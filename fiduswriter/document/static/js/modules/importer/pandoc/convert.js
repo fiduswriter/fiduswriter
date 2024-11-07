@@ -5,7 +5,7 @@ export class PandocConvert {
         this.doc = doc
         this.importId = importId
         this.citations = []
-        this.imageIds = []
+        this.images = []
     }
 
     init() {
@@ -19,10 +19,7 @@ export class PandocConvert {
         return {
             content: this.convert(),
             settings: {
-                //documentstyle: "elephant",
-                //template: "Standard Article",
                 import_id: this.importId,
-                //citationstyle: "apa",
                 tracked: false,
                 language: this.doc.meta?.lang?.c?.[0]?.c || "en-US"
             }
@@ -254,6 +251,11 @@ export class PandocConvert {
     convertBlock(block) {
         switch (block.t) {
             case "Para":
+                // Check if this is a paragraph containing only an image
+                if (block.c.length === 1 && block.c[0].t === "Image") {
+                    // Convert the image directly
+                    return this.convertInline(block.c[0])
+                }
                 return {
                     type: "paragraph",
                     content: this.convertInlines(block.c)
@@ -356,10 +358,80 @@ export class PandocConvert {
                         equation: inline.c[1]
                     }
                 }
+            case "Image": {
+                const imageId = Math.floor(Math.random() * 1000000)
+                const imagePath = inline.c[2][0]
+                const imageTitle = imagePath.split("/").pop()
+
+                // Store image reference
+                this.images[imageId] = {
+                    id: imageId,
+                    title: imageTitle,
+                    copyright: {
+                        holder: false,
+                        year: false,
+                        freeToRead: true,
+                        licenses: []
+                    },
+                    image: imagePath,
+                    file_type: this.getImageFileType(imageTitle),
+                    file: null,
+                    checksum: 0
+                }
+
+                // Create a figure with optional caption
+                const caption = inline.c[1] || []
+                let category = "none"
+                if (
+                    caption.length &&
+                    ["Figure", "Table", "Photo"].includes(caption[0].c)
+                ) {
+                    category = caption[0].c.toLowerCase()
+                    caption.shift() // Category name, for example "Figure"
+                    caption.shift() // Space
+                    caption.shift() // Category number, for example "1:"
+                    caption.shift() // Space
+                }
+                return {
+                    type: "figure",
+                    attrs: {
+                        aligned: "center",
+                        width: this.extractImageWidth(inline.c[0][2]),
+                        category,
+                        caption: Boolean(caption.length)
+                    },
+                    content: [
+                        {
+                            type: "image",
+                            attrs: {
+                                image: imageId
+                            }
+                        },
+                        ...(caption.length
+                            ? [
+                                  {
+                                      type: "figure_caption",
+                                      content: this.convertInlines(caption)
+                                  }
+                              ]
+                            : [])
+                    ]
+                }
+            }
             default:
                 console.warn(`Unhandled inline type: ${inline.t}`)
                 return null
         }
+    }
+
+    extractImageWidth(attrs) {
+        const widthAttr = attrs.find(attr => attr[0] === "width")
+        if (widthAttr) {
+            // Convert inch measurement to percentage (assuming max width is 8.5 inches)
+            const widthInInches = parseFloat(widthAttr[1])
+            return Math.min(Math.round((widthInInches / 8.5) * 100), 100)
+        }
+        return 100 // default width
     }
 
     convertTable(table) {
@@ -405,6 +477,23 @@ export class PandocConvert {
         }
     }
 
+    getImageFileType(filename) {
+        const ext = filename.split(".").pop().toLowerCase()
+        switch (ext) {
+            case "png":
+                return "image/png"
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg"
+            case "gif":
+                return "image/gif"
+            case "svg":
+                return "image/svg+xml"
+            default:
+                return "image/png" // Default fallback
+        }
+    }
+
     convertFigure(figure) {
         const attrs = {
             aligned: "center",
@@ -424,6 +513,26 @@ export class PandocConvert {
             }
         })
 
+        const imagePath = figure.c[2][0].c[0].c[2][0]
+        const imageId = Math.floor(Math.random() * 1000000)
+        const imageTitle = imagePath.split("/").pop()
+
+        // Store image reference
+        this.images[imageId] = {
+            id: imageId,
+            title: imageTitle,
+            copyright: {
+                holder: false,
+                year: false,
+                freeToRead: true,
+                licenses: []
+            },
+            image: imagePath,
+            file_type: this.getImageFileType(imageTitle),
+            file: null,
+            checksum: 0
+        }
+
         return {
             type: "figure",
             attrs,
@@ -431,7 +540,7 @@ export class PandocConvert {
                 {
                     type: "image",
                     attrs: {
-                        image: figure.c[2][0].c[0].c[2][0]
+                        image: imageId
                     }
                 }
             ].concat(

@@ -47,10 +47,6 @@ export class ImportNative {
                 // bibliography without any changes.
                 return this.saveDocument()
             })
-            .catch(error => {
-                addAlert("error", gettext("Could not create document"))
-                throw error
-            })
     }
 
     saveImages(images, ImageTranslationTable) {

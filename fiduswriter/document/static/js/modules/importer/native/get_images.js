@@ -53,10 +53,6 @@ export class GetImages {
             return get(getUrl)
                 .then(response => response.blob())
                 .then(blob => {
-                    // const mimeString = this.imageEntries[this.counter].file_type
-                    // const dataView = new DataView(blob)
-                    // const newBlob = new window.Blob([dataView], {type: mimeString})
-                    // this.imageEntries[this.counter]['file'] = newBlob
                     this.imageEntries[this.counter]["file"] = blob
                     this.counter++
                     return this.getImageUrlEntry()

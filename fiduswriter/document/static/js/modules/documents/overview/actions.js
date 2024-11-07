@@ -195,14 +195,14 @@ export class DocumentOverviewActions {
                 text: gettext("Import"),
                 classes: "fw-dark",
                 click: () => {
-                    let jsonFile = document.getElementById(
+                    let file = document.getElementById(
                         "pandoc-json-uploader"
                     ).files
-                    if (0 === jsonFile.length) {
+                    if (0 === file.length) {
                         return false
                     }
-                    jsonFile = jsonFile[0]
-                    if (104857600 < jsonFile.size) {
+                    file = file[0]
+                    if (104857600 < file.size) {
                         addAlert("error", gettext("File too large"))
                         return false
                     }
@@ -214,10 +214,10 @@ export class DocumentOverviewActions {
                         ).value
                     }
 
-                    activateWait() // Show loading indicator
+                    activateWait()
 
                     const importer = new ImportPandocFile(
-                        jsonFile,
+                        file,
                         this.documentOverview.user,
                         this.documentOverview.path,
                         importId
@@ -247,7 +247,7 @@ export class DocumentOverviewActions {
 
         const importDialog = new Dialog({
             id: "importpandocjson",
-            title: gettext("Import Pandoc JSON file"),
+            title: gettext("Import Pandoc JSON/ZIP file"),
             body: `<form>
                 ${templateSelector}
                 <div class="fw-select-container">
@@ -257,10 +257,10 @@ export class DocumentOverviewActions {
                         </button>
                         <label id="import-pandoc-json-name" class="ajax-upload-label"></label>
                     </div>
-                    <input id="pandoc-json-uploader" type="file" accept=".json" style="display: none;">
+                    <input id="pandoc-json-uploader" type="file" accept=".json,.zip" style="display: none;">
                 </div>
             </form>`,
-            height: importIds.length > 1 ? 150 : 100, // Increase height if we have template selector
+            height: importIds.length > 1 ? 150 : 100,
             buttons
         })
         importDialog.open()

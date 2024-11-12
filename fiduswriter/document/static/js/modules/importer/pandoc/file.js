@@ -47,7 +47,9 @@ export class ImportPandocFile {
                     if (relativePath.endsWith(".json")) {
                         jsonFile = zipEntry
                     } else if (
-                        relativePath.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i)
+                        relativePath.match(
+                            /\.(avif|avifs|png|jpg|jpeg|gif|svg|webp)$/i
+                        )
                     ) {
                         imageFiles[relativePath] = zipEntry
                     }

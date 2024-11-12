@@ -480,6 +480,9 @@ export class PandocConvert {
     getImageFileType(filename) {
         const ext = filename.split(".").pop().toLowerCase()
         switch (ext) {
+            case "avif":
+            case "avifs":
+                return "image/avif"
             case "png":
                 return "image/png"
             case "jpg":
@@ -489,6 +492,8 @@ export class PandocConvert {
                 return "image/gif"
             case "svg":
                 return "image/svg+xml"
+            case "webp":
+                return "image/webp"
             default:
                 return "image/png" // Default fallback
         }

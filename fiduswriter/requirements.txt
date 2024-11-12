@@ -5,7 +5,9 @@ django-avatar==8.0.1
 django-js-error-hook==1.0
 django-npm-mjs==3.1.0
 django-loginas==0.3.11
-Pillow==10.4.0
+Pillow==11.0.0
+# Needed until https://github.com/python-pillow/Pillow/pull/5201 has been resolved
+pillow-avif-plugin==1.4.6
 python-magic==0.4.27
 prosemirror==0.5.0
 httpx==0.27.2

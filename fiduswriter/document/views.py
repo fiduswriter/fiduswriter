@@ -981,10 +981,10 @@ def add_images_to_doc(request):
             image.uploader = doc.owner
             f = open(
                 os.path.join(
-                    settings.PROJECT_PATH, "base/static/img/error.png"
+                    settings.PROJECT_PATH, "base/static/img/error.avif"
                 )
             )
-            image.image.save("error.png", File(f))
+            image.image.save("error.avif", File(f))
             image.save()
         doc_image_data["image"] = image
         DocumentImage.objects.create(**doc_image_data)

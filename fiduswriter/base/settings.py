@@ -330,7 +330,7 @@ LOGGING = {
 # You only need to change this in very advanced setups.
 AVATAR_GRAVATAR_BACKUP = False
 AVATAR_THUMB_FORMAT = "PNG"
-AVATAR_DEFAULT_URL = "img/default_avatar.png"
+AVATAR_DEFAULT_URL = "img/default_avatar.avif"
 AVATAR_DEFAULT_SIZE = 80
 AVATAR_MAX_AVATARS_PER_USER = 1
 AVATAR_CACHE_ENABLED = True

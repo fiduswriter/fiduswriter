@@ -746,6 +746,25 @@ def get_template_for_doc(request):
 @login_required
 @ajax_required
 @require_POST
+def get_template(request):
+    response = {}
+    import_id = request.POST["import_id"]
+    doc_template = DocumentTemplate.objects.filter(
+        Q(user=request.user) | Q(user=None), import_id=import_id
+    ).first()
+    if not doc_template:
+        return JsonResponse(response, status=405)
+    response["template"] = {
+        "id": doc_template.id,
+        "title": doc_template.title,
+        "content": doc_template.content,
+    }
+    return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
 def get_ws_base(request):
     response = {}
     doc_id = int(request.POST.get("id"))

@@ -1,13 +1,15 @@
+import {postJson} from "../../common"
 import {ImportNative} from "../native"
 import {PandocConvert} from "./convert"
 
 export class ImportPandocFile {
-    constructor(file, user, path = "", importId) {
+    constructor(file, user, path, importId) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
 
+        this.template = null
         this.output = {
             ok: false,
             statusText: "",
@@ -17,14 +19,24 @@ export class ImportPandocFile {
     }
 
     init() {
-        if (this.file.type === "application/json") {
-            return this.importJSON()
-        } else if (this.file.type === "application/zip") {
-            return this.importZip()
-        } else {
-            this.output.statusText = gettext("Unknown file type")
-            return Promise.resolve(this.output)
-        }
+        return this.getTemplate().then(() => {
+            if (this.file.type === "application/json") {
+                return this.importJSON()
+            } else if (this.file.type === "application/zip") {
+                return this.importZip()
+            } else {
+                this.output.statusText = gettext("Unknown file type")
+                return Promise.resolve(this.output)
+            }
+        })
+    }
+
+    getTemplate() {
+        return postJson("/api/document/get_template/", {
+            import_id: this.importId
+        }).then(({json}) => {
+            this.template = json.template
+        })
     }
 
     importJSON() {
@@ -95,7 +107,11 @@ export class ImportPandocFile {
             return this.output
         }
 
-        const converter = new PandocConvert(pandocJson, this.importId)
+        const converter = new PandocConvert(
+            pandocJson,
+            this.importId,
+            this.template
+        )
 
         let convertedDoc
         try {

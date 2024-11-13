@@ -1,9 +1,11 @@
 import {applyMarkToNodes, mergeTextNodes} from "./helpers"
 
 export class PandocConvert {
-    constructor(doc, importId) {
+    constructor(doc, importId, template) {
         this.doc = doc
         this.importId = importId
+        this.template = template
+
         this.citations = []
         this.images = []
     }
@@ -65,12 +67,12 @@ export class PandocConvert {
     }
 
     convert() {
+        const templateParts = this.template.content.content.slice()
+        templateParts.shift()
         // Create the outer document structure
         const document = {
             type: "doc",
             attrs: {
-                //documentstyle: "elephant",
-                //template: "Standard Article",
                 import_id: this.importId
             },
             content: []
@@ -83,14 +85,16 @@ export class PandocConvert {
                 this.doc.meta?.title?.c || [{t: "Str", c: "Untitled"}]
             )
         })
-
         // Add subtitle if present
         if (this.doc.meta?.subtitle?.c) {
+            const templatePart = templateParts.find(
+                part => part.attrs.metadata === "subtitle"
+            )
             document.content.push({
                 type: "heading_part",
                 attrs: {
-                    title: "Subtitle",
-                    id: "subtitle",
+                    title: templatePart ? templatePart.attrs.title : "Subtitle",
+                    id: templatePart ? templatePart.attrs.id : "subtitle",
                     metadata: "subtitle"
                 },
                 content: [
@@ -107,11 +111,14 @@ export class PandocConvert {
 
         // Add authors if present
         if (this.doc.meta?.author?.c) {
+            const templatePart = templateParts.find(
+                part => part.attrs.metadata === "authors"
+            )
             document.content.push({
                 type: "contributors_part",
                 attrs: {
-                    title: "Authors",
-                    id: "authors",
+                    title: templatePart ? templatePart.attrs.title : "Authors",
+                    id: templatePart ? templatePart.attrs.id : "authors",
                     metadata: "authors"
                 },
                 content: this.doc.meta.author.c.map(author => ({
@@ -123,23 +130,29 @@ export class PandocConvert {
 
         // Add abstract if present
         if (this.doc.meta?.abstract?.c) {
+            const templatePart = templateParts.find(
+                part => part.attrs.metadata === "abstract"
+            )
             document.content.push({
                 type: "richtext_part",
                 attrs: {
-                    title: "Abstract",
-                    id: "abstract",
+                    title: templatePart ? templatePart.attrs.title : "Abstract",
+                    id: templatePart ? templatePart.attrs.id : "abstract",
                     metadata: "abstract"
                 },
                 content: this.convertBlocks(this.doc.meta.abstract.c)
             })
         }
 
+        const templatePart = templateParts.find(
+            part => !part.attrs.metadata && part.type === "richtext_part"
+        )
         // Add main body content
         document.content.push({
             type: "richtext_part",
             attrs: {
-                title: "Body",
-                id: "body",
+                title: templatePart ? templatePart.attrs.title : "Body",
+                id: templatePart ? templatePart.attrs.id : "body",
                 marks: ["strong", "em", "link"]
             },
             content: this.convertBlocks(this.doc.blocks)

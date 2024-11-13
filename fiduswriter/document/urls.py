@@ -44,6 +44,11 @@ urlpatterns = [
         name="get_template_admin",
     ),
     re_path(
+        "^get_template/$",
+        views.get_template,
+        name="get_template",
+    ),
+    re_path(
         "^get_template_for_doc/$",
         views.get_template_for_doc,
         name="get_template_for_doc",

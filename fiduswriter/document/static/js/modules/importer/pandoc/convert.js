@@ -1,13 +1,15 @@
 import {applyMarkToNodes, mergeTextNodes} from "./helpers"
 
 export class PandocConvert {
-    constructor(doc, importId, template) {
+    constructor(doc, importId, template, bibliography) {
         this.doc = doc
         this.importId = importId
         this.template = template
+        this.bibliography = bibliography
 
-        this.citations = []
         this.images = []
+
+        this.language = this.doc.meta?.lang?.c?.[0]?.c || "en-US"
     }
 
     init() {
@@ -23,7 +25,7 @@ export class PandocConvert {
             settings: {
                 import_id: this.importId,
                 tracked: false,
-                language: this.doc.meta?.lang?.c?.[0]?.c || "en-US"
+                language: this.language
             }
         }
     }
@@ -161,64 +163,6 @@ export class PandocConvert {
         return document
     }
 
-    convertMetadata(meta, output) {
-        if (!output.content) {
-            output.content = []
-        }
-
-        // Convert title
-        if (meta.title) {
-            output.content.unshift({
-                type: "title",
-                content: this.convertInlines(meta.title.c)
-            })
-        }
-
-        // Convert subtitle if present
-        if (meta.subtitle) {
-            output.content.push({
-                type: "heading_part",
-                attrs: {
-                    metadata: "subtitle",
-                    id: "subtitle"
-                },
-                content: [
-                    {
-                        type: "paragraph",
-                        content: this.convertInlines(meta.subtitle.c)
-                    }
-                ]
-            })
-        }
-
-        // Convert abstract
-        if (meta.abstract) {
-            output.content.push({
-                type: "richtext_part",
-                attrs: {
-                    metadata: "abstract",
-                    id: "abstract"
-                },
-                content: this.convertBlocks(meta.abstract.c)
-            })
-        }
-
-        // Convert authors
-        if (meta.author?.c?.length) {
-            const authors = {
-                type: "contributors_part",
-                attrs: {
-                    metadata: "authors",
-                    id: "authors"
-                },
-                content: meta.author.c.map(author =>
-                    this.convertContributor(author)
-                )
-            }
-            output.content.push(authors)
-        }
-    }
-
     convertContributor(author) {
         const attrs = {
             firstname: "",
@@ -263,6 +207,10 @@ export class PandocConvert {
 
     convertBlock(block) {
         switch (block.t) {
+            case "Div":
+                // Ignore. Could be bibliography
+                // or other non-content block
+                return null
             case "Para":
                 // Check if this is a paragraph containing only an image
                 if (block.c.length === 1 && block.c[0].t === "Image") {
@@ -334,43 +282,8 @@ export class PandocConvert {
         }
 
         switch (inline.t) {
-            case "Str":
-                return {
-                    type: "text",
-                    text: inline.c
-                }
-            case "Space":
-                return {
-                    type: "text",
-                    text: " "
-                }
-            case "Strong": {
-                const innerNodes = this.convertInlines(inline.c)
-                return mergeTextNodes(applyMarkToNodes(innerNodes, "strong"))
-            }
-            case "Emph": {
-                const innerNodes = this.convertInlines(inline.c)
-                return mergeTextNodes(applyMarkToNodes(innerNodes, "em"))
-            }
-            case "Underline": {
-                const innerNodes = this.convertInlines(inline.c)
-                return mergeTextNodes(applyMarkToNodes(innerNodes, "underline"))
-            }
-            case "Link": {
-                const innerNodes = this.convertInlines(inline.c[1])
-                return mergeTextNodes(
-                    applyMarkToNodes(innerNodes, "link", {href: inline.c[2][0]})
-                )
-            }
             case "Cite":
                 return this.convertCitation(inline)
-            case "Math":
-                return {
-                    type: "equation",
-                    attrs: {
-                        equation: inline.c[1]
-                    }
-                }
             case "Image": {
                 const imageId = Math.floor(Math.random() * 1000000)
                 const imagePath = inline.c[2][0]
@@ -431,6 +344,77 @@ export class PandocConvert {
                     ]
                 }
             }
+            case "Str":
+                return {
+                    type: "text",
+                    text: inline.c
+                }
+            case "Space":
+                return {
+                    type: "text",
+                    text: " "
+                }
+            case "Strong": {
+                const innerNodes = this.convertInlines(inline.c)
+                return mergeTextNodes(applyMarkToNodes(innerNodes, "strong"))
+            }
+            case "Emph": {
+                const innerNodes = this.convertInlines(inline.c)
+                return mergeTextNodes(applyMarkToNodes(innerNodes, "em"))
+            }
+            case "Underline": {
+                const innerNodes = this.convertInlines(inline.c)
+                return mergeTextNodes(applyMarkToNodes(innerNodes, "underline"))
+            }
+            case "Link": {
+                const innerNodes = this.convertInlines(inline.c[1])
+                return mergeTextNodes(
+                    applyMarkToNodes(innerNodes, "link", {href: inline.c[2][0]})
+                )
+            }
+            case "Note": {
+                if (
+                    inline.c.length === 1 &&
+                    inline.c[0].t === "Para" &&
+                    inline.c[0].c.length === 2 &&
+                    inline.c[0].c[0].t === "Cite" &&
+                    inline.c[0].c[1].t === "Str" &&
+                    inline.c[0].c[1].c === "."
+                ) {
+                    // This is a citation note rendered as a footnote.
+                    return this.convertInline(inline.c[0].c[0])
+                }
+
+                return {
+                    type: "footnote",
+                    attrs: {
+                        footnote: this.convertBlocks(inline.c)
+                    }
+                }
+            }
+            case "Math":
+                return {
+                    type: "equation",
+                    attrs: {
+                        equation: inline.c[1]
+                    }
+                }
+            case "Quoted": {
+                const type =
+                    inline.c[0].t === "SingleQuote" ? "single" : "double"
+                const quoteStart = type === "single" ? "‘" : "“" // U+2018, U+201C
+                const quoteEnd = type === "single" ? "’" : "”" // U+2019, U+201D
+                const innerNodes = this.convertInlines(inline.c[1])
+                const quotedNodes = [
+                    {type: "text", text: quoteStart},
+                    ...innerNodes,
+                    {type: "text", text: quoteEnd}
+                ]
+                return mergeTextNodes(quotedNodes)
+            }
+
+            case "SoftBreak":
+                return {type: "hard_break"}
             default:
                 console.warn(`Unhandled inline type: ${inline.t}`)
                 return null
@@ -575,12 +559,32 @@ export class PandocConvert {
     }
 
     convertCitation(cite) {
-        const references = cite.c[0].map(ref => ({
-            id: ref.citationId,
-            prefix: ref.citationPrefix.map(prefix => prefix.c).join(" "),
-            locator: ref.citationSuffix.map(suffix => suffix.c).join(" ")
-        }))
+        const references = cite.c[0]
+            .map(ref => {
+                const [bibId, _bibEntry] = Object.entries(
+                    this.bibliography
+                ).find(
+                    ([_id, definition]) =>
+                        definition.entry_key === ref.citationId
+                )
+                if (!bibId) {
+                    return
+                }
+                return {
+                    id: bibId,
+                    prefix: ref.citationPrefix
+                        .map(prefix => prefix.c)
+                        .join(" "),
+                    locator: ref.citationSuffix
+                        .map(suffix => suffix.c)
+                        .join(" ")
+                }
+            })
+            .filter(ref => ref)
 
+        if (!references.length) {
+            return null
+        }
         return {
             type: "citation",
             attrs: {

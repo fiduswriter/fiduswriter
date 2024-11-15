@@ -259,9 +259,10 @@ export const menuModel = () => ({
         },
         {
             type: "text",
-            title: gettext("Import Pandoc JSON"),
-            action: overview => overview.mod.actions.importPandocJson(),
-            order: 3.5
+            id: "import_external",
+            title: gettext("Import Pandoc JSON/ZIP"),
+            action: overview => overview.mod.actions.importExternal(),
+            order: 4
         },
         {
             type: "search",
@@ -281,7 +282,7 @@ export const menuModel = () => ({
                     overview.table.search(text)
                 }
             },
-            order: 4
+            order: 5
         }
     ]
 })

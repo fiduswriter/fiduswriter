@@ -1,6 +1,6 @@
 import {updateTemplateFile} from "../../document_template"
 import {FW_DOCUMENT_VERSION} from "../../schema"
-import {ImportNative} from "./index"
+import {NativeImporter} from "./index"
 import {updateFile} from "./update"
 
 /** The current Fidus Writer filetype version. The importer will not import from
@@ -17,7 +17,7 @@ const TEXT_FILENAMES = [
     "bibliography.json"
 ]
 
-export class ImportFidusFile {
+export class FidusFileImporter {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
@@ -186,7 +186,7 @@ export class ImportFidusFile {
                     file => !this.template.files.includes(file)
                 )
             }
-            const importer = new ImportNative(
+            const importer = new NativeImporter(
                 doc,
                 bibliography,
                 images,

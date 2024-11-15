@@ -1,9 +1,9 @@
 import {BibLatexImporter} from "../../bibliography/import"
 import {postJson} from "../../common"
-import {ImportNative} from "../native"
+import {NativeImporter} from "../native"
 import {PandocConvert} from "./convert"
 
-export class ImportPandocFile {
+export class PandocImporter {
     constructor(file, user, path, importId) {
         this.file = file
         this.user = user
@@ -118,7 +118,7 @@ export class ImportPandocFile {
         })
     }
 
-    handlePandocJson(jsonString, images, bibString) {
+    handlePandocJson(jsonString, images = {}, bibString = "") {
         let pandocJson
         try {
             pandocJson = JSON.parse(jsonString)
@@ -193,8 +193,9 @@ export class ImportPandocFile {
             const title =
                 convertedDoc.content.content[0].content?.[0]?.text ||
                 gettext("Untitled")
-            // Create a new ImportNative instance
-            const nativeImporter = new ImportNative(
+
+            // Create a new NativeImporter instance
+            const nativeImporter = new NativeImporter(
                 {
                     content: convertedDoc.content,
                     title,

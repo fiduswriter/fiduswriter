@@ -1,2 +1,2 @@
-export {ImportFidusFile} from "./file"
-export {ImportNative} from "./import"
+export {FidusFileImporter} from "./file"
+export {NativeImporter} from "./import"

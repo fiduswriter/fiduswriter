@@ -1,1 +1,1 @@
-export {ImportPandocFile} from "./file"
+export {PandocImporter} from "./import"

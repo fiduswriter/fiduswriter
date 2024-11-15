@@ -2,7 +2,7 @@ import {addAlert, postJson, shortFileTitle} from "../../common"
 import {extractTemplate} from "../../document_template"
 import {GetImages} from "./get_images"
 
-export class ImportNative {
+export class NativeImporter {
     /* Save document information into the database */
     constructor(
         doc,

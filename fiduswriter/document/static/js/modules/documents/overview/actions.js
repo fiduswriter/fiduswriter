@@ -8,8 +8,8 @@ import {
     postJson
 } from "../../common"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
-import {ImportFidusFile} from "../../importer/native"
-import {ImportPandocFile} from "../../importer/pandoc"
+import {FidusFileImporter} from "../../importer/native"
+import {PandocImporter} from "../../importer/pandoc"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate} from "./templates"
@@ -18,6 +18,11 @@ export class DocumentOverviewActions {
     constructor(documentOverview) {
         documentOverview.mod.actions = this
         this.documentOverview = documentOverview
+
+        // To override in plugin
+        this.externalFormats = ["json", "zip"]
+        this.externalFormatsTitle = gettext("Import Pandoc JSON/ZIP file")
+        this.externalFileImporter = PandocImporter
     }
 
     deleteDocument(id) {
@@ -113,7 +118,7 @@ export class DocumentOverviewActions {
                     }
                     activateWait()
 
-                    const importer = new ImportFidusFile(
+                    const importer = new FidusFileImporter(
                         fidusFile,
                         this.documentOverview.user,
                         this.documentOverview.path,
@@ -168,7 +173,7 @@ export class DocumentOverviewActions {
             })
     }
 
-    importPandocJson() {
+    importExternal() {
         const importIds = Object.keys(this.documentOverview.documentTemplates)
         let importId = importIds[0] // Default to first template
 
@@ -195,9 +200,8 @@ export class DocumentOverviewActions {
                 text: gettext("Import"),
                 classes: "fw-dark",
                 click: () => {
-                    let file = document.getElementById(
-                        "pandoc-json-uploader"
-                    ).files
+                    let file =
+                        document.getElementById("external-uploader").files
                     if (0 === file.length) {
                         return false
                     }
@@ -216,7 +220,7 @@ export class DocumentOverviewActions {
 
                     activateWait()
 
-                    const importer = new ImportPandocFile(
+                    const importer = new this.externalFileImporter(
                         file,
                         this.documentOverview.user,
                         this.documentOverview.path,
@@ -246,18 +250,18 @@ export class DocumentOverviewActions {
         ]
 
         const importDialog = new Dialog({
-            id: "importpandocjson",
-            title: gettext("Import Pandoc JSON/ZIP file"),
+            id: "import_external",
+            title: this.externalFormatsTitle,
             body: `<form>
                 ${templateSelector}
                 <div class="fw-select-container">
                     <div class="fw-select-head">
-                        <button type="button" class="fw-button fw-light fw-large" id="import-pandoc-json-btn">
+                        <button type="button" class="fw-button fw-light fw-large" id="import-external-btn">
                             ${gettext("Select a file")}
                         </button>
-                        <label id="import-pandoc-json-name" class="ajax-upload-label"></label>
+                        <label id="import-external-name" class="ajax-upload-label"></label>
                     </div>
-                    <input id="pandoc-json-uploader" type="file" accept=".json,.zip" style="display: none;">
+                    <input id="external-uploader" type="file" accept="${this.externalFormats.map(format => `.${format}`).join(",")}" style="display: none;">
                 </div>
             </form>`,
             height: importIds.length > 1 ? 150 : 100,
@@ -266,18 +270,18 @@ export class DocumentOverviewActions {
         importDialog.open()
 
         document
-            .getElementById("pandoc-json-uploader")
+            .getElementById("external-uploader")
             .addEventListener("change", () => {
-                document.getElementById("import-pandoc-json-name").innerHTML =
+                document.getElementById("import-external-name").innerHTML =
                     document
-                        .getElementById("pandoc-json-uploader")
+                        .getElementById("external-uploader")
                         .value.replace(/C:\\fakepath\\/i, "")
             })
 
         document
-            .getElementById("import-pandoc-json-btn")
+            .getElementById("import-external-btn")
             .addEventListener("click", event => {
-                document.getElementById("pandoc-json-uploader").click()
+                document.getElementById("external-uploader").click()
                 event.preventDefault()
             })
     }

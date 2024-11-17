@@ -1,6 +1,8 @@
 import {parseCSL} from "biblatex-csl-converter"
+import {MathMLToLaTeX} from "mathml-to-latex"
 
 import {xmlDOM} from "../../exporter/tools/xml"
+import {parseTracks} from "../../schema/common/track"
 
 export class OdtConvert {
     constructor(
@@ -20,18 +22,24 @@ export class OdtConvert {
         this.contentDoc = contentXml ? xmlDOM(contentXml) : null
         this.stylesDoc = stylesXml ? xmlDOM(stylesXml) : null
         this.manifestDoc = manifestXml ? xmlDOM(manifestXml) : null
+
+        this.tracks = {}
+        this.comments = {}
+        this.currentCommentIds = []
     }
 
     init() {
         this.parseStyles()
-
+        this.parseTrackedChanges()
+        this.parseComments()
         return {
             content: this.convert(),
             settings: {
                 import_id: this.importId,
-                tracked: false,
+                tracked: Object.keys(this.tracks).length > 0,
                 language: this.detectLanguage()
-            }
+            },
+            comments: this.comments
         }
     }
 
@@ -106,6 +114,57 @@ export class OdtConvert {
         return properties
     }
 
+    convertObject(node) {
+        const mathEl = node.query("math")
+        if (mathEl) {
+            return {
+                type: "equation",
+                attrs: {
+                    equation: MathMLToLaTeX.convert(mathEl.innerXML)
+                }
+            }
+        }
+        return null
+    }
+
+    parseComments() {
+        const annotations = this.contentDoc.queryAll("office:annotation")
+        annotations.forEach(annotation => {
+            const id = annotation.getAttribute("office:name")
+            if (!id) {
+                return
+            }
+
+            const comment = {
+                id: id,
+                username: annotation.query("dc:creator")?.textContent || "",
+                date:
+                    new Date(
+                        annotation.query("dc:date")?.textContent || ""
+                    ).getTime() / 60000,
+                comment: this.convertContainer(annotation),
+                answers: [],
+                resolved: annotation.getAttribute("loext:resolved") === "true"
+            }
+
+            // Parse answers
+            const answers = annotation.queryAll("office:annotation")
+            if (answers.length) {
+                comment.answers = answers.map(answer => ({
+                    id: answer.getAttribute("office:name"),
+                    username: answer.query("dc:creator")?.textContent || "",
+                    date:
+                        new Date(
+                            answer.query("dc:date")?.textContent || ""
+                        ).getTime() / 60000,
+                    answer: this.convertContainer(answer)
+                }))
+            }
+
+            this.comments[id] = comment
+        })
+    }
+
     convert() {
         const templateParts = this.template.content.content.slice()
         templateParts.shift()
@@ -125,7 +184,7 @@ export class OdtConvert {
             content: [
                 {
                     type: "text",
-                    text: titleText
+                    text: String(titleText)
                 }
             ]
         })
@@ -322,7 +381,7 @@ export class OdtConvert {
                     content: [
                         {
                             type: "text",
-                            text: keywordsSection.textContent
+                            text: String(keywordsSection.textContent)
                         }
                     ]
                 }
@@ -636,10 +695,16 @@ export class OdtConvert {
                 return this.convertList(node)
             case "draw:frame":
                 return this.convertImage(node)
+            case "draw:object":
+                return this.convertObject(node)
             case "table:table":
                 return this.convertTable(node)
             case "text:note":
                 return this.convertFootnote(node)
+            case "office:annotation-start":
+                return this.convertAnnotationStart(node)
+            case "office:annotation-end":
+                return this.convertAnnotationEnd(node)
             case "text:sequence-decls":
             case "office:forms":
                 return null
@@ -650,18 +715,42 @@ export class OdtConvert {
     }
 
     convertParagraph(node) {
+        const styleName = node.getAttribute("text:style-name")
+        const style = this.styles[styleName]
+
+        // Check if this paragraph is title-like
+        if (this.isTitleStyle(style)) {
+            return {
+                type: "heading1",
+                attrs: {
+                    id: "H" + Math.random().toString(36).substr(2, 7),
+                    track: parseTracks(node.getAttribute("text:change"))
+                },
+                content: this.convertTextContent(node)
+            }
+        }
+
+        if (this.isHeadingStyle(styleName)) {
+            return this.convertHeading(node)
+        }
+
         return {
             type: "paragraph",
+            attrs: {
+                track: parseTracks(node.getAttribute("text:change"))
+            },
             content: this.convertTextContent(node)
         }
     }
 
     convertHeading(node) {
-        const level = parseInt(node.getAttribute("text:outline-level")) || 1
+        const level =
+            parseInt(node.getAttribute("text:outline-level") || 1) || 1
         return {
             type: `heading${level}`,
             attrs: {
-                id: "H" + Math.random().toString(36).substr(2, 7)
+                id: "H" + Math.random().toString(36).substr(2, 7),
+                track: parseTracks(node.getAttribute("text:change"))
             },
             content: this.convertTextContent(node)
         }
@@ -690,11 +779,27 @@ export class OdtConvert {
                 }
             } else if (!insideZoteroReferenceMark) {
                 // Only process content that's not inside a reference mark
+
                 if (child.tagName === "#text") {
-                    content.push({
-                        type: "text",
-                        text: child.textContent
+                    const marks = []
+
+                    // Add comment marks for any active comment IDs
+                    this.currentCommentIds.forEach(commentId => {
+                        marks.push({
+                            type: "comment",
+                            attrs: {
+                                id: commentId
+                            }
+                        })
                     })
+                    const textNode = {
+                        type: "text",
+                        text: String(child.textContent)
+                    }
+                    if (marks.length) {
+                        textNode.marks = marks
+                    }
+                    content.push(textNode)
                 } else if (child.tagName === "text:span") {
                     content.push(...this.convertSpan(child))
                 } else if (child.tagName === "text:a") {
@@ -905,12 +1010,40 @@ export class OdtConvert {
 
         return {
             type: isOrdered ? "ordered_list" : "bullet_list",
-            attrs: isOrdered ? {order: 1} : {},
+            attrs: isOrdered
+                ? {
+                      order: 1,
+                      id: "L" + Math.random().toString(36).substr(2, 7),
+                      track: parseTracks(node.getAttribute("text:change"))
+                  }
+                : {
+                      id: "L" + Math.random().toString(36).substr(2, 7),
+                      track: parseTracks(node.getAttribute("text:change"))
+                  },
             content: node.queryAll("text:list-item").map(item => ({
                 type: "list_item",
                 content: this.convertContainer(item)
             }))
         }
+    }
+
+    convertAnnotationStart(node) {
+        const commentId = node.getAttribute("office:name")
+        if (commentId && this.comments[commentId]) {
+            this.currentCommentIds.push(commentId)
+        }
+        return null
+    }
+
+    convertAnnotationEnd(node) {
+        const commentId = node.getAttribute("office:name")
+        if (commentId) {
+            const index = this.currentCommentIds.indexOf(commentId)
+            if (index !== -1) {
+                this.currentCommentIds.splice(index, 1)
+            }
+        }
+        return null
     }
 
     isOrderedList(styleName) {
@@ -936,7 +1069,7 @@ export class OdtConvert {
 
         const imageId = Math.floor(Math.random() * 1000000)
         const width = this.convertLength(node.getAttribute("svg:width"))
-        //const height = this.convertLength(node.getAttribute("svg:height"))
+        const height = this.convertLength(node.getAttribute("svg:height"))
 
         this.images[imageId] = {
             id: imageId,
@@ -950,6 +1083,8 @@ export class OdtConvert {
             image: href,
             file_type: this.getImageFileType(href),
             file: null,
+            width,
+            height,
             checksum: 0
         }
 
@@ -959,9 +1094,11 @@ export class OdtConvert {
         return {
             type: "figure",
             attrs: {
+                id: "F" + Math.random().toString(36).substr(2, 7),
                 aligned: "center",
                 width: Math.min(Math.round((width / 8.5) * 100), 100),
-                caption: Boolean(captionContent.length)
+                caption: Boolean(captionContent.length),
+                track: parseTracks(node.getAttribute("text:change"))
             },
             content: [
                 {
@@ -1018,14 +1155,24 @@ export class OdtConvert {
     }
 
     convertTable(node) {
+        const width =
+            node.getAttribute("style:rel-width")?.replace("%", "") || "100"
+        const styleName = node.getAttribute("table:style-name")
+        const style = this.styles[styleName]
+        const aligned = style?.getAttribute("table:align") || "center"
         return {
             type: "table",
             attrs: {
-                width: 100,
-                aligned: "center",
-                layout: "fixed"
+                id: "T" + Math.random().toString(36).substr(2, 7),
+                track: parseTracks(node.getAttribute("text:change")),
+                width,
+                aligned,
+                layout: "fixed",
+                category: "none",
+                caption: false
             },
             content: [
+                {type: "table_caption"},
                 {
                     type: "table_body",
                     content: node
@@ -1040,24 +1187,28 @@ export class OdtConvert {
         return {
             type: "table_row",
             content: row
-                .queryAll("table:table-cell")
+                .queryAll(["table:table-cell", "table:covered-table-cell"])
                 .map(cell => this.convertTableCell(cell))
         }
     }
 
-    convertTableCell(cell) {
+    convertTableCell(node) {
+        if (node.tagName === "table:covered-table-cell") {
+            return null
+        }
         return {
             type: "table_cell",
             attrs: {
                 colspan:
                     parseInt(
-                        cell.getAttribute("table:number-columns-spanned")
+                        node.getAttribute("table:number-columns-spanned")
                     ) || 1,
                 rowspan:
-                    parseInt(cell.getAttribute("table:number-rows-spanned")) ||
-                    1
+                    parseInt(node.getAttribute("table:number-rows-spanned")) ||
+                    1,
+                track: parseTracks(node.getAttribute("text:change"))
             },
-            content: this.convertContainer(cell)
+            content: this.convertContainer(node)
         }
     }
 
@@ -1115,5 +1266,54 @@ export class OdtConvert {
 
         // Default to "en-US"
         return "en-US"
+    }
+
+    parseTrackedChanges() {
+        const trackedChangesEl = this.contentDoc.query("text:tracked-changes")
+        if (!trackedChangesEl) {
+            return
+        }
+
+        const changedRegions = trackedChangesEl.queryAll("text:changed-region")
+        changedRegions.forEach(region => {
+            const id = region.getAttribute("text:id")
+
+            // Handle deletions
+            const deletion = region.query("text:deletion")
+            if (deletion) {
+                const changeInfo = deletion.query("office:change-info")
+                if (changeInfo) {
+                    this.tracks[id] = {
+                        type: "deletion",
+                        user: changeInfo.query("dc:creator")?.textContent || "",
+                        username:
+                            changeInfo.query("dc:creator")?.textContent || "",
+                        date:
+                            new Date(
+                                changeInfo.query("dc:date")?.textContent || ""
+                            ).getTime() / 60000
+                    }
+                }
+            }
+
+            // Handle insertions
+            const insertion = region.query("text:insertion")
+            if (insertion) {
+                const changeInfo = insertion.query("office:change-info")
+                if (changeInfo) {
+                    this.tracks[id] = {
+                        type: "insertion",
+                        user: changeInfo.query("dc:creator")?.textContent || "",
+                        username:
+                            changeInfo.query("dc:creator")?.textContent || "",
+                        date:
+                            new Date(
+                                changeInfo.query("dc:date")?.textContent || ""
+                            ).getTime() / 60000,
+                        approved: false
+                    }
+                }
+            }
+        })
     }
 }

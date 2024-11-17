@@ -9,7 +9,7 @@ import {
 } from "../../common"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
 import {FidusFileImporter} from "../../importer/native"
-import {PandocImporter} from "../../importer/pandoc"
+import {importerRegistry} from "../../importer/register"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate} from "./templates"
@@ -18,11 +18,6 @@ export class DocumentOverviewActions {
     constructor(documentOverview) {
         documentOverview.mod.actions = this
         this.documentOverview = documentOverview
-
-        // To override in plugin
-        this.externalFormats = ["json", "zip"]
-        this.externalFormatsTitle = gettext("Import Pandoc JSON/ZIP file")
-        this.externalFileImporter = PandocImporter
     }
 
     deleteDocument(id) {
@@ -211,6 +206,19 @@ export class DocumentOverviewActions {
                         return false
                     }
 
+                    // Get file extension
+                    const fileExtension = file.name
+                        .split(".")
+                        .pop()
+                        .toLowerCase()
+                    const importerInfo =
+                        importerRegistry.getImporter(fileExtension)
+
+                    if (!importerInfo) {
+                        addAlert("error", gettext("Unsupported file format"))
+                        return false
+                    }
+
                     // Get selected template if multiple templates exist
                     if (importIds.length > 1) {
                         importId = document.getElementById(
@@ -220,7 +228,7 @@ export class DocumentOverviewActions {
 
                     activateWait()
 
-                    const importer = new this.externalFileImporter(
+                    const importer = new importerInfo.importer(
                         file,
                         this.documentOverview.user,
                         this.documentOverview.path,
@@ -249,9 +257,12 @@ export class DocumentOverviewActions {
             }
         ]
 
+        const supportedFormats = importerRegistry.getAllFileTypes()
+        const dialogTitle = importerRegistry.getAllImporterTitles().join(" / ")
+
         const importDialog = new Dialog({
             id: "import_external",
-            title: this.externalFormatsTitle,
+            title: dialogTitle,
             body: `<form>
                 ${templateSelector}
                 <div class="fw-select-container">
@@ -261,7 +272,7 @@ export class DocumentOverviewActions {
                         </button>
                         <label id="import-external-name" class="ajax-upload-label"></label>
                     </div>
-                    <input id="external-uploader" type="file" accept="${this.externalFormats.map(format => `.${format}`).join(",")}" style="display: none;">
+                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")}" style="display: none;">
                 </div>
             </form>`,
             height: importIds.length > 1 ? 150 : 100,

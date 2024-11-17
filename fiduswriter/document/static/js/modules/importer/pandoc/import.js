@@ -188,6 +188,7 @@ export class PandocImporter {
                 convertedDoc = converter.init()
             } catch (error) {
                 this.output.statusText = error.message
+                console.error(error)
                 return this.output
             }
             const title =

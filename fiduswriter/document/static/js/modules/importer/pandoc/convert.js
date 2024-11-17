@@ -1,3 +1,5 @@
+import {parseCSL} from "biblatex-csl-converter"
+
 import {applyMarkToNodes, mergeTextNodes} from "./helpers"
 
 export class PandocConvert {
@@ -415,6 +417,60 @@ export class PandocConvert {
 
             case "SoftBreak":
                 return {type: "hard_break"}
+            case "Span": {
+                // Check if this is a Zotero CSL citation
+                const attrs = inline.c[0][0]
+                if (attrs && attrs.startsWith("ZOTERO_ITEM CSL_CITATION")) {
+                    try {
+                        // Extract just the JSON portion
+                        const jsonStr = attrs.replace(
+                            "ZOTERO_ITEM CSL_CITATION ",
+                            ""
+                        )
+                        const lastBrace = jsonStr.lastIndexOf("}") + 1
+                        const cslData = JSON.parse(
+                            jsonStr.substring(0, lastBrace)
+                        )
+
+                        // Create citation references
+                        const citations = cslData.citationItems.map(item => {
+                            const id = String(item.itemData.id)
+
+                            // find in bibliography
+                            let [bibKey, _] =
+                                Object.entries(this.bibliography).find(
+                                    ([_key, entry]) => entry.entry_key === id
+                                ) || []
+                            if (!bibKey) {
+                                // Not yet present in bibliography. We'll parse the CSL data and add it.
+                                const parseData = parseCSL({
+                                    [id]: item.itemData
+                                })
+                                const bibEntry = parseData["1"]
+                                bibKey = `${Object.keys(this.bibliography).length + 1}`
+                                this.bibliography[bibKey] = bibEntry
+                            }
+                            return {
+                                id: bibKey,
+                                prefix: item.prefix || "",
+                                locator: item.locator || ""
+                            }
+                        })
+
+                        return {
+                            type: "citation",
+                            attrs: {
+                                format: "cite",
+                                references: citations
+                            }
+                        }
+                    } catch (error) {
+                        console.warn("Failed to parse CSL citation:", error)
+                    }
+                }
+                // If not a citation or parsing failed, fall through to regular text
+                return this.convertInlines(inline.c[1])
+            }
             default:
                 console.warn(`Unhandled inline type: ${inline.t}`)
                 return null

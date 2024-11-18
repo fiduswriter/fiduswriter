@@ -33,12 +33,15 @@ export class OdtConvert {
         this.tracks = {}
         this.comments = {}
         this.currentCommentIds = []
+        this.referenceableObjects = {} // All objects that can be referenced
     }
 
     init() {
         this.parseStyles()
         this.parseTrackedChanges()
         this.parseComments()
+
+        this.collectReferenceableObjects(this.contentDoc)
         return {
             content: this.convert(),
             settings: {
@@ -248,6 +251,56 @@ export class OdtConvert {
                             .map(par => this.convertBlockNode(par))
                     })
                 }
+            }
+        })
+    }
+
+    collectReferenceableObjects(node) {
+        // Handle heading bookmarks
+        const bookmarkStarts = node.queryAll("text:bookmark-start")
+        bookmarkStarts.forEach(mark => {
+            const refName = mark.getAttribute("text:name")
+            if (!refName) {
+                return
+            }
+
+            // Find the closest heading
+            let targetParent = mark.parentElement
+            while (targetParent) {
+                if (targetParent.tagName === "text:h") {
+                    const id = randomHeadingId()
+                    this.referenceableObjects[refName] = {
+                        type: "heading",
+                        id,
+                        node: targetParent
+                    }
+                    break
+                }
+                targetParent = targetParent.parentElement
+            }
+        })
+
+        // Handle figure sequences
+        const sequences = node.queryAll("text:sequence")
+        sequences.forEach(sequence => {
+            const refName = sequence.getAttribute("text:ref-name")
+            if (!refName) {
+                return
+            }
+
+            // Find the figure container
+            let targetParent = sequence.parentElement
+            while (targetParent) {
+                if (targetParent.tagName === "draw:frame") {
+                    const id = randomFigureId()
+                    this.referenceableObjects[refName] = {
+                        type: "figure",
+                        id,
+                        node: targetParent
+                    }
+                    break
+                }
+                targetParent = targetParent.parentElement
             }
         })
     }
@@ -834,10 +887,21 @@ export class OdtConvert {
     convertHeading(node) {
         const level =
             parseInt(node.getAttribute("text:outline-level") || 1) || 1
+
+        // Check for bookmark
+        let id = null
+        const bookmarkStart = node.query("text:bookmark-start")
+        if (bookmarkStart) {
+            const refName = bookmarkStart.getAttribute("text:name")
+            if (refName && this.referenceableObjects[refName]) {
+                id = this.referenceableObjects[refName].id
+            }
+        }
+
         return {
             type: `heading${level}`,
             attrs: {
-                id: randomHeadingId(),
+                id: id || randomHeadingId(),
                 track: parseTracks(node.getAttribute("text:change"))
             },
             content: this.convertNodeChildren(node)
@@ -890,6 +954,10 @@ export class OdtConvert {
                         }
                         return null
                     }
+                    case "text:bookmark-ref":
+                        return this.convertHeadingReference(child)
+                    case "text:sequence-ref":
+                        return this.convertFigureReference(child)
                     default:
                         console.warn(
                             `Unsupported inline node: ${child.tagName}`
@@ -1101,6 +1169,49 @@ export class OdtConvert {
         return null
     }
 
+    convertHeadingReference(node) {
+        const refName = node.getAttribute("text:ref-name")
+        if (!refName || !this.referenceableObjects[refName]) {
+            return null
+        }
+
+        const targetObject = this.referenceableObjects[refName]
+        if (targetObject.type !== "heading") {
+            return null
+        }
+
+        return {
+            type: "cross_reference",
+            attrs: {
+                id: targetObject.id,
+                title: targetObject.node.textContent
+            }
+        }
+    }
+
+    convertFigureReference(node) {
+        const refName = node.getAttribute("text:ref-name")
+        if (!refName || !this.referenceableObjects[refName]) {
+            return null
+        }
+
+        const targetObject = this.referenceableObjects[refName]
+        if (targetObject.type !== "figure") {
+            return null
+        }
+
+        // Find the caption text within the figure
+        const caption = targetObject.node.query("text:p")?.textContent || ""
+
+        return {
+            type: "cross_reference",
+            attrs: {
+                id: targetObject.id,
+                title: caption
+            }
+        }
+    }
+
     isOrderedList(styleName) {
         if (!this.stylesDoc) {
             return false
@@ -1114,6 +1225,11 @@ export class OdtConvert {
     convertImage(node) {
         const imageElement = node.query("draw:image")
         if (!imageElement) {
+            return null
+        }
+
+        const frame = node.closest("draw:frame")
+        if (!frame) {
             return null
         }
 
@@ -1144,13 +1260,23 @@ export class OdtConvert {
             checksum: 0
         }
 
+        // Find sequence element for figure reference
+        const sequence = frame.query("text:sequence")
+        let figureId = null
+        if (sequence) {
+            const refName = sequence.getAttribute("text:ref-name")
+            if (refName && this.referenceableObjects[refName]) {
+                figureId = this.referenceableObjects[refName].id
+            }
+        }
+
         const caption = node.query("text:p")
         const captionContent = caption ? this.convertNodeChildren(caption) : []
 
         return {
             type: "figure",
             attrs: {
-                id: randomFigureId(),
+                id: figureId || randomFigureId(),
                 aligned: "center",
                 width: Math.min(Math.round((width / 8.5) * 100), 100),
                 caption: Boolean(captionContent.length),

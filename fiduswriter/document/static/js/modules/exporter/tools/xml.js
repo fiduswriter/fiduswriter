@@ -313,6 +313,17 @@ class XMLElement {
         return result
     }
 
+    closest(tagName) {
+        let currentNode = this
+        while (currentNode) {
+            if (currentNode.tagName === tagName) {
+                return currentNode
+            }
+            currentNode = currentNode.parentElement
+        }
+        return null
+    }
+
     // Serialize back to original structure in a non-destructive way
     toObject() {
         const tagName = this.tagName

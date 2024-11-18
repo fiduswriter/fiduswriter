@@ -111,7 +111,7 @@ export class OdtImporter {
             {
                 content: convertedDoc.content,
                 title,
-                comments: {},
+                comments: convertedDoc.comments,
                 settings: convertedDoc.settings
             },
             converter.bibliography || {}, // Pass the populated bibliography

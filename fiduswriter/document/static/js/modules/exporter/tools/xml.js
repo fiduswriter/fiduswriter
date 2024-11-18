@@ -9,7 +9,8 @@ const fastXMLParserOptions = {
     commentPropName: "#comment",
     processEntities: true,
     suppressUnpairedNode: false,
-    suppressEmptyNode: true
+    suppressEmptyNode: true,
+    trimValues: false
 }
 
 const isLeaf = tagName => ["#text", "__cdata", "#comment"].includes(tagName)

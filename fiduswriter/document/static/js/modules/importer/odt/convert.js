@@ -52,41 +52,67 @@ export class OdtConvert {
             const styleName = node.getAttribute("style:name")
             this.styles[styleName] = this.parseStyle(node)
         })
+        const contentStyleNodes = this.contentDoc.queryAll("style:style")
+        contentStyleNodes.forEach(node => {
+            const styleName = node.getAttribute("style:name")
+            this.styles[styleName] = this.parseStyle(node)
+        })
     }
 
     parseStyle(styleNode) {
-        const properties = {}
+        const properties = {
+            // Basic style information
+            parentStyleName: styleNode.getAttribute("style:parent-style-name"),
+            isSection:
+                styleNode.getAttribute("style:family") === "section" ||
+                Boolean(styleNode.query("style:section-properties")),
+            title: styleNode.getAttribute("style:display-name"),
 
-        // Get parent style name if it exists
-        properties.parentStyleName = styleNode.getAttribute(
-            "style:parent-style-name"
-        )
+            // Family and name info
+            family: styleNode.getAttribute("style:family"),
+            name: styleNode.getAttribute("style:name"),
 
-        // Check if this is a section style
-        properties.isSection =
-            styleNode.getAttribute("style:family") === "section" ||
-            Boolean(styleNode.query("style:section-properties"))
+            // Heading related
+            isHeading:
+                styleNode.getAttribute("style:family") === "paragraph" &&
+                (styleNode
+                    .getAttribute("style:name")
+                    .toLowerCase()
+                    .includes("heading") ||
+                    styleNode
+                        .getAttribute("style:parent-style-name")
+                        ?.toLowerCase()
+                        .includes("heading")),
+            outlineLevel: styleNode.getAttribute("text:outline-level"),
 
-        // Get style title/display name
-        properties.title = styleNode.getAttribute("style:display-name")
+            // Text properties
+            textProperties: {},
 
-        // Check if it's a heading style
-        properties.isHeading =
-            styleNode.getAttribute("style:family") === "paragraph" &&
-            (styleNode
-                .getAttribute("style:name")
-                .toLowerCase()
-                .includes("heading") ||
-                properties.parentStyleName?.toLowerCase().includes("heading"))
+            // Paragraph properties
+            paragraphProperties: {},
+
+            // Section properties
+            sectionProperties: {}
+        }
 
         // Parse text properties
         const textProperties = styleNode.query("style:text-properties")
         if (textProperties) {
-            if (textProperties.getAttribute("fo:font-weight") === "bold") {
-                properties.bold = true
-            }
-            if (textProperties.getAttribute("fo:font-style") === "italic") {
-                properties.italic = true
+            properties.textProperties = {
+                bold: textProperties.getAttribute("fo:font-weight") === "bold",
+                italic:
+                    textProperties.getAttribute("fo:font-style") === "italic",
+                fontSize: this.convertLength(
+                    textProperties.getAttribute("fo:font-size")
+                ),
+                fontFamily: textProperties.getAttribute("fo:font-family"),
+                color: textProperties.getAttribute("fo:color"),
+                backgroundColor: textProperties.getAttribute(
+                    "fo:background-color"
+                ),
+                textDecoration:
+                    textProperties.getAttribute("style:text-underline-style") ||
+                    textProperties.getAttribute("style:text-line-through-style")
             }
         }
 
@@ -95,19 +121,67 @@ export class OdtConvert {
             "style:paragraph-properties"
         )
         if (paragraphProperties) {
-            properties.margin = {
-                top: this.convertLength(
+            properties.paragraphProperties = {
+                marginTop: this.convertLength(
                     paragraphProperties.getAttribute("fo:margin-top")
                 ),
-                bottom: this.convertLength(
+                marginBottom: this.convertLength(
                     paragraphProperties.getAttribute("fo:margin-bottom")
                 ),
-                left: this.convertLength(
+                marginLeft: this.convertLength(
                     paragraphProperties.getAttribute("fo:margin-left")
                 ),
-                right: this.convertLength(
+                marginRight: this.convertLength(
                     paragraphProperties.getAttribute("fo:margin-right")
-                )
+                ),
+                textAlign: paragraphProperties.getAttribute("fo:text-align"),
+                lineHeight: paragraphProperties.getAttribute("fo:line-height"),
+                backgroundColor: paragraphProperties.getAttribute(
+                    "fo:background-color"
+                ),
+                padding: this.convertLength(
+                    paragraphProperties.getAttribute("fo:padding")
+                ),
+                borderStyle: paragraphProperties.getAttribute("fo:border-style")
+            }
+        }
+
+        // Parse section properties
+        const sectionProperties = styleNode.query("style:section-properties")
+        if (sectionProperties) {
+            properties.sectionProperties = {
+                columnCount: sectionProperties.getAttribute("fo:column-count"),
+                columnGap: this.convertLength(
+                    sectionProperties.getAttribute("fo:column-gap")
+                ),
+                backgroundColor: sectionProperties.getAttribute(
+                    "fo:background-color"
+                ),
+                margins: {
+                    top: this.convertLength(
+                        sectionProperties.getAttribute("fo:margin-top")
+                    ),
+                    bottom: this.convertLength(
+                        sectionProperties.getAttribute("fo:margin-bottom")
+                    ),
+                    left: this.convertLength(
+                        sectionProperties.getAttribute("fo:margin-left")
+                    ),
+                    right: this.convertLength(
+                        sectionProperties.getAttribute("fo:margin-right")
+                    )
+                }
+            }
+        }
+
+        // Additional table-specific properties
+        if (styleNode.getAttribute("style:family") === "table") {
+            properties.tableProperties = {
+                align: styleNode.getAttribute("table:align"),
+                width: this.convertLength(
+                    styleNode.getAttribute("style:width")
+                ),
+                relWidth: styleNode.getAttribute("style:rel-width")
             }
         }
 
@@ -130,38 +204,47 @@ export class OdtConvert {
     parseComments() {
         const annotations = this.contentDoc.queryAll("office:annotation")
         annotations.forEach(annotation => {
-            const id = annotation.getAttribute("office:name")
-            if (!id) {
-                return
-            }
+            const username = annotation.query("dc:creator")?.textContent || ""
+            const date = new Date(
+                annotation.query("dc:date")?.textContent || ""
+            ).getTime()
 
-            const comment = {
-                id: id,
-                username: annotation.query("dc:creator")?.textContent || "",
-                date:
-                    new Date(
-                        annotation.query("dc:date")?.textContent || ""
-                    ).getTime() / 60000,
-                comment: this.convertContainer(annotation),
-                answers: [],
-                resolved: annotation.getAttribute("loext:resolved") === "true"
-            }
+            const id = (annotation.getAttribute("office:name") || "").slice(-10)
 
-            // Parse answers
-            const answers = annotation.queryAll("office:annotation")
-            if (answers.length) {
-                comment.answers = answers.map(answer => ({
-                    id: answer.getAttribute("office:name"),
-                    username: answer.query("dc:creator")?.textContent || "",
-                    date:
-                        new Date(
-                            answer.query("dc:date")?.textContent || ""
-                        ).getTime() / 60000,
-                    answer: this.convertContainer(answer)
-                }))
+            if (id) {
+                // main comment
+                this.comments[id] = {
+                    user: 0,
+                    username,
+                    date,
+                    comment: annotation
+                        .queryAll("text:p")
+                        .map(par => this.convertBlockNode(par)),
+                    answers: [],
+                    resolved:
+                        annotation.getAttribute("loext:resolved") === "true"
+                }
+            } else {
+                const parentId = (
+                    annotation.getAttribute("loext:parent-name") || ""
+                ).slice(-10)
+                if (parentId && this.comments[parentId]) {
+                    this.comments[parentId].answers.push({
+                        id: (
+                            Math.floor(Math.random() * 9_000_000_000) +
+                            1_000_000_000
+                        ).toString(), // random 10-digit number
+                        user: 0,
+                        username,
+                        date,
+                        // drop the frist paragraph. It only contains "Reply to...."
+                        answer: annotation
+                            .queryAll("text:p")
+                            .slice(1)
+                            .map(par => this.convertBlockNode(par))
+                    })
+                }
             }
-
-            this.comments[id] = comment
         })
     }
 
@@ -502,7 +585,7 @@ export class OdtConvert {
         const textProps = style.textProperties
         if (textProps) {
             // Title usually has larger font size and/or bold weight
-            if (textProps.fontSize > 14 || textProps.fontWeight === "bold") {
+            if (textProps.fontSize > 14 || textProps.bold) {
                 return true
             }
         }
@@ -618,7 +701,7 @@ export class OdtConvert {
                 }
             }
 
-            const converted = this.convertNode(node)
+            const converted = this.convertBlockNode(node)
             if (converted) {
                 currentSection.content.push(converted)
             }
@@ -665,7 +748,7 @@ export class OdtConvert {
                 // Larger font size
                 (style.textProperties.fontSize > 12 ||
                     // Bold text
-                    style.textProperties.fontWeight === "bold" ||
+                    style.textProperties.bold ||
                     // Different font family
                     style.textProperties.fontFamily))
         )
@@ -681,11 +764,11 @@ export class OdtConvert {
 
     convertContainer(container) {
         return container.children
-            .map(node => this.convertNode(node))
+            .map(node => this.convertBlockNode(node))
             .filter(node => node)
     }
 
-    convertNode(node) {
+    convertBlockNode(node) {
         switch (node.tagName) {
             case "text:p":
                 return this.convertParagraph(node)
@@ -699,17 +782,11 @@ export class OdtConvert {
                 return this.convertObject(node)
             case "table:table":
                 return this.convertTable(node)
-            case "text:note":
-                return this.convertFootnote(node)
-            case "office:annotation-start":
-                return this.convertAnnotationStart(node)
-            case "office:annotation-end":
-                return this.convertAnnotationEnd(node)
             case "text:sequence-decls":
             case "office:forms":
                 return null
             default:
-                console.warn(`Unsupported node: ${node.tagName}`)
+                console.warn(`Unsupported block node: ${node.tagName}`)
                 return null
         }
     }
@@ -726,7 +803,7 @@ export class OdtConvert {
                     id: "H" + Math.random().toString(36).substr(2, 7),
                     track: parseTracks(node.getAttribute("text:change"))
                 },
-                content: this.convertTextContent(node)
+                content: this.convertNodeChildren(node)
             }
         }
 
@@ -739,7 +816,7 @@ export class OdtConvert {
             attrs: {
                 track: parseTracks(node.getAttribute("text:change"))
             },
-            content: this.convertTextContent(node)
+            content: this.convertNodeChildren(node)
         }
     }
 
@@ -752,133 +829,100 @@ export class OdtConvert {
                 id: "H" + Math.random().toString(36).substr(2, 7),
                 track: parseTracks(node.getAttribute("text:change"))
             },
-            content: this.convertTextContent(node)
+            content: this.convertNodeChildren(node)
         }
     }
 
-    convertTextContent(node) {
-        const content = []
+    convertNodeChildren(node) {
         let insideZoteroReferenceMark = false
 
-        node.children.forEach(child => {
-            if (child.tagName === "text:reference-mark-start") {
-                // Store reference mark start for citation processing
-                const name = child.getAttribute("text:name")
-                if (name && name.startsWith("ZOTERO_ITEM CSL_CITATION")) {
-                    insideZoteroReferenceMark = true
-                }
-            } else if (child.tagName === "text:reference-mark-end") {
-                // Process citation when we hit the end mark
-                const name = child.getAttribute("text:name")
-                if (name && name.startsWith("ZOTERO_ITEM CSL_CITATION")) {
-                    const citation = this.convertCitation(name)
-                    if (citation) {
-                        content.push(citation)
-                    }
-                    insideZoteroReferenceMark = false
-                }
-            } else if (!insideZoteroReferenceMark) {
-                // Only process content that's not inside a reference mark
-
-                if (child.tagName === "#text") {
-                    const marks = []
-
-                    // Add comment marks for any active comment IDs
-                    this.currentCommentIds.forEach(commentId => {
-                        marks.push({
-                            type: "comment",
-                            attrs: {
-                                id: commentId
+        const content = node.children
+            .map(child => {
+                if (insideZoteroReferenceMark) {
+                    if (child.tagName === "text:reference-mark-end") {
+                        // Process citation when we hit the end mark
+                        const name = child.getAttribute("text:name")
+                        if (
+                            name &&
+                            name.startsWith("ZOTERO_ITEM CSL_CITATION")
+                        ) {
+                            const citation = this.convertCitation(name)
+                            insideZoteroReferenceMark = false
+                            if (citation) {
+                                return citation
                             }
-                        })
-                    })
-                    const textNode = {
-                        type: "text",
-                        text: String(child.textContent)
-                    }
-                    if (marks.length) {
-                        textNode.marks = marks
-                    }
-                    content.push(textNode)
-                } else if (child.tagName === "text:span") {
-                    content.push(...this.convertSpan(child))
-                } else if (child.tagName === "text:a") {
-                    content.push(...this.convertLink(child))
-                } else if (child.tagName === "text:note") {
-                    const noteBody = child.query("text:note-body")
-                    if (!noteBody) {
-                        return
-                    }
-
-                    // Get the first paragraph in the footnote
-                    const firstParagraph = noteBody.query("text:p")
-                    if (!firstParagraph) {
-                        return
-                    }
-
-                    // Check if this is a citation-only footnote
-                    const referenceMarkStart = firstParagraph.query(
-                        "text:reference-mark-start"
-                    )
-                    const referenceMarkEnd = firstParagraph.query(
-                        "text:reference-mark-end"
-                    )
-
-                    if (
-                        referenceMarkStart &&
-                        referenceMarkEnd &&
-                        referenceMarkStart
-                            .getAttribute("text:name")
-                            .startsWith("ZOTERO_ITEM CSL_CITATION") &&
-                        // Check that there's no content outside the reference marks
-                        firstParagraph.children.every(
-                            child =>
-                                child.tagName === "text:reference-mark-start" ||
-                                child.tagName === "text:reference-mark-end" ||
-                                (child.tagName === "text:span" &&
-                                    child.previousElementSibling?.tagName ===
-                                        "text:reference-mark-start" &&
-                                    child.nextElementSibling?.tagName ===
-                                        "text:reference-mark-end")
-                        )
-                    ) {
-                        // If it's a citation-only footnote, convert it directly to a citation
-                        const citationData =
-                            referenceMarkStart.getAttribute("text:name")
-                        const citation = this.convertCitation(citationData)
-                        if (citation) {
-                            content.push(citation)
                         }
-                    } else {
-                        // Otherwise, convert as regular footnote
-                        content.push({
-                            type: "footnote",
-                            attrs: {
-                                footnote: this.convertContainer(noteBody)
-                            }
-                        })
                     }
-                } else {
-                    console.warn(`Unhandled text content: ${child.tagName}`)
+                    return null
                 }
-            }
-            // Skip any content while insideZoteroReferenceMark is true
-        })
+                switch (child.tagName) {
+                    case "#text":
+                        return this.convertText(child)
+                    case "text:span":
+                        return this.convertSpan(child)
+                    case "text:a":
+                        return this.convertLink(child)
+                    case "text:note":
+                        return this.convertFootnote(child)
+                    case "office:annotation":
+                        return this.convertAnnotationStart(child)
+                    case "office:annotation-end":
+                        return this.convertAnnotationEnd(child)
+                    case "text:reference-mark-start": {
+                        // Store reference mark start for citation processing
+                        const name = child.getAttribute("text:name")
+                        if (
+                            name &&
+                            name.startsWith("ZOTERO_ITEM CSL_CITATION")
+                        ) {
+                            insideZoteroReferenceMark = true
+                        }
+                        return null
+                    }
+                    default:
+                        console.warn(
+                            `Unsupported inline node: ${child.tagName}`
+                        )
+                        return null
+                }
+            })
+            .filter(node => node)
+            .flat()
         return content
     }
 
+    convertText(node) {
+        const marks = []
+        // Add comment marks for any active comment IDs
+        this.currentCommentIds.forEach(commentId => {
+            marks.push({
+                type: "comment",
+                attrs: {
+                    id: commentId
+                }
+            })
+        })
+        const textNode = {
+            type: "text",
+            text: String(node.textContent)
+        }
+        if (marks.length) {
+            textNode.marks = marks
+        }
+        return textNode
+    }
+
     convertSpan(node) {
-        const content = this.convertTextContent(node)
+        const content = this.convertNodeChildren(node)
         const styleName = node.getAttribute("text:style-name")
         const style = this.styles[styleName]
-
-        if (style?.bold) {
+        if (style?.textProperties?.bold) {
             return content.map(node => ({
                 ...node,
                 marks: [...(node.marks || []), {type: "strong"}]
             }))
         }
-        if (style?.italic) {
+        if (style?.textProperties?.italic) {
             return content.map(node => ({
                 ...node,
                 marks: [...(node.marks || []), {type: "em"}]
@@ -1028,7 +1072,7 @@ export class OdtConvert {
     }
 
     convertAnnotationStart(node) {
-        const commentId = node.getAttribute("office:name")
+        const commentId = (node.getAttribute("office:name") || "").slice(-10)
         if (commentId && this.comments[commentId]) {
             this.currentCommentIds.push(commentId)
         }
@@ -1036,7 +1080,7 @@ export class OdtConvert {
     }
 
     convertAnnotationEnd(node) {
-        const commentId = node.getAttribute("office:name")
+        const commentId = (node.getAttribute("office:name") || "").slice(-10)
         if (commentId) {
             const index = this.currentCommentIds.indexOf(commentId)
             if (index !== -1) {
@@ -1089,7 +1133,7 @@ export class OdtConvert {
         }
 
         const caption = node.query("text:p")
-        const captionContent = caption ? this.convertTextContent(caption) : []
+        const captionContent = caption ? this.convertNodeChildren(caption) : []
 
         return {
             type: "figure",
@@ -1214,7 +1258,7 @@ export class OdtConvert {
 
     convertLink(node) {
         const href = node.getAttribute("xlink:href")
-        const content = this.convertTextContent(node)
+        const content = this.convertNodeChildren(node)
         return content.map(node => ({
             ...node,
             marks: [

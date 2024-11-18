@@ -2,6 +2,13 @@ import {parseCSL} from "biblatex-csl-converter"
 import {MathMLToLaTeX} from "mathml-to-latex"
 
 import {xmlDOM} from "../../exporter/tools/xml"
+import {
+    randomCommentId,
+    randomFigureId,
+    randomHeadingId,
+    randomListId,
+    randomTableId
+} from "../../schema/common"
 import {parseTracks} from "../../schema/common/track"
 
 export class OdtConvert {
@@ -230,10 +237,7 @@ export class OdtConvert {
                 ).slice(-10)
                 if (parentId && this.comments[parentId]) {
                     this.comments[parentId].answers.push({
-                        id: (
-                            Math.floor(Math.random() * 9_000_000_000) +
-                            1_000_000_000
-                        ).toString(), // random 10-digit number
+                        id: randomCommentId(),
                         user: 0,
                         username,
                         date,
@@ -771,6 +775,13 @@ export class OdtConvert {
     convertBlockNode(node) {
         switch (node.tagName) {
             case "text:p":
+                if (
+                    node.children.length === 1 &&
+                    node.children[0].tagName === "draw:frame"
+                ) {
+                    // Paragraph consists of only one figure/image.
+                    return this.convertImage(node.children[0])
+                }
                 return this.convertParagraph(node)
             case "text:h":
                 return this.convertHeading(node)
@@ -800,7 +811,7 @@ export class OdtConvert {
             return {
                 type: "heading1",
                 attrs: {
-                    id: "H" + Math.random().toString(36).substr(2, 7),
+                    id: randomHeadingId(),
                     track: parseTracks(node.getAttribute("text:change"))
                 },
                 content: this.convertNodeChildren(node)
@@ -826,7 +837,7 @@ export class OdtConvert {
         return {
             type: `heading${level}`,
             attrs: {
-                id: "H" + Math.random().toString(36).substr(2, 7),
+                id: randomHeadingId(),
                 track: parseTracks(node.getAttribute("text:change"))
             },
             content: this.convertNodeChildren(node)
@@ -1057,11 +1068,11 @@ export class OdtConvert {
             attrs: isOrdered
                 ? {
                       order: 1,
-                      id: "L" + Math.random().toString(36).substr(2, 7),
+                      id: randomListId(),
                       track: parseTracks(node.getAttribute("text:change"))
                   }
                 : {
-                      id: "L" + Math.random().toString(36).substr(2, 7),
+                      id: randomListId(),
                       track: parseTracks(node.getAttribute("text:change"))
                   },
             content: node.queryAll("text:list-item").map(item => ({
@@ -1115,9 +1126,10 @@ export class OdtConvert {
         const width = this.convertLength(node.getAttribute("svg:width"))
         const height = this.convertLength(node.getAttribute("svg:height"))
 
+        const title = href.split("/").pop()
         this.images[imageId] = {
             id: imageId,
-            title: href.split("/").pop(),
+            title,
             copyright: {
                 holder: false,
                 year: false,
@@ -1125,7 +1137,7 @@ export class OdtConvert {
                 licenses: []
             },
             image: href,
-            file_type: this.getImageFileType(href),
+            file_type: this.getImageFileType(title),
             file: null,
             width,
             height,
@@ -1138,7 +1150,7 @@ export class OdtConvert {
         return {
             type: "figure",
             attrs: {
-                id: "F" + Math.random().toString(36).substr(2, 7),
+                id: randomFigureId(),
                 aligned: "center",
                 width: Math.min(Math.round((width / 8.5) * 100), 100),
                 caption: Boolean(captionContent.length),
@@ -1160,6 +1172,28 @@ export class OdtConvert {
                       ]
                     : [])
             ]
+        }
+    }
+
+    getImageFileType(filename) {
+        const ext = filename.split(".").pop().toLowerCase()
+        switch (ext) {
+            case "avif":
+            case "avifs":
+                return "image/avif"
+            case "png":
+                return "image/png"
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg"
+            case "gif":
+                return "image/gif"
+            case "svg":
+                return "image/svg+xml"
+            case "webp":
+                return "image/webp"
+            default:
+                return "image/png" // Default fallback
         }
     }
 
@@ -1207,7 +1241,7 @@ export class OdtConvert {
         return {
             type: "table",
             attrs: {
-                id: "T" + Math.random().toString(36).substr(2, 7),
+                id: randomTableId(),
                 track: parseTracks(node.getAttribute("text:change")),
                 width,
                 aligned,

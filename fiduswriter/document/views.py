@@ -530,14 +530,18 @@ def import_image(request):
     else:
         status = 401
         return JsonResponse(response, status=status)
-    checksum = request.POST["checksum"]
-    image = Image.objects.filter(checksum=checksum).first()
+    checksum = int(request.POST.get("checksum", 0))
+    if checksum > 0:
+        image = Image.objects.filter(checksum=checksum).first()
+    else:
+        image = None
     if image is None:
-        image = Image.objects.create(
+        image = Image(
             uploader=request.user,
             image=request.FILES["image"],
             checksum=checksum,
         )
+        image.save()
     doc_image = DocumentImage.objects.create(
         image=image,
         title=request.POST["title"],

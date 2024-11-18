@@ -1,3 +1,4 @@
+import {randomCommentId} from "../../schema/common"
 import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration
@@ -86,7 +87,7 @@ export class ModCommentStore {
 
     // Add a new comment to the comment database both remotely and locally.
     addComment(commentData, posFrom, posTo, view) {
-        const id = randomID(),
+        const id = randomCommentId(),
             markType = view.state.schema.marks.comment.create({id}),
             tr = this.addMark(view.state.tr, posFrom, posTo, markType)
 
@@ -272,7 +273,7 @@ export class ModCommentStore {
     }
 
     addAnswer(id, answer) {
-        answer.id = randomID()
+        answer.id = randomCommentId()
         this.addLocalAnswer(id, answer, true)
         this.unsent.push({
             type: "add_answer",
@@ -450,8 +451,4 @@ export class ModCommentStore {
             }
         })
     }
-}
-
-function randomID() {
-    return String(Math.floor(Math.random() * 0xffffffff))
 }

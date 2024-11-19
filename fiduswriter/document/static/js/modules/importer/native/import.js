@@ -1,4 +1,4 @@
-import {addAlert, postJson, shortFileTitle} from "../../common"
+import {addAlert, deactivateWait, postJson, shortFileTitle} from "../../common"
 import {extractTemplate} from "../../document_template"
 import {GetImages} from "./get_images"
 
@@ -28,16 +28,30 @@ export class NativeImporter {
 
     init() {
         const ImageTranslationTable = {}
-        return this.createDoc()
+        // We first create any new entries in the DB for images.
+        const imageGetter = new GetImages(this.images, this.otherFiles)
+        return imageGetter
+            .init()
+            .then(() => {
+                const missingImage = Object.values(this.images).find(
+                    imageEntry => !imageEntry.file
+                )
+                if (missingImage) {
+                    addAlert(
+                        "error",
+                        `${gettext("Could not create document. Missing image file:")} ${missingImage.image}`
+                    )
+                    deactivateWait()
+                    throw new Error(`Missing image file: ${missingImage.image}`)
+                }
+            })
+            .then(() => this.createDoc())
             .then(() => {
                 if (!this.docId) {
                     return Promise.reject(new Error("document not created"))
                 }
-                // We first create any new entries in the DB for images.
-                const imageGetter = new GetImages(this.images, this.otherFiles)
-                return imageGetter.init()
+                return this.saveImages(this.images, ImageTranslationTable)
             })
-            .then(() => this.saveImages(this.images, ImageTranslationTable))
             .then(() => {
                 // We need to change some reference numbers in the document content
                 this.translateReferenceIds(ImageTranslationTable)

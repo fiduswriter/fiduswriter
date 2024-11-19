@@ -206,6 +206,64 @@ export class DocumentOverviewActions {
                         return false
                     }
 
+                    if (file.type === "application/zip") {
+                        return import("jszip").then(({default: JSZip}) => {
+                            return JSZip.loadAsync(file).then(zip => {
+                                const importerInfo =
+                                    importerRegistry.getZipImporter(zip)
+
+                                if (!importerInfo) {
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "No importable files found in ZIP"
+                                        )
+                                    )
+                                    return false
+                                }
+
+                                activateWait()
+
+                                return importerInfo
+                                    .getContents()
+                                    .then(files => {
+                                        console.log({importerInfo})
+                                        const importer =
+                                            new importerInfo.importer(
+                                                files.mainContent,
+                                                this.documentOverview.user,
+                                                this.documentOverview.path,
+                                                importId,
+                                                files
+                                            )
+
+                                        return importer
+                                            .init()
+                                            .then(({ok, statusText, doc}) => {
+                                                deactivateWait()
+                                                if (ok) {
+                                                    addAlert("info", statusText)
+                                                } else {
+                                                    addAlert(
+                                                        "error",
+                                                        statusText
+                                                    )
+                                                    return
+                                                }
+                                                this.documentOverview.documentList.push(
+                                                    doc
+                                                )
+                                                this.documentOverview.initTable()
+                                                importDialog.close()
+                                            })
+                                    })
+                                    .catch(_error => {
+                                        deactivateWait()
+                                    })
+                            })
+                        })
+                    }
+
                     // Get file extension
                     const fileExtension = file.name
                         .split(".")
@@ -256,14 +314,26 @@ export class DocumentOverviewActions {
                 type: "cancel"
             }
         ]
-
-        const supportedFormats = importerRegistry.getAllFileTypes()
-        const dialogTitle = importerRegistry.getAllImporterTitles().join(" / ")
+        console.log({
+            allDescriptions: importerRegistry.getAllDescriptions(),
+            allFormats: importerRegistry.getAllFormats(),
+            importerRegistry
+        })
+        const supportedDescriptions = Object.entries(
+            importerRegistry.getAllDescriptions()
+        )
+            .map(
+                ([description, extensions]) =>
+                    `${description} (${extensions.join(", ")})`
+            )
+            .join("<br>")
+        const supportedFormats = importerRegistry.getAllFormats()
 
         const importDialog = new Dialog({
             id: "import_external",
-            title: dialogTitle,
-            body: `<form>
+            title: gettext("Import a text document in a different format"),
+            body: `
+            <form>
                 ${templateSelector}
                 <div class="fw-select-container">
                     <div class="fw-select-head">
@@ -272,10 +342,15 @@ export class DocumentOverviewActions {
                         </button>
                         <label id="import-external-name" class="ajax-upload-label"></label>
                     </div>
-                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")}" style="display: none;">
+                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")},zip" style="display: none;">
                 </div>
-            </form>`,
-            height: importIds.length > 1 ? 150 : 100,
+            </form>
+            <div class="noteEl">${gettext("Supported formats")}:</div>
+            <div class="noteEl">${supportedDescriptions}</div>
+            <div class="noteEl">${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}</div>`,
+            height:
+                (importIds.length > 1 ? 250 : 200) +
+                supportedFormats.length * 12,
             buttons
         })
         importDialog.open()

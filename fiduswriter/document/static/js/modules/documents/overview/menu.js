@@ -260,7 +260,7 @@ export const menuModel = () => ({
         {
             type: "text",
             id: "import_external",
-            title: gettext("Import Pandoc JSON/ZIP"),
+            title: gettext("Import document"),
             action: overview => overview.mod.actions.importExternal(),
             order: 4
         },

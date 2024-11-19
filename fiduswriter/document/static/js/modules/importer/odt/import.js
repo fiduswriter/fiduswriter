@@ -3,11 +3,13 @@ import {NativeImporter} from "../native"
 import {OdtConvert} from "./convert"
 
 export class OdtImporter {
-    constructor(file, user, path, importId) {
+    constructor(file, user, path, importId, additionalFiles) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
+
+        this._additionalFiles = additionalFiles // We do not use these files in the ODT importer
 
         this.template = null
         this.output = {

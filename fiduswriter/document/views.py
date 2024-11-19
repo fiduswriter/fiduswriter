@@ -530,14 +530,18 @@ def import_image(request):
     else:
         status = 401
         return JsonResponse(response, status=status)
-    checksum = request.POST["checksum"]
-    image = Image.objects.filter(checksum=checksum).first()
+    checksum = int(request.POST.get("checksum", 0))
+    if checksum > 0:
+        image = Image.objects.filter(checksum=checksum).first()
+    else:
+        image = None
     if image is None:
-        image = Image.objects.create(
+        image = Image(
             uploader=request.user,
             image=request.FILES["image"],
             checksum=checksum,
         )
+        image.save()
     doc_image = DocumentImage.objects.create(
         image=image,
         title=request.POST["title"],
@@ -741,6 +745,25 @@ def get_template_for_doc(request):
         "document_styles": document_styles,
     }
     return JsonResponse(response, status=200)
+
+
+@login_required
+@ajax_required
+@require_POST
+def get_template(request):
+    response = {}
+    import_id = request.POST["import_id"]
+    doc_template = DocumentTemplate.objects.filter(
+        Q(user=request.user) | Q(user=None), import_id=import_id
+    ).first()
+    if not doc_template:
+        return JsonResponse(response, status=405)
+    response["template"] = {
+        "id": doc_template.id,
+        "title": doc_template.title,
+        "content": doc_template.content,
+    }
+    return JsonResponse(response, status=201)
 
 
 @login_required
@@ -981,10 +1004,10 @@ def add_images_to_doc(request):
             image.uploader = doc.owner
             f = open(
                 os.path.join(
-                    settings.PROJECT_PATH, "base/static/img/error.png"
+                    settings.PROJECT_PATH, "base/static/img/error.avif"
                 )
             )
-            image.image.save("error.png", File(f))
+            image.image.save("error.avif", File(f))
             image.save()
         doc_image_data["image"] = image
         DocumentImage.objects.create(**doc_image_data)

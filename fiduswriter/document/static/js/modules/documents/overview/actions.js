@@ -8,7 +8,8 @@ import {
     postJson
 } from "../../common"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
-import {ImportFidusFile} from "../../importer/native/file"
+import {FidusFileImporter} from "../../importer/native"
+import {importerRegistry} from "../../importer/register"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate} from "./templates"
@@ -112,7 +113,7 @@ export class DocumentOverviewActions {
                     }
                     activateWait()
 
-                    const importer = new ImportFidusFile(
+                    const importer = new FidusFileImporter(
                         fidusFile,
                         this.documentOverview.user,
                         this.documentOverview.path,
@@ -163,6 +164,210 @@ export class DocumentOverviewActions {
             .getElementById("import-fidus-btn")
             .addEventListener("click", event => {
                 document.getElementById("fidus-uploader").click()
+                event.preventDefault()
+            })
+    }
+
+    importExternal() {
+        const importIds = Object.keys(this.documentOverview.documentTemplates)
+        let importId = importIds[0] // Default to first template
+
+        const templateSelector =
+            importIds.length > 1
+                ? `<label for="import-template-selector">${gettext("Import as:")}</label>
+                <div class="fw-select-container">
+                    <select class="fw-button fw-light fw-large" id="import-template-selector">
+                        ${Object.entries(
+                            this.documentOverview.documentTemplates
+                        )
+                            .map(
+                                ([key, template]) =>
+                                    `<option value="${escapeText(key)}">${escapeText(template.title)}</option>`
+                            )
+                            .join("")}
+                    </select>
+                    <div class="fw-select-arrow fa fa-caret-down"></div>
+                </div>`
+                : ""
+
+        const buttons = [
+            {
+                text: gettext("Import"),
+                classes: "fw-dark",
+                click: () => {
+                    let file =
+                        document.getElementById("external-uploader").files
+                    if (0 === file.length) {
+                        return false
+                    }
+                    file = file[0]
+                    if (104857600 < file.size) {
+                        addAlert("error", gettext("File too large"))
+                        return false
+                    }
+
+                    if (file.type === "application/zip") {
+                        return import("jszip").then(({default: JSZip}) => {
+                            return JSZip.loadAsync(file).then(zip => {
+                                const importerInfo =
+                                    importerRegistry.getZipImporter(zip)
+
+                                if (!importerInfo) {
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "No importable files found in ZIP"
+                                        )
+                                    )
+                                    return false
+                                }
+
+                                activateWait()
+
+                                return importerInfo
+                                    .getContents()
+                                    .then(files => {
+                                        console.log({importerInfo})
+                                        const importer =
+                                            new importerInfo.importer(
+                                                files.mainContent,
+                                                this.documentOverview.user,
+                                                this.documentOverview.path,
+                                                importId,
+                                                files
+                                            )
+
+                                        return importer
+                                            .init()
+                                            .then(({ok, statusText, doc}) => {
+                                                deactivateWait()
+                                                if (ok) {
+                                                    addAlert("info", statusText)
+                                                } else {
+                                                    addAlert(
+                                                        "error",
+                                                        statusText
+                                                    )
+                                                    return
+                                                }
+                                                this.documentOverview.documentList.push(
+                                                    doc
+                                                )
+                                                this.documentOverview.initTable()
+                                                importDialog.close()
+                                            })
+                                    })
+                                    .catch(_error => {
+                                        deactivateWait()
+                                    })
+                            })
+                        })
+                    }
+
+                    // Get file extension
+                    const fileExtension = file.name
+                        .split(".")
+                        .pop()
+                        .toLowerCase()
+                    const importerInfo =
+                        importerRegistry.getImporter(fileExtension)
+
+                    if (!importerInfo) {
+                        addAlert("error", gettext("Unsupported file format"))
+                        return false
+                    }
+
+                    // Get selected template if multiple templates exist
+                    if (importIds.length > 1) {
+                        importId = document.getElementById(
+                            "import-template-selector"
+                        ).value
+                    }
+
+                    activateWait()
+
+                    const importer = new importerInfo.importer(
+                        file,
+                        this.documentOverview.user,
+                        this.documentOverview.path,
+                        importId
+                    )
+
+                    importer
+                        .init()
+                        .then(({ok, statusText, doc}) => {
+                            deactivateWait()
+                            if (ok) {
+                                addAlert("info", statusText)
+                            } else {
+                                addAlert("error", statusText)
+                                return
+                            }
+                            this.documentOverview.documentList.push(doc)
+                            this.documentOverview.initTable()
+                            importDialog.close()
+                        })
+                        .catch(() => false)
+                }
+            },
+            {
+                type: "cancel"
+            }
+        ]
+        console.log({
+            allDescriptions: importerRegistry.getAllDescriptions(),
+            allFormats: importerRegistry.getAllFormats(),
+            importerRegistry
+        })
+        const supportedDescriptions = Object.entries(
+            importerRegistry.getAllDescriptions()
+        )
+            .map(
+                ([description, extensions]) =>
+                    `${description} (${extensions.join(", ")})`
+            )
+            .join("<br>")
+        const supportedFormats = importerRegistry.getAllFormats()
+
+        const importDialog = new Dialog({
+            id: "import_external",
+            title: gettext("Import a text document in a different format"),
+            body: `
+            <form>
+                ${templateSelector}
+                <div class="fw-select-container">
+                    <div class="fw-select-head">
+                        <button type="button" class="fw-button fw-light fw-large" id="import-external-btn">
+                            ${gettext("Select a file")}
+                        </button>
+                        <label id="import-external-name" class="ajax-upload-label"></label>
+                    </div>
+                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")},zip" style="display: none;">
+                </div>
+            </form>
+            <div class="noteEl">${gettext("Supported formats")}:</div>
+            <div class="noteEl">${supportedDescriptions}</div>
+            <div class="noteEl">${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}</div>`,
+            height:
+                (importIds.length > 1 ? 250 : 200) +
+                supportedFormats.length * 12,
+            buttons
+        })
+        importDialog.open()
+
+        document
+            .getElementById("external-uploader")
+            .addEventListener("change", () => {
+                document.getElementById("import-external-name").innerHTML =
+                    document
+                        .getElementById("external-uploader")
+                        .value.replace(/C:\\fakepath\\/i, "")
+            })
+
+        document
+            .getElementById("import-external-btn")
+            .addEventListener("click", event => {
+                document.getElementById("external-uploader").click()
                 event.preventDefault()
             })
     }

@@ -70,3 +70,7 @@ export const comment = {
         ]
     }
 }
+
+export function randomCommentId() {
+    return String(Math.floor(Math.random() * 0xffffffff))
+}

@@ -12,7 +12,7 @@ import {
     post,
     shortFileTitle
 } from "../../common"
-import {ImportFidusFile} from "../../importer/native/file"
+import {FidusFileImporter} from "../../importer/native"
 import {documentrevisionsTemplate} from "./templates"
 
 /**
@@ -84,7 +84,7 @@ export class DocumentRevisionsDialog {
         return get(`/api/document/get_revision/${id}/`)
             .then(response => response.blob())
             .then(blob => {
-                const importer = new ImportFidusFile(
+                const importer = new FidusFileImporter(
                     blob,
                     user,
                     longFilePath(

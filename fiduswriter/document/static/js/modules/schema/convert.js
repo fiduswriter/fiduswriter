@@ -41,6 +41,8 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
@@ -53,6 +55,8 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
@@ -64,6 +68,8 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
             doc = convertDocV13(doc, bibliography)
@@ -74,6 +80,8 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 2.0: // Fidus Writer 3.3
             doc = convertDocV20(doc)
@@ -83,6 +91,8 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 2.1: // Fidus Writer 3.4
             doc = convertDocV21(doc)
@@ -91,6 +101,8 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 2.2: // Fidus Writer 3.5.7
             doc = convertDocV22(doc)
@@ -98,27 +110,38 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 2.3: // Fidus Writer 3.5.10
             doc = convertDocV23(doc)
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 3.0: // Fidus Writer 3.6
             doc = convertDocV30(doc)
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 3.1: // Fidus Writer 3.7
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 3.2: // Fidus Writer 3.8
             doc = convertDocV32(doc)
+            doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 3.3: // Fidus Writer 3.9
             doc = convertDocV33(doc)
+            doc = convertDocV34(doc)
             break
         case 3.4: // Fidus Writer 3.10
             doc = convertDocV34(doc)
@@ -684,7 +707,7 @@ const convertDocV23 = doc => {
 }
 
 const convertNodeV30 = node => {
-    if (node.attrs?.marks) {
+    if (node.attrs?.marks && node.attrs.marks.filter) {
         node.attrs.marks = node.attrs.marks.filter(mark => mark !== "anchor")
     }
     if (node.attrs?.footnote_marks) {
@@ -1222,5 +1245,5 @@ const convertDocV34 = doc => {
     // The top node needs to be changed from "article" to "doc".
     const returnDoc = JSON.parse(JSON.stringify(doc))
     returnDoc.content.type = "doc"
-    return JSON.parse(JSON.stringify(doc))
+    return returnDoc
 }

@@ -1,5 +1,5 @@
 import {addAlert, longFilePath} from "../../common"
-import {ImportNative} from "../../importer/native"
+import {NativeImporter} from "../../importer/native"
 import {ShrinkFidus} from "./shrink"
 
 /* Saves a copy of the document. The owner may change in that process, if the
@@ -19,7 +19,7 @@ export class SaveCopy {
         return shrinker
             .init()
             .then(({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
-                const importer = new ImportNative(
+                const importer = new NativeImporter(
                     doc,
                     shrunkBibDB,
                     shrunkImageDB,

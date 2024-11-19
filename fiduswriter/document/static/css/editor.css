@@ -79,7 +79,7 @@ body.editor header {
     color: var(--cs-5-text);
     font-style: italic;
     padding: 0 48px 0 110px;
-    background: url("../img/fidus_face.png") no-repeat 42px 0;
+    background: url("../img/fidus_face.avif") no-repeat 42px 0;
     background-size: 23px auto;
     line-height: 32px;
     overflow: hidden;

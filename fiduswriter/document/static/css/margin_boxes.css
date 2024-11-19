@@ -175,22 +175,6 @@ body.header-closed #margin-box-filter {
     content: "";
 }
 
-.comment-item.wait,
-.comment-answer.wait {
-    opacity: 0.5;
-}
-
-.comment-item.wait textarea,
-.comment-answer.wait .comment-answer-text {
-    background-image: url("../img/wait.gif");
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.comment-item.wait textarea {
-    background-size: 40px 40px;
-}
-
 .comment .collaborator {
     font-weight: 700;
 }

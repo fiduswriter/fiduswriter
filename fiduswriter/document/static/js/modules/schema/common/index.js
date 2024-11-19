@@ -1,4 +1,4 @@
-export {annotation_tag, comment} from "./annotate"
+export {annotation_tag, comment, randomCommentId} from "./annotate"
 export {paragraph, blockquote, horizontal_rule, underline} from "./base"
 export {citation} from "./citation"
 export {equation} from "./equation"

@@ -258,6 +258,13 @@ export const menuModel = () => ({
             order: 3
         },
         {
+            type: "text",
+            id: "import_external",
+            title: gettext("Import document"),
+            action: overview => overview.mod.actions.importExternal(),
+            order: 4
+        },
+        {
             type: "search",
             icon: "search",
             title: gettext("Search documents"),
@@ -275,7 +282,7 @@ export const menuModel = () => ({
                     overview.table.search(text)
                 }
             },
-            order: 4
+            order: 5
         }
     ]
 })

@@ -44,7 +44,6 @@ export class OdtConvert {
 
         this.collectReferenceableObjects(this.contentDoc)
         const content = this.convert()
-        console.log({content})
         return {
             content,
             settings: {

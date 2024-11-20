@@ -227,7 +227,6 @@ export class DocumentOverviewActions {
                                 return importerInfo
                                     .getContents()
                                     .then(files => {
-                                        console.log({importerInfo})
                                         const importer =
                                             new importerInfo.importer(
                                                 files.mainContent,
@@ -314,11 +313,6 @@ export class DocumentOverviewActions {
                 type: "cancel"
             }
         ]
-        console.log({
-            allDescriptions: importerRegistry.getAllDescriptions(),
-            allFormats: importerRegistry.getAllFormats(),
-            importerRegistry
-        })
         const supportedDescriptions = Object.entries(
             importerRegistry.getAllDescriptions()
         )

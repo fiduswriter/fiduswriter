@@ -33,17 +33,20 @@ export class OdtConvert {
         this.tracks = {}
         this.comments = {}
         this.currentCommentIds = []
+        this.currentTracks = []
         this.referenceableObjects = {} // All objects that can be referenced
     }
 
     init() {
-        this.parseStyles()
         this.parseTrackedChanges()
+        this.parseStyles()
         this.parseComments()
 
         this.collectReferenceableObjects(this.contentDoc)
+        const content = this.convert()
+        console.log({content})
         return {
-            content: this.convert(),
+            content,
             settings: {
                 import_id: this.importId,
                 tracked: Object.keys(this.tracks).length > 0,
@@ -51,6 +54,106 @@ export class OdtConvert {
             },
             comments: this.comments
         }
+    }
+
+    parseTrackedChanges() {
+        const trackedChangesEl = this.contentDoc.query("text:tracked-changes")
+        if (!trackedChangesEl) {
+            return
+        }
+
+        // Tracked deletions are stored in two different ways in FW and ODT.
+        // FW: The deleted content stays in place where it was before the deletion,
+        // and is marked with a tracked change mark. Megre only occurs after change
+        // has been accepted.
+        // ODT: The deleted content is removed from the content flow and is replaced by a marker.
+        // The removed content is stored in a special section of the document.
+        // This method takes all the deleted content and puts it back into the place where
+        // it was previously. That way the structure is more similar to the output FW document
+        // and is more easily converted.
+        const deletions = {}
+
+        const changedRegions = trackedChangesEl.queryAll("text:changed-region")
+        changedRegions.forEach(region => {
+            const id = region.getAttribute("text:id")
+
+            const insertion = region.query("text:insertion")
+            const deletion = region.query("text:deletion")
+            if (!insertion && !deletion) {
+                // Neither insertion or deletion. Must be type unknown to us
+                return
+            }
+            const changeInfo = region.query("office:change-info")
+            if (changeInfo) {
+                const track = {
+                    type: insertion ? "insertion" : "deletion",
+                    user: 1,
+                    username: changeInfo.query("dc:creator")?.textContent || "",
+                    date: parseInt(
+                        new Date(
+                            changeInfo.query("dc:date")?.textContent || ""
+                        ).getTime() / 60000
+                    )
+                }
+                if (insertion) {
+                    track.approved = false
+                }
+                this.tracks[id] = track
+
+                if (deletion) {
+                    // Store deletion content for later use
+                    deletions[id] = deletion.children.filter(
+                        child => child.tagName !== "office:change-info"
+                    )
+                }
+            }
+        })
+
+        // Then find and replace all deletion change markers
+        const changeMarkers = this.contentDoc.queryAll("text:change")
+        changeMarkers.forEach(marker => {
+            const changeId = marker.getAttribute("text:change-id")
+            const deletion = deletions[changeId]
+            if (deletion) {
+                if (deletion.length > 0) {
+                    // Create change-start and change-end elements
+                    const markerIndex =
+                        marker.parentElement.children.indexOf(marker)
+
+                    marker.parentElement.insertXMLAt(
+                        `<text:change-start text:change-id="${changeId}"/>`,
+                        markerIndex
+                    )
+                    marker.parentElement.insertXMLAt(
+                        `<text:change-end text:change-id="${changeId}"/>`,
+                        markerIndex + 2
+                    )
+
+                    if (deletion.length === 1) {
+                        // Single block - just insert the content
+                        deletion[0].children.forEach(content => {
+                            marker.parentElement.insertBefore(content, marker)
+                        })
+                    } else {
+                        // Multiple blocks - need to split the paragraph/headline
+                        const parentElement = marker.parentElement
+                        parentElement.splitAtChildElement(
+                            marker,
+                            deletion[0].children
+                                ?.map(node => node.toString())
+                                .join("") || "", // First block content to be added to current node
+                            deletion
+                                .slice(1, -1)
+                                .map(node => node.toString())
+                                .join(""), // Middle blocks
+                            deletion[deletion.length - 1].toString() // Last block
+                        )
+                    }
+                }
+                // Remove the original change marker
+                marker.parentElement.removeChild(marker)
+            }
+        })
     }
 
     parseStyles() {
@@ -198,14 +301,18 @@ export class OdtConvert {
         return properties
     }
 
-    convertObject(node) {
+    convertObject(node, attrs) {
         const mathEl = node.query("math")
+        attrs = Object.assign(
+            {
+                equation: MathMLToLaTeX.convert(mathEl.innerXML)
+            },
+            attrs
+        )
         if (mathEl) {
             return {
                 type: "equation",
-                attrs: {
-                    equation: MathMLToLaTeX.convert(mathEl.innerXML)
-                }
+                attrs
             }
         }
         return null
@@ -811,14 +918,6 @@ export class OdtConvert {
         )
     }
 
-    convertBody() {
-        const body = this.contentDoc.query("office:text")
-        if (!body) {
-            return []
-        }
-        return this.convertContainer(body)
-    }
-
     convertContainer(container) {
         return container.children
             .map(node => this.convertBlockNode(node))
@@ -826,6 +925,15 @@ export class OdtConvert {
     }
 
     convertBlockNode(node) {
+        const track = this.currentTracks.map(track => ({
+            type: track.type,
+            user: track.attrs.user,
+            username: track.attrs.username,
+            date: track.attrs.date
+        }))
+
+        const attrs = track.length ? {track} : {}
+
         switch (node.tagName) {
             case "text:p":
                 if (
@@ -833,21 +941,22 @@ export class OdtConvert {
                     node.children[0].tagName === "draw:frame"
                 ) {
                     // Paragraph consists of only one figure/image.
-                    return this.convertImage(node.children[0])
+                    return this.convertImage(node.children[0], attrs)
                 }
-                return this.convertParagraph(node)
+                return this.convertParagraph(node, attrs)
             case "text:h":
-                return this.convertHeading(node)
+                return this.convertHeading(node, attrs)
             case "text:list":
-                return this.convertList(node)
+                return this.convertList(node, attrs)
             case "draw:frame":
-                return this.convertImage(node)
+                return this.convertImage(node, attrs)
             case "draw:object":
-                return this.convertObject(node)
+                return this.convertObject(node, attrs)
             case "table:table":
-                return this.convertTable(node)
+                return this.convertTable(node, attrs)
             case "text:sequence-decls":
             case "office:forms":
+            case "text:tracked-changes":
                 return null
             default:
                 console.warn(`Unsupported block node: ${node.tagName}`)
@@ -855,36 +964,37 @@ export class OdtConvert {
         }
     }
 
-    convertParagraph(node) {
+    convertParagraph(node, attrs = {}) {
         const styleName = node.getAttribute("text:style-name")
         const style = this.styles[styleName]
 
         // Check if this paragraph is title-like
         if (this.isTitleStyle(style)) {
+            attrs = Object.assign(
+                {
+                    id: randomHeadingId()
+                },
+                attrs
+            )
             return {
                 type: "heading1",
-                attrs: {
-                    id: randomHeadingId(),
-                    track: parseTracks(node.getAttribute("text:change"))
-                },
+                attrs,
                 content: this.convertNodeChildren(node)
             }
         }
 
         if (this.isHeadingStyle(styleName)) {
-            return this.convertHeading(node)
+            return this.convertHeading(node, attrs)
         }
 
         return {
             type: "paragraph",
-            attrs: {
-                track: parseTracks(node.getAttribute("text:change"))
-            },
+            attrs,
             content: this.convertNodeChildren(node)
         }
     }
 
-    convertHeading(node) {
+    convertHeading(node, attrs = {}) {
         const level =
             parseInt(node.getAttribute("text:outline-level") || 1) || 1
 
@@ -897,21 +1007,23 @@ export class OdtConvert {
                 id = this.referenceableObjects[refName].id
             }
         }
-
+        attrs = Object.assign(
+            {
+                id: id || randomHeadingId()
+            },
+            attrs
+        )
         return {
             type: `heading${level}`,
-            attrs: {
-                id: id || randomHeadingId(),
-                track: parseTracks(node.getAttribute("text:change"))
-            },
+            attrs,
             content: this.convertNodeChildren(node)
         }
     }
 
-    convertNodeChildren(node) {
+    convertNodeChildren(node, currentStyleMarks = []) {
         let insideZoteroReferenceMark = false
 
-        const content = node.children
+        return node.children
             .map(child => {
                 if (insideZoteroReferenceMark) {
                     if (child.tagName === "text:reference-mark-end") {
@@ -921,30 +1033,62 @@ export class OdtConvert {
                             name &&
                             name.startsWith("ZOTERO_ITEM CSL_CITATION")
                         ) {
-                            const citation = this.convertCitation(name)
                             insideZoteroReferenceMark = false
-                            if (citation) {
-                                return citation
-                            }
+                            return this.convertCitation(name, currentStyleMarks)
                         }
                     }
                     return null
                 }
+
                 switch (child.tagName) {
+                    case "text:change-start": {
+                        const changeId = child.getAttribute("text:change-id")
+                        const track = this.tracks[changeId]
+                        if (track) {
+                            const trackMark = {
+                                type: track.type,
+                                attrs: {
+                                    user: track.user,
+                                    username: track.username,
+                                    date: track.date
+                                }
+                            }
+                            if (track.type === "insertion") {
+                                trackMark.attrs.approved = track.approved
+                            }
+                            this.currentTracks.push(trackMark)
+                        }
+                        return null
+                    }
+                    case "text:change-end": {
+                        const changeId = child.getAttribute("text:change-id")
+                        const track = this.tracks[changeId]
+                        if (track) {
+                            this.currentTracks = this.currentTracks.filter(
+                                mark => mark.type !== track.type
+                            )
+                        }
+                        return null
+                    }
                     case "#text":
-                        return this.convertText(child)
-                    case "text:span":
-                        return this.convertSpan(child)
+                        return this.convertText(
+                            String(child.textContent),
+                            currentStyleMarks
+                        )
+                    case "text:s": // space
+                        return this.convertText(" ", currentStyleMarks)
+                    case "text:span": {
+                        return this.convertSpan(child, currentStyleMarks)
+                    }
                     case "text:a":
-                        return this.convertLink(child)
+                        return this.convertLink(child, currentStyleMarks)
                     case "text:note":
-                        return this.convertFootnote(child)
+                        return this.convertFootnote(child, currentStyleMarks)
                     case "office:annotation":
                         return this.convertAnnotationStart(child)
                     case "office:annotation-end":
                         return this.convertAnnotationEnd(child)
                     case "text:reference-mark-start": {
-                        // Store reference mark start for citation processing
                         const name = child.getAttribute("text:name")
                         if (
                             name &&
@@ -958,59 +1102,57 @@ export class OdtConvert {
                         return this.convertHeadingReference(child)
                     case "text:sequence-ref":
                         return this.convertFigureReference(child)
+                    case "text:soft-page-break":
+                        return null
                     default:
                         console.warn(
                             `Unsupported inline node: ${child.tagName}`
                         )
-                        return null
                 }
             })
             .filter(node => node)
             .flat()
-        return content
     }
 
-    convertText(node) {
-        const marks = []
+    getCurrentMarks(currentStyleMarks = []) {
+        const commentMarks = []
         // Add comment marks for any active comment IDs
         this.currentCommentIds.forEach(commentId => {
-            marks.push({
+            commentMarks.push({
                 type: "comment",
                 attrs: {
                     id: commentId
                 }
             })
         })
+        return [...currentStyleMarks, ...this.currentTracks, ...commentMarks]
+    }
+
+    convertText(text, currentStyleMarks) {
         const textNode = {
             type: "text",
-            text: String(node.textContent)
+            text
         }
+        const marks = this.getCurrentMarks(currentStyleMarks)
         if (marks.length) {
             textNode.marks = marks
         }
         return textNode
     }
 
-    convertSpan(node) {
-        const content = this.convertNodeChildren(node)
+    convertSpan(node, currentStyleMarks) {
         const styleName = node.getAttribute("text:style-name")
         const style = this.styles[styleName]
         if (style?.textProperties?.bold) {
-            return content.map(node => ({
-                ...node,
-                marks: [...(node.marks || []), {type: "strong"}]
-            }))
+            currentStyleMarks = [...currentStyleMarks, {type: "strong"}]
         }
         if (style?.textProperties?.italic) {
-            return content.map(node => ({
-                ...node,
-                marks: [...(node.marks || []), {type: "em"}]
-            }))
+            currentStyleMarks = [...currentStyleMarks, {type: "em"}]
         }
-        return content
+        return this.convertNodeChildren(node, currentStyleMarks)
     }
 
-    convertFootnote(node) {
+    convertFootnote(node, currentStyleMarks) {
         const noteBody = node.query("text:note-body")
         if (!noteBody) {
             return null
@@ -1048,7 +1190,7 @@ export class OdtConvert {
         ) {
             // If it's a citation-only footnote, convert it directly to a citation
             const citationData = referenceMarkStart.getAttribute("text:name")
-            return this.convertCitation(citationData)
+            return this.convertCitation(citationData, currentStyleMarks)
         }
 
         // Otherwise, convert as regular footnote
@@ -1056,16 +1198,13 @@ export class OdtConvert {
             type: "footnote",
             attrs: {
                 footnote: this.convertContainer(noteBody)
-            }
+            },
+            marks: this.getCurrentMarks(currentStyleMarks)
         }
     }
 
-    convertCitation(citationData) {
+    convertCitation(citationData, currentStyleMarks) {
         // Handle both string citation data and reference mark names
-        if (typeof citationData !== "string") {
-            // Existing citation node processing
-            return this.convertCitationNode(citationData)
-        }
         try {
             const jsonStr = citationData.replace(
                 "ZOTERO_ITEM CSL_CITATION ",
@@ -1119,7 +1258,8 @@ export class OdtConvert {
                 attrs: {
                     format: "cite", // Could be determined from properties if needed
                     references: citations
-                }
+                },
+                marks: this.getCurrentMarks(currentStyleMarks)
             }
         } catch (error) {
             console.warn("Failed to parse CSL citation:", error)
@@ -1127,22 +1267,24 @@ export class OdtConvert {
         }
     }
 
-    convertList(node) {
+    convertList(node, attrs) {
         const listStyle = node.getAttribute("text:style-name")
         const isOrdered = this.isOrderedList(listStyle)
 
+        attrs = Object.assign(
+            {
+                id: randomListId()
+            },
+            attrs
+        )
+
+        if (isOrdered) {
+            attrs.order = 1
+        }
+
         return {
             type: isOrdered ? "ordered_list" : "bullet_list",
-            attrs: isOrdered
-                ? {
-                      order: 1,
-                      id: randomListId(),
-                      track: parseTracks(node.getAttribute("text:change"))
-                  }
-                : {
-                      id: randomListId(),
-                      track: parseTracks(node.getAttribute("text:change"))
-                  },
+            attrs,
             content: node.queryAll("text:list-item").map(item => ({
                 type: "list_item",
                 content: this.convertContainer(item)
@@ -1222,7 +1364,7 @@ export class OdtConvert {
         return listStyle?.query("text:list-level-style-number") !== null
     }
 
-    convertImage(node) {
+    convertImage(node, attrs = {}) {
         const imageElement = node.query("draw:image")
         if (!imageElement) {
             return null
@@ -1273,15 +1415,19 @@ export class OdtConvert {
         const caption = node.query("text:p")
         const captionContent = caption ? this.convertNodeChildren(caption) : []
 
-        return {
-            type: "figure",
-            attrs: {
+        attrs = Object.assign(
+            {
                 id: figureId || randomFigureId(),
                 aligned: "center",
                 width: Math.min(Math.round((width / 8.5) * 100), 100),
-                caption: Boolean(captionContent.length),
-                track: parseTracks(node.getAttribute("text:change"))
+                caption: Boolean(captionContent.length)
             },
+            attrs
+        )
+
+        return {
+            type: "figure",
+            attrs,
             content: [
                 {
                     type: "image",
@@ -1358,23 +1504,28 @@ export class OdtConvert {
         }
     }
 
-    convertTable(node) {
+    convertTable(node, attrs) {
         const width =
             node.getAttribute("style:rel-width")?.replace("%", "") || "100"
         const styleName = node.getAttribute("table:style-name")
         const style = this.styles[styleName]
         const aligned = style?.getAttribute("table:align") || "center"
-        return {
-            type: "table",
-            attrs: {
+
+        attrs = Object.assign(
+            {
                 id: randomTableId(),
-                track: parseTracks(node.getAttribute("text:change")),
+                track: parseTracks(node.getAttribute("text:change-id")),
                 width,
                 aligned,
                 layout: "fixed",
                 category: "none",
                 caption: false
             },
+            attrs
+        )
+        return {
+            type: "table",
+            attrs,
             content: [
                 {type: "table_caption"},
                 {
@@ -1410,25 +1561,18 @@ export class OdtConvert {
                 rowspan:
                     parseInt(node.getAttribute("table:number-rows-spanned")) ||
                     1,
-                track: parseTracks(node.getAttribute("text:change"))
+                track: parseTracks(node.getAttribute("text:change-id"))
             },
             content: this.convertContainer(node)
         }
     }
 
-    convertLink(node) {
+    convertLink(node, currentStyleMarks) {
         const href = node.getAttribute("xlink:href")
-        const content = this.convertNodeChildren(node)
-        return content.map(node => ({
-            ...node,
-            marks: [
-                ...(node.marks || []),
-                {
-                    type: "link",
-                    attrs: {href}
-                }
-            ]
-        }))
+        currentStyleMarks = currentStyleMarks.concat([
+            {type: "link", attrs: {href}}
+        ])
+        return this.convertNodeChildren(node, currentStyleMarks)
     }
 
     detectLanguage() {
@@ -1470,54 +1614,5 @@ export class OdtConvert {
 
         // Default to "en-US"
         return "en-US"
-    }
-
-    parseTrackedChanges() {
-        const trackedChangesEl = this.contentDoc.query("text:tracked-changes")
-        if (!trackedChangesEl) {
-            return
-        }
-
-        const changedRegions = trackedChangesEl.queryAll("text:changed-region")
-        changedRegions.forEach(region => {
-            const id = region.getAttribute("text:id")
-
-            // Handle deletions
-            const deletion = region.query("text:deletion")
-            if (deletion) {
-                const changeInfo = deletion.query("office:change-info")
-                if (changeInfo) {
-                    this.tracks[id] = {
-                        type: "deletion",
-                        user: changeInfo.query("dc:creator")?.textContent || "",
-                        username:
-                            changeInfo.query("dc:creator")?.textContent || "",
-                        date:
-                            new Date(
-                                changeInfo.query("dc:date")?.textContent || ""
-                            ).getTime() / 60000
-                    }
-                }
-            }
-
-            // Handle insertions
-            const insertion = region.query("text:insertion")
-            if (insertion) {
-                const changeInfo = insertion.query("office:change-info")
-                if (changeInfo) {
-                    this.tracks[id] = {
-                        type: "insertion",
-                        user: changeInfo.query("dc:creator")?.textContent || "",
-                        username:
-                            changeInfo.query("dc:creator")?.textContent || "",
-                        date:
-                            new Date(
-                                changeInfo.query("dc:date")?.textContent || ""
-                            ).getTime() / 60000,
-                        approved: false
-                    }
-                }
-            }
-        })
     }
 }

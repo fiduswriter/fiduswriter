@@ -234,6 +234,118 @@ class XMLElement {
         })
     }
 
+    insertXMLAt(xmlString, index) {
+        if (isLeaf(this.tagName)) {
+            return false
+        }
+        const parser = new XMLParser(fastXMLParserOptions)
+        const xml = parser.parse(
+            `<${this.tagName}>${xmlString}</${this.tagName}>`
+        )
+        xml[0][this.tagName].forEach((child, i) => {
+            const newChild = new XMLElement(child, this)
+            this.node[this.tagName].splice(index + i, 0, newChild)
+        })
+    }
+
+    splitAtChildElement(
+        childElement,
+        appendToCurrentNode = "",
+        insertBetweenNodes = "",
+        insertAfterSplit = ""
+    ) {
+        if (!this.children.includes(childElement)) {
+            return false
+        }
+
+        // Get the index of the child element
+        const splitIndex = this.children.indexOf(childElement)
+
+        // Store the original content
+        const beforeContent = this.children.slice(0, splitIndex)
+        const afterContent = this.children.slice(splitIndex + 1)
+
+        // Clear current node's content
+        this.node[this.tagName] = []
+
+        // Add back content before split point plus any appendToCurrentNode
+        beforeContent.forEach(child => this.appendChild(child))
+        if (appendToCurrentNode) {
+            this.appendXML(appendToCurrentNode)
+        }
+
+        const nextSibling = this.nextSibling
+
+        // Insert between content if provided
+        if (insertBetweenNodes) {
+            const parentElement = this.parentElement
+            if (parentElement) {
+                const currentIndex = parentElement.children.indexOf(this)
+                parentElement.insertXMLAt(insertBetweenNodes, currentIndex + 1)
+            }
+        }
+
+        // Create and insert the after content
+        if (afterContent.length || insertAfterSplit) {
+            const parentElement = this.parentElement
+            if (parentElement) {
+                const insertIndex = nextSibling
+                    ? parentElement.children.indexOf(nextSibling)
+                    : parentElement.children.length
+
+                // Parse insertAfterSplit to get the node type and attributes
+                if (insertAfterSplit) {
+                    const parser = new XMLParser(fastXMLParserOptions)
+                    const tempXml = parser.parse(insertAfterSplit)[0]
+                    const newTagName = Object.keys(tempXml).find(
+                        key => key !== ":@"
+                    )
+                    const newAttributes = tempXml[":@"] || {}
+
+                    // Create new element with the parsed tag name and attributes
+                    const newElement = new XMLElement(
+                        {
+                            [newTagName]: [],
+                            ":@": newAttributes
+                        },
+                        parentElement
+                    )
+
+                    // Add the content from insertAfterSplit first
+                    if (tempXml[newTagName]) {
+                        tempXml[newTagName].forEach(child =>
+                            newElement.appendChild(child)
+                        )
+                    }
+
+                    // Then add the existing after content
+                    afterContent.forEach(child => newElement.appendChild(child))
+
+                    parentElement.node[parentElement.tagName].splice(
+                        insertIndex,
+                        0,
+                        newElement
+                    )
+                } else {
+                    // Fallback to original tag name if no insertAfterSplit provided
+                    const tagName = this.tagName
+                    const newElement = new XMLElement(
+                        {[tagName]: []},
+                        parentElement
+                    )
+                    afterContent.forEach(child => newElement.appendChild(child))
+                    parentElement.node[parentElement.tagName].splice(
+                        insertIndex,
+                        0,
+                        newElement
+                    )
+                }
+            }
+        }
+
+        return true
+    }
+
     removeChild(child) {
         if (isLeaf(this.tagName)) {
             return false

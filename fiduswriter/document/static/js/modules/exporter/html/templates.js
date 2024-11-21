@@ -1,9 +1,17 @@
 import {escapeText} from "../../common"
 
 /** A template for HTML export of a document. */
-export const htmlExportTemplate = ({head, body, back, settings, lang, xhtml}) =>
+export const htmlExportTemplate = ({
+    head,
+    body,
+    back,
+    settings,
+    lang,
+    xhtml,
+    epub
+}) =>
     `${xhtml ? '<?xml version="1.0" encoding="UTF-8"?>' : "<!DOCTYPE html>"}
-<html lang="${lang}"${xhtml ? ` xmlns="http://www.w3.org/1999/xhtml" xml:lang="${lang}"` : ""}>
+    <html ${xhtml ? `xmlns="http://www.w3.org/1999/xhtml" ${epub ? 'xmlns:epub="http://www.idpf.org/2007/ops"' : ""}` : ""} lang="${lang}"${xhtml ? ` xml:lang="${lang}"` : ""}>
     <head>
         <meta charset="UTF-8">
         ${settings.copyright && settings.copyright.holder ? `<meta name="copyright" content="© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}" />` : ""}

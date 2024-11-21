@@ -42,26 +42,14 @@ ${images
                 image.coverImage
                     ? 'id="cover-image" properties="cover-image"'
                     : `id="img${index}"`
-            } href="${image.filename}" media-type="image/${
-                image.filename.split(".")[1] === "png"
-                    ? "png"
-                    : image.filename.split(".")[1] === "svg"
-                      ? "svg+xml"
-                      : "jpeg"
-            }" />\n`
+            } href="${image.filename}" media-type="${image.mimeType}" />\n`
     )
     .join("")}${fontFiles
     .map(
         (fontFile, index) =>
             `\t\t\t<item ${`id="font${index}"`} href="${
                 fontFile.filename
-            }" media-type="font/${
-                fontFile.filename.split(".")[1] === "woff"
-                    ? "woff"
-                    : fontFile.filename.split(".")[1] === "woff2"
-                      ? "woff2"
-                      : "sfnt"
-            }" />\n`
+            }" media-type="${fontFile.mimeType}" />\n`
     )
     .join("")}${styleSheets
     .map(
@@ -87,7 +75,7 @@ export const containerTemplate = () =>
 </container>`
 
 /** A template of the NCX file of an epub. */
-export const ncxTemplate = ({shortLang, idType, id, title, contentItems}) =>
+export const ncxTemplate = ({shortLang, idType, id, title, toc}) =>
     `<?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="${shortLang}">
     <head>
@@ -98,7 +86,7 @@ export const ncxTemplate = ({shortLang, idType, id, title, contentItems}) =>
     </docTitle>
     <navMap>
         <!-- 2.01 NCX: playOrder is optional -->
-${contentItems.map(item => ncxItemTemplate({item})).join("")}
+${toc.map(item => ncxItemTemplate({item})).join("")}
     </navMap>
 </ncx>`
 
@@ -107,7 +95,7 @@ export const ncxItemTemplate = ({item}) =>
     `        <navPoint id="t${item.docNum ? `${item.id}-${item.docNum}` : item.id}">
             <navLabel><text>${escapeText(item.title)}</text></navLabel>
             <content src="${item.link ? item.link : item.docNum ? `document-${item.docNum}.xhtml#${item.id}` : `document.xhtml#${item.id}`}"/>
-${item.subItems.map(item => ncxItemTemplate({item})).join("")}
+${item.children?.map(item => ncxItemTemplate({item})).join("") || ""}
         </navPoint>\n`
 
 /** A template for a document in an epub. */
@@ -163,16 +151,16 @@ const navItemTemplate = ({item}) =>
               : `document.xhtml#${item.id}`
     }">${escapeText(item.title)}</a>
 ${
-    item.subItems.length
+    item.children.length
         ? `<ol>
-        ${item.subItems.map(item => navItemTemplate({item})).join("")}
+        ${item.children.map(item => navItemTemplate({item})).join("")}
     </ol>`
         : ""
 }
 </li>`
 
 /** A template for an epub's navigation document. */
-export const navTemplate = ({shortLang, contentItems, styleSheets}) =>
+export const navTemplate = ({shortLang, toc, styleSheets}) =>
     `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
@@ -188,7 +176,7 @@ export const navTemplate = ({shortLang, contentItems, styleSheets}) =>
     <body class="epub navigation">
         <nav epub:type="toc" id="toc">
             <ol>
-${contentItems.map(item => navItemTemplate({item})).join("")}
+${toc.map(item => navItemTemplate({item})).join("")}
             </ol>
         </nav>
     </body>

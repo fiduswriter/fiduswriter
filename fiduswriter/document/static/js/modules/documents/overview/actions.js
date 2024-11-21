@@ -667,13 +667,12 @@ export class DocumentOverviewActions {
                 )
                 import("../../exporter/epub").then(({EpubExporter}) => {
                     const exporter = new EpubExporter(
-                        this.documentOverview.schema,
-                        this.documentOverview.app.csl,
-                        this.documentOverview.documentStyles,
                         doc,
                         {db: doc.bibliography},
                         {db: doc.images},
-                        new Date(doc.updated * 1000)
+                        this.documentOverview.app.csl,
+                        new Date(doc.updated * 1000),
+                        this.documentOverview.documentStyles
                     )
                     exporter.init()
                 })

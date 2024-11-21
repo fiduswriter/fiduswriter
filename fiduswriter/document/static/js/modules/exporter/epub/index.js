@@ -2,12 +2,13 @@ import download from "downloadjs"
 import pretty from "pretty"
 
 import {addAlert, shortFileTitle} from "../../common"
+import {HTMLExporter} from "../html"
+import {HTMLExporterCitations} from "../html/citations"
 import {removeHidden} from "../tools/doc_content"
-import {DOMExporter} from "../tools/dom_export"
 import {createSlug} from "../tools/file"
-import {modifyImages} from "../tools/html"
-import {node2Obj, obj2Node} from "../tools/json"
 import {ZipFileCreator} from "../tools/zip"
+
+import {EPUBExporterConvert} from "./convert"
 import {
     containerTemplate,
     navTemplate,
@@ -16,215 +17,195 @@ import {
     xhtmlTemplate
 } from "./templates"
 import {
-    addCategoryLabels,
-    getTimestamp,
-    orderLinks,
-    setLinks,
-    styleEpubFootnotes
+    buildHierarchy,
+    getFontMimeType,
+    getImageMimeType,
+    getTimestamp
 } from "./tools"
 
-export class EpubExporter extends DOMExporter {
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
-        super(schema, csl, documentStyles)
-        this.doc = doc
-        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
-        this.bibDB = bibDB
-        this.imageDB = imageDB
-        this.updated = updated
+export class EpubExporter extends HTMLExporter {
+    constructor(doc, bibDB, imageDB, csl, updated, documentStyles) {
+        super(doc, bibDB, imageDB, csl, updated, documentStyles)
 
+        // EPUB-specific properties
         this.shortLang = this.doc.settings.language.split("-")[0]
         this.lang = this.doc.settings.language
-
-        this.outputList = []
-        this.includeZips = []
     }
 
     init() {
         addAlert(
             "info",
-            this.docTitle + ": " + gettext("Epub export has been initiated.")
+            `${this.docTitle}: ${gettext("Epub export has been initiated.")}`
         )
-        this.docContent = removeHidden(this.doc.content, false)
-        this.addDocStyle(this.doc)
+
+        this.docContent = removeHidden(this.doc.content)
+        this.addDocStyle(this.doc) // Now inherited from HTMLExporter
+        // Override converter class
+        this.converter = new EPUBExporterConvert(
+            this,
+            this.imageDB,
+            this.bibDB,
+            this.doc.settings
+        )
+        this.citations = new HTMLExporterCitations(this, this.bibDB, this.csl)
 
         return this.loadStyles()
-            .then(() => this.joinDocumentParts())
-            .then(() => this.fillToc())
+            .then(() => this.converter.init(this.docContent))
+            .then(({html, imageIds}) => {
+                const contentBody = html.split("<body")[1].split("</body>")[0]
+                const bodyContent = contentBody.substring(
+                    contentBody.indexOf(">") + 1
+                )
+
+                return this.createEPUBFiles(bodyContent, imageIds)
+            })
             .then(() => this.save())
     }
 
-    addCategoryLabels(language) {
-        const fnListEl = this.content.querySelector("section.fnlist")
-        if (fnListEl) {
-            addCategoryLabels(fnListEl, language, true)
-        }
-        addCategoryLabels(this.content, language)
-    }
-
-    save() {
-        const title = this.docTitle
-
-        const contents = this.content
-
-        const images = modifyImages(contents)
-
-        const contentsBody = document.createElement("body")
-
-        while (contents.firstChild) {
-            contentsBody.appendChild(contents.firstChild)
-        }
-
-        const equations = contentsBody.querySelectorAll(
-            ".equation, .figure-equation"
-        )
-
-        const math = equations.length ? true : false
-        // Make links to all H1-3 and create a TOC list of them
-        const contentItems = orderLinks(setLinks(contentsBody))
-
-        const contentsBodyEpubPrepared = styleEpubFootnotes(contentsBody)
-
-        let xhtmlCode = xhtmlTemplate({
-            currentPart: false,
-            part: false,
-            shortLang: this.shortLang,
-            title,
-            styleSheets: this.styleSheets,
-            math,
-            body: obj2Node(node2Obj(contentsBodyEpubPrepared), "xhtml")
-                .innerHTML
-        })
-
-        xhtmlCode = this.replaceImgSrc(xhtmlCode)
-
-        const containerCode = containerTemplate({})
+    createEPUBFiles(bodyContent, imageIds) {
+        // Generate the required EPUB files using the converted content
+        const containerCode = containerTemplate()
         const timestamp = getTimestamp(this.updated)
 
-        const authors = this.docContent.content.reduce((authors, part) => {
-            if (
-                part.type === "contributors_part" &&
-                part.attrs.metadata === "authors" &&
-                part.content
-            ) {
-                return authors.concat(
-                    part.content.map(authorNode => {
-                        const nameParts = []
-                        if (authorNode.attrs.firstname) {
-                            nameParts.push(authorNode.attrs.firstname)
-                        }
-                        if (authorNode.attrs.lastname) {
-                            nameParts.push(authorNode.attrs.lastname)
-                        }
-                        if (!nameParts.length && authorNode.attrs.institution) {
-                            // We have an institution but no names. Use institution as name.
-                            nameParts.push(authorNode.attrs.institution)
-                        }
-                        return nameParts.join(" ")
-                    })
-                )
-            } else {
-                return authors
-            }
-        }, [])
-        const keywords = this.docContent.content.reduce((keywords, part) => {
-            if (
-                part.type === "tags_part" &&
-                part.attrs.metadata === "keywords" &&
-                part.content
-            ) {
-                return keywords.concat(
-                    part.content.map(keywordNode => keywordNode.attrs.tag)
-                )
-            } else {
-                return keywords
-            }
-        }, [])
-
-        const opfCode = opfTemplate({
-            language: this.lang,
-            title,
-            authors,
-            keywords,
-            idType: "fidus",
-            id: this.doc.id,
-            date: timestamp.slice(0, 10),
-            modified: timestamp,
-            styleSheets: this.styleSheets,
-            math,
-            images,
-            fontFiles: this.fontFiles,
-            copyright: this.doc.settings.copyright
-        })
-
-        const ncxCode = ncxTemplate({
-            shortLang: this.shortLang,
-            title,
-            idType: "fidus",
-            id: this.doc.id,
-            contentItems
-        })
-
-        const navCode = navTemplate({
-            shortLang: this.shortLang,
-            contentItems,
-            styleSheets: this.styleSheets
-        })
-
-        this.outputList.push(
+        // Add content files
+        this.textFiles.push(
             {
                 filename: "META-INF/container.xml",
                 contents: pretty(containerCode, {ocd: true})
             },
             {
                 filename: "EPUB/document.opf",
-                contents: pretty(opfCode, {ocd: true})
+                contents: pretty(this.createOPF(timestamp, imageIds), {
+                    ocd: true
+                })
             },
             {
                 filename: "EPUB/document.ncx",
-                contents: pretty(ncxCode, {ocd: true})
+                contents: pretty(this.createNCX(), {ocd: true})
             },
             {
                 filename: "EPUB/document-nav.xhtml",
-                contents: pretty(navCode, {ocd: true})
+                contents: pretty(this.createNav(), {ocd: true})
             },
             {
                 filename: "EPUB/document.xhtml",
-                contents: pretty(xhtmlCode, {ocd: true})
+                contents: pretty(this.createXHTML(bodyContent), {ocd: true})
             }
         )
 
-        this.styleSheets.forEach(styleSheet => {
-            this.outputList.push({
-                filename: "EPUB/" + styleSheet.filename,
-                contents: styleSheet.contents
-            })
-        })
-        images.forEach(image => {
-            this.binaryFiles.push({
-                filename: "EPUB/" + image.filename,
-                url: image.url
-            })
-        })
-        this.fontFiles.forEach(font => {
-            this.binaryFiles.push({
-                filename: "EPUB/" + font.filename,
-                url: font.url
+        // Add styles
+        this.styleSheets.forEach(sheet => {
+            this.textFiles.push({
+                filename: "EPUB/" + sheet.filename,
+                contents: sheet.contents
             })
         })
 
-        if (math) {
+        // Add images
+        imageIds.forEach(id => {
+            const imageEntry = this.imageDB.db[id]
+            this.httpFiles.push({
+                filename: `EPUB/images/${imageEntry.image.split("/").pop()}`,
+                url: imageEntry.image
+            })
+        })
+    }
+
+    createOPF(timestamp, imageIds) {
+        const images = imageIds
+            .map(id => {
+                const imageEntry = this.imageDB.db[id]
+                const filename = imageEntry.image.split("/").pop()
+                return {
+                    filename: `images/${filename}`,
+                    url: imageEntry.image,
+                    mimeType: getImageMimeType(filename)
+                }
+            })
+            .filter(image => image.mimeType)
+
+        const fontFiles = this.httpFiles
+            .map(file =>
+                Object.assign({mimeType: getFontMimeType(file.filename)}, file)
+            )
+            .filter(file => file.mimeType)
+
+        // Extract authors and keywords from metaData
+        const authors = this.converter.metaData.authors.map(
+            ({attrs: author}) => {
+                if (author.firstname || author.lastname) {
+                    const nameParts = []
+                    if (author.firstname) {
+                        nameParts.push(author.firstname)
+                    }
+                    if (author.lastname) {
+                        nameParts.push(author.lastname)
+                    }
+                    return nameParts.join(" ")
+                } else if (author.institution) {
+                    return author.institution
+                }
+            }
+        )
+        return opfTemplate({
+            language: this.lang,
+            title: this.docTitle,
+            authors,
+            keywords: this.converter.metaData.keywords,
+            idType: "fidus",
+            id: this.doc.id,
+            date: timestamp.slice(0, 10),
+            modified: timestamp,
+            styleSheets: this.styleSheets,
+            math: this.converter.features.math,
+            images,
+            fontFiles,
+            copyright: this.doc.settings.copyright
+        })
+    }
+
+    createNCX() {
+        return ncxTemplate({
+            shortLang: this.shortLang,
+            title: this.docTitle,
+            idType: "fidus",
+            id: this.doc.id,
+            toc: buildHierarchy(this.converter.metaData.toc)
+        })
+    }
+
+    createNav() {
+        return navTemplate({
+            shortLang: this.shortLang,
+            toc: buildHierarchy(this.converter.metaData.toc),
+            styleSheets: this.styleSheets
+        })
+    }
+
+    createXHTML(bodyContent) {
+        return xhtmlTemplate({
+            shortLang: this.shortLang,
+            title: this.docTitle,
+            math: this.converter.features.math,
+            styleSheets: this.styleSheets,
+            part: false,
+            currentPart: false,
+            body: bodyContent,
+            copyright: this.doc.settings.copyright
+        })
+    }
+
+    save() {
+        if (this.converter.features.math) {
             this.includeZips.push({
                 directory: "EPUB/css",
                 url: staticUrl("zip/mathlive_style.zip")
             })
         }
-        return this.createZip()
-    }
 
-    createZip() {
         const zipper = new ZipFileCreator(
-            this.outputList,
-            this.binaryFiles,
+            this.textFiles,
+            this.httpFiles,
             this.includeZips,
             "application/epub+zip",
             this.updated

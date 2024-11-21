@@ -62,7 +62,8 @@ export class HTMLExporterConvert {
                 back,
                 settings: this.exporter.doc.settings,
                 lang: this.exporter.doc.settings.language.split("-")[0],
-                xhtml: this.xhtml
+                xhtml: this.xhtml,
+                epub: this.epub
             })
             return {
                 html,
@@ -84,9 +85,13 @@ export class HTMLExporterConvert {
             case "heading5":
             case "heading6": {
                 const level = Number.parseInt(node.type.slice(-1))
-                this.metaData.toc.push(
-                    `<h${level}><a href="#${node.attrs.id}">${(node.content || []).map(subNode => this.walkJson(subNode)).join("")}</a></h${level}>`
-                )
+                this.metaData.toc.push({
+                    level,
+                    id: node.attrs.id,
+                    title: (node.content || [])
+                        .map(subNode => this.walkJson(subNode))
+                        .join("")
+                })
                 break
             }
             case "title": {
@@ -94,6 +99,12 @@ export class HTMLExporterConvert {
                 if (title.length) {
                     this.metaData.title = title
                 }
+                this.metaData.toc.push({
+                    docTitle: true,
+                    level: 1,
+                    id: "title",
+                    title: title
+                })
                 break
             }
             case "richtext_part":
@@ -308,7 +319,12 @@ export class HTMLExporterConvert {
                 break
             case "table_of_contents":
                 start += `<div class="doc-part table-of-contents"><h1>${escapeText(node.attrs.title)}</h1>`
-                content += this.metaData.toc.join("")
+                content += this.metaData.toc
+                    .map(
+                        item =>
+                            `<h${item.level}><a href="#${item.id}">${item.title}</a></h${item.level}>`
+                    )
+                    .join("")
                 end += "</div>"
                 break
             case "separator_part":

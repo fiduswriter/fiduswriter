@@ -243,15 +243,14 @@ export const headerbarModel = () => ({
                         import("../../../exporter/epub").then(
                             ({EpubExporter}) => {
                                 const exporter = new EpubExporter(
-                                    editor.schema,
-                                    editor.app.csl,
-                                    editor.mod.documentTemplate.documentStyles,
                                     editor.getDoc({
                                         changes: "acceptAllNoInsertions"
                                     }),
                                     editor.mod.db.bibDB,
                                     editor.mod.db.imageDB,
-                                    editor.docInfo.updated
+                                    editor.app.csl,
+                                    editor.docInfo.updated,
+                                    editor.mod.documentTemplate.documentStyles
                                 )
                                 exporter.init()
                             }

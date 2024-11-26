@@ -98,6 +98,48 @@ export const ncxItemTemplate = ({item}) =>
 ${item.children?.map(item => ncxItemTemplate({item})).join("") || ""}
         </navPoint>\n`
 
+/** A template for each item in an epub's navigation document. */
+const navItemTemplate = ({item}) =>
+    `\t\t\t\t<li><a href="${
+        item.link
+            ? item.link
+            : item.docNum
+              ? `document-${item.docNum}.xhtml#${item.id}`
+              : `document.xhtml#${item.id}`
+    }">${escapeText(item.title)}</a>
+${
+    item.children.length
+        ? `<ol>
+        ${item.children.map(item => navItemTemplate({item})).join("")}
+    </ol>`
+        : ""
+}
+</li>`
+
+/** A template for an epub's navigation document. */
+export const navTemplate = ({shortLang, toc, styleSheets}) =>
+    `<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
+    <head>
+        <meta charset="utf-8"></meta>
+        <title>Navigation</title>
+        ${styleSheets
+            .map(
+                sheet =>
+                    `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
+            )
+            .join("")}
+    </head>
+    <body class="epub navigation">
+        <nav epub:type="toc" id="toc">
+            <ol>
+${toc.map(item => navItemTemplate({item})).join("")}
+            </ol>
+        </nav>
+    </body>
+</html>`
+
+// Old templates. Still used by fiduswriter-books
 /** A template for a document in an epub. */
 export const xhtmlTemplate = ({
     shortLang,
@@ -139,45 +181,4 @@ ${styleSheets
             ? `<div>${copyright.licenses.map(license => `<a rel="license" href="${escapeText(license.url)}">${escapeText(license.title)}${license.start ? ` (${license.start})` : ""}</a>`).join("</div><div>")}</div>`
             : ""
     }</body>
-</html>`
-
-/** A template for each item in an epub's navigation document. */
-const navItemTemplate = ({item}) =>
-    `\t\t\t\t<li><a href="${
-        item.link
-            ? item.link
-            : item.docNum
-              ? `document-${item.docNum}.xhtml#${item.id}`
-              : `document.xhtml#${item.id}`
-    }">${escapeText(item.title)}</a>
-${
-    item.children.length
-        ? `<ol>
-        ${item.children.map(item => navItemTemplate({item})).join("")}
-    </ol>`
-        : ""
-}
-</li>`
-
-/** A template for an epub's navigation document. */
-export const navTemplate = ({shortLang, toc, styleSheets}) =>
-    `<?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
-    <head>
-        <meta charset="utf-8"></meta>
-        <title>Navigation</title>
-        ${styleSheets
-            .map(
-                sheet =>
-                    `<link rel="stylesheet" type="text/css" href="${sheet.filename}" />\n`
-            )
-            .join("")}
-    </head>
-    <body class="epub navigation">
-        <nav epub:type="toc" id="toc">
-            <ol>
-${toc.map(item => navItemTemplate({item})).join("")}
-            </ol>
-        </nav>
-    </body>
 </html>`

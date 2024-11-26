@@ -3,24 +3,33 @@ import pretty from "pretty"
 
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
+import {HTMLExporterCitations} from "./citations"
 
 export class HTMLExporterConvert {
     constructor(
-        exporter,
+        docTitle,
+        docSettings,
+        docContent,
+        htmlExportTemplate,
         imageDB,
         bibDB,
-        settings,
+        csl,
+        styleSheets,
         xhtml = false,
         epub = false
     ) {
-        this.exporter = exporter
-        this.settings = settings
+        this.docTitle = docTitle
+        this.docSettings = docSettings
+        this.docContent = docContent
+        this.htmlExportTemplate = htmlExportTemplate
         this.imageDB = imageDB
         this.bibDB = bibDB
+        this.csl = csl
+        this.styleSheets = styleSheets
         this.xhtml = xhtml
         this.epub = epub
-        this.endSlash = this.xhtml ? "/" : ""
 
+        this.endSlash = this.xhtml ? "/" : ""
         this.imageIds = []
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
         this.affiliations = {} // affiliations of authors and editors
@@ -33,7 +42,7 @@ export class HTMLExporterConvert {
         this.footnotes = []
         this.fnCounter = 0
         this.metaData = {
-            title: this.exporter.docTitle,
+            title: this.docTitle,
             authors: [],
             abstract: false,
             keywords: [],
@@ -43,38 +52,83 @@ export class HTMLExporterConvert {
             toc: []
         }
         this.features = {
-            math: false
+            math: false,
+            bibliography: false
+        }
+        this.citations = {
+            type: "",
+            bibCSS: "",
+            bibHTML: "",
+            citationTexts: []
         }
         this.citInfos = []
         this.citationCount = 0
+        this.extraStyleSheets = []
     }
 
-    init(docContent) {
-        this.preWalkJson(docContent)
-        this.findCitations(docContent)
-        return this.exporter.citations.init(this.citInfos).then(() => {
-            const body = this.assembleBody(docContent)
-            const back = this.assembleBack()
-            const head = this.assembleHead()
-            const html = this.exporter.htmlExportTemplate({
-                head,
-                body,
-                back,
-                settings: this.exporter.doc.settings,
-                lang: this.exporter.doc.settings.language.split("-")[0],
-                xhtml: this.xhtml,
-                epub: this.epub
+    init() {
+        this.analyze(this.docContent)
+        return this.process()
+    }
+
+    async processCitInfos() {
+        const citationProcessor = new HTMLExporterCitations(
+            this.docSettings,
+            this.bibDB,
+            this.csl
+        )
+        const citations = await citationProcessor.init(this.citInfos)
+        this.citations = citations
+    }
+
+    async process() {
+        if (this.citInfos.length) {
+            await this.processCitInfos()
+        }
+
+        if (this.citations.bibCSS.length) {
+            this.extraStyleSheets.push({
+                filename: "css/bibliography.css",
+                contents: pretty(this.citations.bibCSS, {
+                    ocd: true
+                })
             })
-            return {
-                html,
-                imageIds: this.imageIds
-            }
+        }
+        if (this.features.math) {
+            this.extraStyleSheets.push({filename: "css/mathlive.css"})
+        }
+        const body = this.assembleBody()
+        const back = this.assembleBack()
+        const head = this.assembleHead()
+        const html = this.htmlExportTemplate({
+            head,
+            body,
+            back,
+            settings: this.docSettings,
+            lang: this.docSettings.language.split("-")[0],
+            xhtml: this.xhtml,
+            epub: this.epub
         })
+        return {
+            html,
+            imageIds: this.imageIds,
+            extraStyleSheets: this.extraStyleSheets
+        }
     }
 
     // Find information for meta tags in header
-    preWalkJson(node) {
+    analyze(node) {
         switch (node.type) {
+            case "citation":
+                this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
+                break
+            case "contributors_part":
+                if (node.attrs.metadata === "authors" && node.content) {
+                    node.content.forEach(author => {
+                        this.metaData.authors.push(author)
+                    })
+                }
+                break
             case "doc":
                 this.metaData.copyright = node.attrs.copyright
                 break
@@ -94,19 +148,13 @@ export class HTMLExporterConvert {
                 })
                 break
             }
-            case "title": {
-                const title = this.textWalkJson(node)
-                if (title.length) {
-                    this.metaData.title = title
-                }
-                this.metaData.toc.push({
-                    docTitle: true,
-                    level: 1,
-                    id: "title",
-                    title: title
-                })
+            case "equation":
+            case "figure_equation":
+                this.features.math = true
                 break
-            }
+            case "footnote":
+                node.attrs.footnote.forEach(child => this.analyze(child))
+                break
             case "richtext_part":
                 if (
                     node.attrs.metadata === "abstract" &&
@@ -123,37 +171,25 @@ export class HTMLExporterConvert {
                     })
                 }
                 break
-            case "contributors_part":
-                if (node.attrs.metadata === "authors" && node.content) {
-                    node.content.forEach(author => {
-                        this.metaData.authors.push(author)
-                    })
+            case "title": {
+                const title = this.textWalkJson(node)
+                if (title.length) {
+                    this.metaData.title = title
                 }
+                this.metaData.toc.push({
+                    docTitle: true,
+                    level: 1,
+                    id: "title",
+                    title: title
+                })
                 break
-            case "equation":
-            case "figure_equation":
-                this.features.math = true
-                break
+            }
+
             default:
                 break
         }
         if (node.content) {
-            node.content.forEach(child => this.preWalkJson(child))
-        }
-    }
-    findCitations(node) {
-        switch (node.type) {
-            case "citation":
-                this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
-                break
-            case "footnote":
-                node.attrs.footnote.forEach(child => this.findCitations(child))
-                break
-            default:
-                break
-        }
-        if (node.content) {
-            node.content.forEach(child => this.findCitations(child))
+            node.content.forEach(child => this.analyze(child))
         }
     }
 
@@ -207,7 +243,8 @@ export class HTMLExporterConvert {
         if (this.metaData.keywords.length) {
             head += `<meta name="keywords" content="${escapeText(this.metaData.keywords.join(", "))}"${this.endSlash}>`
         }
-        head += this.exporter.styleSheets
+        head += this.styleSheets
+            .concat(this.extraStyleSheets)
             .map(sheet =>
                 sheet.filename
                     ? `<link rel="stylesheet" type="text/css" href="${sheet.filename}"${this.endSlash}>`
@@ -377,7 +414,7 @@ export class HTMLExporterConvert {
                 end = "</li>" + end
                 break
             case "footnote":
-                content += `<a class="footnote"${this.epub ? 'epub:type="noteref" ' : ""} href="#fn-${++this.fnCounter}">${this.fnCounter}</a>`
+                content += `<a class="footnote"${this.epub ? ' epub:type="noteref"' : ""} href="#fn-${++this.fnCounter}">${this.fnCounter}</a>`
                 options = Object.assign({}, options)
                 options.inFootnote = true
                 this.footnotes.push(
@@ -395,7 +432,7 @@ export class HTMLExporterConvert {
                 )
                 break
             case "footnotecontainer":
-                start += `<aside class="footnote"${this.epub ? 'epub:type="footnote" ' : ""} id="${node.attrs.id}"><label>${node.attrs.label}</label>`
+                start += `<aside class="footnote"${this.epub ? ' epub:type="footnote"' : ""} id="${node.attrs.id}"><label>${node.attrs.label}</label>`
                 end = "</aside>" + end
                 break
             case "text": {
@@ -435,11 +472,15 @@ export class HTMLExporterConvert {
                 break
             }
             case "citation": {
+                if (!this.citations.citationTexts.length) {
+                    // There are no citations. This may happen while analyzing.
+                    return ""
+                }
                 const citationText =
-                    this.exporter.citations.citationTexts[this.citationCount++]
+                    this.citations.citationTexts[this.citationCount++]
                 if (
                     options.inFootnote ||
-                    this.exporter.citations.citFm.citationType !== "note"
+                    this.citations.citationType !== "note"
                 ) {
                     content += citationText
                 } else {
@@ -513,7 +554,7 @@ export class HTMLExporterConvert {
                                 this.categoryCounter[category] = 0
                             }
                             const catCount = ++this.categoryCounter[category]
-                            const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                            const catLabel = `${CATS[category][this.docSettings.language]} ${catCount}`
                             figcaption += `<label>${escapeText(catLabel)}</label>`
                         }
                         if (caption.length) {
@@ -565,7 +606,7 @@ export class HTMLExporterConvert {
                         this.categoryCounter[category] = 0
                     }
                     const catCount = ++this.categoryCounter[category]
-                    const catLabel = `${CATS[category][this.settings.language]} ${catCount}`
+                    const catLabel = `${CATS[category][this.docSettings.language]} ${catCount}`
                     start += `<label>${escapeText(catLabel)}</label>`
                 }
                 const caption = node.attrs.caption
@@ -617,15 +658,15 @@ export class HTMLExporterConvert {
         return start + content + end
     }
 
-    assembleBody(docContent) {
-        return `<div id="body">${this.walkJson(docContent)}</div>`
+    assembleBody() {
+        return `<div id="body">${this.walkJson(this.docContent)}</div>`
     }
 
     assembleBack() {
         let back = ""
         if (
             this.footnotes.length ||
-            this.exporter.citations.bibHTML.length ||
+            this.citations.bibHTML.length ||
             Object.keys(this.affiliations).length
         ) {
             back += '<div id="back">'
@@ -642,14 +683,8 @@ export class HTMLExporterConvert {
             if (this.footnotes.length) {
                 back += `<div id="footnotes">${this.footnotes.join("")}</div>`
             }
-            if (this.exporter.citations.bibHTML.length) {
-                back += `<div id="references">${this.exporter.citations.bibHTML}</div>`
-                this.exporter.styleSheets.push({
-                    filename: "css/bibliography.css",
-                    contents: pretty(this.exporter.citations.bibCSS, {
-                        ocd: true
-                    })
-                })
+            if (this.citations.bibHTML.length) {
+                back += `<div id="references">${this.citations.bibHTML}</div>`
             }
             back += "</div>"
         }

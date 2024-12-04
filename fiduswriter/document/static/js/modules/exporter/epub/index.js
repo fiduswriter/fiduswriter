@@ -5,8 +5,7 @@ import {
     containerTemplate,
     navTemplate,
     ncxTemplate,
-    opfTemplate,
-    xhtmlTemplate
+    opfTemplate
 } from "./templates"
 import {
     buildHierarchy,
@@ -17,12 +16,13 @@ import {
 
 export class EpubExporter extends HTMLExporter {
     constructor(doc, bibDB, imageDB, csl, updated, documentStyles) {
-        super(doc, bibDB, imageDB, csl, updated, documentStyles)
+        super(doc, bibDB, imageDB, csl, updated, documentStyles, {
+            xhtml: true,
+            epub: true
+        })
         // Overriden properties
         this.fileEnding = "epub"
         this.mimeType = "application/epub+zip"
-        this.xhtml = true
-        this.epub = true
     }
 
     createZip() {

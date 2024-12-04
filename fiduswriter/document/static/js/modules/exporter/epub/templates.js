@@ -79,7 +79,7 @@ export const ncxTemplate = ({shortLang, idType, id, title, toc}) =>
     `<?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="${shortLang}">
     <head>
-        <meta name="dtb:${idType}" content="${id}"/>
+        <meta name="dtb:${idType}" content="${id}" />
     </head>
     <docTitle>
         <text>${escapeText(title)}</text>
@@ -121,7 +121,7 @@ export const navTemplate = ({shortLang, toc, styleSheets}) =>
     `<?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="${shortLang}" lang="${shortLang}" xmlns:epub="http://www.idpf.org/2007/ops">
     <head>
-        <meta charset="utf-8"></meta>
+        <meta charset="utf-8" />
         <title>Navigation</title>
         ${styleSheets
             .map(
@@ -169,7 +169,7 @@ ${styleSheets
     )
     .join("")}
     </head>
-    <body class="${currentPart && currentPart.length ? `epub ${currentPart.toLowerCase().replace(/[^a-z]/g, "")} content` : "epub content"}"${currentPart && currentPart.length ? ` data-part="${escapeText(currentPart)}"` : ""} data-title="${escapeText(title)}">${
+    <body class="user-contents ${currentPart && currentPart.length ? `epub ${currentPart.toLowerCase().replace(/[^a-z]/g, "")} content` : "epub content"}"${currentPart && currentPart.length ? ` data-part="${escapeText(currentPart)}"` : ""} data-title="${escapeText(title)}">${
         part && part.length ? `<h1 class="part">${escapeText(part)}</h1>` : ""
     }${body}${
         copyright && copyright.holder

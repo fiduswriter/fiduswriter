@@ -1,14 +1,17 @@
 import {printHTML} from "@vivliostyle/print"
 import {addAlert, shortFileTitle} from "../../common"
 import {PAPER_SIZES} from "../../schema/const"
-import {OldHTMLExporter} from "../html_old"
+import {HTMLExporter} from "../html"
+import {HTMLExporterConvert} from "../html/convert"
 import {removeHidden} from "../tools/doc_content"
 
-export class PrintExporter extends OldHTMLExporter {
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB) {
-        super(schema, csl, documentStyles, doc, bibDB, imageDB)
+export class PrintExporter extends HTMLExporter {
+    constructor(doc, bibDB, imageDB, csl, updated, documentStyles) {
+        super(doc, bibDB, imageDB, csl, updated, documentStyles, {
+            replaceUrls: false
+        })
         this.styleSheets.push({
-            contents: `a.fn {
+            contents: `a.footnote, a.affiliation {
                 -adapt-template: url(data:application/xml,${encodeURI(
                     '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:s="http://www.pyroxy.com/ns/shadow"><head><style>.footnote-content{float:footnote}</style></head><body><s:template id="footnote"><s:content/><s:include class="footnote-content"/></s:template></body></html>#footnote'
                 )});
@@ -18,28 +21,20 @@ export class PrintExporter extends OldHTMLExporter {
                 font-size: 70%;
                 position: relative;
                 top: -0.3em;
-
             }
+            aside.footnote label:first-child, aside.footnote *:nth-child(2),
+            aside.affiliation label:first-child, aside.affiliation *:nth-child(2) {
+                display: inline;
+            }
+            aside.footnote label:first-child:after,
+            aside.affiliation label:first-child:after  {
+                content: '. '
+            }
+
             body, section[role=doc-footnotes] {
                 counter-reset: cat-figure cat-equation cat-photo cat-table footnote-counter footnote-marker-counter;
             }
-            section[role=doc-footnote] > *:first-child:before {
-                counter-increment: footnote-counter;
-                content: counter(footnote-counter) ". ";
-            }
-            section[role=doc-footnote] figure[data-category='figure'] caption label::after {
-                content: ' ' counter(cat-figure) 'A';
-            }
-            section[role=doc-footnote] figure[data-category='equation']::after {
-                content: ' ' counter(cat-equation) 'A';
-            }
-            section[role=doc-footnote] figure[data-category='photo']::after {
-                content: ' ' counter(cat-photo) 'A';
-            }
-            section[role=doc-footnote] figure[data-category='table']::after {
-                content: ' ' counter(cat-table) 'A';
-            }
-            section.fnlist {
+            section#affiliations, section#footnotes  {
                 display: none;
             }
             section:footnote-content {
@@ -89,46 +84,53 @@ export class PrintExporter extends OldHTMLExporter {
         })
     }
 
-    init() {
+    async init() {
         addAlert(
             "info",
             `${shortFileTitle(this.doc.title, this.doc.path)}: ${gettext("Printing has been initiated.")}`
         )
-        this.docContent = removeHidden(this.doc.content, false)
+        this.docContent = removeHidden(this.doc.content)
         this.addDocStyle(this.doc)
+        this.converter = new HTMLExporterConvert(
+            this.docTitle,
+            this.doc.settings,
+            this.docContent,
+            this.htmlExportTemplate,
+            this.imageDB,
+            this.bibDB,
+            this.csl,
+            this.styleSheets,
+            {
+                replaceUrls: false
+            }
+        )
+        await this.loadStyles()
+        const {html, metaData} = await this.converter.init()
 
-        return this.loadStyles()
-            .then(() => this.joinDocumentParts())
-            .then(() => this.fillToc())
-            .then(() => this.postProcess())
-            .then(({html, title}) => {
-                const config = {title}
+        const config = {title: metaData.title}
 
-                if (navigator.userAgent.includes("Gecko/")) {
-                    // Firefox has issues printing images when in iframe. This workaround can be
-                    // removed once that has been fixed. TODO: Add gecko bug number if there is one.
-                    config.printCallback = iframeWin => {
-                        const oldBody = document.body
-                        document.body.parentElement.dataset.vivliostylePaginated = true
-                        document.body = iframeWin.document.body
-                        document.body
-                            .querySelectorAll("figure, table")
-                            .forEach(el => delete el.dataset.category)
-                        iframeWin.document
-                            .querySelectorAll("style")
-                            .forEach(el => document.body.appendChild(el))
-                        const backgroundStyle = document.createElement("style")
-                        backgroundStyle.innerHTML =
-                            "body {background-color: white;}"
-                        document.body.appendChild(backgroundStyle)
-                        window.print()
-                        document.body = oldBody
-                        delete document.body.parentElement.dataset
-                            .vivliostylePaginated
-                    }
-                }
-                return printHTML(html, config)
-            })
+        if (navigator.userAgent.includes("Gecko/")) {
+            // Firefox has issues printing images when in iframe. This workaround can be
+            // removed once that has been fixed. TODO: Add gecko bug number if there is one.
+            config.printCallback = iframeWin => {
+                const oldBody = document.body
+                document.body.parentElement.dataset.vivliostylePaginated = true
+                document.body = iframeWin.document.body
+                document.body
+                    .querySelectorAll("figure, table")
+                    .forEach(el => delete el.dataset.category)
+                iframeWin.document
+                    .querySelectorAll("style")
+                    .forEach(el => document.body.appendChild(el))
+                const backgroundStyle = document.createElement("style")
+                backgroundStyle.innerHTML = "body {background-color: white;}"
+                document.body.appendChild(backgroundStyle)
+                window.print()
+                document.body = oldBody
+                delete document.body.parentElement.dataset.vivliostylePaginated
+            }
+        }
+        return printHTML(html, config)
     }
 
     addDocStyle(doc) {
@@ -136,19 +138,33 @@ export class PrintExporter extends OldHTMLExporter {
         const docStyle = this.documentStyles.find(
             docStyle => docStyle.slug === doc.settings.documentstyle
         )
-
         if (!docStyle) {
             return
         }
+
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(
             ([url, filename]) =>
-                (contents = contents.replace(new RegExp(filename, "g"), url))
+                (contents = contents.replace(
+                    new RegExp(filename, "g"),
+                    new URL(url, window.location).href
+                ))
         )
         this.styleSheets.push({contents})
     }
 
     loadStyles() {
+        if (this.converter.features.math) {
+            this.styleSheets.push({
+                filename: staticUrl("css/libs/mathlive/mathlive.css")
+            })
+        }
+        if (this.converter.citations.bibCSS.length) {
+            this.styleSheets.push({
+                contents: this.converter.citations.bibCSS
+            })
+        }
+
         this.styleSheets.forEach(sheet => {
             if (sheet.url) {
                 sheet.filename = sheet.url
@@ -157,22 +173,5 @@ export class PrintExporter extends OldHTMLExporter {
         })
 
         return Promise.resolve()
-    }
-
-    addMathliveStylesheet() {
-        this.styleSheets.push({
-            url: staticUrl("css/libs/mathlive/mathlive.css")
-        })
-    }
-
-    getFootnoteAnchor(counter) {
-        const footnoteAnchor = super.getFootnoteAnchor(counter)
-        // Add the counter directly into the footnote.
-        footnoteAnchor.innerHTML = counter
-        return footnoteAnchor
-    }
-
-    prepareBinaryFiles() {
-        // Not needed for print
     }
 }

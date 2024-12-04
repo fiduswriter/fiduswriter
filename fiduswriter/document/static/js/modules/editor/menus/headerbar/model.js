@@ -161,14 +161,14 @@ export const headerbarModel = () => ({
                         import("../../../exporter/print").then(
                             ({PrintExporter}) => {
                                 const exporter = new PrintExporter(
-                                    editor.schema,
-                                    editor.app.csl,
-                                    editor.mod.documentTemplate.documentStyles,
                                     editor.getDoc({
                                         changes: "acceptAllNoInsertions"
                                     }),
                                     editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl,
+                                    editor.docInfo.updated,
+                                    editor.mod.documentTemplate.documentStyles
                                 )
                                 exporter.init()
                             }

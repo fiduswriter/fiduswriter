@@ -4,6 +4,7 @@ import pretty from "pretty"
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 import {HTMLExporterCitations} from "./citations"
+import {displayNumber} from "./tools"
 
 export class HTMLExporterConvert {
     constructor(
@@ -15,8 +16,13 @@ export class HTMLExporterConvert {
         bibDB,
         csl,
         styleSheets,
-        xhtml = false,
-        epub = false
+        {
+            xhtml = false,
+            epub = false,
+            replaceUrls = true,
+            footnoteNumbering = "decimal",
+            affiliationNumbering = "alpha"
+        } = {}
     ) {
         this.docTitle = docTitle
         this.docSettings = docSettings
@@ -28,6 +34,9 @@ export class HTMLExporterConvert {
         this.styleSheets = styleSheets
         this.xhtml = xhtml
         this.epub = epub
+        this.replaceUrls = replaceUrls
+        this.footnoteNumbering = footnoteNumbering
+        this.affiliationNumbering = affiliationNumbering
 
         this.endSlash = this.xhtml ? "/" : ""
         this.imageIds = []
@@ -112,7 +121,8 @@ export class HTMLExporterConvert {
         return {
             html,
             imageIds: this.imageIds,
-            extraStyleSheets: this.extraStyleSheets
+            extraStyleSheets: this.extraStyleSheets,
+            metaData: this.metaData
         }
     }
 
@@ -213,7 +223,7 @@ export class HTMLExporterConvert {
                 })
                 .join(", ")
             if (authorString.length) {
-                head += `<meta name="author" content="${escapeText(authorString)}">`
+                head += `<meta name="author" content="${escapeText(authorString)}"${this.endSlash}>`
             }
         }
         if (this.metaData.copyright.holder) {
@@ -245,11 +255,18 @@ export class HTMLExporterConvert {
         }
         head += this.styleSheets
             .concat(this.extraStyleSheets)
-            .map(sheet =>
-                sheet.filename
+            .map(sheet => {
+                if (!sheet.filename && !sheet.contents) {
+                    console.warn(
+                        "No filename or contents for stylesheet.",
+                        sheet
+                    )
+                    return ""
+                }
+                return sheet.filename
                     ? `<link rel="stylesheet" type="text/css" href="${sheet.filename}"${this.endSlash}>`
                     : `<style>${sheet.contents}</style>`
-            )
+            })
             .join("")
         return head
     }
@@ -324,7 +341,11 @@ export class HTMLExporterConvert {
                                     this.affiliations[contributor.institution] =
                                         affNumber
                                 }
-                                output += `<a class="affiliation" href="#aff-${affNumber}">${affNumber}</a>`
+                                const affNumberDisplay = displayNumber(
+                                    affNumber,
+                                    this.affiliationNumbering
+                                )
+                                output += `<a class="affiliation" href="#aff-${affNumber}"${this.epub ? ' epub:type="noteref"' : ""}>${affNumberDisplay}</a>`
                             }
                             output += "</span>"
                         } else if (contributor.institution) {
@@ -413,8 +434,13 @@ export class HTMLExporterConvert {
                 start += "<li>"
                 end = "</li>" + end
                 break
-            case "footnote":
-                content += `<a class="footnote"${this.epub ? ' epub:type="noteref"' : ""} href="#fn-${++this.fnCounter}">${this.fnCounter}</a>`
+            case "footnote": {
+                const footnoteNumber = ++this.fnCounter
+                const footnoteNumberDisplay = displayNumber(
+                    footnoteNumber,
+                    this.footnoteNumbering
+                )
+                content += `<a class="footnote"${this.epub ? ' epub:type="noteref"' : ""} href="#fn-${footnoteNumber}">${footnoteNumberDisplay}</a>`
                 options = Object.assign({}, options)
                 options.inFootnote = true
                 this.footnotes.push(
@@ -422,8 +448,8 @@ export class HTMLExporterConvert {
                         {
                             type: "footnotecontainer",
                             attrs: {
-                                id: `fn-${this.fnCounter}`,
-                                label: this.fnCounter // Note: it's unclear whether the footnote number is required as a label
+                                id: `fn-${footnoteNumber}`,
+                                label: footnoteNumberDisplay // Note: it's unclear whether the footnote number is required as a label
                             },
                             content: node.attrs.footnote
                         },
@@ -431,8 +457,9 @@ export class HTMLExporterConvert {
                     )
                 )
                 break
+            }
             case "footnotecontainer":
-                start += `<aside class="footnote"${this.epub ? ' epub:type="footnote"' : ""} id="${node.attrs.id}"><label>${node.attrs.label}</label>`
+                start += `<aside class="footnote"${this.epub ? ' epub:type="footnote"' : ""} role="doc-footnote" id="${node.attrs.id}"><label>${node.attrs.label}</label>`
                 end = "</aside>" + end
                 break
             case "text": {
@@ -492,7 +519,7 @@ export class HTMLExporterConvert {
                 break
             }
             case "figure": {
-                let imageFilename, copyright
+                let imageUrl, copyright
                 const image =
                     node.content.find(node => node.type === "image")?.attrs
                         .image || false
@@ -501,7 +528,9 @@ export class HTMLExporterConvert {
                     const imageDBEntry = this.imageDB.db[image],
                         filePathName = imageDBEntry.image
                     copyright = imageDBEntry.copyright
-                    imageFilename = filePathName.split("/").pop()
+                    imageUrl = this.replaceUrls
+                        ? `images/${filePathName.split("/").pop()}`
+                        : filePathName
                 }
                 const caption = node.attrs.caption
                     ? node.content.find(node => node.type === "figure_caption")
@@ -509,11 +538,11 @@ export class HTMLExporterConvert {
                     : []
                 if (
                     node.attrs.category === "none" &&
-                    imageFilename &&
+                    imageUrl &&
                     !caption.length &&
                     (!copyright || !copyright.holder)
                 ) {
-                    content += `<img id="${node.attrs.id}" src="images/${imageFilename}"${this.endSlash}>`
+                    content += `<img id="${node.attrs.id}" class="aligned-${node.attrs.aligned} image-width-${node.attrs.width}" src="${imageUrl}"${this.endSlash}>`
                 } else {
                     start += `<figure
                         id="${node.attrs.id}"
@@ -573,8 +602,8 @@ export class HTMLExporterConvert {
                         end = "</math></div>" + end
                         content = convertLatexToMathMl(equation)
                     } else {
-                        if (imageFilename) {
-                            content += `<img src="images/${imageFilename}"${this.endSlash}>`
+                        if (imageUrl) {
+                            content += `<img src="${imageUrl}"${this.endSlash}>`
                         }
                     }
                 }
@@ -671,17 +700,17 @@ export class HTMLExporterConvert {
         ) {
             back += '<div id="back">'
             if (Object.keys(this.affiliations).length) {
-                back += `<div id="affiliations">${Object.entries(
+                back += `<section id="affiliations">${Object.entries(
                     this.affiliations
                 )
                     .map(
                         ([name, id]) =>
-                            `<aside class="affiliation" id="aff-${id}"><label>${id}</label> <div>${escapeText(name)}</div></aside>`
+                            `<aside class="affiliation" id="aff-${id}"${this.epub ? 'epub:type="footnote"' : ""}><label>${displayNumber(id, this.affiliationNumbering)}</label> <div>${escapeText(name)}</div></aside>`
                     )
-                    .join("")}</div>`
+                    .join("")}</section>`
             }
             if (this.footnotes.length) {
-                back += `<div id="footnotes">${this.footnotes.join("")}</div>`
+                back += `<section class="fnlist" role="doc-footnotes" id="footnotes">${this.footnotes.join("")}</section>`
             }
             if (this.citations.bibHTML.length) {
                 back += `<div id="references">${this.citations.bibHTML}</div>`

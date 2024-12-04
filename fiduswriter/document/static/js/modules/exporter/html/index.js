@@ -13,13 +13,24 @@ import {htmlExportTemplate} from "./templates"
 */
 
 export class HTMLExporter {
-    constructor(doc, bibDB, imageDB, csl, updated, documentStyles) {
+    constructor(
+        doc,
+        bibDB,
+        imageDB,
+        csl,
+        updated,
+        documentStyles,
+        {xhtml = false, epub = false, replaceUrls = true} = {}
+    ) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.csl = csl
         this.updated = updated
         this.documentStyles = documentStyles
+        this.xhtml = xhtml
+        this.epub = epub
+        this.replaceUrls = replaceUrls
 
         this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
 
@@ -28,18 +39,17 @@ export class HTMLExporter {
         this.textFiles = []
         this.httpFiles = []
         this.includeZips = []
-        // Stylesheets can have:
-        // a url - which means they will be fetched before they are included as a separate file
-        // a filename and contents - which means they will be included as a separate file
-        // only contents - which means they will be incldued inside <style></style> tags in the document header
-        // only filename - which means they will be referenced as a sepaarte file. You need to add the file yourself.
+        this.metaData = {} // Information to be used in sub classes.
+        // Stylesheets will have one of:
+        // * a url - which means they will be fetched before they are included as a separate file
+        // * a filename and contents - which means they will be included as a separate file
+        // * only contents - which means they will be incldued inside <style></style> tags in the document header
+        // * only filename - which means they will be referenced as a separate file. You need to add the file yourself.
         this.styleSheets = [{url: staticUrl("css/document.css")}]
         // To override in subclasses
         this.htmlExportTemplate = htmlExportTemplate
         this.fileEnding = "html.zip"
         this.mimeType = "application/zip"
-        this.xhtml = false
-        this.epub = false
     }
 
     async init() {
@@ -55,16 +65,20 @@ export class HTMLExporter {
             this.bibDB,
             this.csl,
             this.styleSheets,
-            this.xhtml,
-            this.epub
+            {
+                xhtml: this.xhtml,
+                epub: this.epub,
+                replaceUrls: this.replaceUrls
+            }
         )
+        await this.loadStyles()
 
-        const {html, imageIds, extraStyleSheets} = await this.converter.init()
-
+        const {html, imageIds, metaData, extraStyleSheets} =
+            await this.converter.init()
+        this.metaData = metaData
         this.addDoc(html)
         this.addImages(imageIds)
         this.styleSheets = this.styleSheets.concat(extraStyleSheets)
-        await this.loadStyles()
         await this.createZip()
     }
 

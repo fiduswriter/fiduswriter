@@ -1,6 +1,8 @@
 import time
 import sys
 import multiprocessing
+from tempfile import mkdtemp
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -30,7 +32,8 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_data = cls.get_drivers(2)
+        cls.download_dir = mkdtemp()
+        driver_data = cls.get_drivers(2, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
         cls.client = driver_data["clients"][0]
@@ -641,12 +644,12 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
             "//span[contains(@title,'Export the document to an HTML file.')]",
         ).click()
 
-        # Check that the alert box is displayed.
-        alert_element = WebDriverWait(self.driver, self.wait_time).until(
-            EC.visibility_of_element_located((By.CLASS_NAME, "alerts-info"))
-        )
-        self.assertEqual(alert_element.is_displayed(), True)
-        time.sleep(1)
+        # Check that the file has downloaded.
+        path = os.path.join(self.download_dir, "my-title.html.zip")
+        self.wait_until_file_exists(path, self.wait_time)
+        assert os.path.isfile(path)
+        os.remove(path)
+
         # Check the same for PDF export too !
         # Click on the file menu
         self.driver.find_element(

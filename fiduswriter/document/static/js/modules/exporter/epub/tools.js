@@ -1,5 +1,3 @@
-import {CATS} from "../../schema/i18n"
-
 export function getTimestamp(date) {
     let second = date.getUTCSeconds()
     let minute = date.getUTCMinutes()

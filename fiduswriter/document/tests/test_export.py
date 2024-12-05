@@ -390,20 +390,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Document with many features has been created let's see if we can
         # export it from the editor.
 
-        # HTML (old)
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]',
-        ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="HTML (old)"]'
-        ).click()
-        path = os.path.join(self.download_dir, "title.html.zip")
-        self.wait_until_file_exists(path, self.wait_time)
-        assert os.path.isfile(path)
-        os.remove(path)
-
-        # HTML (new)
+        # HTML
         self.driver.find_element(
             By.CSS_SELECTOR,
             '.header-nav-item[title="Export of the document contents"]',
@@ -547,19 +534,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         assert os.path.isfile(path)
         os.remove(path)
 
-        # HTML (old)
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
-        ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Export selected as HTML (old)"]'
-        ).click()
-        path = os.path.join(self.download_dir, "title.html.zip")
-        self.wait_until_file_exists(path, self.wait_time)
-        assert os.path.isfile(path)
-        os.remove(path)
-
-        # HTML (new)
+        # HTML
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()

@@ -186,34 +186,10 @@ export const headerbarModel = () => ({
             keys: "Alt-e",
             content: [
                 {
-                    title: gettext("HTML (old)"),
-                    type: "action",
-                    tooltip: gettext("Export the document to an HTML file."),
-                    order: 0,
-                    action: editor => {
-                        import("../../../exporter/html_old").then(
-                            ({OldHTMLExporter}) => {
-                                const exporter = new OldHTMLExporter(
-                                    editor.schema,
-                                    editor.app.csl,
-                                    editor.mod.documentTemplate.documentStyles,
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.docInfo.updated
-                                )
-                                exporter.init()
-                            }
-                        )
-                    }
-                },
-                {
                     title: gettext("HTML"),
                     type: "action",
                     tooltip: gettext("Export the document to an HTML file."),
-                    order: 0.5,
+                    order: 0,
                     action: editor => {
                         import("../../../exporter/html").then(
                             ({HTMLExporter}) => {

@@ -92,21 +92,6 @@ export const bulkMenuModel = () => ({
             order: 3
         },
         {
-            title: gettext("Export selected as HTML (old)"),
-            tooltip: gettext(
-                "Export the documents that have been selected as HTML files."
-            ),
-            action: overview => {
-                const ids = overview.getSelected()
-                if (ids.length) {
-                    overview.mod.actions.downloadOldHTMLFiles(ids)
-                }
-            },
-            disabled: overview =>
-                !overview.getSelected().length || overview.app.isOffline(),
-            order: 4
-        },
-        {
             title: gettext("Export selected as HTML"),
             tooltip: gettext(
                 "Export the documents that have been selected as HTML files."
@@ -119,7 +104,7 @@ export const bulkMenuModel = () => ({
             },
             disabled: overview =>
                 !overview.getSelected().length || overview.app.isOffline(),
-            order: 4.5
+            order: 4
         },
         {
             title: gettext("Export selected as LaTeX"),

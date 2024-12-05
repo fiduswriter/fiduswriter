@@ -494,32 +494,6 @@ export class DocumentOverviewActions {
         )
     }
 
-    downloadOldHTMLFiles(ids) {
-        getMissingDocumentListData(
-            ids,
-            this.documentOverview.documentList,
-            this.documentOverview.schema
-        ).then(() =>
-            ids.forEach(id => {
-                const doc = this.documentOverview.documentList.find(
-                    entry => entry.id === id
-                )
-                import("../../exporter/html_old").then(({OldHTMLExporter}) => {
-                    const exporter = new OldHTMLExporter(
-                        this.documentOverview.schema,
-                        this.documentOverview.app.csl,
-                        this.documentOverview.documentStyles,
-                        doc,
-                        {db: doc.bibliography},
-                        {db: doc.images},
-                        new Date(doc.updated * 1000)
-                    )
-                    exporter.init()
-                })
-            })
-        )
-    }
-
     downloadHTMLFiles(ids) {
         getMissingDocumentListData(
             ids,

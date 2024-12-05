@@ -20,7 +20,7 @@ export class HTMLExporter {
         csl,
         updated,
         documentStyles,
-        {xhtml = false, epub = false, replaceUrls = true} = {}
+        {xhtml = false, epub = false, relativeUrls = true} = {}
     ) {
         this.doc = doc
         this.bibDB = bibDB
@@ -30,7 +30,7 @@ export class HTMLExporter {
         this.documentStyles = documentStyles
         this.xhtml = xhtml
         this.epub = epub
-        this.replaceUrls = replaceUrls
+        this.relativeUrls = relativeUrls
 
         this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
 
@@ -40,12 +40,6 @@ export class HTMLExporter {
         this.httpFiles = []
         this.includeZips = []
         this.metaData = {} // Information to be used in sub classes.
-        // Stylesheets will have one of:
-        // * a url - which means they will be fetched before they are included as a separate file
-        // * a filename and contents - which means they will be included as a separate file
-        // * only contents - which means they will be incldued inside <style></style> tags in the document header
-        // * only filename - which means they will be referenced as a separate file. You need to add the file yourself.
-        this.styleSheets = [{url: staticUrl("css/document.css")}]
         // To override in subclasses
         this.htmlExportTemplate = htmlExportTemplate
         this.fileEnding = "html.zip"
@@ -55,7 +49,22 @@ export class HTMLExporter {
     async init() {
         this.zipFileName = `${createSlug(this.docTitle)}.${this.fileEnding}`
         this.docContent = removeHidden(this.doc.content)
-        this.addDocStyle(this.doc)
+        // Stylesheets will have one of:
+        // * a url - which means they will be fetched before they are included as a separate file
+        // * a filename and contents - which means they will be included as a separate file
+        // * only contents - which means they will be incldued inside <style></style> tags in the document header
+        // * only filename - which means they will be referenced as a separate file. You need to add the file yourself.
+        const styleSheets = [{url: staticUrl("css/document.css")}]
+
+        const docStyle = this.getDocStyle(this.doc)
+
+        if (docStyle) {
+            styleSheets.push(docStyle)
+        }
+        await Promise.all(
+            styleSheets.map(async sheet => await this.loadStyle(sheet))
+        )
+
         this.converter = new HTMLExporterConvert(
             this.docTitle,
             this.doc.settings,
@@ -64,21 +73,27 @@ export class HTMLExporter {
             this.imageDB,
             this.bibDB,
             this.csl,
-            this.styleSheets,
+            styleSheets,
             {
                 xhtml: this.xhtml,
                 epub: this.epub,
-                replaceUrls: this.replaceUrls
+                relativeUrls: this.relativeUrls
             }
         )
-        await this.loadStyles()
-
         const {html, imageIds, metaData, extraStyleSheets} =
             await this.converter.init()
         this.metaData = metaData
+        if (this.converter.features.math) {
+            this.includeZips.push({
+                directory: "css",
+                url: staticUrl("zip/mathlive_style.zip")
+            })
+        }
         this.addDoc(html)
         this.addImages(imageIds)
-        this.styleSheets = this.styleSheets.concat(extraStyleSheets)
+        await Promise.all(
+            extraStyleSheets.map(async sheet => await this.loadStyle(sheet))
+        )
         await this.createZip()
     }
 
@@ -99,7 +114,7 @@ export class HTMLExporter {
         })
     }
 
-    addDocStyle(doc) {
+    getDocStyle(doc) {
         const docStyle = this.documentStyles.find(
             docStyle => docStyle.slug === doc.settings.documentstyle
         )
@@ -107,7 +122,7 @@ export class HTMLExporter {
         // The files will be in the base directory. The filenames of
         // DocumentStyleFiles will therefore not need to replaced with their URLs.
         if (!docStyle) {
-            return
+            return false
         }
         let contents = docStyle.contents
         docStyle.documentstylefile_set.forEach(
@@ -117,44 +132,27 @@ export class HTMLExporter {
                     `media/${filename}`
                 ))
         )
-        this.styleSheets.push({contents, filename: `css/${docStyle.slug}.css`})
         this.httpFiles = this.httpFiles.concat(
             docStyle.documentstylefile_set.map(([url, filename]) => ({
                 filename: `css/media/${filename}`,
                 url
             }))
         )
+        return {contents, filename: `css/${docStyle.slug}.css`}
     }
 
-    async loadStyles() {
-        const p = []
-        this.styleSheets.forEach(sheet => {
-            if (sheet.url) {
-                p.push(this.getStyleSheet(sheet))
-            }
-        })
-        await Promise.all(p)
-
-        this.styleSheets.forEach(styleSheet => {
-            if (styleSheet.filename) {
-                this.textFiles.push(styleSheet)
-            }
-        })
-
-        if (this.converter.features.math) {
-            this.includeZips.push({
-                directory: "css",
-                url: staticUrl("zip/mathlive_style.zip")
-            })
+    async loadStyle(sheet) {
+        if (sheet.url) {
+            const response = await get(sheet.url)
+            const text = await response.text()
+            sheet.contents = text
+            sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`
+            delete sheet.url
         }
-    }
-
-    async getStyleSheet(sheet) {
-        const response = await get(sheet.url)
-        const text = await response.text()
-        sheet.contents = text
-        sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`
-        delete sheet.url
+        if (sheet.filename) {
+            this.textFiles.push(sheet)
+        }
+        return Promise.resolve(sheet)
     }
 
     async createZip() {

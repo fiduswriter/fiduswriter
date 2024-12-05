@@ -19,7 +19,7 @@ export class HTMLExporterConvert {
         {
             xhtml = false,
             epub = false,
-            replaceUrls = true,
+            relativeUrls = true, // Whether to use relative urls for images, css files, etc. Is used when bundled in HTML. Not in print.
             footnoteNumbering = "decimal",
             affiliationNumbering = "alpha"
         } = {}
@@ -34,7 +34,7 @@ export class HTMLExporterConvert {
         this.styleSheets = styleSheets
         this.xhtml = xhtml
         this.epub = epub
-        this.replaceUrls = replaceUrls
+        this.relativeUrls = relativeUrls
         this.footnoteNumbering = footnoteNumbering
         this.affiliationNumbering = affiliationNumbering
 
@@ -97,14 +97,18 @@ export class HTMLExporterConvert {
 
         if (this.citations.bibCSS.length) {
             this.extraStyleSheets.push({
-                filename: "css/bibliography.css",
+                filename: this.relativeUrls ? "css/bibliography.css" : null,
                 contents: pretty(this.citations.bibCSS, {
                     ocd: true
                 })
             })
         }
         if (this.features.math) {
-            this.extraStyleSheets.push({filename: "css/mathlive.css"})
+            this.extraStyleSheets.push({
+                filename: this.relativeUrls
+                    ? "css/mathlive.css"
+                    : staticUrl("css/libs/mathlive/mathlive.css")
+            })
         }
         const body = this.assembleBody()
         const back = this.assembleBack()
@@ -528,7 +532,7 @@ export class HTMLExporterConvert {
                     const imageDBEntry = this.imageDB.db[image],
                         filePathName = imageDBEntry.image
                     copyright = imageDBEntry.copyright
-                    imageUrl = this.replaceUrls
+                    imageUrl = this.relativeUrls
                         ? `images/${filePathName.split("/").pop()}`
                         : filePathName
                 }

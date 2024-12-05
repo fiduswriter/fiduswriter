@@ -80,6 +80,10 @@ export class EpubExporter extends HTMLExporter {
             )
             .filter(file => file.mimeType)
 
+        const styleSheets = this.textFiles.filter(file =>
+            file.filename.endsWith(".css")
+        )
+
         // Extract authors and keywords from metaData
         const authors = this.converter.metaData.authors.map(
             ({attrs: author}) => {
@@ -106,7 +110,7 @@ export class EpubExporter extends HTMLExporter {
             id: this.doc.id,
             date: timestamp.slice(0, 10),
             modified: timestamp,
-            styleSheets: this.styleSheets,
+            styleSheets,
             math: this.converter.features.math,
             images,
             fontFiles,
@@ -125,10 +129,13 @@ export class EpubExporter extends HTMLExporter {
     }
 
     createNav() {
+        const styleSheets = this.textFiles.filter(file =>
+            file.filename.endsWith(".css")
+        )
         return navTemplate({
             shortLang: this.shortLang,
             toc: buildHierarchy(this.converter.metaData.toc),
-            styleSheets: this.styleSheets
+            styleSheets
         })
     }
 }

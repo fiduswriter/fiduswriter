@@ -32,8 +32,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.download_dir = mkdtemp()
-        driver_data = cls.get_drivers(2, cls.download_dir)
+        driver_data = cls.get_drivers(2)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
         cls.client = driver_data["clients"][0]
@@ -523,7 +522,8 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_data = cls.get_drivers(1)
+        cls.download_dir = mkdtemp()
+        driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
         cls.wait_time = driver_data["wait_time"]

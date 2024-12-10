@@ -21,7 +21,11 @@ export class HTMLExporterConvert {
             epub = false,
             relativeUrls = true, // Whether to use relative urls for images, css files, etc. Is used when bundled in HTML. Not in print.
             footnoteNumbering = "decimal",
-            affiliationNumbering = "alpha"
+            affiliationNumbering = "alpha",
+            idPrefix = "",
+            footnoteOffset = 0,
+            affiliationOffset = 0,
+            figureOffset = {}
         } = {}
     ) {
         this.docTitle = docTitle
@@ -42,14 +46,14 @@ export class HTMLExporterConvert {
         this.imageIds = []
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
         this.affiliations = {} // affiliations of authors and editors
-        this.affCounter = 0
         this.parCounter = 0
         this.headingCounter = 0
         this.currentSectionLevel = 0
         this.listCounter = 0
         this.orderedListLengths = []
         this.footnotes = []
-        this.fnCounter = 0
+        this.fnCounter = footnoteOffset
+        this.affCounter = affiliationOffset
         this.metaData = {
             title: this.docTitle,
             authors: [],
@@ -73,6 +77,8 @@ export class HTMLExporterConvert {
         this.citInfos = []
         this.citationCount = 0
         this.extraStyleSheets = []
+        this.idPrefix = idPrefix
+        this.categoryCounter = Object.assign({}, figureOffset)
     }
 
     init() {
@@ -296,11 +302,11 @@ export class HTMLExporterConvert {
             case "doc":
                 break
             case "title":
-                start += '<div class="doc-part doc-title" id="title">'
+                start += `<div class="doc-part doc-title" id="${this.idPrefix}title">`
                 end = "</div>" + end
                 break
             case "heading_part":
-                start += `<div class="doc-part doc-heading doc-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                start += `<div class="doc-part doc-heading doc-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${this.idPrefix}${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                 end = "</div>" + end
                 break
             case "contributor":
@@ -308,7 +314,7 @@ export class HTMLExporterConvert {
                 break
             case "contributors_part":
                 if (node.content) {
-                    start += `<div class="doc-part doc-contributors doc-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                    start += `<div class="doc-part doc-contributors doc-${node.attrs.id} ${node.attrs.metadata || "other"}" id="${this.idPrefix}${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                     end = "</div>" + end
                     let counter = 0
                     const contributorOutputs = []
@@ -316,7 +322,7 @@ export class HTMLExporterConvert {
                         const contributor = childNode.attrs
                         let output = ""
                         if (contributor.firstname || contributor.lastname) {
-                            output += `<span id="${node.attrs.id}-${counter++}" class="person">`
+                            output += `<span id="${this.idPrefix}${node.attrs.id}-${counter++}" class="person">`
                             const nameParts = []
                             if (contributor.firstname) {
                                 nameParts.push(
@@ -355,7 +361,7 @@ export class HTMLExporterConvert {
                         } else if (contributor.institution) {
                             // There is an affiliation but no first/last name. We take this
                             // as a group collaboration.
-                            output += `<span id="${node.attrs.id}-${counter++}" class="group">`
+                            output += `<span id="${this.idPrefix}${node.attrs.id}-${counter++}" class="group">`
                             output += `<span class="name">${escapeText(contributor.institution)}</span>`
                             output += "</span>"
                         }
@@ -366,7 +372,7 @@ export class HTMLExporterConvert {
                 break
             case "tags_part":
                 if (node.content) {
-                    start += `<div class="doc-part doc-tags doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                    start += `<div class="doc-part doc-tags doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${this.idPrefix}${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                     end = "</div>" + end
                 }
                 break
@@ -375,7 +381,7 @@ export class HTMLExporterConvert {
                 break
             case "richtext_part":
                 if (node.content) {
-                    start += `<div class="doc-part doc-richtext doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                    start += `<div class="doc-part doc-richtext doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${this.idPrefix}${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                     end = "</div>" + end
                 }
                 break
@@ -390,16 +396,16 @@ export class HTMLExporterConvert {
                 end += "</div>"
                 break
             case "separator_part":
-                content += `<hr class="doc-part doc-separator doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}">`
+                content += `<hr class="doc-part doc-separator doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${this.idPrefix}${node.attrs.id}">`
                 break
             case "table_part":
                 if (node.content) {
-                    start += `<div class="doc-part doc-table doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
+                    start += `<div class="doc-part doc-table doc-${node.attrs.id} doc-${node.attrs.metadata || "other"}" id="${this.idPrefix}${node.attrs.id}"${node.attrs.language ? ` lang="${node.attrs.language}"` : ""}>`
                     end = "</div>" + end
                 }
                 break
             case "paragraph":
-                start += `<p id="p-${++this.parCounter}">`
+                start += `<p id="${this.idPrefix}p-${++this.parCounter}">`
                 end = "</p>" + end
                 break
             case "heading1":
@@ -409,7 +415,7 @@ export class HTMLExporterConvert {
             case "heading5":
             case "heading6": {
                 const level = Number.parseInt(node.type.slice(-1))
-                start += `<h${level} id="${node.attrs.id}">`
+                start += `<h${level} id="${this.idPrefix}${node.attrs.id}">`
                 end = `</h${level}>` + end
                 break
             }
@@ -423,15 +429,15 @@ export class HTMLExporterConvert {
                 break
             case "ordered_list": {
                 if (node.attrs.order == 1) {
-                    start += `<ol id="list-${++this.listCounter}">`
+                    start += `<ol id="${this.idPrefix}list-${++this.listCounter}">`
                 } else {
-                    start += `<ol id="list-${++this.listCounter}" start="${node.attrs.order}">`
+                    start += `<ol id="${this.idPrefix}list-${++this.listCounter}" start="${node.attrs.order}">`
                 }
                 end = "</ol>" + end
                 break
             }
             case "bullet_list":
-                start += `<ul id="list-${++this.listCounter}">`
+                start += `<ul id="${this.idPrefix}list-${++this.listCounter}">`
                 end = "</ul>" + end
                 break
             case "list_item":
@@ -463,7 +469,7 @@ export class HTMLExporterConvert {
                 break
             }
             case "footnotecontainer":
-                start += `<aside class="footnote"${this.epub ? ' epub:type="footnote"' : ""} role="doc-footnote" id="${node.attrs.id}"><label>${node.attrs.label}</label>`
+                start += `<aside class="footnote"${this.epub ? ' epub:type="footnote"' : ""} role="doc-footnote" id="${this.idPrefix}${node.attrs.id}"><label>${node.attrs.label}</label>`
                 end = "</aside>" + end
                 break
             case "text": {
@@ -490,14 +496,18 @@ export class HTMLExporterConvert {
                     end = "</span>" + end
                 }
                 if (hyperlink) {
-                    start += `<a href="${hyperlink.attrs.href}">`
+                    const href = hyperlink.attrs.href
+                    const link = href.startsWith("#")
+                        ? `#${this.idPrefix}${href.slice(1)}`
+                        : href
+                    start += `<a href="${link}">`
                     end = "</a>" + end
                 }
                 content += escapeText(node.text).normalize("NFC")
                 break
             }
             case "cross_reference": {
-                start += `<a class="reference" href="#${node.attrs.id}">`
+                start += `<a class="reference" href="#${this.idPrefix}${node.attrs.id}">`
                 content += escapeText(node.attrs.title || "MISSING TARGET")
                 end = "</a>" + end
                 break
@@ -517,7 +527,7 @@ export class HTMLExporterConvert {
                 } else {
                     content += `<a class="footnote"${this.epub ? 'epub:type="noteref" ' : ""} href="#fn-${++this.fnCounter}">${this.fnCounter}</a>`
                     this.footnotes.push(
-                        `<aside class="footnote"${this.epub ? 'epub:type="footnote" ' : ""} id="fn-${this.fnCounter}"><label>${this.fnCounter}</label><p id="p-${++this.parCounter}">${citationText}</p></aside>`
+                        `<aside class="footnote"${this.epub ? 'epub:type="footnote" ' : ""} id="fn-${this.fnCounter}"><label>${this.fnCounter}</label><p id="${this.idPrefix}p-${++this.parCounter}">${citationText}</p></aside>`
                     )
                 }
                 break
@@ -546,10 +556,10 @@ export class HTMLExporterConvert {
                     !caption.length &&
                     (!copyright || !copyright.holder)
                 ) {
-                    content += `<img id="${node.attrs.id}" class="aligned-${node.attrs.aligned} image-width-${node.attrs.width}" src="${imageUrl}"${this.endSlash}>`
+                    content += `<img id="${this.idPrefix}${node.attrs.id}" class="aligned-${node.attrs.aligned} image-width-${node.attrs.width}" src="${imageUrl}"${this.endSlash}>`
                 } else {
                     start += `<figure
-                        id="${node.attrs.id}"
+                        id="${this.idPrefix}${node.attrs.id}"
                         class="aligned-${node.attrs.aligned} image-width-${node.attrs.width}"
                         data-aligned="${node.attrs.aligned}"
                         data-width="${node.attrs.width}"
@@ -692,7 +702,7 @@ export class HTMLExporterConvert {
     }
 
     assembleBody() {
-        return `<div id="body">${this.walkJson(this.docContent)}</div>`
+        return `<div id="${this.idPrefix}body">${this.walkJson(this.docContent)}</div>`
     }
 
     assembleBack() {
@@ -702,9 +712,9 @@ export class HTMLExporterConvert {
             this.citations.bibHTML.length ||
             Object.keys(this.affiliations).length
         ) {
-            back += '<div id="back">'
+            back += `<div id="${this.idPrefix}back">`
             if (Object.keys(this.affiliations).length) {
-                back += `<section id="affiliations">${Object.entries(
+                back += `<section id="${this.idPrefix}affiliations" class="affiliations">${Object.entries(
                     this.affiliations
                 )
                     .map(
@@ -714,10 +724,10 @@ export class HTMLExporterConvert {
                     .join("")}</section>`
             }
             if (this.footnotes.length) {
-                back += `<section class="fnlist" role="doc-footnotes" id="footnotes">${this.footnotes.join("")}</section>`
+                back += `<section class="fnlist footnotes" role="doc-footnotes" id="${this.idPrefix}footnotes">${this.footnotes.join("")}</section>`
             }
             if (this.citations.bibHTML.length) {
-                back += `<div id="references">${this.citations.bibHTML}</div>`
+                back += `<div id="${this.idPrefix}references" class="references">${this.citations.bibHTML}</div>`
             }
             back += "</div>"
         }

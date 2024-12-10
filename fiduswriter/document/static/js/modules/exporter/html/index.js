@@ -20,7 +20,8 @@ export class HTMLExporter {
         csl,
         updated,
         documentStyles,
-        {xhtml = false, epub = false, relativeUrls = true} = {}
+        converterOptions = {},
+        template = htmlExportTemplate
     ) {
         this.doc = doc
         this.bibDB = bibDB
@@ -28,9 +29,7 @@ export class HTMLExporter {
         this.csl = csl
         this.updated = updated
         this.documentStyles = documentStyles
-        this.xhtml = xhtml
-        this.epub = epub
-        this.relativeUrls = relativeUrls
+        this.converterOptions = converterOptions
 
         this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
 
@@ -41,12 +40,19 @@ export class HTMLExporter {
         this.includeZips = []
         this.metaData = {} // Information to be used in sub classes.
         // To override in subclasses
-        this.htmlExportTemplate = htmlExportTemplate
+        this.htmlExportTemplate = template
+        this.contentFileName = "document.html"
         this.fileEnding = "html.zip"
         this.mimeType = "application/zip"
     }
 
     async init() {
+        await this.process()
+        await this.createZip()
+    }
+
+    async process() {
+        // Process the document and prepare files
         this.zipFileName = `${createSlug(this.docTitle)}.${this.fileEnding}`
         this.docContent = removeHidden(this.doc.content)
         // Stylesheets will have one of:
@@ -74,11 +80,7 @@ export class HTMLExporter {
             this.bibDB,
             this.csl,
             styleSheets,
-            {
-                xhtml: this.xhtml,
-                epub: this.epub,
-                relativeUrls: this.relativeUrls
-            }
+            this.converterOptions
         )
         const {html, imageIds, metaData, extraStyleSheets} =
             await this.converter.init()
@@ -94,12 +96,23 @@ export class HTMLExporter {
         await Promise.all(
             extraStyleSheets.map(async sheet => await this.loadStyle(sheet))
         )
-        await this.createZip()
+    }
+
+    getProcessedFiles() {
+        // Return the processed files and metadata. Used when using the
+        // exporter in a different context than creating a zip file.
+        return {
+            textFiles: this.textFiles,
+            httpFiles: this.httpFiles,
+            includeZips: this.includeZips,
+            metaData: this.metaData,
+            converter: this.converter
+        }
     }
 
     addDoc(html) {
         this.textFiles.push({
-            filename: this.xhtml ? "document.xhtml" : "document.html",
+            filename: this.contentFileName,
             contents: pretty(html, {ocd: true})
         })
     }

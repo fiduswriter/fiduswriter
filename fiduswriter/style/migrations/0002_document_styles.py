@@ -4,15 +4,15 @@ from django.db import migrations
 
 
 def article_to_doc_selector(apps, schema_editor):
-    BookStyle = apps.get_model("book", "BookStyle")
-    for style in BookStyle.objects.all():
+    DocumentStyle = apps.get_model("style", "DocumentStyle")
+    for style in DocumentStyle.objects.all():
         style.contents = style.contents.replace(".article-", ".doc-")
         style.save()
 
 
 def doc_to_article_selector(apps, schema_editor):
-    BookStyle = apps.get_model("book", "BookStyle")
-    for style in BookStyle.objects.all():
+    DocumentStyle = apps.get_model("style", "DocumentStyle")
+    for style in DocumentStyle.objects.all():
         style.contents = style.contents.replace(".doc-", ".article-")
         style.save()
 

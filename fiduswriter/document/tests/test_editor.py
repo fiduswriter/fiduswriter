@@ -51,6 +51,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
     def tearDown(self):
+        self.driver.execute_script("window.localStorage.clear()")
+        self.driver.execute_script("window.sessionStorage.clear()")
         super().tearDown()
         empty_outbox(MAIL_STORAGE_NAME)
         if "coverage" in sys.modules.keys():
@@ -1203,7 +1205,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             2
         ].click()
         self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
-        time.sleep(1)
+        time.sleep(self.wait_time)
         self.assertEqual(
             len(
                 self.driver.find_elements(

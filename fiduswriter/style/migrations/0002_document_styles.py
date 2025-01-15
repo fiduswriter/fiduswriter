@@ -19,7 +19,7 @@ def doc_to_article_selector(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("style", "0001_initial"),
+        ("style", "0001_squashed_20200219"),
     ]
 
     operations = [

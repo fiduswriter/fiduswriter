@@ -50,7 +50,7 @@ def get_outbox(mail_storage_name=None):
     else:
         mail_storage = MAIL_STORAGE_BASE
     storage = shelve.open(mail_storage)
-    outbox = storage[OUTBOX]
+    outbox = storage.get(OUTBOX, [])
     storage.close()
     logger.info(f"Mailbox length: {len(outbox)}")
     return outbox

@@ -7,7 +7,6 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromiumService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -26,6 +25,8 @@ class SeleniumHelper(object):
     """
     Methods for manipulating django and the browser for testing purposes.
     """
+
+    login_page = "/"
 
     def find_urls(self, string):
         return re.findall(
@@ -64,7 +65,7 @@ class SeleniumHelper(object):
         logger.debug("cookie: %s" % cookie.value)
         if driver.current_url == "data:,":
             # To set the cookie at the right domain we load the front page.
-            driver.get("%s%s" % (self.live_server_url, "/"))
+            driver.get("%s%s" % (self.live_server_url, self.login_page))
             WebDriverWait(driver, self.wait_time).until(
                 EC.presence_of_element_located((By.ID, "id-login"))
             )

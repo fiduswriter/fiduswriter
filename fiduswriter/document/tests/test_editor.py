@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
 
 from django.conf import settings
 from django.test import override_settings
@@ -58,6 +59,58 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         if "coverage" in sys.modules.keys():
             # Cool down
             time.sleep(self.wait_time / 3)
+
+    def check_document_count(self, expected_count, timeout=10):
+        """
+        Check if the number of documents matches the expected count.
+
+        Args:
+            expected_count (int): The expected number of documents
+            timeout (int): Maximum time to wait in seconds
+
+        Returns:
+            bool: True if assertion passes, False if it fails
+        """
+
+        def document_count_matches(driver):
+            documents = driver.find_elements(
+                By.CSS_SELECTOR,
+                ".fw-contents tbody tr a.fw-data-table-title",
+            )
+            return len(documents) == expected_count
+
+        try:
+            WebDriverWait(self.driver, timeout).until(document_count_matches)
+            return True
+        except TimeoutException:
+            documents = self.driver.find_elements(
+                By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
+            )
+            actual_count = len(documents)
+            raise AssertionError(
+                f"Expected {expected_count} documents, but found {actual_count}"
+            )
+
+    def assert_with_retry(self, func, *args, max_attempts=3, wait_between=1):
+        """
+        Retry an assertion multiple times before failing.
+
+        Args:
+            func: The function to retry
+            *args: Arguments to pass to the function
+            max_attempts (int): Number of attempts before failing
+            wait_between (int): Seconds to wait between attempts
+        """
+        for attempt in range(max_attempts):
+            try:
+                func(*args)
+                return
+            except AssertionError as e:
+                if attempt == max_attempts - 1:
+                    raise AssertionError(
+                        f"Failed after {max_attempts} attempts. Last error: {str(e)}"
+                    )
+                time.sleep(wait_between)
 
     def test_crossrefs_and_internal_links(self):
         self.driver.get(self.base_url)
@@ -719,10 +772,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         )
         time.sleep(1)
+        self.assert_with_retry(self.check_document_count, 1)
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
+
         documents[0].click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
@@ -756,10 +810,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         )
         time.sleep(1)
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
+
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()
@@ -1010,10 +1062,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 1)
+        self.assert_with_retry(self.check_document_count, 1)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
@@ -1031,10 +1080,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         invitation_link = self.find_urls(user5_invitation_email)[0]
         self.driver.get(invitation_link)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
@@ -1049,10 +1095,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 1)
+        self.assert_with_retry(self.check_document_count, 1)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
@@ -1070,10 +1113,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         invitation_link = self.find_urls(user6_invitation_email)[0]
         self.driver.get(invitation_link)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
@@ -1088,10 +1128,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
@@ -1107,10 +1144,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         read_access_rights = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-read"
         )
@@ -1137,10 +1171,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         time.sleep(1)
         doc_texts = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-searchable"
@@ -1167,10 +1198,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-write"
         ).click()
@@ -1205,7 +1233,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             2
         ].click()
         self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
-        time.sleep(self.wait_time)
+        time.sleep(self.wait_time / 3)
         self.assertEqual(
             len(
                 self.driver.find_elements(
@@ -1226,10 +1254,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         read_access_rights = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-read"
         )
@@ -1246,10 +1271,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
+        # Wait for document list to be interactive
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-contents"))
         )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'

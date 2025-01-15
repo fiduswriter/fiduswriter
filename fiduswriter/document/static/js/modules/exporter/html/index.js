@@ -48,7 +48,7 @@ export class HTMLExporter {
 
     async init() {
         await this.process()
-        await this.createZip()
+        return await this.createZip()
     }
 
     async process() {

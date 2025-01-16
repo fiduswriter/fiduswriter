@@ -168,7 +168,7 @@ export const toolbarModel = () => ({
                         ? title.slice(0, 20) + "..."
                         : title
                 } else if (
-                    editor.currentView.state.selection.$anchor.depth === 1 &&
+                    editor.currentView.state.selection.$anchor.depth === 0 &&
                     editor.currentView.state.selection.from ===
                         editor.currentView.state.selection.to
                 ) {

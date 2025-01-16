@@ -124,7 +124,6 @@ class SeleniumHelper(object):
         drivers = []
         wait_time = 0
         options = webdriver.ChromeOptions()
-        options.add_argument("--kiosk")
         options.add_argument("--kiosk-printing")
         options.add_argument("--safebrowsing-disable-download-protection")
         options.add_argument("--safebrowsing-disable-extension-blacklist")

@@ -47,7 +47,7 @@ export const selectionMenuModel = () => ({
                 return false
             },
             hidden: editor =>
-                editor.currentView.state.selection.$anchor.depth < 2,
+                editor.currentView.state.selection.$anchor.depth < 1,
             selected: editor =>
                 !!editor.currentView.state.selection.$head
                     .marks()
@@ -91,7 +91,7 @@ export const selectionMenuModel = () => ({
                 }
             },
             hidden: editor =>
-                editor.currentView.state.selection.$anchor.depth < 2,
+                editor.currentView.state.selection.$anchor.depth < 1,
             selected: editor =>
                 !!editor.currentView.state.selection.$head
                     .marks()
@@ -110,7 +110,7 @@ export const selectionMenuModel = () => ({
                 ),
             disabled: editor => editor.docInfo.access_rights !== "write",
             hidden: editor =>
-                editor.currentView.state.selection.$anchor.depth < 2 ||
+                editor.currentView.state.selection.$anchor.depth < 1 ||
                 !tracksInSelection(editor.currentView),
             order: 3
         },
@@ -126,7 +126,7 @@ export const selectionMenuModel = () => ({
                 ),
             disabled: editor => editor.docInfo.access_rights !== "write",
             hidden: editor =>
-                editor.currentView.state.selection.$anchor.depth < 2 ||
+                editor.currentView.state.selection.$anchor.depth < 1 ||
                 !tracksInSelection(editor.currentView),
             order: 4
         }

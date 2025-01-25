@@ -23,7 +23,7 @@ export class HeaderbarView {
         this.listeners = {}
 
         this.removeUnavailable(this.options.editor.menu.headerbarModel)
-
+        this.addMissingIds(this.options.editor.menu.headerbarModel)
         this.bindEvents()
         this.update()
         this.parentChain = []
@@ -43,6 +43,18 @@ export class HeaderbarView {
                 this.removeUnavailable(item)
             }
             return true
+        })
+    }
+
+    addMissingIds(menu) {
+        // Add missing ids to menu items that don't have an ID.
+        menu.content.forEach(item => {
+            if (!item.id) {
+                item.id = Math.random().toString(36).substring(2)
+            }
+            if (item.type === "menu") {
+                this.addMissingIds(item)
+            }
         })
     }
 
@@ -123,18 +135,17 @@ export class HeaderbarView {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling
             }
-            this.editor.menu.headerbarModel.content.forEach((menu, index) => {
-                if (index === menuNumber) {
-                    menu.open = true
-                    this.openMenu = menu
-                    this.parentChain = [menu]
-                } else if (menu.open) {
+            this.editor.menu.headerbarModel.content.forEach(menu => {
+                if (menu.open) {
                     menu.open = false
                     this.openMenu = null
                     this.closeAllMenu(menu)
                     this.parentChain = []
                 }
             })
+            this.editor.menu.headerbarModel.content[menuNumber].open = true
+            this.openMenu = this.editor.menu.headerbarModel.content[menuNumber]
+            this.parentChain = [this.openMenu]
             this.cursorMenuItem = null
             this.update()
         } else {
@@ -181,6 +192,9 @@ export class HeaderbarView {
                 let flagCloseAllMenu = true
                 if (!this.parentChain.length) {
                     this.parentChain = [menuItem]
+                    if (this.openMenu) {
+                        this.openMenu.open = false
+                    }
                     this.openMenu = menuItem
                     this.openMenu.open = true
                 } else {
@@ -415,6 +429,17 @@ export class HeaderbarView {
         this.update()
     }
 
+    getAccessKeyHTML(title, accessKey) {
+        if (!accessKey) {
+            return escapeText(title)
+        }
+        const index = title.toLowerCase().indexOf(accessKey.toLowerCase())
+        if (index === -1) {
+            return escapeText(title)
+        }
+        return `${escapeText(title.substring(0, index))}<span class="access-key">${escapeText(title.charAt(index))}</span>${escapeText(title.substring(index + 1))}`
+    }
+
     saveFileName() {
         if (this.editor.app.isOffline()) {
             // We are offline. Just reset.
@@ -443,6 +468,8 @@ export class HeaderbarView {
         menu.content.forEach(menuItem => {
             if (menuItem.keys === nameKey) {
                 event.preventDefault()
+
+                // Now execute the menu item
                 this.executeMenuItem(menuItem, menu)
             } else if (menuItem.content) {
                 this.checkKeys(event, menuItem, nameKey)
@@ -535,11 +562,13 @@ export class HeaderbarView {
     getHeaderNavHTML() {
         return this.editor.menu.headerbarModel.content
             .map(
-                menu =>
-                    `
+                menu => `
                 <div class="header-menu">
-                    <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}" title="${menu.tooltip}">
-                        ${typeof menu.title === "function" ? menu.title(this.editor) : menu.title}
+                    <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}"
+                          title="${menu.tooltip}"
+                          role="menuitem"
+                          aria-haspopup="true">
+                        ${this.getAccessKeyHTML(menu.title, menu.keys?.slice(-1))}
                     </span>
                     ${menu.open ? this.getMenuHTML(menu) : ""}
                 </div>
@@ -549,11 +578,16 @@ export class HeaderbarView {
     }
 
     getMenuHTML(menu) {
-        return `<div class="fw-pulldown fw-left fw-open">
+        return `<div class="fw-pulldown fw-left fw-open"
+                     role="menu"
+                     aria-label="${typeof menu.title === "function" ? menu.title(this.editor) : menu.title}">
             <ul>
                 ${menu.content
                     .map(
-                        menuItem => `<li>${this.getMenuItemHTML(menuItem)}</li>`
+                        menuItem => `
+                        <li role="none">
+                            ${this.getMenuItemHTML(menuItem)}
+                        </li>`
                     )
                     .join("")}
             </ul>
@@ -586,8 +620,12 @@ export class HeaderbarView {
                 : ""
         }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
             menuItem === this.cursorMenuItem ? " cursor" : ""
-        }" ${menuItem.tooltip ? `title="${menuItem.tooltip}"` : ""}>
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ""}
+        }"
+        role="menuitem"
+        ${menuItem.disabled && menuItem.disabled(this.editor) ? 'aria-disabled="true"' : ""}
+        ${menuItem.selected && menuItem.selected(this.editor) ? 'aria-checked="true"' : ""}
+        ${menuItem.tooltip ? `aria-label="${menuItem.tooltip}"` : ""}>
+            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
         </span>`
     }

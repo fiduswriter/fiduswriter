@@ -88,7 +88,7 @@ export class HeaderbarView {
                 event.stopPropagation()
                 addAlert(
                     "info",
-                    gettext("Cannot close a document when you're offline.")
+                    gettext("You cannot close a document when you're offline.")
                 )
             }
         } else if (

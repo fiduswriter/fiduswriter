@@ -5,6 +5,7 @@ export const menuModel = () => ({
         {
             type: "text",
             title: gettext("Create new document template"),
+            keys: "Alt-n",
             action: overview => {
                 overview.app.goTo("/templates/0/")
             },
@@ -13,6 +14,7 @@ export const menuModel = () => ({
         {
             type: "text",
             title: gettext("Upload FIDUSTEMPLATE file"),
+            keys: "Alt-u",
             action: overview => overview.mod.actions.uploadDocTemplate(),
             order: 2
         }

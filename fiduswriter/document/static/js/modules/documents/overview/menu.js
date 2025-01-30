@@ -216,12 +216,14 @@ export const menuModel = () => ({
             type: "text",
             id: "new_document",
             title: gettext("Create new document"),
+            keys: "Alt-n",
             action: overview => overview.goToNewDocument("new"),
             order: 1
         },
         {
             type: "text",
             title: gettext("Create new folder"),
+            keys: "Alt-f",
             action: overview => {
                 const dialog = new NewFolderDialog(folderName => {
                     overview.path = overview.path + folderName + "/"
@@ -239,6 +241,7 @@ export const menuModel = () => ({
         {
             type: "text",
             title: gettext("Upload FIDUS document"),
+            keys: "Alt-u",
             action: overview => overview.mod.actions.importFidus(),
             order: 3
         },
@@ -246,6 +249,7 @@ export const menuModel = () => ({
             type: "text",
             id: "import_external",
             title: gettext("Import document"),
+            keys: "Alt-i",
             action: overview => overview.mod.actions.importExternal(),
             order: 4
         },
@@ -253,6 +257,7 @@ export const menuModel = () => ({
             type: "search",
             icon: "search",
             title: gettext("Search documents"),
+            keys: "Alt-s",
             input: (overview, text) => {
                 if (text.length && !currentlySearching) {
                     overview.initTable(true)

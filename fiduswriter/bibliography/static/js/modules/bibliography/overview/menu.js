@@ -41,6 +41,7 @@ export const menuModel = () => ({
         {
             type: "dropdown",
             id: "cat_selector",
+            keys: "Alt-c",
             content: [
                 {
                     title: gettext("All categories"),
@@ -57,12 +58,14 @@ export const menuModel = () => ({
         {
             type: "text",
             title: gettext("Edit categories"),
+            keys: "Alt-e",
             action: overview => overview.editCategoriesDialog(),
             order: 2
         },
         {
             type: "text",
             title: gettext("Register new source"),
+            keys: "Alt-n",
             action: overview => {
                 import("../form").then(({BibEntryForm}) => {
                     const form = new BibEntryForm(
@@ -80,6 +83,7 @@ export const menuModel = () => ({
         {
             type: "text",
             title: gettext("Upload BibTeX file"),
+            keys: "Alt-u",
             action: overview => {
                 const fileImporter = new BibLatexFileImportDialog(
                     overview.app.bibDB,
@@ -94,6 +98,7 @@ export const menuModel = () => ({
             type: "search",
             icon: "search",
             title: gettext("Search bibliography"),
+            keys: "Alt-s",
             input: (overview, text) => overview.table.search(text),
             order: 5
         }

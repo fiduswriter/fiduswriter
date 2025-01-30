@@ -324,4 +324,14 @@ export class ImageOverview {
             }
         })
     }
+
+    close() {
+        if (this.table) {
+            this.table.destroy()
+        }
+        if (this.menu) {
+            this.menu.destroy()
+            this.menu = null
+        }
+    }
 }

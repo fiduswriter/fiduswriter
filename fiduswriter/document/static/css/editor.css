@@ -112,11 +112,6 @@ body.editor header {
     letter-spacing: 1px;
 }
 
-.access-key {
-    text-decoration: underline;
-    text-underline-offset: 2px; /* Adjust for better visibility */
-}
-
 .fw-pulldown-item.cursor {
     border-left: 3px var(--menu-cursor-border-color) solid;
 }

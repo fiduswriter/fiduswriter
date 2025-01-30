@@ -649,4 +649,14 @@ export class DocumentOverview {
     goToNewDocument(id) {
         this.app.goTo(`/document${this.path}${id}`)
     }
+
+    close() {
+        if (this.table) {
+            this.table.destroy()
+        }
+        if (this.menu) {
+            this.menu.destroy()
+            this.menu = null
+        }
+    }
 }

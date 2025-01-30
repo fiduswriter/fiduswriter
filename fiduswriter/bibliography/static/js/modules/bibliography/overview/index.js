@@ -442,4 +442,14 @@ export class BibliographyOverview {
             .deleteBibEntries(ids)
             .then(ids => this.removeTableRows(ids))
     }
+
+    close() {
+        if (this.table) {
+            this.table.destroy()
+        }
+        if (this.menu) {
+            this.menu.destroy()
+            this.menu = null
+        }
+    }
 }

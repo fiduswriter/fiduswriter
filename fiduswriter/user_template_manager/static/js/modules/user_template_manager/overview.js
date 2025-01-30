@@ -266,4 +266,14 @@ export class DocTemplatesOverview {
             this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
         ).map(el => Number.parseInt(el.getAttribute("data-id")))
     }
+
+    close() {
+        if (this.table) {
+            this.table.destroy()
+        }
+        if (this.menu) {
+            this.menu.destroy()
+            this.menu = null
+        }
+    }
 }

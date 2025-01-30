@@ -175,3 +175,8 @@ div.input {
     color: var(--cs-light-text);
     background-color: var(--cs-light-background);
 }
+
+.access-key {
+    text-decoration: underline;
+    text-underline-offset: 2px; /* Adjust for better visibility */
+}

@@ -74,9 +74,9 @@ export class HeaderbarView {
             this.saveFileName()
         }
         document.body.removeEventListener("click", this.listeners.onclick)
-        document.removeEventListener("keydown", this.listeners.onKeydown)
-        document.removeEventListener("keyup", this.listeners.onKeyup)
-        document.removeEventListener("focusout", this.listeners.onFocusout)
+        document.body.removeEventListener("keydown", this.listeners.onKeydown)
+        document.body.removeEventListener("keyup", this.listeners.onKeyup)
+        document.body.removeEventListener("focusout", this.listeners.onFocusout)
     }
 
     onclick(event) {

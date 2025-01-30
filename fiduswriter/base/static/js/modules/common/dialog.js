@@ -117,6 +117,12 @@ export class Dialog {
         this.hasBeenMoved = false
         this.listeners = {}
         this.fullScreen = options.fullScreen ? options.fullScreen : false
+        this.initialFocus = options.initialFocus || null
+
+        this.previousActiveElement = null // Store previously focused element
+        this.firstFocusableEl = null
+        this.lastFocusableEl = null
+        this.focusableEls = null
     }
 
     setButtons(buttons) {
@@ -145,6 +151,10 @@ export class Dialog {
         if (this.dialogEl) {
             return
         }
+
+        // Store currently focused element to restore later
+        this.previousActiveElement = document.activeElement
+
         if (this.fullScreen) {
             this.height = "85vh"
         }
@@ -177,6 +187,30 @@ export class Dialog {
         } else {
             this.centerDialog()
         }
+
+        // Set dialog attributes for accessibility
+        this.dialogEl.setAttribute("role", "dialog")
+        this.dialogEl.setAttribute("aria-modal", "true")
+        if (this.title) {
+            this.dialogEl.setAttribute("aria-labelledby", "dialog-title")
+            this.dialogEl.querySelector(".ui-dialog-title").id = "dialog-title"
+        }
+
+        // Get all focusable elements
+        this.focusableEls = this.getFocusableElements()
+        this.firstFocusableEl = this.focusableEls[0]
+        this.lastFocusableEl = this.focusableEls[this.focusableEls.length - 1]
+
+        // Set initial focus to the most appropriate element
+        const initialFocusElement = this.getInitialFocusElement()
+        if (initialFocusElement) {
+            setTimeout(() => initialFocusElement.focus(), 0)
+        } else if (this.firstFocusableEl) {
+            this.firstFocusableEl.focus()
+        } else {
+            this.dialogEl.focus()
+        }
+
         this.bind()
     }
 
@@ -253,7 +287,19 @@ export class Dialog {
             name = "Shift-" + name
         }
         if (name === "Escape" && this.canEscape) {
+            event.preventDefault()
             this.close()
+            return
+        } else if (name === "Tab") {
+            if (document.activeElement === this.lastFocusableEl) {
+                event.preventDefault()
+                this.firstFocusableEl.focus()
+            }
+        } else if (name === "Shift-Tab") {
+            if (document.activeElement === this.firstFocusableEl) {
+                event.preventDefault()
+                this.lastFocusableEl.focus()
+            }
         }
     }
 
@@ -319,6 +365,19 @@ export class Dialog {
                 this.moveDialog(event.clientX, event.clientY)
             })
         }
+
+        // Prevent clicks outside dialog from moving focus outside
+        this.backdropEl.addEventListener("click", event => {
+            event.preventDefault()
+            if (this.canClose) {
+                this.close()
+            }
+        })
+
+        // Prevent focus from leaving dialog when clicking backdrop
+        this.backdropEl.addEventListener("mousedown", event => {
+            event.preventDefault()
+        })
     }
 
     getHighestDialogZIndex() {
@@ -329,6 +388,61 @@ export class Dialog {
                 dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
             )
         return zIndex
+    }
+
+    getFocusableElements() {
+        // Get all focusable elements
+        const focusableSelectors = [
+            "button:not([disabled])",
+            "[href]",
+            "input:not([disabled])",
+            "select:not([disabled])",
+            "textarea:not([disabled])",
+            '[tabindex]:not([tabindex="-1"])'
+        ].join(",")
+
+        const elements = Array.from(
+            this.dialogEl.querySelectorAll(focusableSelectors)
+        )
+
+        // Filter out hidden elements
+        return elements.filter(el => {
+            const style = window.getComputedStyle(el)
+            return style.display !== "none" && style.visibility !== "hidden"
+        })
+    }
+
+    getInitialFocusElement() {
+        if (this.initialFocus) {
+            const customFocusElement = this.dialogEl.querySelector(
+                this.initialFocus
+            )
+            if (customFocusElement) {
+                return customFocusElement
+            }
+        }
+        // Get all focusable elements
+        const elements = this.getFocusableElements()
+
+        // Try to find the most appropriate initial focus target
+        const priorityElements = [
+            // First try to find a text input
+            elements.find(el => el.tagName === "INPUT" && el.type === "text"),
+            // Then try to find the first button in the button pane
+            elements.find(el => el.closest(".ui-dialog-buttonpane")),
+            // Then try to find any input
+            elements.find(el => el.tagName === "INPUT"),
+            // Then try to find any button except close/help
+            elements.find(
+                el =>
+                    el.tagName === "BUTTON" &&
+                    !el.classList.contains("ui-dialog-titlebar-close") &&
+                    !el.classList.contains("ui-dialog-titlebar-help")
+            )
+        ]
+
+        // Return the first element that exists
+        return priorityElements.find(el => el) || elements[0]
     }
 
     close() {
@@ -344,6 +458,12 @@ export class Dialog {
         }
         this.dialogEl.parentElement.removeChild(this.dialogEl)
         this.backdropEl.parentElement.removeChild(this.backdropEl)
+
+        // Restore focus to previous element
+        if (this.previousActiveElement && this.previousActiveElement.focus) {
+            this.previousActiveElement.focus()
+        }
+
         if (this.onClose) {
             this.onClose()
         }

@@ -31,6 +31,7 @@
     height: 100%;
     background-color: rgba(var(--overlay-color));
     z-index: 100;
+    backdrop-filter: blur(2px);
 }
 
 .content-menu-list {

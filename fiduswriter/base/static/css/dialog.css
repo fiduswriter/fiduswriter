@@ -2,7 +2,6 @@
     position: absolute;
     background-color: white;
     font-size: 14px;
-    z-index: 101;
     border-image: initial;
     overflow: hidden;
     outline: 0;
@@ -10,6 +9,8 @@
     box-shadow: none;
     border: 0 none;
     border-radius: 0;
+    z-index: 1000; /* Ensure dialog stays on top */
+    user-select: none; /* Prevent interaction with background content */
 }
 
 .ui-dialog-content.ui-scrollable {
@@ -113,6 +114,7 @@
     height: 100%;
     background-color: rgba(var(--overlay-color));
     z-index: 100;
+    backdrop-filter: blur(2px);
 }
 
 .ui-dialog-content textarea {

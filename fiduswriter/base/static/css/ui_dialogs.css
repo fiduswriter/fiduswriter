@@ -6,6 +6,7 @@
     height: 100%;
     background-color: rgba(var(--overlay-color));
     z-index: 100;
+    backdrop-filter: blur(2px);
 }
 
 .ui-dialog {
@@ -17,8 +18,9 @@
     overflow: hidden;
     border-radius: 4px;
     font-size: 14px;
-    z-index: 100;
     outline: 0;
+    z-index: 1000; /* Ensure dialog stays on top */
+    user-select: none; /* Prevent interaction with background content */
 }
 
 .ui-dialog-titlebar {
@@ -76,6 +78,11 @@
     text-indent: 5019px;
 }
 
+/* Style for the close button specifically */
+.ui-dialog-titlebar-close {
+    order: 99; /* Push to end of flex container */
+}
+
 .ui-dialog-titlebar-close:hover,
 .ui-dialog-titlebar-help:hover {
     color: var(--cs-dark-hover);
@@ -108,4 +115,26 @@
 
 .ui-dialog-buttonset .fw-button {
     margin-left: 6px;
+}
+
+/* Make focus visible on all focusable elements */
+.ui-dialog *:focus {
+    outline: 2px solid var(--cs-dark-background);
+    outline-offset: 2px;
+}
+
+/* Style the title bar buttons specifically */
+.ui-dialog-titlebar .ui-button-icon-only {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px;
+    background: transparent;
+    border: none;
+}
+
+.ui-dialog-titlebar .ui-button-icon-only:focus {
+    outline: 2px solid var(--cs-dark-text);
+    outline-offset: 2px;
+    border-radius: 4px;
 }

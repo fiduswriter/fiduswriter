@@ -42,6 +42,8 @@ export class OverviewMenuView {
         document.body.addEventListener("input", this.listeners.oninput)
         this.listeners.onKeydown = event => this.onKeydown(event)
         document.body.addEventListener("keydown", this.listeners.onKeydown)
+        this.listeners.onFocus = event => this.onFocus(event)
+        document.body.addEventListener("focus", this.listeners.onFocus, true)
         this.update()
     }
 
@@ -76,25 +78,95 @@ export class OverviewMenuView {
                     }
                 } else if (menuItem.type === "dropdown") {
                     // Toggle dropdown menu
+                    // If the menu is already open, close it
                     if (
                         this.openedMenu === this.model.content.indexOf(menuItem)
                     ) {
                         menuItem.open = false
                         this.openedMenu = false
+                        this.update()
                     } else {
                         if (this.openedMenu !== false) {
                             this.model.content[this.openedMenu].open = false
                         }
                         menuItem.open = true
                         this.openedMenu = this.model.content.indexOf(menuItem)
+                        this.update()
+                        const firstDropdownItem = this.menuEl.querySelector(
+                            `.fw-pulldown-item.selected`
+                        )
+                        if (firstDropdownItem) {
+                            firstDropdownItem.focus()
+                        }
                     }
-                    this.update()
                 } else if (menuItem.action) {
                     menuItem.action(this.overview)
                 }
                 return
             }
         }
+
+        // Handle horizontal navigation between menu items
+        if (name === "ArrowLeft" || name === "ArrowRight") {
+            const menuItems = Array.from(
+                this.menuEl.querySelectorAll("#fw-overview-menu > li")
+            )
+            const focusedElement = document.activeElement
+            const currentMenuItem = focusedElement.closest("li")
+
+            if (currentMenuItem) {
+                event.preventDefault()
+                const currentIndex = menuItems.indexOf(currentMenuItem)
+                let newIndex
+
+                if (name === "ArrowLeft") {
+                    newIndex =
+                        currentIndex > 0
+                            ? currentIndex - 1
+                            : menuItems.length - 1
+                } else {
+                    newIndex =
+                        currentIndex < menuItems.length - 1
+                            ? currentIndex + 1
+                            : 0
+                }
+
+                const nextMenuItem = menuItems[newIndex].querySelector(
+                    ".fw-dropdown-menu, .fw-text-menu, button, input"
+                )
+                if (nextMenuItem) {
+                    nextMenuItem.focus()
+                }
+            }
+            return
+        }
+
+        // Handle Enter and Space to open dropdown menus
+        if (name === "Enter" || name === " ") {
+            const focusedElement = document.activeElement
+            if (focusedElement.matches(".fw-dropdown-menu")) {
+                event.preventDefault()
+                const menuItem = this.findMenuItemFromElement(focusedElement)
+                if (menuItem && menuItem.type === "dropdown") {
+                    if (this.openedMenu !== false) {
+                        this.model.content[this.openedMenu].open = false
+                    }
+                    menuItem.open = true
+                    this.openedMenu = this.model.content.indexOf(menuItem)
+                    menuItem.selectedIndex = 0
+                    this.update()
+
+                    const firstDropdownItem = this.menuEl.querySelector(
+                        `.fw-pulldown-item.selected`
+                    )
+                    if (firstDropdownItem) {
+                        firstDropdownItem.focus()
+                    }
+                }
+                return
+            }
+        }
+
         if (this.openedMenu !== false) {
             const menuItem = this.model.content[this.openedMenu]
 
@@ -116,14 +188,30 @@ export class OverviewMenuView {
                                 ? selectedIndex + 1
                                 : 0
                     } else {
-                        selectedIndex =
-                            selectedIndex > 0
-                                ? selectedIndex - 1
-                                : menuItem.content.length - 1
+                        selectedIndex -= 1
+                        if (selectedIndex < 0) {
+                            // Close menu
+                            menuItem.open = false
+                            this.openedMenu = false
+                            delete menuItem.selectedIndex
+                            this.update()
+                            const dropdownButton = this.menuEl.querySelector(
+                                `#${menuItem.id}-button`
+                            )
+                            if (dropdownButton) {
+                                dropdownButton.focus()
+                            }
+                        }
                     }
 
                     menuItem.selectedIndex = selectedIndex
                     this.update()
+                    const selectedEl = this.menuEl.querySelector(
+                        `.fw-pulldown-item.selected`
+                    )
+                    if (selectedEl) {
+                        selectedEl.focus()
+                    }
                 } else if (name === "Enter" || name === " ") {
                     event.preventDefault()
                     event.stopPropagation()
@@ -150,13 +238,63 @@ export class OverviewMenuView {
                     this.openedMenu = false
                     delete menuItem.selectedIndex
                     this.update()
+                    const dropdownButton = document.getElementById(
+                        `${menuItem.id}-button`
+                    )
+                    if (dropdownButton) {
+                        dropdownButton.focus()
+                    }
                 }
             }
         }
     }
 
+    onFocus(event) {
+        // Ignore if the focus event is triggered by JavaScript
+        if (event.isTrusted === false) {
+            return
+        }
+        const target = event.target
+        if (this.openedMenu !== false) {
+            if (target.matches("#fw-overview-menu li .fw-pulldown-item")) {
+                const menuItem = this.model.content[this.openedMenu]
+                if (menuItem) {
+                    const itemNumber = Array.from(
+                        target.parentElement.parentElement.children
+                    ).indexOf(target.parentElement)
+                    menuItem.selectedIndex = itemNumber
+                    this.update()
+                }
+            } else {
+                // Close dropdown menu if focus is outside of the dropdown
+                const menuItem = this.model.content[this.openedMenu]
+                if (menuItem) {
+                    menuItem.open = false
+                    delete menuItem.selectedIndex
+                    this.openedMenu = false
+                    this.update()
+                }
+            }
+        }
+    }
+
+    findMenuItemFromElement(element) {
+        const menuItem = element.closest("li")
+        if (!menuItem) {
+            return null
+        }
+
+        let menuNumber = 0
+        let seekItem = menuItem
+        while (seekItem.previousElementSibling) {
+            menuNumber++
+            seekItem = seekItem.previousElementSibling
+        }
+        return this.model.content[menuNumber]
+    }
+
     focusMenuItem(menuItem) {
-        const menuEl = document.querySelector(`#${menuItem.id}`)
+        const menuEl = this.menuEl.querySelector(`#${menuItem.id}`)
         if (menuEl) {
             menuEl.focus()
         }
@@ -354,7 +492,12 @@ export class OverviewMenuView {
     getDropdownHTML(menuItem) {
         const accessKey = menuItem.keys?.split("-")[1]
         return `
-        <div class="dropdown fw-dropdown-menu" role="menuitem" aria-haspopup="true">
+        <div class="dropdown fw-dropdown-menu"
+          role="button"
+          aria-haspopup="true"
+          aria-expanded="${menuItem.open ? "true" : "false"}"
+          tabindex="0"
+          id="${menuItem.id}-button">
             <label id="${menuItem.id}-label">
                 ${this.getAccessKeyHTML(
                     menuItem.title
@@ -365,8 +508,8 @@ export class OverviewMenuView {
                     accessKey
                 )}
             </label>
-            <span class="dropdown" aria-labelledby="${menuItem.id}-label">
-                <i class="fa fa-caret-down" aria-hidden="true"></i>
+            <span class="dropdown" aria-hidden="true">
+                <i class="fa fa-caret-down"></i>
             </span>
         </div>
         ${this.getDropdownListHTML(menuItem)}
@@ -375,24 +518,28 @@ export class OverviewMenuView {
 
     getDropdownListHTML(menuItem) {
         if (menuItem.open) {
-            return `<div class="fw-pulldown fw-left" role="menu" style="display: block;">
+            return `<div class="fw-pulldown fw-left"
+                        role="menu"
+                        style="display: block;"
+                        aria-labelledby="${menuItem.id}-button"
+                        >
                 <ul role="presentation">${menuItem.content
-                    .map(menuOption => this.getDropdownOptionHTML(menuOption))
+                    .map((menuOption, index) =>
+                        this.getDropdownOptionHTML(menuOption, index)
+                    )
                     .join("")}</ul></div>`
         } else {
             return ""
         }
     }
 
-    getDropdownOptionHTML(menuOption) {
+    getDropdownOptionHTML(menuOption, index) {
         const menuItem = this.model.content[this.openedMenu]
-        const isSelected =
-            menuItem.selectedIndex !== undefined &&
-            menuItem.content[menuItem.selectedIndex] === menuOption
+        const isSelected = menuItem.selectedIndex === index
         return `
       <li role="none">
           <span class="fw-pulldown-item${isSelected ? " selected" : ""}"
-                role="menuitem">
+                role="menuitem" tabindex="0">
               ${escapeText(menuOption.title)}
           </span>
       </li>
@@ -452,6 +599,7 @@ export class OverviewMenuView {
         document.body.removeEventListener("click", this.listeners.onclick)
         document.body.removeEventListener("input", this.listeners.oninput)
         document.body.removeEventListener("keydown", this.listeners.onKeydown)
+        document.body.removeEventListener("focus", this.listeners.onFocus)
 
         // Clear references
         this.listeners = {}

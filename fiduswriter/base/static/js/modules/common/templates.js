@@ -13,7 +13,7 @@ export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
                 <img src="${staticUrl("svg/icon.svg")}" alt="Logo" />
             </h1>
         </a>
-        <nav id="header-nav"></nav>
+        <nav id="header-nav" role="navigation" aria-label="${gettext("Site navigation")}"></nav>
         <div id="user-preferences" class="fw-user-preferences fw-header-text">
             <div id="preferences-btn" class="fw-button">
                 ${avatarTemplate({user})}

@@ -10,7 +10,7 @@ export const basePreloginTemplate = ({
 <header class="fw-header prelogin" role="banner">
    <div class="fw-container">
       <h1 class="fw-login-logo"><span class="fw-logo-text"></span><img src="${staticUrl("svg/icon.svg")}" alt="Logo"/></h1>
-      <nav id="header-nav">${headerLinks
+      <nav id="header-nav" role="navigation" aria-label="${gettext("Site navigation")}">${headerLinks
           .map(hLink => {
               let returnValue
               switch (hLink.type) {

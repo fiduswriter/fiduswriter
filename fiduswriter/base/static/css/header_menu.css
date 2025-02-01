@@ -107,3 +107,8 @@
 #preferences-btn .fw-string-avatar:hover {
     opacity: 0.7;
 }
+
+#header-nav a:focus {
+    outline: 2px solid var(--cs-6-background-focus);
+    outline-offset: 2px;
+}

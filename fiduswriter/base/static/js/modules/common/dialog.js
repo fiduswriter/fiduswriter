@@ -110,7 +110,10 @@ export class Dialog {
         this.onClose = options.onClose || false
         this.icon = options.icon || false
         this.scroll = options.scroll || false
-        this.canEscape = options.canEscape || false
+        this.canEscape =
+            options.canEscape ||
+            options.buttons?.find(button => button.type === "close") ||
+            false
         this.dialogEl = false
         this.backdropEl = false
         this.dragging = false

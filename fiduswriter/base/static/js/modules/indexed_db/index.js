@@ -10,13 +10,13 @@ export class IndexedDB {
         this.app["db_config"] = {
             db_name: this.app.config.user.username
         }
-
         // Open/Create db if it doesn't exist
         const request = window.indexedDB.open(
             this.app.db_config.db_name,
             DB_VERSION
         )
-        request.onerror = _event => this.reset()
+
+        request.onerror = event => this.reset(event)
         return new Promise(resolve => {
             request.onsuccess = event => {
                 const database = event.target.result
@@ -51,8 +51,8 @@ export class IndexedDB {
             this.app.db_config.db_name,
             DB_VERSION
         )
-        request.onerror = _event => {
-            this.reset().then(() => this.updateData(objectStoreName, data))
+        request.onerror = event => {
+            this.reset(event).then(() => this.updateData(objectStoreName, data))
         }
 
         request.onsuccess = event => {
@@ -73,8 +73,8 @@ export class IndexedDB {
             this.app.db_config.db_name,
             DB_VERSION
         )
-        request.onerror = function (_event) {
-            return this.reset().then(() =>
+        request.onerror = function (event) {
+            return this.reset(event).then(() =>
                 this.insertData(objectStoreName, data, false)
             )
         }
@@ -106,11 +106,20 @@ export class IndexedDB {
         request.onupgradeneeded = event => this.onUpgradeNeeded(event)
     }
 
-    reset() {
+    reset(event = false) {
+        if (event) {
+            const database = event.target?.result
+            if (database) {
+                database.close()
+            }
+        }
         return new Promise(resolve => {
             const delRequest = window.indexedDB.deleteDatabase(
                 this.app.db_config.db_name
             )
+            delRequest.onerror = () => {
+                this.init().then(() => resolve())
+            }
             delRequest.onsuccess = () => {
                 // Resolve the promise after the indexedDB is set up.
                 this.init().then(() => resolve())

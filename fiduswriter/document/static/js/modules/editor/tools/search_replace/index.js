@@ -258,6 +258,8 @@ export class SearchReplaceDialog {
             ])
         }
 
+        buttons = buttons.concat([{type: "close"}])
+
         this.dialog = new Dialog({
             title: this.canWrite
                 ? gettext("Search and replace")
@@ -268,7 +270,6 @@ export class SearchReplaceDialog {
                 this.endSearch()
                 this.editor.currentView.focus()
             },
-            canEscape: true,
             note: {
                 display: false,
                 text: gettext(

@@ -272,9 +272,9 @@ export class App {
                 this.activateFidusPlugins()
                 // Initialize the indexedDB after the plugins have loaded.
                 this.indexedDB = new IndexedDB(this)
-                this.indexedDB.init()
-                return this.selectPage()
+                return this.indexedDB.init()
             })
+            .then(() => this.selectPage())
             .then(() => this.bind())
             .then(() => this.showNews())
     }

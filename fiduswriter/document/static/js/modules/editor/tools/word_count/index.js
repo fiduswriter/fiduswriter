@@ -12,8 +12,7 @@ export class WordCountDialog {
         const dialog = new Dialog({
             title: gettext("Word counter"),
             body: wordCounterDialogTemplate(this.countWords()),
-            buttons: [{type: "close"}],
-            canEscape: true
+            buttons: [{type: "close"}]
         })
         dialog.open()
     }

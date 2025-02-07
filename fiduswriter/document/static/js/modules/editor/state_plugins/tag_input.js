@@ -1,3 +1,4 @@
+import {GapCursor} from "prosemirror-gapcursor"
 import {history, redo, undo} from "prosemirror-history"
 import {keymap} from "prosemirror-keymap"
 import {Schema} from "prosemirror-model"
@@ -135,7 +136,50 @@ const createTagInputEditor = (view, getPos, node) => {
                     ",": (state, dispatch, tagInputView) =>
                         submitTag(state, dispatch, tagInputView, view, getPos),
                     ";": (state, dispatch, tagInputView) =>
-                        submitTag(state, dispatch, tagInputView, view, getPos)
+                        submitTag(state, dispatch, tagInputView, view, getPos),
+                    ArrowUp: (_state, _dispatch, _tagInputView) => {
+                        let validTextSelection = false,
+                            validGapCursor = false,
+                            newPos = getPos(),
+                            $pos
+                        while (!validGapCursor && !validTextSelection) {
+                            newPos -= 1
+                            if (newPos === 0) {
+                                // Could not find any valid position
+                                return
+                            }
+                            $pos = view.state.doc.resolve(newPos)
+                            validTextSelection = $pos.parent.inlineContent
+                            validGapCursor = GapCursor.valid($pos)
+                        }
+                        const selection = validTextSelection
+                            ? new TextSelection($pos)
+                            : new GapCursor($pos)
+                        const tr = view.state.tr.setSelection(selection)
+                        view.dispatch(tr)
+                    },
+                    ArrowDown: (_state, _dispatch, _tagInputView) => {
+                        let validTextSelection = false,
+                            validGapCursor = false,
+                            newPos = getPos() + node.nodeSize,
+                            $pos
+                        const docSize = view.state.doc.nodeSize
+                        while (!validGapCursor && !validTextSelection) {
+                            newPos += 1
+                            if (newPos === docSize) {
+                                // Could not find any valid position
+                                return
+                            }
+                            $pos = view.state.doc.resolve(newPos)
+                            validTextSelection = $pos.parent.inlineContent
+                            validGapCursor = GapCursor.valid($pos)
+                        }
+                        const selection = validTextSelection
+                            ? new TextSelection($pos)
+                            : new GapCursor($pos)
+                        const tr = view.state.tr.setSelection(selection)
+                        view.dispatch(tr)
+                    }
                 })
             ]
         }),

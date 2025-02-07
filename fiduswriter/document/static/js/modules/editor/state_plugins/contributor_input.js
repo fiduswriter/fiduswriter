@@ -1,7 +1,10 @@
-import {Plugin, PluginKey} from "prosemirror-state"
+import {keyName} from "w3c-keyname"
+
+import {GapCursor} from "prosemirror-gapcursor"
+import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {escapeText, noSpaceTmp} from "../../common"
+import {escapeText, isActivationEvent, noSpaceTmp} from "../../common"
 import {ContributorDialog} from "../dialogs"
 import {addDeletedPartWidget} from "./document_template"
 
@@ -24,18 +27,70 @@ export class ContributorsPartView {
         this.contentDOM.classList.add("contributors-inner")
         this.contentDOM.contentEditable = true
         this.dom.appendChild(this.contentDOM)
+        this.contentDOM.addEventListener("keydown", event => {
+            const key = keyName(event)
+            switch (key) {
+                case "Enter":
+                    event.preventDefault()
+                    this.handleActivation(event)
+                    break
+                case "ArrowDown":
+                case "ArrowUp": {
+                    event.preventDefault()
+                    let newPos = getPos()
+                    const dir = key === "ArrowDown" ? 1 : -1
+
+                    if (key === "ArrowDown") {
+                        newPos += node.nodeSize
+                    } else {
+                        newPos -= 1
+                    }
+                    let validTextSelection = false,
+                        validGapCursor = false,
+                        $pos
+                    const state = view.state
+                    while (!validGapCursor && !validTextSelection) {
+                        newPos += dir
+                        if (newPos === 0 || newPos === state.doc.nodeSize) {
+                            // Could not find any valid position
+                            return
+                        }
+                        $pos = state.doc.resolve(newPos)
+                        validTextSelection = $pos.parent.inlineContent
+                        validGapCursor = GapCursor.valid($pos)
+                    }
+                    const selection = validTextSelection
+                        ? new TextSelection($pos)
+                        : new GapCursor($pos)
+                    const tr = state.tr.setSelection(selection)
+                    view.dispatch(tr)
+                    view.dom.focus()
+                    break
+                }
+            }
+        })
+
         const nodeTitle = this.node.attrs.item_title
         this.dom.insertAdjacentHTML(
             "beforeend",
             `<button class="fw-button fw-light">${gettext("Add")} ${nodeTitle.toLowerCase()}...</button>`
         )
-        this.dom.lastElementChild.addEventListener("click", event => {
-            event.preventDefault()
-            const dialog = new ContributorDialog(node, view)
-            dialog.init()
-        })
+        const button = this.dom.lastElementChild
+        button.addEventListener("click", event => this.handleActivation(event))
+        button.addEventListener("keydown", event =>
+            this.handleActivation(event)
+        )
+
         if (node.attrs.deleted) {
             addDeletedPartWidget(this.dom, view, getPos)
+        }
+    }
+
+    handleActivation(event) {
+        if (isActivationEvent(event)) {
+            event.preventDefault()
+            const dialog = new ContributorDialog(this.node, this.view)
+            dialog.init()
         }
     }
 }

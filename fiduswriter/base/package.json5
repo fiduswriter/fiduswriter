@@ -21,7 +21,7 @@
         "diff-dom": "5.1.3",
         downloadjs: "1.4.7",
         "@fortawesome/fontawesome-free": "^6.1.1",
-        "simple-datatables": "9.0.3",
+        "simple-datatables": "https://github.com/fiduswriter/simple-datatables#0563cdce54da30f5429d39e9c3ee4a8b08da0a56",
         "@vivliostyle/print": "^2.25.5",
         "w3c-keyname": "2.2.8",
         "source-map-loader": "4.0.1",

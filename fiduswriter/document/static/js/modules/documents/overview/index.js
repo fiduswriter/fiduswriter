@@ -1,5 +1,6 @@
 import deepEqual from "fast-deep-equal"
 import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
 import * as plugins from "../../../plugins/documents_overview"
 import {
     DatatableBulk,
@@ -81,47 +82,39 @@ export class DocumentOverview {
             const el = {}
             let docId
             switch (true) {
-                case findTarget(event, ".revisions", el):
-                    if (this.app.isOffline()) {
-                        addAlert(
-                            "info",
-                            gettext(
-                                "You cannot access revisions of a document while you are offline."
-                            )
-                        )
-                    } else {
-                        docId = Number.parseInt(el.target.dataset.id)
-                        this.mod.actions.revisionsDialog(docId)
+                case findTarget(
+                    event,
+                    ".entry-select, .entry-select + label",
+                    el
+                ): {
+                    const checkbox = el.target
+                    const dataIndex = checkbox
+                        .closest("tr")
+                        .getAttribute("data-index", null)
+                    if (dataIndex) {
+                        const index = Number.parseInt(dataIndex)
+                        const data = this.table.data.data[index]
+                        data.cells[2].data = !checkbox.checked
+                        data.cells[2].text = String(!checkbox.checked)
                     }
                     break
+                }
+                case findTarget(event, ".revisions", el): {
+                    docId = Number.parseInt(el.target.dataset.id)
+                    this.mod.actions.revisionsDialog(docId, this.app)
+                    break
+                }
                 case findTarget(event, ".delete-document", el):
-                    if (this.app.isOffline()) {
-                        addAlert(
-                            "info",
-                            gettext(
-                                "You cannot delete a document while you are offline."
-                            )
-                        )
-                    } else {
-                        docId = Number.parseInt(el.target.dataset.id)
-                        this.mod.actions.deleteDocumentDialog([docId])
-                    }
+                    docId = Number.parseInt(el.target.dataset.id)
+                    this.mod.actions.deleteDocumentDialog([docId], this.app)
                     break
-                case findTarget(event, ".delete-folder", el):
-                    if (this.app.isOffline()) {
-                        addAlert(
-                            "info",
-                            gettext(
-                                "You cannot delete documents while you are offline."
-                            )
-                        )
-                    } else {
-                        const ids = el.target.dataset.ids
-                            .split(",")
-                            .map(id => Number.parseInt(id))
-                        this.mod.actions.deleteDocumentDialog(ids)
-                    }
+                case findTarget(event, ".delete-folder", el): {
+                    const ids = el.target.dataset.ids
+                        .split(",")
+                        .map(id => Number.parseInt(id))
+                    this.mod.actions.deleteDocumentDialog(ids, this.app)
                     break
+                }
                 case findTarget(event, ".owned-by-user.rights", el): {
                     if (this.app.isOffline()) {
                         addAlert(
@@ -431,6 +424,9 @@ export class DocumentOverview {
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 200)}px`,
             tableRender,
+            rowNavigation: true,
+            rowSelectionKeys: ["Enter", "Delete", " "],
+            tabIndex: 1,
             labels: {
                 noRows: gettext("No documents available"), // Message shown when there are no entries
                 noResults: gettext("No documents found") // Message shown when there are no search results
@@ -452,6 +448,34 @@ export class DocumentOverview {
                 ],
                 data: fileList
             },
+            rowRender: (row, tr, _index) => {
+                if (row.cells[1].data === "folder") {
+                    tr.childNodes[0].childNodes = []
+                    return
+                }
+                const id = row.cells[0].data
+                const inputNode = {
+                    nodeName: "input",
+                    attributes: {
+                        type: "checkbox",
+                        class: "entry-select fw-check",
+                        "data-id": id,
+                        id: `doc-${id}`
+                    }
+                }
+                if (row.cells[2].data) {
+                    inputNode.attributes.checked = true
+                }
+                tr.childNodes[0].childNodes = [
+                    inputNode,
+                    {
+                        nodeName: "label",
+                        attributes: {
+                            for: `doc-${id}`
+                        }
+                    }
+                ]
+            },
             columns: [
                 {
                     select: 0,
@@ -460,6 +484,10 @@ export class DocumentOverview {
                 {
                     select: 1,
                     type: "string"
+                },
+                {
+                    select: 2,
+                    type: "boolean"
                 },
                 {
                     select: [5, 6],
@@ -479,11 +507,43 @@ export class DocumentOverview {
                 }
             ]
         })
+
+        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
+            event.preventDefault()
+            if (event.type === "keydown") {
+                const key = keyName(event)
+                if (key === "Enter") {
+                    const link = this.table.dom.querySelector(
+                        `tr[data-index="${rowIndex}"] a.fw-data-table-title`
+                    )
+                    if (link) {
+                        link.click()
+                    }
+                } else if (key === " ") {
+                    const cell = this.table.data.data[rowIndex].cells[2]
+                    cell.data = !cell.data
+                    cell.text = String(cell.data)
+                    this.table.update()
+                } else if (key === "Delete") {
+                    const cell = this.table.data.data[rowIndex].cells[0]
+                    const docId = cell.data
+                    this.mod.actions.deleteDocumentDialog([docId], this.app)
+                }
+            } else {
+                if (!focused) {
+                    this.table.dom.focus()
+                }
+                this.table.rows.setCursor(rowIndex)
+            }
+        })
+
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
         this.dtBulk.init(this.table.dom)
+
+        this.table.dom.focus()
     }
 
     createTableRow(doc, subdirs, searching) {
@@ -527,7 +587,7 @@ export class DocumentOverview {
             const row = [
                 "0",
                 "folder",
-                "",
+                null,
                 `<a class="fw-data-table-title fw-link-text subdir" href="/documents${encodeURI(this.path + subdir)}/" data-path="${this.path}${subdir}/">
                     <i class="fas fa-folder"></i>
                     <span>${escapeText(subdir)}</span>
@@ -552,7 +612,7 @@ export class DocumentOverview {
         return [
             String(doc.id),
             "file",
-            `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
+            false,
             `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}">
                 <i class="far fa-file-alt"></i>
                 <span class="fw-searchable">

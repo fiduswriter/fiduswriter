@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../../common"
+import {getFocusIndex, noSpaceTmp, setFocusIndex} from "../../../common"
 import {LiteralFieldForm} from "./literal"
 
 // There are only name lists, no name fields in the data format. The separation
@@ -57,15 +57,17 @@ export class NameFieldForm {
             Object.assign(this.currentValue, formValue)
         }
         this.realPerson = !this.realPerson
-        this.drawForm()
+        this.drawForm(true)
     }
 
-    drawForm() {
+    drawForm(redraw = false) {
+        const focusIndex = redraw ? getFocusIndex() : -1
         if (this.realPerson) {
             this.drawPersonForm()
         } else {
             this.drawOrganizationForm()
         }
+        setFocusIndex(focusIndex)
     }
 
     drawPersonForm() {

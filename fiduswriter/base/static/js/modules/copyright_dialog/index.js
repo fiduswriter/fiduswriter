@@ -1,6 +1,6 @@
 import {edtfParse} from "biblatex-csl-converter"
 import deepEqual from "fast-deep-equal"
-import {Dialog, findTarget} from "../common"
+import {Dialog, findTarget, isActivationEvent} from "../common"
 import {
     copyrightTemplate,
     licenseInputTemplate,
@@ -111,53 +111,61 @@ export class CopyrightDialog {
     }
 
     bind() {
-        this.dialog.dialogEl.addEventListener("click", event => {
-            const el = {}
-            switch (true) {
-                case findTarget(event, ".type-switch", el): {
-                    const url =
-                        el.target.nextElementSibling.querySelector(
-                            ".license"
-                        ).value
-                    if (el.target.classList.contains("value1")) {
-                        el.target.classList.add("value2")
-                        el.target.classList.remove("value1")
-                        const title = getLicenseTitle(url)
-                        el.target.nextElementSibling.innerHTML =
-                            licenseInputTemplate({
-                                url,
-                                title
-                            })
-                    } else {
-                        el.target.classList.add("value1")
-                        el.target.classList.remove("value2")
-                        el.target.nextElementSibling.innerHTML =
-                            licenseSelectTemplate({
-                                url
-                            })
-                    }
-                    break
-                }
-                case findTarget(event, ".fa-plus-circle", el): {
-                    this.getCurrentValue()
-                    this.dialog.dialogEl.querySelector(
-                        "#configure-copyright"
-                    ).innerHTML = copyrightTemplate(this.copyright)
-                    break
-                }
-                case findTarget(event, ".fa-minus-circle", el): {
-                    const tr = el.target.closest("tr")
-                    tr.parentElement.removeChild(tr)
-                    this.getCurrentValue()
+        this.dialog.dialogEl.addEventListener("click", event =>
+            this.handleActivation(event)
+        )
+        this.dialog.dialogEl.addEventListener("keydown", event =>
+            this.handleActivation(event)
+        )
+    }
 
-                    this.dialog.dialogEl.querySelector(
-                        "#configure-copyright"
-                    ).innerHTML = copyrightTemplate(this.copyright)
-                    break
+    handleActivation(event) {
+        if (!isActivationEvent(event)) {
+            return
+        }
+        const el = {}
+        switch (true) {
+            case findTarget(event, ".type-switch", el): {
+                const url =
+                    el.target.nextElementSibling.querySelector(".license").value
+                if (el.target.classList.contains("value1")) {
+                    el.target.classList.add("value2")
+                    el.target.classList.remove("value1")
+                    const title = getLicenseTitle(url)
+                    el.target.nextElementSibling.innerHTML =
+                        licenseInputTemplate({
+                            url,
+                            title
+                        })
+                } else {
+                    el.target.classList.add("value1")
+                    el.target.classList.remove("value2")
+                    el.target.nextElementSibling.innerHTML =
+                        licenseSelectTemplate({
+                            url
+                        })
                 }
-                default:
-                    break
+                break
             }
-        })
+            case findTarget(event, ".fa-plus-circle", el): {
+                this.getCurrentValue()
+                this.dialog.dialogEl.querySelector(
+                    "#configure-copyright"
+                ).innerHTML = copyrightTemplate(this.copyright)
+                break
+            }
+            case findTarget(event, ".fa-minus-circle", el): {
+                const tr = el.target.closest("tr")
+                tr.parentElement.removeChild(tr)
+                this.getCurrentValue()
+
+                this.dialog.dialogEl.querySelector(
+                    "#configure-copyright"
+                ).innerHTML = copyrightTemplate(this.copyright)
+                break
+            }
+            default:
+                break
+        }
     }
 }

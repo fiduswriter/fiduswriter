@@ -1,4 +1,6 @@
 import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
+
 import * as plugins from "../../../plugins/images_overview"
 import {
     DatatableBulk,
@@ -27,6 +29,8 @@ export class ImageOverview {
         this.app = app
         this.user = user
         this.mod = {}
+
+        this.lastSort = {column: 0, dir: "asc"}
     }
 
     init() {
@@ -157,8 +161,8 @@ export class ImageOverview {
         }
 
         return [
-            String(id),
-            `<input type="checkbox" class="entry-select fw-check" id="doc-img-${id}" data-id="${id}"><label for="doc-img-${id}"></label>`,
+            id,
+            false, // checkbox
             `<span class="fw-usermedia-image ${cats.join(" ")}">
                 <img src="${image.thumbnail ? image.thumbnail : image.image}">
             </span>
@@ -227,6 +231,9 @@ export class ImageOverview {
                 noRows: gettext("No images available"), // Message shown when there are no images
                 noResults: gettext("No images found") // Message shown when no images are found after search
             },
+            rowNavigation: true,
+            rowSelectionKeys: ["Enter", "Delete", " "],
+            tabIndex: 1,
             template: (options, _dom) =>
                 `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
             <div class='${options.classes.bottom}'>
@@ -254,6 +261,10 @@ export class ImageOverview {
                     type: "number"
                 },
                 {
+                    select: 1,
+                    type: "boolean"
+                },
+                {
                     select: hiddenCols,
                     hidden: true
                 },
@@ -261,15 +272,69 @@ export class ImageOverview {
                     select: [1, 3, 5],
                     sortable: false
                 }
-            ]
+            ],
+            rowRender: (row, tr, _index) => {
+                const id = row.cells[0].data
+                const inputNode = {
+                    nodeName: "input",
+                    attributes: {
+                        type: "checkbox",
+                        class: "entry-select fw-check",
+                        "data-id": id,
+                        id: `doc-img-${id}`
+                    }
+                }
+                if (row.cells[1].data) {
+                    inputNode.attributes.checked = true
+                }
+                tr.childNodes[0].childNodes = [
+                    inputNode,
+                    {
+                        nodeName: "label",
+                        attributes: {
+                            for: `doc-img-${id}`
+                        }
+                    }
+                ]
+            }
         })
-        this.lastSort = {column: 0, dir: "asc"}
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
+        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
+            event.preventDefault()
+            if (event.type === "keydown") {
+                const key = keyName(event)
+                if (key === "Enter") {
+                    const button = this.table.dom.querySelector(
+                        `tr[data-index="${rowIndex}"] span.edit-image`
+                    )
+                    if (button) {
+                        button.click()
+                    }
+                } else if (key === " ") {
+                    const cell = this.table.data.data[rowIndex].cells[1]
+                    cell.data = !cell.data
+                    cell.text = String(cell.data)
+                    this.table.update()
+                } else if (key === "Delete") {
+                    const cell = this.table.data.data[rowIndex].cells[0]
+                    const imageId = cell.data
+                    this.deleteImageDialog([imageId])
+                }
+            } else {
+                if (!focused) {
+                    this.table.dom.focus()
+                }
+                this.table.rows.setCursor(rowIndex)
+            }
+        })
+
         this.dtBulk.init(this.table.dom)
+
+        this.table.dom.focus()
     }
 
     // get IDs of selected bib entries
@@ -283,6 +348,23 @@ export class ImageOverview {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
+                case findTarget(
+                    event,
+                    ".entry-select, .entry-select + label",
+                    el
+                ): {
+                    const checkbox = el.target
+                    const dataIndex = checkbox
+                        .closest("tr")
+                        .getAttribute("data-index", null)
+                    if (dataIndex) {
+                        const index = Number.parseInt(dataIndex)
+                        const data = this.table.data.data[index]
+                        data.cells[1].data = !checkbox.checked
+                        data.cells[1].text = String(!checkbox.checked)
+                    }
+                    break
+                }
                 case findTarget(event, ".delete-image", el): {
                     const imageId = el.target.dataset.id
                     this.deleteImageDialog([imageId])

@@ -1,5 +1,6 @@
 import fixUTF8 from "fix-utf8"
 import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
 
 import * as plugins from "../../../plugins/bibliography_overview"
 import {
@@ -25,6 +26,8 @@ export class BibliographyOverview {
     constructor({app, user}) {
         this.app = app
         this.user = user
+
+        this.lastSort = {column: 0, dir: "asc"}
     }
 
     /** Bind the init function to doc loading.
@@ -94,6 +97,9 @@ export class BibliographyOverview {
             searchable: true,
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
+            rowNavigation: true,
+            rowSelectionKeys: ["Enter", "Delete", " "],
+            tabIndex: 1,
             labels: {
                 noRows: gettext("No sources registered"),
                 noResults: gettext("No sources found") // Message shown when there are no search results
@@ -118,22 +124,81 @@ export class BibliographyOverview {
                     type: "number"
                 },
                 {
+                    select: 1,
+                    type: "boolean",
+                    sortable: false
+                },
+                {
                     select: hiddenCols,
                     hidden: true
                 },
                 {
-                    select: [1, 6],
+                    select: 6,
                     sortable: false
                 }
-            ]
+            ],
+            rowRender: (row, tr, _index) => {
+                const id = row.cells[0].data
+                const inputNode = {
+                    nodeName: "input",
+                    attributes: {
+                        type: "checkbox",
+                        class: "entry-select fw-check",
+                        "data-id": id,
+                        id: `bib-${id}`
+                    }
+                }
+                if (row.cells[1].data) {
+                    inputNode.attributes.checked = true
+                }
+                tr.childNodes[0].childNodes = [
+                    inputNode,
+                    {
+                        nodeName: "label",
+                        attributes: {
+                            for: `bib-${id}`
+                        }
+                    }
+                ]
+            }
         })
-        this.lastSort = {column: 0, dir: "asc"}
+
+        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
+            event.preventDefault()
+            if (event.type === "keydown") {
+                const key = keyName(event)
+                if (key === "Enter") {
+                    const editButton = this.table.dom.querySelector(
+                        `tr[data-index="${rowIndex}"] span.edit-bib`
+                    )
+                    if (editButton) {
+                        editButton.click()
+                    }
+                } else if (key === " ") {
+                    const cell = this.table.data.data[rowIndex].cells[1]
+                    cell.data = !cell.data
+                    cell.text = String(cell.data)
+                    this.table.update()
+                } else if (key === "Delete") {
+                    const cell = this.table.data.data[rowIndex].cells[0]
+                    const bibId = cell.data
+                    this.deleteBibEntryDialog([bibId])
+                }
+            } else {
+                if (!focused) {
+                    this.table.dom.focus()
+                }
+                this.table.rows.setCursor(rowIndex)
+            }
+        })
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
         this.dtBulk.init(this.table.dom)
+
+        this.table.dom.focus()
     }
 
     /** Adds a list of bibliography categories to current list of bibliography categories.
@@ -189,8 +254,8 @@ export class BibliographyOverview {
         const bibauthors = bibInfo.fields.author || bibInfo.fields.editor
         const cats = bibInfo.cats.map(cat => `cat_${cat}`)
         return [
-            String(id),
-            `<input type="checkbox" class="entry-select fw-check" data-id="${id}" id="bib-${id}"><label for="bib-${id}"></label>`, // checkbox
+            id,
+            false, // checkbox
             `<span class="fw-data-table-title ${cats.join(" ")}">
                 <i class="fa fa-book"></i>
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
@@ -339,18 +404,35 @@ export class BibliographyOverview {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
+                case findTarget(
+                    event,
+                    ".entry-select, .entry-select + label",
+                    el
+                ): {
+                    const checkbox = el.target
+                    const dataIndex = checkbox
+                        .closest("tr")
+                        .getAttribute("data-index", null)
+                    if (dataIndex) {
+                        const index = Number.parseInt(dataIndex)
+                        const data = this.table.data.data[index]
+                        data.cells[1].data = !checkbox.checked
+                        data.cells[1].text = String(!checkbox.checked)
+                    }
+                    break
+                }
                 case findTarget(event, ".delete-bib", el): {
-                    const bookId = Number.parseInt(el.target.dataset.id)
-                    this.deleteBibEntryDialog([bookId])
+                    const bibId = Number.parseInt(el.target.dataset.id)
+                    this.deleteBibEntryDialog([bibId])
                     break
                 }
                 case findTarget(event, ".edit-bib", el): {
-                    const bookId = Number.parseInt(el.target.dataset.id)
+                    const bibId = Number.parseInt(el.target.dataset.id)
                     import("../form").then(({BibEntryForm}) => {
                         const form = new BibEntryForm(
                             this.app.bibDB,
                             this.app,
-                            bookId
+                            bibId
                         )
                         form.init().then(idTranslations => {
                             const ids = idTranslations.map(

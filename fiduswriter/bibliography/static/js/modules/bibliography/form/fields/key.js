@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../../common"
+import {getFocusIndex, noSpaceTmp, setFocusIndex} from "../../../common"
 import {BibOptionTitles} from "../strings"
 import {LiteralFieldForm} from "./literal"
 
@@ -55,15 +55,17 @@ export class KeyFieldForm {
             }
         }
         this.predefined = !this.predefined
-        this.drawForm()
+        this.drawForm(true)
     }
 
-    drawForm() {
+    drawForm(redraw = false) {
+        const focusIndex = redraw ? getFocusIndex() : -1
         if (this.predefined) {
             this.drawSelectionListForm()
         } else {
             this.drawCustomInputForm()
         }
+        setFocusIndex(focusIndex)
     }
 
     drawSelectionListForm() {

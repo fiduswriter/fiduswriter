@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../../common"
+import {getFocusIndex, noSpaceTmp, setFocusIndex} from "../../../common"
 import {LiteralFieldForm} from "./literal"
 
 // There are only range lists, no range fields in the data format. The separation
@@ -47,15 +47,17 @@ export class RangeFieldForm {
             Object.assign(this.currentValue, formValue)
         }
         this.range = !this.range
-        this.drawForm()
+        this.drawForm(true)
     }
 
-    drawForm() {
+    drawForm(redraw = false) {
+        const focusIndex = redraw ? getFocusIndex() : -1
         if (this.range) {
             this.drawRangeForm()
         } else {
             this.drawSingleValueForm()
         }
+        setFocusIndex(focusIndex)
     }
 
     drawSingleValueForm() {

@@ -1,4 +1,5 @@
 import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
 
 import {
     DatatableBulk,
@@ -27,6 +28,8 @@ export class DocTemplatesOverview {
         this.mod = {}
         this.templateList = []
         this.styles = false
+
+        this.lastSort = {column: 0, dir: "asc"}
     }
 
     init() {
@@ -91,6 +94,9 @@ export class DocTemplatesOverview {
                 noRows: gettext("No document templates available"),
                 noResults: gettext("No document templates found") // Message shown when there are no search results
             },
+            rowNavigation: true,
+            rowSelectionKeys: ["Enter", "Delete", " "],
+            tabIndex: 1,
             template: (
                 options,
                 _dom
@@ -117,16 +123,73 @@ export class DocTemplatesOverview {
                     type: "number"
                 },
                 {
+                    select: 1,
+                    sortable: false,
+                    type: "boolean"
+                },
+                {
                     select: hiddenCols,
                     hidden: true
                 },
                 {
-                    select: [1, 5],
+                    select: 5,
                     sortable: false
                 }
-            ]
+            ],
+            rowRender: (row, tr, _index) => {
+                const id = row.cells[0].data
+                const inputNode = {
+                    nodeName: "input",
+                    attributes: {
+                        type: "checkbox",
+                        class: "entry-select fw-check",
+                        "data-id": String(id),
+                        id: `template-${id}`
+                    }
+                }
+                if (row.cells[1].data) {
+                    inputNode.attributes.checked = true
+                }
+                tr.childNodes[0].childNodes = [
+                    inputNode,
+                    {
+                        nodeName: "label",
+                        attributes: {
+                            for: `template-${id}`
+                        }
+                    }
+                ]
+            }
         })
-        this.lastSort = {column: 0, dir: "asc"}
+
+        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
+            event.preventDefault()
+            if (event.type === "keydown") {
+                const key = keyName(event)
+                if (key === "Enter") {
+                    const link = this.table.dom.querySelector(
+                        `tr[data-index="${rowIndex}"] a`
+                    )
+                    if (link) {
+                        link.click()
+                    }
+                } else if (key === " ") {
+                    const cell = this.table.data.data[rowIndex].cells[1]
+                    cell.data = !cell.data
+                    cell.text = String(cell.data)
+                    this.table.update()
+                } else if (key === "Delete") {
+                    const cell = this.table.data.data[rowIndex].cells[0]
+                    const imageId = cell.data
+                    this.deleteDocTemplatesDialog([imageId])
+                }
+            } else {
+                if (!focused) {
+                    this.table.dom.focus()
+                }
+                this.table.rows.setCursor(rowIndex)
+            }
+        })
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
@@ -137,8 +200,8 @@ export class DocTemplatesOverview {
 
     createTableRow(docTemplate) {
         return [
-            String(docTemplate.id),
-            `<input type="checkbox" class="entry-select" data-id="${docTemplate.id}">`,
+            docTemplate.id,
+            false, // Checkbox
             `<span class="${docTemplate.is_owner ? "fw-data-table-title " : ""}fw-inline">
                 <i class="far fa-file"></i>
                 ${
@@ -241,6 +304,23 @@ export class DocTemplatesOverview {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
+                case findTarget(
+                    event,
+                    ".entry-select, .entry-select + label",
+                    el
+                ): {
+                    const checkbox = el.target
+                    const dataIndex = checkbox
+                        .closest("tr")
+                        .getAttribute("data-index", null)
+                    if (dataIndex) {
+                        const index = Number.parseInt(dataIndex)
+                        const data = this.table.data.data[index]
+                        data.cells[1].data = !checkbox.checked
+                        data.cells[1].text = String(!checkbox.checked)
+                    }
+                    break
+                }
                 case findTarget(event, ".delete-doc-template", el): {
                     const docTemplateId = Number.parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocTemplatesDialog([docTemplateId])

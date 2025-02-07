@@ -47,7 +47,14 @@ export class DocumentOverviewActions {
         })
     }
 
-    deleteDocumentDialog(ids) {
+    deleteDocumentDialog(ids, app) {
+        if (app.isOffline()) {
+            addAlert(
+                "info",
+                gettext("You cannot delete a document while you are offline.")
+            )
+            return
+        }
         const docPaths = ids.map(id => {
             const doc = this.documentOverview.documentList.find(
                 doc => doc.id === id
@@ -654,7 +661,16 @@ export class DocumentOverviewActions {
         )
     }
 
-    revisionsDialog(documentId) {
+    revisionsDialog(documentId, app) {
+        if (app.isOffline()) {
+            addAlert(
+                "info",
+                gettext(
+                    "You cannot view the revision history of a document while you are offline."
+                )
+            )
+            return
+        }
         const revDialog = new DocumentRevisionsDialog(
             documentId,
             this.documentOverview.documentList,

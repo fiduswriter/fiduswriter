@@ -3,10 +3,6 @@
     height: calc(100vh - 278px);
 }
 
-#bib-dialog :focus {
-    outline: 0;
-}
-
 div.literal,
 pre.long-literal {
     box-sizing: border-box;

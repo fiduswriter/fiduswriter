@@ -18,6 +18,10 @@ export {
 
 export {convertDataURIToBlob} from "./blob"
 
+export {isActivationEvent} from "./events"
+
+export {getFocusIndex, setFocusIndex} from "./focus"
+
 export {
     jsonPost,
     get,

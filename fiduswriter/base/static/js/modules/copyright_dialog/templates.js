@@ -46,7 +46,7 @@ const licenseTemplate = ({url, title, start}) => {
             </table>
         </td>
         <td class="input-field-list-ctrl">
-            <span class="fa fa-minus-circle"></span>&nbsp;<span class="fa fa-plus-circle"></span>
+            <span class="fa fa-minus-circle" tabindex="0"></span>&nbsp;<span class="fa fa-plus-circle" tabindex="0"></span>
         </td>
     </tr>`
 }

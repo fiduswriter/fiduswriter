@@ -23,11 +23,7 @@ const predefinedVariables = {
     transpile_VERSION: transpile.VERSION
 }
 
-if (settings.DEBUG) {
-    predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url)`
-} else {
-    predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url + "?v=" + ${transpile.VERSION})`
-}
+predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url + "?v=" + ${transpile.VERSION})`
 
 module.exports = {
     mode: settings.DEBUG ? "development" : "production",

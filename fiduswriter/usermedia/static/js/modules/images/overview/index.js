@@ -326,7 +326,9 @@ export class ImageOverview {
                     this.deleteImageDialog([imageId])
                 }
             } else {
-                if (event.target.closest("spn.edit-image, span.delete-image")) {
+                if (
+                    event.target.closest("span.edit-image, span.delete-image")
+                ) {
                     return
                 }
                 if (!focused) {

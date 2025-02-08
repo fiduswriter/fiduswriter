@@ -60,7 +60,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             EC.presence_of_element_located(
                 (
                     By.CSS_SELECTOR,
-                    "#header-navigation > div:nth-child(3) > span",
+                    "#header-navigation > div.header-menu:nth-child(3) > span.header-nav-item",
                 )
             )
         ).click()
@@ -639,7 +639,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # We import the fidus file
         self.driver.find_element(By.CSS_SELECTOR, "a[href='/']").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             upload_full_path
@@ -653,7 +653,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         os.remove(upload_full_path)
         # Upload slim file
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             upload_slim_path

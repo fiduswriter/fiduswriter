@@ -198,7 +198,10 @@ export const bulkMenuModel = () => ({
                     )
                 }
                 if (ownIds.length) {
-                    overview.mod.actions.deleteDocumentDialog(ownIds)
+                    overview.mod.actions.deleteDocumentDialog(
+                        ownIds,
+                        overview.app
+                    )
                 }
             },
             disabled: overview =>

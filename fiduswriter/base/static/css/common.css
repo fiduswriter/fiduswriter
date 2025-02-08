@@ -179,4 +179,5 @@ div.input {
 .access-key {
     text-decoration: underline;
     text-underline-offset: 2px; /* Adjust for better visibility */
+    pointer-events: none;
 }

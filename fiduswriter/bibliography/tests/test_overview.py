@@ -132,6 +132,10 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
             self.verificationErrors.append(str(e))
         driver.find_element(
             By.CSS_SELECTOR,
+            "button.fw-dark",
+        ).click()
+        driver.find_element(
+            By.CSS_SELECTOR,
             "button[title='Register new source (Alt-n)']",
         ).click()
         driver.find_element(By.ID, "select-bibtype").click()
@@ -195,7 +199,7 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Closed citation dialog
         search_input = driver.find_element(
             By.CSS_SELECTOR,
-            ".fw-overview-menu-item .fw-button input[type=text]",
+            ".fw-overview-menu-item .fw-button input[type=search]",
         )
         search_input.click()
         search_input.send_keys("women")
@@ -224,7 +228,7 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload BibTeX file']"
+            By.CSS_SELECTOR, "button[title='Upload BibTeX file (Alt-u)']"
         ).click()
         # bibliography path
         bib_path = os.path.join(

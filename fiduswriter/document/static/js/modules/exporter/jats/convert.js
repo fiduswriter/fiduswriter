@@ -1,3 +1,5 @@
+import {convertLatexToMathMl} from "mathlive"
+
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 
@@ -703,7 +705,13 @@ export class JATSExporterConverter {
                     if (equation) {
                         start += "<disp-formula>"
                         end = "</disp-formula>" + end
-                        content = `<tex-math><![CDATA[${equation}]]></tex-math>`
+                        const equationML = convertLatexToMathMl(equation)
+                        content = `
+                            <alternatives>
+                                <tex-math><![CDATA[${equation}]]></tex-math>
+                                <mml:math>${equationML}</mml:math>
+                            </alternatives>
+                        `
                     } else {
                         if (copyright?.holder) {
                             start += "<permissions>"
@@ -786,11 +794,18 @@ export class JATSExporterConverter {
                 start += `<th${node.attrs.colspan === 1 ? "" : ` colspan="${node.attrs.colspan}"`}${node.attrs.rowspan === 1 ? "" : ` rowspan="${node.attrs.rowspan}"`}>`
                 end = "</th>" + end
                 break
-            case "equation":
+            case "equation": {
                 start += "<inline-formula>"
                 end = "</inline-formula>" + end
-                content = `<tex-math><![CDATA[${node.attrs.equation}]]></tex-math>`
+                const equationML = convertLatexToMathMl(node.attrs.equation)
+                content = `
+                    <alternatives>
+                        <tex-math><![CDATA[${node.attrs.equation}]]></tex-math>
+                        <mml:math>${equationML}</mml:math>
+                    </alternatives>
+                `
                 break
+            }
             case "hard_break":
                 // Forbidden inside of most elements. We only render it if explicitly allowed.
                 // https://jats.nlm.nih.gov/publishing/tag-library/1.3/element/break.html

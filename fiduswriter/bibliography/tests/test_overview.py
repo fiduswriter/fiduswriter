@@ -131,14 +131,8 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::button[2]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR,
+            "button[title='Register new source (Alt-n)']",
         ).click()
         driver.find_element(By.ID, "select-bibtype").click()
         driver.find_element(
@@ -296,7 +290,7 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(len(entries), 0)
         # Delete category
         driver.find_element(
-            By.CSS_SELECTOR, "button[title='Edit categories']"
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
         category_inputs = self.driver.find_elements(
             By.CSS_SELECTOR, "#editCategoryList tr"
@@ -307,7 +301,7 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         driver.find_element(
-            By.CSS_SELECTOR, "button[title='Edit categories']"
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
         category_inputs = self.driver.find_elements(
             By.CSS_SELECTOR, "#editCategoryList tr"

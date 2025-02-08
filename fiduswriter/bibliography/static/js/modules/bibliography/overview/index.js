@@ -12,6 +12,7 @@ import {
     ensureCSS,
     escapeText,
     findTarget,
+    isActivationEvent,
     setDocTitle,
     whenReady
 } from "../../common"
@@ -185,6 +186,10 @@ export class BibliographyOverview {
                     this.deleteBibEntryDialog([bibId])
                 }
             } else {
+                if (event.target.closest("span.edit-bib, span.delete-bib")) {
+                    return
+                }
+
                 if (!focused) {
                     this.table.dom.focus()
                 }
@@ -401,69 +406,12 @@ export class BibliographyOverview {
      * @function bibEvents
      */
     bindEvents() {
-        this.dom.addEventListener("click", event => {
-            const el = {}
-            switch (true) {
-                case findTarget(
-                    event,
-                    ".entry-select, .entry-select + label",
-                    el
-                ): {
-                    const checkbox = el.target
-                    const dataIndex = checkbox
-                        .closest("tr")
-                        .getAttribute("data-index", null)
-                    if (dataIndex) {
-                        const index = Number.parseInt(dataIndex)
-                        const data = this.table.data.data[index]
-                        data.cells[1].data = !checkbox.checked
-                        data.cells[1].text = String(!checkbox.checked)
-                    }
-                    break
-                }
-                case findTarget(event, ".delete-bib", el): {
-                    const bibId = Number.parseInt(el.target.dataset.id)
-                    this.deleteBibEntryDialog([bibId])
-                    break
-                }
-                case findTarget(event, ".edit-bib", el): {
-                    const bibId = Number.parseInt(el.target.dataset.id)
-                    import("../form").then(({BibEntryForm}) => {
-                        const form = new BibEntryForm(
-                            this.app.bibDB,
-                            this.app,
-                            bibId
-                        )
-                        form.init().then(idTranslations => {
-                            const ids = idTranslations.map(
-                                idTrans => idTrans[1]
-                            )
-                            return this.updateTable(ids)
-                        })
-                    })
-                    break
-                }
-                case findTarget(event, ".fw-add-input", el): {
-                    const itemEl = el.target.closest(".fw-list-input")
-                    if (!itemEl.nextElementSibling) {
-                        itemEl.insertAdjacentHTML(
-                            "afterend",
-                            `<tr class="fw-list-input">
-                                <td>
-                                    <input type="text" class="category-form">
-                                    <span class="fw-add-input icon-addremove"></span>
-                                </td>
-                            </tr>`
-                        )
-                    } else {
-                        itemEl.parentElement.removeChild(itemEl)
-                    }
-                    break
-                }
-                default:
-                    break
-            }
-        })
+        this.dom.addEventListener("click", event =>
+            this.handleActivation(event)
+        )
+        this.dom.addEventListener("keydown", event =>
+            this.handleActivation(event)
+        )
 
         // Allow pasting of bibtex data.
         this.dom.addEventListener("paste", event => {
@@ -497,6 +445,71 @@ export class BibliographyOverview {
             const text = fixUTF8(event.dataTransfer.getData("text"))
             return this.getBibtex(text)
         })
+    }
+
+    handleActivation(event) {
+        if (!isActivationEvent(event)) {
+            return
+        }
+        const el = {}
+        switch (true) {
+            case findTarget(
+                event,
+                ".entry-select, .entry-select + label",
+                el
+            ): {
+                const checkbox = el.target
+                const dataIndex = checkbox
+                    .closest("tr")
+                    .getAttribute("data-index", null)
+                if (dataIndex) {
+                    const index = Number.parseInt(dataIndex)
+                    const data = this.table.data.data[index]
+                    data.cells[1].data = !checkbox.checked
+                    data.cells[1].text = String(!checkbox.checked)
+                }
+                break
+            }
+            case findTarget(event, ".delete-bib", el): {
+                const bibId = Number.parseInt(el.target.dataset.id)
+                this.deleteBibEntryDialog([bibId])
+                break
+            }
+            case findTarget(event, ".edit-bib", el): {
+                const bibId = Number.parseInt(el.target.dataset.id)
+                import("../form").then(({BibEntryForm}) => {
+                    const form = new BibEntryForm(
+                        this.app.bibDB,
+                        this.app,
+                        bibId
+                    )
+                    form.init().then(idTranslations => {
+                        const ids = idTranslations.map(idTrans => idTrans[1])
+                        return this.updateTable(ids)
+                    })
+                })
+                break
+            }
+            case findTarget(event, ".fw-add-input", el): {
+                const itemEl = el.target.closest(".fw-list-input")
+                if (!itemEl.nextElementSibling) {
+                    itemEl.insertAdjacentHTML(
+                        "afterend",
+                        `<tr class="fw-list-input">
+                            <td>
+                                <input type="text" class="category-form">
+                                <span class="fw-add-input icon-addremove" tabindex="0"></span>
+                            </td>
+                        </tr>`
+                    )
+                } else {
+                    itemEl.parentElement.removeChild(itemEl)
+                }
+                break
+            }
+            default:
+                break
+        }
     }
 
     // find bibtex in pasted or dropped data.

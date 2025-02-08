@@ -13,6 +13,7 @@ import {
     ensureCSS,
     escapeText,
     findTarget,
+    isActivationEvent,
     localizeDate,
     post,
     setDocTitle,
@@ -325,6 +326,9 @@ export class ImageOverview {
                     this.deleteImageDialog([imageId])
                 }
             } else {
+                if (event.target.closest("spn.edit-image, span.delete-image")) {
+                    return
+                }
                 if (!focused) {
                     this.table.dom.focus()
                 }
@@ -345,66 +349,76 @@ export class ImageOverview {
     }
 
     bindEvents() {
-        this.dom.addEventListener("click", event => {
-            const el = {}
-            switch (true) {
-                case findTarget(
-                    event,
-                    ".entry-select, .entry-select + label",
-                    el
-                ): {
-                    const checkbox = el.target
-                    const dataIndex = checkbox
-                        .closest("tr")
-                        .getAttribute("data-index", null)
-                    if (dataIndex) {
-                        const index = Number.parseInt(dataIndex)
-                        const data = this.table.data.data[index]
-                        data.cells[1].data = !checkbox.checked
-                        data.cells[1].text = String(!checkbox.checked)
-                    }
-                    break
+        this.dom.addEventListener("click", event =>
+            this.handleActivation(event)
+        )
+        this.dom.addEventListener("keydown", event =>
+            this.handleActivation(event)
+        )
+    }
+
+    handleActivation(event) {
+        if (!isActivationEvent(event)) {
+            return
+        }
+        const el = {}
+        switch (true) {
+            case findTarget(
+                event,
+                ".entry-select, .entry-select + label",
+                el
+            ): {
+                const checkbox = el.target
+                const dataIndex = checkbox
+                    .closest("tr")
+                    .getAttribute("data-index", null)
+                if (dataIndex) {
+                    const index = Number.parseInt(dataIndex)
+                    const data = this.table.data.data[index]
+                    data.cells[1].data = !checkbox.checked
+                    data.cells[1].text = String(!checkbox.checked)
                 }
-                case findTarget(event, ".delete-image", el): {
-                    const imageId = el.target.dataset.id
-                    this.deleteImageDialog([imageId])
-                    break
-                }
-                case findTarget(event, ".edit-image", el): {
-                    const imageId = el.target.dataset.id
-                    import("../edit_dialog").then(({ImageEditDialog}) => {
-                        const dialog = new ImageEditDialog(
-                            this.app.imageDB,
-                            imageId,
-                            this
-                        )
-                        dialog.init().then(() => {
-                            this.updateTable([imageId])
-                        })
-                    })
-                    break
-                }
-                case findTarget(event, ".fw-add-input", el): {
-                    const itemEl = el.target.closest(".fw-list-input")
-                    if (!itemEl.nextElementSibling) {
-                        itemEl.insertAdjacentHTML(
-                            "afterend",
-                            `<tr class="fw-list-input">
-                                <td>
-                                    <input type="text" class="category-form">
-                                    <span class="fw-add-input icon-addremove"></span>
-                                </td>
-                            </tr>`
-                        )
-                    } else {
-                        itemEl.parentElement.removeChild(itemEl)
-                    }
-                    break
-                }
-                default:
-                    break
+                break
             }
-        })
+            case findTarget(event, ".delete-image", el): {
+                const imageId = el.target.dataset.id
+                this.deleteImageDialog([imageId])
+                break
+            }
+            case findTarget(event, ".edit-image", el): {
+                const imageId = el.target.dataset.id
+                import("../edit_dialog").then(({ImageEditDialog}) => {
+                    const dialog = new ImageEditDialog(
+                        this.app.imageDB,
+                        imageId,
+                        this
+                    )
+                    dialog.init().then(() => {
+                        this.updateTable([imageId])
+                    })
+                })
+                break
+            }
+            case findTarget(event, ".fw-add-input", el): {
+                const itemEl = el.target.closest(".fw-list-input")
+                if (!itemEl.nextElementSibling) {
+                    itemEl.insertAdjacentHTML(
+                        "afterend",
+                        `<tr class="fw-list-input">
+                            <td>
+                                <input type="text" class="category-form">
+                                <span class="fw-add-input icon-addremove" tabindex="0"></span>
+                            </td>
+                        </tr>`
+                    )
+                } else {
+                    itemEl.parentElement.removeChild(itemEl)
+                }
+                break
+            }
+            default:
+                break
+        }
     }
 
     close() {

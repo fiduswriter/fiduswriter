@@ -9,7 +9,7 @@ const usermediaCategoryformsTemplate = ({categories}) =>
                 <td>
                     <input type="text" class="category-form" id="categoryTitle_${cat.id}"
                             value="${escapeText(cat.category_title)}" data-id="${cat.id}" />
-                    <span class="fw-add-input icon-addremove"></span>
+                    <span class="fw-add-input icon-addremove" tabindex="0"></span>
                 </td>
             </tr>`
         )
@@ -17,7 +17,7 @@ const usermediaCategoryformsTemplate = ({categories}) =>
     <tr class="fw-list-input">
         <td>
             <input type="text" class="category-form" />
-            <span class="fw-add-input icon-addremove"></span>
+            <span class="fw-add-input icon-addremove" tabindex="0"></span>
         </td>
     </tr>`
 

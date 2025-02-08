@@ -139,9 +139,7 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "'Submit'])[1]/following::button[1]",
         ).click()
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR, "button[title='Upload new image (Alt-u)']"
         ).click()
         driver.find_element(By.NAME, "title").click()
         driver.find_element(By.NAME, "title").send_keys("An image")
@@ -176,7 +174,7 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual("An image", image_title.text)
         search_input = driver.find_element(
             By.CSS_SELECTOR,
-            ".fw-overview-menu-item .fw-button input[type=text]",
+            ".fw-overview-menu-item .fw-button input[type=search]",
         )
         search_input.click()
         search_input.send_keys("fish")

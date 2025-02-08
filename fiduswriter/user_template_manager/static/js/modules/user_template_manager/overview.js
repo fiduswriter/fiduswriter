@@ -184,6 +184,9 @@ export class DocTemplatesOverview {
                     this.deleteDocTemplatesDialog([imageId])
                 }
             } else {
+                if (event.target.closest("a, span.delete-doc-template")) {
+                    return
+                }
                 if (!focused) {
                     this.table.dom.focus()
                 }

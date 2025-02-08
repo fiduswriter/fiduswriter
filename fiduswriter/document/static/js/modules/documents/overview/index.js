@@ -530,6 +530,13 @@ export class DocumentOverview {
                     this.mod.actions.deleteDocumentDialog([docId], this.app)
                 }
             } else {
+                if (
+                    event.target.closest(
+                        "a, span.fw-link-text, span.delete-document"
+                    )
+                ) {
+                    return
+                }
                 if (!focused) {
                     this.table.dom.focus()
                 }

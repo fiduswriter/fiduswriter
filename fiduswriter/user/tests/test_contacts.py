@@ -95,7 +95,7 @@ class ContactsTest(SeleniumHelper, ChannelsLiveServerTestCase):
             1,
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Invite contact']"
+            By.CSS_SELECTOR, "button[title='Invite contact (Alt-i)']"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
             "contact2@snowman.com"

@@ -78,7 +78,7 @@ export class DocTemplatesOverview {
         this.dom.querySelector(".fw-contents").innerHTML = ""
         this.dom.querySelector(".fw-contents").appendChild(tableEl)
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 1)
 
         const hiddenCols = [0]
 
@@ -167,6 +167,10 @@ export class DocTemplatesOverview {
             if (event.type === "keydown") {
                 const key = keyName(event)
                 if (key === "Enter") {
+                    if (this.getSelected().length > 0) {
+                        // Don't open the document. Let the bulk menu handle it.
+                        return
+                    }
                     const link = this.table.dom.querySelector(
                         `tr[data-index="${rowIndex}"] a`
                     )
@@ -184,7 +188,9 @@ export class DocTemplatesOverview {
                     this.deleteDocTemplatesDialog([imageId])
                 }
             } else {
-                if (event.target.closest("a, span.delete-doc-template")) {
+                if (
+                    event.target.closest("a, span.delete-doc-template, label")
+                ) {
                     return
                 }
                 if (!focused) {
@@ -198,7 +204,7 @@ export class DocTemplatesOverview {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.dom)
+        this.dtBulk.init(this.table)
     }
 
     createTableRow(docTemplate) {
@@ -307,23 +313,6 @@ export class DocTemplatesOverview {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-                case findTarget(
-                    event,
-                    ".entry-select, .entry-select + label",
-                    el
-                ): {
-                    const checkbox = el.target
-                    const dataIndex = checkbox
-                        .closest("tr")
-                        .getAttribute("data-index", null)
-                    if (dataIndex) {
-                        const index = Number.parseInt(dataIndex)
-                        const data = this.table.data.data[index]
-                        data.cells[1].data = !checkbox.checked
-                        data.cells[1].text = String(!checkbox.checked)
-                    }
-                    break
-                }
                 case findTarget(event, ".delete-doc-template", el): {
                     const docTemplateId = Number.parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocTemplatesDialog([docTemplateId])

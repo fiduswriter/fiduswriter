@@ -216,7 +216,7 @@ export class ImageOverview {
         this.dom.querySelector(".fw-contents").innerHTML = ""
         this.dom.querySelector(".fw-contents").appendChild(tableEl)
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 1)
 
         const hiddenCols = [0]
 
@@ -309,6 +309,11 @@ export class ImageOverview {
             if (event.type === "keydown") {
                 const key = keyName(event)
                 if (key === "Enter") {
+                    if (this.getSelected().length > 0) {
+                        // Don't open. Let the bulk menu handle it.
+                        return
+                    }
+
                     const button = this.table.dom.querySelector(
                         `tr[data-index="${rowIndex}"] span.edit-image`
                     )
@@ -327,7 +332,9 @@ export class ImageOverview {
                 }
             } else {
                 if (
-                    event.target.closest("span.edit-image, span.delete-image")
+                    event.target.closest(
+                        "span.edit-image, span.delete-image, label"
+                    )
                 ) {
                     return
                 }
@@ -338,7 +345,7 @@ export class ImageOverview {
             }
         })
 
-        this.dtBulk.init(this.table.dom)
+        this.dtBulk.init(this.table)
 
         this.table.dom.focus()
     }
@@ -365,23 +372,6 @@ export class ImageOverview {
         }
         const el = {}
         switch (true) {
-            case findTarget(
-                event,
-                ".entry-select, .entry-select + label",
-                el
-            ): {
-                const checkbox = el.target
-                const dataIndex = checkbox
-                    .closest("tr")
-                    .getAttribute("data-index", null)
-                if (dataIndex) {
-                    const index = Number.parseInt(dataIndex)
-                    const data = this.table.data.data[index]
-                    data.cells[1].data = !checkbox.checked
-                    data.cells[1].text = String(!checkbox.checked)
-                }
-                break
-            }
             case findTarget(event, ".delete-image", el): {
                 const imageId = el.target.dataset.id
                 this.deleteImageDialog([imageId])

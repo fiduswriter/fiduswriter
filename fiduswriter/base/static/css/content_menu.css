@@ -64,6 +64,12 @@
     background-color: var(--cs-white-background-hover);
 }
 
+.content-menu-item:focus {
+    color: var(--cs-white-focus);
+    background-color: var(--cs-white-background-focus);
+    outline: none;
+}
+
 .content-menu-item-divider {
     border: 0 none;
     border-top: 1px solid var(--pulldown-separator-color) !important;

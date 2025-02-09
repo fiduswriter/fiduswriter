@@ -26,7 +26,7 @@ const menuTemplate = ({
                     case "separator":
                         return '<li><hr class="content-menu-item-divider"/></li>'
                     default:
-                        return `<li data-index="${index}" class="content-menu-item${
+                        return `<li tabindex="0" data-index="${index}" class="content-menu-item${
                             menuItem.disabled && menuItem.disabled(page)
                                 ? " disabled"
                                 : menuItem.selected
@@ -77,12 +77,18 @@ export class ContentMenu {
         this.dialogEl = dialogEl
         this.backdropEl = backdropEl
         this.menuPos = menuPos
+
+        this.focusedIndex = 0
+        this.previouslyFocusedElement = null
     }
 
     open() {
         if (this.dialogEl) {
             return
         }
+
+        this.previouslyFocusedElement = document.activeElement
+
         document.body.insertAdjacentHTML(
             "beforeend",
             menuTemplate({
@@ -104,6 +110,7 @@ export class ContentMenu {
             this.centerDialog()
         }
         this.bind()
+        this.focusFirstMenuItem()
     }
 
     centerDialog() {
@@ -149,6 +156,10 @@ export class ContentMenu {
     bind() {
         this.backdropEl.addEventListener("click", () => this.close())
         this.dialogEl.addEventListener("click", event => this.onclick(event))
+        this.dialogEl.addEventListener("keydown", event =>
+            this.onKeyDown(event)
+        )
+        this.dialogEl.focus()
     }
 
     getHighestDialogZIndex() {
@@ -172,6 +183,15 @@ export class ContentMenu {
         }
         this.dialogEl.parentElement.removeChild(this.dialogEl)
         this.backdropEl.parentElement.removeChild(this.backdropEl)
+
+        // Restore focus to the previously focused element
+        if (
+            this.previouslyFocusedElement &&
+            this.previouslyFocusedElement.focus
+        ) {
+            this.previouslyFocusedElement.focus()
+        }
+
         if (this.onClose) {
             this.onClose()
         }
@@ -189,6 +209,60 @@ export class ContentMenu {
             }
             menuItem.action(this.page)
             this.close()
+        }
+    }
+
+    onKeyDown(event) {
+        const {key} = event
+        const menuItems = this.dialogEl.querySelectorAll(
+            "li.content-menu-item:not(.disabled)"
+        )
+
+        switch (key) {
+            case "Escape":
+                this.close()
+                break
+            case "ArrowUp":
+                event.preventDefault()
+                this.focusedIndex =
+                    (this.focusedIndex - 1 + menuItems.length) %
+                    menuItems.length
+                this.focusMenuItem(this.focusedIndex)
+                break
+            case "ArrowDown":
+                event.preventDefault()
+                this.focusedIndex = (this.focusedIndex + 1) % menuItems.length
+                this.focusMenuItem(this.focusedIndex)
+                break
+            case "Enter":
+            case " ": {
+                event.preventDefault()
+                const menuItem = this.menu.content[this.focusedIndex]
+                if (!menuItem.disabled?.(this.page)) {
+                    menuItem.action(this.page)
+                    this.close()
+                }
+                break
+            }
+        }
+    }
+
+    focusFirstMenuItem() {
+        const menuItems = this.dialogEl.querySelectorAll(
+            "li.content-menu-item:not(.disabled)"
+        )
+        if (menuItems.length > 0) {
+            this.focusedIndex = 0
+            this.focusMenuItem(this.focusedIndex)
+        }
+    }
+
+    focusMenuItem(index) {
+        const menuItems = this.dialogEl.querySelectorAll(
+            "li.content-menu-item:not(.disabled)"
+        )
+        if (menuItems[index]) {
+            menuItems[index].focus()
         }
     }
 }

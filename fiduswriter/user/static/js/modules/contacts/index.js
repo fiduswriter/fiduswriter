@@ -1,5 +1,7 @@
 import deepEqual from "fast-deep-equal"
 import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
+
 import {
     DatatableBulk,
     OverviewMenuView,
@@ -44,8 +46,6 @@ export class ContactsOverview {
     }
 
     render() {
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
-
         this.dom = document.createElement("body")
         this.dom.innerHTML = baseBodyTemplate({
             contents: "",
@@ -73,7 +73,7 @@ export class ContactsOverview {
         contentsEl.innerHTML = "" // Delete any old table
         contentsEl.appendChild(tableEl)
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 2)
 
         this.table = new DataTable(tableEl, {
             paging: false,
@@ -98,24 +98,92 @@ export class ContactsOverview {
             },
             columns: [
                 {
-                    select: [0, 1],
-                    hidden: true
+                    select: 0,
+                    hidden: true,
+                    type: "number"
+                },
+                {
+                    select: 1,
+                    hidden: true,
+                    type: "string"
+                },
+                {
+                    select: 2,
+                    type: "boolean"
                 },
                 {
                     select: [2, 6],
                     sortable: false
                 }
-            ]
+            ],
+            rowNavigation: true,
+            rowSelectionKeys: ["Enter", "Delete", " "],
+            tabIndex: 1,
+            rowRender: (row, tr, _index) => {
+                const id = row.cells[0].data
+                const contactType = row.cells[1].data
+                const inputNode = {
+                    nodeName: "input",
+                    attributes: {
+                        type: "checkbox",
+                        class: `entry-select fw-check ${contactType}`,
+                        "data-id": id,
+                        "data-type": contactType,
+                        id: `contact-${contactType}-${id}`
+                    }
+                }
+                if (row.cells[2].data) {
+                    inputNode.attributes.checked = true
+                }
+                tr.childNodes[0].childNodes = [
+                    inputNode,
+                    {
+                        nodeName: "label",
+                        attributes: {
+                            for: `contact-${contactType}-${id}`
+                        }
+                    }
+                ]
+            }
         })
 
-        this.dtBulk.init(this.table.dom)
+        this.dtBulk.init(this.table)
+
+        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
+            event.preventDefault()
+            if (event.type === "keydown") {
+                const key = keyName(event)
+                if (key === " ") {
+                    const cell = this.table.data.data[rowIndex].cells[2]
+                    cell.data = !cell.data
+                    cell.text = String(cell.data)
+                    this.table.update()
+                } else if (key === "Delete") {
+                    const id = this.table.data.data[rowIndex].cells[0].data
+                    const type = this.table.data.data[rowIndex].cells[1].data
+                    this.deleteContact(id, type)
+                }
+            } else {
+                if (
+                    event.target.closest(
+                        "span.delete-single-contact, button.respond-invite, label"
+                    )
+                ) {
+                    return
+                }
+                if (!focused) {
+                    this.table.dom.focus()
+                }
+                this.table.rows.setCursor(rowIndex)
+            }
+        })
     }
 
     createTableRow(contact) {
         return [
-            String(contact.id),
+            contact.id,
             contact.type,
-            `<input type="checkbox" class="entry-select fw-check ${contact.type}" id="contact-${contact.type}-${contact.id}" data-id="${contact.id}" data-type="${contact.type}"><label for="contact-${contact.type}-${contact.id}"></label`,
+            false, // checkbox
             `${avatarTemplate({user: contact})} ${escapeText(contact.name)}`,
             displayContactType(contact),
             contact.email,
@@ -196,14 +264,8 @@ export class ContactsOverview {
                     //delete single user
                     const id = Number.parseInt(el.target.dataset.id)
                     const type = el.target.dataset.type
-                    const dialog = new DeleteContactDialog([{id, type}])
-                    dialog.init().then(() => {
-                        this.contacts = this.contacts.filter(
-                            ocontact =>
-                                ocontact.id !== id || ocontact.type !== type
-                        )
-                        this.initializeView()
-                    })
+
+                    this.deleteContact(id, type)
                     break
                 }
                 case findTarget(event, ".respond-invite", el): {
@@ -245,5 +307,15 @@ export class ContactsOverview {
             id: Number.parseInt(el.dataset.id),
             type: el.dataset.type
         }))
+    }
+
+    deleteContact(id, type) {
+        const dialog = new DeleteContactDialog([{id, type}])
+        dialog.init().then(() => {
+            this.contacts = this.contacts.filter(
+                ocontact => ocontact.id !== id || ocontact.type !== type
+            )
+            this.initializeView()
+        })
     }
 }

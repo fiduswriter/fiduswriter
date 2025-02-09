@@ -96,6 +96,7 @@
     /* black on white */
     --cs-white-text: #000000;
     --cs-white-hover: #000000;
+    --cs-white-focus: #000000;
     --cs-white-selected: #000000;
     --cs-white-border: #cccccc;
     --cs-white-header-border: #888888;
@@ -103,6 +104,7 @@
     --cs-white-placeholder-text: #cecece;
     --cs-white-background: #ffffff;
     --cs-white-background-hover: #cccccc;
+    --cs-white-background-focus: #cccccc;
     --cs-white-background-selected: #dddddd;
 
     /* disabled */

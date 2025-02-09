@@ -7,7 +7,7 @@
         "fast-xml-parser": "4.5.0",
         "fix-utf8": "1.1.2",
         jszip: "3.10.1",
-        mathlive: "0.98.5",
+        mathlive: "0.104.0",
         "mathml-to-latex": "1.4.3",
         orderedmap: "2.1.1",
         "prosemirror-changeset": "2.2.1",

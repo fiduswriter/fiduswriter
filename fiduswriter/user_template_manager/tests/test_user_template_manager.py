@@ -46,7 +46,9 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".fw-contents tbody tr .fw-data-table-title a"
         )
         self.assertEqual(len(editable_templates), 0)
-        self.driver.find_element(By.CSS_SELECTOR, ".entry-select").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".entry-select + label"
+        ).click()
         # Try to delete the default template - should fail
         self.driver.find_element(By.CSS_SELECTOR, ".dt-bulk-dropdown").click()
         self.driver.find_element(
@@ -202,7 +204,7 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             slim_file_path
@@ -245,7 +247,7 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             fat_file_path
@@ -253,7 +255,7 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
         # Import slim file
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             slim_file_path

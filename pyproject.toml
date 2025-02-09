@@ -31,8 +31,8 @@ homepage = "https://www.fiduswriter.org"
 repository = "https://www.github.com/fiduswriter/fiduswriter"
 
 [project.optional-dependencies]
-books = ["fiduswriter-books ~= >= 4.0.0rc1, ~= 4.0.0"]
-citation-api-import = ["fiduswriter-citation-api-import ~= >= 4.0.0rc1, ~= 4.0.0"]
+books = ["fiduswriter-books >= 4.0.0rc1, ~= 4.0.0"]
+citation-api-import = ["fiduswriter-citation-api-import >= 4.0.0rc1, ~= 4.0.0"]
 languagetool = ["fiduswriter-languagetool >= 4.0.0rc1, ~= 4.0.0"]
 ojs = ["fiduswriter-ojs >= 4.0.0rc1, ~= 4.0.0"]
 pandoc = ["fiduswriter-pandoc >= 4.0.0rc1, ~= 4.0.0"]

@@ -36,6 +36,11 @@ a.feedback-tab:hover {
     background-color: var(--feedback-tab-background-hover-color);
 }
 
+a.feedback-tab:focus {
+    outline: 2px solid var(--cs-6-background-focus);
+    outline-offset: 2px;
+}
+
 body.header-closed a.feedback-tab {
     display: none;
 }
@@ -117,6 +122,10 @@ a.feedback-tab::before {
 
 #close-feedback:hover {
     color: var(--feedback-icon-hover-color);
+}
+
+#close-feedback:focus {
+    color: var(--feedback-icon-focus-color);
 }
 
 @media print {

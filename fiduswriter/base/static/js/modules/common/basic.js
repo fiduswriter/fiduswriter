@@ -1,5 +1,8 @@
+import {keyName} from "w3c-keyname"
+
 import {ContentMenu} from "./content_menu"
 import {Dialog} from "./dialog"
+import {isActivationEvent} from "./events"
 
 /** Creates a styled select with a contentmenu from a select tag.
  * @param select The select-tag which is to be replaced.
@@ -21,10 +24,12 @@ export const dropdownSelect = (
         buttonDOM = document.createElement("div")
         buttonDOM.innerHTML =
             '<label></label>&nbsp;<span class="fa fa-caret-down"></span>'
-        buttonDOM.classList.add("fw-button")
-        buttonDOM.classList.add("fw-light")
-        buttonDOM.classList.add("fw-large")
-        buttonDOM.classList.add("fw-dropdown")
+        buttonDOM.classList.add(
+            "fw-button",
+            "fw-light",
+            "fw-large",
+            "fw-dropdown"
+        )
         if (width) {
             buttonDOM.style.width = Number.isInteger(width)
                 ? `${width}px`
@@ -38,6 +43,11 @@ export const dropdownSelect = (
         }
         selectDOM.parentElement.replaceChild(buttonDOM, selectDOM) // Remove the <select> from the main dom.
     }
+
+    buttonDOM.setAttribute("role", "button")
+    buttonDOM.setAttribute("tabindex", "0")
+    buttonDOM.setAttribute("aria-haspopup", "true")
+    buttonDOM.setAttribute("aria-expanded", "false")
 
     const options = Array.from(selectDOM.children)
     if (!options.length) {
@@ -83,18 +93,40 @@ export const dropdownSelect = (
 
     value = selected ? selected.value : false
 
-    buttonDOM.addEventListener("click", event => {
+    const openMenu = event => {
+        if (!isActivationEvent(event)) {
+            return
+        }
+
         event.preventDefault()
         event.stopPropagation()
         if (buttonDOM.classList.contains("disabled")) {
             return
         }
+        // Determine menu position
+        let menuPos
+        if (event.type === "click") {
+            menuPos = {X: event.pageX, Y: event.pageY}
+        } else {
+            // Keyboard event
+            const rect = buttonDOM.getBoundingClientRect()
+            menuPos = {
+                X: rect.left + window.pageXOffset,
+                Y: rect.top + window.pageYOffset + rect.height
+            }
+        }
+
+        buttonDOM.setAttribute("aria-expanded", "true")
         const contentMenu = new ContentMenu({
             menu,
-            menuPos: {X: event.pageX, Y: event.pageY}
+            menuPos,
+            onClose: () => buttonDOM.setAttribute("aria-expanded", "false")
         })
         contentMenu.open()
-    })
+    }
+
+    buttonDOM.addEventListener("click", openMenu)
+    buttonDOM.addEventListener("keydown", openMenu)
 
     return {
         setValue: newValue => {

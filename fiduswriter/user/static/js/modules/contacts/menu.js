@@ -33,6 +33,7 @@ export const menuModel = () => ({
         {
             type: "text",
             title: gettext("Invite contact"),
+            keys: "Alt-i",
             action: overview => {
                 const dialog = new AddContactDialog()
                 dialog.init().then(contacts => {

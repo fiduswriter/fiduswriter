@@ -5,7 +5,9 @@ import {ensureCSS, post} from "../common"
 // This is also where browser sniffing happens to prevent still unsupported browsers from logging in.
 
 export class FeedbackTab {
-    constructor() {}
+    constructor() {
+        this.previousActiveElement = null
+    }
 
     init() {
         this.render()
@@ -15,7 +17,7 @@ export class FeedbackTab {
     render() {
         document.body.insertAdjacentHTML(
             "beforeend",
-            `<div class="feedback-panel">
+            `<div class="feedback-panel" tole="dialog" aria-modal="true" aria-labelledby="feedback-title">
               <div id="feedback-wrapper">
                 <div id="feedback-title">${gettext("Tech support")}</div>
                 <p>${gettext("Did you encounter an error or bug?")}<br>
@@ -29,7 +31,7 @@ export class FeedbackTab {
                 <div id="response-message">
                   ${gettext("Thank you for your report!")}
                 </div>
-                <span id="close-feedback" class="fa fa-times-circle"></span>
+                <button id="close-feedback" aria-label="${gettext("Close technical support")}"><i class="fa fa-times-circle"></i></button>
               </div>
             </div>`
         )
@@ -64,28 +66,31 @@ export class FeedbackTab {
         document
             .querySelector("a.feedback-tab")
             .addEventListener("click", event => {
-                document.querySelector(".feedback-panel").style.display =
-                    "block"
                 event.preventDefault()
+                this.openFeedbackPanel()
             })
 
         document
             .querySelector("#close-feedback")
             .addEventListener("click", event => {
-                document.querySelector(".feedback-panel").style.display = "none"
-                document.querySelector("#feedback-form").style.visibility =
-                    "visible"
-                document.querySelector("#response-message").style.display =
-                    "none"
                 event.preventDefault()
+                this.closeFeedbackPanel()
             })
 
         document
             .querySelector("#feedbackbutton")
-            .addEventListener("click", () => this.openFeedback())
+            .addEventListener("click", () => this.sendFeedback())
     }
 
-    openFeedback() {
+    openFeedbackPanel() {
+        this.previousActiveElement = document.activeElement
+        const panelEl = document.querySelector(".feedback-panel")
+        panelEl.style.display = "block"
+        document.querySelector("textarea#message").focus()
+        panelEl.addEventListener("keydown", this.handleKeyDown)
+    }
+
+    sendFeedback() {
         const messageEl = document.querySelector("textarea#message"),
             closeFeedbackEl = document.querySelector("#close-feedback"),
             feedbackFormEl = document.querySelector("#feedback-form"),
@@ -108,5 +113,58 @@ export class FeedbackTab {
                 closeFeedbackEl.style.display = "block"
             })
         return false
+    }
+
+    handleKeyDown(event) {
+        // Trap Tab key within the feedback panel.
+        const FOCUSABLE_SELECTORS = "button, textarea"
+        if (event.key !== "Tab") {
+            return
+        }
+        const focusableEls = Array.from(
+            document
+                .querySelector(".feedback-panel")
+                .querySelectorAll(FOCUSABLE_SELECTORS)
+        )
+            // Filter only visible elements
+            .filter(el => el.offsetParent !== null)
+
+        if (focusableEls.length === 0) {
+            return
+        }
+        const firstEl = focusableEls[0]
+        const lastEl = focusableEls[focusableEls.length - 1]
+
+        if (event.shiftKey) {
+            // If Shift+Tab and the first element is active, move focus to the last element.
+            if (document.activeElement === firstEl) {
+                event.preventDefault()
+                lastEl.focus()
+            }
+        } else {
+            // Tab: if focus is on the last element, cycle back to first.
+            if (document.activeElement === lastEl) {
+                event.preventDefault()
+                firstEl.focus()
+            }
+        }
+    }
+
+    closeFeedbackPanel() {
+        const panelEl = document.querySelector(".feedback-panel")
+        panelEl.style.display = "none"
+        document.querySelector("#feedback-form").style.visibility = "visible"
+        document.querySelector("#response-message").style.display = "none"
+
+        // Remove the keydown event listener that was added for focus trapping.
+        panelEl.removeEventListener("keydown", this.handleKeyDown)
+
+        // Restore focus to the previously active element, if any.
+        if (
+            this.previousActiveElement &&
+            typeof this.previousActiveElement.focus === "function"
+        ) {
+            this.previousActiveElement.focus()
+        }
     }
 }

@@ -168,7 +168,7 @@ export class DocTemplatesOverview {
                 const key = keyName(event)
                 if (key === "Enter") {
                     if (this.getSelected().length > 0) {
-                        // Don't open the document. Let the bulk menu handle it.
+                        // Don't open. Let the bulk menu handle it.
                         return
                     }
                     const link = this.table.dom.querySelector(
@@ -205,6 +205,8 @@ export class DocTemplatesOverview {
         })
 
         this.dtBulk.init(this.table)
+
+        this.table.dom.focus()
     }
 
     createTableRow(docTemplate) {

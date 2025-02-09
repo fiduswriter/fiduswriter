@@ -198,11 +198,6 @@ export class App {
                     console.log("SW registration failed: ", registrationError)
                 })
         }
-
-        // OfflinePluginRuntime.install({
-        //     onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-        //     onUpdated: () => window.location.reload()
-        // })
     }
 
     init() {

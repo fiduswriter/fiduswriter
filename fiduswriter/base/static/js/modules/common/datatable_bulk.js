@@ -81,7 +81,6 @@ export class DatatableBulk {
     }
 
     toggleSelectAll(checked) {
-        console.log(`toggleSelectAll ${checked}`)
         // Update the DataTable instance
         if (this.table) {
             this.table.data.data.forEach(row => {
@@ -89,7 +88,6 @@ export class DatatableBulk {
                     row.cells[this.checkboxColumn].data = checked
                     row.cells[this.checkboxColumn].text = String(checked)
                 }
-                console.log({row})
             })
             this.table.update()
         }
@@ -117,9 +115,7 @@ export class DatatableBulk {
 
     onClick(event) {
         const target = event.target
-        console.log("click", event)
         if (target.matches(`#${this.id} *`)) {
-            console.log("match 1")
             event.preventDefault()
             event.stopImmediatePropagation()
             event.stopPropagation()
@@ -155,17 +151,12 @@ export class DatatableBulk {
             event.preventDefault()
             event.stopImmediatePropagation()
             event.stopPropagation()
-            console.log("clicked on label")
-            console.log({target})
             const tr = target.closest("tr")
             const index = parseInt(tr.dataset.index)
             const row = this.table.data.data[index]
             const cell = row.cells[this.checkboxColumn]
-            console.log({index, row, cell, checkboxColumn: this.checkboxColumn})
-            console.log(`Previous state: ${cell.data}`)
             cell.data = !cell.data
             cell.text = String(cell.data)
-            console.log(`New state: ${cell.data}`)
             this.table.update()
             this.onTableCheckChange()
         }

@@ -177,6 +177,8 @@ export class ContactsOverview {
                 this.table.rows.setCursor(rowIndex)
             }
         })
+
+        this.table.dom.focus()
     }
 
     createTableRow(contact) {

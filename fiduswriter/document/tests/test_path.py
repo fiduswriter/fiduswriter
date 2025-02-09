@@ -85,7 +85,7 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         # Create new folder 'February' and enter
         self.driver.find_element(
-            By.CSS_SELECTOR, 'button[title="Create new folder"]'
+            By.CSS_SELECTOR, 'button[title="Create new folder (Alt-f)"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#new-folder-name").click()
         self.driver.find_element(

@@ -530,7 +530,7 @@ export class HeaderbarView {
                 : `/documents${encodeURI(folderPath)}/`
         return `<div>
             <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
-                <a href="${exitUrl}" aria-label="Close document">
+                <a href="${exitUrl}" aria-label="${gettext("Close document")}" title="${gettext("Close document")}">
                     <i class="fa fa-times"></i>
                 </a>
             </div>
@@ -566,6 +566,7 @@ export class HeaderbarView {
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}"
                           title="${menu.tooltip}"
+                          aria-label="${menu.tooltip}"
                           role="menuitem"
                           aria-haspopup="true">
                         ${this.getAccessKeyHTML(menu.title, menu.keys?.slice(-1))}
@@ -578,9 +579,14 @@ export class HeaderbarView {
     }
 
     getMenuHTML(menu) {
+        const title =
+            typeof menu.title === "function"
+                ? menu.title(this.editor)
+                : menu.title
         return `<div class="fw-pulldown fw-left fw-open"
                      role="menu"
-                     aria-label="${typeof menu.title === "function" ? menu.title(this.editor) : menu.title}">
+                     aria-label="${title}"
+                     title="${title}">
             <ul>
                 ${menu.content
                     .map(
@@ -624,7 +630,7 @@ export class HeaderbarView {
         role="menuitem"
         ${menuItem.disabled && menuItem.disabled(this.editor) ? 'aria-disabled="true"' : ""}
         ${menuItem.selected && menuItem.selected(this.editor) ? 'aria-checked="true"' : ""}
-        ${menuItem.tooltip ? `aria-label="${menuItem.tooltip}"` : ""}>
+        ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
             ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
         </span>`
@@ -637,7 +643,7 @@ export class HeaderbarView {
                 : ""
         }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
             menuItem === this.cursorMenuItem ? " cursor" : ""
-        }" ${menuItem.tooltip ? `title="${menuItem.tooltip}"` : ""}>
+        }" ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
             ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
             <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>

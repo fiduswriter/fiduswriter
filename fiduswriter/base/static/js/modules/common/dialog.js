@@ -111,8 +111,10 @@ export class Dialog {
         this.icon = options.icon || false
         this.scroll = options.scroll || false
         this.canEscape =
-            options.canEscape ||
-            options.buttons?.find(button => button.type === "close") ||
+            options.canEscape ??
+            options.buttons?.find(button =>
+                ["cancel", "close"].includes(button.type)
+            ) ??
             false
         this.dialogEl = false
         this.backdropEl = false

@@ -63,7 +63,11 @@ export class ContactsOverview {
     initTable() {
         if (this.table) {
             this.table.destroy()
-            this.table = false
+            this.table = null
+        }
+        if (this.dtBulk) {
+            this.dtBulk.destroy()
+            this.dtBulk = null
         }
         const tableEl = document.createElement("table")
         tableEl.classList.add("fw-data-table")

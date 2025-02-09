@@ -26,13 +26,47 @@ export class DatatableBulk {
     }
 
     bindEvents() {
-        this.page.dom.addEventListener("click", this.onClick.bind(this))
-        this.table.dom.addEventListener(
-            "change",
-            this.onTableCheckChange.bind(this)
-        )
-        this.table.dom.addEventListener("keydown", this.onKeyDown.bind(this))
+        // Store the bound functions as instance variables so we can remove them later
+        this.boundOnClick = this.onClick.bind(this)
+        this.boundOnTableCheckChange = this.onTableCheckChange.bind(this)
+        this.boundOnKeyDown = this.onKeyDown.bind(this)
+
+        this.page.dom.addEventListener("click", this.boundOnClick)
+        this.table.dom.addEventListener("change", this.boundOnTableCheckChange)
+        this.table.dom.addEventListener("keydown", this.boundOnKeyDown)
         this.onTableCheckChange()
+    }
+
+    // The new destroy() method removes all event listeners that were added and cleans up DOM elements.
+    destroy() {
+        if (this.page && this.page.dom && this.boundOnClick) {
+            this.page.dom.removeEventListener("click", this.boundOnClick)
+        }
+        if (this.table && this.table.dom) {
+            if (this.boundOnTableCheckChange) {
+                this.table.dom.removeEventListener(
+                    "change",
+                    this.boundOnTableCheckChange
+                )
+            }
+            if (this.boundOnKeyDown) {
+                this.table.dom.removeEventListener(
+                    "keydown",
+                    this.boundOnKeyDown
+                )
+            }
+        }
+
+        // Remove the bulk element from the DOM if it exists
+        const el = document.getElementById(this.id)
+        if (el && el.parentNode) {
+            el.parentNode.removeChild(el)
+        }
+
+        // Clear any references to help garbage collection
+        this.page = null
+        this.table = null
+        this.model = null
     }
 
     onKeyDown(event) {
@@ -154,6 +188,12 @@ export class DatatableBulk {
             const tr = target.closest("tr")
             const index = parseInt(tr.dataset.index)
             const row = this.table.data.data[index]
+            console.log({
+                row,
+                index,
+                checkboxColumn: this.checkboxColumn,
+                table: this.table
+            })
             const cell = row.cells[this.checkboxColumn]
             cell.data = !cell.data
             cell.text = String(cell.data)

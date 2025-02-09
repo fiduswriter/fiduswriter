@@ -532,6 +532,11 @@ export class BibliographyOverview {
     close() {
         if (this.table) {
             this.table.destroy()
+            this.table = null
+        }
+        if (this.dtBulk) {
+            this.dtBulk.destroy()
+            this.dtBulk = null
         }
         if (this.menu) {
             this.menu.destroy()

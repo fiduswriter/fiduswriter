@@ -45,7 +45,7 @@ TEST_SERVER = True
 # the site.
 CONTACT_EMAIL = "mail@email.com"
 # If websockets is running on a non-standard port, add it here:
-WS_SERVERS = [False]
+WS_URLS = [False]
 
 ADMINS = (("Your Name", "your_email@example.com"),)
 

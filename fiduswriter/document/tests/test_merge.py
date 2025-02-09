@@ -1,11 +1,13 @@
+import sys
+import time
 import multiprocessing
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 
-class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
+class AutoMergeTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     Auto merge would be triggered when the connection is restored.
@@ -42,6 +44,12 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
 
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time)
+
     def test_footnotes_automerge(self):
         """
         Test one client going offline in collaborative mode while both
@@ -54,7 +62,7 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
@@ -122,7 +130,7 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Add some initial text and wait for doc to be synced.
         self.type_text(self.driver, self.TEST_TEXT)
@@ -144,13 +152,13 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
         # Select all the list item except the last one
         # delete them and then delete the remaining
         # one too.
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
         self.driver2.execute_script("window.testCaret.setSelection(86,86)")
         self.driver2.execute_script("window.testCaret.setSelection(56,86)")
-        self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").send_keys(
             Keys.BACKSPACE
         )
-        self.driver2.find_element(By.CLASS_NAME, "article-body").send_keys(
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").send_keys(
             Keys.BACKSPACE
         )
 
@@ -173,11 +181,11 @@ class AutoMergeTests(LiveTornadoTestCase, EditorHelper):
 
         # Check that the list items aren't deleted
         numberedTags = self.driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ol//li'
         )
         self.assertEqual(len(numberedTags), 4)
         numberedTags = self.driver2.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ol//li'
         )
         self.assertEqual(len(numberedTags), 4)
 

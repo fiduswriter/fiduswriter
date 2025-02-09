@@ -1,113 +1,186 @@
 import download from "downloadjs"
 import pretty from "pretty"
 
-import {createSlug} from "../tools/file"
-import {modifyImages} from "../tools/html"
-import {ZipFileCreator} from "../tools/zip"
+import {get, shortFileTitle} from "../../common"
 import {removeHidden} from "../tools/doc_content"
-import {htmlExportTemplate} from "../html/templates"
-import {addAlert, shortFileTitle} from "../../common"
-import {DOMExporter} from "../tools/dom_export"
+import {createSlug} from "../tools/file"
+import {ZipFileCreator} from "../tools/zip"
 
-export class HTMLExporter extends DOMExporter {
-    constructor(schema, csl, documentStyles, doc, bibDB, imageDB, updated) {
-        super(schema, csl, documentStyles)
+import {HTMLExporterConvert} from "./convert"
+import {htmlExportTemplate} from "./templates"
+/*
+ Exporter to HTML
+*/
+
+export class HTMLExporter {
+    constructor(
+        doc,
+        bibDB,
+        imageDB,
+        csl,
+        updated,
+        documentStyles,
+        converterOptions = {},
+        template = htmlExportTemplate
+    ) {
         this.doc = doc
-        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
         this.bibDB = bibDB
         this.imageDB = imageDB
+        this.csl = csl
         this.updated = updated
+        this.documentStyles = documentStyles
+        this.converterOptions = converterOptions
 
-        this.outputList = []
+        this.docTitle = shortFileTitle(this.doc.title, this.doc.path)
+
+        this.docContent = false
+        this.zipFileName = false
+        this.textFiles = []
+        this.httpFiles = []
         this.includeZips = []
+        this.metaData = {} // Information to be used in sub classes.
+        // To override in subclasses
+        this.htmlExportTemplate = template
+        this.contentFileName = "document.html"
+        this.fileEnding = "html.zip"
+        this.mimeType = "application/zip"
     }
 
-    init() {
-        addAlert("info", `${this.docTitle}: ${gettext("HTML export has been initiated.")}`)
-        this.docContent = removeHidden(this.doc.content, false)
+    async init() {
+        await this.process()
+        return await this.createZip()
+    }
 
-        this.addDocStyle(this.doc)
+    async process() {
+        // Process the document and prepare files
+        this.zipFileName = `${createSlug(this.docTitle)}.${this.fileEnding}`
+        this.docContent = removeHidden(this.doc.content)
+        // Stylesheets will have one of:
+        // * a url - which means they will be fetched before they are included as a separate file
+        // * a filename and contents - which means they will be included as a separate file
+        // * only contents - which means they will be incldued inside <style></style> tags in the document header
+        // * only filename - which means they will be referenced as a separate file. You need to add the file yourself.
+        const styleSheets = [{url: staticUrl("css/document.css")}]
 
-        return this.loadStyles().then(
-            () => this.joinDocumentParts()
-        ).then(
-            () => this.fillToc()
-        ).then(
-            () => this.postProcess()
-        ).then(
-            ({title, html, math}) => this.save({title, html, math})
+        const docStyle = this.getDocStyle(this.doc)
+
+        if (docStyle) {
+            styleSheets.push(docStyle)
+        }
+        await Promise.all(
+            styleSheets.map(async sheet => await this.loadStyle(sheet))
         )
 
-    }
-
-    prepareBinaryFiles() {
-        this.binaryFiles = this.binaryFiles.concat(modifyImages(this.content)).concat(this.fontFiles)
-    }
-
-    postProcess() {
-
-        const title = this.docTitle
-
-        const math = this.content.querySelectorAll(".equation, .figure-equation").length ? true : false
-
-        if (math) {
-            this.addMathliveStylesheet()
-        }
-
-        this.prepareBinaryFiles()
-
-        const html = htmlExportTemplate({
-            contents: this.content,
-            settings: this.doc.settings,
-            styleSheets: this.styleSheets,
-            title
-        })
-
-        return {html, title, math}
-    }
-
-    save({html, math}) {
-        this.outputList.push({
-            filename: "document.html",
-            contents: pretty(this.replaceImgSrc(html), {ocd: true})
-        })
-
-        this.styleSheets.forEach(styleSheet => {
-            if (styleSheet.filename) {
-                this.outputList.push(styleSheet)
-            }
-        })
-
-        if (math) {
+        this.converter = new HTMLExporterConvert(
+            this.docTitle,
+            this.doc.settings,
+            this.docContent,
+            this.htmlExportTemplate,
+            this.imageDB,
+            this.bibDB,
+            this.csl,
+            styleSheets,
+            this.converterOptions
+        )
+        const {html, imageIds, metaData, extraStyleSheets} =
+            await this.converter.init()
+        this.metaData = metaData
+        if (this.converter.features.math) {
             this.includeZips.push({
-                "directory": "css",
-                "url": staticUrl("zip/mathlive_style.zip"),
+                directory: "css",
+                url: staticUrl("zip/mathlive_style.zip")
             })
         }
-
-        return this.createZip()
+        this.addDoc(html)
+        this.addImages(imageIds)
+        await Promise.all(
+            extraStyleSheets.map(async sheet => await this.loadStyle(sheet))
+        )
     }
 
-    addMathliveStylesheet() {
-        this.styleSheets.push({filename: "css/mathlive.css"})
+    getProcessedFiles() {
+        // Return the processed files and metadata. Used when using the
+        // exporter in a different context than creating a zip file.
+        return {
+            textFiles: this.textFiles,
+            httpFiles: this.httpFiles,
+            includeZips: this.includeZips,
+            metaData: this.metaData,
+            converter: this.converter
+        }
     }
 
-    createZip() {
+    addDoc(html) {
+        this.textFiles.push({
+            filename: this.contentFileName,
+            contents: pretty(html, {ocd: true})
+        })
+    }
+
+    addImages(imageIds) {
+        imageIds.forEach(id => {
+            const image = this.imageDB.db[id]
+            this.httpFiles.push({
+                filename: `images/${image.image.split("/").pop()}`,
+                url: image.image
+            })
+        })
+    }
+
+    getDocStyle(doc) {
+        const docStyle = this.documentStyles.find(
+            docStyle => docStyle.slug === doc.settings.documentstyle
+        )
+
+        // The files will be in the base directory. The filenames of
+        // DocumentStyleFiles will therefore not need to replaced with their URLs.
+        if (!docStyle) {
+            return false
+        }
+        let contents = docStyle.contents
+        docStyle.documentstylefile_set.forEach(
+            ([_url, filename]) =>
+                (contents = contents.replace(
+                    new RegExp(filename, "g"),
+                    `media/${filename}`
+                ))
+        )
+        this.httpFiles = this.httpFiles.concat(
+            docStyle.documentstylefile_set.map(([url, filename]) => ({
+                filename: `css/media/${filename}`,
+                url
+            }))
+        )
+        return {contents, filename: `css/${docStyle.slug}.css`}
+    }
+
+    async loadStyle(sheet) {
+        if (sheet.url) {
+            const response = await get(sheet.url)
+            const text = await response.text()
+            sheet.contents = text
+            sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`
+            delete sheet.url
+        }
+        if (sheet.filename) {
+            this.textFiles.push(sheet)
+        }
+        return Promise.resolve(sheet)
+    }
+
+    async createZip() {
         const zipper = new ZipFileCreator(
-            this.outputList,
-            this.binaryFiles,
+            this.textFiles,
+            this.httpFiles,
             this.includeZips,
-            undefined,
+            this.mimeType,
             this.updated
         )
-
-        return zipper.init().then(
-            blob => this.download(blob)
-        )
+        const blob = await zipper.init()
+        return this.download(blob)
     }
 
     download(blob) {
-        return download(blob, createSlug(this.docTitle) + ".html.zip", "application/zip")
+        return download(blob, this.zipFileName, this.mimeType)
     }
-
 }

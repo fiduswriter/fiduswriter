@@ -1,131 +1,77 @@
+import {collab, sendableSteps} from "prosemirror-collab"
+import {baseKeymap} from "prosemirror-commands"
+import {dropCursor} from "prosemirror-dropcursor"
+import {buildKeymap} from "prosemirror-example-setup"
+import {gapCursor} from "prosemirror-gapcursor"
+import {history} from "prosemirror-history"
+import {keymap} from "prosemirror-keymap"
+import {EditorState, TextSelection} from "prosemirror-state"
+import {tableEditing} from "prosemirror-tables"
+import {EditorView} from "prosemirror-view"
 import {
-    whenReady,
-    ensureCSS,
-    WebSocketConnector,
-    postJson,
-    activateWait,
     Dialog,
+    WebSocketConnector,
+    activateWait,
+    addAlert,
+    ensureCSS,
+    postJson,
     showSystemMessage,
-    addAlert
+    whenReady
 } from "../common"
-import {
-    FeedbackTab
-} from "../feedback"
-import {
-    EditorState,
-    TextSelection
-} from "prosemirror-state"
-import {
-    EditorView
-} from "prosemirror-view"
-import {
-    history
-} from "prosemirror-history"
-import {
-    baseKeymap
-} from "prosemirror-commands"
-import {
-    keymap
-} from "prosemirror-keymap"
-import {
-    collab,
-    sendableSteps
-} from "prosemirror-collab"
-import {
-    tableEditing
-} from "prosemirror-tables"
-import {
-    dropCursor
-} from "prosemirror-dropcursor"
-import {
-    gapCursor
-} from "prosemirror-gapcursor"
-import {
-    buildKeymap
-} from "prosemirror-example-setup"
+import {FeedbackTab} from "../feedback"
 
 import * as plugins from "../../plugins/editor"
+import {getSettings} from "../schema/convert"
+import {docSchema} from "../schema/document"
+import {ModCitations} from "./citations"
+import {ModCollab} from "./collab"
+import {ModComments} from "./comments"
+import {ModDB} from "./databases"
+import {ModDocumentTemplate} from "./document_template"
+import {ModFootnotes} from "./footnotes"
+import {ModMarginboxes} from "./marginboxes"
 import {
-    docSchema
-} from "../schema/document"
-import {
-    ModComments
-} from "./comments"
-import {
-    ModFootnotes
-} from "./footnotes"
-import {
-    ModCitations
-} from "./citations"
-import {
-    ModDB
-} from "./databases"
-import {
-    ModCollab
-} from "./collab"
-import {
-    ModTrack,
-    acceptAllNoInsertions,
-    amendTransaction
-} from "./track"
-import {
-    ModNavigator
-} from "./navigator"
-import {
+    figureMenuModel,
+    figureWidthMenuModel,
     headerbarModel,
     imageMenuModel,
     navigatorFilterModel,
     orderedListMenuModel,
     selectionMenuModel,
     tableMenuModel,
-    figureMenuModel,
-    toolbarModel,
-    figureWidthMenuModel
+    toolbarModel
 } from "./menus"
-import {
-    ModMarginboxes
-} from "./marginboxes"
-import {
-    ModDocumentTemplate
-} from "./document_template"
-import {
-    getSettings
-} from "../schema/convert"
+import {ModNavigator} from "./navigator"
+import {ModTrack, acceptAllNoInsertions, amendTransaction} from "./track"
 
+import {ExportFidusFile} from "../exporter/native/file"
+import {imageEditModel} from "../images/edit_dialog/model"
+import {buildEditorKeymap} from "./keymap"
 import {
     accessRightsPlugin,
-    contributorInputPlugin,
     citationRenderPlugin,
     clipboardPlugin,
     collabCaretsPlugin,
     commentsPlugin,
+    contributorInputPlugin,
     documentTemplatePlugin,
+    figurePlugin,
     footnoteMarkersPlugin,
     headerbarPlugin,
     jumpHiddenNodesPlugin,
-    tagInputPlugin,
     linksPlugin,
     marginboxesPlugin,
     orderedListMenuPlugin,
     placeholdersPlugin,
+    searchPlugin,
     selectionMenuPlugin,
     settingsPlugin,
     tablePlugin,
-    figurePlugin,
+    tagInputPlugin,
     tocRenderPlugin,
     toolbarPlugin,
-    trackPlugin,
-    searchPlugin,
+    trackPlugin
 } from "./state_plugins"
-import {
-    buildEditorKeymap
-} from "./keymap"
-import {
-    ExportFidusFile
-} from "../exporter/native/file"
-import {
-    imageEditModel
-} from "../images/edit_dialog/model"
 
 export const COMMENT_ONLY_ROLES = ["review", "comment"]
 export const READ_ONLY_ROLES = ["read", "read-without-comments"]
@@ -154,10 +100,10 @@ export class Editor {
             dir: "ltr", // standard direction, used in input fields, etc.
             path // Default doc path.
         }
-        let id = parseInt(idString)
+        let id = Number.parseInt(idString)
         if (isNaN(id)) {
             id = 0
-            let templateId = parseInt(idString.slice(1))
+            let templateId = Number.parseInt(idString.slice(1))
             if (isNaN(templateId)) {
                 templateId = 1
             }
@@ -178,7 +124,7 @@ export class Editor {
             toolbarModel: toolbarModel(),
             figureWidthMenuModel: figureWidthMenuModel()
         }
-        this.client_id = Math.floor(Math.random() * 0xFFFFFFFF)
+        this.client_id = Math.floor(Math.random() * 0xffffffff)
         this.clientTimeAdjustment = 0
 
         this.pathEditable = true // Set to false through plugin to disable path editing.
@@ -247,203 +193,247 @@ export class Editor {
         ]
         if (this.docInfo.hasOwnProperty("templateId")) {
             initPromises.push(
-                postJson(
-                    "/api/document/create_doc/",
-                    {
-                        template_id: this.docInfo.templateId,
-                        path: this.docInfo.path
-                    }
-                ).then(
-                    ({json}) => {
-                        this.docInfo.id = json.id
-                        window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
-                        delete this.docInfo.templateId
-                        return Promise.resolve()
-                    }
-                )
+                postJson("/api/document/create_doc/", {
+                    template_id: this.docInfo.templateId,
+                    path: this.docInfo.path
+                }).then(({json}) => {
+                    this.docInfo.id = json.id
+                    window.history.replaceState(
+                        "",
+                        "",
+                        `/document/${this.docInfo.id}/`
+                    )
+                    delete this.docInfo.templateId
+                    return Promise.resolve()
+                })
             )
         }
-        return Promise.all(initPromises).then(
-            () => {
+        return Promise.all(initPromises)
+            .then(() => {
                 new ModCitations(this)
                 new ModFootnotes(this)
                 return this.activateFidusPlugins()
-            }
-        ).then(() => {
-            let resubScribed = false
-            this.ws = new WebSocketConnector({
-                url: `/ws/document/${this.docInfo.id}/`,
-                appLoaded: () => this.view.state.plugins.length,
-                anythingToSend: () => sendableSteps(this.view.state),
-                initialMessage: () => {
-                    const message = {
-                        "type": "subscribe"
-                    }
+            })
+            .then(() =>
+                postJson("/api/document/get_ws_base/", {
+                    id: this.docInfo.id
+                })
+            )
+            .then(({json}) => {
+                let resubScribed = false
+                this.ws = new WebSocketConnector({
+                    base: json.ws_base,
+                    path: `/document/${this.docInfo.id}/`,
+                    appLoaded: () => this.view.state.plugins.length,
+                    anythingToSend: () => sendableSteps(this.view.state),
+                    initialMessage: () => {
+                        const message = {
+                            type: "subscribe"
+                        }
 
-                    if (this.ws.connectionCount) {
-                        message.connection = this.ws.connectionCount
-                    }
-                    return message
-                },
-                resubScribed: () => {
-                    if (sendableSteps(this.mod.footnotes.fnEditor.view.state)) {
-                        this.mod.collab.doc.footnoteRender = true
-                    }
-                    resubScribed = true
-                    this.mod.footnotes.fnEditor.renderAllFootnotes()
-                    this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
-                },
-                restartMessage: () => ({type: "get_document"}), // Too many messages have been lost and we need to restart
-                messagesElement: () => this.dom.querySelector("#unobtrusive-messages"),
-                warningNotAllSent: gettext("Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."),
-                infoDisconnected: gettext("Disconnected. Attempting to reconnect..."),
-                receiveData: data => {
-                    if (document.body !== this.dom) {
-                        return // user navigated away.
-                    }
-                    switch (data.type) {
-                    case "chat":
-                        this.mod.collab.chat.newMessage(data)
-                        break
-                    case "connections":
-                        this.mod.collab.updateParticipantList(data.participant_list)
-                        if (resubScribed) { // check version if only reconnected after being offline
-                            this.mod.collab.doc.checkVersion() // check version to sync the doc
-                            resubScribed = false
+                        if (this.ws.connectionCount) {
+                            message.connection = this.ws.connectionCount
                         }
-                        break
-                    case "styles":
-                        this.mod.documentTemplate.setStyles(data.styles)
-                        break
-                    case "doc_data":
-                        this.mod.collab.doc.receiveDocument(data)
-                        break
-                    case "confirm_version":
-                        this.mod.collab.doc.cancelCurrentlyCheckingVersion()
-                        if (data["v"] !== this.docInfo.version) {
-                            this.mod.collab.doc.checkVersion()
-                            return
+                        return message
+                    },
+                    resubScribed: () => {
+                        if (
+                            sendableSteps(
+                                this.mod.footnotes.fnEditor.view.state
+                            )
+                        ) {
+                            this.mod.collab.doc.footnoteRender = true
                         }
-                        this.mod.collab.doc.enableDiffSending()
-                        break
-                    case "selection_change":
-                        this.mod.collab.doc.cancelCurrentlyCheckingVersion()
-                        if (data["v"] !== this.docInfo.version) {
-                            this.mod.collab.doc.checkVersion()
-                            return
+                        resubScribed = true
+                        this.mod.footnotes.fnEditor.renderAllFootnotes()
+                        this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
+                    },
+                    restartMessage: () => ({type: "get_document"}), // Too many messages have been lost and we need to restart
+                    messagesElement: () =>
+                        this.dom.querySelector("#unobtrusive-messages"),
+                    warningNotAllSent: gettext(
+                        "Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."
+                    ),
+                    infoDisconnected: gettext(
+                        "Disconnected. Attempting to reconnect..."
+                    ),
+                    receiveData: data => {
+                        if (document.body !== this.dom) {
+                            return // user navigated away.
                         }
-                        this.mod.collab.doc.receiveSelectionChange(data)
-                        break
-                    case "path_change":
-                        this.docInfo.path = data["path"]
-                        this.menu.headerView.update()
-                        break
-                    case "diff":
-                        if (data["cid"] === this.client_id) {
-                            // The diff origins from the local user.
-                            this.mod.collab.doc.confirmDiff(data["rid"])
-                            return
-                        }
-                        if (data["v"] !== this.docInfo.version) {
-                            this.mod.collab.doc.checkVersion()
-                            return
-                        }
-                        this.mod.collab.doc.receiveDiff(data)
-                        break
-                    case "confirm_diff":
-                        this.mod.collab.doc.confirmDiff(data["rid"])
-                        break
-                    case "reject_diff":
-                        this.mod.collab.doc.rejectDiff(data["rid"])
-                        break
-                    case "patch_error":
-                        showSystemMessage(gettext("Your document was out of sync and has been reset."))
-                        break
-                    case "access_right":
-                        if (data.access_right !== this.docInfo.access_rights) {
-                            if (sendableSteps(this.view.state) && !(WRITE_ROLES).includes(data.access_right)) {
-                                // If the user's new rights does not allow him to update document , then download a copy of the
-                                // same and ask him to re-open the document.
-                                this.handleAccessRightModification()
-                            } else {
-                                addAlert(
-                                    "info",
-                                    interpolate(
-                                        gettext("Your Access rights have been modified. You now have %(accessRight)s access to this document."),
-                                        {accessRight: data.access_right},
-                                        true
+                        switch (data.type) {
+                            case "chat":
+                                this.mod.collab.chat.newMessage(data)
+                                break
+                            case "connections":
+                                this.mod.collab.updateParticipantList(
+                                    data.participant_list
+                                )
+                                if (resubScribed) {
+                                    // check version if only reconnected after being offline
+                                    this.mod.collab.doc.checkVersion() // check version to sync the doc
+                                    resubScribed = false
+                                }
+                                break
+                            case "styles":
+                                this.mod.documentTemplate.setStyles(data.styles)
+                                break
+                            case "doc_data":
+                                this.mod.collab.doc.receiveDocument(data)
+                                break
+                            case "confirm_version":
+                                this.mod.collab.doc.cancelCurrentlyCheckingVersion()
+                                if (data["v"] !== this.docInfo.version) {
+                                    this.mod.collab.doc.checkVersion()
+                                    return
+                                }
+                                this.mod.collab.doc.enableDiffSending()
+                                break
+                            case "selection_change":
+                                this.mod.collab.doc.cancelCurrentlyCheckingVersion()
+                                if (data["v"] !== this.docInfo.version) {
+                                    this.mod.collab.doc.checkVersion()
+                                    return
+                                }
+                                this.mod.collab.doc.receiveSelectionChange(data)
+                                break
+                            case "path_change":
+                                this.docInfo.path = data["path"]
+                                this.menu.headerView.update()
+                                break
+                            case "diff":
+                                if (data["cid"] === this.client_id) {
+                                    // The diff origins from the local user.
+                                    this.mod.collab.doc.confirmDiff(data["rid"])
+                                    return
+                                }
+                                if (data["v"] !== this.docInfo.version) {
+                                    this.mod.collab.doc.checkVersion()
+                                    return
+                                }
+                                this.mod.collab.doc.receiveDiff(data)
+                                break
+                            case "confirm_diff":
+                                this.mod.collab.doc.confirmDiff(data["rid"])
+                                break
+                            case "reject_diff":
+                                this.mod.collab.doc.rejectDiff(data["rid"])
+                                break
+                            case "patch_error":
+                                showSystemMessage(
+                                    gettext(
+                                        "Your document was out of sync and has been reset."
                                     )
                                 )
-                                this.docInfo.access_rights = data.access_right
-                            }
-                        }
-                        break
-                    default:
-                        break
-                    }
-                },
-                failedAuth: () => {
-                    if (this.view.state.plugins.length && sendableSteps(this.view.state) && this.ws.connectionCount > 0) {
-                        this.ws.online = false // To avoid Websocket trying to reconnect.
-                        new ExportFidusFile(
-                            this.getDoc({"use_current_view": true}),
-                            this.mod.db.bibDB,
-                            this.mod.db.imageDB
-                        )
-                        const sessionDialog = new Dialog({
-                            title: gettext("Session Expired"),
-                            id: "session_expiration_dialog",
-                            body: gettext("Your session expired while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."),
-                            buttons: [{
-                                text: gettext("Proceed to Login page"),
-                                classes: "fw-dark",
-                                click: () => {
-                                    window.location.href = "/"
+                                break
+                            case "access_right":
+                                if (
+                                    data.access_right !==
+                                    this.docInfo.access_rights
+                                ) {
+                                    if (
+                                        sendableSteps(this.view.state) &&
+                                        !WRITE_ROLES.includes(data.access_right)
+                                    ) {
+                                        // If the user's new rights does not allow him to update document , then download a copy of the
+                                        // same and ask him to re-open the document.
+                                        this.handleAccessRightModification()
+                                    } else {
+                                        addAlert(
+                                            "info",
+                                            interpolate(
+                                                gettext(
+                                                    "Your Access rights have been modified. You now have %(accessRight)s access to this document."
+                                                ),
+                                                {
+                                                    accessRight:
+                                                        data.access_right
+                                                },
+                                                true
+                                            )
+                                        )
+                                        this.docInfo.access_rights =
+                                            data.access_right
+                                    }
                                 }
-                            }],
-                            canClose: false
-                        })
-                        sessionDialog.open()
-                    } else {
-                        window.location.href = "/"
+                                break
+                            default:
+                                break
+                        }
+                    },
+                    failedAuth: () => {
+                        if (
+                            this.view.state.plugins.length &&
+                            sendableSteps(this.view.state) &&
+                            this.ws.connectionCount > 0
+                        ) {
+                            this.ws.online = false // To avoid Websocket trying to reconnect.
+                            new ExportFidusFile(
+                                this.getDoc({use_current_view: true}),
+                                this.mod.db.bibDB,
+                                this.mod.db.imageDB
+                            )
+                            const sessionDialog = new Dialog({
+                                title: gettext("Session Expired"),
+                                id: "session_expiration_dialog",
+                                body: gettext(
+                                    "Your session expired while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."
+                                ),
+                                buttons: [
+                                    {
+                                        text: gettext("Proceed to Login page"),
+                                        classes: "fw-dark",
+                                        click: () => {
+                                            window.location.href = "/"
+                                        }
+                                    }
+                                ],
+                                canClose: false
+                            })
+                            sessionDialog.open()
+                        } else {
+                            window.location.href = "/"
+                        }
                     }
-                }
-            })
-            this.render()
-            activateWait(true)
-            this.initEditor()
+                })
+                this.render()
+                activateWait(true)
+                this.initEditor()
 
-            this.ws.ws.addEventListener("close", () => {
-                // Listen to close event and update the headerbar and toolbar view.
-                if (this.menu.toolbarViews) {
-                    this.menu.toolbarViews.forEach(view => view.update())
-                }
-                if (this.menu.headerView) {
-                    this.menu.headerView.update()
-                }
+                this.ws.ws.addEventListener("close", () => {
+                    // Listen to close event and update the headerbar and toolbar view.
+                    if (this.menu.toolbarViews) {
+                        this.menu.toolbarViews.forEach(view => view.update())
+                    }
+                    if (this.menu.headerView) {
+                        this.menu.headerView.update()
+                    }
+                })
             })
-        })
     }
-
 
     handleAccessRightModification() {
         // This function when invoked creates a copy of document in FW format and closes editor operation.
         new ExportFidusFile(
-            this.getDoc({"use_current_view": true}),
+            this.getDoc({use_current_view: true}),
             this.mod.db.bibDB,
             this.mod.db.imageDB
         )
         const accessRightModifiedDialog = new Dialog({
             title: gettext("Access rights modified"),
             id: "access_rights_modified",
-            body: gettext("Your access rights were modified while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."),
-            buttons: [{
-                text: gettext("Leave editor"),
-                classes: "fw-dark",
-                click: () => {
-                    window.location.href = "/"
+            body: gettext(
+                "Your access rights were modified while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."
+            ),
+            buttons: [
+                {
+                    text: gettext("Leave editor"),
+                    classes: "fw-dark",
+                    click: () => {
+                        window.location.href = "/"
+                    }
                 }
-            }],
+            ],
             canClose: false
         })
         accessRightModifiedDialog.open()
@@ -485,7 +475,7 @@ export class Editor {
                             <div id="citation-footnote-box-container"></div>
                         </div>
                     </div>
-                    <div id="bibliography" class="article-bibliography user-contents"></div>
+                    <div id="bibliography" class="doc-bibliography user-contents"></div>
                 </div>
                 <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">
@@ -519,7 +509,11 @@ export class Editor {
 
     onBeforeUnload() {
         if (this.app.isOffline()) {
-            showSystemMessage(gettext("Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."))
+            showSystemMessage(
+                gettext(
+                    "Changes you made to the document since going offline will be lost, if you choose to close/refresh the tab or close the browser."
+                )
+            )
             return true
         }
         this.close()
@@ -527,40 +521,47 @@ export class Editor {
 
     initEditor() {
         let setFocus = false
-        this.view = new EditorView(this.dom.querySelector("#document-editable"), {
-            state: EditorState.create({
-                schema: this.schema
-            }),
-            handleDOMEvents: {
-                focus: (view, _event) => {
-                    if (!setFocus) {
-                        this.currentView = this.view
-                        // We focus once more, as focus may have disappeared due to
-                        // disappearing placeholders.
-                        setFocus = true
-                        view.focus()
-                        setFocus = false
+        this.view = new EditorView(
+            this.dom.querySelector("#document-editable"),
+            {
+                state: EditorState.create({
+                    schema: this.schema
+                }),
+                handleDOMEvents: {
+                    focus: (view, _event) => {
+                        if (!setFocus) {
+                            this.currentView = this.view
+                            // We focus once more, as focus may have disappeared due to
+                            // disappearing placeholders.
+                            setFocus = true
+                            view.focus()
+                            setFocus = false
+                        }
                     }
-                }
-            },
-            dispatchTransaction: tr => {
-                const trackedTr = amendTransaction(tr, this.view.state, this)
-                const {state: newState, transactions} = this.view.state.applyTransaction(trackedTr)
-                this.view.updateState(newState)
-                transactions.forEach(subTr => {
-                    const footTr = subTr.getMeta("footTr")
-                    if (footTr && footTr.steps.length) {
-                        this.mod.footnotes.fnEditor.view.dispatch(footTr)
+                },
+                dispatchTransaction: tr => {
+                    const trackedTr = amendTransaction(
+                        tr,
+                        this.view.state,
+                        this
+                    )
+                    const {state: newState, transactions} =
+                        this.view.state.applyTransaction(trackedTr)
+                    this.view.updateState(newState)
+                    transactions.forEach(subTr => {
+                        const footTr = subTr.getMeta("footTr")
+                        if (footTr && footTr.steps.length) {
+                            this.mod.footnotes.fnEditor.view.dispatch(footTr)
+                        }
+                    })
+                    if (tr.steps.length) {
+                        this.docInfo.updated = new Date()
                     }
-                })
-                if (tr.steps.length) {
-                    this.docInfo.updated = new Date()
-                }
 
-                this.mod.collab.doc.sendToCollaborators()
+                    this.mod.collab.doc.sendToCollaborators()
+                }
             }
-
-        })
+        )
         // The editor that is currently being edited in -- main or footnote editor
         this.currentView = this.view
         this.mod.citations.init()
@@ -574,41 +575,44 @@ export class Editor {
         new ModNavigator(this)
         this.mod.navigator.init()
         this.ws.init()
-
     }
 
     activateFidusPlugins() {
         // Add plugins.
         this.plugins = {}
 
-        return Promise.all(Object.keys(plugins).map(plugin => {
-            if (typeof plugins[plugin] === "function") {
-                this.plugins[plugin] = new plugins[plugin](this)
-                return this.plugins[plugin].init() || Promise.resolve()
-            }
-            return Promise.resolve()
-        }))
+        return Promise.all(
+            Object.keys(plugins).map(plugin => {
+                if (typeof plugins[plugin] === "function") {
+                    this.plugins[plugin] = new plugins[plugin](this)
+                    return this.plugins[plugin].init() || Promise.resolve()
+                }
+                return Promise.resolve()
+            })
+        )
     }
 
     // Collect all components of the current doc. Needed for saving and export
     // filters
     getDoc(options = {}) {
-        const doc = (this.app.isOffline() || Boolean(options.use_current_view)) ? this.view.docView.node : this.docInfo.confirmedDoc
-        const pmArticle = options.changes === "acceptAllNoInsertions" ?
-            acceptAllNoInsertions(doc).firstChild :
-            doc.firstChild
+        const doc =
+            this.app.isOffline() || Boolean(options.use_current_view)
+                ? this.view.docView.node
+                : this.docInfo.confirmedDoc
+        const pmDoc =
+            options.changes === "acceptAllNoInsertions"
+                ? acceptAllNoInsertions(doc)
+                : doc
 
         let title = ""
-        pmArticle.firstChild.forEach(
-            child => {
-                if (!child.marks.find(mark => mark.type.name === "deletion")) {
-                    title += child.textContent
-                }
+        pmDoc.firstChild.forEach(child => {
+            if (!child.marks.find(mark => mark.type.name === "deletion")) {
+                title += child.textContent
             }
-        )
+        })
         return {
-            content: pmArticle.toJSON(),
-            settings: getSettings(pmArticle),
+            content: pmDoc.toJSON(),
+            settings: getSettings(pmDoc),
             title: title.substring(0, 255),
             path: this.docInfo.path,
             version: this.docInfo.version,
@@ -620,18 +624,23 @@ export class Editor {
 
     // Use PMs scrollIntoView function and adjust for top menu
     scrollIdIntoView(id) {
-
         let foundPos = false,
             view
 
         this.view.state.doc.descendants((node, pos) => {
             if (foundPos) {
                 return
-            } else if ((node.type.groups.includes("heading") || node.type.name === "figure") && node.attrs.id === id) {
+            } else if (
+                (node.type.groups.includes("heading") ||
+                    node.type.name === "figure") &&
+                node.attrs.id === id
+            ) {
                 foundPos = node.type.name === "figure" ? pos : pos + 1
                 view = this.view
             } else {
-                const anchorMark = node.marks.find(mark => mark.type.name === "anchor")
+                const anchorMark = node.marks.find(
+                    mark => mark.type.name === "anchor"
+                )
                 if (anchorMark?.attrs.id === id) {
                     foundPos = pos + 1
                     view = this.view
@@ -640,25 +649,32 @@ export class Editor {
         })
 
         if (!foundPos) {
-            this.mod.footnotes.fnEditor.view.state.doc.descendants((node, pos) => {
-                if (foundPos) {
-                    return
-                } else if ((node.type.groups.includes("heading") || node.type.name === "figure") && node.attrs.id === id) {
-                    foundPos = node.type.name === "figure" ? pos : pos + 1
-                    view = this.mod.footnotes.fnEditor.view
-                } else {
-                    const anchorMark = node.marks.find(mark => mark.type.name === "anchor")
-                    if (anchorMark?.attrs.id === id) {
-                        foundPos = pos + 1
+            this.mod.footnotes.fnEditor.view.state.doc.descendants(
+                (node, pos) => {
+                    if (foundPos) {
+                        return
+                    } else if (
+                        (node.type.groups.includes("heading") ||
+                            node.type.name === "figure") &&
+                        node.attrs.id === id
+                    ) {
+                        foundPos = node.type.name === "figure" ? pos : pos + 1
                         view = this.mod.footnotes.fnEditor.view
+                    } else {
+                        const anchorMark = node.marks.find(
+                            mark => mark.type.name === "anchor"
+                        )
+                        if (anchorMark?.attrs.id === id) {
+                            foundPos = pos + 1
+                            view = this.mod.footnotes.fnEditor.view
+                        }
                     }
                 }
-            })
+            )
         }
         if (foundPos) {
             this.scrollPosIntoView(foundPos, view)
         }
-
     }
 
     scrollPosIntoView(pos, view) {
@@ -667,16 +683,28 @@ export class Editor {
         view.dispatch(view.state.tr.setSelection(new TextSelection($pos, $pos)))
         view.focus()
         const distanceFromTop = view.coordsAtPos(pos).top - topMenuHeight
-        window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
+        window.scrollBy({
+            left: 0,
+            top: distanceFromTop,
+            behavior: "smooth",
+            block: "center"
+        })
         return
     }
 
     scrollBibliographyIntoView() {
         const topMenuHeight = this.dom.querySelector("header").offsetHeight + 10
-        const bibliographyHeaderEl = document.querySelector("h1.article-bibliography-header")
-        const distanceFromTop = bibliographyHeaderEl.getBoundingClientRect().top - topMenuHeight
-        window.scrollBy({left: 0, top: distanceFromTop, behavior: "smooth", block: "center"})
+        const bibliographyHeaderEl = document.querySelector(
+            "h1.doc-bibliography-header"
+        )
+        const distanceFromTop =
+            bibliographyHeaderEl.getBoundingClientRect().top - topMenuHeight
+        window.scrollBy({
+            left: 0,
+            top: distanceFromTop,
+            behavior: "smooth",
+            block: "center"
+        })
         return
     }
-
 }

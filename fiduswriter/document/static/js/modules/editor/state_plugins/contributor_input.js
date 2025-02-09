@@ -1,12 +1,14 @@
-import {Plugin, PluginKey} from "prosemirror-state"
+import {keyName} from "w3c-keyname"
+
+import {GapCursor} from "prosemirror-gapcursor"
+import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {noSpaceTmp, escapeText} from "../../common"
+import {escapeText, isActivationEvent, noSpaceTmp} from "../../common"
 import {ContributorDialog} from "../dialogs"
 import {addDeletedPartWidget} from "./document_template"
 
 const key = new PluginKey("contributorInput")
-
 
 export class ContributorsPartView {
     constructor(node, view, getPos) {
@@ -14,9 +16,9 @@ export class ContributorsPartView {
         this.view = view
         this.getPos = getPos
         this.dom = document.createElement("div")
-        this.dom.classList.add("article-part")
-        this.dom.classList.add(`article-${this.node.type.name}`)
-        this.dom.classList.add(`article-${this.node.attrs.id}`)
+        this.dom.classList.add("doc-part")
+        this.dom.classList.add(`doc-${this.node.type.name}`)
+        this.dom.classList.add(`doc-${this.node.attrs.id}`)
         this.dom.contentEditable = false
         if (node.attrs.hidden) {
             this.dom.dataset.hidden = true
@@ -25,25 +27,76 @@ export class ContributorsPartView {
         this.contentDOM.classList.add("contributors-inner")
         this.contentDOM.contentEditable = true
         this.dom.appendChild(this.contentDOM)
+        this.contentDOM.addEventListener("keydown", event => {
+            const key = keyName(event)
+            switch (key) {
+                case "Enter":
+                    event.preventDefault()
+                    this.handleActivation(event)
+                    break
+                case "ArrowDown":
+                case "ArrowUp": {
+                    event.preventDefault()
+                    let newPos = getPos()
+                    const dir = key === "ArrowDown" ? 1 : -1
+
+                    if (key === "ArrowDown") {
+                        newPos += node.nodeSize
+                    } else {
+                        newPos -= 1
+                    }
+                    let validTextSelection = false,
+                        validGapCursor = false,
+                        $pos
+                    const state = view.state
+                    while (!validGapCursor && !validTextSelection) {
+                        newPos += dir
+                        if (newPos === 0 || newPos === state.doc.nodeSize) {
+                            // Could not find any valid position
+                            return
+                        }
+                        $pos = state.doc.resolve(newPos)
+                        validTextSelection = $pos.parent.inlineContent
+                        validGapCursor = GapCursor.valid($pos)
+                    }
+                    const selection = validTextSelection
+                        ? new TextSelection($pos)
+                        : new GapCursor($pos)
+                    const tr = state.tr.setSelection(selection)
+                    view.dispatch(tr)
+                    view.dom.focus()
+                    break
+                }
+            }
+        })
+
         const nodeTitle = this.node.attrs.item_title
         this.dom.insertAdjacentHTML(
             "beforeend",
             `<button class="fw-button fw-light">${gettext("Add")} ${nodeTitle.toLowerCase()}...</button>`
         )
-        this.dom.lastElementChild.addEventListener("click", event => {
-            event.preventDefault()
-            const dialog = new ContributorDialog(node, view)
-            dialog.init()
-        })
+        const button = this.dom.lastElementChild
+        button.addEventListener("click", event => this.handleActivation(event))
+        button.addEventListener("keydown", event =>
+            this.handleActivation(event)
+        )
+
         if (node.attrs.deleted) {
             addDeletedPartWidget(this.dom, view, getPos)
         }
     }
+
+    handleActivation(event) {
+        if (isActivationEvent(event)) {
+            event.preventDefault()
+            const dialog = new ContributorDialog(this.node, this.view)
+            dialog.init()
+        }
+    }
 }
 
-export const contributorInputPlugin = function(options) {
-
-    const createDropUp = function(selection) {
+export const contributorInputPlugin = options => {
+    const createDropUp = selection => {
         const dropUp = document.createElement("span"),
             requiredPx = 120,
             parentNode = selection.$anchor.parent
@@ -60,15 +113,17 @@ export const contributorInputPlugin = function(options) {
                 </ul>
             </div>`
 
-        dropUp.querySelector(".edit-contributor").addEventListener("click", event => {
-            event.preventDefault()
-            const dialog = new ContributorDialog(
-                parentNode,
-                options.editor.view,
-                selection.node.attrs
-            )
-            dialog.init()
-        })
+        dropUp
+            .querySelector(".edit-contributor")
+            .addEventListener("click", event => {
+                event.preventDefault()
+                const dialog = new ContributorDialog(
+                    parentNode,
+                    options.editor.view,
+                    selection.node.attrs
+                )
+                dialog.init()
+            })
         return dropUp
     }
 
@@ -79,22 +134,23 @@ export const contributorInputPlugin = function(options) {
                 const decos = DecorationSet.empty
 
                 if (options.editor.docInfo.access_rights === "write") {
-                    this.spec.props.nodeViews["contributors_part"] =
-                        (node, view, getPos) => new ContributorsPartView(node, view, getPos)
+                    this.spec.props.nodeViews["contributors_part"] = (
+                        node,
+                        view,
+                        getPos
+                    ) => new ContributorsPartView(node, view, getPos)
                 }
 
                 return {
                     decos
                 }
             },
-            apply(tr, prev, oldState, state) {
+            apply(tr, _prev, oldState, state) {
                 const pluginState = this.getState(oldState)
-                let {
-                    decos
-                } = pluginState
+                let {decos} = pluginState
 
                 if (
-                    (options.editor.docInfo.access_rights !== "write") ||
+                    options.editor.docInfo.access_rights !== "write" ||
                     (!tr.docChanged && !tr.selectionSet)
                 ) {
                     return {
@@ -108,7 +164,11 @@ export const contributorInputPlugin = function(options) {
                     oldState.selection.node.type.name === "contributor" &&
                     state.selection.node !== oldState.selection.node
                 ) {
-                    const oldDropUpDeco = decos.find(null, null, spec => spec.id === "contributorDropUp")
+                    const oldDropUpDeco = decos.find(
+                        null,
+                        null,
+                        spec => spec.id === "contributorDropUp"
+                    )
                     if (oldDropUpDeco && oldDropUpDeco.length) {
                         decos = decos.remove(oldDropUpDeco)
                     }
@@ -118,11 +178,15 @@ export const contributorInputPlugin = function(options) {
                     state.selection.node.type.name === "contributor" &&
                     state.selection.node !== oldState.selection.node
                 ) {
-                    const dropUpDeco = Decoration.widget(state.selection.from, createDropUp(state.selection), {
-                        side: -1,
-                        stopEvent: () => true,
-                        id: "contributorDropUp"
-                    })
+                    const dropUpDeco = Decoration.widget(
+                        state.selection.from,
+                        createDropUp(state.selection),
+                        {
+                            side: -1,
+                            stopEvent: () => true,
+                            id: "contributorDropUp"
+                        }
+                    )
 
                     decos = decos.add(state.doc, [dropUpDeco])
                 }
@@ -134,15 +198,11 @@ export const contributorInputPlugin = function(options) {
         },
         props: {
             decorations(state) {
-                const {
-                    decos
-                } = this.getState(state)
+                const {decos} = this.getState(state)
 
                 return decos
             },
-            nodeViews: {
-
-            }
+            nodeViews: {}
         }
     })
 }

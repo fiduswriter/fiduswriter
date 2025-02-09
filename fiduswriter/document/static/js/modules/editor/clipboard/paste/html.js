@@ -1,31 +1,43 @@
-import {GeneralPasteHandler} from "./general"
-import {MicrosoftWordPasteHandler} from "./microsoft_word"
-import {LibreOfficeWriterPasteHandler} from "./libreoffice_writer"
-import {GoogleDocsPasteHandler} from "./google_docs"
 import {FidusWriterPasteHandler} from "./fidus_writer"
+import {GeneralPasteHandler} from "./general"
+import {GoogleDocsPasteHandler} from "./google_docs"
+import {LibreOfficeWriterPasteHandler} from "./libreoffice_writer"
+import {MicrosoftWordPasteHandler} from "./microsoft_word"
+
+import {resetPasteRange} from "../../state_plugins/clipboard"
 
 // Some pasted HTML will need slight conversions to work correctly.
 // We try to sniff whether paste comes from MsWord, LibreOffice or Google Docs
 // and use specialized handlers for these and a general handler everything else.
 
 export class HTMLPaste {
-    constructor(editor, inHTML, pmType) {
+    constructor(editor, inHTML, pmType, view) {
         this.editor = editor
         this.inHTML = inHTML
         this.pmType = pmType
+        this.view = view
     }
 
     getOutput() {
         this.parseHTML()
         this.selectHandler()
-        this.handlerInstance = new this.handler(this.editor, this.htmlDoc, this.pmType)
+        this.handlerInstance = new this.handler(
+            this.editor,
+            this.htmlDoc,
+            this.pmType
+        )
         this.outHTML = this.handlerInstance.getOutput()
+        setTimeout(() => {
+            this.resetPasteRange()
+        }, 0)
         return this.outHTML
     }
 
     parseHTML() {
         const parser = new window.DOMParser()
-        this.htmlDoc = parser.parseFromString(this.inHTML, "text/html").getElementsByTagName("html")[0]
+        this.htmlDoc = parser
+            .parseFromString(this.inHTML, "text/html")
+            .getElementsByTagName("html")[0]
     }
 
     // Find out what the source of the paste is and choose a corresponding
@@ -39,8 +51,10 @@ export class HTMLPaste {
         const firstB = body.querySelector("b")
         // For Fidus Writer
         const pmSlice = this.htmlDoc.querySelector("[data-pm-slice]")
-        if (this.htmlDoc.hasAttribute("xmlns:w") &&
-            this.htmlDoc.getAttribute("xmlns:w") === "urn:schemas-microsoft-com:office:word"
+        if (
+            this.htmlDoc.hasAttribute("xmlns:w") &&
+            this.htmlDoc.getAttribute("xmlns:w") ===
+                "urn:schemas-microsoft-com:office:word"
         ) {
             this.handler = MicrosoftWordPasteHandler
         } else if (generatorMetaTag?.content?.startsWith("LibreOffice")) {
@@ -54,4 +68,9 @@ export class HTMLPaste {
         }
     }
 
+    resetPasteRange() {
+        const tr = this.view.state.tr
+        resetPasteRange(tr)
+        this.view.dispatch(tr)
+    }
 }

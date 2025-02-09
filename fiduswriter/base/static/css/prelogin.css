@@ -29,8 +29,7 @@
     padding-right: 19.5px;
 }
 
-
-@media (max-width: 540px) {
+@media (width <= 540px) {
     .prelogin #header-nav {
         top: 2px;
     }
@@ -52,7 +51,7 @@
 
 .fw-contents.prelogin::after {
     display: block;
-    content: ' ';
+    content: " ";
     clear: both;
 }
 
@@ -158,4 +157,17 @@ footer.prelogin {
 #lang-selection {
     vertical-align: top;
     margin-bottom: 10px;
+}
+
+.prelogin .star {
+    position: relative;
+    margin: 0 auto;
+}
+
+.prelogin .star img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    height: 73px;
 }

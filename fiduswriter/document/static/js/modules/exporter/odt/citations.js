@@ -1,16 +1,17 @@
-import {DOMSerializer, DOMParser} from "prosemirror-model"
+import {DOMParser, DOMSerializer} from "prosemirror-model"
 
+import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {FormatCitations} from "../../citations/format"
 import {fnSchema} from "../../schema/footnotes"
-import {cslBibSchema} from "../../bibliography/schema/csl_bib"
 import {descendantNodes} from "../tools/doc_content"
 
-export class OdtExporterCitations {
-    constructor(exporter, bibDB, csl, docContent, origCitInfos = []) {
-        this.exporter = exporter
+export class ODTExporterCitations {
+    constructor(docContent, settings, styles, bibDB, csl, origCitInfos = []) {
+        this.docContent = docContent
+        this.settings = settings
+        this.styles = styles
         this.bibDB = bibDB
         this.csl = csl
-        this.docContent = docContent
         // If citInfos were found in a previous run, they are stored here
         // (for example: first citations in main document, then in footnotes)
         this.origCitInfos = origCitInfos
@@ -36,34 +37,29 @@ export class OdtExporterCitations {
             this.citInfos = this.citInfos.concat(this.origCitInfos)
         }
 
-        descendantNodes(this.docContent).forEach(
-            node => {
-                if (node.type === "citation") {
-                    this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
-                }
+        descendantNodes(this.docContent).forEach(node => {
+            if (node.type === "citation") {
+                this.citInfos.push(JSON.parse(JSON.stringify(node.attrs)))
             }
-        )
+        })
         this.citFm = new FormatCitations(
             this.csl,
             this.citInfos,
-            this.exporter.doc.settings.citationstyle,
+            this.settings.citationstyle,
             "",
             this.bibDB,
             false,
-            this.exporter.doc.settings.language
+            this.settings.language
         )
-        return this.citFm.init().then(
-            () => {
-                this.citationTexts = this.citFm.citationTexts
-                if (this.origCitInfos.length) {
-                    // Remove all citation texts originating from original starting citInfos
-                    this.citationTexts.splice(0, this.origCitInfos.length)
-                }
-                this.convertCitations()
-                return Promise.resolve()
+        return this.citFm.init().then(() => {
+            this.citationTexts = this.citFm.citationTexts
+            if (this.origCitInfos.length) {
+                // Remove all citation texts originating from original starting citInfos
+                this.citationTexts.splice(0, this.origCitInfos.length)
             }
-        )
-
+            this.convertCitations()
+            return Promise.resolve()
+        })
     }
 
     convertCitations() {
@@ -72,11 +68,9 @@ export class OdtExporterCitations {
         // the fiduswriter schema and so that the converter doesn't mash them together.
         if (this.citationTexts.length) {
             let citationsHTML = ""
-            this.citationTexts.forEach(
-                ct => {
-                    citationsHTML += `<p>${ct}</p>`
-                }
-            )
+            this.citationTexts.forEach(ct => {
+                citationsHTML += `<p>${ct}</p>`
+            })
 
             // We create a standard footnote container DOM node,
             // add the citations into it, and parse it back.
@@ -84,7 +78,9 @@ export class OdtExporterCitations {
             const serializer = DOMSerializer.fromSchema(fnSchema)
             const dom = serializer.serializeNode(fnNode)
             dom.innerHTML = citationsHTML
-            this.pmCits = DOMParser.fromSchema(fnSchema).parse(dom, {topNode: fnNode}).toJSON().content
+            this.pmCits = DOMParser.fromSchema(fnSchema)
+                .parse(dom, {topNode: fnNode})
+                .toJSON().content
         } else {
             this.pmCits = []
         }
@@ -92,12 +88,14 @@ export class OdtExporterCitations {
         // Now we do the same for the bibliography.
         const cslBib = this.citFm.bibliography
         if (cslBib && cslBib[1].length > 0) {
-            this.exporter.styles.addReferenceStyle(cslBib[0])
+            this.styles.addReferenceStyle(cslBib[0])
             const bibNode = cslBibSchema.nodeFromJSON({type: "cslbib"})
             const serializer = DOMSerializer.fromSchema(cslBibSchema)
             const dom = serializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join("")
-            this.pmBib = DOMParser.fromSchema(cslBibSchema).parse(dom, {topNode: bibNode}).toJSON()
+            this.pmBib = DOMParser.fromSchema(cslBibSchema)
+                .parse(dom, {topNode: bibNode})
+                .toJSON()
         }
     }
 }

@@ -1,8 +1,7 @@
-import {ZipFidus} from "./zip"
-import {ShrinkFidus} from "./shrink"
-import {createSlug} from "../tools/file"
 import {addAlert, post} from "../../common"
-
+import {createSlug} from "../tools/file"
+import {ShrinkFidus} from "./shrink"
+import {ZipFidus} from "./zip"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -19,14 +18,11 @@ export class SaveRevision {
     }
 
     init() {
-        const shrinker = new ShrinkFidus(
-            this.doc,
-            this.imageDB,
-            this.bibDB
-        )
+        const shrinker = new ShrinkFidus(this.doc, this.imageDB, this.bibDB)
 
-        shrinker.init().then(
-            ({shrunkImageDB, shrunkBibDB, httpIncludes}) => {
+        shrinker
+            .init()
+            .then(({shrunkImageDB, shrunkBibDB, httpIncludes}) => {
                 const zipper = new ZipFidus(
                     this.doc.id,
                     this.doc,
@@ -35,23 +31,27 @@ export class SaveRevision {
                     httpIncludes
                 )
                 return zipper.init()
-            }
-        ).then(
-            blob => this.uploadRevision(blob)
-        ).catch(
-            (error) => {
-                addAlert("error", gettext("Revision file could not be generated."))
+            })
+            .then(blob => this.uploadRevision(blob))
+            .catch(error => {
+                addAlert(
+                    "error",
+                    gettext("Revision file could not be generated.")
+                )
                 if (this.app.isOffline()) {
-                    addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
+                    addAlert(
+                        "info",
+                        gettext(
+                            "You are currently offline. Please try again when you are back online."
+                        )
+                    )
                 } else {
-                    throw (error)
+                    throw error
                 }
-            }
-        )
+            })
     }
 
     uploadRevision(blob) {
-
         post("/api/document/upload/", {
             note: this.note,
             file: {
@@ -59,21 +59,25 @@ export class SaveRevision {
                 filename: createSlug(this.doc.title) + ".fidus"
             },
             document_id: this.doc.id
-        }).then(
-            () => {
-                addAlert("success", gettext("Revision saved"))
-            },
-            () => {
-                addAlert("error", gettext("Revision could not be saved."))
-                if (this.app.isOffline()) {
-                    addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
+        })
+            .then(
+                () => {
+                    addAlert("success", gettext("Revision saved"))
+                },
+                () => {
+                    addAlert("error", gettext("Revision could not be saved."))
+                    if (this.app.isOffline()) {
+                        addAlert(
+                            "info",
+                            gettext(
+                                "You are currently offline. Please try again when you are back online."
+                            )
+                        )
+                    }
                 }
-            }
-        ).catch(
-            (error) => {
-                throw (error)
-            }
-        )
+            )
+            .catch(error => {
+                throw error
+            })
     }
-
 }

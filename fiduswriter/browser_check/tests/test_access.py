@@ -1,14 +1,17 @@
 from selenium.webdriver.common.by import By
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class AccessTest(LiveTornadoTestCase, SeleniumHelper):
+class AccessTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.wait_time = 10
+
+    def setUp(self):
+        self.base_url = self.live_server_url
+        return super().setUp()
 
     def test_ie11(self):
         driver_data = self.get_drivers(
@@ -37,14 +40,17 @@ class AccessTest(LiveTornadoTestCase, SeleniumHelper):
         driver.implicitly_wait(driver_data["wait_time"])
         driver.get(self.base_url + "/robots.txt")
         body = driver.find_element(By.CSS_SELECTOR, "body")
-        self.assertEqual(body.text, "User-agent: * Disallow: /* Allow: /$")
+        self.assertEqual(
+            body.text,
+            "User-agent: *\nDisallow: /document/\nDisallow: /bibliography/",
+        )
         driver.quit()
 
     def test_hello(self):
         driver_data = self.get_drivers(1)
         driver = driver_data["drivers"][0]
         driver.implicitly_wait(driver_data["wait_time"])
-        driver.get(self.base_url + "/hello-tornado")
+        driver.get(self.base_url + "/hello-fiduswriter")
         body = driver.find_element(By.CSS_SELECTOR, "body")
-        self.assertEqual(body.text, "Hello from tornado")
+        self.assertEqual(body.text, "Hello from Fidus Writer")
         driver.quit()

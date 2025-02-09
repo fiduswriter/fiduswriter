@@ -1,9 +1,9 @@
-import {messageTemplate} from "./templates"
 import {localizeDate, whenReady} from "../../common"
+import {messageTemplate} from "./templates"
 
 /*
-* Functions for chat between users who access a document simultaneously.
-*/
+ * Functions for chat between users who access a document simultaneously.
+ */
 
 export class ModCollabChat {
     constructor(mod) {
@@ -35,8 +35,8 @@ export class ModCollabChat {
                 document.title = origTitle
                 this.currentlyFlashing = false
             } else {
-                document.title = (document.title === origTitle) ?
-                    messageTitle : origTitle
+                document.title =
+                    document.title === origTitle ? messageTitle : origTitle
             }
         }, 500)
     }
@@ -45,10 +45,15 @@ export class ModCollabChat {
         if (document.getElementById(`m${message.id}`)) {
             return
         }
-        const theChatter = this.mod.participants.find(participant => participant.id === message.from)
+        const theChatter = this.mod.participants.find(
+            participant => participant.id === message.from
+        )
 
         const chatContainer = document.getElementById("chat-container")
-        chatContainer.insertAdjacentHTML("beforeend", messageTemplate({message, theChatter, localizeDate}))
+        chatContainer.insertAdjacentHTML(
+            "beforeend",
+            messageTemplate({message, theChatter, localizeDate})
+        )
         if (!this.focus) {
             this.beep()
             this.flashtab(message.from + ": " + message.body)
@@ -59,9 +64,11 @@ export class ModCollabChat {
     }
 
     showChat(participants) {
-
         // If only one machine is connected and nothing has been chatted, don't show chat
-        if (participants.length === 1 && !document.querySelector("#chat-container .message")) {
+        if (
+            participants.length === 1 &&
+            !document.querySelector("#chat-container .message")
+        ) {
             document.getElementById("chat").style.display = "none"
         } else {
             document.getElementById("chat").style.display = "block"
@@ -81,31 +88,35 @@ export class ModCollabChat {
             `<style>\n#messageform.empty:before{content:"${gettext("Send a message...")}"}\n</style>`
         )
         whenReady().then(() => {
-            document.getElementById("chat-container").style.maxHeight = `${window.innerHeight - 200}px`
+            document.getElementById("chat-container").style.maxHeight =
+                `${window.innerHeight - 200}px`
 
             const resizeButton = document.querySelector("#chat .resize-button")
-            resizeButton.addEventListener(
-                "click",
-                () => {
-                    const chatEl = document.getElementById("chat")
-                    if (resizeButton.classList.contains("fa-angle-double-down")) {
-                        resizeButton.classList.remove("fa-angle-double-down")
-                        resizeButton.classList.add("fa-angle-double-up")
-                        chatEl.style.top = `${chatEl.getBoundingClientRect().top}px` // Set current height to get the animation working.
-                        setTimeout(() => chatEl.style.top = `${window.innerHeight - 29}px`, 0)
-                    } else {
-                        resizeButton.classList.remove("fa-angle-double-up")
-                        resizeButton.classList.add("fa-angle-double-down")
-                        // Add height teemporarily to make sliding animation.
-                        chatEl.style.top = `${Math.max(window.innerHeight - chatEl.scrollHeight - 11, 0)}px` // 11px for padding
-                        setTimeout(() => chatEl.style.top = "", 3000)
-                    }
+            resizeButton.addEventListener("click", () => {
+                const chatEl = document.getElementById("chat")
+                if (resizeButton.classList.contains("fa-angle-double-down")) {
+                    resizeButton.classList.remove("fa-angle-double-down")
+                    resizeButton.classList.add("fa-angle-double-up")
+                    chatEl.style.top = `${chatEl.getBoundingClientRect().top}px` // Set current height to get the animation working.
+                    setTimeout(
+                        () =>
+                            (chatEl.style.top = `${window.innerHeight - 29}px`),
+                        0
+                    )
+                } else {
+                    resizeButton.classList.remove("fa-angle-double-up")
+                    resizeButton.classList.add("fa-angle-double-down")
+                    // Add height teemporarily to make sliding animation.
+                    chatEl.style.top = `${Math.max(window.innerHeight - chatEl.scrollHeight - 11, 0)}px` // 11px for padding
+                    setTimeout(() => (chatEl.style.top = ""), 3000)
                 }
-            )
+            })
 
             const messageForm = document.getElementById("messageform")
 
-            messageForm.addEventListener("focus", () => messageForm.classList.remove("empty"))
+            messageForm.addEventListener("focus", () =>
+                messageForm.classList.remove("empty")
+            )
 
             messageForm.addEventListener("blur", () => {
                 if (messageForm.innerText.trim().length === 0) {
@@ -122,7 +133,7 @@ export class ModCollabChat {
             })
         })
 
-        window.addEventListener("blur", () => this.focus = false)
-        window.addEventListener("focus", () => this.focus = true)
+        window.addEventListener("blur", () => (this.focus = false))
+        window.addEventListener("focus", () => (this.focus = true))
     }
 }

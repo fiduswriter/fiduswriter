@@ -2,7 +2,7 @@ import time
 import os
 from tempfile import mkdtemp
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-class AdminTest(LiveTornadoTestCase, SeleniumHelper):
+class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -20,9 +20,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
-        cls.base_admin_url = f"{cls.base_url}/admin/"
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -36,6 +34,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
+        self.base_admin_url = f"{self.base_url}/admin/"
         self.verificationErrors = []
         self.accept_next_alert = True
         self.admin = self.create_user(
@@ -50,6 +50,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.user2 = self.create_user(
             username="User2", email="user2@user.com", passtext="password"
         )
+        return super().setUp()
 
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)
@@ -62,6 +63,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR, "a[href='/admin/document/document/maintenance/']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#update").click()
+        time.sleep(self.wait_time)  # Give some time to update database
         self.assertEqual(
             1,
             len(
@@ -291,9 +293,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         time.sleep(1)
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
         self.assertEqual(body_text, "Initial body")
@@ -354,9 +354,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
         self.assertEqual(body_text, "Initial body")
@@ -364,7 +362,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             self.driver.find_element(By.CSS_SELECTOR, ".margin-box.help").text,
             "Body instructions",
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -372,7 +370,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         ).perform()
         time.sleep(1)
         # Create regular copy
-        old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
+        old_body = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
@@ -384,9 +382,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         )
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
 
@@ -397,7 +393,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
             "Body instructions",
         )
         # Create copy with different template
-        old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
+        old_body = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
@@ -418,9 +414,7 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         )
         body_text = (
             WebDriverWait(self.driver, self.wait_time)
-            .until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".article-body"))
-            )
+            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
             .text
         )
         # The text should still be the same, but there should be no

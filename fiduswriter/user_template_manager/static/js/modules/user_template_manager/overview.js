@@ -1,11 +1,22 @@
 import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
 
-import {DocTemplatesActions} from "./actions"
-import {OverviewMenuView, escapeText, findTarget, whenReady, postJson, addAlert, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk} from "../common"
-import {SiteMenu} from "../menu"
-import {menuModel, bulkMenuModel} from "./menu"
+import {
+    DatatableBulk,
+    OverviewMenuView,
+    addAlert,
+    baseBodyTemplate,
+    ensureCSS,
+    escapeText,
+    findTarget,
+    postJson,
+    setDocTitle,
+    whenReady
+} from "../common"
 import {FeedbackTab} from "../feedback"
-
+import {SiteMenu} from "../menu"
+import {DocTemplatesActions} from "./actions"
+import {bulkMenuModel, menuModel} from "./menu"
 
 export class DocTemplatesOverview {
     // A class that contains everything that happens on the templates page.
@@ -17,6 +28,8 @@ export class DocTemplatesOverview {
         this.mod = {}
         this.templateList = []
         this.styles = false
+
+        this.lastSort = {column: 0, dir: "asc"}
     }
 
     init() {
@@ -65,7 +78,7 @@ export class DocTemplatesOverview {
         this.dom.querySelector(".fw-contents").innerHTML = ""
         this.dom.querySelector(".fw-contents").appendChild(tableEl)
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel())
+        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 1)
 
         const hiddenCols = [0]
 
@@ -81,95 +94,182 @@ export class DocTemplatesOverview {
                 noRows: gettext("No document templates available"),
                 noResults: gettext("No document templates found") // Message shown when there are no search results
             },
-            layout: {
-                top: ""
-            },
+            rowNavigation: true,
+            rowSelectionKeys: ["Enter", "Delete", " "],
+            tabIndex: 1,
+            template: (
+                options,
+                _dom
+            ) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            <div class='${options.classes.bottom}'>
+                <nav class='${options.classes.pagination}'></nav>
+            </div>`,
             data: {
-                headings: ["", this.dtBulk.getHTML(), gettext("Title"), gettext("Created"), gettext("Last changed"), ""],
-                data: this.templateList.map(docTemplate => this.createTableRow(docTemplate))
+                headings: [
+                    "",
+                    this.dtBulk.getHTML(),
+                    gettext("Title"),
+                    gettext("Created"),
+                    gettext("Last changed"),
+                    ""
+                ],
+                data: this.templateList.map(docTemplate =>
+                    this.createTableRow(docTemplate)
+                )
             },
             columns: [
+                {
+                    select: 0,
+                    type: "number"
+                },
+                {
+                    select: 1,
+                    sortable: false,
+                    type: "boolean"
+                },
                 {
                     select: hiddenCols,
                     hidden: true
                 },
                 {
-                    select: [1, 5],
+                    select: 5,
                     sortable: false
                 }
-            ]
+            ],
+            rowRender: (row, tr, _index) => {
+                const id = row.cells[0].data
+                const inputNode = {
+                    nodeName: "input",
+                    attributes: {
+                        type: "checkbox",
+                        class: "entry-select fw-check",
+                        "data-id": String(id),
+                        id: `template-${id}`
+                    }
+                }
+                if (row.cells[1].data) {
+                    inputNode.attributes.checked = true
+                }
+                tr.childNodes[0].childNodes = [
+                    inputNode,
+                    {
+                        nodeName: "label",
+                        attributes: {
+                            for: `template-${id}`
+                        }
+                    }
+                ]
+            }
         })
-        this.lastSort = {column: 0, dir: "asc"}
+
+        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
+            event.preventDefault()
+            if (event.type === "keydown") {
+                const key = keyName(event)
+                if (key === "Enter") {
+                    if (this.getSelected().length > 0) {
+                        // Don't open. Let the bulk menu handle it.
+                        return
+                    }
+                    const link = this.table.dom.querySelector(
+                        `tr[data-index="${rowIndex}"] a`
+                    )
+                    if (link) {
+                        link.click()
+                    }
+                } else if (key === " ") {
+                    const cell = this.table.data.data[rowIndex].cells[1]
+                    cell.data = !cell.data
+                    cell.text = String(cell.data)
+                    this.table.update()
+                } else if (key === "Delete") {
+                    const cell = this.table.data.data[rowIndex].cells[0]
+                    const imageId = cell.data
+                    this.deleteDocTemplatesDialog([imageId])
+                }
+            } else {
+                if (
+                    event.target.closest("a, span.delete-doc-template, label")
+                ) {
+                    return
+                }
+                if (!focused) {
+                    this.table.dom.focus()
+                }
+                this.table.rows.setCursor(rowIndex)
+            }
+        })
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table)
+
+        this.table.dom.focus()
     }
 
     createTableRow(docTemplate) {
         return [
-            String(docTemplate.id),
-            `<input type="checkbox" class="entry-select" data-id="${docTemplate.id}">`,
-            `<span class="${ docTemplate.is_owner ? "fw-data-table-title " : "" }fw-inline">
+            docTemplate.id,
+            false, // Checkbox
+            `<span class="${docTemplate.is_owner ? "fw-data-table-title " : ""}fw-inline">
                 <i class="far fa-file"></i>
                 ${
-    docTemplate.is_owner ?
-        `<a href='/templates/${docTemplate.id}/'>
+                    docTemplate.is_owner
+                        ? `<a href='/templates/${docTemplate.id}/'>
                         ${
-    docTemplate.title.length ?
-        escapeText(docTemplate.title) :
-        gettext("Untitled")
-}
-                    </a>` :
-        docTemplate.title.length ?
-            escapeText(docTemplate.title) :
-            gettext("Untitled")
-}
+                            docTemplate.title.length
+                                ? escapeText(docTemplate.title)
+                                : gettext("Untitled")
+                        }
+                    </a>`
+                        : docTemplate.title.length
+                          ? escapeText(docTemplate.title)
+                          : gettext("Untitled")
+                }
             </span>`,
             docTemplate.added, // format?
             docTemplate.updated, // format ?
             `<span class="delete-doc-template fw-inline fw-link-text" data-id="${docTemplate.id}" data-title="${escapeText(docTemplate.title)}">
-                ${docTemplate.is_owner ? "<i class=\"fa fa-trash-alt\"></i>" : ""}
+                ${docTemplate.is_owner ? '<i class="fa fa-trash-alt"></i>' : ""}
            </span>`
         ]
     }
 
     removeTableRows(ids) {
-        const existingRows = this.table.data.map((data, index) => {
-            const id = parseInt(data.cells[0].textContent)
-            if (ids.includes(id)) {
-                return index
-            } else {
-                return false
-            }
-        }).filter(rowIndex => rowIndex !== false)
+        const existingRows = this.table.data.data
+            .map((row, index) => {
+                const id = row.cells[0].data
+                if (ids.includes(id)) {
+                    return index
+                } else {
+                    return false
+                }
+            })
+            .filter(rowIndex => rowIndex !== false)
 
         if (existingRows.length) {
-            this.table.rows().remove(existingRows)
+            this.table.rows.remove(existingRows)
         }
     }
 
     addDocTemplateToTable(docTemplate) {
         this.table.insert({data: [this.createTableRow(docTemplate)]})
         // Redo last sort
-        this.table.columns().sort(this.lastSort.column, this.lastSort.dir)
+        this.table.columns.sort(this.lastSort.column, this.lastSort.dir)
     }
 
     getTemplateListData() {
         if (this.app.isOffline()) {
             return this.showCached()
         }
-        return postJson(
-            "/api/user_template_manager/list/"
-        ).then(
-            ({json}) => {
+        return postJson("/api/user_template_manager/list/")
+            .then(({json}) => {
                 this.updateIndexedDB(json)
                 this.initializeView(json)
-            }
-        ).catch(
-            error => {
+            })
+            .catch(error => {
                 if (this.app.isOffline()) {
                     return this.showCached()
                 } else {
@@ -177,10 +277,9 @@ export class DocTemplatesOverview {
                         "error",
                         gettext("Document templates loading failed.")
                     )
-                    throw (error)
+                    throw error
                 }
-            }
-        )
+            })
     }
 
     initializeView(json) {
@@ -191,38 +290,47 @@ export class DocTemplatesOverview {
     }
 
     showCached() {
-        return this.loaddatafromIndexedDB().then(json => this.initializeView(json))
+        return this.loaddatafromIndexedDB().then(json =>
+            this.initializeView(json)
+        )
     }
 
     loaddatafromIndexedDB() {
-        return this.app.indexedDB.readAllData("templates_list").then(response => ({document_templates: response}))
+        return this.app.indexedDB
+            .readAllData("templates_list")
+            .then(response => ({document_templates: response}))
     }
 
     updateIndexedDB(json) {
         // Clear data if any present
         this.app.indexedDB.clearData("templates_list").then(() => {
-            this.app.indexedDB.insertData("templates_list", json.document_templates)
+            this.app.indexedDB.insertData(
+                "templates_list",
+                json.document_templates
+            )
         })
     }
-
 
     bind() {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, ".delete-doc-template", el): {
-                const docTemplateId = parseInt(el.target.dataset.id)
-                this.mod.actions.deleteDocTemplatesDialog([docTemplateId])
-                break
-            }
-            case findTarget(event, "a", el):
-                if (el.target.hostname === window.location.hostname && el.target.getAttribute("href")[0] === "/") {
-                    event.preventDefault()
-                    this.app.goTo(el.target.href)
+                case findTarget(event, ".delete-doc-template", el): {
+                    const docTemplateId = Number.parseInt(el.target.dataset.id)
+                    this.mod.actions.deleteDocTemplatesDialog([docTemplateId])
+                    break
                 }
-                break
-            default:
-                break
+                case findTarget(event, "a", el):
+                    if (
+                        el.target.hostname === window.location.hostname &&
+                        el.target.getAttribute("href")[0] === "/"
+                    ) {
+                        event.preventDefault()
+                        this.app.goTo(el.target.href)
+                    }
+                    break
+                default:
+                    break
             }
         })
     }
@@ -230,6 +338,21 @@ export class DocTemplatesOverview {
     getSelected() {
         return Array.from(
             this.dom.querySelectorAll(".entry-select:checked:not(:disabled)")
-        ).map(el => parseInt(el.getAttribute("data-id")))
+        ).map(el => Number.parseInt(el.getAttribute("data-id")))
+    }
+
+    close() {
+        if (this.table) {
+            this.table.destroy()
+            this.table = null
+        }
+        if (this.dtBulk) {
+            this.dtBulk.destroy()
+            this.dtBulk = null
+        }
+        if (this.menu) {
+            this.menu.destroy()
+            this.menu = null
+        }
     }
 }

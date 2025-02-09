@@ -1,16 +1,18 @@
-bleach==5.0.1
-Django==4.1.13
-django-allauth==0.52.0
-django-avatar==8.0.0
+bleach==6.1.0
+channels==4.1.0
+daphne==4.1.2
+Django==5.1.5
+django-allauth==65.0.2
+django-avatar==8.0.1
 django-js-error-hook==1.0
-django-npm-mjs==2.5.0
-django-loginas==0.3.10
-Pillow==10.3.0
-python-dateutil==2.8.2
+django-npm-mjs==3.1.0
+django-loginas==0.3.11
+httpx==0.27.2
+httpx-ws==0.6.2
+tenacity==9.0.0 # Used by OJS plugin
+Pillow==11.0.0
+# Needed until https://github.com/python-pillow/Pillow/pull/5201 has been resolved
+pillow-avif-plugin==1.4.6
 python-magic==0.4.27
-tornado==6.3.3
-prosemirror==0.3.7
-# settings_JSONPATCH
-jsonpatch==1.32
-# end settings_JSONPATCH
-httpx==0.23.0
+prosemirror==0.5.0
+watchdog==5.0.3

@@ -1,5 +1,10 @@
+import {
+    getFocusIndex,
+    isActivationEvent,
+    noSpaceTmp,
+    setFocusIndex
+} from "../../../common"
 import {NameFieldForm} from "./name"
-import {noSpaceTmp} from "../../../common"
 
 export class NameListForm {
     constructor(dom, initialValue = [[]]) {
@@ -13,7 +18,8 @@ export class NameListForm {
 
     drawForm() {
         this.fields = []
-        this.dom.innerHTML = "<table class=\"input-list-wrapper\"><tbody></tbody></table>"
+        this.dom.innerHTML =
+            '<table class="input-list-wrapper"><tbody></tbody></table>'
         this.currentValue.forEach((fieldValue, index) => {
             this.addField(fieldValue, index)
         })
@@ -26,8 +32,8 @@ export class NameListForm {
             <tr>
                 <td></td>
                 <td class="input-field-list-ctrl">
-                    <span class="fa fa-minus-circle"></span>&nbsp;
-                    <span class="fa fa-plus-circle"></span>
+                    <span class="fa fa-minus-circle" tabindex="0"></span>&nbsp;
+                    <span class="fa fa-plus-circle" tabindex="0"></span>
                 </td>
             </tr>`
         )
@@ -38,38 +44,62 @@ export class NameListForm {
 
         // click on plus
         const addItemEl = fieldDOM.querySelector(".fa-plus-circle")
-        addItemEl.addEventListener("click", () => {
-            if (!this.value) {
-                return
-            }
-            this.currentValue = this.value
-            this.currentValue.splice(index + 1, 0, [])
-            this.drawForm()
-        })
+        addItemEl.addEventListener("click", event =>
+            this.handlePlus(event, index)
+        )
+        addItemEl.addEventListener("keydown", event =>
+            this.handlePlus(event, index)
+        )
 
         // Click on minus
         const removeItemEl = fieldDOM.querySelector(".fa-minus-circle")
-        removeItemEl.addEventListener("click", () => {
-            if (!this.value) {
-                return
-            }
-            this.currentValue = this.value
-            this.currentValue.splice(index, 1)
-            if (this.currentValue.length === 0) {
-                this.currentValue = [[]]
-            }
-            this.drawForm()
-        })
+        removeItemEl.addEventListener("click", event =>
+            this.handleMinus(event, index)
+        )
+        removeItemEl.addEventListener("keydown", event =>
+            this.handleMinus(event, index)
+        )
+    }
+
+    handlePlus(event, index) {
+        if (!isActivationEvent(event)) {
+            return
+        }
+        if (!this.value) {
+            return
+        }
+        this.currentValue = this.value
+        this.currentValue.splice(index + 1, 0, [])
+        const focusIndex = getFocusIndex()
+        this.drawForm()
+        setFocusIndex(focusIndex + 1)
+    }
+
+    handleMinus(event, index) {
+        if (!isActivationEvent(event)) {
+            return
+        }
+        if (!this.value) {
+            return
+        }
+        this.currentValue = this.value
+        this.currentValue.splice(index, 1)
+        if (this.currentValue.length === 0) {
+            this.currentValue = [[]]
+        }
+        const focusIndex = getFocusIndex()
+        this.drawForm()
+        setFocusIndex(focusIndex - 7)
     }
 
     get value() {
-        const formValue = this.fields.map(field => {
-            return field.value
-        }).filter(
-            value => {
+        const formValue = this.fields
+            .map(field => {
+                return field.value
+            })
+            .filter(value => {
                 return value !== false
-            }
-        )
+            })
         if (formValue.length === 0) {
             return false
         }

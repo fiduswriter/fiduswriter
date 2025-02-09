@@ -38,7 +38,7 @@ span.deletion {
 }
 
 [data-track]::before {
-    content: '';
+    content: "";
     position: absolute;
     border-left: 1px solid black;
     left: -10px;
@@ -48,7 +48,6 @@ span.deletion {
 li[data-track]::before {
     content: inherit;
 }
-
 
 li[data-track]::before,
 li [data-track]::before {

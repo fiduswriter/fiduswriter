@@ -1,32 +1,32 @@
-import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
-import {SaveRevision, SaveCopy} from "../../../exporter/native"
-import {ExportFidusFile} from "../../../exporter/native/file"
 import {CopyrightDialog} from "../../../copyright_dialog"
-import {RevisionDialog, LanguageDialog} from "../../dialogs"
-import {WordCountDialog, KeyBindingsDialog, SearchReplaceDialog} from "../../tools"
+import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
+import {SaveCopy, SaveRevision} from "../../../exporter/native"
+import {ExportFidusFile} from "../../../exporter/native/file"
+import {LanguageDialog, RevisionDialog} from "../../dialogs"
+import {
+    KeyBindingsDialog,
+    SearchReplaceDialog,
+    WordCountDialog
+} from "../../tools"
 
-const languageItem = function(code, name, order) {
-    return {
-        title: name,
-        type: "setting",
-        order,
-        action: editor => {
-            const article = editor.view.state.doc.firstChild
-            const attrs = Object.assign({}, article.attrs)
-            attrs.language = code
-            editor.view.dispatch(
-                editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
-            )
-        },
-        selected: editor => {
-            return editor.view.state.doc.firstChild.attrs.language === code
-        },
-        available: editor => {
-            return editor.view.state.doc.firstChild.attrs.languages.includes(code)
-        }
+const languageItem = (language, name, order) => ({
+    title: name,
+    type: "setting",
+    order,
+    action: editor => {
+        editor.view.dispatch(
+            editor.view.state.tr
+                .setDocAttribute("language", language)
+                .setMeta("settings", true)
+        )
+    },
+    selected: editor => {
+        return editor.view.state.doc.attrs.language === language
+    },
+    available: editor => {
+        return editor.view.state.doc.attrs.languages.includes(language)
     }
-}
-
+})
 
 export const headerbarModel = () => ({
     open: window.innerWidth > 500, // Whether the menu is shown at all.
@@ -36,6 +36,7 @@ export const headerbarModel = () => ({
             title: gettext("File"),
             tooltip: gettext("File handling"),
             type: "menu",
+            keys: "Alt-f",
             order: 0,
             content: [
                 {
@@ -55,21 +56,28 @@ export const headerbarModel = () => ({
                         dialog.init()
                     },
                     disabled: editor => {
-                        return !editor.docInfo.is_owner || editor.app.isOffline()
+                        return (
+                            !editor.docInfo.is_owner || editor.app.isOffline()
+                        )
                     }
                 },
                 {
                     title: gettext("Close"),
                     type: "action",
                     //icon: 'times-circle',
-                    tooltip: gettext("Close the document and return to the document overview menu."),
+                    tooltip: gettext(
+                        "Close the document and return to the document overview menu."
+                    ),
                     order: 1,
                     action: editor => {
                         const folderPath = editor.docInfo.path.slice(
                             0,
                             editor.docInfo.path.lastIndexOf("/")
                         )
-                        if (!folderPath.length && editor.app.routes[""].app === "document") {
+                        if (
+                            !folderPath.length &&
+                            editor.app.routes[""].app === "document"
+                        ) {
                             editor.app.goTo("/")
                         } else {
                             editor.app.goTo(`/documents${folderPath}/`)
@@ -86,20 +94,20 @@ export const headerbarModel = () => ({
                     keys: "Ctrl-s",
                     action: editor => {
                         const dialog = new RevisionDialog(editor.docInfo.dir)
-                        dialog.init().then(
-                            note => {
-                                const saver = new SaveRevision(
-                                    editor.getDoc(),
-                                    editor.mod.db.imageDB,
-                                    editor.mod.db.bibDB,
-                                    note,
-                                    editor.app
-                                )
-                                return saver.init()
-                            }
-                        )
+                        dialog.init().then(note => {
+                            const saver = new SaveRevision(
+                                editor.getDoc(),
+                                editor.mod.db.imageDB,
+                                editor.mod.db.bibDB,
+                                note,
+                                editor.app
+                            )
+                            return saver.init()
+                        })
                     },
-                    disabled: editor => editor.docInfo.access_rights !== "write" || editor.app.isOffline()
+                    disabled: editor =>
+                        editor.docInfo.access_rights !== "write" ||
+                        editor.app.isOffline()
                 },
                 {
                     title: gettext("Create copy"),
@@ -114,17 +122,22 @@ export const headerbarModel = () => ({
                             editor.mod.db.imageDB,
                             editor.user
                         )
-                        copier.init().then(({docInfo}) =>
-                            editor.app.goTo(`/document/${docInfo.id}/`)
-                        ).catch(() => false)
+                        copier
+                            .init()
+                            .then(({docInfo}) =>
+                                editor.app.goTo(`/document/${docInfo.id}/`)
+                            )
+                            .catch(() => false)
                     },
-                    disabled: editor => editor.app.isOffline(),
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext("Download"),
                     type: "action",
                     //icon: 'download',
-                    tooltip: gettext("Export the document as a FIDUS file including its template."),
+                    tooltip: gettext(
+                        "Export the document as a FIDUS file including its template."
+                    ),
                     order: 4,
                     action: editor => {
                         new ExportFidusFile(
@@ -133,27 +146,33 @@ export const headerbarModel = () => ({
                             editor.mod.db.imageDB
                         )
                     },
-                    disabled: editor => editor.app.isOffline(),
+                    disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext("Print/PDF"),
                     type: "action",
                     //icon: 'print',
-                    tooltip: gettext("Either print or create a PDF using your browser print dialog."),
+                    tooltip: gettext(
+                        "Either print or create a PDF using your browser print dialog."
+                    ),
                     order: 5,
                     keys: "Ctrl-p",
                     action: editor => {
-                        import("../../../exporter/print").then(({PrintExporter}) => {
-                            const exporter = new PrintExporter(
-                                editor.schema,
-                                editor.app.csl,
-                                editor.mod.documentTemplate.documentStyles,
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB
-                            )
-                            exporter.init()
-                        })
+                        import("../../../exporter/print").then(
+                            ({PrintExporter}) => {
+                                const exporter = new PrintExporter(
+                                    editor.getDoc({
+                                        changes: "acceptAllNoInsertions"
+                                    }),
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl,
+                                    editor.docInfo.updated,
+                                    editor.mod.documentTemplate.documentStyles
+                                )
+                                exporter.init()
+                            }
+                        )
                     }
                 }
             ]
@@ -164,64 +183,54 @@ export const headerbarModel = () => ({
             tooltip: gettext("Export of the document contents"),
             type: "menu",
             order: 1,
+            keys: "Alt-e",
             content: [
-                {
-                    title: gettext("HTML (old)"),
-                    type: "action",
-                    tooltip: gettext("Export the document to an HTML file."),
-                    order: 0,
-                    action: editor => {
-                        import("../../../exporter/html").then(({HTMLExporter}) => {
-                            const exporter = new HTMLExporter(
-                                editor.schema,
-                                editor.app.csl,
-                                editor.mod.documentTemplate.documentStyles,
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.docInfo.updated
-                            )
-                            exporter.init()
-                        })
-                    }
-                },
                 {
                     title: gettext("HTML"),
                     type: "action",
                     tooltip: gettext("Export the document to an HTML file."),
-                    order: 0.5,
+                    order: 0,
                     action: editor => {
-                        import("../../../exporter/html2").then(({HTMLExporter}) => {
-                            const exporter = new HTMLExporter(
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.app.csl,
-                                editor.docInfo.updated,
-                                editor.mod.documentTemplate.documentStyles
-                            )
-                            exporter.init()
-                        })
+                        import("../../../exporter/html").then(
+                            ({HTMLExporter}) => {
+                                const exporter = new HTMLExporter(
+                                    editor.getDoc({
+                                        changes: "acceptAllNoInsertions"
+                                    }),
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl,
+                                    editor.docInfo.updated,
+                                    editor.mod.documentTemplate.documentStyles
+                                )
+                                exporter.init()
+                            }
+                        )
                     }
                 },
                 {
                     title: gettext("Epub"),
                     type: "action",
-                    tooltip: gettext("Export the document to an Epub electronic reader file."),
+                    tooltip: gettext(
+                        "Export the document to an Epub electronic reader file."
+                    ),
                     order: 1,
                     action: editor => {
-                        import("../../../exporter/epub").then(({EpubExporter}) => {
-                            const exporter = new EpubExporter(
-                                editor.schema,
-                                editor.app.csl,
-                                editor.mod.documentTemplate.documentStyles,
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.docInfo.updated
-                            )
-                            exporter.init()
-                        })
+                        import("../../../exporter/epub").then(
+                            ({EpubExporter}) => {
+                                const exporter = new EpubExporter(
+                                    editor.getDoc({
+                                        changes: "acceptAllNoInsertions"
+                                    }),
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl,
+                                    editor.docInfo.updated,
+                                    editor.mod.documentTemplate.documentStyles
+                                )
+                                exporter.init()
+                            }
+                        )
                     },
                     disabled: editor => editor.app.isOffline()
                 },
@@ -231,42 +240,106 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an LaTeX file."),
                     order: 2,
                     action: editor => {
-                        import("../../../exporter/latex").then(({LatexExporter}) => {
-                            const exporter = new LatexExporter(
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.docInfo.updated
-                            )
-                            exporter.init()
-                        })
+                        import("../../../exporter/latex").then(
+                            ({LatexExporter}) => {
+                                const exporter = new LatexExporter(
+                                    editor.getDoc({
+                                        changes: "acceptAllNoInsertions"
+                                    }),
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.docInfo.updated
+                                )
+                                exporter.init()
+                            }
+                        )
                     },
                     disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext("JATS"),
                     type: "action",
-                    tooltip: gettext("Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."),
+                    tooltip: gettext(
+                        "Export the document to a Journal Archiving and Interchange Tag Library NISO JATS Version 1.2 file."
+                    ),
                     order: 2,
                     action: editor => {
-                        import("../../../exporter/jats").then(({JATSExporter}) => {
-                            const exporter = new JATSExporter(
-                                editor.getDoc({changes: "acceptAllNoInsertions"}),
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.app.csl,
-                                editor.docInfo.updated
-                            )
-                            exporter.init()
-                        })
+                        import("../../../exporter/jats").then(
+                            ({JATSExporter}) => {
+                                const exporter = new JATSExporter(
+                                    editor.getDoc({
+                                        changes: "acceptAllNoInsertions"
+                                    }),
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl,
+                                    editor.docInfo.updated,
+                                    "article"
+                                )
+                                exporter.init()
+                            }
+                        )
+                    },
+                    disabled: editor => editor.app.isOffline()
+                },
+                {
+                    title: gettext("BITS"),
+                    type: "action",
+                    tooltip: gettext(
+                        "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
+                    ),
+                    order: 2,
+                    action: editor => {
+                        import("../../../exporter/jats").then(
+                            ({JATSExporter}) => {
+                                const exporter = new JATSExporter(
+                                    editor.getDoc({
+                                        changes: "acceptAllNoInsertions"
+                                    }),
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl,
+                                    editor.docInfo.updated,
+                                    "book-part-wrapper"
+                                )
+                                exporter.init()
+                            }
+                        )
+                    },
+                    disabled: editor => editor.app.isOffline()
+                },
+                {
+                    title: gettext("Pandoc JSON"),
+                    type: "action",
+                    tooltip: gettext(
+                        "Export the document to a Pandoc JSON file."
+                    ),
+                    order: 3,
+                    action: editor => {
+                        import("../../../exporter/pandoc").then(
+                            ({PandocExporter}) => {
+                                const exporter = new PandocExporter(
+                                    editor.getDoc({
+                                        changes: "acceptAllNoInsertions"
+                                    }),
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl,
+                                    editor.docInfo.updated
+                                )
+                                exporter.init()
+                            }
+                        )
                     },
                     disabled: editor => editor.app.isOffline()
                 },
                 {
                     title: gettext("Slim FIDUS"),
                     type: "action",
-                    tooltip: gettext("Export the document to a FIDUS file without its template."),
-                    order: 3,
+                    tooltip: gettext(
+                        "Export the document to a FIDUS file without its template."
+                    ),
+                    order: 4,
                     action: editor => {
                         new ExportFidusFile(
                             editor.getDoc(),
@@ -275,7 +348,7 @@ export const headerbarModel = () => ({
                             false
                         )
                     }
-                },
+                }
             ]
         },
         {
@@ -284,6 +357,7 @@ export const headerbarModel = () => ({
             tooltip: gettext("Configure settings of this document."),
             type: "menu",
             order: 2,
+            keys: "Alt-s",
             content: [
                 {
                     id: "citation_style",
@@ -303,7 +377,10 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Choose your preferred document style."),
                     order: 2,
                     disabled: editor => {
-                        return editor.docInfo.access_rights !== "write" || editor.app.isOffline()
+                        return (
+                            editor.docInfo.access_rights !== "write" ||
+                            editor.app.isOffline()
+                        )
                     },
                     content: []
                 },
@@ -317,16 +394,32 @@ export const headerbarModel = () => ({
                         return editor.docInfo.access_rights !== "write"
                     },
                     content: [
-                        languageItem("en-US", gettext("English (United States)"), 0),
-                        languageItem("en-GB", gettext("English (United Kingdom)"), 1),
+                        languageItem(
+                            "en-US",
+                            gettext("English (United States)"),
+                            0
+                        ),
+                        languageItem(
+                            "en-GB",
+                            gettext("English (United Kingdom)"),
+                            1
+                        ),
                         languageItem("de-DE", gettext("German (Germany)"), 2),
-                        languageItem("zh-CN", gettext("Chinese (Simplified)"), 3),
+                        languageItem(
+                            "zh-CN",
+                            gettext("Chinese (Simplified)"),
+                            3
+                        ),
                         languageItem("es", gettext("Spanish"), 4),
                         languageItem("fr", gettext("French"), 5),
                         languageItem("ja", gettext("Japanese"), 6),
                         languageItem("it", gettext("Italian"), 7),
                         //languageItem('pl', gettext('Polish'), 8),
-                        languageItem("pt-BR", gettext("Portuguese (Brazil)"), 9),
+                        languageItem(
+                            "pt-BR",
+                            gettext("Portuguese (Brazil)"),
+                            9
+                        ),
                         //languageItem('nl', gettext('Dutch'), 10),
                         //languageItem('ru', gettext('Russian'), 11),
                         {
@@ -335,38 +428,42 @@ export const headerbarModel = () => ({
                             available: editor => {
                                 // There has to be at least one language of the default languages
                                 // among the default ones and one that is not among the default ones.
-                                return !!editor.view.state.doc.firstChild.attrs.languages.find(
-                                    lang => [
-                                        "en-US",
-                                        "en-GB",
-                                        "de-DE",
-                                        "zh-CN",
-                                        "es",
-                                        "fr",
-                                        "ja",
-                                        "it",
-                                        "pl",
-                                        "pt-BR",
-                                        "nl",
-                                        "ru"
-                                    ].includes(lang)
-                                ) && !!editor.view.state.doc.firstChild.attrs.languages.find(
-                                    lang => ![
-                                        "en-US",
-                                        "en-GB",
-                                        "de-DE",
-                                        "zh-CN",
-                                        "es",
-                                        "fr",
-                                        "ja",
-                                        "it",
-                                        "pl",
-                                        "pt-BR",
-                                        "nl",
-                                        "ru"
-                                    ].includes(lang)
+                                return (
+                                    !!editor.view.state.doc.attrs.languages.find(
+                                        lang =>
+                                            [
+                                                "en-US",
+                                                "en-GB",
+                                                "de-DE",
+                                                "zh-CN",
+                                                "es",
+                                                "fr",
+                                                "ja",
+                                                "it",
+                                                "pl",
+                                                "pt-BR",
+                                                "nl",
+                                                "ru"
+                                            ].includes(lang)
+                                    ) &&
+                                    !!editor.view.state.doc.attrs.languages.find(
+                                        lang =>
+                                            ![
+                                                "en-US",
+                                                "en-GB",
+                                                "de-DE",
+                                                "zh-CN",
+                                                "es",
+                                                "fr",
+                                                "ja",
+                                                "it",
+                                                "pl",
+                                                "pt-BR",
+                                                "nl",
+                                                "ru"
+                                            ].includes(lang)
+                                    )
                                 )
-
                             }
                         },
                         {
@@ -374,8 +471,12 @@ export const headerbarModel = () => ({
                             type: "setting",
                             order: 13,
                             action: editor => {
-                                const language = editor.view.state.doc.firstChild.attrs.language,
-                                    dialog = new LanguageDialog(editor, language)
+                                const language =
+                                        editor.view.state.doc.attrs.language,
+                                    dialog = new LanguageDialog(
+                                        editor,
+                                        language
+                                    )
                                 dialog.init()
                             },
                             selected: editor => {
@@ -392,26 +493,26 @@ export const headerbarModel = () => ({
                                     "pt-BR",
                                     "nl",
                                     "ru"
-                                ].includes(
-                                    editor.view.state.doc.firstChild.attrs.language
-                                )
+                                ].includes(editor.view.state.doc.attrs.language)
                             },
-                            available: editor => !!editor.view.state.doc.firstChild.attrs.languages.find(
-                                lang => ![
-                                    "en-US",
-                                    "en-GB",
-                                    "de-DE",
-                                    "zh-CN",
-                                    "es",
-                                    "fr",
-                                    "ja",
-                                    "it",
-                                    "pl",
-                                    "pt-BR",
-                                    "nl",
-                                    "ru"
-                                ].includes(lang)
-                            )
+                            available: editor =>
+                                !!editor.view.state.doc.attrs.languages.find(
+                                    lang =>
+                                        ![
+                                            "en-US",
+                                            "en-GB",
+                                            "de-DE",
+                                            "zh-CN",
+                                            "es",
+                                            "fr",
+                                            "ja",
+                                            "it",
+                                            "pl",
+                                            "pt-BR",
+                                            "nl",
+                                            "ru"
+                                        ].includes(lang)
+                                )
                         }
                     ]
                 },
@@ -419,7 +520,9 @@ export const headerbarModel = () => ({
                     id: "paper_size",
                     title: gettext("Paper Size"),
                     type: "menu",
-                    tooltip: gettext("Choose a papersize for print and PDF generation."),
+                    tooltip: gettext(
+                        "Choose a papersize for print and PDF generation."
+                    ),
                     order: 4,
                     disabled: editor => {
                         return editor.docInfo.access_rights !== "write"
@@ -428,41 +531,56 @@ export const headerbarModel = () => ({
                         {
                             title: gettext("DIN A4"),
                             type: "setting",
-                            tooltip: gettext("A4 (DIN A4/ISO 216) which is used in most of the world."),
+                            tooltip: gettext(
+                                "A4 (DIN A4/ISO 216) which is used in most of the world."
+                            ),
                             order: 0,
                             action: editor => {
-                                const article = editor.view.state.doc.firstChild
-                                const attrs = Object.assign({}, article.attrs)
-                                attrs.papersize = "A4"
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                                    editor.view.state.tr
+                                        .setDocAttribute("papersize", "A4")
+                                        .setMeta("settings", true)
                                 )
                             },
                             selected: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersize === "A4"
+                                return (
+                                    editor.view.state.doc.attrs.papersize ===
+                                    "A4"
+                                )
                             },
                             available: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersizes.includes("A4")
+                                return editor.view.state.doc.attrs.papersizes.includes(
+                                    "A4"
+                                )
                             }
                         },
                         {
                             title: gettext("US Letter"),
                             type: "setting",
-                            tooltip: gettext("The format used by the USA and some other American countries."),
+                            tooltip: gettext(
+                                "The format used by the USA and some other American countries."
+                            ),
                             order: 1,
                             action: editor => {
-                                const article = editor.view.state.doc.firstChild
-                                const attrs = Object.assign({}, article.attrs)
-                                attrs.papersize = "US Letter"
                                 editor.view.dispatch(
-                                    editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                                    editor.view.state.tr
+                                        .setDocAttribute(
+                                            "papersize",
+                                            "US Letter"
+                                        )
+                                        .setMeta("settings", true)
                                 )
                             },
                             selected: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersize === "US Letter"
+                                return (
+                                    editor.view.state.doc.attrs.papersize ===
+                                    "US Letter"
+                                )
                             },
                             available: editor => {
-                                return editor.view.state.doc.firstChild.attrs.papersizes.includes("US Letter")
+                                return editor.view.state.doc.attrs.papersizes.includes(
+                                    "US Letter"
+                                )
                             }
                         }
                     ]
@@ -472,20 +590,19 @@ export const headerbarModel = () => ({
                     type: "setting",
                     order: 5,
                     action: editor => {
-                        const dialog = new CopyrightDialog(editor.view.state.doc.firstChild.attrs.copyright)
-                        dialog.init().then(
-                            copyright => {
-                                if (copyright) {
-                                    const article = editor.view.state.doc.firstChild
-                                    const attrs = Object.assign({}, article.attrs, {copyright})
-
-                                    editor.view.dispatch(
-                                        editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
-                                    )
-                                }
-                                editor.currentView.focus()
-                            }
+                        const dialog = new CopyrightDialog(
+                            editor.view.state.doc.attrs.copyright
                         )
+                        dialog.init().then(copyright => {
+                            if (copyright) {
+                                editor.view.dispatch(
+                                    editor.view.state.tr
+                                        .setDocAttribute("copyright", copyright)
+                                        .setMeta("settings", true)
+                                )
+                            }
+                            editor.currentView.focus()
+                        })
                     },
                     disabled: editor => editor.docInfo.access_rights !== "write"
                 }
@@ -497,6 +614,7 @@ export const headerbarModel = () => ({
             tooltip: gettext("Select document editing tool."),
             type: "menu",
             order: 3,
+            keys: "Alt-t",
             content: [
                 {
                     title: gettext("Word counter"),
@@ -522,7 +640,9 @@ export const headerbarModel = () => ({
                 {
                     title: gettext("Keyboard shortcuts"),
                     type: "action",
-                    tooltip: gettext("Show an overview of available keyboard shortcuts."),
+                    tooltip: gettext(
+                        "Show an overview of available keyboard shortcuts."
+                    ),
                     order: 2,
                     keys: "Shift-Ctrl-/",
                     action: editor => {
@@ -537,6 +657,7 @@ export const headerbarModel = () => ({
             type: "menu",
             tooltip: gettext("Tracking changes to the document"),
             order: 4,
+            keys: "Alt-c",
             disabled: editor => editor.docInfo.access_rights !== "write",
             content: [
                 {
@@ -548,15 +669,15 @@ export const headerbarModel = () => ({
                         return editor.docInfo.access_rights !== "write"
                     },
                     action: editor => {
-                        const article = editor.view.state.doc.firstChild
-                        const attrs = Object.assign({}, article.attrs)
-                        attrs.tracked = !attrs.tracked
+                        const tracked = !editor.view.state.doc.attrs.tracked
                         editor.view.dispatch(
-                            editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                            editor.view.state.tr
+                                .setDocAttribute("tracked", tracked)
+                                .setMeta("settings", true)
                         )
                     },
                     selected: editor => {
-                        return editor.view.state.doc.firstChild.attrs.tracked === true
+                        return editor.view.state.doc.attrs.tracked === true
                     }
                 },
                 {
@@ -576,7 +697,7 @@ export const headerbarModel = () => ({
                     action: editor => {
                         editor.mod.track.rejectAll()
                     }
-                },
+                }
             ]
         }
     ]

@@ -1,13 +1,14 @@
 #document-editable,
 #footnote-box-container {
-    counter-reset: cat-figure cat-equation cat-photo cat-table footnote-counter footnote-marker-counter;
+    counter-reset: cat-figure cat-equation cat-photo cat-table footnote-counter
+        footnote-marker-counter;
 }
 
 /* CSL */
 
 .csl-bib-body {
-    padding-top: .5em;
-    padding-bottom: .5em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .csl-left-margin {
@@ -36,7 +37,7 @@
 }
 
 .csl-indent {
-    padding-left: .5in;
+    padding-left: 0.5in;
 }
 
 .csl-entry {
@@ -54,7 +55,7 @@ span.anchor {
 
 figure figcaption {
     margin-top: 10px;
-    font-size: .9em;
+    font-size: 0.9em;
 }
 
 figure img {
@@ -108,45 +109,54 @@ figure {
     box-sizing: border-box;
 }
 
-figure[data-category='figure'] figcaption span.label::after {
+figure[data-category="figure"] figcaption span.label::after {
     counter-increment: cat-figure;
-    content: ' ' counter(cat-figure);
+    content: " " counter(cat-figure);
 }
 
-figure[data-category='equation'] figcaption span.label::after {
+figure[data-category="equation"] figcaption span.label::after {
     counter-increment: cat-equation;
-    content: ' ' counter(cat-equation);
+    content: " " counter(cat-equation);
 }
 
-figure[data-category='photo'] figcaption span.label::after {
+figure[data-category="photo"] figcaption span.label::after {
     counter-increment: cat-photo;
-    content: ' ' counter(cat-photo);
+    content: " " counter(cat-photo);
 }
 
-figure[data-category='table'] figcaption span.label::after,
-table[data-category='table'] caption span.label::after {
+figure[data-category="table"] figcaption span.label::after,
+table[data-category="table"] caption span.label::after {
     counter-increment: cat-table;
-    content: ' ' counter(cat-table);
+    content: " " counter(cat-table);
 }
 
-#footnote-box-container figure[data-category='figure'] figcaption span.label::after {
-    content: ' ' counter(cat-figure) 'A';
+#footnote-box-container
+    figure[data-category="figure"]
+    figcaption
+    span.label::after {
+    content: " " counter(cat-figure) "A";
 }
 
-#footnote-box-container figure[data-category='photo'] figcaption span.label::after {
-    content: ' ' counter(cat-photo) 'A';
+#footnote-box-container
+    figure[data-category="photo"]
+    figcaption
+    span.label::after {
+    content: " " counter(cat-photo) "A";
 }
 
-#footnote-box-container figure[data-category='table'] figcaption span.label::after,
-#footnote-box-container table[data-category='table'] caption span.label::after {
-    content: ' ' counter(cat-table) 'A';
+#footnote-box-container
+    figure[data-category="table"]
+    figcaption
+    span.label::after,
+#footnote-box-container table[data-category="table"] caption span.label::after {
+    content: " " counter(cat-table) "A";
 }
 
-figure[data-category='table'] figcaption span.text::before,
-figure[data-category='photo'] figcaption span.text::before,
-figure[data-category='figure'] figcaption span.text::before,
-table[data-category='table'] caption span.text::before {
-    content: ': ';
+figure[data-category="table"] figcaption span.text::before,
+figure[data-category="photo"] figcaption span.text::before,
+figure[data-category="figure"] figcaption span.text::before,
+table[data-category="table"] caption span.text::before {
+    content: ": ";
 }
 
 table {
@@ -187,50 +197,50 @@ table {
     text-decoration: underline;
 }
 
-.article table[data-layout='fixed'] {
+.doc table[data-layout="fixed"] {
     table-layout: fixed !important;
 }
 
-.article table[data-layout='auto'] {
+.doc table[data-layout="auto"] {
     table-layout: auto !important;
 }
 
-.article-title {
+.doc-title {
     font-size: 48px;
 }
 
-.article .table-of-contents h1,
-.article .table-of-contents h2,
-.article .table-of-contents h3,
-.article .table-of-contents h4,
-.article .table-of-contents h5,
-.article .table-of-contents h6 {
+.doc .table-of-contents h1,
+.doc .table-of-contents h2,
+.doc .table-of-contents h3,
+.doc .table-of-contents h4,
+.doc .table-of-contents h5,
+.doc .table-of-contents h6 {
     font-size: 1em;
     font-weight: normal;
     margin-bottom: unset;
 }
 
-.article .table-of-contents h2 {
+.doc .table-of-contents h2 {
     padding-left: 1em;
 }
 
-.article .table-of-contents h3 {
+.doc .table-of-contents h3 {
     padding-left: 2em;
 }
 
-.article .table-of-contents h4 {
+.doc .table-of-contents h4 {
     padding-left: 3em;
 }
 
-.article .table-of-contents h5 {
+.doc .table-of-contents h5 {
     padding-left: 4em;
 }
 
-.article .table-of-contents h6 {
+.doc .table-of-contents h6 {
     padding-left: 5em;
 }
 
-.article .table-of-contents h1.toc {
+.doc .table-of-contents h1.toc {
     font-style: italic;
 }
 

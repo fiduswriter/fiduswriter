@@ -1,5 +1,7 @@
 import os
-from testing.testcases import LiveTornadoTestCase
+import time
+import sys
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
@@ -9,11 +11,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
 
 
-class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
+class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
-        super(UsermediaOverviewTest, cls).setUpClass()
-        cls.base_url = cls.live_server_url
+        super().setUpClass()
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -26,12 +27,19 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         super(UsermediaOverviewTest, cls).tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
         self.login_user(self.user, self.driver, self.client)
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_overview(self):
         driver = self.driver
@@ -131,9 +139,7 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "'Submit'])[1]/following::button[1]",
         ).click()
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR, "button[title='Upload new image (Alt-u)']"
         ).click()
         driver.find_element(By.NAME, "title").click()
         driver.find_element(By.NAME, "title").send_keys("An image")
@@ -168,7 +174,7 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual("An image", image_title.text)
         search_input = driver.find_element(
             By.CSS_SELECTOR,
-            ".fw-overview-menu-item .fw-button input[type=text]",
+            ".fw-overview-menu-item .fw-button input[type=search]",
         )
         search_input.click()
         search_input.send_keys("fish")
@@ -203,10 +209,9 @@ class UsermediaOverviewTest(LiveTornadoTestCase, SeleniumHelper):
             "'Confirm deletion'])[1]/following::button[2]",
         ).click()
         image_placeholder = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "dataTables-empty"))
+            EC.presence_of_element_located((By.CLASS_NAME, "datatable-empty"))
         )
-        self.assertEqual("No images available", image_placeholder.text)
-
-    def tearDown(self):
+        self.assertEqual(
+            "File Size (px) Added\nNo images available", image_placeholder.text
+        )
         self.assertEqual([], self.verificationErrors)
-        return super().tearDown()

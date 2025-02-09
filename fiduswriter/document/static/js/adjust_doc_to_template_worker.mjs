@@ -1,7 +1,7 @@
 import {AdjustDocToTemplateWorker} from "./workers/document_template/adjust_doc.js"
 
-onmessage = function(message) {
-    let adjuster = new AdjustDocToTemplateWorker(
+addEventListener("message", message => {
+    const adjuster = new AdjustDocToTemplateWorker(
         message.data.schemaSpec,
         message.data.doc,
         message.data.template,
@@ -9,4 +9,4 @@ onmessage = function(message) {
         response => postMessage(response)
     )
     adjuster.init()
-}
+})

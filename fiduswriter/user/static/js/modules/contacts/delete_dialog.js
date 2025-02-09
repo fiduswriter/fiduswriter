@@ -1,4 +1,4 @@
-import {postJson, Dialog} from "../common"
+import {Dialog, postJson} from "../common"
 
 //dialog for removing a user from contacts
 export class DeleteContactDialog {
@@ -13,18 +13,16 @@ export class DeleteContactDialog {
                     text: gettext("Delete"),
                     classes: "fw-dark",
                     click: () => {
-                        postJson(
-                            "/api/user/contacts/delete/",
-                            {contacts: JSON.stringify(this.contacts)}
-                        ).then(
-                            ({status}) => {
-                                dialog.close()
-                                if (status == 200) { //user removed from contacts
-                                    return resolve()
-                                }
-                                return reject()
+                        postJson("/api/user/contacts/delete/", {
+                            contacts: JSON.stringify(this.contacts)
+                        }).then(({status}) => {
+                            dialog.close()
+                            if (status == 200) {
+                                //user removed from contacts
+                                return resolve()
                             }
-                        )
+                            return reject()
+                        })
                     }
                 },
                 {
@@ -40,6 +38,5 @@ export class DeleteContactDialog {
             })
             dialog.open()
         })
-
     }
 }

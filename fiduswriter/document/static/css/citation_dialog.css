@@ -7,14 +7,16 @@
     overflow-y: auto;
 }
 
-#cite-source-table_filter { /* stylelint-disable-line */
+/* stylelint-disable selector-id-pattern */
+#cite-source-table_filter {
     text-align: left;
 }
 
-#cite-source-table_filter input[type='text'] { /* stylelint-disable-line */
+#cite-source-table_filter input[type="text"] {
     width: 332px;
     height: 33px;
 }
+/* stylelint-enable selector-id-pattern */
 
 #selected-cite-source-table .fw-data-table-title > span {
     width: 100px;
@@ -22,6 +24,14 @@
 
 #cite-source-table .fw-data-table-title > span {
     width: 128px;
+}
+
+#configure-citation .datatable-container tbody tr {
+    cursor: pointer;
+}
+
+#configure-citation .datatable-container tbody tr:nth-child(2n + 1) {
+    background-color: var(--table-row-background-color);
 }
 
 .fw-cite-parts-table td {
@@ -47,7 +57,6 @@
     width: 278px;
     border-radius: 4px;
 }
-
 
 .selected-source:first-child .order-up {
     display: none;

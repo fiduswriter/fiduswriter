@@ -4,6 +4,7 @@ from builtins import object
 import os
 import uuid
 from PIL import Image as PilImage
+import pillow_avif  # noqa: F401
 from io import BytesIO
 
 from django.db import models
@@ -12,8 +13,23 @@ from django.db import IntegrityError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from document.models import Document
 
-ALLOWED_FILETYPES = ["image/jpeg", "image/png", "image/svg+xml"]
-ALLOWED_EXTENSIONS = ["jpeg", "jpg", "png", "svg", "jfif"]
+ALLOWED_FILETYPES = [
+    "image/avif",
+    "image/jpeg",
+    "image/png",
+    "image/svg+xml",
+    "image/webp",
+]
+ALLOWED_EXTENSIONS = [
+    "avif",
+    "avifs",
+    "jpeg",
+    "jpg",
+    "png",
+    "svg",
+    "jfif",
+    "webp",
+]
 
 
 def get_file_path(instance, filename):
@@ -84,32 +100,17 @@ class Image(models.Model):
             raise IntegrityError
 
     def create_thumbnail(self):
-        # original code for this method came from
-        # http://snipt.net/danfreak/generate-thumbnails-in-django-with-pil/
-
         # If there is no image associated with this.
         # do not create thumbnail
-        if not self.image:
-            return
-        if not hasattr(self.image.file, "content_type"):
+        if not self.image or not self.file_type:
             return
 
-        # Set our max thumbnail size in a tuple (max width, max height)
-        # THUMBNAIL_SIZE = (170,200)
-
-        DJANGO_TYPE = self.image.file.content_type
-
-        if DJANGO_TYPE == "image/jpeg":
-            PIL_TYPE = "jpeg"
-            FILE_EXTENSION = "jpg"
-            self.file_type = DJANGO_TYPE
-        elif DJANGO_TYPE == "image/png":
-            PIL_TYPE = "png"
-            FILE_EXTENSION = "png"
-            self.file_type = DJANGO_TYPE
-        else:
-            self.file_type = DJANGO_TYPE
+        if self.file_type == "image/svg+xml":
+            # Don't create a thumbnail for an SVG file
             return
+
+        # original code for this method came from
+        # http://snipt.net/danfreak/generate-thumbnails-in-django-with-pil/
 
         # Open original photo which we want to thumbnail using PIL's Image
         image = PilImage.open(BytesIO(self.image.read()))
@@ -156,7 +157,7 @@ class Image(models.Model):
 
         # Save the thumbnail
         temp_handle = BytesIO()
-        image.save(temp_handle, PIL_TYPE)
+        image.save(temp_handle, "avif")
         temp_handle.seek(0)
 
         # Save image to a SimpleUploadedFile which can be saved into
@@ -164,23 +165,25 @@ class Image(models.Model):
         suf = SimpleUploadedFile(
             os.path.split(self.image.name)[-1],
             temp_handle.read(),
-            content_type=DJANGO_TYPE,
+            content_type="image/avif",
         )
         # Save SimpleUploadedFile into image field
         self.thumbnail.save(
-            "%s_thumbnail.%s"
-            % (os.path.splitext(suf.name)[0], FILE_EXTENSION),
+            "%s.%s" % (os.path.splitext(suf.name)[0], "avif"),
             suf,
             save=False,
         )
 
     def save(self, *args, **kwargs):
-        # create a thumbnail
-        self.create_checksum()
+        if self.image and hasattr(self.image.file, "content_type"):
+            # Store the file type
+            self.file_type = self.image.file.content_type
         self.check_filetype()
-        self.create_thumbnail()
-
+        self.create_checksum()
         super().save(*args, **kwargs)
+
+        self.create_thumbnail()
+        # create a thumbnail. Name based on main image file
 
 
 def default_copyright():

@@ -1,4 +1,4 @@
-import {parseTracks, addTracks} from "./track"
+import {addTracks, parseTracks} from "./track"
 
 // :: NodeSpec
 // An ordered list [node spec](#model.NodeSpec). Has a single
@@ -11,16 +11,22 @@ export const ordered_list = {
     attrs: {
         id: {default: false},
         order: {default: 1},
-        track: {default: []},
-
+        track: {default: []}
     },
-    parseDOM: [{tag: "ol", getAttrs(dom) {
-        return {
-            id: dom.id,
-            order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1,
-            track: parseTracks(dom.dataset.track)
+    parseDOM: [
+        {
+            tag: "ol",
+            getAttrs(dom) {
+                return {
+                    id: dom.id,
+                    order: dom.hasAttribute("start")
+                        ? +dom.getAttribute("start")
+                        : 1,
+                    track: parseTracks(dom.dataset.track)
+                }
+            }
         }
-    }}],
+    ],
     toDOM(node) {
         const attrs = {id: node.attrs.id}
         if (node.attrs.order !== 1) {
@@ -44,12 +50,17 @@ export const bullet_list = {
         id: {default: false},
         track: {default: []}
     },
-    parseDOM: [{tag: "ul", getAttrs(dom) {
-        return {
-            id: dom.id,
-            track: parseTracks(dom.dataset.track)
+    parseDOM: [
+        {
+            tag: "ul",
+            getAttrs(dom) {
+                return {
+                    id: dom.id,
+                    track: parseTracks(dom.dataset.track)
+                }
+            }
         }
-    }}],
+    ],
     toDOM(node) {
         const attrs = {id: node.attrs.id}
         addTracks(node, attrs)
@@ -65,11 +76,16 @@ export const list_item = {
     attrs: {
         track: {default: []}
     },
-    parseDOM: [{tag: "li", getAttrs(dom) {
-        return {
-            track: parseTracks(dom.dataset.track)
+    parseDOM: [
+        {
+            tag: "li",
+            getAttrs(dom) {
+                return {
+                    track: parseTracks(dom.dataset.track)
+                }
+            }
         }
-    }}],
+    ],
     toDOM(node) {
         const attrs = {}
         addTracks(node, attrs)

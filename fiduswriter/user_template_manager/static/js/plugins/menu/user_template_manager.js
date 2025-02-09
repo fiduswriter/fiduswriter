@@ -11,8 +11,8 @@ export class DocTemplatesMenuItem {
             title: gettext("Document Templates"),
             url: "/templates/",
             text: gettext("Templates"),
-            order: 4
+            order: 4,
+            keys: "Alt-t"
         })
     }
-
 }

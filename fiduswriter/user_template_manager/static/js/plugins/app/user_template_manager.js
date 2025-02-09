@@ -9,18 +9,27 @@ export class DocTemplatesAppItem {
             requireLogin: true,
             open: pathnameParts => {
                 if (pathnameParts.length < 4) {
-                    return import("../../modules/user_template_manager/overview").then(({DocTemplatesOverview}) => new DocTemplatesOverview(this.app.config))
+                    return import(
+                        "../../modules/user_template_manager/overview"
+                    ).then(
+                        ({DocTemplatesOverview}) =>
+                            new DocTemplatesOverview(this.app.config)
+                    )
                 } else {
                     const id = pathnameParts[2]
-                    return import("../../modules/user_template_manager/editor").then(({DocTemplatesEditor}) => new DocTemplatesEditor(this.app.config, id))
+                    return import(
+                        "../../modules/user_template_manager/editor"
+                    ).then(
+                        ({DocTemplatesEditor}) =>
+                            new DocTemplatesEditor(this.app.config, id)
+                    )
                 }
             },
             dbTables: {
-                "list": {
+                list: {
                     keyPath: "id"
                 }
             }
         }
     }
-
 }

@@ -1,6 +1,15 @@
-import {enquote, literal, sup, sub, smallcaps, url, text, variable} from "./common"
-import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
+import {marks} from "prosemirror-schema-basic"
+import {
+    url,
+    enquote,
+    literal,
+    smallcaps,
+    sub,
+    sup,
+    text,
+    variable
+} from "./common"
 
 const nocase = {
     parseDOM: [{tag: "span.nocase"}],

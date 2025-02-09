@@ -10,12 +10,12 @@
 }
 
 #fw-overview-menu::after {
-    content: '';
+    content: "";
     display: table;
     clear: both;
 }
 
-@media (max-width: 1429px) {
+@media (width <= 1429px) {
     #fw-overview-menu {
         margin: 0 auto;
         max-width: 1004px;
@@ -26,6 +26,44 @@
     position: relative;
     float: left;
     margin-right: 14px;
+}
+
+.fw-search-field-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.fw-search-field-container .fw-search-label {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    pointer-events: none; /* Makes the label non-interactive */
+    user-select: none;
+    z-index: 1;
+}
+
+.fw-search-field-container input.fw-search-field[type="search"] {
+    position: relative;
+    z-index: 2;
+    background: transparent; /* Makes input background transparent to show label */
+}
+
+.fw-search-field-container:has(
+        input.fw-search-field[type="search"]:not(:placeholder-shown)
+    )
+    label.fw-search-label {
+    display: none;
+}
+
+.fw-search-field-container i.fa {
+    position: relative;
+    z-index: 3;
+    margin-left: 8px;
 }
 
 .fw-overview-menu-item.search {
@@ -41,6 +79,39 @@
     background-color: var(--input-focus-background-color);
 }
 
+.fw-button .fw-search-label {
+    margin-right: 8px;
+    display: inline-block;
+}
+
+/* Hide label visually while keeping it accessible for screen readers
+   when the search box is narrow */
+@media (width <= 600px) {
+    .fw-button .fw-search-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+}
+
+.fw-button input[type="text"] {
+    border: 1px solid #cccccc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: calc(100% - 30px);
+    height: 30px;
+}
+
+.fw-button input[type="text"]:focus {
+    outline: 2px solid #007bff;
+    border-color: #007bff;
+}
+
 .fw-text-menu {
     height: 40px;
     color: var(--cs-white-text-secondary);
@@ -49,6 +120,18 @@
     background-color: transparent;
     font-size: 14px;
     cursor: pointer;
+    position: relative;
+    padding-left: 5px;
+}
+
+.fw-text-menu:focus::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px; /* Width of the border */
+    background-color: var(--menu-cursor-border-color); /* Color of the border */
 }
 
 .fw-text-menu:hover {
@@ -77,7 +160,7 @@ div.select-action {
     min-width: 38px;
 }
 
-div.select-action input[type='checkbox'] {
+div.select-action input[type="checkbox"] {
     cursor: default;
 }
 
@@ -85,13 +168,7 @@ span.select-action-dropdown {
     margin-left: 5px;
 }
 
-.fw-button input[type='text'] {
-    width: calc(100% - 30px);
-    height: 30px;
-    border: 0;
-}
-
-.fw-white input[type='text'] {
+.fw-button.fw-white input[type="text"] {
     color: var(--cs-light-text);
     background-color: var(--cs-light-background);
 }
@@ -100,7 +177,11 @@ span.select-action-dropdown {
     background-color: var(--input-focus-background-color);
 }
 
-.fw-button.fw-white input[type='text']:focus,
+.fw-button.fw-white input[type="text"]:focus,
 .fw-white.fw-input:hover {
     background-color: var(--input-focus-background-color);
+}
+
+.fw-pulldown-item.selected {
+    background-color: #f0f0f0;
 }

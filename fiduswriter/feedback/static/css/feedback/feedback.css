@@ -6,7 +6,7 @@
     height: 100%;
     z-index: 1000;
     background-color: rgba(var(--overlay-color));
-    font-family: scalareg, 'courier new', courier, monospace;
+    font-family: scalareg, "courier new", courier, monospace;
     display: none;
 }
 
@@ -36,15 +36,20 @@ a.feedback-tab:hover {
     background-color: var(--feedback-tab-background-hover-color);
 }
 
+a.feedback-tab:focus {
+    outline: 2px solid var(--cs-6-background-focus);
+    outline-offset: 2px;
+}
+
 body.header-closed a.feedback-tab {
     display: none;
 }
 
 a.feedback-tab::before {
     display: block;
-    font-family: 'Font Awesome 5 Free', monospace;
+    font-family: "Font Awesome 5 Free", monospace;
     font-size: 16px;
-    content: '\f075';
+    content: "\f075";
     color: white;
     text-indent: 0;
     text-align: center;
@@ -68,12 +73,11 @@ a.feedback-tab::before {
     margin-left: 10px;
 }
 
-@media (max-width: 1079px) {
+@media (width <= 1079px) {
     #footer-menu.prelogin a.feedback-tab {
         margin-left: 12px;
     }
 }
-
 
 #feedback-wrapper textarea {
     width: 287px;
@@ -118,6 +122,10 @@ a.feedback-tab::before {
 
 #close-feedback:hover {
     color: var(--feedback-icon-hover-color);
+}
+
+#close-feedback:focus {
+    color: var(--feedback-icon-focus-color);
 }
 
 @media print {

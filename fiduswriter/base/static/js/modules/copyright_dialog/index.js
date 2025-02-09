@@ -1,7 +1,11 @@
-import deepEqual from "fast-deep-equal"
 import {edtfParse} from "biblatex-csl-converter"
-import {Dialog, findTarget} from "../common"
-import {copyrightTemplate, licenseInputTemplate, licenseSelectTemplate} from "./templates"
+import deepEqual from "fast-deep-equal"
+import {Dialog, findTarget, isActivationEvent} from "../common"
+import {
+    copyrightTemplate,
+    licenseInputTemplate,
+    licenseSelectTemplate
+} from "./templates"
 
 export const LICENSE_URLS = [
     ["CC BY 4.0", "https://creativecommons.org/licenses/by/4.0/"],
@@ -30,23 +34,45 @@ export class CopyrightDialog {
         const holder = this.dialog.dialogEl.querySelector(".holder").value
         this.copyright.holder = holder.length ? holder : false
         const year = this.dialog.dialogEl.querySelector(".year").value
-        this.copyright.year = year.length ? Math.max(0, Math.min(parseInt(year) || 0, 2100)) : false
-        this.copyright.freeToRead = this.dialog.dialogEl.querySelector(".free-to-read:checked") ? true : false
-        const licenseStartDates = Array.from(this.dialog.dialogEl.querySelectorAll(".license-start")).map(el => el.value)
-        this.copyright.licenses = Array.from(this.dialog.dialogEl.querySelectorAll(".license")).map((el, index) => {
-            if (!el.value.length) {
-                return false
-            } else {
-                const url = el.value,
-                    title = el.matches("select") ? getLicenseTitle(url) : el.parentElement.parentElement.querySelector(".license-title").value,
-                    returnValue = {url, title},
-                    startDate = edtfParse(licenseStartDates[index])
-                if (startDate.valid && startDate.type === "Date" && !startDate.uncertain && !startDate.approximate && startDate.values.length === 3) {
-                    returnValue.start = startDate.cleanedString
+        this.copyright.year = year.length
+            ? Math.max(0, Math.min(Number.parseInt(year) || 0, 2100))
+            : false
+        this.copyright.freeToRead = this.dialog.dialogEl.querySelector(
+            ".free-to-read:checked"
+        )
+            ? true
+            : false
+        const licenseStartDates = Array.from(
+            this.dialog.dialogEl.querySelectorAll(".license-start")
+        ).map(el => el.value)
+        this.copyright.licenses = Array.from(
+            this.dialog.dialogEl.querySelectorAll(".license")
+        )
+            .map((el, index) => {
+                if (!el.value.length) {
+                    return false
+                } else {
+                    const url = el.value,
+                        title = el.matches("select")
+                            ? getLicenseTitle(url)
+                            : el.parentElement.parentElement.querySelector(
+                                  ".license-title"
+                              ).value,
+                        returnValue = {url, title},
+                        startDate = edtfParse(licenseStartDates[index])
+                    if (
+                        startDate.valid &&
+                        startDate.type === "Date" &&
+                        !startDate.uncertain &&
+                        !startDate.approximate &&
+                        startDate.values.length === 3
+                    ) {
+                        returnValue.start = startDate.cleanedString
+                    }
+                    return returnValue
                 }
-                return returnValue
-            }
-        }).filter(license => license)
+            })
+            .filter(license => license)
     }
 
     init() {
@@ -85,26 +111,47 @@ export class CopyrightDialog {
     }
 
     bind() {
-        this.dialog.dialogEl.addEventListener("click", event => {
-            const el = {}
-            switch (true) {
+        this.dialog.dialogEl.addEventListener("click", event =>
+            this.handleActivation(event)
+        )
+        this.dialog.dialogEl.addEventListener("keydown", event =>
+            this.handleActivation(event)
+        )
+    }
+
+    handleActivation(event) {
+        if (!isActivationEvent(event)) {
+            return
+        }
+        const el = {}
+        switch (true) {
             case findTarget(event, ".type-switch", el): {
-                const url = el.target.nextElementSibling.querySelector(".license").value
+                const url =
+                    el.target.nextElementSibling.querySelector(".license").value
                 if (el.target.classList.contains("value1")) {
                     el.target.classList.add("value2")
                     el.target.classList.remove("value1")
                     const title = getLicenseTitle(url)
-                    el.target.nextElementSibling.innerHTML = licenseInputTemplate({url, title})
+                    el.target.nextElementSibling.innerHTML =
+                        licenseInputTemplate({
+                            url,
+                            title
+                        })
                 } else {
                     el.target.classList.add("value1")
                     el.target.classList.remove("value2")
-                    el.target.nextElementSibling.innerHTML = licenseSelectTemplate({url})
+                    el.target.nextElementSibling.innerHTML =
+                        licenseSelectTemplate({
+                            url
+                        })
                 }
                 break
             }
             case findTarget(event, ".fa-plus-circle", el): {
                 this.getCurrentValue()
-                this.dialog.dialogEl.querySelector("#configure-copyright").innerHTML = copyrightTemplate(this.copyright)
+                this.dialog.dialogEl.querySelector(
+                    "#configure-copyright"
+                ).innerHTML = copyrightTemplate(this.copyright)
                 break
             }
             case findTarget(event, ".fa-minus-circle", el): {
@@ -112,12 +159,13 @@ export class CopyrightDialog {
                 tr.parentElement.removeChild(tr)
                 this.getCurrentValue()
 
-                this.dialog.dialogEl.querySelector("#configure-copyright").innerHTML = copyrightTemplate(this.copyright)
+                this.dialog.dialogEl.querySelector(
+                    "#configure-copyright"
+                ).innerHTML = copyrightTemplate(this.copyright)
                 break
             }
             default:
                 break
-            }
-        })
+        }
     }
 }

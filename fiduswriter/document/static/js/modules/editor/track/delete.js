@@ -1,13 +1,22 @@
-import {ReplaceStep, ReplaceAroundStep, replaceStep} from "prosemirror-transform"
 import {Slice} from "prosemirror-model"
-import {Selection, TextSelection, EditorState} from "prosemirror-state"
 import {liftListItem} from "prosemirror-schema-list"
+import {EditorState, Selection, TextSelection} from "prosemirror-state"
+import {
+    ReplaceAroundStep,
+    ReplaceStep,
+    replaceStep
+} from "prosemirror-transform"
 
-export const deleteNode = function(tr, node, nodePos, map, accept) { // Delete a node either because a deletion has been accepted or an insertion rejected.
-    const newNodePos = map.map(nodePos), trackType = accept ? "deletion" : "insertion"
+export const deleteNode = (tr, node, nodePos, map, accept) => {
+    // Delete a node either because a deletion has been accepted or an insertion rejected.
+    const newNodePos = map.map(nodePos),
+        trackType = accept ? "deletion" : "insertion"
     let delStep
     if (node.isTextblock) {
-        const selectionBefore = Selection.findFrom(tr.doc.resolve(newNodePos), -1)
+        const selectionBefore = Selection.findFrom(
+            tr.doc.resolve(newNodePos),
+            -1
+        )
         if (selectionBefore instanceof TextSelection) {
             const start = selectionBefore.$anchor.pos,
                 end = newNodePos + 1
@@ -22,19 +31,29 @@ export const deleteNode = function(tr, node, nodePos, map, accept) { // Delete a
                 }
             })
             if (allowMerge) {
-                delStep = replaceStep(
-                    tr.doc,
-                    start,
-                    end
-                )
+                delStep = replaceStep(tr.doc, start, end)
             } else {
-                const track = node.attrs.track.filter(track => track.type !== trackType)
-                tr.setNodeMarkup(newNodePos, null, Object.assign({}, node.attrs, {track}), node.marks)
+                const track = node.attrs.track.filter(
+                    track => track.type !== trackType
+                )
+                tr.setNodeMarkup(
+                    newNodePos,
+                    null,
+                    Object.assign({}, node.attrs, {track}),
+                    node.marks
+                )
             }
         } else {
             // There is a block node right in front of it that cannot be removed. Give up. (table/figure/etc.)
-            const track = node.attrs.track.filter(track => track.type !== trackType)
-            tr.setNodeMarkup(newNodePos, null, Object.assign({}, node.attrs, {track}), node.marks)
+            const track = node.attrs.track.filter(
+                track => track.type !== trackType
+            )
+            tr.setNodeMarkup(
+                newNodePos,
+                null,
+                Object.assign({}, node.attrs, {track}),
+                node.marks
+            )
         }
     } else if (node.isLeaf || ["figure", "table"].includes(node.type.name)) {
         delStep = new ReplaceStep(
@@ -52,8 +71,7 @@ export const deleteNode = function(tr, node, nodePos, map, accept) { // Delete a
                 tr.step(step)
                 map.appendMap(step.getMap())
             })
-        }
-        )
+        })
     } else {
         const end = map.map(nodePos + node.nodeSize)
         delStep = new ReplaceAroundStep(

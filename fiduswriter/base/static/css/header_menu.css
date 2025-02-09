@@ -34,12 +34,12 @@
 }
 
 .fw-logo-text::before {
-    content: 'Fidus';
+    content: "Fidus";
     font-weight: 700;
 }
 
 .fw-logo-text::after {
-    content: 'Writer ';
+    content: "Writer ";
     font-weight: 300;
 }
 
@@ -68,7 +68,7 @@
 .fw-nav-item.active-menu-wrapper::after {
     position: absolute;
     left: 50%;
-    top: 37px;
+    top: 34px;
     line-height: 100%;
     font-size: 24px;
     margin-left: -8px;
@@ -76,13 +76,15 @@
 }
 
 .fw-nav-item a {
-    color: rgba(var(--nagivation-link-text-color));
+    color: var(--nagivation-link-text-color);
     text-decoration: none;
+    letter-spacing: 1px;
 }
 
 .fw-nav-item a:hover,
 .fw-nav-item.active-menu-wrapper a {
-    color: rgba(var(--nagivation-link-active-text-color));
+    color: var(--nagivation-link-active-text-color);
+    text-shadow: 1px 0 0 var(--nagivation-link-active-text-color);
 }
 
 #user-preferences {
@@ -103,5 +105,10 @@
 
 #preferences-btn .fw-avatar:hover,
 #preferences-btn .fw-string-avatar:hover {
-    opacity: .7;
+    opacity: 0.7;
+}
+
+#header-nav a:focus {
+    outline: 2px solid var(--cs-6-background-focus);
+    outline-offset: 2px;
 }

@@ -1,46 +1,15 @@
-
-import {
-    EditorState
-} from "prosemirror-state"
-import {
-    Mapping,
-    Step,
-    Transform
-} from "prosemirror-transform"
-import {
-    sendableSteps,
-    receiveTransaction
-} from "prosemirror-collab"
-import {
-    showSystemMessage,
-    addAlert,
-    Dialog
-} from "../../../common"
-import {
-    WRITE_ROLES
-} from "../../"
-import {
-    trackedTransaction,
-    acceptAllNoInsertions
-} from "../../track"
-import {
-    recreateTransform
-} from "./recreate_transform"
-import {
-    changeSet
-} from "./changeset"
-import {
-    MergeEditor
-} from "./editor"
-import {
-    simplifyTransform
-} from "./tools"
-import {
-    ExportFidusFile
-} from "../../../exporter/native"
-import {
-    getSettings
-} from "../../../schema/convert"
+import {receiveTransaction, sendableSteps} from "prosemirror-collab"
+import {EditorState} from "prosemirror-state"
+import {Mapping, Step, Transform} from "prosemirror-transform"
+import {WRITE_ROLES} from "../../"
+import {Dialog, addAlert, showSystemMessage} from "../../../common"
+import {ExportFidusFile} from "../../../exporter/native"
+import {getSettings} from "../../../schema/convert"
+import {acceptAllNoInsertions, trackedTransaction} from "../../track"
+import {changeSet} from "./changeset"
+import {MergeEditor} from "./editor"
+import {recreateTransform} from "./recreate_transform"
+import {simplifyTransform} from "./tools"
 
 export class Merge {
     constructor(mod) {
@@ -52,60 +21,93 @@ export class Merge {
     adjustDocument(data) {
         // Adjust the document when reconnecting after offline and many changes
         // happening on server.
-        if (this.mod.editor.docInfo.version < data.doc.v && sendableSteps(this.mod.editor.view.state)) {
+        if (
+            this.mod.editor.docInfo.version < data.doc.v &&
+            sendableSteps(this.mod.editor.view.state)
+        ) {
             this.mod.doc.receiving = true
-            if (settings_JSONPATCH) {
-                this.mod.doc.confirmedJson = JSON.parse(JSON.stringify(data.doc.content))
-            }
-            const confirmedState = EditorState.create({doc: this.mod.editor.docInfo.confirmedDoc})
+            const confirmedState = EditorState.create({
+                doc: this.mod.editor.docInfo.confirmedDoc
+            })
             const unconfirmedTr = confirmedState.tr
             const sendable = sendableSteps(this.mod.editor.view.state)
             if (sendable) {
                 sendable.steps.forEach(step => unconfirmedTr.step(step))
             }
             const rollbackTr = this.mod.editor.view.state.tr
-            unconfirmedTr.steps.slice().reverse().forEach(
-                (step, index) => rollbackTr.step(step.invert(unconfirmedTr.docs[unconfirmedTr.docs.length - index - 1]))
-            )
+            unconfirmedTr.steps
+                .slice()
+                .reverse()
+                .forEach((step, index) =>
+                    rollbackTr.step(
+                        step.invert(
+                            unconfirmedTr.docs[
+                                unconfirmedTr.docs.length - index - 1
+                            ]
+                        )
+                    )
+                )
             // We reset to there being no local changes to send.
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                unconfirmedTr.steps,
-                unconfirmedTr.steps.map(_step => this.mod.editor.client_id)
-            ))
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                rollbackTr.steps,
-                rollbackTr.steps.map(_step => "remote")
-            ).setMeta("remote", true))
-            const toDoc = this.mod.editor.schema.nodeFromJSON({type: "doc", content: [data.doc.content]})
+            this.mod.editor.view.dispatch(
+                receiveTransaction(
+                    this.mod.editor.view.state,
+                    unconfirmedTr.steps,
+                    unconfirmedTr.steps.map(_step => this.mod.editor.client_id)
+                )
+            )
+            this.mod.editor.view.dispatch(
+                receiveTransaction(
+                    this.mod.editor.view.state,
+                    rollbackTr.steps,
+                    rollbackTr.steps.map(_step => "remote")
+                ).setMeta("remote", true)
+            )
+            const toDoc = this.mod.editor.schema.nodeFromJSON(data.doc.content)
             // Apply the online Transaction
             let lostTr
             if (data.m) {
                 lostTr = new Transform(this.mod.editor.view.state.doc)
                 data.m.forEach(message => {
-                    if (message.ds && message.cid !== this.mod.editor.client_id) {
-                        message.ds.forEach(j => lostTr.maybeStep(Step.fromJSON(this.mod.editor.schema, j)))
+                    if (
+                        message.ds &&
+                        message.cid !== this.mod.editor.client_id
+                    ) {
+                        message.ds.forEach(j =>
+                            lostTr.maybeStep(
+                                Step.fromJSON(this.mod.editor.schema, j)
+                            )
+                        )
                     }
                 })
                 if (!lostTr.doc.eq(toDoc)) {
                     // We were not able to recreate the document using the steps in the diffs. So instead we recreate the steps artificially.
-                    lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+                    lostTr = recreateTransform(
+                        this.mod.editor.view.state.doc,
+                        toDoc
+                    )
                 }
             } else {
-                lostTr = recreateTransform(this.mod.editor.view.state.doc, toDoc)
+                lostTr = recreateTransform(
+                    this.mod.editor.view.state.doc,
+                    toDoc
+                )
             }
 
-            this.mod.editor.view.dispatch(receiveTransaction(
-                this.mod.editor.view.state,
-                lostTr.steps,
-                lostTr.steps.map(_step => "remote")
-            ).setMeta("remote", true))
+            this.mod.editor.view.dispatch(
+                receiveTransaction(
+                    this.mod.editor.view.state,
+                    lostTr.steps,
+                    lostTr.steps.map(_step => "remote")
+                ).setMeta("remote", true)
+            )
 
             // We split the complex steps that delete and insert into simple steps so that finding conflicts is more pronounced.
             const modifiedLostTr = simplifyTransform(lostTr)
             const lostChangeSet = new changeSet(modifiedLostTr)
-            const conflicts = lostChangeSet.findConflicts(unconfirmedTr, modifiedLostTr)
+            const conflicts = lostChangeSet.findConflicts(
+                unconfirmedTr,
+                modifiedLostTr
+            )
             // Set the version
             this.mod.editor.docInfo.version = data.doc.v
 
@@ -127,15 +129,28 @@ export class Merge {
                         toDoc,
                         unconfirmedTr,
                         lostTr,
-                        {bibliography: data.doc.bibliography, images: data.doc.images}
+                        {
+                            bibliography: data.doc.bibliography,
+                            images: data.doc.images
+                        }
                     )
                     editor.init()
                 } catch (error) {
-                    this.handleMergeFailure(error, unconfirmedTr.doc, toDoc, editor)
+                    this.handleMergeFailure(
+                        error,
+                        unconfirmedTr.doc,
+                        toDoc,
+                        editor
+                    )
                 }
             } else {
                 try {
-                    this.autoMerge(unconfirmedTr, lostTr, data, this.mod.editor.view.state.selection)
+                    this.autoMerge(
+                        unconfirmedTr,
+                        lostTr,
+                        data,
+                        this.mod.editor.view.state.selection
+                    )
                 } catch (error) {
                     this.handleMergeFailure(error, unconfirmedTr.doc, toDoc)
                 }
@@ -154,28 +169,44 @@ export class Merge {
 
     autoMerge(unconfirmedTr, lostTr, data, selection) {
         /* This automerges documents incase of no conflicts */
-        const toDoc = this.mod.editor.schema.nodeFromJSON({type: "doc", content: [data.doc.content]})
-        const rebasedTr = EditorState.create({doc: toDoc, selection}).tr.setMeta("remote", true)
-        const maps = new Mapping([].concat(unconfirmedTr.mapping.maps.slice().reverse().map(map => map.invert())).concat(lostTr.mapping.maps.slice()))
-
-        unconfirmedTr.steps.forEach(
-            (step, index) => {
-                const mapped = step.map(maps.slice(unconfirmedTr.steps.length - index))
-                if (mapped && !rebasedTr.maybeStep(mapped).failed) {
-                    maps.appendMap(mapped.getMap())
-                    maps.setMirror(unconfirmedTr.steps.length - index - 1, (unconfirmedTr.steps.length + lostTr.steps.length + rebasedTr.steps.length - 1))
-                }
-            }
+        const toDoc = this.mod.editor.schema.nodeFromJSON(data.doc.content)
+        const rebasedTr = EditorState.create({
+            doc: toDoc,
+            selection
+        }).tr.setMeta("remote", true)
+        const maps = new Mapping(
+            []
+                .concat(
+                    unconfirmedTr.mapping.maps
+                        .slice()
+                        .reverse()
+                        .map(map => map.invert())
+                )
+                .concat(lostTr.mapping.maps.slice())
         )
+
+        unconfirmedTr.steps.forEach((step, index) => {
+            const mapped = step.map(
+                maps.slice(unconfirmedTr.steps.length - index)
+            )
+            if (mapped && !rebasedTr.maybeStep(mapped).failed) {
+                maps.appendMap(mapped.getMap())
+                maps.setMirror(
+                    unconfirmedTr.steps.length - index - 1,
+                    unconfirmedTr.steps.length +
+                        lostTr.steps.length +
+                        rebasedTr.steps.length -
+                        1
+                )
+            }
+        })
 
         let tracked
         let rebasedTrackedTr // offline steps to be tracked
         if (
             WRITE_ROLES.includes(this.mod.editor.docInfo.access_rights) &&
-            (
-                unconfirmedTr.steps.length > this.trackOfflineLimit ||
-                lostTr.steps.length > this.remoteTrackOfflineLimit
-            )
+            (unconfirmedTr.steps.length > this.trackOfflineLimit ||
+                lostTr.steps.length > this.remoteTrackOfflineLimit)
         ) {
             tracked = true
             // Either this user has made 50 changes since going offline,
@@ -197,20 +228,28 @@ export class Merge {
         const usedBibs = []
         const footnoteFind = (node, usedImages, usedBibs) => {
             if (node.name === "citation") {
-                node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
+                node.attrs.references.forEach(ref =>
+                    usedBibs.push(Number.parseInt(ref.id))
+                )
             } else if (node.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.content) {
-                node.content.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
+                node.content.forEach(subNode =>
+                    footnoteFind(subNode, usedImages, usedBibs)
+                )
             }
         }
         rebasedTr.doc.descendants(node => {
             if (node.type.name === "citation") {
-                node.attrs.references.forEach(ref => usedBibs.push(parseInt(ref.id)))
+                node.attrs.references.forEach(ref =>
+                    usedBibs.push(Number.parseInt(ref.id))
+                )
             } else if (node.type.name === "image" && node.attrs.image) {
                 usedImages.push(node.attrs.image)
             } else if (node.type.name === "footnote" && node.attrs.footnote) {
-                node.attrs.footnote.forEach(subNode => footnoteFind(subNode, usedImages, usedBibs))
+                node.attrs.footnote.forEach(subNode =>
+                    footnoteFind(subNode, usedImages, usedBibs)
+                )
             }
         })
         const oldBibDB = this.mod.editor.mod.db.bibDB.db
@@ -232,22 +271,49 @@ export class Merge {
                     this.mod.editor.mod.db.imageDB.setImage(id, oldImageDB[id])
                 } else {
                     // If the image was uploaded by someone else , to set the image we have to reupload it again as there is backend check to associate who can add an image with the image owner.
-                    this.mod.editor.mod.db.imageDB.reUploadImage(id, oldImageDB[id].image, oldImageDB[id].title, oldImageDB[id].copyright).then(
-                        () => {},
-                        (id) => {
-                            const transaction = this.mod.editor.view.state.tr
-                            this.mod.editor.view.state.doc.descendants((node, pos) => {
-                                if (node.type.name === "image" && node.attrs.image == id) {
-                                    const attrs = Object.assign({}, node.attrs)
-                                    attrs["image"] = false
-                                    const nodeType = this.mod.editor.currentView.state.schema.nodes["image"]
-                                    transaction.setNodeMarkup(pos, nodeType, attrs)
-                                }
-                            })
-                            this.mod.editor.view.dispatch(transaction)
-                            addAlert("error", gettext("One of the image(s) you copied could not be found on the server. Please try uploading it again."))
-                        }
-                    )
+                    this.mod.editor.mod.db.imageDB
+                        .reUploadImage(
+                            id,
+                            oldImageDB[id].image,
+                            oldImageDB[id].title,
+                            oldImageDB[id].copyright
+                        )
+                        .then(
+                            () => {},
+                            id => {
+                                const transaction =
+                                    this.mod.editor.view.state.tr
+                                this.mod.editor.view.state.doc.descendants(
+                                    (node, pos) => {
+                                        if (
+                                            node.type.name === "image" &&
+                                            node.attrs.image == id
+                                        ) {
+                                            const attrs = Object.assign(
+                                                {},
+                                                node.attrs
+                                            )
+                                            attrs["image"] = false
+                                            const nodeType =
+                                                this.mod.editor.currentView
+                                                    .state.schema.nodes["image"]
+                                            transaction.setNodeMarkup(
+                                                pos,
+                                                nodeType,
+                                                attrs
+                                            )
+                                        }
+                                    }
+                                )
+                                this.mod.editor.view.dispatch(transaction)
+                                addAlert(
+                                    "error",
+                                    gettext(
+                                        "One of the image(s) you copied could not be found on the server. Please try uploading it again."
+                                    )
+                                )
+                            }
+                        )
                 }
             }
         })
@@ -264,19 +330,16 @@ export class Merge {
             )
         }
         this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes()
-
     }
 
     getDocData(offlineDoc) {
         const pmArticle = acceptAllNoInsertions(offlineDoc).firstChild
         let title = ""
-        pmArticle.firstChild.forEach(
-            child => {
-                if (!child.marks.find(mark => mark.type.name === "deletion")) {
-                    title += child.textContent
-                }
+        pmArticle.firstChild.forEach(child => {
+            if (!child.marks.find(mark => mark.type.name === "deletion")) {
+                title += child.textContent
             }
-        )
+        })
 
         return {
             content: pmArticle.toJSON(),
@@ -287,7 +350,6 @@ export class Merge {
             id: this.mod.editor.docInfo.id,
             updated: this.mod.editor.docInfo.updated
         }
-
     }
 
     handleMergeFailure(error, offlineDoc, _onlineDoc, mergeEditor = false) {
@@ -314,14 +376,18 @@ export class Merge {
         const mergeFailedDialog = new Dialog({
             title: gettext("Merge failed"),
             id: "merge_failed",
-            body: gettext("An error occurred during the merge process, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."),
-            buttons: [{
-                text: gettext("Leave editor"),
-                classes: "fw-dark",
-                click: () => {
-                    window.location.href = "/"
+            body: gettext(
+                "An error occurred during the merge process, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."
+            ),
+            buttons: [
+                {
+                    text: gettext("Leave editor"),
+                    classes: "fw-dark",
+                    click: () => {
+                        window.location.href = "/"
+                    }
                 }
-            }],
+            ],
             canClose: false
         })
         mergeFailedDialog.open()

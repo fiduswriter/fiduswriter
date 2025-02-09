@@ -9,15 +9,14 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from django.conf import settings
 
-from testing.testcases import LiveTornadoTestCase
 from testing.selenium_helper import SeleniumHelper
+from channels.testing import ChannelsLiveServerTestCase
 
 
-class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
+class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
@@ -32,6 +31,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user = self.create_user(
@@ -131,14 +131,12 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::button[2]",
+            By.CSS_SELECTOR,
+            "button.fw-dark",
         ).click()
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR,
+            "button[title='Register new source (Alt-n)']",
         ).click()
         driver.find_element(By.ID, "select-bibtype").click()
         driver.find_element(
@@ -201,7 +199,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         # Closed citation dialog
         search_input = driver.find_element(
             By.CSS_SELECTOR,
-            ".fw-overview-menu-item .fw-button input[type=text]",
+            ".fw-overview-menu-item .fw-button input[type=search]",
         )
         search_input.click()
         search_input.send_keys("women")
@@ -210,7 +208,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
                 "No sources found",
                 driver.find_element(
                     By.CSS_SELECTOR,
-                    ".fw-data-table.fw-large.dataTable-table td",
+                    ".fw-data-table.fw-large.datatable-table td",
                 ).text,
             )
         except AssertionError as e:
@@ -230,7 +228,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload BibTeX file']"
+            By.CSS_SELECTOR, "button[title='Upload BibTeX file (Alt-u)']"
         ).click()
         # bibliography path
         bib_path = os.path.join(
@@ -296,7 +294,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(len(entries), 0)
         # Delete category
         driver.find_element(
-            By.CSS_SELECTOR, "button[title='Edit categories']"
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
         category_inputs = self.driver.find_elements(
             By.CSS_SELECTOR, "#editCategoryList tr"
@@ -307,7 +305,7 @@ class BibliographyOverviewTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         driver.find_element(
-            By.CSS_SELECTOR, "button[title='Edit categories']"
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
         category_inputs = self.driver.find_elements(
             By.CSS_SELECTOR, "#editCategoryList tr"

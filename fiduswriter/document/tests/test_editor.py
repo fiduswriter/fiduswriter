@@ -1,21 +1,28 @@
-import time
 import os
+import time
+import sys
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
+from testing.mail import get_outbox, empty_outbox, delete_outbox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
 
-from django.core import mail
 from django.conf import settings
+from django.test import override_settings
 
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 
+MAIL_STORAGE_NAME = "editor"
 
-class EditorTest(LiveTornadoTestCase, SeleniumHelper):
+
+@override_settings(MAIL_STORAGE_NAME=MAIL_STORAGE_NAME)
+@override_settings(EMAIL_BACKEND="testing.mail.EmailBackend")
+class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -24,7 +31,6 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -34,14 +40,77 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+        delete_outbox(MAIL_STORAGE_NAME)
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user1 = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter"
         )
+
+    def tearDown(self):
+        self.driver.execute_script("window.localStorage.clear()")
+        self.driver.execute_script("window.sessionStorage.clear()")
+        super().tearDown()
+        empty_outbox(MAIL_STORAGE_NAME)
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
+
+    def check_document_count(self, expected_count, timeout=10):
+        """
+        Check if the number of documents matches the expected count.
+
+        Args:
+            expected_count (int): The expected number of documents
+            timeout (int): Maximum time to wait in seconds
+
+        Returns:
+            bool: True if assertion passes, False if it fails
+        """
+
+        def document_count_matches(driver):
+            documents = driver.find_elements(
+                By.CSS_SELECTOR,
+                ".fw-contents tbody tr a.fw-data-table-title",
+            )
+            return len(documents) == expected_count
+
+        try:
+            WebDriverWait(self.driver, timeout).until(document_count_matches)
+            return True
+        except TimeoutException:
+            documents = self.driver.find_elements(
+                By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
+            )
+            actual_count = len(documents)
+            raise AssertionError(
+                f"Expected {expected_count} documents, but found {actual_count}"
+            )
+
+    def assert_with_retry(self, func, *args, max_attempts=3, wait_between=1):
+        """
+        Retry an assertion multiple times before failing.
+
+        Args:
+            func: The function to retry
+            *args: Arguments to pass to the function
+            max_attempts (int): Number of attempts before failing
+            wait_between (int): Seconds to wait between attempts
+        """
+        for attempt in range(max_attempts):
+            try:
+                func(*args)
+                return
+            except AssertionError as e:
+                if attempt == max_attempts - 1:
+                    raise AssertionError(
+                        f"Failed after {max_attempts} attempts. Last error: {str(e)}"
+                    )
+                time.sleep(wait_between)
 
     def test_crossrefs_and_internal_links(self):
         self.driver.get(self.base_url)
@@ -56,8 +125,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test"
         )
         # We enable the abstract
@@ -78,7 +147,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 "> ul > li:nth-child(1) > div > ul > li:nth-child(3) > span"
             ),
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).send_keys(Keys.LEFT).send_keys(
             "An abstract title"
         ).perform()
@@ -94,8 +163,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             ),
         ).click()
         # We type in the body
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "Body"
         )
         # We add a figure
@@ -110,10 +179,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, "div.figure-category"
         ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Photo"]'
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//*[normalize-space()="Photo"]')
+            )
         ).click()
-
         # click on 'Insert image' button
         self.driver.find_element(By.ID, "insert-figure-image").click()
 
@@ -159,7 +229,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
 
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
 
@@ -191,7 +261,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             ),
         ).click()
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
         assert cross_reference.text == "An abstract title"
         # We add a second cross reference to the figure
@@ -217,7 +287,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             ),
         ).click()
         figure_cross_reference = self.driver.find_elements(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )[1]
         assert figure_cross_reference.text == "Photo 1"
         # We add an internal link
@@ -243,13 +313,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             ),
         ).click()
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a"
+            By.CSS_SELECTOR, ".doc-body a"
         )
         assert internal_link.text == "An abstract title"
         # We change the link text.
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".article-abstract h3"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3").click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -258,18 +326,16 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             Keys.BACKSPACE
         ).perform()
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a"
+            By.CSS_SELECTOR, ".doc-body a"
         )
         assert internal_link.text == "An abstract title"
         assert internal_link.get_attribute("title") == "An abstract"
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
         assert cross_reference.text == "An abstract"
         # We add a second photo figure to increase the count
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body figure"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body figure").click()
         ActionChains(self.driver).send_keys(Keys.LEFT).perform()
         button = self.driver.find_element(By.XPATH, '//*[@title="Figure"]')
         button.click()
@@ -290,7 +356,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         # click on 'Use image' button
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".dataTable-container img")
+                (By.CSS_SELECTOR, ".datatable-container img")
             )
         ).click()
 
@@ -300,14 +366,12 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         time.sleep(1)
         figure_cross_reference = self.driver.find_elements(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )[1]
         assert figure_cross_reference.text == "Photo 2"
 
         # We delete the contents from the heading
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".article-abstract h3"
-        ).click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3").click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -326,11 +390,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             Keys.BACKSPACE
         ).perform()
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference.missing-target"
+            By.CSS_SELECTOR, ".doc-body .cross-reference.missing-target"
         )
         assert cross_reference.text == "MISSING TARGET"
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a.missing-target"
+            By.CSS_SELECTOR, ".doc-body a.missing-target"
         )
         assert internal_link.get_attribute("title") == "Missing target"
         self.assertEqual(
@@ -344,11 +408,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         # We add text to the heading again
         ActionChains(self.driver).send_keys("Title").perform()
         cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
         assert cross_reference.text == "Title"
         internal_link = self.driver.find_element(
-            By.CSS_SELECTOR, ".article-body a"
+            By.CSS_SELECTOR, ".doc-body a"
         )
         assert internal_link.get_attribute("title") == "Title"
         self.assertEqual(
@@ -360,7 +424,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             0,
         )
         # We remove the second figure
-        self.driver.find_elements(By.CSS_SELECTOR, ".article-body figure")[
+        self.driver.find_elements(By.CSS_SELECTOR, ".doc-body figure")[
             1
         ].click()
         button = self.driver.find_element(By.XPATH, '//*[@title="Figure"]')
@@ -371,7 +435,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ).click()
         time.sleep(1)
         figure_cross_reference = self.driver.find_elements(
-            By.CSS_SELECTOR, ".article-body .cross-reference"
+            By.CSS_SELECTOR, ".doc-body .cross-reference"
         )[1]
         assert figure_cross_reference.text == "MISSING TARGET"
 
@@ -380,8 +444,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             seconds = self.wait_time
         # Contents is child 5.
         current_body_text = driver.execute_script(
-            "return window.theApp.page.view.state.doc.firstChild"
-            ".child(5).textContent;"
+            "return window.theApp.page.view.state.doc.child(5).textContent;"
         )
         if seconds < 0:
             assert False, "Body text incorrect: {}".format(current_body_text)
@@ -404,36 +467,36 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "A test article with tracked changes"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "First I type "
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "some"
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             " standard "
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "text"
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             " here.\nI'll even write a second paragraph."
         )
         # Turn on tracked changes
@@ -444,15 +507,15 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
         # Make changes
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).double_click(
-            self.driver.find_element(By.CSS_SELECTOR, ".article-body strong")
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-body strong")
         ).perform()
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
         ActionChains(self.driver).double_click(
-            self.driver.find_element(By.CSS_SELECTOR, ".article-body em")
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-body em")
         ).perform()
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
@@ -511,8 +574,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "A test article to share"
         )
         # Turn on tracked changes
@@ -522,8 +585,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "With tracked changes\n"
         )
 
@@ -580,12 +643,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH, '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
+        time.sleep(2)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        time.sleep(1)
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
-        user4_invitation_email = mail.outbox[-1].body
+        user4_invitation_email = outbox[-1].body
         #  Reopen the share dialog and add users 5-7
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
@@ -603,6 +667,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         ActionChains(self.driver).send_keys(Keys.TAB).send_keys(
             Keys.RETURN
         ).perform()
+        # Downgrade the write rights to read rights for user4
         self.retry_click(
             self.driver,
             (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right"),
@@ -626,12 +691,12 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        time.sleep(1)
+        outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
         last_three_emails = [
-            mail.outbox[-3].body,
-            mail.outbox[-2].body,
-            mail.outbox[-1].body,
+            outbox[-3].body,
+            outbox[-2].body,
+            outbox[-1].body,
         ]
         user5_invitation_email = next(
             (s for s in last_three_emails if "yeti5" in s), None
@@ -680,13 +745,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).send_keys("... in the body").send_keys(
             Keys.ENTER
         ).perform()
         time.sleep(1)
         assert (
-            self.driver.find_element(By.CSS_SELECTOR, ".article-title").text
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-title").text
             == "A test article to share"
         )
         self.check_body(self.driver, "With tracked changes... in the body")
@@ -707,10 +772,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         time.sleep(1)
+        self.assert_with_retry(self.check_document_count, 1)
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
+
         documents[0].click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
@@ -744,10 +810,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             )
         )
         time.sleep(1)
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
+
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()
@@ -821,17 +885,17 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "Some extra content that doesn't show"
         )
         assert (
-            self.driver.find_element(By.CSS_SELECTOR, ".article-title").text
+            self.driver.find_element(By.CSS_SELECTOR, ".doc-title").text
             == "A test article to share"
         )
         self.check_body(self.driver, "With tracked changes... in the body")
         # Make a copy of the file
-        old_body = self.driver.find_element(By.CSS_SELECTOR, ".article-body")
+        old_body = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
@@ -842,8 +906,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "Some extra content that does show"
         )
         self.check_body(
@@ -917,7 +981,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
         # Tag user 1 in comment
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         ActionChains(self.driver).key_down(Keys.SHIFT).send_keys(
             Keys.LEFT
         ).send_keys(Keys.LEFT).send_keys(Keys.LEFT).send_keys(
@@ -930,12 +994,13 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".tag-user"))
         ).click()
-        emails_sent_before_comment = len(mail.outbox)
+        outbox = get_outbox(MAIL_STORAGE_NAME)
+        emails_sent_before_comment = len(outbox)
         self.driver.find_element(
             By.CSS_SELECTOR, ".comment-btns .submit"
         ).click()
-        time.sleep(1)
-        self.assertEqual(emails_sent_before_comment + 1, len(mail.outbox))
+        outbox = get_outbox(MAIL_STORAGE_NAME)
+        self.assertEqual(emails_sent_before_comment + 1, len(outbox))
         self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
@@ -965,7 +1030,8 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, 'a[href="mailto:yeti4a@snowman.com"]')
             )
         )
-        confirmation_link = self.find_urls(mail.outbox[-1].body)[0]
+        outbox = get_outbox(MAIL_STORAGE_NAME)
+        confirmation_link = self.find_urls(outbox[-1].body)[0]
         self.driver.get(confirmation_link)
         self.driver.find_element(By.ID, "terms-check").click()
         self.driver.find_element(By.ID, "test-check").click()
@@ -996,10 +1062,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 1)
+        self.assert_with_retry(self.check_document_count, 1)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
@@ -1017,10 +1080,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         invitation_link = self.find_urls(user5_invitation_email)[0]
         self.driver.get(invitation_link)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
@@ -1035,10 +1095,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 1)
+        self.assert_with_retry(self.check_document_count, 1)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
@@ -1056,10 +1113,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         invitation_link = self.find_urls(user6_invitation_email)[0]
         self.driver.get(invitation_link)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
@@ -1074,10 +1128,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
@@ -1093,10 +1144,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         read_access_rights = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-read"
         )
@@ -1123,10 +1171,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         time.sleep(1)
         doc_texts = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-searchable"
@@ -1153,10 +1198,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-write"
         ).click()
@@ -1191,7 +1233,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
             2
         ].click()
         self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
-        time.sleep(1)
+        time.sleep(self.wait_time / 3)
         self.assertEqual(
             len(
                 self.driver.find_elements(
@@ -1212,10 +1254,7 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
-        )
-        self.assertEqual(len(documents), 2)
+        self.assert_with_retry(self.check_document_count, 2)
         read_access_rights = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-read"
         )
@@ -1232,10 +1271,11 @@ class EditorTest(LiveTornadoTestCase, SeleniumHelper):
                 (By.CSS_SELECTOR, ".new_document button")
             )
         )
-        documents = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
+        # Wait for document list to be interactive
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-contents"))
         )
-        self.assertEqual(len(documents), 0)
+        self.assert_with_retry(self.check_document_count, 0)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'

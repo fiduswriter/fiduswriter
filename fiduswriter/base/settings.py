@@ -12,8 +12,10 @@ TEST_SERVER = True
 # This is the contact email that will be shown in various places all over
 # the site.
 CONTACT_EMAIL = "mail@email.com"
-# If websockets is running on a non-standard port, add it here:
-WS_PORT = False
+# If websockets is running on a non-standard server/port, add it here:
+WS_URLS = [
+    False,  # Default websocket server
+]
 # Interval between document saves
 DOC_SAVE_INTERVAL = 30
 
@@ -31,8 +33,9 @@ SRC_PATH = os.environ.get("SRC_PATH")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(PROJECT_PATH, "fiduswriter.sql"),
+        "NAME": os.path.join(PROJECT_PATH, "fiduswriter.sqlite3"),
         "CONN_MAX_AGE": None,
+        "TEST": {"NAME": "testdb.sqlite3"},
     }
 }
 
@@ -109,6 +112,7 @@ MEDIA_URL = "/media/"
 # The maximum size of user uploaded images in bytes. If you use NGINX, note
 # that also it needs to support at least this size.
 MEDIA_MAX_SIZE = False
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -150,6 +154,7 @@ BASE_MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 MIDDLEWARE = []
@@ -189,6 +194,7 @@ TEMPLATES = [
 BASE_INSTALLED_APPS = [
     "npm_mjs",
     "base",
+    "daphne",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -198,6 +204,8 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.admindocs",
     "django.contrib.flatpages",
+    "channels",
+    # "channels_presence",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -315,10 +323,6 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-        "tornado.access": {
-            "handlers": ["null"],
-            "propagate": False,
-        },
     },
 }
 
@@ -326,7 +330,7 @@ LOGGING = {
 # You only need to change this in very advanced setups.
 AVATAR_GRAVATAR_BACKUP = False
 AVATAR_THUMB_FORMAT = "PNG"
-AVATAR_DEFAULT_URL = "img/default_avatar.png"
+AVATAR_DEFAULT_URL = "img/default_avatar.avif"
 AVATAR_DEFAULT_SIZE = 80
 AVATAR_MAX_AVATARS_PER_USER = 1
 AVATAR_CACHE_ENABLED = True
@@ -343,8 +347,8 @@ SESSION_COOKIE_HTTPONLY = False
 CSRF_COOKIE_HTTPONLY = False
 
 # To make npm-mjs enable the webpack offline plugin
-WEBPACK_CONFIG_TEMPLATE = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), "webpack.config.template.js"
+RSPACK_CONFIG_TEMPLATE = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), "rspack.config.template.js"
 )
 
 # JS error logging
@@ -360,12 +364,6 @@ JAVASCRIPT_ERROR_BLACKLIST = [
 # The page to show while transpilation takes place.
 SETUP_PAGE_PATH = os.path.join(SRC_PATH, "base/setup_page/")
 
-# Whether to use the old JSON patch method rather than prosemirror-py.
-# Tests have shown that the JSON patch method is faster for now. This setting
-# will likely be removed once the prosemirror-py method has reached a similar
-# speed.
-JSONPATCH = False
-
 # Whether to create a service worker on production sites
 USE_SERVICE_WORKER = True
 
@@ -375,3 +373,5 @@ SILENCED_SYSTEM_CHECKS = ["models.W042"]
 
 FOOTER_LINKS = []
 BRANDING_LOGO = False
+
+ASGI_APPLICATION = "base.routing.application"

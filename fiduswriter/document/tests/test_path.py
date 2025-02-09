@@ -1,7 +1,7 @@
 import time
 from urllib.parse import urlparse
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -9,7 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-class PathTest(LiveTornadoTestCase, SeleniumHelper):
+class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
         "initial_styles.json",
@@ -18,7 +18,6 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         driver_data = cls.get_drivers(1)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
@@ -31,6 +30,7 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user1 = self.create_user(
@@ -51,8 +51,8 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test"
         )
         time.sleep(1)
@@ -64,9 +64,6 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").click()
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
             Keys.CONTROL, "a"
-        )
-        self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
-            Keys.DELETE
         )
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
             "/Reports/2019/Report 23"
@@ -81,13 +78,14 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(
             urlparse(self.driver.current_url).path, "/documents/Reports/2019/"
         )
+        time.sleep(1)
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, ".fw-contents h1").text,
             "/Reports/2019/",
         )
         # Create new folder 'February' and enter
         self.driver.find_element(
-            By.CSS_SELECTOR, 'button[title="Create new folder"]'
+            By.CSS_SELECTOR, 'button[title="Create new folder (Alt-f)"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#new-folder-name").click()
         self.driver.find_element(
@@ -104,14 +102,18 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "February Doc"
         )
         time.sleep(1)
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
             "/Reports/2019/February/February Doc",
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
+            "February Doc Content"
         )
         # Exit to overview page
         self.driver.find_element(
@@ -124,6 +126,15 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
             urlparse(self.driver.current_url).path,
             "/documents/Reports/2019/February/",
         )
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            >= 2
+        )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
@@ -132,9 +143,9 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
         self.assertEqual(documents[1].text, "February Doc")
         # Go up one folder
         documents[0].click()
-        time.sleep(1)
-        self.assertEqual(
-            urlparse(self.driver.current_url).path, "/documents/Reports/2019/"
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: urlparse(driver.current_url).path
+            == "/documents/Reports/2019/"
         )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
@@ -250,56 +261,97 @@ class PathTest(LiveTornadoTestCase, SeleniumHelper):
             By.XPATH,
             '//*[contains(@class, "fw-dark") and normalize-space()="Submit"]',
         ).click()
-        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
+        )
         # Documents should be gone as it is moved into the February subfolder
-        documents = self.driver.find_elements(
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "..")
-        documents[0].click()
+        self.assertEqual(document.text, "..")
+        document.click()
         # Confirm deletion
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button.delete-folder"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "button.delete-folder")
+            )
         ).click()
-        time.sleep(1)
         # Also the 2019 folder should be empty
-        documents = self.driver.find_elements(
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
+        )
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "..")
-        documents[0].click()
+        self.assertEqual(document.text, "..")
+        document.click()
         # Confirm deletion
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button.delete-folder"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "button.delete-folder")
+            )
         ).click()
-        time.sleep(1)
         # Also the Reports folder should be empty
-        documents = self.driver.find_elements(
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
+        )
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "..")
-        documents[0].click()
+        self.assertEqual(document.text, "..")
+        document.click()
         # Confirm deletion
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button.delete-folder"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "button.delete-folder")
+            )
         ).click()
-        time.sleep(1)
         # There should be just one folder in the top folder.
         # The Reports folder should have been auto-deleted.
-        documents = self.driver.find_elements(
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 1
+        )
+        document = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 1)
-        self.assertEqual(documents[0].text, "Documents")
-        documents[0].click()
-        time.sleep(1)
+        self.assertEqual(document.text, "Documents")
+        document.click()
         # There should be two docs in the Documents folder
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr a.fw-data-table-title",
+                )
+            )
+            == 3
+        )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(len(documents), 3)
         self.assertEqual(documents[1].text, "Report 23")
         self.assertEqual(documents[2].text, "February Doc")

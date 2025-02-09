@@ -5,16 +5,17 @@ function parseReferences(str) {
     let references
     try {
         references = JSON.parse(str)
-    } catch (error) {
+    } catch (_error) {
         return []
     }
     if (!Array.isArray(references)) {
         return []
     }
-    return references.filter(
-        ref => ref.hasOwnProperty("id") // ensure there is an id.
-    ).map(
-        ref => {
+    return references
+        .filter(
+            ref => ref.hasOwnProperty("id") // ensure there is an id.
+        )
+        .map(ref => {
             const mRef = {id: ref.id}
             if (ref.locator) {
                 mRef.locator = ref.locator
@@ -23,8 +24,7 @@ function parseReferences(str) {
                 mRef.prefix = ref.prefix
             }
             return mRef
-        }
-    )
+        })
 }
 
 export const citation = {
@@ -38,20 +38,25 @@ export const citation = {
             default: [] // array of {id[, locator][, prefix]}
         }
     },
-    parseDOM: [{
-        tag: "span.citation",
-        getAttrs(dom) {
-            return {
-                format: dom.dataset.format || "",
-                references: parseReferences(dom.dataset.references)
+    parseDOM: [
+        {
+            tag: "span.citation",
+            getAttrs(dom) {
+                return {
+                    format: dom.dataset.format || "",
+                    references: parseReferences(dom.dataset.references)
+                }
             }
         }
-    }],
+    ],
     toDOM(node) {
-        return ["span", {
-            class: "citation",
-            "data-format": node.attrs.format,
-            "data-references": JSON.stringify(node.attrs.references)
-        }]
+        return [
+            "span",
+            {
+                class: "citation",
+                "data-format": node.attrs.format,
+                "data-references": JSON.stringify(node.attrs.references)
+            }
+        ]
     }
 }

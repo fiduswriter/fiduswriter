@@ -1,13 +1,12 @@
-import {moveTemplate} from "./templates"
-import {addAlert, Dialog, FileSelector} from "../../common"
-import {shortFileTitle, moveFile} from "./tools"
+import {Dialog, FileSelector, addAlert} from "../../common"
 import {NewFolderDialog} from "./new_folder_dialog"
+import {moveTemplate} from "./templates"
+import {moveFile, shortFileTitle} from "./tools"
 /**
-* Functions for the document move dialog.
-*/
+ * Functions for the document move dialog.
+ */
 
 export class FileDialog {
-
     constructor({
         title = "", // Dialog title
         movingFiles = [], // Array of all files that are to be moved.
@@ -35,7 +34,9 @@ export class FileDialog {
         if (this.movingFiles.length === 1) {
             let path = this.movingFiles[0].path
             if (path.endsWith("/")) {
-                path += this.movingFiles[0].title.replace(/\//g, "") || gettext("Untitled")
+                path +=
+                    this.movingFiles[0].title.replace(/\//g, "") ||
+                    gettext("Untitled")
             }
             return path
         }
@@ -45,12 +46,14 @@ export class FileDialog {
     }
 
     updatePathDir(path) {
-        const fileName = this.dialog.dialogEl.querySelector("#path").value.split("/").pop()
+        const fileName = this.dialog.dialogEl
+            .querySelector("#path")
+            .value.split("/")
+            .pop()
         this.dialog.dialogEl.querySelector("#path").value = path + fileName
     }
 
     init() {
-
         this.dialog = new Dialog({
             title: this.title,
             id: "move-dialog",
@@ -64,15 +67,13 @@ export class FileDialog {
                     text: gettext("New folder"),
                     classes: "fw-dark",
                     click: () => {
-                        const dialog = new NewFolderDialog(
-                            folderName => {
-                                if (!this.fileSelector) {
-                                    return
-                                }
-                                this.fileSelector.addFolder(folderName)
-                            })
+                        const dialog = new NewFolderDialog(folderName => {
+                            if (!this.fileSelector) {
+                                return
+                            }
+                            this.fileSelector.addFolder(folderName)
+                        })
                         dialog.open()
-
                     }
                 },
                 {type: "cancel"},
@@ -81,7 +82,8 @@ export class FileDialog {
                     classes: "fw-dark",
                     click: () => {
                         //apply the current state to server
-                        let path = this.dialog.dialogEl.querySelector("#path").value
+                        let path =
+                            this.dialog.dialogEl.querySelector("#path").value
                         this.dialog.close()
 
                         if (path === this.path) {
@@ -95,13 +97,14 @@ export class FileDialog {
                             this.movingFiles.forEach(doc => {
                                 this.moveFile(
                                     doc,
-                                    doc.path.endsWith("/") ? path : path + doc.path.split("/").pop()
+                                    doc.path.endsWith("/")
+                                        ? path
+                                        : path + doc.path.split("/").pop()
                                 )
                             })
                         } else {
                             this.moveFile(this.movingFiles[0], path)
                         }
-
                     }
                 }
             ]
@@ -119,15 +122,19 @@ export class FileDialog {
     }
 
     moveFile(file, requestedPath) {
-        return moveFile(file.id, file.title, requestedPath, this.moveUrl).then(
-            path => {
-                addAlert("success", `${this.successMessage}: '${shortFileTitle(file.title, path)}'`)
+        return moveFile(file.id, file.title, requestedPath, this.moveUrl)
+            .then(path => {
+                addAlert(
+                    "success",
+                    `${this.successMessage}: '${shortFileTitle(file.title, path)}'`
+                )
                 this.succcessCallback(file, path)
-            }
-        ).catch(
-            () => {
-                addAlert("error", `${this.errorMessage}: '${shortFileTitle(file.title, file.path)}'`)
-            }
-        )
+            })
+            .catch(() => {
+                addAlert(
+                    "error",
+                    `${this.errorMessage}: '${shortFileTitle(file.title, file.path)}'`
+                )
+            })
     }
 }

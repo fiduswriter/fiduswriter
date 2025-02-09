@@ -2,7 +2,6 @@
     position: absolute;
     background-color: white;
     font-size: 14px;
-    z-index: 101;
     border-image: initial;
     overflow: hidden;
     outline: 0;
@@ -10,6 +9,8 @@
     box-shadow: none;
     border: 0 none;
     border-radius: 0;
+    z-index: 1000; /* Ensure dialog stays on top */
+    user-select: none; /* Prevent interaction with background content */
 }
 
 .ui-dialog-content.ui-scrollable {
@@ -67,11 +68,10 @@
 .ui-dialog-content {
     position: relative;
     margin-top: 24px;
-    overflow-y: auto;
+    overflow: hidden auto;
     max-height: calc(100vh - 133px);
     min-height: 20px;
     max-width: calc(100vw - 4px);
-    overflow-x: hidden;
 }
 
 .input-list-wrapper > tbody > tr:last-child > td {
@@ -88,8 +88,8 @@
     display: inline;
 }
 
-.entry-field input[type='text'],
-.entry-field input[type='number'] {
+.entry-field input[type="text"],
+.entry-field input[type="number"] {
     margin: 0;
 }
 
@@ -106,7 +106,6 @@
     margin-left: 6px;
 }
 
-
 .ui-widget-overlay {
     position: fixed;
     left: 0;
@@ -115,6 +114,7 @@
     height: 100%;
     background-color: rgba(var(--overlay-color));
     z-index: 100;
+    backdrop-filter: blur(2px);
 }
 
 .ui-dialog-content textarea {

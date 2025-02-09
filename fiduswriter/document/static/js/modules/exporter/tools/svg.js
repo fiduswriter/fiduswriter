@@ -9,7 +9,10 @@ export function svg2png(blob) {
         img.onload = function onload() {
             const canvas = document.createElement("canvas")
             const ctx = canvas.getContext("2d")
-            const ratio = Math.min(Math.min(img.width, img.height) / img.width, Math.min(img.width, img.height) / img.height)
+            const ratio = Math.min(
+                Math.min(img.width, img.height) / img.width,
+                Math.min(img.width, img.height) / img.height
+            )
             const width = img.width * ratio
             const height = img.height * ratio
             canvas.width = width

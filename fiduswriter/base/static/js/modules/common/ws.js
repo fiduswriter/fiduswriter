@@ -2,7 +2,8 @@
  */
 export class WebSocketConnector {
     constructor({
-        url = "", // needs to be specified
+        base = "", // needs to be specified
+        path = "", // needs to be specified
         appLoaded = () => false, // required argument
         anythingToSend = () => false, // required argument
         messagesElement = () => false, // element in which to show connection messages
@@ -14,9 +15,10 @@ export class WebSocketConnector {
         receiveData = _data => {},
         failedAuth = () => {
             window.location.href = "/"
-        },
+        }
     }) {
-        this.url = url
+        this.base = base
+        this.path = path
         this.appLoaded = appLoaded
         this.anythingToSend = anythingToSend
         this.messagesElement = messagesElement
@@ -41,6 +43,10 @@ export class WebSocketConnector {
         this.connectionCount = 0
         this.recentlySent = false
         this.listeners = {}
+
+        //heartbeat
+        this.pingTimer = false
+        this.pongTimer = false
     }
 
     init() {
@@ -79,46 +85,38 @@ export class WebSocketConnector {
             client: 0,
             lastTen: []
         }
-        const url = this.online ?
-            `${
-                location.protocol === "https:" ?
-                    "wss://" :
-                    "ws://"
-            }${
-                settings_WS_SERVER ?
-                    settings_WS_SERVER :
-                    location.host.split(":")[0]
-            }${
-                settings_WS_PORT ?
-                    `:${settings_WS_PORT}` :
-                    location.port.length ?
-                        `:${location.port}` :
-                        ""
-            }${
-                this.url
-            }` :
-            `${
-                location.protocol === "https:" ?
-                    "wss://offline" :
-                    "ws://offline"
-            }`
+        let url
+        if (this.online) {
+            if (this.base.startsWith("/")) {
+                url = this.base + this.path
+            } else if (location.protocol === "https:") {
+                url = `wss://${this.base}${this.path}`
+            } else {
+                url = `ws://${this.base}${this.path}`
+            }
+        } else {
+            if (location.protocol === "https:") {
+                url = "wss://offline"
+            } else {
+                url = "ws://offline"
+            }
+        }
         this.ws = new window.WebSocket(url)
         this.ws.onmessage = event => this.onmessage(event)
         this.ws.onclose = () => this.onclose()
     }
 
     waitForWS() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             if (this.ws && this.ws.readyState === this.ws.OPEN) {
                 return resolve()
             } else {
-                return new Promise(resolveTimer => setTimeout(resolveTimer, 100)).then(
-                    () => this.waitForWS()
-                ).then(
-                    () => resolve()
+                return new Promise(resolveTimer =>
+                    setTimeout(resolveTimer, 100)
                 )
+                    .then(() => this.waitForWS())
+                    .then(() => resolve())
             }
-
         })
     }
 
@@ -127,6 +125,8 @@ export class WebSocketConnector {
         const expectedServer = this.messages.server + 1
         if (data.type === "request_resend") {
             this.resend_messages(data.from)
+        } else if (data.type === "pong") {
+            this.heartbeat()
         } else if (data.s < expectedServer) {
             // Receive a message already received at least once. Ignore.
             return
@@ -134,10 +134,12 @@ export class WebSocketConnector {
             // Messages from the server have been lost.
             // Request resend.
             this.waitForWS().then(() =>
-                this.ws.send(JSON.stringify({
-                    type: "request_resend",
-                    from: this.messages.server
-                }))
+                this.ws.send(
+                    JSON.stringify({
+                        type: "request_resend",
+                        from: this.messages.server
+                    })
+                )
             )
         } else {
             this.messages.server = expectedServer
@@ -156,14 +158,15 @@ export class WebSocketConnector {
                         this.send(this.restartMessage)
                         return
                     }
-                    this.messages["lastTen"].slice(0 - clientDifference).forEach(data => {
-                        this.messages.client += 1
-                        data.c = this.messages.client
-                        data.s = this.messages.server
+                    this.messages["lastTen"]
+                        .slice(0 - clientDifference)
+                        .forEach(data => {
+                            this.messages.client += 1
+                            data.c = this.messages.client
+                            data.s = this.messages.server
 
-                        this.ws.send(JSON.stringify(data))
-
-                    })
+                            this.ws.send(JSON.stringify(data))
+                        })
                     this.receive(data)
                 })
             }
@@ -183,12 +186,10 @@ export class WebSocketConnector {
         const messagesElement = this.messagesElement()
         if (messagesElement) {
             if (this.anythingToSend()) {
-                messagesElement.innerHTML =
-                    `<span class="warn">${this.warningNotAllSent}</span>`
+                messagesElement.innerHTML = `<span class="warn">${this.warningNotAllSent}</span>`
             } else {
                 messagesElement.innerHTML = this.infoDisconnected
             }
-
         }
     }
 
@@ -204,7 +205,7 @@ export class WebSocketConnector {
         this.oldMessages = this.messagesToSend
         this.messagesToSend = []
 
-        this.send(() => (message))
+        this.send(() => message)
     }
 
     subscribed() {
@@ -275,19 +276,33 @@ export class WebSocketConnector {
 
     receive(data) {
         switch (data.type) {
-        case "welcome":
-            this.open()
-            break
-        case "subscribed":
-            this.subscribed()
-            break
-        case "access_denied":
-            this.failedAuth()
-            break
-        default:
-            this.receiveData(data)
-            break
+            case "redirect":
+                this.base = data.base
+                break
+            case "welcome":
+                this.open()
+                break
+            case "subscribed":
+                this.subscribed()
+                this.heartbeat()
+                break
+            case "access_denied":
+                this.failedAuth()
+                break
+            default:
+                this.receiveData(data)
+                break
         }
     }
 
+    heartbeat() {
+        clearTimeout(this.pingTimer)
+        clearTimeout(this.pongTimer)
+        this.pingTimer = setTimeout(() => {
+            this.ws.send('{"type": "ping"}')
+            this.pongTimer = setTimeout(() => {
+                this.listeners.onOffline()
+            }, 10000)
+        }, 60000)
+    }
 }

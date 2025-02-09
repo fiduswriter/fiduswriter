@@ -1,8 +1,7 @@
 import {Dialog} from "../../common"
 
-import {languageTemplate} from "./templates"
 import {LANGUAGES} from "../../schema/const"
-
+import {languageTemplate} from "./templates"
 
 export class LanguageDialog {
     constructor(editor, language) {
@@ -17,19 +16,18 @@ export class LanguageDialog {
             text: gettext("Change"),
             classes: "fw-dark",
             click: () => {
-                const language = this.dialog.dialogEl.querySelector("select").value
+                const language =
+                    this.dialog.dialogEl.querySelector("select").value
                 this.dialog.close()
 
                 if (language === this.language) {
                     // No change.
                     return
                 }
-
-                const article = this.editor.view.state.doc.firstChild
-                const attrs = Object.assign({}, article.attrs, {language})
-
                 this.editor.view.dispatch(
-                    this.editor.view.state.tr.setNodeMarkup(0, false, attrs).setMeta("settings", true)
+                    this.editor.view.state.tr
+                        .setDocAttribute("language", language)
+                        .setMeta("settings", true)
                 )
                 return
             }
@@ -46,13 +44,14 @@ export class LanguageDialog {
             title: gettext("Change language of the document"),
             body: languageTemplate({
                 currentLanguage: this.language,
-                allowedLanguages: LANGUAGES.filter(lang => this.editor.view.state.doc.firstChild.attrs.languages.includes(lang[0]))
+                allowedLanguages: LANGUAGES.filter(lang =>
+                    this.editor.view.state.doc.attrs.languages.includes(lang[0])
+                )
             }),
             buttons,
             onClose: () => this.editor.currentView.focus()
         })
 
         this.dialog.open()
-
     }
 }

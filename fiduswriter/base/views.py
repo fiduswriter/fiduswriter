@@ -1,15 +1,23 @@
+import json
+import random
+from httpx_ws import connect_ws
+
+from django.conf import settings
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
+from django.contrib.admin.views.decorators import staff_member_required
 
-from allauth.socialaccount.models import providers
+from allauth.socialaccount.adapter import get_adapter
 
 from user.helpers import Avatars
 from .decorators import ajax_required
 from . import get_version
+from .helpers.ws import get_url_base
+from .models import Presence
 
 
 @ensure_csrf_cookie
@@ -34,8 +42,11 @@ def configuration(request):
     """
     Load the configuration options of the page that are request dependent.
     """
+    ws_url_base = get_url_base(
+        request.headers["Origin"], random.choice(settings.WS_URLS)
+    )
     socialaccount_providers = []
-    for provider in providers.registry.get_list():
+    for provider in get_adapter(request).list_providers(request):
         socialaccount_providers.append(
             {
                 "id": provider.id,
@@ -46,6 +57,7 @@ def configuration(request):
     response = {
         "language": request.LANGUAGE_CODE,
         "socialaccount_providers": socialaccount_providers,
+        "ws_url_base": ws_url_base,
     }
     if request.user.is_authenticated:
         avatars = Avatars()
@@ -103,6 +115,56 @@ def admin_console(request):
     Load the admin console page.
     """
     return render(request, "admin/console.html")
+
+
+@ajax_required
+@require_GET
+@staff_member_required
+def connection_info(request):
+    """
+    Return info about currently connected clients.
+    """
+    response = {}
+    Presence.prune()
+    response["sessions"] = Presence.objects.all().count()
+    response["users"] = Presence.objects.values("user").distinct().count()
+    return JsonResponse(response, status=200)
+
+
+def send_to_server(server_url, message, headers):
+    with connect_ws(
+        server_url,
+        headers={
+            "Origin": headers["Origin"],
+            "Cookie": headers["Cookie"],
+            "User-Agent": "Fidus Writer",
+        },
+    ) as websocket:
+        websocket.send_text(
+            json.dumps(
+                {"type": "system_message", "message": message, "s": 1, "c": 1}
+            )
+        )
+
+
+@ajax_required
+@require_POST
+@staff_member_required
+def send_system_message(request):
+    """
+    Send out a system message to all clients connected to the frontend.
+    """
+    response = {}
+    message = request.POST["message"]
+
+    servers = set(
+        Presence.objects.values_list("server_url", flat=True).distinct()
+    )
+
+    for server in servers:
+        send_to_server(server, message, dict(request.headers))
+
+    return JsonResponse(response, status=200)
 
 
 @ajax_required

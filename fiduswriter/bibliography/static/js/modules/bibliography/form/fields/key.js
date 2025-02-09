@@ -1,9 +1,9 @@
-import {LiteralFieldForm} from "./literal"
-import {noSpaceTmp} from "../../../common"
+import {getFocusIndex, noSpaceTmp, setFocusIndex} from "../../../common"
 import {BibOptionTitles} from "../strings"
+import {LiteralFieldForm} from "./literal"
 
 export class KeyFieldForm {
-    constructor(dom, initialValue, unused, fieldType = undefined) {
+    constructor(dom, initialValue, _unused, fieldType = undefined) {
         this.currentValue = {}
         this.dom = dom
         this.fieldType = fieldType
@@ -23,8 +23,7 @@ export class KeyFieldForm {
     }
 
     prepareWrapper() {
-        this.dom.innerHTML =
-            noSpaceTmp`
+        this.dom.innerHTML = noSpaceTmp`
                 <div class="type-switch-input-wrapper">
                     <button class="type-switch">
                         <span class="type-switch-inner">
@@ -56,34 +55,41 @@ export class KeyFieldForm {
             }
         }
         this.predefined = !this.predefined
-        this.drawForm()
+        this.drawForm(true)
     }
 
-    drawForm() {
+    drawForm(redraw = false) {
+        const focusIndex = redraw ? getFocusIndex() : -1
         if (this.predefined) {
             this.drawSelectionListForm()
         } else {
             this.drawCustomInputForm()
         }
+        setFocusIndex(focusIndex)
     }
 
     drawSelectionListForm() {
         this.switcher.classList.add("value1")
         this.switcher.classList.remove("value2")
 
-        this.inner.innerHTML =
-            noSpaceTmp`
+        this.inner.innerHTML = noSpaceTmp`
                 <select class='key-selection'><option value=''></option></select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             `
         const selectEl = this.dom.querySelector(".key-selection")
         if (Array.isArray(this.fieldType.options)) {
             this.fieldType.options.forEach(option => {
-                selectEl.insertAdjacentHTML("beforeend", `<option value="${option}">${BibOptionTitles[option]}</option>`)
+                selectEl.insertAdjacentHTML(
+                    "beforeend",
+                    `<option value="${option}">${BibOptionTitles[option]}</option>`
+                )
             })
         } else {
             Object.keys(this.fieldType.options).forEach(option => {
-                selectEl.insertAdjacentHTML("beforeend", `<option value="${option}">${BibOptionTitles[option]}</option>`)
+                selectEl.insertAdjacentHTML(
+                    "beforeend",
+                    `<option value="${option}">${BibOptionTitles[option]}</option>`
+                )
             })
         }
 
@@ -108,7 +114,8 @@ export class KeyFieldForm {
     get value() {
         if (this.predefined) {
             const selectEl = this.dom.querySelector(".key-selection")
-            const selectionValue = selectEl.options[selectEl.selectedIndex].value
+            const selectionValue =
+                selectEl.options[selectEl.selectedIndex].value
             if (selectionValue === "") {
                 return false
             } else {

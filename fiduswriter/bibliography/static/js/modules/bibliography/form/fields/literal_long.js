@@ -1,10 +1,10 @@
+import {baseKeymap, toggleMark} from "prosemirror-commands"
+import {history, redo, undo} from "prosemirror-history"
+import {keymap} from "prosemirror-keymap"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
-import {toggleMark, baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap"
 
-import {icon, InlineTools} from "../../../prosemirror/inline_tools"
+import {InlineTools, icon} from "../../../prosemirror/inline_tools"
 import {longLitSchema} from "../../schema/literal_long"
 
 export class LiteralLongFieldForm {
@@ -19,10 +19,12 @@ export class LiteralLongFieldForm {
                 schema: longLitSchema,
                 doc: longLitSchema.nodeFromJSON({
                     type: "doc",
-                    content: [{
-                        type: "longliteral",
-                        content: this.initialValue
-                    }]
+                    content: [
+                        {
+                            type: "longliteral",
+                            content: this.initialValue
+                        }
+                    ]
                 }),
                 plugins: [
                     history(),
@@ -34,20 +36,39 @@ export class LiteralLongFieldForm {
                         "Mod-b": () => {
                             const sMark = this.view.state.schema.marks["strong"]
                             const command = toggleMark(sMark)
-                            command(this.view.state, tr => this.view.dispatch(tr))
+                            command(this.view.state, tr =>
+                                this.view.dispatch(tr)
+                            )
                         },
                         "Mod-i": () => {
                             const sMark = this.view.state.schema.marks["em"]
                             const command = toggleMark(sMark)
-                            command(this.view.state, tr => this.view.dispatch(tr))
+                            command(this.view.state, tr =>
+                                this.view.dispatch(tr)
+                            )
                         }
                     }),
                     InlineTools([
-                        {command: toggleMark(longLitSchema.marks.strong), dom: icon("strong", gettext("Strong"))},
-                        {command: toggleMark(longLitSchema.marks.em), dom: icon("em", gettext("Emphasis"))},
-                        {command: toggleMark(longLitSchema.marks.smallcaps), dom: icon("smallcaps", gettext("Small caps"))},
-                        {command: toggleMark(longLitSchema.marks.sub), dom: icon("sub", gettext("Subscript₊"))},
-                        {command: toggleMark(longLitSchema.marks.sup), dom: icon("sup", gettext("Supscript²"))}
+                        {
+                            command: toggleMark(longLitSchema.marks.strong),
+                            dom: icon("strong", gettext("Strong"))
+                        },
+                        {
+                            command: toggleMark(longLitSchema.marks.em),
+                            dom: icon("em", gettext("Emphasis"))
+                        },
+                        {
+                            command: toggleMark(longLitSchema.marks.smallcaps),
+                            dom: icon("smallcaps", gettext("Small caps"))
+                        },
+                        {
+                            command: toggleMark(longLitSchema.marks.sub),
+                            dom: icon("sub", gettext("Subscript₊"))
+                        },
+                        {
+                            command: toggleMark(longLitSchema.marks.sup),
+                            dom: icon("sup", gettext("Supscript²"))
+                        }
                     ])
                 ]
             }),
@@ -60,11 +81,12 @@ export class LiteralLongFieldForm {
 
     get value() {
         const literalContents = this.view.state.doc.firstChild.content.toJSON()
-        return literalContents && literalContents.length ? literalContents : false
+        return literalContents && literalContents.length
+            ? literalContents
+            : false
     }
 
     check() {
         return true
     }
-
 }

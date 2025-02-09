@@ -1,12 +1,12 @@
 import {Plugin, PluginKey} from "prosemirror-state"
-import {Decoration, DecorationSet} from "prosemirror-view"
 import {AddMarkStep} from "prosemirror-transform"
+import {Decoration, DecorationSet} from "prosemirror-view"
 
 const key = new PluginKey("comments")
 
 const commentDuringCreationDecoSpec = {}
 
-const moveComment = function(doc, id, pos) {
+const moveComment = (doc, id, pos) => {
     // The content to which a comment was linked has been removed.
     // We need to find text close to the position to which we can link
     // comment.
@@ -58,33 +58,42 @@ const moveComment = function(doc, id, pos) {
     return new AddMarkStep(posFrom, posTo, markType)
 }
 
-export const addCommentDuringCreationDecoration = function(state, tr) {
+export const addCommentDuringCreationDecoration = (state, tr) => {
     if (!tr.selection.from || tr.selection.from === tr.selection.to) {
         return false
     }
-    let {
-        decos
-    } = key.getState(state)
+    let {decos} = key.getState(state)
 
-    const commentDuringCreationDeco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    const commentDuringCreationDeco = decos.find(
+        undefined,
+        undefined,
+        spec => spec === commentDuringCreationDecoSpec
+    )
 
     if (commentDuringCreationDeco) {
         decos = decos.remove([commentDuringCreationDeco])
     }
 
     decos = decos.add(tr.doc, [
-        Decoration.inline(tr.selection.from, tr.selection.to, {class: "active-comment"}, commentDuringCreationDecoSpec)
+        Decoration.inline(
+            tr.selection.from,
+            tr.selection.to,
+            {class: "active-comment"},
+            commentDuringCreationDecoSpec
+        )
     ])
 
     return tr.setMeta(key, {decos})
 }
 
-export const removeCommentDuringCreationDecoration = function(state, tr) {
-    let {
-        decos
-    } = key.getState(state)
+export const removeCommentDuringCreationDecoration = (state, tr) => {
+    let {decos} = key.getState(state)
 
-    const commentDuringCreationDecos = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    const commentDuringCreationDecos = decos.find(
+        undefined,
+        undefined,
+        spec => spec === commentDuringCreationDecoSpec
+    )
 
     if (!commentDuringCreationDecos) {
         return false
@@ -94,12 +103,14 @@ export const removeCommentDuringCreationDecoration = function(state, tr) {
     return tr.setMeta(key, {decos})
 }
 
-export const getCommentDuringCreationDecoration = function(state) {
-    const {
-        decos
-    } = key.getState(state)
+export const getCommentDuringCreationDecoration = state => {
+    const {decos} = key.getState(state)
 
-    const deco = decos.find(undefined, undefined, spec => spec === commentDuringCreationDecoSpec)
+    const deco = decos.find(
+        undefined,
+        undefined,
+        spec => spec === commentDuringCreationDecoSpec
+    )
 
     if (deco.length) {
         return deco[0]
@@ -108,40 +119,41 @@ export const getCommentDuringCreationDecoration = function(state) {
     }
 }
 
-export const commentsPlugin = function(options) {
-    return new Plugin({
+export const commentsPlugin = options =>
+    new Plugin({
         key,
         state: {
             init() {
                 return {
-                    decos: DecorationSet.empty,
+                    decos: DecorationSet.empty
                 }
             },
-            apply(tr, prev, oldState, _state) {
+            apply(tr, _prev, oldState, _state) {
                 const meta = tr.getMeta(key)
                 if (meta) {
                     // There has been an update, return values from meta instead
                     // of previous values
                     return meta
                 }
-                let {
-                    decos
-                } = this.getState(oldState)
+                let {decos} = this.getState(oldState)
 
-                decos = decos.map(tr.mapping, tr.doc, {onRemove: _decoSpec => {
-                    // comment text has been deleted, cancel comment creation.
-                    options.editor.mod.comments.interactions.deleteComment(-1)
-                }})
+                decos = decos.map(tr.mapping, tr.doc, {
+                    onRemove: _decoSpec => {
+                        // comment text has been deleted, cancel comment creation.
+                        options.editor.mod.comments.interactions.deleteComment(
+                            -1
+                        )
+                    }
+                })
 
                 return {
                     decos
                 }
             }
         },
-        appendTransaction: (trs, oldState, state) => {
+        appendTransaction: (trs, _oldState, state) => {
             // Check if any of the transactions are local.
-            if (trs.every(tr => tr.getMeta(
-                "remote"))) {
+            if (trs.every(tr => tr.getMeta("remote"))) {
                 // All transactions are remote. Give up.
                 return
             }
@@ -152,22 +164,37 @@ export const commentsPlugin = function(options) {
             trs.forEach(tr => {
                 Object.keys(deletedComments).forEach(commentId => {
                     // map positions from earlier transactions
-                    deletedComments[commentId] = tr.mapping.map(deletedComments[commentId])
+                    deletedComments[commentId] = tr.mapping.map(
+                        deletedComments[commentId]
+                    )
                 })
                 tr.steps.forEach((step, index) => {
-                    if (step.jsonID === "replace" || step.jsonID === "replaceAround") {
+                    if (
+                        step.jsonID === "replace" ||
+                        step.jsonID === "replaceAround"
+                    ) {
                         if (step.from !== step.to) {
                             tr.docs[index].nodesBetween(
                                 step.from,
                                 step.to,
                                 node => {
-                                    node.marks.filter(
-                                        mark => mark.type.name === "comment" && mark.attrs.id
-                                    ).map(mark => mark.attrs.id).forEach(commentId => {
-                                        if (!deletedComments.hasOwnProperty(commentId)) {
-                                            deletedComments[commentId] = step.from
-                                        }
-                                    })
+                                    node.marks
+                                        .filter(
+                                            mark =>
+                                                mark.type.name === "comment" &&
+                                                mark.attrs.id
+                                        )
+                                        .map(mark => mark.attrs.id)
+                                        .forEach(commentId => {
+                                            if (
+                                                !deletedComments.hasOwnProperty(
+                                                    commentId
+                                                )
+                                            ) {
+                                                deletedComments[commentId] =
+                                                    step.from
+                                            }
+                                        })
                                 }
                             )
                         }
@@ -185,13 +212,16 @@ export const commentsPlugin = function(options) {
                     return
                 }
 
-                node.marks.filter(
-                    mark => mark.type.name === "comment" && mark.attrs.id
-                ).map(mark => mark.attrs.id).forEach(commentId => {
-                    if (deletedComments.hasOwnProperty(commentId)) {
-                        delete deletedComments[commentId]
-                    }
-                })
+                node.marks
+                    .filter(
+                        mark => mark.type.name === "comment" && mark.attrs.id
+                    )
+                    .map(mark => mark.attrs.id)
+                    .forEach(commentId => {
+                        if (deletedComments.hasOwnProperty(commentId)) {
+                            delete deletedComments[commentId]
+                        }
+                    })
             })
             if (!Object.keys(deletedComments).length) {
                 return
@@ -222,11 +252,8 @@ export const commentsPlugin = function(options) {
         },
         props: {
             decorations(state) {
-                const {
-                    decos
-                } = this.getState(state)
+                const {decos} = this.getState(state)
                 return decos
             }
         }
     })
-}

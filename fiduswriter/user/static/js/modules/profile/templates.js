@@ -44,10 +44,12 @@ export const changeEmailDialogTemplate = () =>
     </tbody></table>`
 
 /** A template for the delete email dialog of the user account. */
-export const deleteEmailDialogTemplate = ({text}) => `<p>${escapeText(text)}</p>`
+export const deleteEmailDialogTemplate = ({text}) =>
+    `<p>${escapeText(text)}</p>`
 
 /** A template for the change primary email dialog of the user account. */
-export const changePrimaryEmailDialogTemplate = ({text}) => `<p>${escapeText(text)}</p>`
+export const changePrimaryEmailDialogTemplate = ({text}) =>
+    `<p>${escapeText(text)}</p>`
 
 /** A template for the change password dialog of the user account. */
 export const changePwdDialogTemplate = ({username}) =>
@@ -111,33 +113,33 @@ export const profileContents = (user, socialaccount_providers) =>
                         </tr>
                     </thead>
                     <tbody>
-                        ${
-    user.emails.map(
-        email => `<tr${email.primary ? " class=\"primary-email-tr\"" : ""}>
+                        ${user.emails
+                            .map(
+                                email => `<tr${email.primary ? ' class="primary-email-tr"' : ""}>
                                     <td class="emailaddress">${email.address}</td>
                                     <td>
                                         ${
-    email.verified ?
-        `<input type="radio" class="primary-email-radio" value="${email.address}"
-                                                    name="primaryemail"${ email.primary ? " checked" : ""} />` :
-        ""
-}
+                                            email.verified
+                                                ? `<input type="radio" class="primary-email-radio" value="${email.address}"
+                                                    name="primaryemail"${email.primary ? " checked" : ""} />`
+                                                : ""
+                                        }
                                     </td>
                                     <td>
-                                        ${ email.verified ? "<i class=\"fa fa-check\"></i>" : "" }
+                                        ${email.verified ? '<i class="fa fa-check"></i>' : ""}
                                     </td>
                                     <td class="profile-email-action">
                                         ${
-    email.primary ?
-        "&nbsp;" :
-        `<span class="delete-email fw-link-text" data-email="${email.address}">` +
-                                                "<i class=\"fa fa-trash-alt\"></i>" +
-                                                "</span>"
-}
+                                            email.primary
+                                                ? "&nbsp;"
+                                                : `<span class="delete-email fw-link-text" data-email="${email.address}">` +
+                                                  '<i class="fa fa-trash-alt"></i>' +
+                                                  "</span>"
+                                        }
                                     </td>
                                 </tr>`
-    ).join("")
-}
+                            )
+                            .join("")}
                         <tr>
                             <td colspan="3"></td>
                             <td class="profile-email-action">
@@ -150,8 +152,8 @@ export const profileContents = (user, socialaccount_providers) =>
                 </table>
             </div>
             ${
-    socialaccount_providers.length ?
-        `<div class="profile-data-row">
+                socialaccount_providers.length
+                    ? `<div class="profile-data-row">
                         <table class="fw-data-table profile-social-accounts-table">
                             <thead class="fw-data-table-header">
                                 <tr>
@@ -161,12 +163,16 @@ export const profileContents = (user, socialaccount_providers) =>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${
-    socialaccount_providers.map(
-        provider => {
-            const account = user.socialaccounts.find(saccount => saccount.provider === provider.id)
-            if (account) {
-                return `<tr>
+                                ${socialaccount_providers
+                                    .map(provider => {
+                                        const account =
+                                            user.socialaccounts.find(
+                                                saccount =>
+                                                    saccount.provider ===
+                                                    provider.id
+                                            )
+                                        if (account) {
+                                            return `<tr>
                                                     <td>${escapeText(provider.name)}</td>
                                                     <td>${escapeText(account.name)}</td>
                                                     <td>
@@ -175,21 +181,20 @@ export const profileContents = (user, socialaccount_providers) =>
                                                         </span>
                                                     </td>
                                                 </tr>`
-            } else {
-                return `<tr>
+                                        } else {
+                                            return `<tr>
                                                     <td>${escapeText(provider.name)}</td>
                                                     <td>&nbsp;</td>
                                                     <td><a href="${provider.login_url}?process=connect">${gettext("Connect")}</a></td>
                                                 </tr>`
-            }
-        }
-    ).join("")
-}
+                                        }
+                                    })
+                                    .join("")}
                             </tbody>
                         </table>
-                    </div>` :
-        ""
-}
+                    </div>`
+                    : ""
+            }
             <div id="profile-submit-wrapper">
                 <span id="submit-profile" class="fw-button fw-dark">
                     ${gettext("Submit")}

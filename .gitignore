@@ -7,6 +7,8 @@ __pycache__/
 .coverage.*
 .coverage
 .DS_Store
+.test_mail_storage
+.test_mail_storage*.db
 .pydevproject
 build
 .project
@@ -23,12 +25,15 @@ build
 /fiduswriter/venv/
 /fiduswriter/.envrc
 /fiduswriter/.direnv
+.envrc
 .direnv
 /fiduswriter/configuration.py
 /fiduswriter/chromedriver
 /fiduswriter/testing.py
 /fiduswriter/fiduswriter.sql
 /fiduswriter/fiduswriter.sql.backup
+/fiduswriter/fiduswriter.sqlite3
+/fiduswriter/testdb.sqlite3
 /fiduswriter/.transpile/
 /fiduswriter/media/
 /fiduswriter/screenshots/
@@ -41,8 +46,9 @@ build
 /fiduswriter/languagetool
 /fiduswriter/npm_mjs
 /fiduswriter/ojs
-/fiduswriter/phplist
+/fiduswriter/pandoc
 /fiduswriter/payment
+/fiduswriter/phplist
 /fiduswriter/publish
 /fiduswriter/website
 /fiduswriter/github_export
@@ -53,3 +59,4 @@ build
 /fiduswriter/data_import
 .history
 .vscode/
+*cache.json

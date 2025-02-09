@@ -1,128 +1,296 @@
-import re
+# Origin: https://github.com/django/daphne/blob/2b13b74ce266fedf1cad9122314a2a3579cee576/daphne/management/commands/runserver.py
+# With Fidus Writer specific adjustments.
+
+import datetime
+import importlib
+import logging
+import sys
 import threading
+import time
+import os
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
-from datetime import datetime
-from sys import platform
-from tornado.httpserver import HTTPServer
-import tornado.ioloop
-from tornado.web import Application
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
-from django.core.management import call_command
-from django.core.management.base import CommandError
-from django.utils import translation
+
+from base import get_version
+
+from django.apps import apps
 from django.conf import settings
-
-from base.servers.tornado_django_hybrid import run as run_server
-from base.handlers import SetupStaticFilesHandler
-from base.management import BaseCommand
-
-try:
-    from asyncio import set_event_loop_policy
-    from tornado.platform.asyncio import AnyThreadEventLoopPolicy
-
-    set_event_loop_policy(AnyThreadEventLoopPolicy())
-except ImportError:
-    pass
-
-naiveip_re = re.compile(
-    r"""^(?:
-(?P<addr>
-    (?P<ipv4>\d{1,3}(?:\.\d{1,3}){3}) |         # IPv4 address
-    (?P<ipv6>\[[a-fA-F0-9:]+\]) |               # IPv6 address
-    (?P<fqdn>[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*) # FQDN
-):)?(?P<port>\d+)$""",
-    re.X,
+from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management import CommandError
+from django.core.management.commands.runserver import (
+    Command as RunserverCommand,
 )
+from django.core.management import call_command
+
+from daphne.endpoints import build_endpoint_description_strings
+from daphne.server import Server
+
+logger = logging.getLogger("django.channels.server")
 
 
-class Command(BaseCommand):
-    help = "Run django using the tornado server"
-    requires_migrations_checks = True
-    requires_system_checks = "__all__"
-    leave_locale_alone = True
-    default_addr = "127.0.0.1"
-    default_port = str(settings.PORT)
-    compile_server = False
+def get_default_application():
+    """
+    Gets the default application, set in the ASGI_APPLICATION setting.
+    """
+    try:
+        path, name = settings.ASGI_APPLICATION.rsplit(".", 1)
+    except (ValueError, AttributeError):
+        raise ImproperlyConfigured("Cannot find ASGI_APPLICATION setting.")
+    try:
+        module = importlib.import_module(path)
+    except ImportError:
+        raise ImproperlyConfigured(
+            "Cannot import ASGI_APPLICATION module %r" % path
+        )
+    try:
+        value = getattr(module, name)
+    except AttributeError:
+        raise ImproperlyConfigured(
+            f"Cannot find {name!r} in ASGI_APPLICATION module {path}"
+        )
+    return value
+
+
+class MaintenancePageHandler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def do_GET(self):
+        self.path = "/index.html"
+        return SimpleHTTPRequestHandler.do_GET(self)
+
+    def translate_path(self, path):
+        return os.path.join(settings.SETUP_PAGE_PATH, "index.html")
+
+
+class JSFileHandler(FileSystemEventHandler):
+    def __init__(self, command_instance):
+        self.command_instance = command_instance
+        self.last_transpile = 0
+        self.watched_extensions = (".js", ".mjs", ".json5")
+        self.last_modified_times = {}
+
+    def on_any_event(self, event):
+        if event.event_type in ["created", "modified", "moved"]:
+            if event.src_path.endswith(self.watched_extensions):
+                if not self._should_ignore(event.src_path):
+                    self._handle_change(event.src_path)
+
+    def _should_ignore(self, path):
+        # Add any specific files or directories you want to ignore
+        ignore_list = ["node_modules", ".git"]
+        return any(ignore_item in path for ignore_item in ignore_list)
+
+    def _handle_change(self, path):
+        current_time = time.time()
+        try:
+            mtime = os.path.getmtime(path)
+        except OSError:
+            # File might have been deleted or moved
+            return
+
+        if path in self.last_modified_times:
+            if mtime == self.last_modified_times[path]:
+                # File hasn't actually changed
+                return
+
+        self.last_modified_times[path] = mtime
+
+        if current_time - self.last_transpile > 30:
+            print(f"File changed: {path}")
+            self.command_instance.stdout.write(
+                "JavaScript or related file changed. Transpiling..."
+            )
+            call_command("transpile")
+            self.last_transpile = current_time
+
+
+class Command(RunserverCommand):
+    protocol = "http"
+    server_cls = Server
 
     def add_arguments(self, parser):
+        super().add_arguments(parser)
         parser.add_argument(
-            "addrport", nargs="?", help="Optional port number, or ipaddr:port"
+            "--http_timeout",
+            action="store",
+            dest="http_timeout",
+            type=int,
+            default=None,
+            help=(
+                "Specify the daphne http_timeout interval in seconds "
+                "(default: no timeout)"
+            ),
+        )
+        parser.add_argument(
+            "--websocket_handshake_timeout",
+            action="store",
+            dest="websocket_handshake_timeout",
+            type=int,
+            default=5,
+            help=(
+                "Specify the daphne websocket_handshake_timeout interval in "
+                "seconds (default: 5)"
+            ),
         )
 
+    def get_version(self):
+        return get_version()
+
     def handle(self, *args, **options):
-        if options["addrport"]:
-            m = re.match(naiveip_re, options["addrport"])
-            if m is None:
-                raise CommandError(
-                    '"%s" is not a valid port number '
-                    "or address:port pair." % options["addrport"]
-                )
-            self.addr, _ipv4, _ipv6, _fqdn, self.port = m.groups()
-            if not self.addr:
-                self.addr = self.default_addr
-        else:
-            self.addr = self.default_addr
-            self.port = self.default_port
-        if not self.port.isdigit():
-            raise CommandError("%r is not a valid port number." % self.port)
-        self.inner_run(*args, **options)
+        self.http_timeout = options.get("http_timeout", None)
+        self.websocket_handshake_timeout = options.get(
+            "websocket_handshake_timeout", 5
+        )
+        # Check Channels is installed right
+        if not hasattr(settings, "ASGI_APPLICATION"):
+            raise CommandError(
+                "You have not set ASGI_APPLICATION, which is needed to run the server."
+            )
+        # Dispatch upward
+        super().handle(*args, **options)
 
     def inner_run(self, *args, **options):
-        quit_command = (platform == "win32") and "CTRL-BREAK" or "CONTROL-C"
-        if (hasattr(settings, "AUTO_SETUP") and settings.AUTO_SETUP) or (
-            not hasattr(settings, "AUTO_SETUP") and settings.DEBUG
-        ):
-            server = self.get_setup_server()
-            loop_thread = threading.Thread(
-                target=tornado.ioloop.IOLoop.current().start
-            )
-            loop_thread.daemon = True
-            loop_thread.start()
-            call_command("setup", force_transpile=False)
-            server.stop()
-            ioloop = tornado.ioloop.IOLoop.current()
-            ioloop.add_callback(ioloop.stop)
+        # Start maintenance page server.
+        maintenance_server = HTTPServer(
+            (
+                "[%s]" % self.addr if self._raw_ipv6 else self.addr,
+                int(self.port),
+            ),
+            MaintenancePageHandler,
+        )
+        maintenance_server_thread = threading.Thread(
+            target=maintenance_server.serve_forever
+        )
+        maintenance_server_thread.start()
+
+        # Run checks
+        self.stdout.write("Performing system checks...\n\n")
+        self.check(display_num_errors=True)
+        self.check_migrations()
+        call_command("setup", force_transpile=False)
+
+        # Stop maintenance page server.
+        maintenance_server.shutdown()
+        maintenance_server.server_close()
+        maintenance_server_thread.join()
+
+        # Print helpful text
+        quit_command = "CTRL-BREAK" if sys.platform == "win32" else "CONTROL-C"
+        now = datetime.datetime.now().strftime("%B %d, %Y - %X")
+        self.stdout.write(now)
         self.stdout.write(
             (
-                "%(started_at)s\n"
                 "Fidus Writer version %(version)s, using settings %(settings)r\n"
-                "Fidus Writer server is running at http://%(addr)s:%(port)s/\n"
+                "Fidus Writer server is running at "
+                "%(protocol)s://%(addr)s:%(port)s/\n"
                 "Quit the server with %(quit_command)s.\n"
             )
             % {
-                "started_at": datetime.now().strftime("%B %d, %Y - %X"),
                 "version": self.get_version(),
                 "settings": settings.SETTINGS_MODULE,
-                "addr": self.addr,
+                "protocol": self.protocol,
+                "addr": "[%s]" % self.addr if self._raw_ipv6 else self.addr,
                 "port": self.port,
                 "quit_command": quit_command,
             }
         )
-        # django.core.management.base forces the locale to en-us. We should
-        # set it up correctly for the first request (particularly important
-        # in the "--noreload" case).
-        translation.activate(settings.LANGUAGE_CODE)
 
-        run_server(self.port)
-
-    def get_setup_server(self):
-        # Start a tornado server to run while the compile is happening
-        tornado_app = Application(
-            [
-                (
-                    r"/(.*)",
-                    SetupStaticFilesHandler,
-                    {
-                        "path": settings.SETUP_PAGE_PATH,
-                        "default_filename": "index.html",
-                    },
-                ),
-            ],
-            debug=settings.DEBUG,
-            websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL,
-            compress_response=True,
+        # Launch server in 'main' thread. Signals are disabled as it's still
+        # actually a subthread under the autoreloader.
+        logger.debug(
+            "Fidus Writer running, listening on %s:%s", self.addr, self.port
         )
-        server = HTTPServer(tornado_app, no_keep_alive=True)
-        server.xheaders = True
-        server.listen(int(self.port))
-        return server
+
+        # build the endpoint description string from host/port options
+        endpoints = build_endpoint_description_strings(
+            host=self.addr, port=self.port
+        )
+
+        # Add JavaScript file watcher
+        if settings.DEBUG:
+            js_handler = JSFileHandler(self)
+            observer = Observer()
+            observer.schedule(
+                js_handler, path=settings.SRC_PATH, recursive=True
+            )
+            observer.start()
+
+        try:
+            self.server_cls(
+                application=self.get_application(options),
+                endpoints=endpoints,
+                signal_handlers=not options["use_reloader"],
+                action_logger=self.log_action,
+                http_timeout=self.http_timeout,
+                root_path=getattr(settings, "FORCE_SCRIPT_NAME", "") or "",
+                websocket_handshake_timeout=self.websocket_handshake_timeout,
+            ).run()
+            logger.debug("Fidus Writer exited")
+        except KeyboardInterrupt:
+            if settings.DEBUG:
+                observer.stop()
+            shutdown_message = options.get("shutdown_message", "")
+            if shutdown_message:
+                self.stdout.write(shutdown_message)
+            return
+
+        finally:
+            if settings.DEBUG:
+                observer.join()
+
+    def get_application(self, options):
+        """
+        Returns the static files serving application wrapping the default application,
+        if static files should be served. Otherwise just returns the default
+        handler.
+        """
+        staticfiles_installed = apps.is_installed("django.contrib.staticfiles")
+        use_static_handler = options.get(
+            "use_static_handler", staticfiles_installed
+        )
+        insecure_serving = options.get("insecure_serving", False)
+        if use_static_handler and (settings.DEBUG or insecure_serving):
+            return ASGIStaticFilesHandler(get_default_application())
+        else:
+            return get_default_application()
+
+    def log_action(self, protocol, action, details):
+        """
+        Logs various different kinds of requests to the console.
+        """
+        # HTTP requests
+        if protocol == "http" and action == "complete":
+            msg = "HTTP %(method)s %(path)s %(status)s [%(time_taken).2f, %(client)s]"
+
+            # Utilize terminal colors, if available
+            if 200 <= details["status"] < 300:
+                # Put 2XX first, since it should be the common case
+                logger.info(self.style.HTTP_SUCCESS(msg), details)
+            elif 100 <= details["status"] < 200:
+                logger.info(self.style.HTTP_INFO(msg), details)
+            elif details["status"] == 304:
+                logger.info(self.style.HTTP_NOT_MODIFIED(msg), details)
+            elif 300 <= details["status"] < 400:
+                logger.info(self.style.HTTP_REDIRECT(msg), details)
+            elif details["status"] == 404:
+                logger.warning(self.style.HTTP_NOT_FOUND(msg), details)
+            elif 400 <= details["status"] < 500:
+                logger.warning(self.style.HTTP_BAD_REQUEST(msg), details)
+            else:
+                # Any 5XX, or any other response
+                logger.error(self.style.HTTP_SERVER_ERROR(msg), details)
+
+        # Websocket requests
+        elif protocol == "websocket" and action == "connected":
+            logger.info("WebSocket CONNECT %(path)s [%(client)s]", details)
+        elif protocol == "websocket" and action == "disconnected":
+            logger.info("WebSocket DISCONNECT %(path)s [%(client)s]", details)
+        elif protocol == "websocket" and action == "connecting":
+            logger.info("WebSocket HANDSHAKING %(path)s [%(client)s]", details)
+        elif protocol == "websocket" and action == "rejected":
+            logger.info("WebSocket REJECT %(path)s [%(client)s]", details)

@@ -1,16 +1,15 @@
 import deepEqual from "fast-deep-equal"
-import {EditorState} from "prosemirror-state"
-import {EditorView} from "prosemirror-view"
-import {history, redo, undo} from "prosemirror-history"
 import {baseKeymap} from "prosemirror-commands"
+import {history, redo, undo} from "prosemirror-history"
 import {keymap} from "prosemirror-keymap"
+import {EditorState} from "prosemirror-state"
 import {suggestionsPlugin, triggerCharacter} from "prosemirror-suggestions"
+import {EditorView} from "prosemirror-view"
 
-import {escapeText, findTarget, avatarTemplate} from "../../../common"
+import {avatarTemplate, escapeText, findTarget} from "../../../common"
 
-import {commentSchema} from "./schema"
 import {notifyMentionedUser} from "./notify"
-
+import {commentSchema} from "./schema"
 
 export class CommentEditor {
     constructor(mod, id, dom, text, options = {}) {
@@ -30,7 +29,7 @@ export class CommentEditor {
             suggestionsPlugin({
                 escapeOnSelectionChange: true,
                 matcher: triggerCharacter("@"),
-                onEnter: (args) => {
+                onEnter: args => {
                     this.selectedTag = 0
                     this.tagRange = args.range
                     const search = args.text.slice(1)
@@ -39,7 +38,7 @@ export class CommentEditor {
                         this.showUserTagger()
                     }
                 },
-                onChange: (args) => {
+                onChange: args => {
                     this.selectedTag = 0
                     this.tagRange = args.range
                     const search = args.text.slice(1)
@@ -48,7 +47,7 @@ export class CommentEditor {
                         this.showUserTagger()
                     }
                 },
-                onExit: (_args) => {
+                onExit: _args => {
                     this.selectedTag = 0
                     this.removeTagger()
                 },
@@ -132,40 +131,42 @@ export class CommentEditor {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-            case findTarget(event, "button.submit:not(.disabled)", el):
-                this.submit()
-                if (this.keepOpenAfterSubmit) {
-                    this.scrollToBottom()
-                } else {
-                    this.mod.interactions.activeCommentId = false
-                    this.mod.interactions.deactivateAll()
-                    this.mod.interactions.collapseSelectionToEnd()
-                }
-                break
-            case findTarget(event, "button.cancel", el):
-                this.mod.interactions.cancelSubmit()
-                break
-            case findTarget(event, ".ProseMirror-wrapper", el):
-                this.view.focus()
-                break
-            case findTarget(event, ".tag-user", el):
-                this.selectedTag = parseInt(el.target.dataset.index)
-                this.selectUserTag()
-                this.view.focus()
-                break
-            case findTarget(event, ".comment-is-major", el):
-                this.isMajor = !this.isMajor
-                this.updateButtons()
-                break
+                case findTarget(event, "button.submit:not(.disabled)", el):
+                    this.submit()
+                    if (this.keepOpenAfterSubmit) {
+                        this.scrollToBottom()
+                    } else {
+                        this.mod.interactions.activeCommentId = false
+                        this.mod.interactions.deactivateAll()
+                        this.mod.interactions.collapseSelectionToEnd()
+                    }
+                    break
+                case findTarget(event, "button.cancel", el):
+                    this.mod.interactions.cancelSubmit()
+                    break
+                case findTarget(event, ".ProseMirror-wrapper", el):
+                    this.view.focus()
+                    break
+                case findTarget(event, ".tag-user", el):
+                    this.selectedTag = Number.parseInt(el.target.dataset.index)
+                    this.selectUserTag()
+                    this.view.focus()
+                    break
+                case findTarget(event, ".comment-is-major", el):
+                    this.isMajor = !this.isMajor
+                    this.updateButtons()
+                    break
             }
         })
     }
 
     hasChanged() {
-        return (!deepEqual(
-            this.text.length ? this.text : [{type: "paragraph"}],
-            this.view.state.doc.toJSON().content || [{type: "paragraph"}]
-        ) || this.options.isMajor !== this.isMajor)
+        return (
+            !deepEqual(
+                this.text.length ? this.text : [{type: "paragraph"}],
+                this.view.state.doc.toJSON().content || [{type: "paragraph"}]
+            ) || this.options.isMajor !== this.isMajor
+        )
     }
 
     updateButtons() {
@@ -179,7 +180,11 @@ export class CommentEditor {
     submit() {
         const comment = this.view.state.doc.toJSON().content
         if (comment?.length > 0) {
-            this.mod.interactions.updateComment({id: this.id, comment, isMajor: this.isMajor})
+            this.mod.interactions.updateComment({
+                id: this.id,
+                comment,
+                isMajor: this.isMajor
+            })
             this.sendNotifications()
         } else {
             this.mod.interactions.deleteComment(this.id)
@@ -187,31 +192,41 @@ export class CommentEditor {
     }
 
     sendNotifications() {
-        const newUserTags = this.getUserTags().filter(id => !this.oldUserTags.includes(id))
+        const newUserTags = this.getUserTags().filter(
+            id => !this.oldUserTags.includes(id)
+        )
         if (newUserTags.length) {
             const comment = this.view.state.doc,
                 docId = this.mod.editor.docInfo.id
-            newUserTags.forEach(userId => notifyMentionedUser(docId, userId, comment))
+            newUserTags.forEach(userId =>
+                notifyMentionedUser(docId, userId, comment)
+            )
         }
     }
 
     setUserTaggerList(search) {
         const owner = this.mod.editor.docInfo.owner
-        this.userTaggerList = owner.contacts.concat(owner).filter(
-            user => user.name.includes(search) || user.username.includes(search)
-        )
+        this.userTaggerList = owner.contacts
+            .concat(owner)
+            .filter(
+                user =>
+                    user.name.includes(search) || user.username.includes(search)
+            )
     }
 
     showUserTagger() {
         if (!this.userTaggerList.length) {
             return
         }
-        this.dom.querySelector("div.tagger").innerHTML = this.userTaggerList.map((user, index) =>
-            `<div class="tag-user tag${index === this.selectedTag ? " selected" : ""}" data-index="${index}">
-                ${user ? avatarTemplate({user}) : "<span class=\"fw-string-avatar\"></span>"}
+        this.dom.querySelector("div.tagger").innerHTML = this.userTaggerList
+            .map(
+                (user, index) =>
+                    `<div class="tag-user tag${index === this.selectedTag ? " selected" : ""}" data-index="${index}">
+                ${user ? avatarTemplate({user}) : '<span class="fw-string-avatar"></span>'}
                 <h5 class="comment-user-name">${escapeText(user.name)}</h5>
             </div>`
-        ).join("")
+            )
+            .join("")
     }
 
     selectUserTag() {
@@ -222,7 +237,10 @@ export class CommentEditor {
         const tr = this.view.state.tr.replaceRangeWith(
             this.tagRange.from,
             this.tagRange.to,
-            this.view.state.schema.nodes.collaborator.create({id: user.id, name: user.name})
+            this.view.state.schema.nodes.collaborator.create({
+                id: user.id,
+                name: user.name
+            })
         )
         this.view.dispatch(tr)
         return true
@@ -245,18 +263,26 @@ export class CommentEditor {
     }
 
     scrollToBottom() {
-        const activeMarginBox = document.querySelector(".margin-box.comment.active .comment-answer-container")
+        const activeMarginBox = document.querySelector(
+            ".margin-box.comment.active .comment-answer-container"
+        )
         if (activeMarginBox) {
             activeMarginBox.scrollTop = activeMarginBox.scrollHeight
         }
 
         // scroll to bottom of the margin-box-container when new comments are added when the screens width is less
         // than 1024px
-        const currentScreenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+        const currentScreenWidth =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth
         if (currentScreenWidth < 1024) {
-            const activeMarginBoxContainer = document.querySelector("#margin-box-container")
+            const activeMarginBoxContainer = document.querySelector(
+                "#margin-box-container"
+            )
             if (activeMarginBoxContainer) {
-                activeMarginBoxContainer.scrollTop = activeMarginBoxContainer.scrollHeight
+                activeMarginBoxContainer.scrollTop =
+                    activeMarginBoxContainer.scrollHeight
             }
         }
     }

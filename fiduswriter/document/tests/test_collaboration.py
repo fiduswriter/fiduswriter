@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import multiprocessing
 from random import randrange
@@ -9,11 +10,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 from django.conf import settings
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 
 
-class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
+class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which collaboration between two browsers with the same user logged
     into both browsers.
@@ -43,17 +44,23 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         cls.driver2.quit()
         super().tearDownClass()
 
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
+
     def setUp(self):
         self.user = self.create_user()
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+        super().setUp()
 
     def get_title(self, driver):
         # Title is child 0.
         return driver.execute_script(
-            "return window.theApp.page.view.state.doc.firstChild"
-            ".firstChild.textContent;"
+            "return window.theApp.page.view.state.doc.firstChild.textContent;"
         )
 
     def test_typing(self):
@@ -64,10 +71,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        title_input = self.driver.find_element(By.CLASS_NAME, "article-title")
-        title_input2 = self.driver2.find_element(
-            By.CLASS_NAME, "article-title"
-        )
+        title_input = self.driver.find_element(By.CLASS_NAME, "doc-title")
+        title_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-title")
 
         first_part = "Here is "
         second_part = "my title"
@@ -87,8 +92,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver2), self.get_title(self.driver)
         )
 
-        body_input = self.driver.find_element(By.CLASS_NAME, "article-body")
-        body_input2 = self.driver2.find_element(By.CLASS_NAME, "article-body")
+        body_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
+        body_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-body")
         body_input.click()
         body_input2.click()
 
@@ -120,10 +125,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        title_input = self.driver.find_element(By.CLASS_NAME, "article-title")
-        title_input2 = self.driver2.find_element(
-            By.CLASS_NAME, "article-title"
-        )
+        title_input = self.driver.find_element(By.CLASS_NAME, "doc-title")
+        title_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-title")
 
         first_part = "Here is "
         second_part = "my title"
@@ -148,8 +151,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_title(self.driver2), self.get_title(self.driver)
         )
 
-        body_input = self.driver.find_element(By.CLASS_NAME, "article-body")
-        body_input2 = self.driver2.find_element(By.CLASS_NAME, "article-body")
+        body_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
+        body_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-body")
         body_input.click()
         body_input2.click()
 
@@ -184,7 +187,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_boldtext(self, driver):
         btext = driver.find_element(
-            By.XPATH, '//*[contains(@class, "article-body")]/p/strong'
+            By.XPATH, '//*[contains(@class, "doc-body")]/p/strong'
         )
         return btext.text
 
@@ -201,7 +204,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -209,13 +212,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.make_bold, args=(self.driver2,)
@@ -239,7 +242,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_italictext(self, driver):
         itext = driver.find_element(
-            By.XPATH, '//*[contains(@class, "article-body")]/p/em'
+            By.XPATH, '//*[contains(@class, "doc-body")]/p/em'
         )
         return itext.text
 
@@ -256,7 +259,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -264,13 +267,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.make_italic, args=(self.driver2,)
@@ -294,7 +297,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_numberedlist(self, driver):
         numberedTags = driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ol//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ol//li'
         )
         return numberedTags
 
@@ -310,7 +313,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -319,13 +322,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,24)")
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist, args=(self.driver2,)
@@ -334,9 +337,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.join()
 
         # Wait for the first processor to write some text and go to next line
-        self.wait_for_doc_size(self.driver2, 49)
+        self.wait_for_doc_size(self.driver2, 47)
 
-        self.driver2.execute_script("window.testCaret.setSelection(43,43)")
+        self.driver2.execute_script("window.testCaret.setSelection(42,42)")
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist, args=(self.driver2,)
@@ -361,7 +364,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_bulletlist(self, driver):
         bulletTags = driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]//ul//li'
+            By.XPATH, '//*[contains(@class, "doc-body")]//ul//li'
         )
         return bulletTags
 
@@ -378,7 +381,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -387,13 +390,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,24)")
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist, args=(self.driver2,)
@@ -402,9 +405,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p2.join()
 
         # Wait for the first processor to write enough text and go to next line
-        self.wait_for_doc_size(self.driver2, 49)
+        self.wait_for_doc_size(self.driver2, 47)
 
-        self.driver2.execute_script("window.testCaret.setSelection(43,43)")
+        self.driver2.execute_script("window.testCaret.setSelection(42,42)")
 
         p2 = multiprocessing.Process(
             target=self.make_bulletlist, args=(self.driver2,)
@@ -429,7 +432,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_blockquote(self, driver):
         blockquoteTags = driver.find_elements(
-            By.XPATH, '//*[contains(@class, "article-body")]/blockquote'
+            By.XPATH, '//*[contains(@class, "doc-body")]/blockquote'
         )
         return blockquoteTags
 
@@ -446,7 +449,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -454,13 +457,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 25)
+        self.wait_for_doc_size(self.driver2, 23)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,24)")
 
         p2 = multiprocessing.Process(
             target=self.make_blockquote, args=(self.driver2,)
@@ -496,7 +499,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_link(self, driver):
         atag = driver.find_element(
-            By.XPATH, '//*[contains(@class, "article-body")]/p/a'
+            By.XPATH, '//*[contains(@class, "doc-body")]/p/a'
         )
         return atag.text
 
@@ -514,7 +517,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -522,18 +525,19 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(target=self.addlink, args=(self.driver2,))
         p2.start()
         p1.join()
         p2.join()
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(5, len(self.get_link(self.driver2)))
 
@@ -579,7 +583,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -587,13 +591,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(28,28)")
+        self.driver2.execute_script("window.testCaret.setSelection(27,27)")
 
         p2 = multiprocessing.Process(
             target=self.make_footnote, args=(self.driver2,)
@@ -620,7 +624,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         button.click()
 
     def get_undo(self, driver):
-        content = driver.find_element(By.CLASS_NAME, "article-body")
+        content = driver.find_element(By.CLASS_NAME, "doc-body")
         return (
             content.get_attribute("innerText")
             .rstrip("\ufeff\n")
@@ -641,7 +645,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -649,13 +653,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element(By.CLASS_NAME, "article-title")
+        content = self.driver2.find_element(By.CLASS_NAME, "doc-title")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.perform_delete_undo, args=(self.driver2,)
@@ -673,10 +677,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.get_undo(self.driver), self.get_undo(self.driver2)
         )
 
+    def get_shadow_root(self, driver, element):
+        return driver.execute_script("return arguments[0].shadowRoot", element)
+
     def make_mathequation(self, driver):
         button = driver.find_element(By.XPATH, '//*[@title="Math"]')
         button.click()
-
         # wait for load of popup
         insert_button = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
@@ -684,22 +690,29 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         # type formula
         math_field = WebDriverWait(driver, self.wait_time).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".math-field"))
+            EC.visibility_of_element_located((By.CSS_SELECTOR, "math-field"))
         )
         math_field.click()
-
+        math_field_shadow_dom = self.get_shadow_root(driver, math_field)
+        keyboard_toggle = math_field_shadow_dom.find_element(
+            By.CSS_SELECTOR, "div.ML__virtual-keyboard-toggle"
+        )
+        keyboard_toggle.click()
         # wait for keyboard
-        WebDriverWait(driver, self.wait_time).until(
+        element = WebDriverWait(driver, self.wait_time).until(
             EC.visibility_of_element_located(
                 (
-                    By.CSS_SELECTOR,
-                    'div.ML__keyboard.is-visible li[data-alt-keys="="]',
+                    By.XPATH,
+                    "//div[contains(@class, 'MLK__keycap')]",
                 )
             )
         )
         element = WebDriverWait(driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, 'li[data-alt-keys="2"]')
+                (
+                    By.XPATH,
+                    "//div[contains(@class, 'MLK__keycap') and text()='2']",
+                )
             )
         )
         try:
@@ -708,17 +721,27 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             time.sleep(1)
             WebDriverWait(driver, self.wait_time).until(
                 EC.element_to_be_clickable(
-                    (By.CSS_SELECTOR, 'li[data-alt-keys="2"]')
+                    (
+                        By.XPATH,
+                        "//div[contains(@class, 'MLK__keycap') and text()='2']",
+                    )
                 )
             ).click()
-
         driver.find_element(
-            By.CSS_SELECTOR, 'li[data-alt-keys="x-var"]'
+            By.CSS_SELECTOR, "div.MLK__keycap"  # The first key - X
         ).click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="+"]').click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="3"]').click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="="]').click()
-        driver.find_element(By.CSS_SELECTOR, 'li[data-alt-keys="7"]').click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='+']"
+        ).click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='3']"
+        ).click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='=']"
+        ).click()
+        driver.find_element(
+            By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='7']"
+        ).click()
         # close keyboard
         driver.find_element(By.CLASS_NAME, "ui-dialog-titlebar").click()
         insert_button.click()
@@ -742,7 +765,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -750,13 +773,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 30)
+        self.wait_for_doc_size(self.driver2, 28)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(28,28)")
+        self.driver2.execute_script("window.testCaret.setSelection(27,27)")
 
         p2 = multiprocessing.Process(
             target=self.make_mathequation, args=(self.driver2,)
@@ -811,7 +834,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -819,13 +842,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 33)
+        self.wait_for_doc_size(self.driver2, 31)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(25,30)")
+        self.driver2.execute_script("window.testCaret.setSelection(24,29)")
 
         p2 = multiprocessing.Process(
             target=self.add_comment, args=(self.driver2,)
@@ -994,7 +1017,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
         caption = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
         caption.click()
@@ -1002,14 +1025,14 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_images(self, driver):
         images = driver.find_elements(
-            By.CSS_SELECTOR, "div.article-body figure img[data-image]"
+            By.CSS_SELECTOR, "div.doc-body figure img[data-image]"
         )
 
         return images
 
     def get_caption(self, driver):
         caption = driver.find_element(
-            By.CSS_SELECTOR, "div.article-body figure figcaption"
+            By.CSS_SELECTOR, "div.doc-body figure figcaption"
         )
 
         return caption.text
@@ -1027,7 +1050,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         document_input = self.driver.find_element(By.CLASS_NAME, "ProseMirror")
 
         # Total: 23
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -1035,13 +1058,13 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CLASS_NAME, "ProseMirror")
         content.click()
 
-        self.driver2.execute_script("window.testCaret.setSelection(28,28)")
+        self.driver2.execute_script("window.testCaret.setSelection(27,27)")
 
         p2 = multiprocessing.Process(
             target=self.add_figure, args=(self.driver2,)
@@ -1070,7 +1093,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.driver.refresh()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure")
+                (By.CSS_SELECTOR, "div.doc-body figure")
             )
         )
         self.assertEqual(1, len(self.get_images(self.driver)))
@@ -1145,12 +1168,12 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
 
     def get_citation_within_text(self, driver):
         cite_within_doc = driver.find_element(
-            By.CSS_SELECTOR, "div.article-body span.citation"
+            By.CSS_SELECTOR, "div.doc-body span.citation"
         )
         return cite_within_doc.text
 
     def get_citation_bib(self, driver):
-        cite_bib = driver.find_element(By.CLASS_NAME, "article-bibliography")
+        cite_bib = driver.find_element(By.CLASS_NAME, "doc-bibliography")
         return cite_bib.text
 
     def test_citation(self):
@@ -1162,12 +1185,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        document_input = self.driver.find_element(
-            By.CLASS_NAME, "article-body"
-        )
+        document_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
 
         # Total: 22
-        self.driver.execute_script("window.testCaret.setSelection(25,25)")
+        self.driver.execute_script("window.testCaret.setSelection(24,24)")
 
         p1 = multiprocessing.Process(
             target=self.input_text, args=(document_input, self.TEST_TEXT)
@@ -1175,12 +1196,10 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element(
-            By.CSS_SELECTOR, "div.article-body p"
-        )
+        content = self.driver2.find_element(By.CSS_SELECTOR, "div.doc-body p")
         content.click()
 
         p2 = multiprocessing.Process(
@@ -1209,7 +1228,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         # We delete the citation again
         ActionChains(self.driver).double_click(
             self.driver.find_element(
-                By.CSS_SELECTOR, "div.article-body span.citation"
+                By.CSS_SELECTOR, "div.doc-body span.citation"
             )
         ).send_keys(Keys.BACKSPACE).perform()
 
@@ -1218,7 +1237,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(
             len(
                 self.driver2.find_elements(
-                    By.CSS_SELECTOR, "div.article-body span.citation"
+                    By.CSS_SELECTOR, "div.doc-body span.citation"
                 )
             ),
             0,
@@ -1253,8 +1272,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         "Test whether changing the path in one editor changes it in the other"
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test Article"
         )
         self.wait_for_doc_sync(self.driver, self.driver2)
@@ -1269,11 +1288,8 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         ).send_keys(Keys.CONTROL, "a")
         self.driver2.find_element(
             By.CSS_SELECTOR, "#document-title"
-        ).send_keys(Keys.DELETE)
-        self.driver2.find_element(
-            By.CSS_SELECTOR, "#document-title"
         ).send_keys("/Reports/2019/")
-        self.driver2.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver2.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.wait_for_doc_sync(self.driver, self.driver2)
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
@@ -1285,12 +1301,9 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             Keys.CONTROL, "a"
         )
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
-            Keys.DELETE
-        )
-        self.driver.find_element(By.CSS_SELECTOR, "#document-title").send_keys(
             "/Reports/2019/Report 23"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.wait_for_doc_sync(self.driver, self.driver2)
         self.assertEqual(
             self.driver2.find_element(By.CSS_SELECTOR, "#document-title").text,
@@ -1307,7 +1320,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
             "/Reports/2019/Report 23",
         )
-        # Delete entire path to obtain article title again.
+        # Delete entire path to obtain doc title again.
         self.driver2.find_element(By.CSS_SELECTOR, "#document-title").click()
         self.driver2.find_element(
             By.CSS_SELECTOR, "#document-title"
@@ -1315,7 +1328,7 @@ class OneUserTwoBrowsersTests(LiveTornadoTestCase, EditorHelper):
         self.driver2.find_element(
             By.CSS_SELECTOR, "#document-title"
         ).send_keys(Keys.DELETE)
-        self.driver2.find_element(By.CSS_SELECTOR, ".article-title").click()
+        self.driver2.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.wait_for_doc_sync(self.driver, self.driver2)
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,

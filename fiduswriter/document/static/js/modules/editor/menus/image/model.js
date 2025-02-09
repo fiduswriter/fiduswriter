@@ -1,6 +1,4 @@
-import {
-    CopyrightDialog
-} from "../../../copyright_dialog"
+import {CopyrightDialog} from "../../../copyright_dialog"
 
 export const imageMenuModel = () => ({
     content: [
@@ -11,13 +9,11 @@ export const imageMenuModel = () => ({
             order: 0,
             action: figureDialog => {
                 const dialog = new CopyrightDialog(figureDialog.copyright)
-                dialog.init().then(
-                    copyright => {
-                        if (copyright) {
-                            figureDialog.copyright = copyright
-                        }
+                dialog.init().then(copyright => {
+                    if (copyright) {
+                        figureDialog.copyright = copyright
                     }
-                )
+                })
             }
         },
         {

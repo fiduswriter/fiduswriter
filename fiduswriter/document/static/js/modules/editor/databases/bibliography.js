@@ -34,7 +34,8 @@ export class ModBibliographyDB {
     saveBibEntries(tmpDB, isNew) {
         const idTranslations = []
         Object.keys(tmpDB).forEach(bibKey => {
-            const reference = tmpDB[bibKey], bibId = parseInt(bibKey)
+            const reference = tmpDB[bibKey],
+                bibId = Number.parseInt(bibKey)
             delete reference.cats
             const oldRef = this.findReference(reference)
             if (oldRef) {
@@ -61,7 +62,6 @@ export class ModBibliographyDB {
         return idTranslations
     }
 
-
     // Function added here for compatibility with user's bibDB. See comment at
     // saveBibEntries function.
     deleteBibEntries(ids) {
@@ -73,10 +73,7 @@ export class ModBibliographyDB {
     // for compatibility reasons.
     getDB() {
         return new Promise(resolve => {
-            window.setTimeout(
-                () => resolve({bibPks: [], bibCats: []}),
-                100
-            )
+            window.setTimeout(() => resolve({bibPks: [], bibCats: []}), 100)
         })
     }
 
@@ -107,7 +104,6 @@ export class ModBibliographyDB {
         } else {
             this.mod.editor.mod.citations.layoutCitations()
         }
-
     }
 
     deleteReference(id) {
@@ -123,34 +119,30 @@ export class ModBibliographyDB {
         delete this.db[id]
     }
 
-
     hasUnsentEvents() {
         return this.unsent.length
     }
 
     unsentEvents() {
-        return this.unsent.map(
-            event => {
-                if (event.type === "delete") {
-                    return event
-                } else if (event.type === "update") {
-                    // Check bib entry still exists. Otherwise ignore.
-                    const reference = this.db[event.id]
-                    if (reference) {
-                        return {
-                            type: "update",
-                            id: event.id,
-                            reference
-                        }
-                    } else {
-                        return {
-                            type: "ignore"
-                        }
+        return this.unsent.map(event => {
+            if (event.type === "delete") {
+                return event
+            } else if (event.type === "update") {
+                // Check bib entry still exists. Otherwise ignore.
+                const reference = this.db[event.id]
+                if (reference) {
+                    return {
+                        type: "update",
+                        id: event.id,
+                        reference
                     }
-
+                } else {
+                    return {
+                        type: "ignore"
+                    }
                 }
             }
-        )
+        })
     }
 
     eventsSent(n) {
@@ -184,5 +176,4 @@ export class ModBibliographyDB {
             return false
         }
     }
-
 }

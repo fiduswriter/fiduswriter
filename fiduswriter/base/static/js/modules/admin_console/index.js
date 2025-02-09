@@ -1,70 +1,73 @@
-import {findTarget, addAlert, whenReady, WebSocketConnector} from "../common"
+import {addAlert, findTarget, getJson, postJson, whenReady} from "../common"
 
 // To see how many users are currently online and send them maintenance messages
 
 export class AdminConsole {
-    constructor() {
-    }
+    constructor() {}
 
     init() {
         whenReady().then(() => {
+            this.render()
             this.bind()
         })
-
     }
 
     bind() {
-        this.ws = new WebSocketConnector({
-            url: "/ws/base/",
-            appLoaded: () => true,
-            initialMessage: () => ({type: "subscribe_admin"}),
-            receiveData: data => {
-                switch (data.type) {
-                case "connection_info":
-                    this.renderConnectionInfo(data.sessions)
-                    break
-                case "message_delivered": {
-                    addAlert("info", gettext("Message delivered successfully!"))
-                    const button = document.querySelector("input#submit_user_message")
-                    button.value = gettext("Message delivered")
+        document.body.addEventListener("click", event => {
+            const el = {}
+            switch (true) {
+                case findTarget(
+                    event,
+                    "input#submit_user_message:not(.disabled)",
+                    el
+                ): {
+                    const message = document.querySelector(
+                        "textarea#user_message"
+                    ).value
+                    if (!message.length) {
+                        return
+                    }
+                    document.querySelector("textarea#user_message").disabled =
+                        true
+                    document.querySelector(
+                        "input#submit_user_message"
+                    ).disabled = true
+                    document.querySelector("input#submit_user_message").value =
+                        gettext("Sending...")
+                    this.sendSystemMessage(message)
                     break
                 }
                 default:
                     break
-                }
-            }
-
-        })
-        this.ws.init()
-        document.body.addEventListener("click", event => {
-            const el = {}
-            switch (true) {
-            case findTarget(event, "input#submit_user_message:not(.disabled)", el): {
-                const message = document.querySelector("textarea#user_message").value
-                if (!message.length) {
-                    return
-                }
-                document.querySelector("textarea#user_message").disabled = true
-                document.querySelector("input#submit_user_message").disabled = true
-                document.querySelector("input#submit_user_message").value = gettext("Sending...")
-                this.sendUserMessage(message)
-                break
-            }
-            default:
-                break
             }
         })
     }
 
-    sendUserMessage(message) {
-        this.ws.send(() => ({type: "message", message}))
+    sendSystemMessage(message) {
+        return postJson("/api/base/send_system_message/", {message}).then(
+            () => {
+                addAlert("info", gettext("Message delivered successfully!"))
+                const button = document.querySelector(
+                    "input#submit_user_message"
+                )
+                button.value = gettext("Message delivered")
+            }
+        )
     }
 
-    renderConnectionInfo(sessions) {
-        const counterEl = document.getElementById("session_count")
-        if (counterEl) {
-            counterEl.innerHTML = sessions
-        }
+    render() {
+        return getJson("/api/base/connection_info/").then(
+            ({sessions, users}) => {
+                const sessionCounterEl =
+                    document.getElementById("session_count")
+                if (sessionCounterEl) {
+                    sessionCounterEl.innerHTML = String(sessions)
+                }
+                const userCounterEl = document.getElementById("user_count")
+                if (userCounterEl) {
+                    userCounterEl.innerHTML = String(users)
+                }
+            }
+        )
     }
-
 }

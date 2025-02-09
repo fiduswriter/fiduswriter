@@ -5,7 +5,9 @@ export const orderedListMenuModel = () => ({
         {
             title: gettext("Set list start number"),
             type: "action",
-            tooltip: gettext("Specify the number from which this list is to start counting"),
+            tooltip: gettext(
+                "Specify the number from which this list is to start counting"
+            ),
             order: 0,
             action: editor => {
                 const dialog = new OrderedListStartDialog(editor)

@@ -4,10 +4,7 @@
 
 #wait.active {
     position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    inset: 0;
     background-color: rgba(var(--wait-active-background-color));
     z-index: 1500;
 }
@@ -23,8 +20,8 @@
     top: 50%;
     left: 50%;
     font-size: 24px;
-    margin-top: -.5em;
-    margin-left: -.5em;
+    margin-top: -0.5em;
+    margin-left: -0.5em;
 }
 
 #wait span {

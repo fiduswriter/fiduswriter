@@ -35,7 +35,7 @@ body.scrollable {
     padding: 40px 8px 20px;
 }
 
-@media (max-width: 1429px) {
+@media (width <= 1429px) {
     .fw-contents {
         min-width: unset;
         margin: 0 auto;
@@ -46,7 +46,7 @@ body.scrollable {
 .fw-contents h1 {
     font-size: 2em;
     font-weight: bold;
-    margin-bottom: .2em;
+    margin-bottom: 0.2em;
 }
 
 .fw-contents .errorlist {
@@ -62,8 +62,8 @@ body.scrollable {
     display: none;
 }
 
-.fw-contents label[for='id-password1'],
-.fw-contents label[for='id-password2'] {
+.fw-contents label[for="id-password1"],
+.fw-contents label[for="id-password2"] {
     display: none;
 }
 
@@ -109,7 +109,7 @@ table .fw-inline {
     width: 0;
     padding-top: 100%;
     vertical-align: middle;
-    content: '';
+    content: "";
 }
 
 .fw-avatar-card {
@@ -152,12 +152,14 @@ table .fw-inline {
     display: none;
 }
 
-.ProseMirror-focused .ProseMirror:not(.ProseMirror-focused) span.placeholder.selected {
+.ProseMirror-focused
+    .ProseMirror:not(.ProseMirror-focused)
+    span.placeholder.selected {
     display: inline;
 }
 
 .clearfix::after {
-    content: '';
+    content: "";
     clear: both;
     display: block;
 }
@@ -172,4 +174,10 @@ div.input {
     min-height: 38px;
     color: var(--cs-light-text);
     background-color: var(--cs-light-background);
+}
+
+.access-key {
+    text-decoration: underline;
+    text-underline-offset: 2px; /* Adjust for better visibility */
+    pointer-events: none;
 }

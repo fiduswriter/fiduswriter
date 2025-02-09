@@ -1,8 +1,8 @@
-import {keyBindingsTemplate} from "./templates"
 import {Dialog} from "../../../common"
+import {keyBindingsTemplate} from "./templates"
 /* This is an adaptation of question.mark for Fidus Writer http://fiduswriter.org
-* originally by Gabriel Lopez <gabriel.marcos.lopez@gmail.com>
-*/
+ * originally by Gabriel Lopez <gabriel.marcos.lopez@gmail.com>
+ */
 
 export class KeyBindingsDialog {
     constructor(editor) {
@@ -14,8 +14,7 @@ export class KeyBindingsDialog {
             title: gettext("Keyboard Shortcuts"),
             body: keyBindingsTemplate(),
             width: 850,
-            buttons: [{type: "close"}],
-            canEscape: true
+            buttons: [{type: "close"}]
         })
         dialog.open()
     }

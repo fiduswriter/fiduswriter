@@ -1,44 +1,51 @@
-
-const menuTemplate = ({id, classes, height, width, zIndex, menu, scroll, page}) =>
+const menuTemplate = ({
+    id,
+    classes,
+    height,
+    width,
+    zIndex,
+    menu,
+    scroll,
+    page
+}) =>
     `<div tabindex="-1" role="incontent_menu"
         class="ui-content-menu ui-corner-all ui-widget ui-widget-content ui-front"
         ${id ? `aria-describedby="${id}"` : ""} style="z-index: ${zIndex};">
     <div ${id ? `id="${id}"` : ""} class="ui-content-menu-content ui-widget-content${classes ? ` ${classes}` : ""}${scroll ? " ui-scrollable" : ""}" style="width: ${width}; height: ${height};">
     <div>
         <ul class="content-menu-list">
-        ${
-    menu.content.map((menuItem, index) => {
-        switch (menuItem.type) {
-        case "header":
-            return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
-                typeof menuItem.title === "function" ?
-                    menuItem.title(page) :
-                    menuItem.title
-            }</span></li>`
-        case "separator":
-            return "<li><hr class=\"content-menu-item-divider\"/></li>"
-        default:
-            return `<li data-index="${index}" class="content-menu-item${
-                menuItem.disabled && menuItem.disabled(page) ?
-                    " disabled" :
-                    menuItem.selected ?
-                        " selected" :
-                        ""
-            }" title='${menuItem.tooltip}'>
+        ${menu.content
+            .map((menuItem, index) => {
+                switch (menuItem.type) {
+                    case "header":
+                        return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
+                            typeof menuItem.title === "function"
+                                ? menuItem.title(page)
+                                : menuItem.title
+                        }</span></li>`
+                    case "separator":
+                        return '<li><hr class="content-menu-item-divider"/></li>'
+                    default:
+                        return `<li tabindex="0" data-index="${index}" class="content-menu-item${
+                            menuItem.disabled && menuItem.disabled(page)
+                                ? " disabled"
+                                : menuItem.selected
+                                  ? " selected"
+                                  : ""
+                        }" title='${menuItem.tooltip}'>
                         ${
-    typeof menuItem.title === "function" ?
-        menuItem.title(page) :
-        menuItem.title
-} ${
-    menuItem.icon ?
-        `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>` :
-        ""
-}
+                            typeof menuItem.title === "function"
+                                ? menuItem.title(page)
+                                : menuItem.title
+                        } ${
+                            menuItem.icon
+                                ? `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>`
+                                : ""
+                        }
                         </li>`
-        }
-
-    }).join("")
-}
+                }
+            })
+            .join("")}
         </ul>
     </div>
     </div>
@@ -70,12 +77,18 @@ export class ContentMenu {
         this.dialogEl = dialogEl
         this.backdropEl = backdropEl
         this.menuPos = menuPos
+
+        this.focusedIndex = 0
+        this.previouslyFocusedElement = null
     }
 
     open() {
         if (this.dialogEl) {
             return
         }
+
+        this.previouslyFocusedElement = document.activeElement
+
         document.body.insertAdjacentHTML(
             "beforeend",
             menuTemplate({
@@ -97,6 +110,7 @@ export class ContentMenu {
             this.centerDialog()
         }
         this.bind()
+        this.focusFirstMenuItem()
     }
 
     centerDialog() {
@@ -123,15 +137,15 @@ export class ContentMenu {
         let top = this.menuPos.Y,
             left = this.menuPos.X
 
-        if ((top + dialogHeight) > (scrollTopOffset + clientHeight)) {
-            top -= ((top + dialogHeight) - (scrollTopOffset + clientHeight))
+        if (top + dialogHeight > scrollTopOffset + clientHeight) {
+            top -= top + dialogHeight - (scrollTopOffset + clientHeight)
         }
 
         if (top < scrollTopOffset) {
             top = scrollTopOffset + 10
         }
 
-        if ((left + dialogWidth) > clientWidth) {
+        if (left + dialogWidth > clientWidth) {
             left -= left + dialogWidth - clientWidth
         }
 
@@ -142,12 +156,24 @@ export class ContentMenu {
     bind() {
         this.backdropEl.addEventListener("click", () => this.close())
         this.dialogEl.addEventListener("click", event => this.onclick(event))
+        this.dialogEl.addEventListener("keydown", event =>
+            this.onKeyDown(event)
+        )
+        this.dialogEl.focus()
     }
 
     getHighestDialogZIndex() {
         let zIndex = 100
-        document.querySelectorAll("div.ui-content-menu").forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
-        document.querySelectorAll("div.ui-dialog").forEach(dialogEl => zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document
+            .querySelectorAll("div.ui-content-menu")
+            .forEach(
+                dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+            )
+        document
+            .querySelectorAll("div.ui-dialog")
+            .forEach(
+                dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+            )
         return zIndex
     }
 
@@ -157,6 +183,15 @@ export class ContentMenu {
         }
         this.dialogEl.parentElement.removeChild(this.dialogEl)
         this.backdropEl.parentElement.removeChild(this.backdropEl)
+
+        // Restore focus to the previously focused element
+        if (
+            this.previouslyFocusedElement &&
+            this.previouslyFocusedElement.focus
+        ) {
+            this.previouslyFocusedElement.focus()
+        }
+
         if (this.onClose) {
             this.onClose()
         }
@@ -174,6 +209,60 @@ export class ContentMenu {
             }
             menuItem.action(this.page)
             this.close()
+        }
+    }
+
+    onKeyDown(event) {
+        const {key} = event
+        const menuItems = this.dialogEl.querySelectorAll(
+            "li.content-menu-item:not(.disabled)"
+        )
+
+        switch (key) {
+            case "Escape":
+                this.close()
+                break
+            case "ArrowUp":
+                event.preventDefault()
+                this.focusedIndex =
+                    (this.focusedIndex - 1 + menuItems.length) %
+                    menuItems.length
+                this.focusMenuItem(this.focusedIndex)
+                break
+            case "ArrowDown":
+                event.preventDefault()
+                this.focusedIndex = (this.focusedIndex + 1) % menuItems.length
+                this.focusMenuItem(this.focusedIndex)
+                break
+            case "Enter":
+            case " ": {
+                event.preventDefault()
+                const menuItem = this.menu.content[this.focusedIndex]
+                if (!menuItem.disabled?.(this.page)) {
+                    menuItem.action(this.page)
+                    this.close()
+                }
+                break
+            }
+        }
+    }
+
+    focusFirstMenuItem() {
+        const menuItems = this.dialogEl.querySelectorAll(
+            "li.content-menu-item:not(.disabled)"
+        )
+        if (menuItems.length > 0) {
+            this.focusedIndex = 0
+            this.focusMenuItem(this.focusedIndex)
+        }
+    }
+
+    focusMenuItem(index) {
+        const menuItems = this.dialogEl.querySelectorAll(
+            "li.content-menu-item:not(.disabled)"
+        )
+        if (menuItems[index]) {
+            menuItems[index].focus()
         }
     }
 }

@@ -1,6 +1,4 @@
-import {noSpaceTmp} from "../../common"
-
-const DEFAULT_TABLENORMAL_XML = noSpaceTmp`
+const DEFAULT_TABLENORMAL_XML = `
     <w:style w:type="table" w:default="1" w:styleId="TableNormal">
         <w:name w:val="Normal Table"/>
         <w:uiPriority w:val="99"/>
@@ -18,7 +16,7 @@ const DEFAULT_TABLENORMAL_XML = noSpaceTmp`
     </w:style>
     `
 
-const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
+const DEFAULT_TABLEGRID_XML = tableNormalStyle => `
     <w:style w:type="table" w:styleId="TableGrid">
         <w:name w:val="Table Grid"/>
         <w:basedOn w:val="${tableNormalStyle}"/>
@@ -44,23 +42,21 @@ const DEFAULT_TABLEGRID_XML = tableNormalStyle => noSpaceTmp`
     </w:style>
     `
 
-export class DocxExporterTables {
-    constructor(exporter) {
-        this.exporter = exporter
+export class DOCXExporterTables {
+    constructor(xml) {
+        this.xml = xml
         this.sideMargins = false
         this.tableGridStyle = false
         this.tableNormalStyle = false
-        this.styleXml = false
+        this.styleXML = false
         this.styleFilePath = "word/styles.xml"
     }
 
     init() {
-        return this.exporter.xml.getXml(this.styleFilePath).then(
-            styleXml => {
-                this.styleXml = styleXml
-                return Promise.resolve()
-            }
-        )
+        return this.xml.getXml(this.styleFilePath).then(styleXML => {
+            this.styleXML = styleXML
+            return Promise.resolve()
+        })
     }
 
     addTableNormalStyle() {
@@ -68,12 +64,15 @@ export class DocxExporterTables {
             // already added
             return
         }
-        const tableNormalEl = this.styleXml.querySelector("style[*|type=\"table\"][*|default=\"1\"]")
+        const tableNormalEl = this.styleXML.query("w:style", {
+            "w:type": "table",
+            "w:default": "1"
+        })
         if (tableNormalEl) {
             this.tableNormalStyle = tableNormalEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.querySelector("styles")
-            stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_TABLENORMAL_XML)
+            const stylesEl = this.styleXML.query("w:styles")
+            stylesEl.appendXML(DEFAULT_TABLENORMAL_XML)
             this.tableNormalStyle = "TableNormal"
         }
     }
@@ -84,26 +83,30 @@ export class DocxExporterTables {
             return
         }
         this.addTableNormalStyle()
-        const tableGridEl = this.styleXml.querySelector("style[*|type=\"table\"][*|customStyle=\"1\"]")
+        const tableGridEl = this.styleXML.query("w:style", {
+            "w:type": "table",
+            "w:customStyle": "1"
+        })
         if (tableGridEl) {
             this.tableGridStyle = tableGridEl.getAttribute("w:styleId")
         } else {
-            const stylesEl = this.styleXml.querySelector("styles")
-            stylesEl.insertAdjacentHTML("beforeEnd", DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
+            const stylesEl = this.styleXML.query("w:styles")
+            stylesEl.appendXML(DEFAULT_TABLEGRID_XML(this.tableNormalStyle))
             this.tableGridStyle = "TableGrid"
         }
     }
 
     getSideMargins() {
         if (!this.sideMargins) {
-            const marginsEl = this.styleXml.querySelector(`style[*|styleId="${this.tableGridStyle}"]`)
-            const leftEl = marginsEl.querySelector("left")
-            const rightEl = marginsEl.querySelector("right")
-            const left = parseInt(leftEl.getAttribute("w:w"))
-            const right = parseInt(rightEl.getAttribute("w:w"))
+            const marginsEl = this.styleXML.query("w:style", {
+                "w:styleId": this.tableGridStyle
+            })
+            const leftEl = marginsEl.query("w:left")
+            const rightEl = marginsEl.query("w:right")
+            const left = Number.parseInt(leftEl.getAttribute("w:w"))
+            const right = Number.parseInt(rightEl.getAttribute("w:w"))
             this.sideMargins = (left + right) * 635
         }
         return this.sideMargins
     }
-
 }

@@ -12,13 +12,17 @@ export class BibLatexImportWorker {
     init() {
         const bibData = new BibLatexParser(this.fileContents)
         const bibDataOutput = bibData.parse()
-        this.tmpDB =  bibDataOutput.entries
+        this.tmpDB = bibDataOutput.entries
         this.bibKeys = Object.keys(this.tmpDB)
         if (!this.bibKeys.length) {
-            this.sendMessage({type: "error", errorCode: "no_Entries", done: true})
+            this.sendMessage({
+                type: "error",
+                errorCode: "no_Entries",
+                done: true
+            })
             return
         } else {
-            this.bibKeys.forEach((bibKey) => {
+            this.bibKeys.forEach(bibKey => {
                 const bibEntry = this.tmpDB[bibKey]
                 // We add an empty category list for all newly imported bib entries.
                 bibEntry.cats = []
@@ -32,7 +36,7 @@ export class BibLatexImportWorker {
                 }
                 // If the entry has no editor or author, add empty author
                 if (!bibEntry.fields.author && !bibEntry.fields.editor) {
-                    bibEntry.fields.author = [{"literal": []}]
+                    bibEntry.fields.author = [{literal: []}]
                 }
             })
             bibData.errors.forEach(error => {
@@ -50,7 +54,6 @@ export class BibLatexImportWorker {
             this.currentChunkNumber = 0
             this.processChunk()
         }
-
     }
 
     processChunk() {
@@ -58,7 +61,7 @@ export class BibLatexImportWorker {
             const fromNumber = this.currentChunkNumber * 50
             const toNumber = fromNumber + 50
             const currentChunk = {}
-            this.bibKeys.slice(fromNumber, toNumber).forEach((bibKey) => {
+            this.bibKeys.slice(fromNumber, toNumber).forEach(bibKey => {
                 currentChunk[bibKey] = this.tmpDB[bibKey]
             })
             this.sendMessage({type: "data", data: currentChunk})

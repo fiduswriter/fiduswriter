@@ -1,5 +1,11 @@
+import {
+    Dialog,
+    activateWait,
+    addAlert,
+    deactivateWait,
+    postBare
+} from "../common"
 import {deleteUserDialogTemplate} from "./templates"
-import {Dialog, activateWait, deactivateWait, postBare, addAlert} from "../common"
 
 export class DeleteUserDialog {
     constructor(username) {
@@ -12,9 +18,15 @@ export class DeleteUserDialog {
                 text: gettext("Delete"),
                 classes: "fw-dark",
                 click: () => {
-                    const usernamefieldValue = document.getElementById("username-confirmation").value
-                    const passwordfieldValue = document.getElementById("password").value
-                    if (usernamefieldValue === this.username && passwordfieldValue.length) {
+                    const usernamefieldValue = document.getElementById(
+                        "username-confirmation"
+                    ).value
+                    const passwordfieldValue =
+                        document.getElementById("password").value
+                    if (
+                        usernamefieldValue === this.username &&
+                        passwordfieldValue.length
+                    ) {
                         this.deleteCurrentUser(passwordfieldValue)
                     }
                 }
@@ -37,17 +49,18 @@ export class DeleteUserDialog {
     deleteCurrentUser(password) {
         activateWait()
 
-        postBare(
-            "/api/user/delete/",
-            {password}
-        ).then(
-            response => {
-                switch (response.status) {
+        postBare("/api/user/delete/", {password}).then(response => {
+            switch (response.status) {
                 case 200:
                     window.location = "/"
                     break
                 case 403:
-                    addAlert("error", gettext("Staff accounts have to be deleted through the admin interface."))
+                    addAlert(
+                        "error",
+                        gettext(
+                            "Staff accounts have to be deleted through the admin interface."
+                        )
+                    )
                     break
                 case 401:
                     addAlert("error", gettext("Password incorrect."))
@@ -55,10 +68,8 @@ export class DeleteUserDialog {
                 default:
                     addAlert("error", gettext("Could not delete user account."))
                     break
-                }
-                deactivateWait()
             }
-        )
+            deactivateWait()
+        })
     }
-
 }

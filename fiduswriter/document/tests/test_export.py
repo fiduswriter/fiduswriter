@@ -2,7 +2,7 @@ import os
 import time
 from tempfile import mkdtemp
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from django.conf import settings
 
 
-class ExportTest(LiveTornadoTestCase, SeleniumHelper):
+class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
     """Test whether Fidus Writer exports files in all the formats.
     Note that it does not validate the export files."""
 
@@ -24,7 +24,6 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
         cls.download_dir = mkdtemp()
         driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
@@ -39,6 +38,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         super().tearDownClass()
 
     def setUp(self):
+        self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
         self.user1 = self.create_user(
@@ -60,7 +60,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             EC.presence_of_element_located(
                 (
                     By.CSS_SELECTOR,
-                    "#header-navigation > div:nth-child(3) > span",
+                    "#header-navigation > div.header-menu:nth-child(3) > span.header-nav-item",
                 )
             )
         ).click()
@@ -87,18 +87,18 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
             "[aria-describedby=configure-copyright] button.fw-dark",
         ).click()
 
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-title").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Title"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "No styling"
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "strong"
         )
         self.driver.find_element(
@@ -107,39 +107,39 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "emph"
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Emphasis]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             Keys.ENTER
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fa-list-ol").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "ordered list"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             Keys.ENTER
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fa-list-ul").click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "bullet list"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             Keys.ENTER
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             Keys.ENTER
         )
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Blockquote]"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "block quote"
         )
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             Keys.ENTER
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fa-link").click()
@@ -159,7 +159,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, ".footnote-container > p"
         ).send_keys("A footnote")
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         self.driver.find_element(By.CSS_SELECTOR, ".fa-book").click()
         # click on 'Register new source' button
         register_new_source = WebDriverWait(self.driver, self.wait_time).until(
@@ -230,7 +230,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(
             By.CSS_SELECTOR, 'button[title="Horizontal line"]'
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".article-body").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             Keys.DOWN
         )
         # Insert figure
@@ -323,7 +323,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
 
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
         caption.click()
@@ -380,7 +380,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body table caption")
+                (By.CSS_SELECTOR, "div.doc-body table caption")
             )
         )
 
@@ -390,20 +390,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # Document with many features has been created let's see if we can
         # export it from the editor.
 
-        # HTML (old)
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            '.header-nav-item[title="Export of the document contents"]',
-        ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="HTML (old)"]'
-        ).click()
-        path = os.path.join(self.download_dir, "title.html.zip")
-        self.wait_until_file_exists(path, self.wait_time)
-        assert os.path.isfile(path)
-        os.remove(path)
-
-        # HTML (new)
+        # HTML
         self.driver.find_element(
             By.CSS_SELECTOR,
             '.header-nav-item[title="Export of the document contents"]',
@@ -547,19 +534,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         assert os.path.isfile(path)
         os.remove(path)
 
-        # HTML (old)
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
-        ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Export selected as HTML (old)"]'
-        ).click()
-        path = os.path.join(self.download_dir, "title.html.zip")
-        self.wait_until_file_exists(path, self.wait_time)
-        assert os.path.isfile(path)
-        os.remove(path)
-
-        # HTML (new)
+        # HTML
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".dt-bulk-dropdown"))
         ).click()
@@ -664,7 +639,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         # We import the fidus file
         self.driver.find_element(By.CSS_SELECTOR, "a[href='/']").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             upload_full_path
@@ -678,7 +653,7 @@ class ExportTest(LiveTornadoTestCase, SeleniumHelper):
         os.remove(upload_full_path)
         # Upload slim file
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document']"
+            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
             upload_slim_path

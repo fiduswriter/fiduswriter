@@ -30,36 +30,41 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
 
 /** The template for an individual row in the left hand side list of users (all contacts) of the access rights dialogue. */
 export const contactsTemplate = ({contacts}) =>
-    contacts.map(contact =>
-        `<tr>
+    contacts
+        .map(
+            contact =>
+                `<tr>
             <td width="337" data-id="${contact.id}" data-type="${contact.type}" class="fw-checkable fw-checkable-td">
                 <span>${avatarTemplate({user: contact})}</span>
                 <span class="fw-inline">
                 ${
-    contact.type === "userinvite" ?
-        `${gettext("Invite")}:&nbsp;` :
-        ""
-}
+                    contact.type === "userinvite"
+                        ? `${gettext("Invite")}:&nbsp;`
+                        : ""
+                }
                     ${escapeText(contact.name)}
 
                 </span>
             </td>
         </tr>`
-    ).join("")
+        )
+        .join("")
 
 /** The template for the right hand side list of users (the collaborators of the current document) of the access rights dialogue. */
 export const collaboratorsTemplate = ({collaborators}) =>
-    collaborators.map(collaborator =>
-        `<tr id="collaborator-${collaborator.holder.type}-${collaborator.holder.id}"
+    collaborators
+        .map(
+            collaborator =>
+                `<tr id="collaborator-${collaborator.holder.type}-${collaborator.holder.id}"
     data-type="${collaborator.holder.type}" data-id="${collaborator.holder.id}"
     class="collaborator-tr" data-rights="${collaborator.rights}">
         <td width="215">
             <span>${avatarTemplate({user: collaborator.holder})}</span>
             <span class="fw-inline">${
-    collaborator.holder.type === "userinvite" ?
-        `${gettext("Invite")}: ` :
-        ""
-}${escapeText(collaborator.holder.name)}</span>
+                collaborator.holder.type === "userinvite"
+                    ? `${gettext("Invite")}: `
+                    : ""
+            }${escapeText(collaborator.holder.name)}</span>
         </td>
         <td width="50" align="center">
             <div class="fw-inline edit-right-wrapper">
@@ -73,4 +78,5 @@ export const collaboratorsTemplate = ({collaborators}) =>
             </span>
         </td>
     </tr>`
-    ).join("")
+        )
+        .join("")

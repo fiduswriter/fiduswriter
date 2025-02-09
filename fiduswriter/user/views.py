@@ -431,20 +431,22 @@ def invites_accept(request):
             .first()
         )
         if ui:
+            by = ui.by
+            to = ui.to
+            ui.apply()
             response["contacts"].append(
                 {
-                    "id": ui.by.id,
-                    "name": ui.by.readable_name,
-                    "email": ui.by.email,
-                    "avatar": avatars.get_url(ui.by),
+                    "id": by.id,
+                    "name": by.readable_name,
+                    "email": by.email,
+                    "avatar": avatars.get_url(by),
                     "type": "user",
                 }
             )
             link = HttpRequest.build_absolute_uri(request, "/user/contacts/")
             emails.send_accept_notification(
-                ui.by.readable_name, ui.by.email, ui.to.readable_name, link
+                by.readable_name, by.email, to.readable_name, link
             )
-            ui.apply()
     return JsonResponse(response, status=status)
 
 

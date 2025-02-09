@@ -31,6 +31,7 @@ from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from base.decorators import ajax_required
+from base.helpers.ws import get_url_base
 from user.models import UserInvite
 from . import emails
 from user.helpers import Avatars
@@ -70,7 +71,7 @@ def get_documentlist_extra(request):
         if "type" not in doc.content:
             doc.content = deepcopy(doc.template.content)
             if "type" not in doc.content:
-                doc.content["type"] = "article"
+                doc.content["type"] = "doc"
             if "content" not in doc.content:
                 doc.content["content"] = [{type: "title"}]
             doc.save()
@@ -529,14 +530,18 @@ def import_image(request):
     else:
         status = 401
         return JsonResponse(response, status=status)
-    checksum = request.POST["checksum"]
-    image = Image.objects.filter(checksum=checksum).first()
+    checksum = int(request.POST.get("checksum", 0))
+    if checksum > 0:
+        image = Image.objects.filter(checksum=checksum).first()
+    else:
+        image = None
     if image is None:
-        image = Image.objects.create(
+        image = Image(
             uploader=request.user,
             image=request.FILES["image"],
             checksum=checksum,
         )
+        image.save()
     doc_image = DocumentImage.objects.create(
         image=image,
         title=request.POST["title"],
@@ -628,9 +633,9 @@ def get_revision(request, revision_id):
             content_type="application/zip; charset=x-user-defined",
             status=200,
         )
-        http_response[
-            "Content-Disposition"
-        ] = "attachment; filename=some_name.zip"
+        http_response["Content-Disposition"] = (
+            "attachment; filename=some_name.zip"
+        )
     else:
         http_response = HttpResponse(status=404)
     return http_response
@@ -739,6 +744,36 @@ def get_template_for_doc(request):
         "export_templates": export_templates,
         "document_styles": document_styles,
     }
+    return JsonResponse(response, status=200)
+
+
+@login_required
+@ajax_required
+@require_POST
+def get_template(request):
+    response = {}
+    import_id = request.POST["import_id"]
+    doc_template = DocumentTemplate.objects.filter(
+        Q(user=request.user) | Q(user=None), import_id=import_id
+    ).first()
+    if not doc_template:
+        return JsonResponse(response, status=405)
+    response["template"] = {
+        "id": doc_template.id,
+        "title": doc_template.title,
+        "content": doc_template.content,
+    }
+    return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
+def get_ws_base(request):
+    response = {}
+    doc_id = int(request.POST.get("id"))
+    ws_server = settings.WS_URLS[doc_id % len(settings.WS_URLS)]
+    response["ws_base"] = get_url_base(request.headers["Origin"], ws_server)
     return JsonResponse(response, status=200)
 
 
@@ -969,10 +1004,10 @@ def add_images_to_doc(request):
             image.uploader = doc.owner
             f = open(
                 os.path.join(
-                    settings.PROJECT_PATH, "base/static/img/error.png"
+                    settings.PROJECT_PATH, "base/static/img/error.avif"
                 )
             )
-            image.image.save("error.png", File(f))
+            image.image.save("error.avif", File(f))
             image.save()
         doc_image_data["image"] = image
         DocumentImage.objects.create(**doc_image_data)

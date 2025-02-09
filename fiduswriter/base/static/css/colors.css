@@ -1,28 +1,28 @@
 :root {
     --main-text-color: #2c2723;
     --main-background-color: #f2f2f2;
-    --overlay-color: 170, 170, 170, .3;
+    --overlay-color: 170, 170, 170, 0.3;
     --input-focus-background-color: #fbf9d2;
     --input-background-color: #f3f3f3;
-    --wait-active-background-color: 240, 240, 240, .7;
+    --wait-active-background-color: 240, 240, 240, 0.7;
     --wait-active-full-background-color: 240, 240, 240, 1;
-    --highcontrast-overlay-color: 255, 255, 255, .8;
+    --highcontrast-overlay-color: 255, 255, 255, 0.8;
     --highcontrast-background-color: #ffffff;
     --highcontrast-border-color: #e0e0e0;
     --alert-box-shadow-color: 240, 240, 240, 1;
-    --dropup-box-shadow-color: 0, 0, 0, .11;
-    --nagivation-link-text-color: 255, 255, 255, .7;
-    --nagivation-link-active-text-color: 255, 255, 255, 1;
+    --dropup-box-shadow-color: 0, 0, 0, 0.11;
+    --nagivation-link-text-color: #dde7e3;
+    --nagivation-link-active-text-color: #ffffff;
     --tokenfield-color: #555555;
-    --tooltip-background-color: 38, 38, 38, .6;
+    --tooltip-background-color: 38, 38, 38, 0.6;
     --chat-highlight-background-color: #6495ed;
     --info-text-color: #ffffff;
-    --info-background-color: 36, 113, 176, .8;
+    --info-background-color: 36, 113, 176, 0.8;
     --success-text-color: #ffffff;
-    --success-background-color: 109, 164, 147, .8;
+    --success-background-color: 109, 164, 147, 0.8;
     --warning-text-color: #ffffff;
-    --warning-background-color: 221, 208, 63, .8;
-    --warning-border-color: 200, 63, 27, .8;
+    --warning-background-color: 221, 208, 63, 0.8;
+    --warning-border-color: 200, 63, 27, 0.8;
     --error-border-color: #af3515;
     --error-background-color: #cc3f1a;
     --input-error-background-color: #f34141;
@@ -30,7 +30,9 @@
     --pulldown-header-text-color: #ffffff;
     --pulldown-header-background-color: #2c2723;
     --pulldown-separator-color: #f2f2f2;
-    --pulldown-box-shadow-color: 0, 0, 0, .2;
+    --pulldown-box-shadow-color: 0, 0, 0, 0.2;
+    --table-row-background-color: #bfedc1;
+    --menu-cursor-border-color: #63ab0d;
 
     /* Color Schemes (CS) */
 
@@ -57,17 +59,17 @@
     --cs-3-border: #7d331f;
 
     /* light green text */
-    --cs-4-text: #84b4a7;
+    --cs-4-text: #4c6860;
 
     /* white on light green */
     --cs-5-text: #ffffff;
-    --cs-5-background: #84b4a7;
+    --cs-5-background: #4c6860;
     --cs-5-border: #f2f2f2;
     --cs-5-background-hover: #97cdbe;
 
     /* white on dark green */
     --cs-6-text: #ffffff;
-    --cs-6-background: #76a698;
+    --cs-6-background: #5a7e73;
     --cs-6-border: #7d948e;
     --cs-6-background-focus: #8ab5a6;
     --cs-6-background-hover: #96c6b8;
@@ -85,7 +87,7 @@
     /* dark on white-ish background */
     --cs-light-text: #2c2723;
     --cs-light-hover: #000000;
-    --cs-light-text-secondary: #999999;
+    --cs-light-text-secondary: #6e6e6e;
     --cs-light-border: #e0e0e0;
     --cs-light-background: #f9f9f9;
     --cs-light-background-hover: #e0e0e0;
@@ -94,12 +96,15 @@
     /* black on white */
     --cs-white-text: #000000;
     --cs-white-hover: #000000;
+    --cs-white-focus: #000000;
     --cs-white-selected: #000000;
     --cs-white-border: #cccccc;
-    --cs-white-text-secondary: #a8a8a8;
+    --cs-white-header-border: #888888;
+    --cs-white-text-secondary: #727272;
     --cs-white-placeholder-text: #cecece;
     --cs-white-background: #ffffff;
     --cs-white-background-hover: #cccccc;
+    --cs-white-background-focus: #cccccc;
     --cs-white-background-selected: #dddddd;
 
     /* disabled */
@@ -122,13 +127,13 @@
     --part-toc-background-color: #985f99;
 
     /* editor */
-    --editor-track-background-color: 45, 82, 144, .63;
+    --editor-track-background-color: 45, 82, 144, 0.63;
     --editor-track-active-background-color: #788fb4;
     --editor-track-text-color: #ffffff;
     --editor-reviewed: #81f781;
     --editor-text-content-item-background-color: #d3d3d3; /* citations, toc and other content that is a single unit */
     --editor-text-content-item-hover-background-color: #808080;
-    --editor-navigator-background-color: 0, 0, 0, .8;
+    --editor-navigator-background-color: 0, 0, 0, 0.8;
     --editor-navigator-color: #ffffff;
     --editor-navigator-scrollbar-background-color: #181818;
     --editor-navigator-scrollbar-background-color-hover: #0f0f0f;
@@ -140,7 +145,7 @@
     --editor-major-comment-background-color: #f4c9d9;
     --editor-resolved-comment-icon-color: #3c3c3c;
     --editor-major-comment-icon-color: #af3515;
-    --editor-comment-resolved-opacity: .7;
+    --editor-comment-resolved-opacity: 0.7;
     --editor-comment-resolved-text-color: #ffffff;
     --editor-comment-resolved-border-color: #ffffff;
 
@@ -151,5 +156,5 @@
     --feedback-text-color: #d3421c;
     --feedback-icon-color: #555555;
     --feedback-icon-hover-color: #999999;
+    --feedback-icon-focus-color: #999999;
 }
-

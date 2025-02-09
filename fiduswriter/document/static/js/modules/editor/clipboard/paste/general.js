@@ -1,6 +1,5 @@
 // General Fallback handler for paste
 export class GeneralPasteHandler {
-
     constructor(editor, htmlDoc, pmType) {
         this.editor = editor
         this.htmlDoc = htmlDoc
@@ -21,18 +20,19 @@ export class GeneralPasteHandler {
     }
 
     // Remove unused content
-    cleanDOM() {
-    }
+    cleanDOM() {}
 
     // Iterate over pasted nodes and their children
     iterateNode(node) {
-        if (node.tagName === "P" & ! node.firstChild) {
+        if ((node.tagName === "P") & !node.firstChild) {
             node.parentNode.removeChild(node)
             return
-        } else if (node.nodeType === 8) { // comment node
+        } else if (node.nodeType === 8) {
+            // comment node
             node.parentNode.removeChild(node)
             return
-        } else if (node.nodeType === 1) { // element node
+        } else if (node.nodeType === 1) {
+            // element node
             let childNode = node.firstChild
             while (childNode) {
                 const nextChildNode = childNode.nextSibling
@@ -45,7 +45,10 @@ export class GeneralPasteHandler {
 
     // Convert an existing node to a different node, if needed.
     convertNode(node) {
-        if (node.tagName === "TABLE" && node.firstElementChild?.tagName !== "CAPTION") {
+        if (
+            node.tagName === "TABLE" &&
+            node.firstElementChild?.tagName !== "CAPTION"
+        ) {
             const caption = document.createElement("caption")
             caption.innerHTML = "<span class='text'></span>"
             node.insertBefore(caption, node.firstChild)
@@ -56,7 +59,6 @@ export class GeneralPasteHandler {
     // Move footnotes into their markers and turn footnote markers into the
     // required format.
     convertFootnotes() {
-
         this.footnoteMarkers.forEach((fnM, index) => {
             const footnote = this.footnotes[index]
             const newFnM = document.createElement("span")
@@ -75,5 +77,4 @@ export class GeneralPasteHandler {
             }
         })
     }
-
 }

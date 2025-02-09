@@ -1,6 +1,6 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
-import {ContentMenu} from "../../common"
 import {WRITE_ROLES} from "../"
+import {ContentMenu} from "../../common"
 
 const key = new PluginKey("table")
 
@@ -11,11 +11,16 @@ class TableView {
         this.getPos = getPos
         this.options = options
         this.dom = document.createElement("div")
-        this.dom.classList.add(`table-${node.attrs.width}`, `table-${node.attrs.aligned}`, "content-container")
+        this.dom.classList.add(
+            `table-${node.attrs.width}`,
+            `table-${node.attrs.aligned}`,
+            "content-container"
+        )
         this.dom.id = node.attrs.id
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add("content-menu-btn")
-        this.menuButton.innerHTML = "<span class=\"dot-menu-icon\"><i class=\"fa fa-ellipsis-v\"></i></span>"
+        this.menuButton.innerHTML =
+            '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
         this.dom.appendChild(this.menuButton)
         const dom = document.createElement("table")
         if (node.attrs.track.length) {
@@ -36,7 +41,10 @@ class TableView {
 
     stopEvent(event) {
         let stopped = false
-        if (event.type === "mousedown" && event.composedPath().includes(this.menuButton)) {
+        if (
+            event.type === "mousedown" &&
+            event.composedPath().includes(this.menuButton)
+        ) {
             stopped = true
             if (!isSelectedTableClicked(this.view.state, this.getPos())) {
                 const tr = this.view.state.tr
@@ -48,7 +56,10 @@ class TableView {
                 menu: this.options.editor.menu.tableMenuModel,
                 width: 280,
                 page: this.options.editor,
-                menuPos: {X: parseInt(event.pageX) + 20, Y: parseInt(event.pageY) - 100},
+                menuPos: {
+                    X: Number.parseInt(event.pageX) + 20,
+                    Y: Number.parseInt(event.pageY) - 100
+                },
                 onClose: () => {
                     this.view.focus()
                 }
@@ -57,7 +68,6 @@ class TableView {
         }
         return stopped
     }
-
 }
 
 class TableCaptionView {
@@ -68,36 +78,46 @@ class TableCaptionView {
         this.options = options
 
         this.dom = document.createElement("caption")
-        this.dom.innerHTML = "<span class=\"text\"></span>"
+        this.dom.innerHTML = '<span class="text"></span>'
         this.contentDOM = this.dom.lastElementChild
     }
 }
 
 const isSelectedTableClicked = (state, $pos) => {
     const pathArr = state.selection.$head.path
-    for (let i = 0; i < pathArr.length ; i++) {
-        if (pathArr[i].type && pathArr[i].type.name && pathArr[i].type.name === "table" && pathArr[i - 1] === $pos) {
+    for (let i = 0; i < pathArr.length; i++) {
+        if (
+            pathArr[i].type &&
+            pathArr[i].type.name &&
+            pathArr[i].type.name === "table" &&
+            pathArr[i - 1] === $pos
+        ) {
             return true
         }
     }
     return false
 }
 
-export const tablePlugin = function(options) {
-    return new Plugin({
+export const tablePlugin = options =>
+    new Plugin({
         key,
         state: {
             init(_config, _state) {
-                if (WRITE_ROLES.includes(options.editor.docInfo.access_rights)) {
-                    this.spec.props.nodeViews["table"] =
-                        (node, view, getPos) => new TableView(node, view, getPos, options)
+                if (
+                    WRITE_ROLES.includes(options.editor.docInfo.access_rights)
+                ) {
+                    this.spec.props.nodeViews["table"] = (node, view, getPos) =>
+                        new TableView(node, view, getPos, options)
                 }
-                this.spec.props.nodeViews["table_caption"] =
-                    (node, view, getPos) => new TableCaptionView(node, view, getPos, options)
+                this.spec.props.nodeViews["table_caption"] = (
+                    node,
+                    view,
+                    getPos
+                ) => new TableCaptionView(node, view, getPos, options)
 
                 return {}
             },
-            apply(tr, prev) {
+            apply(_tr, prev) {
                 return prev
             }
         },
@@ -105,4 +125,3 @@ export const tablePlugin = function(options) {
             nodeViews: {}
         }
     })
-}

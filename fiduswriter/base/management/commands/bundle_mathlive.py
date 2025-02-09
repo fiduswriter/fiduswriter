@@ -3,6 +3,8 @@ import zipfile
 import os
 import shutil
 import magic
+import hashlib
+import json
 
 from django.conf import settings
 
@@ -56,8 +58,73 @@ class Command(BaseCommand):
         "with EPUB and HTML exports"
     )
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--force",
+            action="store_true",
+            dest="force",
+            default=False,
+            help="Whether to force the creation of the bundle even if the "
+            "content has not changed",
+        )
+
     def handle(self, *args, **options):
         self.stdout.write("Bundling MathLive")
+
+        # Calculate hash of source files
+        current_hash = self.calculate_source_hash()
+
+        # Check if the hash has changed
+        if options["force"] or self.has_content_changed(current_hash):
+            self.create_bundle()
+            self.save_hash(current_hash)
+            self.stdout.write("MathLive bundle updated.")
+        else:
+            self.stdout.write("MathLive bundle is up to date. Skipping.")
+
+    def calculate_source_hash(self):
+        # Calculate hash of MathLive CSS and font files
+        hasher = hashlib.md5()
+
+        # Hash MathLive CSS
+        css_path = os.path.join(
+            settings.PROJECT_PATH,
+            ".transpile/node_modules/mathlive/dist/mathlive-static.css",
+        )
+        with open(css_path, "rb") as f:
+            hasher.update(f.read())
+
+        # Hash font files
+        fonts_path = os.path.join(
+            settings.PROJECT_PATH,
+            ".transpile/node_modules/mathlive/dist/fonts/",
+        )
+        for filename in os.listdir(fonts_path):
+            if filename[0] == ".":
+                continue
+            with open(os.path.join(fonts_path, filename), "rb") as f:
+                hasher.update(f.read())
+
+        return hasher.hexdigest()
+
+    def has_content_changed(self, current_hash):
+        cache_file = os.path.join(
+            settings.PROJECT_PATH, ".mathlive_bundle_cache.json"
+        )
+        if os.path.exists(cache_file):
+            with open(cache_file, "r") as f:
+                cached_data = json.load(f)
+                return cached_data.get("hash") != current_hash
+        return True
+
+    def save_hash(self, current_hash):
+        cache_file = os.path.join(
+            settings.PROJECT_PATH, ".mathlive_bundle_cache.json"
+        )
+        with open(cache_file, "w") as f:
+            json.dump({"hash": current_hash}, f)
+
+    def create_bundle(self):
         # Copy MathLive CSS
         mathlive_css_path = os.path.join(
             settings.PROJECT_PATH, "static-libs/css/libs/mathlive/"

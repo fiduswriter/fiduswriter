@@ -1,11 +1,14 @@
 import time
+import sys
 import multiprocessing
+from tempfile import mkdtemp
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
-from document.ws_views import WebSocket
+from document.consumers import WebsocketConsumer
 from django.conf import settings
 import os
 from selenium.webdriver.common.action_chains import ActionChains
@@ -13,7 +16,7 @@ from selenium.webdriver.common.keys import Keys
 from document.models import AccessRight
 
 
-class OfflineTests(LiveTornadoTestCase, EditorHelper):
+class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which two browsers collaborate and the connection is interrupted.
     """
@@ -47,6 +50,13 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
         self.doc = self.create_new_document()
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 2)
 
     def test_simple(self):
         """
@@ -58,7 +68,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -66,12 +76,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -106,13 +116,13 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         """
 
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -120,12 +130,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -150,7 +160,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
             self.get_contents(self.driver2), self.get_contents(self.driver)
         )
 
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
     def test_tracking_local_changes(self):
         """
@@ -164,7 +174,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -172,7 +182,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 sets local tracking limit that will be reached
         self.driver2.execute_script(
@@ -189,7 +199,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -240,7 +250,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -248,7 +258,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 sets remote tracking limit that will be reached
         self.driver2.execute_script(
@@ -267,7 +277,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -316,13 +326,13 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         """
 
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -330,7 +340,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 sets tracking limit
         self.driver2.execute_script(
@@ -340,7 +350,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -379,7 +389,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
         self.assertEqual(len(change_tracking_boxes), 1)
 
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
     def test_failed_authentication(self):
         """
@@ -393,7 +403,7 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -401,12 +411,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -440,13 +450,13 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         Because of this conflict, the merge window opens up.
         """
         # The history length stored by the server is shortened from 1000 to 1.
-        WebSocket.history_length = 1
+        WebsocketConsumer.history_length = 1
 
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -454,12 +464,12 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Start writing text in the middle to cause conflict
         # when online user deletes data.
@@ -492,10 +502,10 @@ class OfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
         # Change the websocket history length back to its original value
-        WebSocket.history_length = 1000
+        WebsocketConsumer.history_length = 1000
 
 
-class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
+class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which one user works offline. The Service Worker is
     also installed in these tests.
@@ -512,7 +522,8 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_data = cls.get_drivers(1)
+        cls.download_dir = mkdtemp()
+        driver_data = cls.get_drivers(1, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.client = driver_data["clients"][0]
         cls.wait_time = driver_data["wait_time"]
@@ -529,7 +540,10 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.doc = self.create_new_document()
 
     def tearDown(self):
-        self.leave_site(self.driver)
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_service_workers(self):
         """
@@ -540,7 +554,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         self.type_text(self.driver, self.TEST_TEXT)
 
@@ -604,7 +618,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         caption = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "div.article-body figure figcaption")
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
 
@@ -630,12 +644,12 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
             "//span[contains(@title,'Export the document to an HTML file.')]",
         ).click()
 
-        # Check that the alert box is displayed.
-        alert_element = WebDriverWait(self.driver, self.wait_time).until(
-            EC.visibility_of_element_located((By.CLASS_NAME, "alerts-info"))
-        )
-        self.assertEqual(alert_element.is_displayed(), True)
-        time.sleep(1)
+        # Check that the file has downloaded.
+        path = os.path.join(self.download_dir, "my-title.html.zip")
+        self.wait_until_file_exists(path, self.wait_time)
+        assert os.path.isfile(path)
+        os.remove(path)
+
         # Check the same for PDF export too !
         # Click on the file menu
         self.driver.find_element(
@@ -670,7 +684,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.driver.execute_script("window.theApp.page.ws.goOffline()")
         self.driver.execute_script("window.theApp.ws.goOffline()")
 
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Type some text
         self.type_text(self.driver, self.TEST_TEXT)
@@ -828,7 +842,7 @@ class FunctionalOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(alert_element.is_displayed(), True)
 
 
-class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
+class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     """
     Tests in which one user works offline. During which the
     access rights of the user has been modified/deleted.
@@ -872,8 +886,10 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         )
 
     def tearDown(self):
-        self.leave_site(self.driver)
-        self.leave_site(self.driver2)
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_access_rights_deletion(self):
         """
@@ -887,7 +903,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -895,12 +911,12 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
@@ -917,7 +933,6 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # driver 2 goes online
         self.driver2.execute_script("window.theApp.page.ws.goOnline()")
-
         # Check that dialog is displayed
         element = WebDriverWait(self.driver2, self.wait_time).until(
             EC.visibility_of_element_located(
@@ -945,7 +960,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
 
         # Add some test text
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         self.type_text(self.driver, self.TEST_TEXT)
 
@@ -967,7 +982,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.assertEqual(alert_element.is_displayed(), True)
 
         # Write some test text wuith user2
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")
         self.type_text(self.driver2, self.TEST_TEXT)
@@ -1002,7 +1017,7 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         self.load_document_editor(self.driver2, self.doc)
 
         self.add_title(self.driver)
-        self.driver.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver.find_element(By.CLASS_NAME, "doc-body").click()
 
         p1 = multiprocessing.Process(
             target=self.type_text, args=(self.driver, self.TEST_TEXT)
@@ -1010,12 +1025,12 @@ class AccessRightsOfflineTests(LiveTornadoTestCase, EditorHelper):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 34)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # driver 2 goes offline
         self.driver2.execute_script("window.theApp.page.ws.goOffline()")
 
-        self.driver2.find_element(By.CLASS_NAME, "article-body").click()
+        self.driver2.find_element(By.CLASS_NAME, "doc-body").click()
 
         # Total: 25
         self.driver2.execute_script("window.testCaret.setSelection(25,25)")

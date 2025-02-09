@@ -1,5 +1,5 @@
 /** Same functionality as objToNode/nodeToObj in diffDOM.js, but also offers output in XHTML format (obj2Node) and without form support. */
-export const obj2Node = function(obj, docType) {
+export const obj2Node = (obj, docType) => {
     let parser
     if (obj === undefined) {
         return false
@@ -18,7 +18,10 @@ export const obj2Node = function(obj, docType) {
             node = parser.createComment(obj.co)
         } else {
             if (obj.nn === "svg" || insideSvg) {
-                node = parser.createElementNS("http://www.w3.org/2000/svg", obj.nn)
+                node = parser.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    obj.nn
+                )
                 insideSvg = true
             } else if (obj.nn === "script") {
                 // Do not allow scripts
@@ -42,7 +45,7 @@ export const obj2Node = function(obj, docType) {
     return inner(obj)
 }
 
-export const node2Obj = function(node) {
+export const node2Obj = node => {
     const obj = {}
 
     if (node.nodeType === 3) {

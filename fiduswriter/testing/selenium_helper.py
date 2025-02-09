@@ -2,19 +2,31 @@ from builtins import object
 import re
 import os
 import time
+from urllib3.exceptions import MaxRetryError
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromiumService
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
+from django.test import Client
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SeleniumHelper(object):
     """
     Methods for manipulating django and the browser for testing purposes.
     """
+
+    login_page = "/"
 
     def find_urls(self, string):
         return re.findall(
@@ -49,9 +61,14 @@ class SeleniumHelper(object):
     def login_user(self, user, driver, client):
         client.force_login(user=user)
         cookie = client.cookies["sessionid"]
+        # output the cookie to the console for debugging
+        logger.debug("cookie: %s" % cookie.value)
         if driver.current_url == "data:,":
             # To set the cookie at the right domain we load the front page.
-            driver.get("%s%s" % (self.live_server_url, "/"))
+            driver.get("%s%s" % (self.live_server_url, self.login_page))
+            WebDriverWait(driver, self.wait_time).until(
+                EC.presence_of_element_located((By.ID, "id-login"))
+            )
         driver.add_cookie(
             {
                 "name": "sessionid",
@@ -59,6 +76,19 @@ class SeleniumHelper(object):
                 "secure": False,
                 "path": "/",
             }
+        )
+
+    def login_user_manually(self, user, driver, passtext="p4ssw0rd"):
+        username = user.username
+        driver.delete_cookie("sessionid")
+        driver.get("%s%s" % (self.live_server_url, "/"))
+        driver.find_element(By.ID, "id-login").send_keys(username)
+        driver.find_element(By.ID, "id-password").send_keys(passtext)
+        driver.find_element(By.ID, "login-submit").click()
+        # Wait until there is an element with the ID user-preferences
+        # which is only present on the dashboard.
+        WebDriverWait(driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "user-preferences"))
         )
 
     def logout_user(self, driver, client):
@@ -84,3 +114,78 @@ class SeleniumHelper(object):
             except ElementClickInterceptedException:
                 count += 1
                 time.sleep(1)
+
+    @classmethod
+    def get_drivers(cls, number, download_dir=False, user_agent=False):
+        # django native clients, to be used for faster login.
+        clients = []
+        for i in range(number):
+            clients.append(Client())
+        drivers = []
+        wait_time = 0
+        options = webdriver.ChromeOptions()
+        options.add_argument("--kiosk-printing")
+        options.add_argument("--safebrowsing-disable-download-protection")
+        options.add_argument("--safebrowsing-disable-extension-blacklist")
+        if download_dir:
+            prefs = {
+                "download.default_directory": download_dir,
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True,
+            }
+            options.add_experimental_option("prefs", prefs)
+        if user_agent:
+            options.add_argument("user-agent={}".format(user_agent))
+        if os.getenv("CI"):
+            options.binary_location = "/usr/bin/google-chrome-stable"
+            options.add_argument("--headless=new")
+            options.add_argument("--disable-gpu")
+            wait_time = 20
+        else:
+            wait_time = 6
+        for i in range(number):
+            driver = webdriver.Chrome(
+                service=ChromiumService(
+                    ChromeDriverManager(
+                        chrome_type=ChromeType.GOOGLE
+                    ).install()
+                ),
+                options=options,
+            )
+            drivers.append(driver)
+        for driver in drivers:
+            # Set sizes of browsers so that all buttons are visible.
+            driver.set_window_position(0, 0)
+            driver.set_window_size(1920, 1080)
+        cls.drivers = drivers
+        return {"clients": clients, "drivers": drivers, "wait_time": wait_time}
+
+    def tearDown(self):
+        # Source: https://stackoverflow.com/a/39606065
+        result = self._outcome.result
+        ok = all(
+            test != self for test, text in result.errors + result.failures
+        )
+        if ok:
+            for driver in self.drivers:
+                self.leave_site(driver)
+        else:
+            if not os.path.exists("screenshots"):
+                os.makedirs("screenshots")
+            for id, driver in enumerate(self.drivers, start=1):
+                screenshotfile = (
+                    f"screenshots/driver{id}-{self._testMethodName}.png"
+                )
+                logger.info(f"Saving {screenshotfile}")
+                driver.save_screenshot(screenshotfile)
+                self.leave_site(driver)
+        return super().tearDown()
+
+    def leave_site(self, driver):
+        try:
+            driver.execute_script(
+                "if (window.theApp) {window.theApp.page = null;}"
+            )
+            driver.get("data:,")
+        except MaxRetryError:
+            pass

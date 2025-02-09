@@ -1,6 +1,15 @@
-import {enquote, literal, sup, sub, smallcaps, url, variable, text} from "./common"
-import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
+import {marks} from "prosemirror-schema-basic"
+import {
+    url,
+    enquote,
+    literal,
+    smallcaps,
+    sub,
+    sup,
+    text,
+    variable
+} from "./common"
 
 const doc = {
     content: "literal"

@@ -13,7 +13,7 @@ authors = [
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
-  "Framework :: Django :: 4.1",
+  "Framework :: Django :: 5.1",
   "License :: OSI Approved :: GNU Affero General Public License v3",
   "Programming Language :: Python :: 3",
   "Topic :: Scientific/Engineering",
@@ -31,14 +31,15 @@ homepage = "https://www.fiduswriter.org"
 repository = "https://www.github.com/fiduswriter/fiduswriter"
 
 [project.optional-dependencies]
-books = ["fiduswriter-books ~= 3.11.4"]
-citation-api-import = ["fiduswriter-citation-api-import ~= 3.11.4"]
-languagetool = ["fiduswriter-languagetool ~= 3.11.2"]
-ojs = ["fiduswriter-ojs ~= 3.11.4"]
-phplist = ["fiduswriter-phplist ~= 3.11.5"]
-gitrepo-export = ["fiduswriter-gitrepo-export ~= 3.11.4"]
-payment-paddle = ["fiduswriter-payment-paddle ~= 3.11.3"]
-website = ["fiduswriter-website ~= 3.11.4"]
+books = ["fiduswriter-books ~= >= 4.0.0rc1, ~= 4.0.0"]
+citation-api-import = ["fiduswriter-citation-api-import ~= >= 4.0.0rc1, ~= 4.0.0"]
+languagetool = ["fiduswriter-languagetool >= 4.0.0rc1, ~= 4.0.0"]
+ojs = ["fiduswriter-ojs >= 4.0.0rc1, ~= 4.0.0"]
+pandoc = ["fiduswriter-pandoc >= 4.0.0rc1, ~= 4.0.0"]
+phplist = ["fiduswriter-phplist >= 4.0.0rc1, ~= 4.0.0"]
+gitrepo-export = ["fiduswriter-gitrepo-export >= 4.0.0rc1, ~= 4.0.0"]
+payment-paddle = ["fiduswriter-payment-paddle >= 4.0.0rc1, ~= 4.0.0"]
+website = ["fiduswriter-website >= 4.0.0rc1, ~= 4.0.0"]
 mysql = ["mysqlclient"]
 postgresql = ["psycopg2"]
 

@@ -7,7 +7,7 @@ export class ModCitations {
         editor.mod.citations = this
         this.editor = editor
         this.citationType = ""
-        this.fnOverrideElement =  false
+        this.fnOverrideElement = false
     }
 
     init() {
@@ -18,21 +18,27 @@ export class ModCitations {
          */
         document.body.insertAdjacentHTML(
             "beforeend",
-            "<style type=\"text/css\" id=\"footnote-numbering-override\"></style>"
+            '<style type="text/css" id="footnote-numbering-override"></style>'
         )
-        this.fnOverrideElement = document.getElementById("footnote-numbering-override")
+        this.fnOverrideElement = document.getElementById(
+            "footnote-numbering-override"
+        )
     }
 
     resetCitations() {
-        const citations = document.querySelectorAll("#paper-editable span.citation")
-        citations.forEach(citation => citation.innerHTML = "")
-        const articleBibliography = document.querySelector(".article-bibliography")
-        const citationsContainer = document.getElementById("citation-footnote-box-container")
-        if (!articleBibliography || !citationsContainer) {
+        const citations = document.querySelectorAll(
+            "#paper-editable span.citation"
+        )
+        citations.forEach(citation => (citation.innerHTML = ""))
+        const docBibliography = document.querySelector(".doc-bibliography")
+        const citationsContainer = document.getElementById(
+            "citation-footnote-box-container"
+        )
+        if (!docBibliography || !citationsContainer) {
             return
         }
-        if (articleBibliography.innerHTML !== "") {
-            articleBibliography.innerHTML = ""
+        if (docBibliography.innerHTML !== "") {
+            docBibliography.innerHTML = ""
         }
         if (citationsContainer.innerHTML !== "") {
             citationsContainer.innerHTML = ""
@@ -45,10 +51,14 @@ export class ModCitations {
             // bibliography hasn't been loaded yet
             return
         }
-        const emptyCitations = document.querySelectorAll("#paper-editable span.citation:empty")
+        const emptyCitations = document.querySelectorAll(
+            "#paper-editable span.citation:empty"
+        )
         if (emptyCitations.length) {
-            const settings = this.editor.view.state.doc.firstChild.attrs,
-                bibliographyHeader = settings.bibliography_header[settings.language] || BIBLIOGRAPHY_HEADERS[settings.language]
+            const settings = this.editor.view.state.doc.attrs,
+                bibliographyHeader =
+                    settings.bibliography_header[settings.language] ||
+                    BIBLIOGRAPHY_HEADERS[settings.language]
             this.citRenderer = new RenderCitations(
                 document.getElementById("paper-editable"),
                 settings.citationstyle,
@@ -56,32 +66,32 @@ export class ModCitations {
                 this.editor.mod.db.bibDB,
                 this.editor.app.csl
             )
-            this.citRenderer.init().then(
-                () => this.layoutCitationsTwo()
-            )
-
+            this.citRenderer.init().then(() => this.layoutCitationsTwo())
         }
-
     }
 
     bindBibliographyClicks() {
         document.querySelectorAll("div.csl-entry").forEach((el, index) => {
             el.addEventListener("click", () => {
-                const eID = parseInt(this.citRenderer.fm.bibliography[0].entry_ids[index][0])
-                this.checkTrackingDialog().then(
-                    () => import("../../bibliography/form")
-                ).then(
-                    ({BibEntryForm}) => {
-                        const form = new BibEntryForm(this.editor.mod.db.bibDB, false, eID)
-                        form.init()
-                    }
+                const eID = Number.parseInt(
+                    this.citRenderer.fm.bibliography[0].entry_ids[index][0]
                 )
+                this.checkTrackingDialog()
+                    .then(() => import("../../bibliography/form"))
+                    .then(({BibEntryForm}) => {
+                        const form = new BibEntryForm(
+                            this.editor.mod.db.bibDB,
+                            false,
+                            eID
+                        )
+                        form.init()
+                    })
             })
         })
     }
 
     checkTrackingDialog() {
-        if (!this.editor.view.state.doc.firstChild.attrs.tracked) {
+        if (!this.editor.view.state.doc.attrs.tracked) {
             return Promise.resolve()
         }
         const buttons = [],
@@ -123,15 +133,18 @@ export class ModCitations {
         }
         this.citationType = citRenderer.fm.citationType
         // Add the rendered html and css of the bibliography to the DOM.
-        const articleBibliography = document.querySelector(".article-bibliography")
-        if (!articleBibliography) {
+        const docBibliography = document.querySelector(".doc-bibliography")
+        if (!docBibliography) {
             return
         }
-        articleBibliography.innerHTML = citRenderer.fm.bibHTML
-        let styleEl = document.querySelector(".article-bibliography-style")
+        docBibliography.innerHTML = citRenderer.fm.bibHTML
+        let styleEl = document.querySelector(".doc-bibliography-style")
         if (!styleEl) {
-            document.body.insertAdjacentHTML("beforeend", "<style type=\"text/css\" class=\"article-bibliography-style\"></style>")
-            styleEl = document.querySelector(".article-bibliography-style")
+            document.body.insertAdjacentHTML(
+                "beforeend",
+                '<style type="text/css" class="doc-bibliography-style"></style>'
+            )
+            styleEl = document.querySelector(".doc-bibliography-style")
         }
         let css = citRenderer.fm.bibCSS
         if (this.editor.docInfo.access_rights === "write") {
@@ -148,39 +161,49 @@ export class ModCitations {
             styleEl.innerHTML = css
         }
 
-        const citationsContainer = document.getElementById("citation-footnote-box-container")
+        const citationsContainer = document.getElementById(
+            "citation-footnote-box-container"
+        )
         if (this.citationType === "note") {
-
             // Check if there is an empty citation in the main body text (not footnotes)
             const emptyCitations = document.querySelector("span.citation:empty")
 
             if (emptyCitations) {
                 // Find all the citations in the main body text (not footnotes)
-                const citationNodes = document.querySelectorAll("#document-editable span.citation"),
-                    citationsHTML = citRenderer.fm.citationTexts.slice(0, citationNodes.length).map(
-                        citText => `<div class="footnote-citation">${citText}</div>`
-                    ).join("")
+                const citationNodes = document.querySelectorAll(
+                        "#document-editable span.citation"
+                    ),
+                    citationsHTML = citRenderer.fm.citationTexts
+                        .slice(0, citationNodes.length)
+                        .map(
+                            citText =>
+                                `<div class="footnote-citation">${citText}</div>`
+                        )
+                        .join("")
                 if (citationsContainer.innerHTML !== citationsHTML) {
                     citationsContainer.innerHTML = citationsHTML
                 }
                 // The citations have not been filled, so we do so manually.
-                citationNodes.forEach(citationNode => citationNode.innerHTML = "<span class=\"citation-footnote-marker\"></span>")
-
-                const footnoteCitationNodes = document.querySelectorAll("#footnote-box-container span.citation")
-                const footnoteCitTexts = citRenderer.fm.citationTexts.slice(citationNodes.length)
-
-                footnoteCitTexts.forEach(
-                    (citText, index) => {
-                        const citationNode = footnoteCitationNodes[index]
-                        if (citationNode) {
-                            citationNode.innerHTML = citText
-                        }
-
-                    }
+                citationNodes.forEach(
+                    citationNode =>
+                        (citationNode.innerHTML =
+                            '<span class="citation-footnote-marker"></span>')
                 )
 
-            }
+                const footnoteCitationNodes = document.querySelectorAll(
+                    "#footnote-box-container span.citation"
+                )
+                const footnoteCitTexts = citRenderer.fm.citationTexts.slice(
+                    citationNodes.length
+                )
 
+                footnoteCitTexts.forEach((citText, index) => {
+                    const citationNode = footnoteCitationNodes[index]
+                    if (citationNode) {
+                        citationNode.innerHTML = citText
+                    }
+                })
+            }
         } else {
             if (citationsContainer.innerHTML !== "") {
                 citationsContainer.innerHTML = ""
@@ -207,7 +230,11 @@ export class ModCitations {
                 footnoteCounter = 1
 
             this.editor.view.state.doc.descendants(node => {
-                if (node.isInline && (node.type.name === "footnote" || node.type.name === "citation")) {
+                if (
+                    node.isInline &&
+                    (node.type.name === "footnote" ||
+                        node.type.name === "citation")
+                ) {
                     if (node.type.name === "footnote") {
                         outputCSS += `#footnote-box-container .footnote-container:nth-of-type(${editorFootnoteCounter}) > *:first-child::before {
                              content: "${footnoteCounter} ";
@@ -222,14 +249,10 @@ export class ModCitations {
                     footnoteCounter++
                 }
             })
-
-
         }
 
         if (this.fnOverrideElement.innerHTML !== outputCSS) {
             this.fnOverrideElement.innerHTML = outputCSS
         }
-
     }
-
 }

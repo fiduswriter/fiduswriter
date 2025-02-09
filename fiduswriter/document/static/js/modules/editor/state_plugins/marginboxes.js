@@ -1,8 +1,8 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
 const key = new PluginKey("marginboxes")
-export const marginboxesPlugin = function(options) {
-    return new Plugin({
+export const marginboxesPlugin = options =>
+    new Plugin({
         key,
         view(_editorState) {
             return {
@@ -12,4 +12,3 @@ export const marginboxesPlugin = function(options) {
             }
         }
     })
-}

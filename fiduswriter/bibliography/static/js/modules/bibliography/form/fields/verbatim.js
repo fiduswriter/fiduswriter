@@ -18,5 +18,4 @@ export class VerbatimFieldForm {
     check() {
         return true
     }
-
 }

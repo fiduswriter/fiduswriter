@@ -4,16 +4,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
-from testing.testcases import LiveTornadoTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 
-class AdminTest(LiveTornadoTestCase, SeleniumHelper):
+class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.base_url = cls.live_server_url
-        cls.base_admin_url = urljoin(cls.base_url, "/admin/")
         driver_data = cls.get_drivers(2)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
@@ -39,6 +37,8 @@ class AdminTest(LiveTornadoTestCase, SeleniumHelper):
         self.user1 = self.create_user(
             username="User1", email="user1@user.com", passtext="password"
         )
+        self.base_url = self.live_server_url
+        self.base_admin_url = urljoin(self.live_server_url, "/admin/")
 
     def test_system_message(self):
         self.login_user(self.user1, self.driver, self.client)

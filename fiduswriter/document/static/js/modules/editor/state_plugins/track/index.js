@@ -1,6 +1,4 @@
-export {
-    trackPlugin
-} from "./plugin"
+export {trackPlugin} from "./plugin"
 export {
     getSelectedChanges,
     setSelectedChanges,

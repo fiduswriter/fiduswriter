@@ -1,26 +1,37 @@
-import {DataTable} from "simple-datatables"
 import deepEqual from "fast-deep-equal"
+import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
 import * as plugins from "../../../plugins/documents_overview"
-import {DocumentOverviewActions} from "./actions"
-import {DocumentAccessRightsDialog} from "../access_rights"
-import {menuModel, bulkMenuModel} from "./menu"
-import {activateWait, deactivateWait, addAlert, escapeText, postJson, OverviewMenuView, findTarget, whenReady, baseBodyTemplate, ensureCSS, setDocTitle, DatatableBulk, shortFileTitle, Dialog, avatarTemplate} from "../../common"
-import {SiteMenu} from "../../menu"
+import {
+    DatatableBulk,
+    Dialog,
+    OverviewMenuView,
+    activateWait,
+    addAlert,
+    avatarTemplate,
+    baseBodyTemplate,
+    deactivateWait,
+    ensureCSS,
+    escapeText,
+    findTarget,
+    postJson,
+    setDocTitle,
+    shortFileTitle,
+    whenReady
+} from "../../common"
 import {FeedbackTab} from "../../feedback"
-import {
-    docSchema
-} from "../../schema/document"
-import {
-    dateCell,
-    deleteFolderCell
-} from "./templates"
+import {SiteMenu} from "../../menu"
+import {docSchema} from "../../schema/document"
+import {DocumentAccessRightsDialog} from "../access_rights"
+import {DocumentOverviewActions} from "./actions"
+import {bulkMenuModel, menuModel} from "./menu"
+import {dateCell, deleteFolderCell} from "./templates"
 
 /*
-* Helper functions for the document overview page.
-*/
+ * Helper functions for the document overview page.
+ */
 
 export class DocumentOverview {
-
     constructor({app, user}, path = "/") {
         this.app = app
         this.user = user
@@ -43,9 +54,7 @@ export class DocumentOverview {
             this.dtBulkModel = bulkMenuModel()
             this.activateFidusPlugins()
             this.bind()
-            return this.getDocumentListData().then(
-                () => deactivateWait()
-            )
+            return this.getDocumentListData().then(() => deactivateWait())
         })
     }
 
@@ -73,96 +82,110 @@ export class DocumentOverview {
             const el = {}
             let docId
             switch (true) {
-            case findTarget(event, ".revisions", el):
-                if (this.app.isOffline()) {
-                    addAlert("info", gettext("You cannot access revisions of a document while you are offline."))
-                } else {
-                    docId = parseInt(el.target.dataset.id)
-                    this.mod.actions.revisionsDialog(docId)
+                case findTarget(event, ".revisions", el): {
+                    docId = Number.parseInt(el.target.dataset.id)
+                    this.mod.actions.revisionsDialog(docId, this.app)
+                    break
                 }
-                break
-            case findTarget(event, ".delete-document", el):
-                if (this.app.isOffline()) {
-                    addAlert("info", gettext("You cannot delete a document while you are offline."))
-                } else {
-                    docId = parseInt(el.target.dataset.id)
-                    this.mod.actions.deleteDocumentDialog([docId])
+                case findTarget(event, ".delete-document", el):
+                    docId = Number.parseInt(el.target.dataset.id)
+                    this.mod.actions.deleteDocumentDialog([docId], this.app)
+                    break
+                case findTarget(event, ".delete-folder", el): {
+                    const ids = el.target.dataset.ids
+                        .split(",")
+                        .map(id => Number.parseInt(id))
+                    this.mod.actions.deleteDocumentDialog(ids, this.app)
+                    break
                 }
-                break
-            case findTarget(event, ".delete-folder", el):
-                if (this.app.isOffline()) {
-                    addAlert("info", gettext("You cannot delete documents while you are offline."))
-                } else {
-                    const ids = el.target.dataset.ids.split(",").map(id => parseInt(id))
-                    this.mod.actions.deleteDocumentDialog(ids)
+                case findTarget(event, ".owned-by-user.rights", el): {
+                    if (this.app.isOffline()) {
+                        addAlert(
+                            "info",
+                            gettext(
+                                "You cannot access rights data of a document while you are offline."
+                            )
+                        )
+                    } else {
+                        docId = Number.parseInt(el.target.dataset.id)
+                        const dialog = new DocumentAccessRightsDialog(
+                            [docId],
+                            this.contacts,
+                            memberDetails => this.contacts.push(memberDetails)
+                        )
+                        dialog.init()
+                    }
+                    break
                 }
-                break
-            case findTarget(event, ".owned-by-user.rights", el): {
-                if (this.app.isOffline()) {
-                    addAlert("info", gettext("You cannot access rights data of a document while you are offline."))
-                } else {
-                    docId = parseInt(el.target.dataset.id)
-                    const dialog = new DocumentAccessRightsDialog(
-                        [docId],
-                        this.contacts,
-                        memberDetails => this.contacts.push(memberDetails)
-                    )
-                    dialog.init()
-                }
-                break
-            }
-            case findTarget(event, "a.fw-data-table-title.parentdir", el):
-                event.preventDefault()
-                if (this.table.data.length > 1) {
-                    this.path = el.target.dataset.path
-                    window.history.pushState({}, "", el.target.getAttribute("href"))
-                    this.initTable()
-                } else {
-                    const confirmFolderDeletionDialog = new Dialog({
-                        title: gettext("Confirm deletion"),
-                        body: `<p>
+                case findTarget(event, "a.fw-data-table-title.parentdir", el):
+                    event.preventDefault()
+                    if (this.table.data.data.length > 0) {
+                        this.path = el.target.dataset.path
+                        window.history.pushState(
+                            {},
+                            "",
+                            el.target.getAttribute("href")
+                        )
+                        this.initTable()
+                    } else {
+                        const confirmFolderDeletionDialog = new Dialog({
+                            title: gettext("Confirm deletion"),
+                            body: `<p>
                     ${gettext("Leaving an empty folder will delete it. Do you really want to delete this folder?")}
                             </p>`,
-                        id: "confirmfolderdeletion",
-                        icon: "exclamation-triangle",
-                        buttons: [
-                            {
-                                text: gettext("Delete"),
-                                classes: "fw-dark delete-folder",
-                                height: 70,
-                                click: () => {
-                                    confirmFolderDeletionDialog.close()
-                                    this.path = el.target.dataset.path
-                                    window.history.pushState({}, "", el.target.getAttribute("href"))
-                                    this.initTable()
+                            id: "confirmfolderdeletion",
+                            icon: "exclamation-triangle",
+                            buttons: [
+                                {
+                                    text: gettext("Delete"),
+                                    classes: "fw-dark delete-folder",
+                                    height: 70,
+                                    click: () => {
+                                        confirmFolderDeletionDialog.close()
+                                        this.path = el.target.dataset.path
+                                        window.history.pushState(
+                                            {},
+                                            "",
+                                            el.target.getAttribute("href")
+                                        )
+                                        this.initTable()
+                                    }
+                                },
+                                {
+                                    type: "cancel"
                                 }
-                            },
-                            {
-                                type: "cancel"
-                            }
-                        ]
-                    })
+                            ]
+                        })
 
-                    confirmFolderDeletionDialog.open()
-                }
+                        confirmFolderDeletionDialog.open()
+                    }
 
-                break
-            case findTarget(event, "a.fw-data-table-title.subdir", el):
-                event.preventDefault()
-                this.path = el.target.dataset.path
-                window.history.pushState({}, "", el.target.getAttribute("href"))
-                this.initTable()
-                break
-            case findTarget(event, "a.fw-data-table-title", el):
-                event.preventDefault()
-                if (this.app.isOffline()) {
-                    addAlert("info", gettext("You cannot open a document while you are offline."))
-                } else {
-                    this.app.goTo(el.target.getAttribute("href"))
-                }
-                break
-            default:
-                break
+                    break
+                case findTarget(event, "a.fw-data-table-title.subdir", el):
+                    event.preventDefault()
+                    this.path = el.target.dataset.path
+                    window.history.pushState(
+                        {},
+                        "",
+                        el.target.getAttribute("href")
+                    )
+                    this.initTable()
+                    break
+                case findTarget(event, "a.fw-data-table-title", el):
+                    event.preventDefault()
+                    if (this.app.isOffline()) {
+                        addAlert(
+                            "info",
+                            gettext(
+                                "You cannot open a document while you are offline."
+                            )
+                        )
+                    } else {
+                        this.app.goTo(el.target.getAttribute("href"))
+                    }
+                    break
+                default:
+                    break
             }
         })
     }
@@ -184,27 +207,23 @@ export class DocumentOverview {
         if (this.app.isOffline()) {
             return cachedPromise
         }
-        return postJson(
-            "/api/document/documentlist/"
-        ).then(
-            ({json}) => {
+        return postJson("/api/document/documentlist/")
+            .then(({json}) => {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
                         this.updateIndexedDB(json)
                         this.initializeView(json)
                     }
                 })
-            }
-        ).catch(
-            error => {
+            })
+            .catch(error => {
                 if (this.app.isOffline()) {
                     return cachedPromise
                 } else {
                     addAlert("error", gettext("Document data loading failed."))
-                    throw (error)
+                    throw error
                 }
-            }
-        )
+            })
     }
 
     showCached() {
@@ -218,25 +237,24 @@ export class DocumentOverview {
     }
 
     loaddatafromIndexedDB() {
-        return this.app.indexedDB.readAllData("document_data").then(
-            response => {
+        return this.app.indexedDB
+            .readAllData("document_data")
+            .then(response => {
                 if (!response.length) {
                     return false
                 }
                 const data = response[0]
                 delete data.id
                 return data
-            }
-        )
-
+            })
     }
 
     updateIndexedDB(json) {
         json.id = 1
         // Clear data if any present
-        return this.app.indexedDB.clearData("document_data").then(
-            () => this.app.indexedDB.insertData("document_data", [json])
-        )
+        return this.app.indexedDB
+            .clearData("document_data")
+            .then(() => this.app.indexedDB.insertData("document_data", [json]))
     }
 
     initializeView(json) {
@@ -276,7 +294,11 @@ export class DocumentOverview {
     initTable(searching = false) {
         if (this.table) {
             this.table.destroy()
-            this.table = false
+            this.table = null
+        }
+        if (this.dtBulk) {
+            this.dtBulk.destroy()
+            this.dtBulk = null
         }
         const subdirs = {}
         const tableEl = document.createElement("table")
@@ -293,7 +315,7 @@ export class DocumentOverview {
             contentsEl.insertBefore(headerEl, tableEl)
         }
 
-        this.dtBulk = new DatatableBulk(this, this.dtBulkModel)
+        this.dtBulk = new DatatableBulk(this, this.dtBulkModel, 2)
 
         const hiddenCols = [0, 1]
 
@@ -303,45 +325,101 @@ export class DocumentOverview {
                 hiddenCols.push(6)
             }
         }
-        const fileList = this.documentList.map(
-            doc => this.createTableRow(doc, subdirs, searching)
-        ).filter(row => !!row)
+        const fileList = this.documentList
+            .map(doc => this.createTableRow(doc, subdirs, searching))
+            .filter(row => !!row)
 
+        let tableRender = false
         if (!searching && this.path !== "/") {
             const pathParts = this.path.split("/")
             pathParts.pop()
             pathParts.pop()
             const parentPath = pathParts.join("/") + "/"
-            const href = parentPath === "/" && this.app.routes[""].app === "document" ? parentPath : `/documents${encodeURI(parentPath)}`
-            fileList.unshift([
-                "-1",
-                "top",
-                "",
-                `<a class="fw-data-table-title fw-link-text parentdir" href="${href}" data-path="${parentPath}">
-                    <i class="fas fa-folder"></i>
-                    <span>..</span>
-                </a>`,
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-            ])
+            const href =
+                parentPath === "/" && this.app.routes[""].app === "document"
+                    ? parentPath
+                    : `/documents${encodeURI(parentPath)}`
+            tableRender = (_data, table, type) => {
+                if (!["main", "message"].includes(type)) {
+                    return
+                }
+                // Add a row at top of the table to go to parent directory.
+                table.childNodes[1].childNodes.unshift({
+                    nodeName: "TR",
+                    attributes: {
+                        "data-index": "0"
+                    },
+                    childNodes: [
+                        {
+                            nodeName: "TD"
+                        },
+                        {
+                            nodeName: "TD",
+                            childNodes: [
+                                {
+                                    nodeName: "a",
+                                    attributes: {
+                                        class: "fw-data-table-title fw-link-text parentdir",
+                                        href: href,
+                                        "data-path": parentPath
+                                    },
+                                    childNodes: [
+                                        {
+                                            nodeName: "i",
+                                            attributes: {
+                                                class: "fas fa-folder"
+                                            }
+                                        },
+                                        {
+                                            nodeName: "span",
+                                            attributes: {},
+                                            childNodes: [
+                                                {
+                                                    nodeName: "#text",
+                                                    data: ".."
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            nodeName: "TD"
+                        },
+                        {
+                            nodeName: "TD"
+                        },
+                        {
+                            nodeName: "TD"
+                        },
+                        {
+                            nodeName: "TD"
+                        },
+                        {
+                            nodeName: "TD"
+                        },
+                        {
+                            nodeName: "TD"
+                        }
+                    ]
+                })
+            }
         }
-
         this.table = new DataTable(tableEl, {
             searchable: searching,
             paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 200)}px`,
+            tableRender,
+            rowNavigation: true,
+            rowSelectionKeys: ["Enter", "Delete", " "],
+            tabIndex: 1,
             labels: {
                 noRows: gettext("No documents available"), // Message shown when there are no entries
                 noResults: gettext("No documents found") // Message shown when there are no search results
             },
-            layout: {
-                top: "",
-                bottom: ""
-            },
+            template: (options, _dom) =>
+                `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             data: {
                 headings: [
                     "",
@@ -357,7 +435,51 @@ export class DocumentOverview {
                 ],
                 data: fileList
             },
+            rowRender: (row, tr, _index) => {
+                if (row.cells[1].data === "folder") {
+                    tr.childNodes[0].childNodes = []
+                    return
+                }
+                const id = row.cells[0].data
+                const inputNode = {
+                    nodeName: "input",
+                    attributes: {
+                        type: "checkbox",
+                        class: "entry-select fw-check",
+                        "data-id": id,
+                        id: `doc-${id}`
+                    }
+                }
+                if (row.cells[2].data) {
+                    inputNode.attributes.checked = true
+                }
+                tr.childNodes[0].childNodes = [
+                    inputNode,
+                    {
+                        nodeName: "label",
+                        attributes: {
+                            for: `doc-${id}`
+                        }
+                    }
+                ]
+            },
             columns: [
+                {
+                    select: 0,
+                    type: "number"
+                },
+                {
+                    select: 1,
+                    type: "string"
+                },
+                {
+                    select: 2,
+                    type: "boolean"
+                },
+                {
+                    select: [5, 6],
+                    type: "date"
+                },
                 {
                     select: hiddenCols,
                     hidden: true
@@ -372,11 +494,54 @@ export class DocumentOverview {
                 }
             ]
         })
+
+        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
+            event.preventDefault()
+            if (event.type === "keydown") {
+                const key = keyName(event)
+                if (key === "Enter") {
+                    if (this.getSelected().length > 0) {
+                        // Don't open the document. Let the bulk menu handle it.
+                        return
+                    }
+                    const link = this.table.dom.querySelector(
+                        `tr[data-index="${rowIndex}"] a.fw-data-table-title`
+                    )
+                    if (link) {
+                        link.click()
+                    }
+                } else if (key === " ") {
+                    const cell = this.table.data.data[rowIndex].cells[2]
+                    cell.data = !cell.data
+                    cell.text = String(cell.data)
+                    this.table.update()
+                } else if (key === "Delete") {
+                    const cell = this.table.data.data[rowIndex].cells[0]
+                    const docId = cell.data
+                    this.mod.actions.deleteDocumentDialog([docId], this.app)
+                }
+            } else {
+                if (
+                    event.target.closest(
+                        "a, span.fw-link-text, span.delete-document, span.delete-folder, span.rights, span.revisions, label"
+                    )
+                ) {
+                    return
+                }
+                if (!focused) {
+                    this.table.dom.focus()
+                }
+                this.table.rows.setCursor(rowIndex)
+            }
+        })
+
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
 
-        this.dtBulk.init(this.table.table)
+        this.dtBulk.init(this.table)
+
+        this.table.dom.focus()
     }
 
     createTableRow(doc, subdirs, searching) {
@@ -407,7 +572,10 @@ export class DocumentOverview {
                 }
                 if (this.user.id === doc.owner.id) {
                     subdirs[subdir].ownedIds.push(doc.id)
-                    subdirs[subdir].row[9] = deleteFolderCell({subdir, ids: subdirs[subdir].ownedIds})
+                    subdirs[subdir].row[9] = deleteFolderCell({
+                        subdir,
+                        ids: subdirs[subdir].ownedIds
+                    })
                 }
                 return false
             }
@@ -417,7 +585,7 @@ export class DocumentOverview {
             const row = [
                 "0",
                 "folder",
-                "",
+                null,
                 `<a class="fw-data-table-title fw-link-text subdir" href="/documents${encodeURI(this.path + subdir)}/" data-path="${this.path}${subdir}/">
                     <i class="fas fa-folder"></i>
                     <span>${escapeText(subdir)}</span>
@@ -429,7 +597,12 @@ export class DocumentOverview {
                 "",
                 ownedIds.length ? deleteFolderCell({subdir, ids: ownedIds}) : ""
             ]
-            subdirs[subdir] = {row, added: doc.added, updated: doc.updated, ownedIds}
+            subdirs[subdir] = {
+                row,
+                added: doc.added,
+                updated: doc.updated,
+                ownedIds
+            }
             return row
         }
 
@@ -437,18 +610,18 @@ export class DocumentOverview {
         return [
             String(doc.id),
             "file",
-            `<input type="checkbox" class="entry-select fw-check" data-id="${doc.id}" id="doc-${doc.id}"><label for="doc-${doc.id}"></label>`,
+            false,
             `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}">
                 <i class="far fa-file-alt"></i>
                 <span class="fw-searchable">
                     ${shortFileTitle(doc.title, doc.path)}
                 </span>
             </a>`,
-            doc.revisions.length ?
-                `<span class="revisions" data-id="${doc.id}">
+            doc.revisions.length
+                ? `<span class="revisions" data-id="${doc.id}">
                 <i class="fas fa-history"></i>
-            </span>` :
-                "",
+            </span>`
+                : "",
             dateCell({date: doc.added}),
             dateCell({date: doc.updated}),
             `<span>
@@ -461,23 +634,25 @@ export class DocumentOverview {
             `<span class="delete-document fw-link-text" data-id="${doc.id}"
                     data-title="${escapeText(currentPath)}">
                 ${
-    this.user.id === doc.owner.id ?
-        "<i class=\"fa fa-trash-alt\"></i>" :
-        ""
-}
+                    this.user.id === doc.owner.id
+                        ? '<i class="fa fa-trash-alt"></i>'
+                        : ""
+                }
             </span>`
         ]
-
-
     }
 
     multipleNewDocumentMenuItem() {
-        const menuItem = this.menu.model.content.find(menuItem => menuItem.id === "new_document")
+        const menuItem = this.menu.model.content.find(
+            menuItem => menuItem.id === "new_document"
+        )
         menuItem.type = "dropdown"
-        menuItem.content = Object.values(this.documentTemplates).map(docTemplate => ({
-            title: docTemplate.title || gettext("Undefined"),
-            action: () => this.goToNewDocument(`n${docTemplate.id}`)
-        }))
+        menuItem.content = Object.values(this.documentTemplates).map(
+            docTemplate => ({
+                title: docTemplate.title || gettext("Undefined"),
+                action: () => this.goToNewDocument(`n${docTemplate.id}`)
+            })
+        )
         this.menu.update()
 
         if (this.dtBulkModel.content.find(item => item.id === "copy_as")) {
@@ -488,14 +663,17 @@ export class DocumentOverview {
         this.dtBulkModel.content.push({
             id: "copy_as",
             title: gettext("Copy selected as..."),
-            tooltip: gettext("Copy the documents and assign them to a specific template."),
+            tooltip: gettext(
+                "Copy the documents and assign them to a specific template."
+            ),
             action: overview => {
                 const ids = overview.getSelected()
                 if (ids.length) {
                     overview.mod.actions.copyFilesAs(ids)
                 }
             },
-            disabled: overview => !overview.getSelected().length || overview.app.isOffline(),
+            disabled: overview =>
+                !overview.getSelected().length || overview.app.isOffline(),
             order: 2.5
         })
 
@@ -503,7 +681,9 @@ export class DocumentOverview {
     }
 
     singleNewDocumentMenuItem() {
-        const menuItem = this.menu.model.content.find(menuItem => menuItem.id === "new_document")
+        const menuItem = this.menu.model.content.find(
+            menuItem => menuItem.id === "new_document"
+        )
         if (menuItem.type === "text") {
             // Already correctly set
             return
@@ -512,19 +692,34 @@ export class DocumentOverview {
         delete menuItem.content
         this.menu.update()
 
-        this.dtBulkModel.content = this.dtBulkModel.content.filter(item => item.id !== "copy_as")
+        this.dtBulkModel.content = this.dtBulkModel.content.filter(
+            item => item.id !== "copy_as"
+        )
         this.dtBulk.update()
-
     }
 
     getSelected() {
         return Array.from(
             document.querySelectorAll(".entry-select:checked:not(:disabled)")
-        ).map(el => parseInt(el.getAttribute("data-id")))
+        ).map(el => Number.parseInt(el.getAttribute("data-id")))
     }
 
     goToNewDocument(id) {
         this.app.goTo(`/document${this.path}${id}`)
     }
 
+    close() {
+        if (this.table) {
+            this.table.destroy()
+            this.table = null
+        }
+        if (this.dtBulk) {
+            this.dtBulk.destroy()
+            this.dtBulk = null
+        }
+        if (this.menu) {
+            this.menu.destroy()
+            this.menu = null
+        }
+    }
 }

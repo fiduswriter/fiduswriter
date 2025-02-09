@@ -1,36 +1,36 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
-import {BibFieldTitles, BibTypeTitles, BibFieldHelp} from "./strings"
-import {bibDialog} from "./templates"
-import {addAlert, noSpaceTmp, Dialog} from "../../common"
+import {Dialog, addAlert, noSpaceTmp} from "../../common"
+import {nameToText} from "../tools"
 import {CatsForm} from "./cats"
 import {DateFieldForm} from "./fields/date"
-import {LiteralFieldForm} from "./fields/literal"
-import {LiteralLongFieldForm} from "./fields/literal_long"
-import {LiteralListForm} from "./fields/literal_list"
-import {TitleFieldForm} from "./fields/title"
-import {NameListForm} from "./fields/name_list"
-import {RangeListForm} from "./fields/range_list"
-import {URIFieldForm} from "./fields/uri"
-import {VerbatimFieldForm} from "./fields/verbatim"
-import {TagListForm} from "./fields/tag_list"
 import {KeyFieldForm} from "./fields/key"
 import {KeyListForm} from "./fields/key_list"
-import {nameToText} from "../tools"
+import {LiteralFieldForm} from "./fields/literal"
+import {LiteralListForm} from "./fields/literal_list"
+import {LiteralLongFieldForm} from "./fields/literal_long"
+import {NameListForm} from "./fields/name_list"
+import {RangeListForm} from "./fields/range_list"
+import {TagListForm} from "./fields/tag_list"
+import {TitleFieldForm} from "./fields/title"
+import {URIFieldForm} from "./fields/uri"
+import {VerbatimFieldForm} from "./fields/verbatim"
+import {BibFieldHelp, BibFieldTitles, BibTypeTitles} from "./strings"
+import {bibDialog} from "./templates"
 
 const FIELD_FORMS = {
-    "f_date": DateFieldForm,
-    "f_integer": LiteralFieldForm,
-    "f_literal": LiteralFieldForm,
-    "l_literal": LiteralListForm,
-    "f_long_literal": LiteralLongFieldForm,
-    "f_key": KeyFieldForm,
-    "l_key": KeyListForm,
-    "l_name": NameListForm,
-    "l_range": RangeListForm,
-    "l_tag": TagListForm,
-    "f_title": TitleFieldForm,
-    "f_uri": URIFieldForm,
-    "f_verbatim": VerbatimFieldForm
+    f_date: DateFieldForm,
+    f_integer: LiteralFieldForm,
+    f_literal: LiteralFieldForm,
+    l_literal: LiteralListForm,
+    f_long_literal: LiteralLongFieldForm,
+    f_key: KeyFieldForm,
+    l_key: KeyListForm,
+    l_name: NameListForm,
+    l_range: RangeListForm,
+    l_tag: TagListForm,
+    f_title: TitleFieldForm,
+    f_uri: URIFieldForm,
+    f_verbatim: VerbatimFieldForm
 }
 
 export class BibEntryForm {
@@ -45,7 +45,12 @@ export class BibEntryForm {
     init() {
         if (this.app && this.app.isOffline()) {
             // Diable the editing of main user bibliography , since Document bibliography is stored in Editor/Document.
-            addAlert("info", gettext("You are currently offline. Please try again when you are back online."))
+            addAlert(
+                "info",
+                gettext(
+                    "You are currently offline. Please try again when you are back online."
+                )
+            )
             return Promise.resolve()
         }
         if (this.itemId !== false) {
@@ -90,7 +95,7 @@ export class BibEntryForm {
                 id: "bib-dialog",
                 width: 940,
                 body: bibDialog({
-                    "bib_type": this.currentValues.bib_type,
+                    bib_type: this.currentValues.bib_type,
                     BibTypes,
                     BibTypeTitles
                 }),
@@ -102,39 +107,48 @@ export class BibEntryForm {
             // init ui tabs
 
             // Hide all but first tab
-            this.dialog.dialogEl.querySelectorAll("#bib-dialog-tabs .tab-content").forEach((el, index) => {
-                if (index) {
-                    el.style.display = "none"
-                }
-            })
-
-            this.dialog.dialogEl.querySelector("#bib-dialog-tabs .tab-link").classList.add("current-tab")
-
-            // Handle tab link clicking
-            this.dialog.dialogEl.querySelectorAll("#bib-dialog-tabs .tab-link a").forEach(el => el.addEventListener("click", event => {
-                event.preventDefault()
-
-                el.parentNode.parentNode.querySelectorAll(".tab-link.current-tab").forEach(el => el.classList.remove("current-tab"))
-                el.parentNode.classList.add("current-tab")
-
-                const link = el.getAttribute("href")
-                this.dialog.dialogEl.querySelectorAll("#bib-dialog-tabs .tab-content").forEach(el => {
-                    if (el.matches(link)) {
-                        el.style.display = ""
-                    } else {
+            this.dialog.dialogEl
+                .querySelectorAll("#bib-dialog-tabs .tab-content")
+                .forEach((el, index) => {
+                    if (index) {
                         el.style.display = "none"
                     }
                 })
 
-            }))
+            this.dialog.dialogEl
+                .querySelector("#bib-dialog-tabs .tab-link")
+                .classList.add("current-tab")
 
-            document.getElementById("select-bibtype").addEventListener(
-                "change",
-                () => resolve(this.changeBibType())
-            )
+            // Handle tab link clicking
+            this.dialog.dialogEl
+                .querySelectorAll("#bib-dialog-tabs .tab-link a")
+                .forEach(el =>
+                    el.addEventListener("click", event => {
+                        event.preventDefault()
+
+                        el.parentNode.parentNode
+                            .querySelectorAll(".tab-link.current-tab")
+                            .forEach(el => el.classList.remove("current-tab"))
+                        el.parentNode.classList.add("current-tab")
+
+                        const link = el.getAttribute("href")
+                        this.dialog.dialogEl
+                            .querySelectorAll("#bib-dialog-tabs .tab-content")
+                            .forEach(el => {
+                                if (el.matches(link)) {
+                                    el.style.display = ""
+                                } else {
+                                    el.style.display = "none"
+                                }
+                            })
+                    })
+                )
+
+            document
+                .getElementById("select-bibtype")
+                .addEventListener("change", () => resolve(this.changeBibType()))
         })
     }
-
 
     addField(fieldName, dom) {
         const fieldType = BibFieldTypes[fieldName]
@@ -165,7 +179,12 @@ export class BibEntryForm {
         const fieldDOM = dom.lastChild.lastChild
         const FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {
-            const fieldHandler = new FieldClass(fieldDOM, this.currentValues.fields[fieldName], undefined, fieldType)
+            const fieldHandler = new FieldClass(
+                fieldDOM,
+                this.currentValues.fields[fieldName],
+                undefined,
+                fieldType
+            )
             fieldHandler.init()
             this.fields[fieldName] = fieldHandler
         }
@@ -175,26 +194,36 @@ export class BibEntryForm {
         const dialogPromise = this.addDialogToDOM()
         if (this.currentValues.bib_type !== false) {
             const eitherOrFields = document.getElementById("eo-fields")
-            BibTypes[this.currentValues.bib_type].eitheror.forEach(fieldName => {
-                this.addField(fieldName, eitherOrFields)
-            })
+            BibTypes[this.currentValues.bib_type].eitheror.forEach(
+                fieldName => {
+                    this.addField(fieldName, eitherOrFields)
+                }
+            )
             const reqFields = document.getElementById("req-fields")
-            BibTypes[this.currentValues.bib_type].required.forEach(fieldName => {
-                this.addField(fieldName, reqFields)
-            })
+            BibTypes[this.currentValues.bib_type].required.forEach(
+                fieldName => {
+                    this.addField(fieldName, reqFields)
+                }
+            )
             const optFields = document.getElementById("opt-fields")
-            BibTypes[this.currentValues.bib_type].optional.forEach(fieldName => {
-                this.addField(fieldName, optFields)
-            })
+            BibTypes[this.currentValues.bib_type].optional.forEach(
+                fieldName => {
+                    this.addField(fieldName, optFields)
+                }
+            )
             const catsField = document.getElementById("categories-field")
-            this.catsForm = new CatsForm(catsField, this.currentValues.cats, this.bibDB.cats)
+            this.catsForm = new CatsForm(
+                catsField,
+                this.currentValues.cats,
+                this.bibDB.cats
+            )
             this.catsForm.init()
 
             if (!this.bibDB.cats.length) {
                 // There are no ctaegories to select from, so remove the categories tab.
-                document.querySelectorAll("#categories-tab, #categories-link").forEach(
-                    el => el.parentElement.removeChild(el)
-                )
+                document
+                    .querySelectorAll("#categories-tab, #categories-link")
+                    .forEach(el => el.parentElement.removeChild(el))
             }
         }
         return dialogPromise
@@ -218,12 +247,20 @@ export class BibEntryForm {
         // key so far.
         let entryKey = ""
         if (bibItem.fields.author) {
-            entryKey += nameToText(bibItem.fields.author).replace(/\s|,|=|;|:|{|}/g, "")
+            entryKey += nameToText(bibItem.fields.author).replace(
+                /\s|,|=|;|:|{|}/g,
+                ""
+            )
         } else if (bibItem.fields.editor) {
-            entryKey += nameToText(bibItem.fields.editor).replace(/\s|,|=|;|:|{|}/g, "")
+            entryKey += nameToText(bibItem.fields.editor).replace(
+                /\s|,|=|;|:|{|}/g,
+                ""
+            )
         }
         if (bibItem.fields.date) {
-            entryKey += bibItem.fields.date.split("/")[0].replace(/\?|\*|u|~|-/g, "")
+            entryKey += bibItem.fields.date
+                .split("/")[0]
+                .replace(/\?|\*|u|~|-/g, "")
         }
         if (entryKey.length) {
             bibItem.entry_key = entryKey
@@ -256,10 +293,7 @@ export class BibEntryForm {
         }
         const saveObj = {}
         saveObj[itemId] = item
-        return this.bibDB.saveBibEntries(
-            saveObj,
-            isNew
-        )
+        return this.bibDB.saveBibEntries(saveObj, isNew)
     }
 
     check() {
@@ -273,9 +307,11 @@ export class BibEntryForm {
             }
         })
         if (!passed) {
-            addAlert("error", gettext("Error in form, check highlighted values!"))
+            addAlert(
+                "error",
+                gettext("Error in form, check highlighted values!")
+            )
         }
         return passed
     }
-
 }

@@ -1,6 +1,6 @@
-import {sup, sub, smallcaps, text} from "./common"
-import {marks} from "prosemirror-schema-basic"
 import {Schema} from "prosemirror-model"
+import {marks} from "prosemirror-schema-basic"
+import {smallcaps, sub, sup, text} from "./common"
 
 const doc = {content: "cslbib"}
 
@@ -8,9 +8,13 @@ const cslbib = {
     content: "cslentry*",
     parseDOM: [{tag: "div.csl-bib-body"}],
     toDOM(_node) {
-        return ["div", {
-            class: "csl-bib-body"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "csl-bib-body"
+            },
+            0
+        ]
     }
 }
 
@@ -18,9 +22,13 @@ const cslentry = {
     content: "block*",
     parseDOM: [{tag: "div.csl-entry"}],
     toDOM(_node) {
-        return ["div", {
-            class: "csl-entry"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "csl-entry"
+            },
+            0
+        ]
     }
 }
 
@@ -34,9 +42,13 @@ const cslinline = {
     marks: "_",
     parseDOM: [{tag: "div.csl-inline"}],
     toDOM(_node) {
-        return ["div", {
-            class: "csl-inline"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "csl-inline"
+            },
+            0
+        ]
     }
 }
 
@@ -46,9 +58,13 @@ const cslblock = {
     marks: "_",
     parseDOM: [{tag: "div.csl-block"}],
     toDOM(_node) {
-        return ["div", {
-            class: "csl-block"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "csl-block"
+            },
+            0
+        ]
     }
 }
 
@@ -58,9 +74,13 @@ const cslleftmargin = {
     marks: "_",
     parseDOM: [{tag: "div.csl-left-margin"}],
     toDOM(_node) {
-        return ["div", {
-            class: "csl-left-margin"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "csl-left-margin"
+            },
+            0
+        ]
     }
 }
 
@@ -70,12 +90,15 @@ const cslrightinline = {
     marks: "_",
     parseDOM: [{tag: "div.csl-right-inline"}],
     toDOM(_node) {
-        return ["div", {
-            class: "csl-right-inline"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "csl-right-inline"
+            },
+            0
+        ]
     }
 }
-
 
 const cslindent = {
     group: "block",
@@ -83,9 +106,13 @@ const cslindent = {
     marks: "_",
     parseDOM: [{tag: "div.csl-indent"}],
     toDOM(_node) {
-        return ["div", {
-            class: "csl-indent"
-        }, 0]
+        return [
+            "div",
+            {
+                class: "csl-indent"
+            },
+            0
+        ]
     }
 }
 

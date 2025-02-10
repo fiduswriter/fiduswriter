@@ -1,7 +1,9 @@
 recursive-include fiduswriter *
 exclude **/*.pyc
-exclude fiduswriter/fiduswriter.sql
-exclude fiduswriter/fiduswriter.sql.backup
+exclude **/*.sqlite3
+exclude **/*.sql
+exclude **/*.db
+exclude **/*.backup
 exclude fiduswriter/testing.py
 exclude fiduswriter/configuration.py
 exclude fiduswriter/.coveragerc
@@ -24,5 +26,7 @@ prune fiduswriter/npm_mjs
 prune fiduswriter/ojs
 prune fiduswriter/phplist
 prune fiduswriter/payment
+prune fiduswriter/website
 prune fiduswriter/screenshots
-prune travis
+prune .github
+prune ci

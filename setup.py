@@ -74,7 +74,14 @@ setup(
     include_package_data=True,
     exclude_package_data={
         "": [
-            "travis/*",
+            "*.pyc",
+            "*.pyo",
+            "*.po",
+            "*.pot",
+            "*.db",
+            ".*.db",
+            "*.sqlite3",
+            "ci/*",
             "build/*",
             "fiduswriter/media/*",
             "fiduswriter/.transpile/*",
@@ -92,6 +99,8 @@ setup(
             "fiduswriter/ojs/*",
             "fiduswriter/phplist/*",
             "fiduswriter/payment/*",
+            "fiduswriter/website/*",
+            "fiduswriter/pandoc/*",
         ]
     },
 )

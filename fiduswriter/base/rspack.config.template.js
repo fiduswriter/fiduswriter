@@ -55,7 +55,7 @@ module.exports = {
         new rspack.DefinePlugin(predefinedVariables),
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,
-            maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
+            maximumFileSizeToCacheInBytes: 100 * 1024 * 1024, // 100 MB
             skipWaiting: true,
             inlineWorkboxRuntime: true,
             swDest: "sw.js",

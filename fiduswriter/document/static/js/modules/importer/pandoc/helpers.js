@@ -69,3 +69,16 @@ export const mergeTextNodes = nodes => {
 
     return mergedNodes
 }
+
+export const applyAnnotation = (nodes, type) => {
+    return nodes.map(node => ({
+        ...node,
+        marks: [
+            ...(node.marks || []),
+            {
+                type: "annotation_tag",
+                attrs: {type, key: "", value: ""}
+            }
+        ]
+    }))
+}

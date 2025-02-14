@@ -1,6 +1,6 @@
 import {parseCSL} from "biblatex-csl-converter"
 
-import {applyMarkToNodes, mergeTextNodes} from "./helpers"
+import {applyAnnotation, applyMarkToNodes, mergeTextNodes} from "./helpers"
 
 export class PandocConvert {
     constructor(doc, importId, template, bibliography) {
@@ -12,6 +12,8 @@ export class PandocConvert {
         this.images = []
 
         this.language = this.doc.meta?.lang?.c?.[0]?.c || "en-US"
+
+        this.SMALL_IMAGE_THRESHOLD = 1.0 // Smaller images will be discarded (in inches)
     }
 
     init() {
@@ -204,64 +206,128 @@ export class PandocConvert {
         }
         return blocks
             .map(block => this.convertBlock(block))
+            .flat()
             .filter(block => block)
     }
 
     convertBlock(block) {
         switch (block.t) {
+            case "CodeBlock": {
+                const [attrs, code] = block.c
+                return [
+                    {
+                        type: "code_block",
+                        attrs: {
+                            track: [],
+                            language: attrs?.classes?.[0] || "" // Store first class as language
+                        },
+                        content: [{type: "text", text: code}]
+                    }
+                ]
+            }
             case "Div":
-                // Ignore. Could be bibliography
+                // Handle special figure containers
+                if (block.attr?.classes?.includes("figure")) {
+                    return this.convertFigure(block)
+                }
+                // Ignore otherwise. Could be bibliography
                 // or other non-content block
-                return null
-            case "Para":
-                // Check if this is a paragraph containing only an image
-                if (block.c.length === 1 && block.c[0].t === "Image") {
-                    // Convert the image directly
-                    return this.convertInline(block.c[0])
+                return []
+            case "Para": {
+                // Process each inline, splitting into paragraphs and figures
+                const blocks = []
+                let currentInlines = []
+                for (const inline of block.c) {
+                    if (inline.t === "Image") {
+                        // Convert accumulated inlines to a paragraph
+                        if (currentInlines.length > 0) {
+                            blocks.push({
+                                type: "paragraph",
+                                content: this.convertInlines(currentInlines)
+                            })
+                            currentInlines = []
+                        }
+                        // Convert image to figure and add as block
+                        const figure = this.convertInline(inline)
+                        blocks.push(figure)
+                    } else {
+                        currentInlines.push(inline)
+                    }
                 }
-                return {
-                    type: "paragraph",
-                    content: this.convertInlines(block.c)
+                // Add remaining inlines as a paragraph
+                if (currentInlines.length > 0) {
+                    blocks.push({
+                        type: "paragraph",
+                        content: this.convertInlines(currentInlines)
+                    })
                 }
+                return blocks
+            }
             case "Header":
-                return {
-                    type: `heading${block.c[0]}`,
-                    attrs: {
-                        id: block.c[1][0]
-                    },
-                    content: this.convertInlines(block.c[2])
-                }
+                return [
+                    {
+                        type: `heading${block.c[0]}`,
+                        attrs: {
+                            id: block.c[1][0]
+                        },
+                        content: this.convertInlines(block.c[2])
+                    }
+                ]
             case "BlockQuote":
-                return {
-                    type: "blockquote",
-                    content: this.convertBlocks(block.c)
-                }
+                return [
+                    {
+                        type: "blockquote",
+                        content: this.convertBlocks(block.c)
+                    }
+                ]
             case "BulletList":
-                return {
-                    type: "bullet_list",
-                    content: block.c.map(item => ({
-                        type: "list_item",
-                        content: this.convertBlocks(item)
-                    }))
-                }
-            case "OrderedList":
-                return {
-                    type: "ordered_list",
-                    attrs: {
-                        order: block.c[0][0]
+                return [
+                    {
+                        type: "bullet_list",
+                        content: block.c.map(item => ({
+                            type: "list_item",
+                            content: this.convertBlocks(item)
+                        }))
+                    }
+                ]
+            case "DefinitionList": {
+                return block.c.flatMap(item => [
+                    {
+                        type: "paragraph",
+                        content: applyMarkToNodes(
+                            this.convertInlines(item.term),
+                            "strong"
+                        )
                     },
-                    content: block.c[1].map(item => ({
-                        type: "list_item",
-                        content: this.convertBlocks(item)
-                    }))
-                }
+                    {
+                        type: "bullet_list",
+                        content: item.definitions.map(def => ({
+                            type: "list_item",
+                            content: this.convertBlocks(def)
+                        }))
+                    }
+                ])
+            }
+            case "OrderedList":
+                return [
+                    {
+                        type: "ordered_list",
+                        attrs: {
+                            order: block.c[0][0]
+                        },
+                        content: block.c[1].map(item => ({
+                            type: "list_item",
+                            content: this.convertBlocks(item)
+                        }))
+                    }
+                ]
             case "Table":
-                return this.convertTable(block)
+                return [this.convertTable(block)]
             case "Figure":
-                return this.convertFigure(block)
+                return [this.convertFigure(block)]
             default:
                 console.warn(`Unhandled block type: ${block.t}`)
-                return null
+                return []
         }
     }
 
@@ -275,7 +341,18 @@ export class PandocConvert {
             .filter(inline => inline)
             .flat()
 
-        return mergeTextNodes(convertedNodes)
+        // Remove hard breaks at start and end
+        const filteredNodes = convertedNodes.filter((node, index, array) => {
+            if (node.type === "hard_break") {
+                // Remove if first or last node
+                if (index === 0 || index === array.length - 1) {
+                    return false
+                }
+            }
+            return true
+        })
+
+        return mergeTextNodes(filteredNodes)
     }
 
     convertInline(inline) {
@@ -287,9 +364,26 @@ export class PandocConvert {
             case "Cite":
                 return this.convertCitation(inline)
             case "Image": {
-                const imageId = Math.floor(Math.random() * 1000000)
                 const imagePath = inline.c[2][0]
+
+                const widthInfo = inline.c[0][2].find(
+                    attr => attr[0] === "width"
+                )
+
+                if (widthInfo) {
+                    const width = parseFloat(widthInfo[1]) // in inches
+                    if (width < this.SMALL_IMAGE_THRESHOLD) {
+                        console.warn(
+                            `Skipping small decorative image: ${imagePath} (width: ${width}%)`
+                        )
+                        return null
+                    }
+                }
+
+                const imageId = Math.floor(Math.random() * 1000000)
                 const imageTitle = imagePath.split("/").pop()
+
+                // Skip small decorative images
 
                 // Store image reference
                 this.images[imageId] = {
@@ -320,11 +414,13 @@ export class PandocConvert {
                     caption.shift() // Category number, for example "1:"
                     caption.shift() // Space
                 }
+
+                const percentageWidth = this.extractImageWidth(inline.c[0][2])
                 return {
                     type: "figure",
                     attrs: {
                         aligned: "center",
-                        width: this.extractImageWidth(inline.c[0][2]),
+                        width: percentageWidth,
                         category,
                         caption: Boolean(caption.length)
                     },
@@ -335,14 +431,10 @@ export class PandocConvert {
                                 image: imageId
                             }
                         },
-                        ...(caption.length
-                            ? [
-                                  {
-                                      type: "figure_caption",
-                                      content: this.convertInlines(caption)
-                                  }
-                              ]
-                            : [])
+                        {
+                            type: "figure_caption",
+                            content: this.convertInlines(caption)
+                        }
                     ]
                 }
             }
@@ -368,6 +460,24 @@ export class PandocConvert {
                 const innerNodes = this.convertInlines(inline.c)
                 return mergeTextNodes(applyMarkToNodes(innerNodes, "underline"))
             }
+            case "Strikeout": {
+                const inner = this.convertInlines(inline.c)
+                return applyAnnotation(inner, "strikeout")
+            }
+            case "SmallCaps": {
+                const inner = this.convertInlines(inline.c)
+                return applyAnnotation(inner, "smallcaps")
+            }
+            case "Superscript":
+                return applyAnnotation(
+                    this.convertInlines(inline.c),
+                    "superscript"
+                )
+            case "Subscript":
+                return applyAnnotation(
+                    this.convertInlines(inline.c),
+                    "subscript"
+                )
             case "Link": {
                 const innerNodes = this.convertInlines(inline.c[1])
                 return mergeTextNodes(
@@ -414,8 +524,28 @@ export class PandocConvert {
                 ]
                 return mergeTextNodes(quotedNodes)
             }
-
+            case "RawBlock":
+            case "RawInline": {
+                return [
+                    {
+                        type: "text",
+                        text: `[RAW CONTENT: ${inline.text}]`,
+                        marks: [
+                            {
+                                type: "annotation_tag",
+                                attrs: {
+                                    type: "raw",
+                                    key: inline.format,
+                                    value: ""
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
             case "SoftBreak":
+                return {type: "text", text: " "}
+            case "LineBreak":
                 return {type: "hard_break"}
             case "Span": {
                 // Check if this is a Zotero CSL citation
@@ -508,10 +638,16 @@ export class PandocConvert {
 
         const rows = table.c[4][0][2].concat(table.c[4][0][3])
 
+        const caption = table.c[0]
+
         return {
             type: "table",
             attrs,
             content: [
+                {
+                    type: "table_caption",
+                    content: this.convertInlines(caption)
+                },
                 {
                     type: "table_body",
                     content: rows.map(row => ({
@@ -553,10 +689,12 @@ export class PandocConvert {
     }
 
     convertFigure(figure) {
+        const caption = figure.c[1][1]
         const attrs = {
             aligned: "center",
             width: 100,
-            figureCategory: "none"
+            figureCategory: "none",
+            caption: Boolean(caption.length)
         }
 
         // Extract figure attributes
@@ -600,17 +738,12 @@ export class PandocConvert {
                     attrs: {
                         image: imageId
                     }
+                },
+                {
+                    type: "figure_caption",
+                    content: this.convertBlocks(caption)
                 }
-            ].concat(
-                figure.c[1][1].length
-                    ? [
-                          {
-                              type: "figure_caption",
-                              content: this.convertBlocks(figure.c[1][1])
-                          }
-                      ]
-                    : []
-            )
+            ]
         }
     }
 

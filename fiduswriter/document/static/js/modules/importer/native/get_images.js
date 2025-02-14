@@ -23,10 +23,22 @@ export class GetImages {
     getImageZipEntry() {
         if (this.counter < this.imageEntries.length) {
             return new Promise(resolve => {
-                const fc = this.entries.find(
+                const f = this.entries.find(
                     entry =>
                         entry.filename === this.imageEntries[this.counter].image
-                ).content
+                )
+                if (!f) {
+                    console.warn(
+                        `Image ${this.imageEntries[this.counter].image} not found`,
+                        this.imageEntries,
+                        this.entries
+                    )
+                    this.counter++
+                    return this.getImageZipEntry().then(() => {
+                        resolve()
+                    })
+                }
+                const fc = f.content
                 this.imageEntries[this.counter]["file"] = new window.Blob(
                     [fc],
                     {

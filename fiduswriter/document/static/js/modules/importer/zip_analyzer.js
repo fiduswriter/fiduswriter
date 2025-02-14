@@ -1,5 +1,5 @@
 export class ZipAnalyzer {
-    constructor(zip, formats) {
+    constructor(zip, formats = []) {
         this.zip = zip
         this.formats = formats
 

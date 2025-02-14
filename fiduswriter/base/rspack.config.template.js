@@ -38,6 +38,10 @@ module.exports = {
             {
                 test: /\.(csljson)$/,
                 type: "asset/resource"
+            },
+            {
+                test: /\.(wasm)$/,
+                type: "asset/resource"
             }
         ]
     },

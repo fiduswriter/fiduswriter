@@ -142,6 +142,9 @@ class Command(RunserverCommand):
         return get_version()
 
     def handle(self, *args, **options):
+        self.addrport_provided = (
+            "addrport" in options and options["addrport"] is not None
+        )
         self.http_timeout = options.get("http_timeout", None)
         self.websocket_handshake_timeout = options.get(
             "websocket_handshake_timeout", 5
@@ -155,18 +158,41 @@ class Command(RunserverCommand):
         super().handle(*args, **options)
 
     def inner_run(self, *args, **options):
-        # Start maintenance page server.
-        maintenance_server = HTTPServer(
-            (
+        # Determine ports to use
+        if self.addrport_provided:
+            ports = [self.port]
+        else:
+            ports = getattr(settings, "PORTS", [self.port])
+            if isinstance(ports, int):
+                ports = [ports]
+            elif not isinstance(ports, (list, tuple)):
+                ports = [self.port]
+            else:
+                ports = list(ports)
+            if not ports:
+                ports = [self.port]
+            try:
+                ports = [int(p) for p in ports]
+            except (ValueError, TypeError):
+                raise CommandError("PORTS must be a list of integers.")
+
+        # Start maintenance page servers for each port
+        maintenance_servers = []
+        for port in ports:
+            server_address = (
                 "[%s]" % self.addr if self._raw_ipv6 else self.addr,
-                int(self.port),
-            ),
-            MaintenancePageHandler,
-        )
-        maintenance_server_thread = threading.Thread(
-            target=maintenance_server.serve_forever
-        )
-        maintenance_server_thread.start()
+                int(port),
+            )
+            maintenance_server = HTTPServer(
+                server_address, MaintenancePageHandler
+            )
+            maintenance_server_thread = threading.Thread(
+                target=maintenance_server.serve_forever
+            )
+            maintenance_server_thread.start()
+            maintenance_servers.append(
+                (maintenance_server, maintenance_server_thread)
+            )
 
         # Run checks
         self.stdout.write("Performing system checks...\n\n")
@@ -174,42 +200,39 @@ class Command(RunserverCommand):
         self.check_migrations()
         call_command("setup", force_transpile=False)
 
-        # Stop maintenance page server.
-        maintenance_server.shutdown()
-        maintenance_server.server_close()
-        maintenance_server_thread.join()
+        # Stop maintenance page servers
+        for maintenance_server, thread in maintenance_servers:
+            maintenance_server.shutdown()
+            maintenance_server.server_close()
+            thread.join()
 
         # Print helpful text
         quit_command = "CTRL-BREAK" if sys.platform == "win32" else "CONTROL-C"
         now = datetime.datetime.now().strftime("%B %d, %Y - %X")
         self.stdout.write(now)
+        addr_display = "[%s]" % self.addr if self._raw_ipv6 else self.addr
+        urls = [f"{self.protocol}://{addr_display}:{port}/" for port in ports]
         self.stdout.write(
             (
                 "Fidus Writer version %(version)s, using settings %(settings)r\n"
-                "Fidus Writer server is running at "
-                "%(protocol)s://%(addr)s:%(port)s/\n"
+                "Fidus Writer server is running at the following URL(s):\n"
+                "%(urls)s\n"
                 "Quit the server with %(quit_command)s.\n"
             )
             % {
                 "version": self.get_version(),
                 "settings": settings.SETTINGS_MODULE,
-                "protocol": self.protocol,
-                "addr": "[%s]" % self.addr if self._raw_ipv6 else self.addr,
-                "port": self.port,
+                "urls": "\n".join(urls),
                 "quit_command": quit_command,
             }
         )
 
-        # Launch server in 'main' thread. Signals are disabled as it's still
-        # actually a subthread under the autoreloader.
-        logger.debug(
-            "Fidus Writer running, listening on %s:%s", self.addr, self.port
-        )
-
-        # build the endpoint description string from host/port options
-        endpoints = build_endpoint_description_strings(
-            host=self.addr, port=self.port
-        )
+        # Configure endpoints for all ports
+        endpoints = []
+        for port in ports:
+            endpoints.extend(
+                build_endpoint_description_strings(host=self.addr, port=port)
+            )
 
         # Add JavaScript file watcher
         if settings.DEBUG:

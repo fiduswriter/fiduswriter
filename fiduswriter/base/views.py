@@ -43,7 +43,7 @@ def configuration(request):
     Load the configuration options of the page that are request dependent.
     """
     ws_url_base = get_url_base(
-        request.headers["Origin"], random.choice(settings.WS_URLS)
+        request.headers["Origin"], random.choice(settings.PORTS)
     )
     socialaccount_providers = []
     for provider in get_adapter(request).list_providers(request):

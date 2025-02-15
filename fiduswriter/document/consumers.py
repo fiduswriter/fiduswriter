@@ -54,12 +54,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         # received its initial connection information. For example, because the
         # number of servers has increased (all servers need to restart to have
         # the right setting).
-        if len(settings.WS_URLS) < 2:
+        if len(settings.PORTS) < 2:
             return False
         origin = (
             dict(self.scope["headers"]).get(b"origin", b"").decode("utf-8")
         )
-        ws_server = settings.WS_URLS[self.document_id % len(settings.WS_URLS)]
+        ws_server = settings.PORTS[self.document_id % len(settings.PORTS)]
         expected = get_url_base(origin, ws_server)
         base = (
             self.scope["server"][0]

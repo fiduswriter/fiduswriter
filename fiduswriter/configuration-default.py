@@ -44,8 +44,8 @@ TEST_SERVER = True
 # This is the contact email that will be shown in various places all over
 # the site.
 CONTACT_EMAIL = "mail@email.com"
-# If websockets is running on a non-standard port, add it here:
-WS_URLS = [False]
+# Ports that Fidus Writer will run on.
+# PORTS = [8000,]
 
 ADMINS = (("Your Name", "your_email@example.com"),)
 

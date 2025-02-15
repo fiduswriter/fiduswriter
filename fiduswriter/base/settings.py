@@ -1,5 +1,10 @@
 import os
 
+# The ports Fidus Writer is running on:
+PORTS = [
+    8000,
+]
+
 # If you want to show debug messages, set DEBUG to True.
 DEBUG = True
 SOURCE_MAPS = False
@@ -10,10 +15,7 @@ TEST_SERVER = True
 # This is the contact email that will be shown in various places all over
 # the site.
 CONTACT_EMAIL = "mail@email.com"
-# The ports Fidus Writer is running on:
-PORTS = [
-    8000,
-]
+
 # Interval between document saves
 DOC_SAVE_INTERVAL = 30
 

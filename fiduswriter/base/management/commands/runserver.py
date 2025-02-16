@@ -109,6 +109,13 @@ class JSFileHandler(FileSystemEventHandler):
             self.last_transpile = current_time
 
 
+def get_internal_port(conn):
+    if isinstance(conn, int):
+        return conn
+    elif isinstance(conn, dict):
+        return int(conn["internal"])
+
+
 class Command(RunserverCommand):
     protocol = "http"
     server_cls = Server
@@ -165,23 +172,25 @@ class Command(RunserverCommand):
             ports = getattr(settings, "PORTS", [self.port])
             if isinstance(ports, int):
                 ports = [ports]
-            elif not isinstance(ports, (list, tuple)):
-                ports = [self.port]
-            else:
+            elif isinstance(ports, (list, tuple)):
                 ports = list(ports)
+            else:
+                ports = [self.port]
             if not ports:
                 ports = [self.port]
             try:
-                ports = [int(p) for p in ports]
+                ports = [get_internal_port(p) for p in ports]
             except (ValueError, TypeError):
-                raise CommandError("PORTS must be a list of integers.")
+                raise CommandError(
+                    "PORTS must be a list of integers or dicts with an `internal` key."
+                )
 
         # Start maintenance page servers for each port
         maintenance_servers = []
         for port in ports:
             server_address = (
                 "[%s]" % self.addr if self._raw_ipv6 else self.addr,
-                int(port),
+                port,
             )
             maintenance_server = HTTPServer(
                 server_address, MaintenancePageHandler

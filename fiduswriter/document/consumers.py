@@ -12,7 +12,6 @@ from django.conf import settings
 from base.helpers.ws import get_url_base
 
 from document.helpers.session_user_info import SessionUserInfo
-from document.helpers.ws import compare_url_base_with_expectation
 from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
 from base.base_consumer import BaseWebsocketConsumer
@@ -56,25 +55,23 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         # the right setting).
         if len(settings.PORTS) < 2:
             return False
-        origin = (
-            dict(self.scope["headers"]).get(b"origin", b"").decode("utf-8")
+        # We compare the internal port
+        actual_port = self.scope["server"][1]
+        expected_conn = settings.PORTS[self.document_id % len(settings.PORTS)]
+        expected_port = (
+            expected_conn["internal"]
+            if isinstance(expected_conn, dict)
+            else expected_conn
         )
-        ws_server = settings.PORTS[self.document_id % len(settings.PORTS)]
-        expected = get_url_base(origin, ws_server)
-        base = (
-            self.scope["server"][0]
-            + ":"
-            + str(self.scope["server"][1])
-            + self.scope["path"].split("/document/")[0]
-        )
-
-        if not compare_url_base_with_expectation(
-            base, expected, origin.startswith("https")
-        ):
+        if actual_port != expected_port:
             # Redirect to the correct URL
             self.init()
-            logger.debug(f"Redirecting from {base} to {expected}")
-            self.send_message({"type": "redirect", "base": f"{expected}"})
+            origin = (
+                dict(self.scope["headers"]).get(b"origin", b"").decode("utf-8")
+            )
+            expected = get_url_base(origin, expected_conn)
+            logger.debug(f"Redirecting from {actual_port} to {expected}.")
+            self.send_message({"type": "redirect", "base": expected})
             self.do_close()
             return True
         return False

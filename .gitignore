@@ -33,7 +33,9 @@ build
 /fiduswriter/fiduswriter.sql
 /fiduswriter/fiduswriter.sql.backup
 /fiduswriter/fiduswriter.sqlite3
+/fiduswriter/fiduswriter.sqlite3-journal
 /fiduswriter/testdb.sqlite3
+/fiduswriter/testdb.sqlite3-journal
 /fiduswriter/.transpile/
 /fiduswriter/media/
 /fiduswriter/screenshots/

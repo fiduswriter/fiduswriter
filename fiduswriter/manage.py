@@ -42,6 +42,8 @@ def inner(default_project_path):
     from django.conf import global_settings as GLOBAL_SETTINGS
     from base import settings as BASE_SETTINGS
 
+    SETTINGS_PATHS = [BASE_SETTINGS.__file__]
+
     # Merge settings from different sources
     settings_dict = {}
     for setting in dir(GLOBAL_SETTINGS):
@@ -55,11 +57,15 @@ def inner(default_project_path):
     # Load configuration settings if available
     try:
         config_module = import_module(SETTINGS_MODULE)
+        SETTINGS_PATHS.append(config_module.__file__)
         for setting in dir(config_module):
             if setting.isupper():
                 settings_dict[setting] = getattr(config_module, setting)
     except ModuleNotFoundError:
         pass
+
+    settings_dict["SETTINGS_PATH"] = SETTINGS_PATHS
+    settings_dict["SETTINGS_MODULE"] = SETTINGS_MODULE
 
     # Override PORTS setting if running tests
     if "test" in sys_argv:

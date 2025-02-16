@@ -64,7 +64,7 @@ def inner(default_project_path):
     except ModuleNotFoundError:
         pass
 
-    settings_dict["SETTINGS_PATH"] = SETTINGS_PATHS
+    settings_dict["SETTINGS_PATHS"] = SETTINGS_PATHS
     settings_dict["SETTINGS_MODULE"] = SETTINGS_MODULE
 
     # Override PORTS setting if running tests

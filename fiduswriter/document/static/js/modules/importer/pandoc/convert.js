@@ -142,7 +142,9 @@ export class PandocConvert {
             document.content.push({
                 type: "richtext_part",
                 attrs: {
-                    title: templatePart ? templatePart.attrs.title : "Abstract",
+                    title: templatePart
+                        ? templatePart.attrs.title
+                        : gettext("Abstract"),
                     id: templatePart ? templatePart.attrs.id : "abstract",
                     metadata: "abstract"
                 },

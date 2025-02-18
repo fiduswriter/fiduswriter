@@ -16,7 +16,7 @@ const predefinedVariables = {
     settings_IS_FREE: settings.IS_FREE,
     settings_TEST_SERVER: settings.TEST_SERVER,
     settings_DEBUG: settings.DEBUG,
-    settings_CSRF_COOKIE_NAME: settings.CSRF_COOKIE_NAME,
+    settings_CSRF_COOKIE_NAME: JSON.stringify(settings.CSRF_COOKIE_NAME),
     settings_SOURCE_MAPS: JSON.stringify(settings.SOURCE_MAPS) || false,
     settings_USE_SERVICE_WORKER: settings.USE_SERVICE_WORKER,
     settings_MEDIA_MAX_SIZE: settings.MEDIA_MAX_SIZE,

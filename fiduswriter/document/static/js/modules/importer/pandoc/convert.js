@@ -233,7 +233,8 @@ export class PandocConvert {
                 // Ignore otherwise. Could be bibliography
                 // or other non-content block
                 return []
-            case "Para": {
+            case "Para":
+            case "Plain": {
                 // Process each inline, splitting into paragraphs and figures
                 const blocks = []
                 let currentInlines = []
@@ -624,6 +625,37 @@ export class PandocConvert {
             layout: "fixed"
         }
 
+        //c[0]: Attr
+        //c[0][0]: identifier
+        //c[0][1]: classes
+        //c[0][2]: key-value pairs
+        //c[1]: Caption
+        //c[1][0]: Caption
+        //c[1][1]: (Maybe ShortCaption)
+        //c[2]: [ColSpec] // per table column
+        //c[3]: TableHead
+        //c[3][0]: Attrs
+        //c[3][1]: Row
+        //c[4]: [TableBody]
+        //c[4][X][0]: Attr
+        //c[4][X][1]: RowHeadColumns
+        //c[4][X][2]: [Row]
+        //c[4][X][3]: [Row]
+        //c[5]: TableFoot
+        //c[5][0]: Attrs
+        //c[5][1]: Row
+
+        //Row
+        //c[0]: Attrs
+        //c[1]: [Cell]
+
+        //Cell
+        //c[0]: Attr
+        //c[1]: Alignment
+        //c[2]: RowSpan
+        //c[3]: ColSpan
+        //c[4]: [Block]
+
         // Extract table attributes
         const tableAttrs = table.c[0][2]
         tableAttrs.forEach(attr => {
@@ -636,10 +668,15 @@ export class PandocConvert {
             }
         })
 
-        const rows = table.c[4][0][2].concat(table.c[4][0][3])
+        const rows = table.c[3][1]
+            .concat(
+                table.c[4]
+                    .map(tableBody => tableBody[2].concat(tableBody[3]))
+                    .flat()
+            )
+            .concat(table.c[5][1])
 
-        const caption = table.c[0]
-
+        const caption = table.c[1][0] || []
         return {
             type: "table",
             attrs,
@@ -652,14 +689,20 @@ export class PandocConvert {
                     type: "table_body",
                     content: rows.map(row => ({
                         type: "table_row",
-                        content: row[1].map(cell => ({
-                            type: "table_cell",
-                            attrs: {
-                                colspan: cell[3],
-                                rowspan: cell[2]
-                            },
-                            content: this.convertBlocks(cell[4])
-                        }))
+                        content: row[1].map(cell => {
+                            const cellContent = this.convertBlocks(cell[4])
+                            if (cellContent.length === 0) {
+                                cellContent.push({type: "paragraph"})
+                            }
+                            return {
+                                type: "table_cell",
+                                attrs: {
+                                    colspan: cell[3],
+                                    rowspan: cell[2]
+                                },
+                                content: cellContent
+                            }
+                        })
                     }))
                 }
             ]
@@ -742,6 +785,8 @@ export class PandocConvert {
                 {
                     type: "figure_caption",
                     content: this.convertBlocks(caption)
+                        .map(block => block.content || [])
+                        .flat()
                 }
             ]
         }

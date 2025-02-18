@@ -410,11 +410,31 @@ export class App {
     }
 
     getConfiguration() {
-        return postJson("/api/base/configuration/").then(({json}) =>
-            Object.entries(json).forEach(
-                ([key, value]) => (this.config[key] = value)
+        return postJson("/api/base/configuration/")
+            .then(({json}) =>
+                Object.entries(json).forEach(
+                    ([key, value]) => (this.config[key] = value)
+                )
             )
-        )
+            .catch(error => {
+                if (error instanceof Response && error.status === 403) {
+                    // We could not fetch user info from server, so let's
+                    // assume we are disconnected and delete all cookies.
+                    // This will force the user to log in again.
+                    //
+                    // This is a bit of a hack, but it is the only way to make sure
+                    // that the user is logged out when the server is not reachable.
+                    document.cookie.split(";").forEach(cookie => {
+                        const eqPos = cookie.indexOf("=")
+                        const name =
+                            eqPos > -1 ? cookie.substring(0, eqPos) : cookie
+                        document.cookie =
+                            name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT"
+                    })
+                    return Promise.reject(error)
+                }
+                throw error
+            })
     }
 
     goTo(url) {

@@ -23,7 +23,7 @@ export class ErrorHook {
         return fetch("/api/django_js_error_hook/", {
             method: "POST",
             headers: {
-                "X-CSRFToken": getCookie("csrftoken")
+                "X-CSRFToken": getCookie(settings_CSRF_COOKIE_NAME)
             },
             credentials: "include",
             body

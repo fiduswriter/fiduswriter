@@ -26,7 +26,8 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
     def disconnect(self, close_code):
         if hasattr(self, "presence"):
             self.presence.delete()
-        SystemMessageConsumer.clients.remove(self)
+        if self in SystemMessageConsumer.clients:
+            SystemMessageConsumer.clients.remove(self)
         self.close()
 
     def send_pong(self):

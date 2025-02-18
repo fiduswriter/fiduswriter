@@ -156,6 +156,7 @@
             "transpile_VERSION",
             "settings_TEST_SERVER",
             "settings_DEBUG",
+            "settings_CSRF_COOKIE_NAME",
             "settings_SOURCE_MAPS",
             "settings_STATIC_URL",
             "settings_PASSWORD_LOGIN",

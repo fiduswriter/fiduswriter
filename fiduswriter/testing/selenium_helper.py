@@ -15,6 +15,7 @@ from webdriver_manager.core.os_manager import ChromeType
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.test import Client
 import logging
 
@@ -60,7 +61,7 @@ class SeleniumHelper(object):
     # drive browser
     def login_user(self, user, driver, client):
         client.force_login(user=user)
-        cookie = client.cookies["sessionid"]
+        cookie = client.cookies[settings.SESSION_COOKIE_NAME]
         # output the cookie to the console for debugging
         logger.debug("cookie: %s" % cookie.value)
         if driver.current_url == "data:,":
@@ -71,7 +72,7 @@ class SeleniumHelper(object):
             )
         driver.add_cookie(
             {
-                "name": "sessionid",
+                "name": settings.SESSION_COOKIE_NAME,
                 "value": cookie.value,
                 "secure": False,
                 "path": "/",
@@ -80,7 +81,7 @@ class SeleniumHelper(object):
 
     def login_user_manually(self, user, driver, passtext="p4ssw0rd"):
         username = user.username
-        driver.delete_cookie("sessionid")
+        driver.delete_cookie(settings.SESSION_COOKIE_NAME)
         driver.get("%s%s" % (self.live_server_url, "/"))
         driver.find_element(By.ID, "id-login").send_keys(username)
         driver.find_element(By.ID, "id-password").send_keys(passtext)
@@ -93,7 +94,7 @@ class SeleniumHelper(object):
 
     def logout_user(self, driver, client):
         client.logout()
-        driver.delete_cookie("sessionid")
+        driver.delete_cookie(settings.SESSION_COOKIE_NAME)
 
     def wait_until_file_exists(self, path, wait_time):
         count = 0

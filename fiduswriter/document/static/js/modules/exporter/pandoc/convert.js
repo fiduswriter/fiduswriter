@@ -52,7 +52,7 @@ export class PandocExporterConvert {
                     t: "Header",
                     c: [
                         level,
-                        [node.attrs.id, [], []],
+                        [node.attrs.id || "", [], []],
                         this.convertContent(node.content || [])
                     ]
                 })
@@ -208,11 +208,13 @@ export class PandocExporterConvert {
                             t: "Div",
                             c: [
                                 [
-                                    node.attrs.id,
+                                    node.attrs.id || "",
                                     [
                                         "doc-part",
                                         "doc-contributors",
-                                        `doc-${node.attrs.id}`,
+                                        node.attrs.id
+                                            ? `doc-${node.attrs.id}`
+                                            : "doc-div",
                                         `doc-${node.attrs.metadata || "other"}`
                                     ],
                                     []
@@ -242,7 +244,7 @@ export class PandocExporterConvert {
                         c: [
                             ["", ["reference"], []],
                             convertText(node.attrs.title || "MISSING TARGET"),
-                            [`#${node.attrs.id}`, ""]
+                            [`#${node.attrs.id || ""}`, ""]
                         ]
                     })
                     break
@@ -278,11 +280,13 @@ export class PandocExporterConvert {
                             t: "Div",
                             c: [
                                 [
-                                    node.attrs.id,
+                                    node.attrs.id || "",
                                     [
                                         "doc-part",
                                         "doc-heading",
-                                        `doc-${node.attrs.id}`,
+                                        node.attrs.id
+                                            ? `doc-${node.attrs.id}`
+                                            : "doc-div",
                                         `doc-${node.attrs.metadata || "other"}`
                                     ],
                                     []
@@ -339,7 +343,7 @@ export class PandocExporterConvert {
                                         t: "Image",
                                         c: [
                                             [
-                                                node.attrs.id,
+                                                node.attrs.id || "",
                                                 [],
                                                 [
                                                     [
@@ -363,7 +367,7 @@ export class PandocExporterConvert {
                                 t: "Figure",
                                 c: [
                                     [
-                                        node.attrs.id,
+                                        node.attrs.id || "",
                                         [
                                             `aligned-${node.attrs.aligned}`,
                                             `image-width-${node.attrs.width}`
@@ -425,7 +429,7 @@ export class PandocExporterConvert {
                             t: "Figure",
                             c: [
                                 [
-                                    node.attrs.id,
+                                    node.attrs.id || "",
                                     [
                                         `aligned-${node.attrs.aligned}`,
                                         `image-width-${node.attrs.width}`
@@ -504,7 +508,7 @@ export class PandocExporterConvert {
                         t: "Header",
                         c: [
                             level,
-                            [node.attrs.id, [], []],
+                            [node.attrs.id || "", [], []],
                             this.convertContent(
                                 node.content || [],
                                 meta,
@@ -570,11 +574,13 @@ export class PandocExporterConvert {
                             t: "Div",
                             c: [
                                 [
-                                    node.attrs.id,
+                                    node.attrs.id || "",
                                     [
                                         "doc-part",
                                         "doc-richtext",
-                                        `doc-${node.attrs.id}`,
+                                        node.attrs.id
+                                            ? `doc-${node.attrs.id}`
+                                            : "doc-div",
                                         `doc-${node.attrs.metadata || "other"}`
                                     ],
                                     []
@@ -590,11 +596,13 @@ export class PandocExporterConvert {
                         t: "HorizontalRule",
                         c: [
                             [
-                                node.attrs.id,
+                                node.attrs.id || "",
                                 [
                                     "doc-part",
                                     "doc-separator",
-                                    `doc-${node.attrs.id}`,
+                                    node.attrs.id
+                                        ? `doc-${node.attrs.id}`
+                                        : "doc-hr",
                                     `doc-${node.attrs.metadata || "other"}`
                                 ],
                                 []
@@ -614,11 +622,13 @@ export class PandocExporterConvert {
                         t: "Div",
                         c: [
                             [
-                                node.attrs.id,
+                                node.attrs.id || "",
                                 [
                                     "doc-part",
                                     "doc-tags",
-                                    `doc-${node.attrs.id}`,
+                                    node.attrs.id
+                                        ? `doc-${node.attrs.id}`
+                                        : "doc-div",
                                     `doc-${node.attrs.metadata || "other"}`
                                 ],
                                 []
@@ -762,11 +772,13 @@ export class PandocExporterConvert {
                         t: "Div",
                         c: [
                             [
-                                node.attrs.id,
+                                node.attrs.id || "",
                                 [
                                     "doc-part",
                                     "doc-table",
-                                    `doc-${node.attrs.id}`,
+                                    node.attrs.id
+                                        ? `doc-${node.attrs.id}`
+                                        : "doc-div",
                                     `doc-${node.attrs.metadata || "other"}`
                                 ],
                                 []
@@ -780,11 +792,13 @@ export class PandocExporterConvert {
                         t: "Div",
                         c: [
                             [
-                                node.attrs.id,
+                                node.attrs.id || "",
                                 [
                                     "doc-part",
                                     "doc-table-of-contents",
-                                    `doc-${node.attrs.id}`,
+                                    node.attrs.id
+                                        ? `doc-${node.attrs.id}`
+                                        : "doc-div",
                                     `doc-${node.attrs.metadata || "other"}`
                                 ],
                                 []
@@ -897,7 +911,7 @@ export class PandocExporterConvert {
                     break
                 }
                 default: {
-                    console.log(`Not handled: ${node.type}`, {node})
+                    console.warn(`Not handled: ${node.type}`, {node})
                     break
                 }
             }

@@ -325,7 +325,9 @@ export class OdtConvert {
                 annotation.query("dc:date")?.textContent || ""
             ).getTime()
 
-            const id = (annotation.getAttribute("office:name") || "").slice(-10)
+            const id = (annotation.getAttribute("office:name") || "")
+                .replace(/\D/g, "")
+                .slice(0, 9)
 
             if (id) {
                 // main comment
@@ -344,7 +346,9 @@ export class OdtConvert {
             } else {
                 const parentId = (
                     annotation.getAttribute("loext:parent-name") || ""
-                ).slice(-10)
+                )
+                    .replace(/\D/g, "")
+                    .slice(0, 9)
                 if (parentId && this.comments[parentId]) {
                     this.comments[parentId].answers.push({
                         id: randomCommentId(),
@@ -1339,7 +1343,9 @@ export class OdtConvert {
     }
 
     convertAnnotationStart(node) {
-        const commentId = (node.getAttribute("office:name") || "").slice(-10)
+        const commentId = (node.getAttribute("office:name") || "")
+            .replace(/\D/g, "")
+            .slice(0, 9)
         if (commentId && this.comments[commentId]) {
             this.currentCommentIds.push(commentId)
         }
@@ -1347,7 +1353,9 @@ export class OdtConvert {
     }
 
     convertAnnotationEnd(node) {
-        const commentId = (node.getAttribute("office:name") || "").slice(-10)
+        const commentId = (node.getAttribute("office:name") || "")
+            .replace(/\D/g, "")
+            .slice(0, 9)
         if (commentId) {
             const index = this.currentCommentIds.indexOf(commentId)
             if (index !== -1) {

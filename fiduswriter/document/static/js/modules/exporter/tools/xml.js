@@ -396,12 +396,21 @@ class XMLElement {
             )
             if (
                 tags.includes(currentTagName) &&
-                Object.keys(attributes).every(
-                    attr =>
-                        dom.hasAttribute(attr) &&
-                        (dom.getAttribute(attr) === attributes[attr] ||
-                            attributes[attr] === null)
-                )
+                Object.keys(attributes).every(attr => {
+                    if (!dom.hasAttribute(attr)) {
+                        return false
+                    }
+                    const attributeValue = attributes[attr]
+                    if (attributeValue === null) {
+                        return true
+                    }
+
+                    if (Array.isArray(attributeValue)) {
+                        return attributeValue.includes(dom.getAttribute(attr))
+                    }
+
+                    return dom.getAttribute(attr) === attributeValue
+                })
             ) {
                 result.push(dom)
             }

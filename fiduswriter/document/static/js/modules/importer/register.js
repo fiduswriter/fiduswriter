@@ -48,6 +48,7 @@ export class ImporterRegistry {
 
 export const importerRegistry = new ImporterRegistry()
 
+import {DocxImporter} from "./docx"
 import {OdtImporter} from "./odt"
 // Register built-in importers
 import {PandocImporter} from "./pandoc"
@@ -55,6 +56,8 @@ import {PandocImporter} from "./pandoc"
 importerRegistry.register([["Pandoc JSON", ["json"]]], PandocImporter)
 
 importerRegistry.register([["ODT", ["odt"]]], OdtImporter)
+
+importerRegistry.register([["DOCX", ["docx"]]], DocxImporter)
 
 export function registerImporter(fileTypes, importer) {
     importerRegistry.register(fileTypes, importer)

@@ -123,7 +123,7 @@ export class OdtImporter {
                 content: blob
             })),
             this.user,
-            null,
+            this.importId,
             this.path + title
         )
 

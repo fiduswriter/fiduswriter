@@ -10,14 +10,11 @@ export class DocxConvert {
         this.bibliography = bibliography
         this.images = {}
         this.parser = new DocxParser(zip)
-        console.log({parser: this.parser})
     }
 
     async init() {
         await this.parser.init()
-        console.log("parsed")
         const body = this.parser.document.query("w:body")
-        console.log("body")
         if (!body) {
             return {
                 content: {
@@ -32,12 +29,10 @@ export class DocxConvert {
                 comments: {}
             }
         }
-        console.log("will convert")
         const convertedContent = this.convertDocument(body)
-        console.log("converted")
         // Convert document
         return {
-            content: convertedContent, //: this.convertDocument(body),
+            content: convertedContent,
             settings: {
                 import_id: this.importId,
                 tracked: this.hasTrackedChanges(this.parser.document),
@@ -58,10 +53,8 @@ export class DocxConvert {
             },
             content: []
         }
-        console.log({templateParts})
         // Add title (required first element)
         const title = this.extractTitle(body)
-        console.log({title})
         document.content.push({
             type: "title",
             content: title.content || [
@@ -75,9 +68,7 @@ export class DocxConvert {
             title.content.map(node => node.textContent).join("") ||
             gettext("Untitled")
         // Extract metadata sections
-        console.log("extracting metadata")
         const metadata = this.extractMetadata(body)
-        console.log({metadata})
         metadata.forEach(({type, content}) => {
             const templatePart = templateParts.find(
                 part => part.attrs.metadata === type
@@ -101,10 +92,8 @@ export class DocxConvert {
                 })
             }
         })
-        console.log("extracted metadata")
         // Extract main content sections
         const sections = this.groupContentIntoSections(body)
-        console.log({sections})
         // Map sections to template parts
         sections.forEach(section => {
             const templatePart = this.findMatchingTemplatePart(
@@ -350,21 +339,14 @@ export class DocxConvert {
                 if (paraStyle.isHeading && paraStyle.level <= headerLevel) {
                     break
                 }
-                //content.push(this.convertBlock(sectionPar))
                 content.push(searchPar)
-                //content.push(this.convertBlock(searchPar))
             }
-            // return {
-            //     content,
-            //     containerNodes
-            // }
         }
 
         return {header, content}
     }
 
     groupContentIntoSections(body) {
-        console.log({body})
         const sections = []
         let currentSection = {
             title: null,
@@ -374,7 +356,6 @@ export class DocxConvert {
         const skippedBlocks = []
 
         body.children.forEach(node => {
-            console.log({node})
             if (skippedBlocks.includes(node)) {
                 return
             }
@@ -384,7 +365,6 @@ export class DocxConvert {
 
             const style = this.getParaStyle(node)
             const title = this.getSectionTitle(node, style)
-            console.log({title, style})
             if (title && style.isHeading) {
                 if (currentSection.content.length) {
                     sections.push(currentSection)
@@ -396,7 +376,6 @@ export class DocxConvert {
             }
 
             const block = this.convertBlock(node, skippedBlocks)
-            console.log({block})
             if (block) {
                 currentSection.content.push(block)
             }
@@ -529,13 +508,11 @@ export class DocxConvert {
     }
 
     convertBlock(node, skippedBlocks = []) {
-        console.log("convertBlock", {node})
         if (node.tagName !== "w:p") {
             return null
         }
 
         const style = this.getParaStyle(node)
-        console.log({style})
         if (style.isHeading) {
             return this.convertHeading(node, style)
         }
@@ -546,8 +523,16 @@ export class DocxConvert {
 
         if (
             style.isCaption &&
+            (node.query("w:drawing") || node.query("w:pict"))
+        ) {
+            return this.convertFigure(node, node)
+        }
+
+        if (
+            style.isCaption &&
             (node.nextSibling?.query("w:drawing") ||
-                node.nextSibling?.query("w:pict"))
+                node.nextSibling?.query("w:pict")) &&
+            !skippedBlocks.includes(node.nextSibling)
         ) {
             skippedBlocks.push(node.nextSibling)
             return this.convertFigure(node.nextSibling, node)
@@ -630,7 +615,7 @@ export class DocxConvert {
     convertFigure(node, captionNode = null) {
         let captionBlock, captionOrder
         if (captionNode) {
-            captionBlock = this.convertBlock(captionNode)
+            captionBlock = this.convertParagraph(captionNode)
             captionOrder = node.nextSibling === captionNode ? "after" : "before"
         }
 

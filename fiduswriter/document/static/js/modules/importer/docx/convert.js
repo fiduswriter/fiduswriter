@@ -10,6 +10,8 @@ export class DocxConvert {
         this.bibliography = bibliography
         this.images = {}
         this.parser = new DocxParser(zip)
+        this.tracks = {}
+        this.currentTracks = []
     }
 
     async init() {
@@ -511,44 +513,78 @@ export class DocxConvert {
         if (node.tagName !== "w:p") {
             return null
         }
-
+        let converted
         const style = this.getParaStyle(node)
         if (style.isHeading) {
-            return this.convertHeading(node, style)
-        }
-
-        if (style.numbering) {
-            return this.convertListItem(node, style)
-        }
-
-        if (
+            converted = this.convertHeading(node, style)
+        } else if (style.numbering) {
+            converted = this.convertListItem(node, style)
+        } else if (
             style.isCaption &&
             (node.query("w:drawing") || node.query("w:pict"))
         ) {
-            return this.convertFigure(node, node)
-        }
-
-        if (
+            converted = this.convertFigure(node, node)
+        } else if (
             style.isCaption &&
             (node.nextSibling?.query("w:drawing") ||
                 node.nextSibling?.query("w:pict")) &&
             !skippedBlocks.includes(node.nextSibling)
         ) {
             skippedBlocks.push(node.nextSibling)
-            return this.convertFigure(node.nextSibling, node)
-        }
-
-        if (node.query("w:drawing") || node.query("w:pict")) {
+            converted = this.convertFigure(node.nextSibling, node)
+        } else if (node.query("w:drawing") || node.query("w:pict")) {
             if (
                 node.nextSibling &&
                 this.getParaStyle(node.nextSibling).isCaption
             ) {
                 skippedBlocks.push(node.nextSibling)
-                return this.convertFigure(node, node.nextSibling)
+                converted = this.convertFigure(node, node.nextSibling)
+            } else {
+                converted = this.convertFigure(node)
             }
-            return this.convertFigure(node)
+        } else {
+            converted = this.convertParagraph(node)
         }
-        return this.convertParagraph(node)
+        return this.wrapTrackChanges(node, converted)
+    }
+
+    wrapTrackChanges(node, content) {
+        if (!content) {
+            return content
+        }
+        const track = this.getTrackFromNode(node)
+        if (!track) {
+            return content
+        }
+
+        return {
+            ...content,
+            marks: [
+                ...(content.marks || []),
+                {
+                    type: track.type,
+                    attrs: {
+                        user: 0, // Default user ID
+                        username: track.author,
+                        date: new Date(track.date).getTime(),
+                        approved: track.type === "insertion" ? false : undefined
+                    }
+                }
+            ]
+        }
+    }
+
+    getTrackFromNode(node) {
+        const trackNode = node.closest("w:ins, w:del")
+        if (!trackNode) {
+            return null
+        }
+
+        return {
+            type: trackNode.tagName === "w:ins" ? "insertion" : "deletion",
+            author: trackNode.getAttribute("w:author") || "Unknown",
+            date: trackNode.getAttribute("w:date") || Date.now()
+        }
     }
 
     getParaStyle(node) {

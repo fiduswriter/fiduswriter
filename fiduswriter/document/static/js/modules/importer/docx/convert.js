@@ -549,42 +549,53 @@ export class DocxConvert {
     }
 
     wrapTrackChanges(node, content) {
-        if (!content) {
+        if (!content || !node.previousSibling) {
             return content
         }
-        const track = this.getTrackFromNode(node)
+        const track = this.getTracksFromNode(node.previousSibling)
         if (!track) {
             return content
         }
 
         return {
             ...content,
-            marks: [
-                ...(content.marks || []),
-                {
-                    type: track.type,
-                    attrs: {
-                        user: 0, // Default user ID
-                        username: track.author,
-                        date: new Date(track.date).getTime(),
-                        approved: track.type === "insertion" ? false : undefined
-                    }
-                }
-            ]
+            attrs: Object.assign({}, content.attrs || {}, {track})
         }
     }
 
-    getTrackFromNode(node) {
-        const trackNode = node.closest("w:ins, w:del")
-        if (!trackNode) {
+    getTracksFromNode(node) {
+        const deletion = node.query("w:pPr")?.query("w:del")
+        const insertion = node.query("w:pPr")?.query("w:ins")
+
+        const tracks = []
+
+        if (insertion) {
+            const date = new Date(insertion.getAttribute("w:date"))
+            const date10 = Math.floor(date.getTime() / 60000) * 10
+            tracks.push({
+                type: "insertion",
+                user: 0, // Default user ID
+                username: insertion.getAttribute("w:author"),
+                date: date10
+            })
+        }
+
+        if (deletion) {
+            const date = new Date(deletion.getAttribute("w:date"))
+            const date10 = Math.floor(date.getTime() / 60000) * 10
+            tracks.push({
+                type: "deletion",
+                user: 0, // Default user ID
+                username: deletion.getAttribute("w:author"),
+                date: date10
+            })
+        }
+
+        if (tracks.length === 0) {
             return null
         }
 
-        return {
-            type: trackNode.tagName === "w:ins" ? "insertion" : "deletion",
-            author: trackNode.getAttribute("w:author") || "Unknown",
-            date: trackNode.getAttribute("w:date") || Date.now()
-        }
+        return tracks
     }
 
     getParaStyle(node) {
@@ -732,24 +743,31 @@ export class DocxConvert {
     convertInline(node) {
         const content = []
         node.queryAll("w:r").forEach(run => {
-            const text = run.query("w:t")?.textContent
+            const text =
+                run.query("w:t")?.textContent ||
+                run.query("w:delText")?.textContent
             if (!text) {
                 return
             }
 
             const rPr = run.query("w:rPr")
             const formatting = rPr ? this.parser.extractRunProperties(rPr) : {}
-
+            const insertion = run.closest("w:ins")
+            const deletion = run.closest("w:del")
             content.push({
                 type: "text",
                 text,
-                marks: this.createMarksFromFormatting(formatting)
+                marks: this.createMarksFromFormatting(
+                    formatting,
+                    insertion,
+                    deletion
+                )
             })
         })
         return content
     }
 
-    createMarksFromFormatting(formatting) {
+    createMarksFromFormatting(formatting, insertion = null, deletion = null) {
         const marks = []
         if (formatting.bold) {
             marks.push({type: "strong"})
@@ -759,6 +777,31 @@ export class DocxConvert {
         }
         if (formatting.underline) {
             marks.push({type: "underline"})
+        }
+        if (insertion) {
+            const date = new Date(insertion.getAttribute("w:date"))
+            const date10 = Math.floor(date.getTime() / 600000) * 10
+            marks.push({
+                type: "insertion",
+                attrs: {
+                    user: 0,
+                    username: insertion.getAttribute("w:author"),
+                    date: date10,
+                    approved: false
+                }
+            })
+        }
+        if (deletion) {
+            const date = new Date(deletion.getAttribute("w:date"))
+            const date10 = Math.floor(date.getTime() / 600000) * 10
+            marks.push({
+                type: "deletion",
+                attrs: {
+                    user: 0,
+                    username: deletion.getAttribute("w:author"),
+                    date: date10
+                }
+            })
         }
         return marks
     }

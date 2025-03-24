@@ -136,3 +136,7 @@
 .ui-dialog-content .noteEl.hide {
     display: none;
 }
+
+.ui-dialog form {
+    padding: 8px;
+}

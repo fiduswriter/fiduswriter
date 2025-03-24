@@ -302,13 +302,13 @@ export class OdtConvert {
 
     convertObject(node, attrs) {
         const mathEl = node.query("math")
-        attrs = Object.assign(
-            {
-                equation: MathMLToLaTeX.convert(mathEl.innerXML)
-            },
-            attrs
-        )
         if (mathEl) {
+            attrs = Object.assign(
+                {
+                    equation: MathMLToLaTeX.convert(mathEl.innerXML)
+                },
+                attrs
+            )
             return {
                 type: "equation",
                 attrs
@@ -325,7 +325,9 @@ export class OdtConvert {
                 annotation.query("dc:date")?.textContent || ""
             ).getTime()
 
-            const id = (annotation.getAttribute("office:name") || "").slice(-10)
+            const id = (annotation.getAttribute("office:name") || "")
+                .replace(/\D/g, "")
+                .slice(0, 9)
 
             if (id) {
                 // main comment
@@ -335,7 +337,8 @@ export class OdtConvert {
                     date,
                     comment: annotation
                         .queryAll("text:p")
-                        .map(par => this.convertBlockNode(par)),
+                        .map(par => this.convertBlockNode(par))
+                        .filter(par => par),
                     answers: [],
                     resolved:
                         annotation.getAttribute("loext:resolved") === "true"
@@ -343,7 +346,9 @@ export class OdtConvert {
             } else {
                 const parentId = (
                     annotation.getAttribute("loext:parent-name") || ""
-                ).slice(-10)
+                )
+                    .replace(/\D/g, "")
+                    .slice(0, 9)
                 if (parentId && this.comments[parentId]) {
                     this.comments[parentId].answers.push({
                         id: randomCommentId(),
@@ -355,6 +360,7 @@ export class OdtConvert {
                             .queryAll("text:p")
                             .slice(1)
                             .map(par => this.convertBlockNode(par))
+                            .filter(par => par)
                     })
                 }
             }
@@ -424,16 +430,32 @@ export class OdtConvert {
         }
 
         // Add title (required first element)
-        const titleText = this.extractTitle() || gettext("Untitled")
-        document.content.push({
-            type: "title",
-            content: [
-                {
-                    type: "text",
-                    text: String(titleText)
-                }
-            ]
+        const title = this.extractTitle()
+
+        if (title.content.length) {
+            document.content.push({
+                type: "title",
+                content: title.content
+            })
+        } else {
+            // If no title found, use default title
+            document.content.push({
+                type: "title",
+                content: [
+                    {
+                        type: "text",
+                        text: gettext("Untitled")
+                    }
+                ]
+            })
+        }
+        title.containerNodes.forEach(node => {
+            node.parentElement.removeChild(node)
         })
+
+        document.attrs.title =
+            title.content.map(node => node.textContent).join("") ||
+            gettext("Untitled")
 
         // Get all content sections from the ODT
         const body = this.contentDoc.query("office:text")
@@ -454,7 +476,11 @@ export class OdtConvert {
                         ...templatePart.attrs,
                         ...attrs
                     },
-                    content
+                    content: content.content
+                })
+                // Remove paragraphs from content so they are not added to body
+                content.containerNodes.forEach(node => {
+                    node.parentElement.removeChild(node)
                 })
             }
         })
@@ -524,19 +550,16 @@ export class OdtConvert {
 
         // Extract authors if present
         const authors = this.extractAuthors()
-        if (authors.length) {
+        if (authors.content.length) {
             metadata.push({
                 type: "authors",
-                content: authors.map(author => ({
-                    type: "contributor",
-                    attrs: author
-                }))
+                content: authors
             })
         }
 
         // Extract abstract if present
         const abstract = this.extractAbstract()
-        if (abstract.length) {
+        if (abstract.content.length) {
             metadata.push({
                 type: "abstract",
                 content: abstract
@@ -545,7 +568,7 @@ export class OdtConvert {
 
         // Extract keywords if present
         const keywords = this.extractKeywords()
-        if (keywords.length) {
+        if (keywords.content.length) {
             metadata.push({
                 type: "keywords",
                 content: keywords
@@ -566,29 +589,46 @@ export class OdtConvert {
             const authorText = authorMeta.textContent
             const [firstname = "", lastname = ""] = authorText.split(" ", 2)
             authors.push({
-                firstname,
-                lastname,
-                email: "",
-                institution: ""
+                type: "contributor",
+                attrs: {
+                    firstname,
+                    lastname,
+                    email: "",
+                    institution: ""
+                }
             })
         })
+        if (authors.length) {
+            return {
+                content: authors,
+                containerNodes: metaAuthors
+            }
+        }
 
         // Also check for creator in document metadata
         const creator = this.contentDoc.query("meta:creator")
-        if (creator && !authors.length) {
+        if (creator) {
             const [firstname = "", lastname = ""] = creator.textContent.split(
                 " ",
                 2
             )
-            authors.push({
-                firstname,
-                lastname,
-                email: "",
-                institution: ""
-            })
+            return {
+                content: [
+                    {
+                        type: "contributor",
+                        attrs: {
+                            firstname,
+                            lastname,
+                            email: "",
+                            institution: ""
+                        }
+                    }
+                ],
+                containerNodes: []
+            }
         }
 
-        return authors
+        return {content: [], containerNodes: []}
     }
 
     extractAbstract() {
@@ -606,10 +646,16 @@ export class OdtConvert {
             (abstractSection.getAttribute("text:style-name") === "Abstract" ||
                 abstractSection.textContent.includes("Abstract"))
         ) {
-            return this.convertContainer(abstractSection)
+            return {
+                content: this.convertContainer(abstractSection),
+                containerNodes: [abstractSection]
+            }
         }
 
-        return []
+        return {
+            content: [],
+            containerNodes: []
+        }
     }
 
     extractKeywords() {
@@ -621,20 +667,13 @@ export class OdtConvert {
             })
 
         if (keywordsSection) {
-            return [
-                {
-                    type: "paragraph",
-                    content: [
-                        {
-                            type: "text",
-                            text: String(keywordsSection.textContent)
-                        }
-                    ]
-                }
-            ]
+            return {
+                content: this.convertContainer(keywordsSection),
+                containerNodes: [keywordsSection]
+            }
         }
 
-        return []
+        return {content: [], containerNodes: []}
     }
 
     findMatchingTemplatePart(sectionTitle, templateParts) {
@@ -687,8 +726,10 @@ export class OdtConvert {
             "text:style-name": "Title"
         })
         if (titleParagraph) {
-            titleParagraph.parentElement.removeChild(titleParagraph)
-            return titleParagraph.textContent
+            return {
+                content: this.convertBlockNode(titleParagraph)?.content || [],
+                containerNodes: [titleParagraph]
+            }
         }
 
         // Fall back to first heading
@@ -696,8 +737,10 @@ export class OdtConvert {
             "text:outline-level": "1"
         })
         if (titleHeading) {
-            titleHeading.parentElement.removeChild(titleHeading)
-            return titleHeading.textContent
+            return {
+                content: this.convertBlockNode(titleHeading)?.content || [],
+                containerNodes: [titleHeading]
+            }
         }
 
         // Check for other common title style names
@@ -712,8 +755,10 @@ export class OdtConvert {
                 "text:style-name": styleName
             })
             if (titleElement) {
-                titleElement.parentElement.removeChild(titleElement)
-                return titleElement.textContent
+                return {
+                    content: this.convertBlockNode(titleElement)?.content || [],
+                    containerNodes: [titleElement]
+                }
             }
         }
 
@@ -725,12 +770,18 @@ export class OdtConvert {
 
             if (style && this.isTitleStyle(style)) {
                 // Remove this node from the document so it's not processed again
-                firstParagraph.parentNode.removeChild(firstParagraph)
-                return firstParagraph.textContent
+                return {
+                    content:
+                        this.convertBlockNode(firstParagraph)?.content || [],
+                    containerNodes: [firstParagraph]
+                }
             }
         }
 
-        return gettext("Untitled")
+        return {
+            content: [],
+            containerNodes: []
+        }
     }
 
     isTitleStyle(style) {
@@ -1181,9 +1232,9 @@ export class OdtConvert {
                     child.tagName === "text:reference-mark-start" ||
                     child.tagName === "text:reference-mark-end" ||
                     (child.tagName === "text:span" &&
-                        child.previousElementSibling?.tagName ===
+                        child.previousSibling?.tagName ===
                             "text:reference-mark-start" &&
-                        child.nextElementSibling?.tagName ===
+                        child.nextSibling?.tagName ===
                             "text:reference-mark-end")
             )
         ) {
@@ -1292,7 +1343,9 @@ export class OdtConvert {
     }
 
     convertAnnotationStart(node) {
-        const commentId = (node.getAttribute("office:name") || "").slice(-10)
+        const commentId = (node.getAttribute("office:name") || "")
+            .replace(/\D/g, "")
+            .slice(0, 9)
         if (commentId && this.comments[commentId]) {
             this.currentCommentIds.push(commentId)
         }
@@ -1300,7 +1353,9 @@ export class OdtConvert {
     }
 
     convertAnnotationEnd(node) {
-        const commentId = (node.getAttribute("office:name") || "").slice(-10)
+        const commentId = (node.getAttribute("office:name") || "")
+            .replace(/\D/g, "")
+            .slice(0, 9)
         if (commentId) {
             const index = this.currentCommentIds.indexOf(commentId)
             if (index !== -1) {
@@ -1375,7 +1430,7 @@ export class OdtConvert {
         }
 
         const href = imageElement.getAttribute("xlink:href")
-        if (!href) {
+        if (!href || !href.startsWith("Pictures/")) {
             return null
         }
 
@@ -1424,6 +1479,11 @@ export class OdtConvert {
             attrs
         )
 
+        const figureCaption = {type: "figure_caption"}
+        if (captionContent.length) {
+            figureCaption.content = captionContent
+        }
+
         return {
             type: "figure",
             attrs,
@@ -1434,14 +1494,7 @@ export class OdtConvert {
                         image: imageId
                     }
                 },
-                ...(captionContent.length
-                    ? [
-                          {
-                              type: "figure_caption",
-                              content: captionContent
-                          }
-                      ]
-                    : [])
+                figureCaption
             ]
         }
     }
@@ -1508,7 +1561,7 @@ export class OdtConvert {
             node.getAttribute("style:rel-width")?.replace("%", "") || "100"
         const styleName = node.getAttribute("table:style-name")
         const style = this.styles[styleName]
-        const aligned = style?.getAttribute("table:align") || "center"
+        const aligned = style?.tableProperties.align || "center"
 
         attrs = Object.assign(
             {

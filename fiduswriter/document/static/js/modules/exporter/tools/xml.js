@@ -91,6 +91,28 @@ class XMLElement {
         }
     }
 
+    set textContent(value) {
+        // For leaf nodes, directly set the text content
+        if (this.tagName === "#text") {
+            this.node["#text"] = value
+            return
+        }
+
+        // For element nodes, clear children and add a text node
+        if (this.node[this.tagName]) {
+            // Clear existing children
+            this.node[this.tagName] = []
+
+            // Only add text content if it's not empty
+            if (value) {
+                const textNode = {
+                    "#text": value
+                }
+                this.node[this.tagName].push(new XMLElement(textNode, this))
+            }
+        }
+    }
+
     get firstChild() {
         return this.children[0]
     }
@@ -487,6 +509,10 @@ class XMLElement {
         const builder = new XMLBuilder(fastXMLParserOptions)
         const object = this.toObject()
         return builder.build(Array.isArray(object) ? object : [object])
+    }
+
+    get outerXML() {
+        return this.toString()
     }
 }
 

@@ -110,8 +110,7 @@ export class DocxParser {
         }
     }
 
-    extractRunProperties(style) {
-        const rPr = style.query("w:rPr")
+    extractRunProperties(rPr) {
         if (!rPr) {
             return {}
         }
@@ -119,12 +118,13 @@ export class DocxParser {
         return {
             bold: Boolean(rPr.query("w:b")),
             italic: Boolean(rPr.query("w:i")),
-            underline: rPr.query("w:u")?.getAttribute("w:val"),
+            underline: rPr.query("w:u")?.getAttribute("w:val") || false,
             strike: Boolean(rPr.query("w:strike")),
             smallCaps: Boolean(rPr.query("w:smallCaps")),
-            vertAlign: rPr.query("w:vertAlign")?.getAttribute("w:val"),
+            vertAlign: rPr.query("w:vertAlign")?.getAttribute("w:val") || false,
             fontSize:
-                parseInt(rPr.query("w:sz")?.getAttribute("w:val") || "0") / 2
+                parseInt(rPr.query("w:sz")?.getAttribute("w:val") || "0") / 2,
+            color: rPr.query("w:color")?.getAttribute("w:val") || false
         }
     }
 
@@ -242,6 +242,171 @@ export class DocxParser {
             console.warn("Could not parse footnotes", err)
         }
     }
+
+    // async parseFootnotes() {
+    //     try {
+    //         const content = await this.zip
+    //             .file("word/footnotes.xml")
+    //             ?.async("string")
+    //         if (!content) {
+    //             return
+    //         }
+    //         const footnotesDoc = xmlDOM(content)
+
+    //         footnotesDoc.queryAll("w:footnote").forEach(footnote => {
+    //             const id = footnote.getAttribute("w:id")
+    //             if (id === "0" || id === "-1") {
+    //                 return // Skip separator footnotes
+    //             }
+
+    //             // Process each paragraph in the footnote
+    //             const paragraphs = []
+    //             footnote.queryAll("w:p").forEach(p => {
+    //                 paragraphs.push({
+    //                     type: "paragraph",
+    //                     content: this.extractParagraphContent(p)
+    //                 })
+    //             })
+
+    //             this.footnotes[id] = {
+    //                 id,
+    //                 content: paragraphs
+    //             }
+    //         })
+    //     } catch (err) {
+    //         console.warn("Could not parse footnotes", err)
+    //     }
+    // }
+
+    // extractParagraphContent(p) {
+    //     const content = []
+
+    //     // Handle field codes (for cross-references)
+    //     const fieldRuns = []
+    //     let currentFieldCode = null
+    //     let collectingField = false
+
+    //     p.queryAll("w:r").forEach(r => {
+    //         const fieldChar = r.query("w:fldChar")
+    //         if (fieldChar) {
+    //             const type = fieldChar.getAttribute("w:fldCharType")
+    //             if (type === "begin") {
+    //                 collectingField = true
+    //                 currentFieldCode = { code: "", result: "" }
+    //             } else if (type === "separate") {
+    //                 collectingField = false
+    //             } else if (type === "end") {
+    //                 if (currentFieldCode) {
+    //                     fieldRuns.push(currentFieldCode)
+    //                     currentFieldCode = null
+    //                 }
+    //             }
+    //         } else if (collectingField && currentFieldCode) {
+    //             const instrText = r.query("w:instrText")
+    //             if (instrText) {
+    //                 currentFieldCode.code += instrText.textContent
+    //             }
+    //         } else if (currentFieldCode) {
+    //             const text = r.query("w:t")?.textContent
+    //             if (text) {
+    //                 currentFieldCode.result += text
+    //             }
+    //         }
+
+    //         // Normal text processing
+    //         const text = r.query("w:t")?.textContent
+    //         if (!text && !r.query("w:drawing") && !r.query("w:pict")) {
+    //             // Check for breaks
+    //             if (r.query("w:br")) {
+    //                 content.push({ type: "hard_break" })
+    //             }
+    //             return
+    //         }
+
+    //         // Check for hyperlinks
+    //         const hyperlink = r.closest("w:hyperlink")
+    //         if (hyperlink && !r.query("w:drawing") && !r.query("w:pict")) {
+    //             // This will be handled separately
+    //             return
+    //         }
+
+    //         const rPr = r.query("w:rPr")
+    //         const formatting = rPr ? this.extractRunProperties(rPr) : {}
+
+    //         if (text) {
+    //             content.push({
+    //                 type: "text",
+    //                 text,
+    //                 marks: this.createMarksFromFormatting(formatting)
+    //             })
+    //         }
+    //     })
+
+    //     // Process hyperlinks in the paragraph
+    //     p.queryAll("w:hyperlink").forEach(hyperlink => {
+    //         const rId = hyperlink.getAttribute("r:id")
+    //         const anchor = hyperlink.getAttribute("w:anchor")
+
+    //         // Collect all text from the hyperlink
+    //         let linkText = ""
+    //         hyperlink.queryAll("w:r").forEach(r => {
+    //             const t = r.query("w:t")
+    //             if (t) {
+    //                 linkText += t.textContent
+    //             }
+    //         })
+
+    //         if (linkText) {
+    //             let href = "#"
+    //             if (rId && this.relationships[rId]) {
+    //                 href = this.relationships[rId].target
+    //             } else if (anchor) {
+    //                 href = `#${anchor}`
+    //             }
+
+    //             content.push({
+    //                 type: "text",
+    //                 text: linkText,
+    //                 marks: [{
+    //                     type: "link",
+    //                     attrs: {
+    //                         href,
+    //                         title: linkText
+    //                     }
+    //                 }]
+    //             })
+    //         }
+    //     })
+
+    //     // Process field runs for cross-references
+    //     fieldRuns.forEach(field => {
+    //         if (field.code.startsWith("REF ")) {
+    //             const target = field.code.substring(4).trim().split(/\s+/)[0]
+    //             content.push({
+    //                 type: "cross_reference",
+    //                 attrs: {
+    //                     id: target,
+    //                     title: field.result || target
+    //                 }
+    //             })
+    //         }
+    //     })
+
+    //     // Handle equations
+    //     const oMath = p.query("m:oMath")
+    //     if (oMath) {
+    //         // Very basic LaTeX conversion (would need a proper OMML to LaTeX converter)
+    //         const latex = "x^2" // Placeholder - should use a proper converter
+    //         content.push({
+    //             type: "equation",
+    //             attrs: {
+    //                 equation: latex
+    //             }
+    //         })
+    //     }
+
+    //     return content
+    // }
 
     async parseEndnotes() {
         try {

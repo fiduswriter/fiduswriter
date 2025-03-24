@@ -1,5 +1,8 @@
+import {MathMLToLaTeX} from "mathml-to-latex"
 import {xmlDOM} from "../../exporter/tools/xml"
 import {randomFigureId, randomHeadingId} from "../../schema/common"
+import {normalizeText} from "./helpers"
+import {omml2mathml} from "./omml2mathml"
 import {DocxParser} from "./parse"
 
 export class DocxConvert {
@@ -31,6 +34,9 @@ export class DocxConvert {
                 comments: {}
             }
         }
+        // Find all reference targets in the document for cross-references
+        this.referenceTargets = this.findReferenceTargets(this.parser.document)
+
         const convertedContent = this.convertDocument(body)
         // Convert document
         return {
@@ -438,14 +444,8 @@ export class DocxConvert {
     }
 
     isSimilarTitle(title1, title2) {
-        const normalize = str =>
-            str
-                .toLowerCase()
-                .replace(/[^a-z0-9]/g, "")
-                .trim()
-
-        const normalized1 = normalize(title1)
-        const normalized2 = normalize(title2)
+        const normalized1 = normalizeText(title1)
+        const normalized2 = normalizeText(title2)
 
         return (
             normalized1.includes(normalized2) ||
@@ -742,29 +742,397 @@ export class DocxConvert {
 
     convertInline(node) {
         const content = []
-        node.queryAll("w:r").forEach(run => {
-            const text =
-                run.query("w:t")?.textContent ||
-                run.query("w:delText")?.textContent
-            if (!text) {
-                return
-            }
 
-            const rPr = run.query("w:rPr")
-            const formatting = rPr ? this.parser.extractRunProperties(rPr) : {}
-            const insertion = run.closest("w:ins")
-            const deletion = run.closest("w:del")
-            content.push({
-                type: "text",
-                text,
-                marks: this.createMarksFromFormatting(
-                    formatting,
-                    insertion,
-                    deletion
-                )
-            })
+        // We'll process all nodes (runs and hyperlinks) in their original order
+        const children = []
+
+        // Collect all direct children that we need to process in order
+        // This includes both w:r (runs) and w:hyperlink elements
+        node.children.forEach(child => {
+            if (["w:r", "w:hyperlink", "m:oMath"].includes(child.tagName)) {
+                children.push(child)
+            }
         })
+
+        // Process each child in document order
+        children.forEach(child => {
+            if (child.tagName === "w:hyperlink") {
+                // Process hyperlink
+                const rId = child.getAttribute("r:id")
+                const anchor = child.getAttribute("w:anchor")
+                const relationship = rId ? this.parser.relationships[rId] : null
+                const href =
+                    relationship?.target || (anchor ? `#${anchor}` : null)
+
+                if (href) {
+                    const runs = child.queryAll("w:r")
+                    const text = runs
+                        .map(run => run.query("w:t")?.textContent || "")
+                        .join("")
+
+                    if (text) {
+                        // Check if this is an internal link (bookmark reference) that should be a cross-reference
+                        if (anchor && this.referenceTargets[anchor]) {
+                            // If the link text is similar to the target text, treat it as a cross-reference
+                            const target = this.referenceTargets[anchor]
+                            const targetText = target.text || anchor
+
+                            // Compare normalized versions to check if text matches target
+                            if (
+                                normalizeText(text) ===
+                                    normalizeText(targetText) ||
+                                // Also check for "Figure X: " or "Table X: " style references
+                                text.match(
+                                    /^(Figure|Table|Equation)\s+\d+(\.\d+)*(\:|\.)?\s*$/i
+                                )
+                            ) {
+                                content.push(
+                                    this.convertCrossReference(anchor, text)
+                                )
+                                return
+                            }
+                        }
+
+                        // Otherwise, treat as a normal link
+                        const rPr = runs[0]?.query("w:rPr")
+                        const formatting = rPr
+                            ? this.parser.extractRunProperties(rPr)
+                            : {}
+
+                        const marks = this.createMarksFromFormatting(formatting)
+                        marks.push({
+                            type: "link",
+                            attrs: {href, title: text}
+                        })
+
+                        content.push({
+                            type: "text",
+                            text,
+                            marks
+                        })
+                    }
+                }
+            } else if (child.tagName === "w:r") {
+                // Process regular run
+
+                // Skip processing if this run is part of a complex field code
+                // This avoids duplicate text content from field codes
+                if (
+                    child.query("w:fldChar")?.getAttribute("w:fldCharType") !==
+                    undefined
+                ) {
+                    return
+                }
+
+                // Process footnote references
+                const footnoteRef = child.query("w:footnoteReference")
+                if (footnoteRef) {
+                    const footnoteId = footnoteRef.getAttribute("w:id")
+                    if (this.parser.footnotes[footnoteId]) {
+                        content.push(this.convertFootnote(footnoteId))
+                    }
+                    return
+                }
+
+                // Process endnote references
+                const endnoteRef = child.query("w:endnoteReference")
+                if (endnoteRef) {
+                    const endnoteId = endnoteRef.getAttribute("w:id")
+                    if (this.parser.endnotes[endnoteId]) {
+                        content.push(this.convertFootnote(endnoteId, true))
+                    }
+                    return
+                }
+
+                // Process text with formatting
+                const text =
+                    child.query("w:t")?.textContent ||
+                    child.query("w:delText")?.textContent
+                if (!text) {
+                    // Process line breaks
+                    if (child.query("w:br")) {
+                        content.push({type: "hard_break"})
+                    }
+                    return
+                }
+
+                const rPr = child.query("w:rPr")
+                const formatting = rPr
+                    ? this.parser.extractRunProperties(rPr)
+                    : {}
+                const insertion = child.closest("w:ins")
+                const deletion = child.closest("w:del")
+
+                content.push({
+                    type: "text",
+                    text,
+                    marks: this.createMarksFromFormatting(
+                        formatting,
+                        insertion,
+                        deletion
+                    )
+                })
+            } else if (child.tagName === "m:oMath") {
+                const equationNode = this.convertEquation(child)
+                if (equationNode) {
+                    content.push(equationNode)
+                }
+            }
+        })
+
+        // Process cross-references from field codes
+        const fields = this.extractFieldContents(node)
+        fields.forEach(field => {
+            if (field.type === "REF" && field.target) {
+                // Find where this reference should be placed
+                // For simplicity, we're just appending them, but ideally
+                // you'd want to insert them at the correct position
+                // This is a limitation of the current approach
+                content.push(
+                    this.convertCrossReference(field.target, field.text)
+                )
+            }
+        })
+
         return content
+    }
+
+    // Method to help process cross-references in documents
+    findReferenceTargets(document) {
+        const targets = {}
+
+        // Find bookmarks
+        document.queryAll("w:bookmarkStart").forEach(bookmark => {
+            const id = bookmark.getAttribute("w:id")
+            const name = bookmark.getAttribute("w:name")
+            if (id && name) {
+                targets[name] = {
+                    id: name,
+                    type: "bookmark"
+                }
+            }
+        })
+
+        // Find headings (with styles like Heading1, Heading2, etc.)
+        document.queryAll("w:pStyle").forEach(pStyle => {
+            const val = pStyle.getAttribute("w:val")
+            if (val && val.match(/^Heading\d+$/)) {
+                const paragraph = pStyle.closest("w:p")
+                if (paragraph) {
+                    const text = this.getTextContent(paragraph)
+                    // Create an ID from the heading text
+                    const id = text
+                        .trim()
+                        .toLowerCase()
+                        .replace(/[^\w\s-]/g, "")
+                        .replace(/\s+/g, "-")
+
+                    targets[id] = {
+                        id: id,
+                        type: "heading",
+                        text: text
+                    }
+                }
+            }
+        })
+
+        return targets
+    }
+
+    convertFootnote(id, isEndnote = false) {
+        const footnoteContent = isEndnote
+            ? this.parser.endnotes[id].content
+            : this.parser.footnotes[id].content
+
+        // Convert the footnote content to our document model
+        const content = []
+        footnoteContent.forEach(block => {
+            if (block.type === "paragraph") {
+                content.push({
+                    type: "paragraph",
+                    content: block.content.map(node => {
+                        if (node.type === "text") {
+                            return {
+                                type: "text",
+                                text: node.text,
+                                marks: node.marks || []
+                            }
+                        }
+                        return node
+                    })
+                })
+            }
+        })
+
+        return {
+            type: "footnote",
+            attrs: {
+                footnote: content
+            }
+        }
+    }
+
+    convertEquation(oMathNode) {
+        // Extract OMML content and convert to MathML
+        const mmlNode = omml2mathml(oMathNode)
+        const latex = MathMLToLaTeX.convert(mmlNode.outerXML)
+        return {
+            type: "equation",
+            attrs: {
+                equation: latex
+            }
+        }
+    }
+
+    simplifiedOmmlToLatex(omml) {
+        // This is a very basic conversion - in a real implementation you would
+        // use a library like MathML-to-LaTeX or implement a more complete converter
+
+        // Extract text content as a fallback
+        const textContent = omml
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim()
+
+        // If the OMML contains a fraction
+        if (omml.includes("<m:f>")) {
+            const numMatch = omml.match(/<m:num>(.*?)<\/m:num>/s)
+            const denMatch = omml.match(/<m:den>(.*?)<\/m:den>/s)
+
+            if (numMatch && denMatch) {
+                const num = numMatch[1].replace(/<[^>]+>/g, "").trim()
+                const den = denMatch[1].replace(/<[^>]+>/g, "").trim()
+                return `\\frac{${num}}{${den}}`
+            }
+        }
+
+        // If it contains a superscript
+        if (omml.includes("<m:sup>")) {
+            const baseMatch = omml.match(/<m:e>(.*?)<\/m:e>/s)
+            const supMatch = omml.match(/<m:sup>(.*?)<\/m:sup>/s)
+
+            if (baseMatch && supMatch) {
+                const base = baseMatch[1].replace(/<[^>]+>/g, "").trim()
+                const sup = supMatch[1].replace(/<[^>]+>/g, "").trim()
+                return `${base}^{${sup}}`
+            }
+        }
+
+        // If it contains a subscript
+        if (omml.includes("<m:sub>")) {
+            const baseMatch = omml.match(/<m:e>(.*?)<\/m:e>/s)
+            const subMatch = omml.match(/<m:sub>(.*?)<\/m:sub>/s)
+
+            if (baseMatch && subMatch) {
+                const base = baseMatch[1].replace(/<[^>]+>/g, "").trim()
+                const sub = subMatch[1].replace(/<[^>]+>/g, "").trim()
+                return `${base}_{${sub}}`
+            }
+        }
+
+        // Return a simplified representation with the text content
+        return textContent || "x^2" // Default fallback
+    }
+
+    extractFieldContents(node) {
+        // This method extracts field code information from Word documents
+        // Field codes are used for cross-references, page numbers, etc.
+        const fields = []
+        let currentField = null
+        let collectingInstrText = false
+        let collectingFieldResult = false
+
+        // Process all runs in the node to find field codes
+        const runs = node.queryAll("w:r")
+
+        for (let i = 0; i < runs.length; i++) {
+            const run = runs[i]
+
+            // Check for field chars which mark the beginning/end of fields
+            const fieldChar = run.query("w:fldChar")
+            if (fieldChar) {
+                const type = fieldChar.getAttribute("w:fldCharType")
+
+                if (type === "begin") {
+                    // Start a new field
+                    currentField = {
+                        type: null,
+                        text: "",
+                        target: null
+                    }
+                    collectingInstrText = true
+                    collectingFieldResult = false
+                } else if (type === "separate") {
+                    // Switch from collecting instruction to collecting result
+                    collectingInstrText = false
+                    collectingFieldResult = true
+
+                    // Parse the instruction text to determine field type and parameters
+                    if (currentField && currentField.text) {
+                        const instr = currentField.text.trim()
+
+                        // Handle REF fields (cross-references)
+                        if (instr.startsWith("REF ")) {
+                            currentField.type = "REF"
+                            // Extract the target bookmark/heading ID
+                            const parts = instr.substring(4).trim().split(/\s+/)
+                            if (parts.length > 0) {
+                                currentField.target = parts[0]
+                            }
+                        }
+                        // Could add more field types here as needed
+                    }
+                } else if (type === "end") {
+                    // End the current field and add it to the list
+                    if (currentField) {
+                        fields.push(currentField)
+                        currentField = null
+                    }
+                    collectingInstrText = false
+                    collectingFieldResult = false
+                }
+            } else {
+                // Process the content of the field
+                if (collectingInstrText) {
+                    // Collecting the instruction text
+                    const instrText = run.query("w:instrText")
+                    if (instrText && currentField) {
+                        currentField.text += instrText.textContent
+                    }
+                } else if (collectingFieldResult && currentField) {
+                    // Collecting the result text (what's displayed in Word)
+                    const text = run.query("w:t")?.textContent || ""
+                    currentField.text = text || currentField.text
+                }
+            }
+        }
+
+        return fields
+    }
+
+    convertCrossReference(targetId, displayText) {
+        // Look up the target in our reference targets
+        const target = this.referenceTargets[targetId]
+
+        // If we found the target, use its information
+        if (target) {
+            return {
+                type: "cross_reference",
+                attrs: {
+                    id: targetId,
+                    title: displayText || target.text || targetId
+                }
+            }
+        }
+
+        // If target not found, create a reference with the display text or target ID
+        return {
+            type: "cross_reference",
+            attrs: {
+                id: targetId,
+                title: displayText || targetId
+            }
+        }
     }
 
     createMarksFromFormatting(formatting, insertion = null, deletion = null) {

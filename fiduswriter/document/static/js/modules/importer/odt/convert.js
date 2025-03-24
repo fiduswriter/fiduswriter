@@ -302,13 +302,13 @@ export class OdtConvert {
 
     convertObject(node, attrs) {
         const mathEl = node.query("math")
-        attrs = Object.assign(
-            {
-                equation: MathMLToLaTeX.convert(mathEl.innerXML)
-            },
-            attrs
-        )
         if (mathEl) {
+            attrs = Object.assign(
+                {
+                    equation: MathMLToLaTeX.convert(mathEl.innerXML)
+                },
+                attrs
+            )
             return {
                 type: "equation",
                 attrs

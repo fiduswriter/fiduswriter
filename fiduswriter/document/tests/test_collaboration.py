@@ -1184,6 +1184,22 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
+        # set citation style
+        self.driver.find_element(
+            By.XPATH, '//span[contains(normalize-space(), "Settings")]'
+        ).click()
+        self.driver.find_element(
+            By.XPATH, '//span[normalize-space()="Citation Style"]'
+        ).click()
+        self.driver.find_element(
+            By.XPATH,
+            '//span[normalize-space()="American Psychological Association 7th edition"]',
+        ).click()
+
+        # Exit menu by hitting ESC
+        self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+
+        # set title
         self.add_title(self.driver)
         document_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
 

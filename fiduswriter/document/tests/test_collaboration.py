@@ -1211,14 +1211,19 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
         self.wait_for_doc_sync(self.driver, self.driver2)
 
-        self.assertEqual(11, len(self.get_citation_within_text(self.driver2)))
+        self.assertEqual(
+            "(Doe, 2012)", self.get_citation_within_text(self.driver2)
+        )
 
         self.assertEqual(
             len(self.get_citation_within_text(self.driver)),
             len(self.get_citation_within_text(self.driver2)),
         )
 
-        self.assertEqual(63, len(self.get_citation_bib(self.driver)))
+        self.assertEqual(
+            "Bibliography\nDoe, J. (2012). My title. In My publication title.",
+            self.get_citation_bib(self.driver),
+        )
 
         self.assertEqual(
             len(self.get_citation_bib(self.driver)),

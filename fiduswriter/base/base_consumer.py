@@ -41,7 +41,7 @@ class BaseWebsocketConsumer(WebsocketConsumer):
     def do_close(self):
         self.close()
 
-    def receive(self, text_data=None):
+    def receive(self, text_data=None, bytes_data=None):
         if not text_data:
             return
         message = json.loads(text_data)

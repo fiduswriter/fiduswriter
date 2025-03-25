@@ -1,3 +1,4 @@
+import autobahn
 import uuid
 import atexit
 import logging
@@ -585,7 +586,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     def can_communicate(self):
         return self.user_info.access_rights in CAN_COMMUNICATE
 
-    def disconnect(self, close_code):
+    def disconnect(self, code):
         if (
             hasattr(self, "endpoint")
             and hasattr(self, "user")
@@ -615,9 +616,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     f"URL:{self.endpoint} User:{self.user.id}"
                 )
             else:
-                WebsocketConsumer.send_participant_list(
-                    self.user_info.document_id
-                )
+                try:
+                    WebsocketConsumer.send_participant_list(
+                        self.user_info.document_id
+                    )
+                except autobahn.exception.Disconnected:
+                    pass
         self.close()
 
     @classmethod

@@ -520,6 +520,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "button[title=Strong]"
         ).click()
+        time.sleep(1)
         ActionChains(self.driver).send_keys(Keys.RIGHT).send_keys(
             Keys.RIGHT
         ).send_keys(Keys.RIGHT).send_keys(Keys.RIGHT).send_keys(

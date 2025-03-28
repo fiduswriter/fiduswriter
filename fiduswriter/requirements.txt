@@ -15,3 +15,4 @@ pillow-avif-plugin==1.4.6
 python-magic==0.4.27
 prosemirror==0.5.0
 watchdog==5.0.3
+requests==2.32.3 # Needed for django-allauth plugins

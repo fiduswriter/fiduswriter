@@ -2,7 +2,7 @@ bleach==6.1.0
 channels==4.1.0
 daphne==4.1.2
 Django==5.1.7
-django-allauth==65.0.2
+django-allauth[socialaccount]==65.0.2
 django-avatar==8.0.1
 django-js-error-hook==1.0
 django-npm-mjs==3.1.6
@@ -15,4 +15,3 @@ pillow-avif-plugin==1.4.6
 python-magic==0.4.27
 prosemirror==0.5.0
 watchdog==5.0.3
-requests==2.32.3 # Needed for django-allauth plugins

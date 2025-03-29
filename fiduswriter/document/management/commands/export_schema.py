@@ -66,7 +66,10 @@ class Command(BaseCommand):
         schema_export_path = os.path.join(
             settings.PROJECT_PATH, "static-transpile/js/schema_export.js"
         )
-
+        if not os.path.exists(schema_export_path):
+            raise FileNotFoundError(
+                f"Schema export file not found at {schema_export_path}"
+            )
         with open(schema_export_path) as js_file:
             js = js_file.read()
 

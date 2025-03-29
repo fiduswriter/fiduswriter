@@ -20,7 +20,9 @@ prune fiduswriter/.direnv
 prune fiduswriter/media
 prune fiduswriter/book
 prune fiduswriter/citation_api_import
-prune fiduswriter/github_export
+prune fiduswriter/gitrepo_export
+prune fiduswriter/pandoc
+prune fiduswriter/pandoc_on_server
 prune fiduswriter/languagetool
 prune fiduswriter/npm_mjs
 prune fiduswriter/ojs

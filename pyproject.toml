@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "fiduswriter"
 description = "A semantic wordprocessor for academic purposes"
 readme = "README.md"
-license = {text = "AGPL-3.0-or-later"}
+license = "AGPL-3.0-or-later"
 authors = [
   {email = "mail@lundinfo.com", name = "Lund Info AB"},
 ]
@@ -14,7 +14,6 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
   "Framework :: Django :: 5.1",
-  "License :: OSI Approved :: GNU Affero General Public License v3",
   "Programming Language :: Python :: 3",
   "Topic :: Scientific/Engineering",
   "Topic :: Text Editors :: Word Processors",
@@ -35,7 +34,7 @@ books = ["fiduswriter-books ~= 4.0.0"]
 citation-api-import = ["fiduswriter-citation-api-import ~= 4.0.0"]
 languagetool = ["fiduswriter-languagetool ~= 4.0.0"]
 ojs = ["fiduswriter-ojs ~= 4.0.0"]
-pandoc = ["fiduswriter-pandoc ~= 4.0.0"]
+pandoc = ["fiduswriter-pandoc ~= 4.0.2"]
 phplist = ["fiduswriter-phplist ~= 4.0.0"]
 gitrepo-export = ["fiduswriter-gitrepo-export ~= 4.0.0"]
 payment-paddle = ["fiduswriter-payment-paddle ~= 4.0.0"]

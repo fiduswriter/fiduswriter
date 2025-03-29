@@ -166,18 +166,19 @@ class Command(RunserverCommand):
 
     def inner_run(self, *args, **options):
         # Determine ports to use
+        default_port = int(self.port)
         if self.addrport_provided:
-            ports = [self.port]
+            ports = [default_port]
         else:
-            ports = getattr(settings, "PORTS", [self.port])
+            ports = getattr(settings, "PORTS", [default_port])
             if isinstance(ports, int):
                 ports = [ports]
             elif isinstance(ports, (list, tuple)):
                 ports = list(ports)
             else:
-                ports = [self.port]
+                ports = [default_port]
             if not ports:
-                ports = [self.port]
+                ports = [default_port]
             try:
                 ports = [get_internal_port(p) for p in ports]
             except (ValueError, TypeError):

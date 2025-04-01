@@ -64,6 +64,15 @@ jobs:
                   pip install coverage
                   pip install coveralls
                   coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
+            - name: Set up Xvfb and ffmpeg
+              if: runner.debug == '1'
+              run: |
+                sudo apt update
+                sudo apt install -y xvfb ffmpeg
+                Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+                echo "DISPLAY=:99" >> $GITHUB_ENV
+                ffmpeg -y -f x11grab -video_size 1920x1080 -framerate 15 -i :99 -codec:v libx264 -preset ultrafast video.mp4 > /dev/null 2>&1 &
+                echo "FFMPEG_PID=$!" >> $GITHUB_ENV
             - name: Run test ${{ matrix.test }} without debug mode
               if: runner.debug != '1'
               uses: nick-invision/retry@v3
@@ -84,6 +93,15 @@ jobs:
                 command: |
                     cd fiduswriter
                     coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
+            - name: Upload video
+              if: ${{ runner.debug == '1' && (failure() || success()) }}
+              run: |
+                kill $FFMPEG_PID
+                sleep 5  # Give ffmpeg time to finish writing
+              uses: actions/upload-artifact@v4
+              with:
+                name: test-video
+                path: video.mp4
             - name: Upload failed test screenshots
               if: ${{ failure() }}
               uses: actions/upload-artifact@v4.3.4

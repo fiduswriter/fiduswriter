@@ -229,16 +229,20 @@ export class TagsPartView {
         if (node.attrs.hidden) {
             this.dom.dataset.hidden = true
         }
-        const [tagInputDOM, tagInputView] = createTagInputEditor(
-            view,
-            getPos,
-            node
-        )
-        this.tagInputView = tagInputView
+
         this.contentDOM = document.createElement("span")
         this.contentDOM.classList.add("tags-inner")
         this.dom.appendChild(this.contentDOM)
-        this.dom.appendChild(tagInputDOM)
+        if (node.attrs.locking !== "fixed") {
+            const [tagInputDOM, tagInputView] = createTagInputEditor(
+                view,
+                getPos,
+                node
+            )
+            this.tagInputView = tagInputView
+            this.dom.appendChild(tagInputDOM)
+        }
+
         if (node.attrs.deleted) {
             addDeletedPartWidget(this.dom, view, getPos)
         }
@@ -246,6 +250,8 @@ export class TagsPartView {
 
     stopEvent(event) {
         if (["click", "mousedown"].includes(event.type)) {
+            return false
+        } else if (!this.tagInputView || this.node.attrs.locking === "fixed") {
             return false
         } else if (
             event.type === "keydown" &&

@@ -25,8 +25,19 @@ export class ContributorsPartView {
         }
         this.contentDOM = document.createElement("span")
         this.contentDOM.classList.add("contributors-inner")
-        this.contentDOM.contentEditable = true
+        this.contentDOM.contentEditable = node.attrs.locking !== "fixed"
         this.dom.appendChild(this.contentDOM)
+
+        if (node.attrs.locking !== "fixed") {
+            this.addKeyListener(node, view, getPos)
+            this.addNewButton()
+        }
+        if (node.attrs.deleted) {
+            addDeletedPartWidget(this.dom, view, getPos)
+        }
+    }
+
+    addKeyListener(node, view, getPos) {
         this.contentDOM.addEventListener("keydown", event => {
             const key = keyName(event)
             switch (key) {
@@ -69,7 +80,9 @@ export class ContributorsPartView {
                 }
             }
         })
+    }
 
+    addNewButton() {
         const nodeTitle = this.node.attrs.item_title
         this.dom.insertAdjacentHTML(
             "beforeend",
@@ -80,10 +93,6 @@ export class ContributorsPartView {
         button.addEventListener("keydown", event =>
             this.handleActivation(event)
         )
-
-        if (node.attrs.deleted) {
-            addDeletedPartWidget(this.dom, view, getPos)
-        }
     }
 
     handleActivation(event) {
@@ -176,7 +185,8 @@ export const contributorInputPlugin = options => {
                 if (
                     state.selection.jsonID === "node" &&
                     state.selection.node.type.name === "contributor" &&
-                    state.selection.node !== oldState.selection.node
+                    state.selection.node !== oldState.selection.node &&
+                    state.selection.$anchor.node(1).attrs.locking !== "fixed"
                 ) {
                     const dropUpDeco = Decoration.widget(
                         state.selection.from,

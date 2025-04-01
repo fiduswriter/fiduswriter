@@ -772,8 +772,12 @@ def get_template(request):
 def get_ws_base(request):
     response = {}
     doc_id = int(request.POST.get("id"))
-    conn = settings.PORTS[doc_id % len(settings.PORTS)]
-    response["ws_base"] = get_url_base(request.headers["Origin"], conn)
+    if len(settings.PORTS) < 2:
+        ws_url_base = "/ws"
+    else:
+        conn = settings.PORTS[doc_id % len(settings.PORTS)]
+        ws_url_base = get_url_base(request.headers["Origin"], conn)
+    response["ws_base"] = ws_url_base
     return JsonResponse(response, status=200)
 
 

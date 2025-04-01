@@ -1137,6 +1137,8 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         author_firstName.click()
         author_firstName.send_keys("John")
 
+        time.sleep(1)
+
         author_lastName = driver.find_element(
             By.CSS_SELECTOR, ".family .ProseMirror"
         )

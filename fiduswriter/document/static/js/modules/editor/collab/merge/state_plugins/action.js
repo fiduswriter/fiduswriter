@@ -1,6 +1,5 @@
 import {TextSelection} from "prosemirror-state"
 import {AddMarkStep, Mapping, RemoveMarkStep, Step} from "prosemirror-transform"
-import {__serializeForClipboard} from "prosemirror-view"
 import {showSystemMessage} from "../../../../common"
 import {dispatchRemoveDiffdata} from "../tools"
 
@@ -17,7 +16,7 @@ export const copyChange = (view, from, to) => {
     view.focus()
 
     const slice = view.state.selection.content()
-    const {dom} = __serializeForClipboard(view, slice)
+    const {dom} = view.serializeForClipboard(slice)
 
     // Copy data to clipboard!!
     document.body.appendChild(dom)

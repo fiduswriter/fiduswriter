@@ -1236,6 +1236,28 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             len(self.get_citation_within_text(self.driver2)),
         )
 
+        # Select citation
+        self.driver.find_element(
+            By.CSS_SELECTOR, "div.doc-body span.citation"
+        ).click()
+
+        # Enter citation dialog
+        button = self.driver.find_element(By.XPATH, '//*[@title="Cite"]')
+        button.click()
+
+        # Verify that citation is correct in citation dialog.
+        citation_in_dialog = self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#my-sources > div > div.datatable-container > table > tbody > tr > td:nth-child(2)",
+        )
+        self.assertEqual(citation_in_dialog.text, "Doe, John")
+
+        # Close dialog
+        cancel_button = self.driver.find_element(
+            By.XPATH, '//button[normalize-space()="Cancel"]'
+        )
+        cancel_button.click()
+
         self.assertEqual(
             "Bibliography\nDoe, J. (2012). My title. In My publication title.",
             self.get_citation_bib(self.driver),

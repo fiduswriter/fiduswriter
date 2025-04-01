@@ -1132,15 +1132,13 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         title.send_keys("My title")
 
         author_firstName = driver.find_element(
-            By.CSS_SELECTOR, ".author .given .ProseMirror"
+            By.CSS_SELECTOR, ".author .given .ProseMirror .literal"
         )
         author_firstName.click()
         author_firstName.send_keys("John")
 
-        time.sleep(1)
-
         author_lastName = driver.find_element(
-            By.CSS_SELECTOR, ".family .ProseMirror"
+            By.CSS_SELECTOR, ".author .family .ProseMirror .literal"
         )
         author_lastName.click()
         author_lastName.send_keys("Doe")

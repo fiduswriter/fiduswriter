@@ -1227,15 +1227,6 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
 
         self.wait_for_doc_sync(self.driver, self.driver2)
 
-        self.assertEqual(
-            "(Doe, 2012)", self.get_citation_within_text(self.driver2)
-        )
-
-        self.assertEqual(
-            len(self.get_citation_within_text(self.driver)),
-            len(self.get_citation_within_text(self.driver2)),
-        )
-
         # Select citation
         self.driver.find_element(
             By.CSS_SELECTOR, "div.doc-body span.citation"
@@ -1257,6 +1248,15 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//button[normalize-space()="Cancel"]'
         )
         cancel_button.click()
+
+        # Verify that citation is correct in both documents
+        self.assertEqual(
+            len(self.get_citation_within_text(self.driver)),
+            len(self.get_citation_within_text(self.driver2)),
+        )
+        self.assertEqual(
+            "(Doe, 2012)", self.get_citation_within_text(self.driver2)
+        )
 
         self.assertEqual(
             "Bibliography\nDoe, J. (2012). My title. In My publication title.",

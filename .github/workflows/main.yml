@@ -85,13 +85,9 @@ jobs:
                   coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
             - name: Run test ${{ matrix.test }} with debug mode
               if: runner.debug == '1'
-              uses: nick-invision/retry@v3
-              with:
-                timeout_minutes: 10
-                max_attempts: 3
-                retry_on: error
-                command: |
+              run:
                   cd fiduswriter
+                  export DEBUG_MODE=1
                   coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
             - name: Kill FFMPEG
               if: ${{ runner.debug == '1' && (failure() || success()) }}

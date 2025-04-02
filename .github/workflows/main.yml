@@ -81,8 +81,8 @@ jobs:
                 max_attempts: 3
                 retry_on: error
                 command: |
-                    cd fiduswriter
-                    coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
+                  cd fiduswriter
+                  coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
             - name: Run test ${{ matrix.test }} with debug mode
               if: runner.debug == '1'
               uses: nick-invision/retry@v3
@@ -91,13 +91,15 @@ jobs:
                 max_attempts: 3
                 retry_on: error
                 command: |
-                    cd fiduswriter
-                    coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
-            - name: Upload video
+                  cd fiduswriter
+                  coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
+            - name: Kill FFMPEG
               if: ${{ runner.debug == '1' && (failure() || success()) }}
               run: |
                 kill $FFMPEG_PID
                 sleep 5  # Give ffmpeg time to finish writing
+            - name: Upload video
+              if: ${{ runner.debug == '1' && (failure() || success()) }}
               uses: actions/upload-artifact@v4
               with:
                 name: test-video
@@ -106,17 +108,17 @@ jobs:
               if: ${{ failure() }}
               uses: actions/upload-artifact@v4.3.4
               with:
-                  name: failure-artifacts
-                  path: ${{ github.workspace }}/fiduswriter/screenshots/
+                name: failure-artifacts
+                path: ${{ github.workspace }}/fiduswriter/screenshots/
             - name: Coveralls
               run: |
-                  cd fiduswriter
-                  coverage combine
-                  coveralls --service=github
+                cd fiduswriter
+                coverage combine
+                coveralls --service=github
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  COVERALLS_PARALLEL: true
-                  COVERALLS_FLAG_NAME: ${{ matrix.test }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                COVERALLS_PARALLEL: true
+                COVERALLS_FLAG_NAME: ${{ matrix.test }}
     finish:
         needs: test
         runs-on: ubuntu-latest

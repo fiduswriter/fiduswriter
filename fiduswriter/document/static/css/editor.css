@@ -877,6 +877,7 @@ html[hc="a5"] #toolbar {
     line-height: 1.2;
     transform: translateX(-100%);
     transition: transform 0.2s ease-out;
+    overflow-y: auto;
 }
 
 #navigator.opened #navigator-content {
@@ -886,6 +887,15 @@ html[hc="a5"] #toolbar {
 #navigator-list {
     max-height: min(550px, 100vh - 315px);
     overflow-y: hidden scroll;
+}
+
+#navigator-content a {
+    color: var(--editor-navigator-color);
+}
+
+#navigator-list a:focus {
+    outline: var(--editor-navigator-focus-color) solid 2px;
+    outline-offset: 2px;
 }
 
 #navigator-filter span {
@@ -912,10 +922,6 @@ html[hc="a5"] #toolbar {
 ::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
     background: var(--editor-navigator-scrollbar-background-color-hover);
-}
-
-#navigator-content a {
-    color: var(--editor-navigator-color);
 }
 
 #navigator-list > * {

@@ -1132,20 +1132,26 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         title.send_keys("My title")
 
         author_firstName = driver.find_element(
-            By.CSS_SELECTOR, ".author .given .ProseMirror .literal"
+            By.CSS_SELECTOR, ".author .given .ProseMirror"
         )
         author_firstName.click()
         author_firstName.send_keys("John")
 
+        time.sleep(1)
+
         author_lastName = driver.find_element(
-            By.CSS_SELECTOR, ".author .family .ProseMirror .literal"
+            By.CSS_SELECTOR, ".author .family .ProseMirror"
         )
         author_lastName.click()
         author_lastName.send_keys("Doe")
 
+        time.sleep(1)
+
         publication_date = driver.find_element(By.CSS_SELECTOR, ".date .date")
         publication_date.click()
         publication_date.send_keys("2012")
+
+        time.sleep(1)
 
         # click on Submit button
         driver.find_element(
@@ -1179,12 +1185,12 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
     def test_citation(self):
         """
         Test typing in collaborative mode with one user typing and
-        another user add cite in two different threads.
+        another user adding a citation in two different threads.
         """
         self.load_document_editor(self.driver, self.doc)
         self.load_document_editor(self.driver2, self.doc)
 
-        # set citation style
+        # Set citation style
         self.driver.find_element(
             By.XPATH, '//span[contains(normalize-space(), "Settings")]'
         ).click()
@@ -1199,7 +1205,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         # Exit menu by hitting ESC
         self.driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
 
-        # set title
+        # Set title
         self.add_title(self.driver)
         document_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
 
@@ -1214,7 +1220,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         # Wait for the first processor to write some text
         self.wait_for_doc_size(self.driver2, 32)
 
-        # without clicking on content the buttons will not work
+        # Without clicking on content the buttons will not work
         content = self.driver2.find_element(By.CSS_SELECTOR, "div.doc-body p")
         content.click()
 

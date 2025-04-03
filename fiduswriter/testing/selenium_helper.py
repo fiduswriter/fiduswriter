@@ -146,19 +146,22 @@ class SeleniumHelper(object):
         else:
             wait_time = 6
         for i in range(number):
+            driver_env = os.environ.copy()
+            if os.getenv("CI") and os.getenv("DEBUG_MODE") == "1" and i < 2:
+                driver_env["DISPLAY"] = f":{99 - i}"
             driver = webdriver.Chrome(
                 service=ChromiumService(
                     ChromeDriverManager(
                         chrome_type=ChromeType.GOOGLE
-                    ).install()
+                    ).install(),
+                    env=driver_env,
                 ),
                 options=options,
             )
-            drivers.append(driver)
-        for driver in drivers:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)
             driver.set_window_size(1920, 1080)
+            drivers.append(driver)
         cls.drivers = drivers
         return {"clients": clients, "drivers": drivers, "wait_time": wait_time}
 

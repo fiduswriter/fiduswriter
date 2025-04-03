@@ -69,10 +69,16 @@ jobs:
               run: |
                 sudo apt update
                 sudo apt install -y xvfb ffmpeg
+                # Start two Xvfb instances on different displays
                 Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+                Xvfb :98 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+                # Set the default display (will be overridden in the test code)
                 echo "DISPLAY=:99" >> $GITHUB_ENV
-                ffmpeg -y -f x11grab -video_size 1920x1080 -framerate 15 -i :99 -codec:v libx264 -preset ultrafast video.mp4 > /dev/null 2>&1 &
-                echo "FFMPEG_PID=$!" >> $GITHUB_ENV
+                # Start ffmpeg recordings for both displays
+                ffmpeg -y -f x11grab -video_size 1920x1080 -framerate 15 -i :99 -codec:v libx264 -preset ultrafast video-browser1.mp4 > /dev/null 2>&1 &
+                echo "FFMPEG_PID1=$!" >> $GITHUB_ENV
+                ffmpeg -y -f x11grab -video_size 1920x1080 -framerate 15 -i :98 -codec:v libx264 -preset ultrafast video-browser2.mp4 > /dev/null 2>&1 &
+                echo "FFMPEG_PID2=$!" >> $GITHUB_ENV
             - name: Run test ${{ matrix.test }} without debug mode
               if: runner.debug != '1'
               uses: nick-invision/retry@v3
@@ -89,17 +95,20 @@ jobs:
                 cd fiduswriter
                 export DEBUG_MODE=1
                 coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
-            - name: Kill FFMPEG
+            - name: Kill FFMPEG processes
               if: ${{ runner.debug == '1' && (failure() || success()) }}
               run: |
-                kill $FFMPEG_PID
-                sleep 5  # Give ffmpeg time to finish writing
+                  kill $FFMPEG_PID1 || true
+                  kill $FFMPEG_PID2 || true
+                  sleep 5  # Give ffmpeg time to finish writing
             - name: Upload video
               if: ${{ runner.debug == '1' && (failure() || success()) }}
               uses: actions/upload-artifact@v4
               with:
                 name: test-video
-                path: video.mp4
+                path: |
+                  video-browser1.mp4
+                  video-browser2.mp4
             - name: Upload failed test screenshots
               if: ${{ failure() }}
               uses: actions/upload-artifact@v4.3.4

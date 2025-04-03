@@ -1,3 +1,6 @@
+#
+# None <>, 2025.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
@@ -7,7 +10,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: POEditor.com\n"
+"X-Generator: Gtranslator 46.0\n"
+"Language-Team: Bulgarian <mail@fiduswriter.org>\n"
+"PO-Revision-Date: 2025-04-03 09:34+0200\n"
+"Last-Translator: None <>\n"
 
 #: base/static/js/modules/404/index.js:6
 #: base/static/js/modules/flatpage/index.js:30
@@ -64,6 +70,8 @@ msgid "Cancel"
 msgstr "Отказ"
 
 #: base/static/js/modules/common/dialog.js:57
+#: document/static/js/modules/editor/menus/headerbar/model.js:65
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:83
 msgid "Close"
 msgstr "Затвори"
 
@@ -82,6 +90,7 @@ msgstr "Затвори"
 #: document/static/js/modules/importer/odt/import.js:110
 #: document/static/js/modules/importer/pandoc/import.js:127
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:156
+#: document/static/js/modules/editor/dialogs/citation.js:169
 msgid "Untitled"
 msgstr "Неозаглавен"
 
@@ -259,6 +268,7 @@ msgstr "Библиографските запис(и) бяха изтрити"
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:54
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:54
 #: document/static/js/modules/editor/menus/toolbar/model.js:371
+#: document/static/js/modules/editor/marginboxes/templates.js:187
 msgid "Strong"
 msgstr "силен"
 
@@ -266,6 +276,7 @@ msgstr "силен"
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:58
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:58
 #: document/static/js/modules/editor/menus/toolbar/model.js:408
+#: document/static/js/modules/editor/marginboxes/templates.js:186
 msgid "Emphasis"
 msgstr "ударение"
 
@@ -917,6 +928,7 @@ msgstr "раздел"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:170
 #: document/static/js/modules/document_template/templates.js:8
+#: document/static/js/modules/editor/marginboxes/templates.js:203
 msgid "Paragraph"
 msgstr "параграф"
 
@@ -1578,6 +1590,7 @@ msgstr "Превключване на заглавните клетки"
 
 #: document/static/js/modules/document_template/schema.js:174
 #: document/static/js/modules/editor/menus/table/model.js:400
+#: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Delete table"
 msgstr "Изтриване на таблицата"
 
@@ -1588,36 +1601,42 @@ msgstr "Разрешени елементи"
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/document_template/templates.js:90
 #: document/static/js/modules/editor/menus/navigator/model.js:4
+#: document/static/js/modules/editor/marginboxes/templates.js:204
 msgid "Heading 1"
 msgstr "Заглавие 1"
 
 #: document/static/js/modules/document_template/templates.js:12
 #: document/static/js/modules/document_template/templates.js:92
 #: document/static/js/modules/editor/menus/navigator/model.js:8
+#: document/static/js/modules/editor/marginboxes/templates.js:205
 msgid "Heading 2"
 msgstr "Заглавие 2"
 
 #: document/static/js/modules/document_template/templates.js:14
 #: document/static/js/modules/document_template/templates.js:94
 #: document/static/js/modules/editor/menus/navigator/model.js:12
+#: document/static/js/modules/editor/marginboxes/templates.js:206
 msgid "Heading 3"
 msgstr "Заглавие 3"
 
 #: document/static/js/modules/document_template/templates.js:16
 #: document/static/js/modules/document_template/templates.js:96
 #: document/static/js/modules/editor/menus/navigator/model.js:16
+#: document/static/js/modules/editor/marginboxes/templates.js:207
 msgid "Heading 4"
 msgstr "Заглавие 4"
 
 #: document/static/js/modules/document_template/templates.js:18
 #: document/static/js/modules/document_template/templates.js:98
 #: document/static/js/modules/editor/menus/navigator/model.js:20
+#: document/static/js/modules/editor/marginboxes/templates.js:208
 msgid "Heading 5"
 msgstr "Заглавие 5"
 
 #: document/static/js/modules/document_template/templates.js:20
 #: document/static/js/modules/document_template/templates.js:100
 #: document/static/js/modules/editor/menus/navigator/model.js:24
+#: document/static/js/modules/editor/marginboxes/templates.js:209
 msgid "Heading 6"
 msgstr "Позиция 6"
 
@@ -1633,11 +1652,13 @@ msgid "Figure"
 msgstr "Фигура"
 
 #: document/static/js/modules/document_template/templates.js:26
+#: document/static/js/modules/editor/marginboxes/templates.js:211
 msgid "Ordered list"
 msgstr "Подреден списък"
 
 #: document/static/js/modules/document_template/templates.js:28
 #: document/static/js/modules/editor/menus/toolbar/model.js:517
+#: document/static/js/modules/editor/marginboxes/templates.js:212
 msgid "Bullet list"
 msgstr "Списък с куршуми"
 
@@ -2692,10 +2713,6 @@ msgstr "Моля изберете поне един източник на цит
 msgid "No sources found\"), // Message shown when there are no search results"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/citation.js:169
-msgid "Untitled"
-msgstr "Неозаглавен"
-
 #: document/static/js/modules/editor/dialogs/contributor.js:21
 #: document/static/js/modules/editor/dialogs/contributor.js:95
 #: document/static/js/modules/editor/state_plugins/contributor_input.js:89
@@ -3026,57 +3043,14 @@ msgstr "Предупреждения"
 msgid "Assign to"
 msgstr "Възлага на"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:212
-msgid "Bullet list"
-msgstr "Списък с куршуми"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:211
-msgid "Ordered list"
-msgstr "Подреден списък"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:210
 msgid "Code block"
 msgstr "Блок код"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:209
-msgid "Heading 6"
-msgstr "Позиция 6"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:208
-msgid "Heading 5"
-msgstr "Заглавие 5"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:207
-msgid "Heading 4"
-msgstr "Заглавие 4"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:206
-msgid "Heading 3"
-msgstr "Заглавие 3"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:205
-msgid "Heading 2"
-msgstr "Заглавие 2"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:204
-msgid "Heading 1"
-msgstr "Заглавие 1"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:203
-msgid "Paragraph"
-msgstr "параграф"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:188
+#: document/static/js/modules/editor/menus/toolbar/model.js:440
 msgid "Underline"
 msgstr "Подчертан"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:187
-msgid "Strong"
-msgstr "силен"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:186
-msgid "Emphasis"
-msgstr "ударение"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Changed into code block"
@@ -3093,10 +3067,6 @@ msgstr "Променен в параграф"
 #: document/static/js/modules/editor/marginboxes/templates.js:179
 msgid "Deleted keyword: %(keyword)s"
 msgstr "Изтрита ключова дума: %(keyword)s"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:178
-msgid "Delete table"
-msgstr "Изтриване на таблицата"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:177
 msgid "Lifted list item"
@@ -3175,9 +3145,6 @@ msgid "Deletion"
 msgstr "заличаване"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:158
-#| msgid "Insertion"
-msgstr "вмъкване"
-
 #: document/static/js/modules/editor/menus/figure/model.js:9
 msgid "Configure the figure."
 msgstr "Конфигурирайте фигурата."
@@ -3201,11 +3168,6 @@ msgstr "Сподели"
 #: document/static/js/modules/editor/menus/headerbar/model.js:46
 msgid "Share the document with other users."
 msgstr "Сподели документа с други потребители"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:65
-#: user_template_manager/static/js/modules/user_template_manager/editor.js:83
-msgid "Close"
-msgstr "Затвори"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:69
 msgid "Close the document and return to the document overview menu."
@@ -3633,10 +3595,6 @@ msgstr "6-та позиция"
 #: document/static/js/modules/editor/menus/toolbar/model.js:129
 msgid "Open/close header menu"
 msgstr "Отваряне / затваряне на менюто на заглавката"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:440
-msgid "Underline"
-msgstr "Подчертан"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:477
 msgid "Numbered list"
@@ -4711,9 +4669,6 @@ msgstr "Търсене..."
 
 #~ msgid "HTML export has been initiated."
 #~ msgstr "Започнат бе HTML експорт."
-
-#~ msgid "OK"
-#~ msgstr "Добре"
 
 #~ msgid "Custom"
 #~ msgstr "Персонализиран"

@@ -1,3 +1,6 @@
+#
+# Johannes Wilm <johannes@fiduswriter.org>, 2025.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
@@ -7,7 +10,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: POEditor.com\n"
+"X-Generator: Gtranslator 46.0\n"
+"PO-Revision-Date: 2025-04-03 09:32+0200\n"
+"Language-Team: German <johannes@fiduswriter.org>\n"
+"Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 
 #: base/static/js/modules/404/index.js:6
 #: base/static/js/modules/flatpage/index.js:30
@@ -64,6 +70,8 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 #: base/static/js/modules/common/dialog.js:57
+#: document/static/js/modules/editor/menus/headerbar/model.js:65
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:83
 msgid "Close"
 msgstr "Schließen"
 
@@ -82,6 +90,7 @@ msgstr "Schließen"
 #: document/static/js/modules/importer/odt/import.js:110
 #: document/static/js/modules/importer/pandoc/import.js:127
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:156
+#: document/static/js/modules/editor/dialogs/citation.js:169
 msgid "Untitled"
 msgstr "Ohne Titel"
 
@@ -263,6 +272,7 @@ msgstr "Der/Die Titel wurden entfernt"
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:54
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:54
 #: document/static/js/modules/editor/menus/toolbar/model.js:371
+#: document/static/js/modules/editor/marginboxes/templates.js:187
 msgid "Strong"
 msgstr "Stark"
 
@@ -270,6 +280,7 @@ msgstr "Stark"
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:58
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:58
 #: document/static/js/modules/editor/menus/toolbar/model.js:408
+#: document/static/js/modules/editor/marginboxes/templates.js:186
 msgid "Emphasis"
 msgstr "Betonung"
 
@@ -921,6 +932,7 @@ msgstr "Sektion"
 
 #: bibliography/static/js/modules/bibliography/form/strings.js:170
 #: document/static/js/modules/document_template/templates.js:8
+#: document/static/js/modules/editor/marginboxes/templates.js:203
 msgid "Paragraph"
 msgstr "Absatz"
 
@@ -1590,6 +1602,7 @@ msgstr "Kopfzellen umschalten"
 
 #: document/static/js/modules/document_template/schema.js:174
 #: document/static/js/modules/editor/menus/table/model.js:400
+#: document/static/js/modules/editor/marginboxes/templates.js:178
 msgid "Delete table"
 msgstr "Tabelle löschen"
 
@@ -1600,36 +1613,42 @@ msgstr "Zulässige Elemente"
 #: document/static/js/modules/document_template/templates.js:10
 #: document/static/js/modules/document_template/templates.js:90
 #: document/static/js/modules/editor/menus/navigator/model.js:4
+#: document/static/js/modules/editor/marginboxes/templates.js:204
 msgid "Heading 1"
 msgstr "Überschrift 1"
 
 #: document/static/js/modules/document_template/templates.js:12
 #: document/static/js/modules/document_template/templates.js:92
 #: document/static/js/modules/editor/menus/navigator/model.js:8
+#: document/static/js/modules/editor/marginboxes/templates.js:205
 msgid "Heading 2"
 msgstr "Überschrift 2"
 
 #: document/static/js/modules/document_template/templates.js:14
 #: document/static/js/modules/document_template/templates.js:94
 #: document/static/js/modules/editor/menus/navigator/model.js:12
+#: document/static/js/modules/editor/marginboxes/templates.js:206
 msgid "Heading 3"
 msgstr "Überschrift 3"
 
 #: document/static/js/modules/document_template/templates.js:16
 #: document/static/js/modules/document_template/templates.js:96
 #: document/static/js/modules/editor/menus/navigator/model.js:16
+#: document/static/js/modules/editor/marginboxes/templates.js:207
 msgid "Heading 4"
 msgstr "Überschrift 4"
 
 #: document/static/js/modules/document_template/templates.js:18
 #: document/static/js/modules/document_template/templates.js:98
 #: document/static/js/modules/editor/menus/navigator/model.js:20
+#: document/static/js/modules/editor/marginboxes/templates.js:208
 msgid "Heading 5"
 msgstr "Überschrift 5"
 
 #: document/static/js/modules/document_template/templates.js:20
 #: document/static/js/modules/document_template/templates.js:100
 #: document/static/js/modules/editor/menus/navigator/model.js:24
+#: document/static/js/modules/editor/marginboxes/templates.js:209
 msgid "Heading 6"
 msgstr "Überschrift 6"
 
@@ -2091,8 +2110,8 @@ msgstr "Kopieren"
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
-"Sie können nicht auf die Revisionsgeschichte eines Dokuments zugreifen, während Sie "
-"offline sind."
+"Sie können nicht auf die Revisionsgeschichte eines Dokuments zugreifen, "
+"während Sie offline sind."
 
 #: document/static/js/modules/documents/overview/index.js:75
 msgid "Document Overview"
@@ -2711,10 +2730,6 @@ msgstr "Wähle bitte mindestens eine Zitierungsquelle!"
 msgid "No sources found\"), // Message shown when there are no search results"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/citation.js:169
-msgid "Untitled"
-msgstr "Ohne Titel"
-
 #: document/static/js/modules/editor/dialogs/contributor.js:21
 #: document/static/js/modules/editor/dialogs/contributor.js:95
 #: document/static/js/modules/editor/state_plugins/contributor_input.js:89
@@ -3054,45 +3069,10 @@ msgstr "Zuweisen"
 msgid "Code block"
 msgstr "Codeblock"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:209
-msgid "Heading 6"
-msgstr "Überschrift 6"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:208
-msgid "Heading 5"
-msgstr "Überschrift 5"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:207
-msgid "Heading 4"
-msgstr "Überschrift 4"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:206
-msgid "Heading 3"
-msgstr "Überschrift 3"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:205
-msgid "Heading 2"
-msgstr "Überschrift 2"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:204
-msgid "Heading 1"
-msgstr "Überschrift 1"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:203
-msgid "Paragraph"
-msgstr "Absatz"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:188
+#: document/static/js/modules/editor/menus/toolbar/model.js:440
 msgid "Underline"
 msgstr "Unterstreichen"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:187
-msgid "Strong"
-msgstr "Stark"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:186
-msgid "Emphasis"
-msgstr "Betonung"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:182
 msgid "Changed into code block"
@@ -3109,10 +3089,6 @@ msgstr "In Absatz geändert"
 #: document/static/js/modules/editor/marginboxes/templates.js:179
 msgid "Deleted keyword: %(keyword)s"
 msgstr "Gelöschtes Schlüsselwort: %(keyword)s"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:178
-msgid "Delete table"
-msgstr "Tabelle löschen"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:177
 msgid "Lifted list item"
@@ -3218,11 +3194,6 @@ msgstr "Teilen"
 msgid "Share the document with other users."
 msgstr "Teile das Dokument mit anderen Benutzern."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:65
-#: user_template_manager/static/js/modules/user_template_manager/editor.js:83
-msgid "Close"
-msgstr "Schließen"
-
 #: document/static/js/modules/editor/menus/headerbar/model.js:69
 msgid "Close the document and return to the document overview menu."
 msgstr "Dokument schließen und zur Übersicht zurückkehren."
@@ -3306,7 +3277,9 @@ msgstr ""
 #: document/static/js/modules/editor/menus/headerbar/model.js:280
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
-msgstr "Exportieren Sie das Dokument in eine Book Interchange Tag Set BITS Version 2.1-Datei."
+msgstr ""
+"Exportieren Sie das Dokument in eine Book Interchange Tag Set BITS Version "
+"2.1-Datei."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:303
 msgid "Pandoc JSON"
@@ -3641,10 +3614,6 @@ msgstr "6. Überschrift"
 #: document/static/js/modules/editor/menus/toolbar/model.js:129
 msgid "Open/close header menu"
 msgstr "Kopfzeilenmenü öffnen / schließen"
-
-#: document/static/js/modules/editor/menus/toolbar/model.js:440
-msgid "Underline"
-msgstr "Unterstreichen"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:477
 msgid "Numbered list"
@@ -4718,9 +4687,6 @@ msgstr "Suche..."
 
 #~ msgid "HTML export has been initiated."
 #~ msgstr "HTML export wurde initiert."
-
-#~ msgid "OK"
-#~ msgstr "OK"
 
 #~ msgid "Custom"
 #~ msgstr "Benutzerdefiniert"

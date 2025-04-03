@@ -1135,23 +1135,20 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".author .given .ProseMirror"
         )
         author_firstName.click()
-        author_firstName.send_keys("John")
-
         time.sleep(1)
+        author_firstName.send_keys("John")
 
         author_lastName = driver.find_element(
             By.CSS_SELECTOR, ".author .family .ProseMirror"
         )
         author_lastName.click()
-        author_lastName.send_keys("Doe")
-
         time.sleep(1)
+        author_lastName.send_keys("Doe")
 
         publication_date = driver.find_element(By.CSS_SELECTOR, ".date .date")
         publication_date.click()
-        publication_date.send_keys("2012")
-
         time.sleep(1)
+        publication_date.send_keys("2012")
 
         # click on Submit button
         driver.find_element(

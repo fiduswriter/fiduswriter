@@ -33,7 +33,8 @@ export class RevisionDialog {
             body: revisionDialogTemplate({dir: this.dir}),
             height: 100,
             width: 300,
-            buttons
+            buttons,
+            restoreActiveElement: false
         })
         this.dialog.open()
 

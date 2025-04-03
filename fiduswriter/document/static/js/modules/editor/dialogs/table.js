@@ -85,7 +85,8 @@ export class TableDialog {
             width: 360,
             height: 360,
             buttons,
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.editor.currentView.focus(),
+            restoreActiveElement: false
         })
 
         this.dialog.open()

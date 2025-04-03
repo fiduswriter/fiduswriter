@@ -99,7 +99,8 @@ export class ContributorDialog {
             width: 836,
             height: 360,
             buttons,
-            onClose: () => this.view.focus()
+            onClose: () => this.view.focus(),
+            restoreActiveElement: false
         })
 
         this.dialog.open()

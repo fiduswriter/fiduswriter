@@ -70,7 +70,8 @@ export class CitationDialog {
             buttons: this.buttons,
             body: this.citationDialogHTML(),
             width: 836,
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.editor.currentView.focus(),
+            restoreActiveElement: false
         })
         this.dialog.open()
         this.initTable()

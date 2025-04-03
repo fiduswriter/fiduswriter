@@ -70,7 +70,8 @@ export class OrderedListStartDialog {
             width: 300,
             height: 100,
             buttons,
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.editor.currentView.focus(),
+            restoreActiveElement: false
         })
 
         this.dialog.open()

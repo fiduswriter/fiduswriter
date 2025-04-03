@@ -250,7 +250,8 @@ export class LinkDialog {
             buttons,
             width: 836,
             height: 360,
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.editor.currentView.focus(),
+            restoreActiveElement: false
         })
 
         this.dialog.open()

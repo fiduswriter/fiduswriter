@@ -347,7 +347,8 @@ export class FigureDialog {
                     this.mathField = false
                 }
             },
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.editor.currentView.focus(),
+            restoreActiveElement: false
         })
 
         this.dialog.open()

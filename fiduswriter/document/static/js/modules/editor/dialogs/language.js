@@ -49,7 +49,8 @@ export class LanguageDialog {
                 )
             }),
             buttons,
-            onClose: () => this.editor.currentView.focus()
+            onClose: () => this.editor.currentView.focus(),
+            restoreActiveElement: false
         })
 
         this.dialog.open()

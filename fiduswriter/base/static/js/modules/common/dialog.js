@@ -97,6 +97,7 @@ export class Dialog {
         this.classes = options.classes || false
         this.title = options.title || ""
         this.body = options.body || ""
+        this.restoreActiveElement = options.restoreActiveElement !== false // default is true
         this.height = options.height ? `${options.height}px` : "auto"
         this.width = options.width ? `${options.width}px` : "auto"
         this.canClose = "canClose" in options ? options.canClose : true
@@ -158,7 +159,9 @@ export class Dialog {
         }
 
         // Store currently focused element to restore later
-        this.previousActiveElement = document.activeElement
+        this.previousActiveElement = this.restoreActiveElement
+            ? document.activeElement
+            : null
 
         if (this.fullScreen) {
             this.height = "85vh"

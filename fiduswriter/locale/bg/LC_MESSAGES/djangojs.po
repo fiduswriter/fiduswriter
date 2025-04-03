@@ -56,19 +56,15 @@ msgid "Help"
 msgstr "Помогне"
 
 #: base/static/js/modules/common/dialog.js:67
-msgid "OK\"),"
+msgid "OK"
 msgstr ""
 
 #: base/static/js/modules/common/dialog.js:62
-#, fuzzy
-#| msgid "Cancel"
-msgid "Cancel\"),"
+msgid "Cancel"
 msgstr "Отказ"
 
 #: base/static/js/modules/common/dialog.js:57
-#, fuzzy
-#| msgid "Close"
-msgid "Close\"),"
+msgid "Close"
 msgstr "Затвори"
 
 #: base/static/js/modules/common/file/dialog.js:39
@@ -119,7 +115,7 @@ msgstr "Път"
 
 #: base/static/js/modules/common/overview_menu.js:408
 msgid "Action completed"
-msgstr ""
+msgstr "Действието е завършено"
 
 #: base/static/js/modules/common/templates.js:20
 msgid "Log out"
@@ -2204,16 +2200,14 @@ msgid "Export the documents that have been selected as JATS files."
 msgstr "Експортирайте документите, които са избрани като JATS файлове."
 
 #: document/static/js/modules/documents/overview/menu.js:140
-#, fuzzy
 #| msgid "Export selected as JATS"
 msgid "Export selected as BITS"
-msgstr "Износът е избран като JATS"
+msgstr "Износът е избран като BITS"
 
 #: document/static/js/modules/documents/overview/menu.js:142
-#, fuzzy
 #| msgid "Export the documents that have been selected as JATS files."
 msgid "Export the documents that have been selected as BITS files."
-msgstr "Експортирайте документите, които са избрани като JATS файлове."
+msgstr "Експортирайте документите, които са избрани като BITS файлове."
 
 #: document/static/js/modules/documents/overview/menu.js:155
 msgid "Export selected as FIDUS"
@@ -2698,16 +2692,8 @@ msgstr "Моля изберете поне един източник на цит
 msgid "No sources found\"), // Message shown when there are no search results"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/citation.js:233
-#, fuzzy
-#| msgid "No sources registered"
-msgid "No sources registered\"),"
-msgstr "Няма регистрирани източници"
-
 #: document/static/js/modules/editor/dialogs/citation.js:169
-#, fuzzy
-#| msgid "Untitled"
-msgid "Untitled\"),"
+msgid "Untitled"
 msgstr "Неозаглавен"
 
 #: document/static/js/modules/editor/dialogs/contributor.js:21
@@ -3041,231 +3027,155 @@ msgid "Assign to"
 msgstr "Възлага на"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:212
-#, fuzzy
-#| msgid "Bullet list"
-msgid "Bullet list\")"
+msgid "Bullet list"
 msgstr "Списък с куршуми"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:211
-#, fuzzy
-#| msgid "Ordered list"
-msgid "Ordered list\"),"
+msgid "Ordered list"
 msgstr "Подреден списък"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:210
-#, fuzzy
-#| msgid "Code block"
-msgid "Code block\"),"
+msgid "Code block"
 msgstr "Блок код"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:209
-#, fuzzy
-#| msgid "Heading 6"
-msgid "Heading 6\"),"
+msgid "Heading 6"
 msgstr "Позиция 6"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:208
-#, fuzzy
-#| msgid "Heading 5"
-msgid "Heading 5\"),"
+msgid "Heading 5"
 msgstr "Заглавие 5"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:207
-#, fuzzy
-#| msgid "Heading 4"
-msgid "Heading 4\"),"
+msgid "Heading 4"
 msgstr "Заглавие 4"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:206
-#, fuzzy
-#| msgid "Heading 3"
-msgid "Heading 3\"),"
+msgid "Heading 3"
 msgstr "Заглавие 3"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:205
-#, fuzzy
-#| msgid "Heading 2"
-msgid "Heading 2\"),"
+msgid "Heading 2"
 msgstr "Заглавие 2"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:204
-#, fuzzy
-#| msgid "Heading 1"
-msgid "Heading 1\"),"
+msgid "Heading 1"
 msgstr "Заглавие 1"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:203
-#, fuzzy
-#| msgid "Paragraph"
-msgid "Paragraph\"),"
+msgid "Paragraph"
 msgstr "параграф"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:188
-#, fuzzy
-#| msgid "Underline"
-msgid "Underline\")"
+msgid "Underline"
 msgstr "Подчертан"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:187
-#, fuzzy
-#| msgid "Strong"
-msgid "Strong\"),"
+msgid "Strong"
 msgstr "силен"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:186
-#, fuzzy
-#| msgid "Emphasis"
-msgid "Emphasis\"),"
+msgid "Emphasis"
 msgstr "ударение"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:182
-#, fuzzy
-#| msgid "Changed into code block"
-msgid "Changed into code block\")"
+msgid "Changed into code block"
 msgstr "Променен в код код"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:181
-#, fuzzy
-#| msgid "Changed into heading %(level)s"
-msgid "Changed into heading %(level)s\"),"
+msgid "Changed into heading %(level)s"
 msgstr "Променено в заглавие %(level)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:180
-#, fuzzy
-#| msgid "Changed into paragraph"
-msgid "Changed into paragraph\"),"
+msgid "Changed into paragraph"
 msgstr "Променен в параграф"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:179
-#, fuzzy
-#| msgid "Deleted keyword: %(keyword)s"
-msgid "Deleted keyword: %(keyword)s\"),"
+msgid "Deleted keyword: %(keyword)s"
 msgstr "Изтрита ключова дума: %(keyword)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
-#, fuzzy
-#| msgid "Delete table"
-msgid "Delete table\"),"
+msgid "Delete table"
 msgstr "Изтриване на таблицата"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:177
-#, fuzzy
-#| msgid "Lifted list item"
-msgid "Lifted list item\"),"
+msgid "Lifted list item"
 msgstr "Повдигнат елемент от списъка"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:176
-#, fuzzy
-#| msgid "Deleted figure"
-msgid "Deleted figure\"),"
+msgid "Deleted figure"
 msgstr "Изтрита фигура"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:175
-#, fuzzy
-#| msgid "Removed code block"
-msgid "Removed code block\"),"
+msgid "Removed code block"
 msgstr "Премахнат код код"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:174
-#, fuzzy
-#| msgid "Unwrapped blockquote"
-msgid "Unwrapped blockquote\"),"
+msgid "Unwrapped blockquote"
 msgstr "Неупаковано блокчейн"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:173
-#, fuzzy
-#| msgid "Deleted citation"
-msgid "Deleted citation\"),"
+msgid "Deleted citation"
 msgstr "Изтрито цитиране"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:172
-#, fuzzy
-#| msgid "Merged heading"
-msgid "Merged heading\"),"
+msgid "Merged heading"
 msgstr "Обединено заглавие"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:171
-#, fuzzy
-#| msgid "Merged paragraph"
-msgid "Merged paragraph\"),"
+msgid "Merged paragraph"
 msgstr "Обединен параграф"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:170
-#, fuzzy
-#| msgid "New keyword: %(keyword)s"
-msgid "New keyword: %(keyword)s\"),"
+msgid "New keyword: %(keyword)s"
 msgstr "Нова ключова дума: %(keyword)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:169
-#, fuzzy
-#| msgid "Inserted table"
-msgid "Inserted table\"),"
+msgid "Inserted table"
 msgstr "Вмъкната маса"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:168
-#, fuzzy
-#| msgid "New list item"
-msgid "New list item\"),"
+msgid "New list item"
 msgstr "Нов елемент от списъка"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:167
-#, fuzzy
-#| msgid "Inserted figure"
-msgid "Inserted figure\"),"
+msgid "Inserted figure"
 msgstr "Вмъкната фигура"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:166
-#, fuzzy
-#| msgid "Added code block"
-msgid "Added code block\"),"
+msgid "Added code block"
 msgstr "Добавен блок код"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:165
-#, fuzzy
-#| msgid "Wrapped into blockquote"
-msgid "Wrapped into blockquote\"),"
+msgid "Wrapped into blockquote"
 msgstr "Увита в блокчейн"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:164
-#, fuzzy
-#| msgid "Inserted citation"
-msgid "Inserted citation\"),"
+msgid "Inserted citation"
 msgstr "Вмъкнато цитиране"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:163
-#, fuzzy
-#| msgid "New heading"
-msgid "New heading\"),"
+msgid "New heading"
 msgstr "Ново заглавие"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:162
-#, fuzzy
-#| msgid "New paragraph"
-msgid "New paragraph\"),"
+msgid "New paragraph"
 msgstr "Нов параграф"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:161
-#, fuzzy
-#| msgid "Block change"
-msgid "Block change\"),"
+msgid "Block change"
 msgstr "Блокова промяна"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:160
-#, fuzzy
-#| msgid "Format change"
-msgid "Format change\"),"
+msgid "Format change"
 msgstr "Промяна на формата"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:159
-#, fuzzy
-#| msgid "Deletion"
-msgid "Deletion\"),"
+msgid "Deletion"
 msgstr "заличаване"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:158
-#, fuzzy
 #| msgid "Insertion"
-msgid "Insertion\"),"
 msgstr "вмъкване"
 
 #: document/static/js/modules/editor/menus/figure/model.js:9
@@ -3381,7 +3291,6 @@ msgid "BITS"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:280
-#, fuzzy
 #| msgid ""
 #| "Export the document to a Journal Archiving and Interchange Tag Library "
 #| "NISO JATS Version 1.2 file."
@@ -3389,17 +3298,15 @@ msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr ""
 "Експортирайте документа в библиотека с етикети за архивиране и обмен на "
-"журнали NISO JATS версия 1.2."
+"журнали Book Interchange Tag Set BITS версия 2.1."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:303
 msgid "Pandoc JSON"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:306
-#, fuzzy
-#| msgid "Export the document to an HTML file."
 msgid "Export the document to a Pandoc JSON file."
-msgstr "Експортирайте документа в HTML файл."
+msgstr "Експортирайте документа в Pandoc JSON файл."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:328
 msgid "Slim FIDUS"
@@ -4214,11 +4121,9 @@ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
 msgstr "Потвърдете вашият имейл и се съгласете с общите условия"
 
 #: user/static/js/modules/email_confirm/templates.js:16
-#, fuzzy
-#| msgid ""
-#| "Please confirm that you own the email <a href=\"mailto:"
-#| "%(email)s\">%(email)s</a>."
-msgid "Please confirm that you own the email <a href="
+msgid ""
+"Please confirm that you own the email <a href=\"mailto:"
+"%(email)s\">%(email)s</a>."
 msgstr ""
 "Моля, потвърдете, че притежавате имейл <a href=\"mailto:"
 "%(email)s\">%(email)s </a>."

@@ -67,10 +67,8 @@ msgid "Admin Console"
 msgstr "Admin-Konsole"
 
 #: base/templates/admin/console.html:18
-#, fuzzy
-#| msgid "Current number of user sessions:"
 msgid "Current number of users:"
-msgstr "Aktuelle Anzahl der Benutzersitzungen:"
+msgstr "Aktuelle Anzahl der Benutzer:"
 
 #: base/templates/admin/console.html:21
 msgid "Current number of user sessions:"

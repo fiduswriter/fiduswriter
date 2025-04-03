@@ -56,19 +56,15 @@ msgid "Help"
 msgstr "Hilfe"
 
 #: base/static/js/modules/common/dialog.js:67
-msgid "OK\"),"
-msgstr ""
+msgid "OK"
+msgstr "OK"
 
 #: base/static/js/modules/common/dialog.js:62
-#, fuzzy
-#| msgid "Cancel"
-msgid "Cancel\"),"
+msgid "Cancel"
 msgstr "Abbrechen"
 
 #: base/static/js/modules/common/dialog.js:57
-#, fuzzy
-#| msgid "Close"
-msgid "Close\"),"
+msgid "Close"
 msgstr "Schließen"
 
 #: base/static/js/modules/common/file/dialog.js:39
@@ -119,7 +115,7 @@ msgstr "Pfad"
 
 #: base/static/js/modules/common/overview_menu.js:408
 msgid "Action completed"
-msgstr ""
+msgstr "Aktion ausgeführt"
 
 #: base/static/js/modules/common/templates.js:20
 msgid "Log out"
@@ -1277,6 +1273,7 @@ msgid "Bibliography Manager"
 msgstr "Bibliografiemanager"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:105
+#: document/static/js/modules/editor/dialogs/citation.js:233
 msgid "No sources registered"
 msgstr "Keine Quellen registriert"
 
@@ -2046,22 +2043,20 @@ msgid "Import a Fidus file"
 msgstr "Importieren Sie eine Fidus-Datei"
 
 #: document/static/js/modules/documents/overview/actions.js:181
-#, fuzzy
-#| msgid "Import"
 msgid "Import as:"
-msgstr "Importieren"
+msgstr "Importieren als:"
 
 #: document/static/js/modules/documents/overview/actions.js:195
 msgid "No importable files found in ZIP"
-msgstr ""
+msgstr "Keine importierbaren Datein in der ZIP-Datei gefunden"
 
 #: document/static/js/modules/documents/overview/actions.js:251
 msgid "Unsupported file format"
-msgstr ""
+msgstr "Nicht unterstütztes Dateiformat"
 
 #: document/static/js/modules/documents/overview/actions.js:304
 msgid "Import a text document in a different format"
-msgstr ""
+msgstr "Importier eine Textdatei in einem anderem Format"
 
 #: document/static/js/modules/documents/overview/actions.js:318
 msgid "Supported formats"
@@ -2093,12 +2088,10 @@ msgid "Copy"
 msgstr "Kopieren"
 
 #: document/static/js/modules/documents/overview/actions.js:638
-#, fuzzy
-#| msgid "You cannot access revisions of a document while you are offline."
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
-"Sie können nicht auf Revisionen eines Dokuments zugreifen, während Sie "
+"Sie können nicht auf die Revisionsgeschichte eines Dokuments zugreifen, während Sie "
 "offline sind."
 
 #: document/static/js/modules/documents/overview/index.js:75
@@ -2221,16 +2214,12 @@ msgid "Export the documents that have been selected as JATS files."
 msgstr "Exportieren Sie die ausgewählten Dokumente als JATS-Dateien."
 
 #: document/static/js/modules/documents/overview/menu.js:140
-#, fuzzy
-#| msgid "Export selected as JATS"
 msgid "Export selected as BITS"
-msgstr "Export als JATS ausgewählt"
+msgstr "Exportiere ausgewählte als BITS"
 
 #: document/static/js/modules/documents/overview/menu.js:142
-#, fuzzy
-#| msgid "Export the documents that have been selected as JATS files."
 msgid "Export the documents that have been selected as BITS files."
-msgstr "Exportieren Sie die ausgewählten Dokumente als JATS-Dateien."
+msgstr "Exportieren Sie die ausgewählten Dokumente als BITS-Dateien."
 
 #: document/static/js/modules/documents/overview/menu.js:155
 msgid "Export selected as FIDUS"
@@ -2277,10 +2266,8 @@ msgid "Upload FIDUS document"
 msgstr "FIDUS-Datei hochladen"
 
 #: document/static/js/modules/documents/overview/menu.js:254
-#, fuzzy
-#| msgid "Move document"
 msgid "Import document"
-msgstr "Dokument verschieben"
+msgstr "Importier Dokument"
 
 #: document/static/js/modules/documents/overview/menu.js:262
 msgid "Search documents"
@@ -2724,16 +2711,8 @@ msgstr "Wähle bitte mindestens eine Zitierungsquelle!"
 msgid "No sources found\"), // Message shown when there are no search results"
 msgstr ""
 
-#: document/static/js/modules/editor/dialogs/citation.js:233
-#, fuzzy
-#| msgid "No sources registered"
-msgid "No sources registered\"),"
-msgstr "Keine Quellen registriert"
-
 #: document/static/js/modules/editor/dialogs/citation.js:169
-#, fuzzy
-#| msgid "Untitled"
-msgid "Untitled\"),"
+msgid "Untitled"
 msgstr "Ohne Titel"
 
 #: document/static/js/modules/editor/dialogs/contributor.js:21
@@ -3071,232 +3050,148 @@ msgstr "Warnungen"
 msgid "Assign to"
 msgstr "Zuweisen"
 
-#: document/static/js/modules/editor/marginboxes/templates.js:212
-#, fuzzy
-#| msgid "Bullet list"
-msgid "Bullet list\")"
-msgstr "Aufzählung"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:211
-#, fuzzy
-#| msgid "Ordered list"
-msgid "Ordered list\"),"
-msgstr "Bestellliste"
-
 #: document/static/js/modules/editor/marginboxes/templates.js:210
-#, fuzzy
-#| msgid "Code block"
-msgid "Code block\"),"
+msgid "Code block"
 msgstr "Codeblock"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:209
-#, fuzzy
-#| msgid "Heading 6"
-msgid "Heading 6\"),"
+msgid "Heading 6"
 msgstr "Überschrift 6"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:208
-#, fuzzy
-#| msgid "Heading 5"
-msgid "Heading 5\"),"
+msgid "Heading 5"
 msgstr "Überschrift 5"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:207
-#, fuzzy
-#| msgid "Heading 4"
-msgid "Heading 4\"),"
+msgid "Heading 4"
 msgstr "Überschrift 4"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:206
-#, fuzzy
-#| msgid "Heading 3"
-msgid "Heading 3\"),"
+msgid "Heading 3"
 msgstr "Überschrift 3"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:205
-#, fuzzy
-#| msgid "Heading 2"
-msgid "Heading 2\"),"
+msgid "Heading 2"
 msgstr "Überschrift 2"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:204
-#, fuzzy
-#| msgid "Heading 1"
-msgid "Heading 1\"),"
+msgid "Heading 1"
 msgstr "Überschrift 1"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:203
-#, fuzzy
-#| msgid "Paragraph"
-msgid "Paragraph\"),"
+msgid "Paragraph"
 msgstr "Absatz"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:188
-#, fuzzy
-#| msgid "Underline"
-msgid "Underline\")"
+msgid "Underline"
 msgstr "Unterstreichen"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:187
-#, fuzzy
-#| msgid "Strong"
-msgid "Strong\"),"
+msgid "Strong"
 msgstr "Stark"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:186
-#, fuzzy
-#| msgid "Emphasis"
-msgid "Emphasis\"),"
+msgid "Emphasis"
 msgstr "Betonung"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:182
-#, fuzzy
-#| msgid "Changed into code block"
-msgid "Changed into code block\")"
+msgid "Changed into code block"
 msgstr "In Codeblock geändert"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:181
-#, fuzzy
-#| msgid "Changed into heading %(level)s"
-msgid "Changed into heading %(level)s\"),"
+msgid "Changed into heading %(level)s"
 msgstr "Geändert in Überschrift %(level)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:180
-#, fuzzy
-#| msgid "Changed into paragraph"
-msgid "Changed into paragraph\"),"
+msgid "Changed into paragraph"
 msgstr "In Absatz geändert"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:179
-#, fuzzy
-#| msgid "Deleted keyword: %(keyword)s"
-msgid "Deleted keyword: %(keyword)s\"),"
+msgid "Deleted keyword: %(keyword)s"
 msgstr "Gelöschtes Schlüsselwort: %(keyword)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:178
-#, fuzzy
-#| msgid "Delete table"
-msgid "Delete table\"),"
+msgid "Delete table"
 msgstr "Tabelle löschen"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:177
-#, fuzzy
-#| msgid "Lifted list item"
-msgid "Lifted list item\"),"
+msgid "Lifted list item"
 msgstr "Listenelement aufgehoben"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:176
-#, fuzzy
-#| msgid "Deleted figure"
-msgid "Deleted figure\"),"
+msgid "Deleted figure"
 msgstr "Gelöschte Abbildung"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:175
-#, fuzzy
-#| msgid "Removed code block"
-msgid "Removed code block\"),"
+msgid "Removed code block"
 msgstr "Codeblock entfernt"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:174
-#, fuzzy
-#| msgid "Unwrapped blockquote"
-msgid "Unwrapped blockquote\"),"
+msgid "Unwrapped blockquote"
 msgstr "Block Zitat entfernt"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:173
-#, fuzzy
-#| msgid "Deleted citation"
-msgid "Deleted citation\"),"
+msgid "Deleted citation"
 msgstr "Zitierung gestrichen"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:172
-#, fuzzy
-#| msgid "Merged heading"
-msgid "Merged heading\"),"
+msgid "Merged heading"
 msgstr "Zusammengeführte Überschrift"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:171
-#, fuzzy
-#| msgid "Merged paragraph"
-msgid "Merged paragraph\"),"
+msgid "Merged paragraph"
 msgstr "Zusammengeführter Absatz"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:170
-#, fuzzy
-#| msgid "New keyword: %(keyword)s"
-msgid "New keyword: %(keyword)s\"),"
+msgid "New keyword: %(keyword)s"
 msgstr "Neues Schlüsselwort: %(keyword)s"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:169
-#, fuzzy
-#| msgid "Inserted table"
-msgid "Inserted table\"),"
+msgid "Inserted table"
 msgstr "Eingefügte Tabelle"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:168
-#, fuzzy
-#| msgid "New list item"
-msgid "New list item\"),"
+msgid "New list item"
 msgstr "Neuer Listeneintrag"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:167
-#, fuzzy
-#| msgid "Inserted figure"
-msgid "Inserted figure\"),"
+msgid "Inserted figure"
 msgstr "Eingefügte Abbildung"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:166
-#, fuzzy
-#| msgid "Added code block"
-msgid "Added code block\"),"
+msgid "Added code block"
 msgstr "Codeblock hinzugefügt"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:165
-#, fuzzy
-#| msgid "Wrapped into blockquote"
-msgid "Wrapped into blockquote\"),"
+msgid "Wrapped into blockquote"
 msgstr "In Block Zitat eingebettet"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:164
-#, fuzzy
-#| msgid "Inserted citation"
-msgid "Inserted citation\"),"
+msgid "Inserted citation"
 msgstr "Eingefügtes Zitat"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:163
-#, fuzzy
-#| msgid "New heading"
-msgid "New heading\"),"
+msgid "New heading"
 msgstr "Neue Überschrift"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:162
-#, fuzzy
-#| msgid "New paragraph"
-msgid "New paragraph\"),"
+msgid "New paragraph"
 msgstr "Neuer Absatz"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:161
-#, fuzzy
-#| msgid "Block change"
-msgid "Block change\"),"
+msgid "Block change"
 msgstr "Blockwechsel"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:160
-#, fuzzy
-#| msgid "Format change"
-msgid "Format change\"),"
+msgid "Format change"
 msgstr "Formatänderung"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:159
-#, fuzzy
-#| msgid "Deletion"
-msgid "Deletion\"),"
+msgid "Deletion"
 msgstr "Streichung"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:158
-#, fuzzy
-#| msgid "Insertion"
-msgid "Insertion\"),"
+msgid "Insertion"
 msgstr "Einfügung"
 
 #: document/static/js/modules/editor/menus/figure/model.js:9
@@ -3409,23 +3304,17 @@ msgid "BITS"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:280
-#, fuzzy
-#| msgid ""
-#| "Export the document to a Journal Archiving and Interchange Tag Library "
-#| "NISO JATS Version 1.2 file."
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
-msgstr "Exportieren Sie das Dokument in eine NISO JATS Version 1.2-Datei."
+msgstr "Exportieren Sie das Dokument in eine Book Interchange Tag Set BITS Version 2.1-Datei."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:303
 msgid "Pandoc JSON"
 msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:306
-#, fuzzy
-#| msgid "Export the document to an HTML file."
 msgid "Export the document to a Pandoc JSON file."
-msgstr "Exportieren Sie das Dokument in eine HTML-Datei."
+msgstr "Exportieren Sie das Dokument in eine Pandoc-JSON-Datei."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:328
 msgid "Slim FIDUS"
@@ -3592,8 +3481,6 @@ msgid "Reject all tracked changes."
 msgstr "Alle nachverfolgten Änderungen ablehnen."
 
 #: document/static/js/modules/editor/menus/headerbar/view.js:91
-#, fuzzy
-#| msgid "Cannot close a document when you're offline."
 msgid "You cannot close a document when you're offline."
 msgstr "Ein Dokument kann nicht geschlossen werden, wenn Sie offline sind."
 
@@ -3780,10 +3667,8 @@ msgid "Insert a table into the document."
 msgstr "Fügen Sie eine Tabelle in das Dokument ein."
 
 #: document/static/js/modules/editor/navigator/index.js:408
-#, fuzzy
-#| msgid "Online Document"
 msgid "Untitled Document"
-msgstr "Online-Dokument"
+msgstr "Unbenanntes Dokument"
 
 #: document/static/js/modules/editor/navigator/index.js:495
 msgid "Document Navigator"
@@ -3918,10 +3803,8 @@ msgid "Printing has been initiated."
 msgstr "Der Druckvorgang wurde gestartet."
 
 #: document/static/js/modules/importer/native/import.js:42
-#, fuzzy
-#| msgid "Could not create document"
 msgid "Could not create document. Missing image file:"
-msgstr "Dokument konnte nicht erstellt werden"
+msgstr "Dokument konnte nicht erstellt werden. Fehlende Bild-datei:"
 
 #: document/static/js/modules/importer/native/import.js:84
 msgid "Could not save Image"
@@ -3936,10 +3819,8 @@ msgid "Could not save "
 msgstr "Konnte nicht speichern "
 
 #: document/static/js/modules/importer/odt/import.js:46
-#, fuzzy
-#| msgid "Field does not contain a valid EDTF string."
 msgid "File does not contain content.xml"
-msgstr "Das Feld enthält keine gültige EDTF-Zeichenfolge."
+msgstr "Die Datei enthält nicht content.xml"
 
 #: document/static/js/modules/maintenance/index.js:25
 msgid "Updating..."
@@ -4240,11 +4121,9 @@ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
 msgstr "Bestätige die E-Mailadresse und stimme den Geschäftsbedingungen zu"
 
 #: user/static/js/modules/email_confirm/templates.js:16
-#, fuzzy
-#| msgid ""
-#| "Please confirm that you own the email <a href=\"mailto:"
-#| "%(email)s\">%(email)s</a>."
-msgid "Please confirm that you own the email <a href="
+msgid ""
+"Please confirm that you own the email <a href=\"mailto:"
+"%(email)s\">%(email)s</a>."
 msgstr ""
 "Bitte bestätigen Sie, dass Sie Eigentümer der E-Mail-Adresse <a "
 "href=\"mailto:%(email)s\">%(email)s</a> sind."

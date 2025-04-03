@@ -2,50 +2,50 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-22 21:10+0000\n"
+"POT-Creation-Date: 2025-04-03 01:41+0000\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 
-#: base/settings.py:239
+#: base/settings.py:251
 msgid "English"
 msgstr "Английски"
 
-#: base/settings.py:240
+#: base/settings.py:252
 msgid "Bulgarian"
 msgstr "Български"
 
-#: base/settings.py:241
+#: base/settings.py:253
 msgid "German"
 msgstr "Немски"
 
-#: base/settings.py:242
+#: base/settings.py:254
 msgid "French"
 msgstr "Френски"
 
-#: base/settings.py:243
+#: base/settings.py:255
 msgid "Italian"
 msgstr "Италиански"
 
-#: base/settings.py:244
+#: base/settings.py:256
 msgid "Spanish"
 msgstr "Испански"
 
-#: base/settings.py:245
+#: base/settings.py:257
 msgid "Portuguese (Brazil)"
 msgstr "Португалски (Бразилия)"
 
-#: base/settings.py:331
+#: base/settings.py:341
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:332
+#: base/settings.py:342
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: base/settings.py:333
+#: base/settings.py:343
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 
@@ -67,18 +67,24 @@ msgid "Admin Console"
 msgstr "Административна конзола"
 
 #: base/templates/admin/console.html:18
+#, fuzzy
+#| msgid "Current number of user sessions:"
+msgid "Current number of users:"
+msgstr "Текущ брой потребителски сесии:"
+
+#: base/templates/admin/console.html:21
 msgid "Current number of user sessions:"
 msgstr "Текущ брой потребителски сесии:"
 
-#: base/templates/admin/console.html:20
+#: base/templates/admin/console.html:23
 msgid "Send a system message to all connected users:"
 msgstr "Изпратете системно съобщение до всички свързани потребители:"
 
-#: base/templates/admin/console.html:24
+#: base/templates/admin/console.html:27
 msgid "Message"
 msgstr "съобщение"
 
-#: base/templates/admin/console.html:26
+#: base/templates/admin/console.html:29
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
@@ -86,7 +92,7 @@ msgstr ""
 "Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата "
 "ви работа ще бъде запазена автоматично и скоро ще се върнем."
 
-#: base/templates/admin/console.html:33
+#: base/templates/admin/console.html:36
 msgid "Send to connected users"
 msgstr "Изпращане на свързани потребители"
 
@@ -144,46 +150,46 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "Дублирайте избраните шаблони за документи"
 
-#: document/emails.py:19 document/views.py:677
+#: document/emails.py:18 document/views.py:702
 msgid "Untitled"
 msgstr "неозаглавен"
 
-#: document/emails.py:98
+#: document/emails.py:97
 msgid "shared"
 msgstr "споделено"
 
-#: document/emails.py:100 document/emails.py:227
+#: document/emails.py:99 document/emails.py:225
 msgid "Document"
 msgstr "документ"
 
-#: document/emails.py:102 document/emails.py:229
+#: document/emails.py:101 document/emails.py:227
 msgid "Author"
 msgstr "Автор"
 
-#: document/emails.py:104
+#: document/emails.py:103
 msgid "Access Rights"
 msgstr "Права за достъп"
 
-#: document/emails.py:107 document/emails.py:234
+#: document/emails.py:106 document/emails.py:232
 msgid "Access the document"
 msgstr "Достъп до документа"
 
-#: document/emails.py:110
+#: document/emails.py:109
 #, fuzzy, python-format
 msgid "Document shared: %(document_title)s"
 msgstr "Споделен документ: %(document_title)s"
 
-#: document/emails.py:157
+#: document/emails.py:155
 #, fuzzy, python-format
 msgid "Comment on : %(document_title)s"
 msgstr "Коментирайте: %(document_title)s"
 
-#: document/emails.py:184
+#: document/emails.py:182
 #, fuzzy, python-format
 msgid "Comment assignment on : %(document_title)s"
 msgstr "Присвояване на коментар на: %(document_title)s"
 
-#: document/emails.py:231
+#: document/emails.py:229
 msgid "Comment"
 msgstr "коментар"
 
@@ -263,13 +269,13 @@ msgstr "Поканата за Fidus Writer е приета"
 msgid "Fidus Writer invite accepted"
 msgstr "Поканата за Fidus Writer е приета"
 
-#: user/models.py:91
-msgid "email address"
-msgstr "имейл адрес"
-
-#: user/models.py:163
+#: user/models.py:50
 msgid "Can login as another user"
 msgstr "Може да влезе като друг потребител"
+
+#: user/models.py:58
+msgid "email address"
+msgstr "имейл адрес"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
@@ -290,8 +296,8 @@ msgstr ""
 #, python-format
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
 msgstr ""
-"За да потвърдите, че това е правилно, отидете на <a href=\"%(url)s\">"
-"%(url)s</a>."
+"За да потвърдите, че това е правилно, отидете на <a "
+"href=\"%(url)s\">%(url)s</a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26

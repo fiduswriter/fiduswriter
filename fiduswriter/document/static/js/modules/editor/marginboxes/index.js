@@ -498,8 +498,9 @@ export class ModMarginboxes {
                             const pos = mboxPlacement.pos - initialOffset
                             let css = ""
                             if (pos !== totalOffset) {
-                                const topMargin = Number.parseInt(
-                                    pos - totalOffset
+                                const topMargin = Math.max(
+                                    0,
+                                    Number.parseInt(pos - totalOffset)
                                 )
                                 css += `#margin-box-container div.margin-box:nth-of-type(${index + 1}) {margin-top: ${topMargin}px;}\n`
                                 totalOffset += topMargin

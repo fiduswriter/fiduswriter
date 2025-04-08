@@ -634,6 +634,7 @@ export class HTMLExporterConvert {
                 break
             case "table": {
                 start += `<table
+                id="${this.idPrefix}${node.attrs.id}"
                 class="table-${node.attrs.width}
                 table-${node.attrs.aligned}
                 table-${node.attrs.layout}"

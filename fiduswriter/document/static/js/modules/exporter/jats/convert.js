@@ -755,7 +755,7 @@ export class JATSExporterConverter {
                     // only allows <p> block level elements https://jats.nlm.nih.gov/archiving/tag-library/1.2/element/fn.html
                     break
                 }
-                start += "<table-wrap>"
+                start += `<table-wrap id="${node.attrs.id}">`
                 end = "</table-wrap>" + end
                 const category = node.attrs.category
                 if (category !== "none") {

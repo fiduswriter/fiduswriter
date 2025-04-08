@@ -675,7 +675,7 @@ export class PandocExporterConvert {
                     })
                     // child 0: attributes of the table.
                     c.push([
-                        "",
+                        node.attrs.id || "",
                         [
                             `table-${node.attrs.width}`,
                             `table-${node.attrs.aligned}`,

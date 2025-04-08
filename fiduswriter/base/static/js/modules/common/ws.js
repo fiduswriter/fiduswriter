@@ -107,16 +107,27 @@ export class WebSocketConnector {
     }
 
     waitForWS() {
-        return new Promise(resolve => {
-            if (this.ws && this.ws.readyState === this.ws.OPEN) {
-                return resolve()
-            } else {
-                return new Promise(resolveTimer =>
-                    setTimeout(resolveTimer, 100)
-                )
-                    .then(() => this.waitForWS())
-                    .then(() => resolve())
+        return new Promise((resolve, reject) => {
+            const checkState = () => {
+                if (!this.ws) {
+                    // WebSocket doesn't exist
+                    return setTimeout(() => checkState(), 100)
+                }
+
+                if (this.ws.readyState === this.ws.OPEN) {
+                    // WebSocket is open and ready
+                    return resolve()
+                } else if (this.ws.readyState === this.ws.CONNECTING) {
+                    // WebSocket is still connecting, wait
+                    return setTimeout(() => checkState(), 100)
+                } else {
+                    // WebSocket is in CLOSING or CLOSED state
+                    // We should not try to send on this socket
+                    return reject(new Error("WebSocket is not in OPEN state"))
+                }
             }
+
+            checkState()
         })
     }
 
@@ -133,14 +144,18 @@ export class WebSocketConnector {
         } else if (data.s > expectedServer) {
             // Messages from the server have been lost.
             // Request resend.
-            this.waitForWS().then(() =>
-                this.ws.send(
-                    JSON.stringify({
-                        type: "request_resend",
-                        from: this.messages.server
-                    })
+            this.waitForWS()
+                .then(() =>
+                    this.ws.send(
+                        JSON.stringify({
+                            type: "request_resend",
+                            from: this.messages.server
+                        })
+                    )
                 )
-            )
+                .catch(() => {
+                    // Connection not ready, we will handle this on reconnection
+                })
         } else {
             this.messages.server = expectedServer
             if (data.c === this.messages.client) {
@@ -234,10 +249,20 @@ export class WebSocketConnector {
             data.s = this.messages.server
             this.messages.lastTen.push(data)
             this.messages.lastTen = this.messages["lastTen"].slice(-10)
-            this.waitForWS().then(() => {
-                this.ws.send(JSON.stringify(data))
-                this.setRecentlySentTimer(timer)
-            })
+
+            this.waitForWS()
+                .then(() => {
+                    this.ws.send(JSON.stringify(data))
+                    this.setRecentlySentTimer(timer)
+                })
+                .catch(() => {
+                    // Failed to send - likely WebSocket is not open
+                    // Put the message back into the queue
+                    this.messages.client -= 1
+                    this.messagesToSend.unshift(getData)
+                    // Remove from lastTen to avoid duplicates
+                    this.messages.lastTen = this.messages.lastTen.slice(0, -1)
+                })
         } else {
             this.messagesToSend.push(getData)
         }
@@ -257,21 +282,26 @@ export class WebSocketConnector {
     }
 
     resend_messages(from) {
-        return this.waitForWS().then(() => {
-            const toSend = this.messages.client - from
-            this.messages.client = from
-            if (toSend > this.messages.lastTen.length) {
-                // Too many messages requested. Abort.
-                this.send(this.restartMessage)
-                return
-            }
-            this.messages.lastTen.slice(0 - toSend).forEach(data => {
-                this.messages.client += 1
-                data.c = this.messages.client
-                data.s = this.messages.server
-                this.ws.send(JSON.stringify(data))
+        return this.waitForWS()
+            .then(() => {
+                const toSend = this.messages.client - from
+                this.messages.client = from
+                if (toSend > this.messages.lastTen.length) {
+                    // Too many messages requested. Abort.
+                    this.send(this.restartMessage)
+                    return
+                }
+                this.messages.lastTen.slice(0 - toSend).forEach(data => {
+                    this.messages.client += 1
+                    data.c = this.messages.client
+                    data.s = this.messages.server
+                    this.ws.send(JSON.stringify(data))
+                })
             })
-        })
+            .catch(() => {
+                // Could not send messages - WebSocket not ready
+                // Will try again when WebSocket is ready
+            })
     }
 
     receive(data) {

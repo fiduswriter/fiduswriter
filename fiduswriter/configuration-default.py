@@ -45,7 +45,14 @@ TEST_SERVER = True
 # the site.
 CONTACT_EMAIL = "mail@email.com"
 # Ports that Fidus Writer will run on.
-# PORTS = [8000,]
+PORTS = [
+    8000,
+]
+#
+
+# Allow the server to listen to all network interfaces (0.0.0.0) instead of just localhost
+# SECURITY WARNING: Setting this to True in production environments could expose your server
+LISTEN_TO_ALL_INTERFACES = False
 
 ADMINS = (("Your Name", "your_email@example.com"),)
 

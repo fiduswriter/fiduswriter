@@ -5,6 +5,10 @@ PORTS = [
     8000,
 ]
 
+# Allow the server to listen to all network interfaces (0.0.0.0) instead of just localhost
+# SECURITY WARNING: Setting this to True in production environments could expose your server
+LISTEN_TO_ALL_INTERFACES = False
+
 # If you want to show debug messages, set DEBUG to True.
 DEBUG = True
 SOURCE_MAPS = False

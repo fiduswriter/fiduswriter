@@ -165,6 +165,14 @@ class Command(RunserverCommand):
         super().handle(*args, **options)
 
     def inner_run(self, *args, **options):
+        # Determine the address to bind to
+        if not options.get("addrport"):
+            # If address not specified on command line, use settings
+            listen_to_all = getattr(
+                settings, "LISTEN_TO_ALL_INTERFACES", False
+            )
+            self.addr = "0.0.0.0" if listen_to_all else "127.0.0.1"
+
         # Determine ports to use
         default_port = int(self.port)
         if self.addrport_provided:

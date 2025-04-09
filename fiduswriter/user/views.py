@@ -24,7 +24,7 @@ from allauth.account.models import (
     EmailConfirmation,
     EmailConfirmationHMAC,
 )
-from allauth.account.views import SignupView
+from allauth.account.views import LoginView, SignupView
 from allauth.account import signals
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.signals import social_account_removed
@@ -255,6 +255,19 @@ def save_profile(request):
     user_form = UserForm(form_data["user"], instance=user_object)
     if user_form.is_valid():
         user_form.save()
+        # Set the language if it has been updated
+        if (
+            "language" in form_data["user"]
+            and user_object.language != form_data["user"]["language"]
+        ):
+            user_object.language = (
+                form_data["user"]["language"]
+                if form_data["user"]["language"]
+                else None
+            )
+            user_object.save(update_fields=["language"])
+            # Update session language
+            request.session["django_language"] = user_object.language
         status = 200
     else:
         response["errors"] = user_form.errors
@@ -562,3 +575,23 @@ class FidusSignupView(SignupView):
 
 
 signup = FidusSignupView.as_view()
+
+
+class FidusLoginView(LoginView):
+    def form_valid(self, form):
+        form_response = super().form_valid(form)
+        is_ajax = (
+            self.request.headers.get("x-requested-with") == "XMLHttpRequest"
+        )
+
+        if is_ajax:
+            # Add user's language preference to the response
+            user = self.request.user
+            response = {"location": form_response["Location"], "user": {}}
+            if user.language:
+                response["user"]["language"] = user.language
+            return JsonResponse(response)
+        return form_response
+
+
+login = FidusLoginView.as_view()

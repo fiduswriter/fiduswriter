@@ -92,6 +92,7 @@ export class Profile {
     render() {
         this.dom = document.createElement("body")
         this.dom.classList.add("scrollable")
+        console.log({settings_LANGUAGES})
         this.dom.innerHTML = baseBodyTemplate({
             contents: profileContents(this.user, this.socialaccount_providers),
             user: this.user,
@@ -108,13 +109,14 @@ export class Profile {
 
     save() {
         activateWait()
-
+        const newLang = this.dom.querySelector("#language").value
         return post("/api/user/save/", {
             form_data: JSON.stringify({
                 user: {
                     username: this.dom.querySelector("#username").value,
                     first_name: this.dom.querySelector("#first_name").value,
-                    last_name: this.dom.querySelector("#last_name").value
+                    last_name: this.dom.querySelector("#last_name").value,
+                    language: newLang
                 }
             })
         })
@@ -125,6 +127,13 @@ export class Profile {
                 deactivateWait()
                 return this.app.getConfiguration()
             })
-            .then(() => this.app.selectPage())
+            .then(() => {
+                const currentLang = document.documentElement.lang
+
+                if (currentLang !== newLang) {
+                    // Refresh the page to use the new language
+                    window.location.reload()
+                }
+            })
     }
 }

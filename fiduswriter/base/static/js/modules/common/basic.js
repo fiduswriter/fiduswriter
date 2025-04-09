@@ -380,3 +380,17 @@ export const setDocTitle = (title, app) => {
         document.title = titleText
     }
 }
+
+const LANGUAGES = {
+    bg: "Български",
+    de: "Deutsch",
+    en: "English",
+    es: "Español",
+    fr: "Français",
+    it: "Italiano",
+    "pt-br": "Português (Brazil)"
+}
+
+export const langName = code => {
+    return LANGUAGES[code] || code
+}

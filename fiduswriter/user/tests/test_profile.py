@@ -339,3 +339,121 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         except NoSuchElementException:
             return False
         return True
+
+    def test_language_preference(self):
+        User = get_user_model()
+        driver = self.driver
+        driver.get(self.base_url + "/")
+
+        # Go to profile page
+        driver.find_element(By.ID, "preferences-btn").click()
+        driver.find_element(By.CSS_SELECTOR, ".fw-avatar-card").click()
+
+        # Find the language dropdown
+        language_dropdown = driver.find_element(By.ID, "language")
+
+        # Check if dropdown exists and has options
+        self.assertTrue(self.is_element_present(By.ID, "language"))
+
+        # Initially language should be default (empty)
+        self.assertEqual(
+            language_dropdown.get_attribute("value"),
+            "",
+            "Initial language should be default (empty)",
+        )
+
+        # Change language to German
+        select = driver.find_element(By.ID, "language")
+        select.find_element(By.CSS_SELECTOR, "option[value='de']").click()
+
+        # Save the profile
+        driver.find_element(By.ID, "submit-profile").click()
+
+        time.sleep(1)
+
+        # Reload the page to see if the language was saved
+        driver.refresh()
+
+        # Wait for page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "language"))
+        )
+
+        # Check if the language is now German
+        select = driver.find_element(By.ID, "language")
+        self.assertEqual(
+            select.get_attribute("value"),
+            "de",
+            "Language should be set to German",
+        )
+
+        # Change language back to default
+        select.find_element(By.CSS_SELECTOR, "option[value='']").click()
+
+        # Save the profile
+        driver.find_element(By.ID, "submit-profile").click()
+
+        time.sleep(1)
+
+        # Check if the user in the database has the updated language
+        user = User.objects.get(username="Yeti")
+        self.assertEqual(
+            user.language, None, "Language should be reset to default (None)"
+        )
+
+        # Set language to Spanish
+        driver.refresh()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "language"))
+        )
+        select = driver.find_element(By.ID, "language")
+        select.find_element(By.CSS_SELECTOR, "option[value='es']").click()
+        driver.find_element(By.ID, "submit-profile").click()
+
+        # Wait for the save to complete
+        time.sleep(1)
+
+        # Log out to test if language persists on login
+        driver.find_element(By.ID, "preferences-btn").click()
+
+        driver.find_element(
+            By.XPATH, '//*[normalize-space()="Cerrar sesión"]'
+        ).click()
+
+        # Wait for login page
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.title_is("Login - Fidus Writer")
+        )
+
+        # Login again
+        driver.find_element(By.ID, "id-login").send_keys("Yeti")
+        driver.find_element(By.ID, "id-password").send_keys("otter1")
+        driver.find_element(By.ID, "login-submit").click()
+
+        # Wait for dashboard page
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "preferences-btn"))
+        )
+
+        # Go to profile page
+        driver.find_element(By.ID, "preferences-btn").click()
+        driver.find_element(By.CSS_SELECTOR, ".fw-avatar-card").click()
+
+        # Check if the language is still Spanish
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "language"))
+        )
+        select = driver.find_element(By.ID, "language")
+        self.assertEqual(
+            select.get_attribute("value"),
+            "es",
+            "Language should still be set to Spanish after logout/login",
+        )
+
+        # Check if the user in the database has the updated language
+        user = User.objects.get(username="Yeti")
+        self.assertEqual(
+            user.language,
+            "es",
+            "Language should be set to Spanish in database",
+        )

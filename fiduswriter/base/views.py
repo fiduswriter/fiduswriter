@@ -70,6 +70,7 @@ def configuration(request):
             "first_name": request.user.first_name,
             "name": request.user.readable_name,
             "last_name": request.user.last_name,
+            "language": request.user.language,
             "avatar": avatars.get_url(request.user),
             "emails": [],
             "socialaccounts": [],

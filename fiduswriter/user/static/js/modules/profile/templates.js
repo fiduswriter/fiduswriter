@@ -1,4 +1,4 @@
-import {avatarTemplate, escapeText} from "../common"
+import {avatarTemplate, escapeText, langName} from "../common"
 
 /** A template to confirm the deletion of a user avatar. */
 export const confirmDeleteAvatarTemplate = () =>
@@ -69,7 +69,7 @@ export const changePwdDialogTemplate = ({username}) =>
     </tbody></table>`
 
 export const profileContents = (user, socialaccount_providers) =>
-    `<div id="profile-wrapper" class="clearfix">
+    `<div id="profile-wrapper" class="clearfix ui-dialog ui-dialog-fullpage">
         <div id="profile-avatar">
             ${avatarTemplate({user})}
             <div id="avatar-pulldown-wrapper">
@@ -150,6 +150,19 @@ export const profileContents = (user, socialaccount_providers) =>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="profile-data-row">
+                <label class="form-label">${gettext("Language")}</label>
+                <select name="language" id="language" class="entry-form dk fw-button fw-large">
+                <option value="">${gettext("Default language")}</option>
+                ${settings_LANGUAGES
+                    .map(
+                        ([code, _name]) =>
+                            `<option value="${code}" ${user.language === code ? "selected" : ""}>${langName(code)}</option>`
+                    )
+                    .join("")}
+                </select>
+                <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
             ${
                 socialaccount_providers.length

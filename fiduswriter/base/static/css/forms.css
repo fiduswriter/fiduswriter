@@ -44,6 +44,48 @@ textarea:focus {
     background-color: var(--input-focus-background-color);
 }
 
+.fw-select-container select {
+    display: inline-block;
+    width: calc(100% - 22px);
+    appearance: none;
+    cursor: pointer;
+}
+
+.fw-select-container select option.placeholder {
+    display: none;
+}
+
+.entry-field .ProseMirror,
+.entry-field input[type="text"],
+.entry-field input[type="number"] {
+    width: 686px;
+    max-width: 80vw;
+}
+
+.entry-field select {
+    padding: 0 3px 0 13px;
+    border: 0 none;
+    color: var(--cs-light-text);
+    background-color: var(--input-background-color);
+    height: 38px;
+    width: 561px;
+    appearance: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.ui-dialog input[type="text"]:not(.fw-inline),
+.ui-dialog input[type="password"]:not(.fw-inline),
+.ui-dialog input[type="search"]:not(.fw-inline),
+.ui-dialog input[type="email"]:not(.fw-inline),
+.ui-dialog input[type="number"]:not(.fw-inline),
+.ui-dialog textarea,
+.ui-dialog div[contenteditable="true"],
+.ui-dialog select,
+.ui-dialog .entry-field select {
+    border: 1px solid var(--input-dialog-border-color);
+}
+
 .form-label {
     font-size: 11px;
     font-weight: bold;
@@ -218,17 +260,6 @@ tr.fw-checkable.checked > td:last-child::after {
     position: relative;
 }
 
-.fw-select-container select {
-    display: inline-block;
-    width: calc(100% - 22px);
-    appearance: none;
-    cursor: pointer;
-}
-
-.fw-select-container select option.placeholder {
-    display: none;
-}
-
 .fw-select-container .fw-select-arrow {
     position: absolute;
     top: 14px;
@@ -237,13 +268,6 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 /* bibliography and license form input */
-
-.entry-field .ProseMirror,
-.entry-field input[type="text"],
-.entry-field input[type="number"] {
-    width: 686px;
-    max-width: 80vw;
-}
 
 .entry-field.fw-fomt-error input[type="text"],
 .entry-field.fw-fomt-error input[type="number"] {
@@ -256,18 +280,6 @@ tr.fw-checkable.checked > td:last-child::after {
 
 .entry-field .selection-list {
     position: relative;
-}
-
-.entry-field select {
-    padding: 0 3px 0 13px;
-    border: 0 none;
-    color: var(--cs-light-text);
-    background-color: var(--input-background-color);
-    height: 38px;
-    width: 561px;
-    appearance: none;
-    cursor: pointer;
-    display: inline-block;
 }
 
 .entry-field .type-switch-input-inner select {

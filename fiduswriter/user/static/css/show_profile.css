@@ -29,6 +29,20 @@
     margin-top: 12px;
 }
 
+.profile-data-row select {
+    width: calc(100% - 21px);
+    color: var(--cs-white-text);
+    background-color: var(--input-background-color);
+    appearance: none;
+}
+
+.profile-data-row .fw-select-arrow {
+    position: absolute;
+    top: 28px;
+    right: 37px;
+    pointer-events: none;
+}
+
 #fw-edit-profile-pwd {
     position: absolute;
     right: 0;

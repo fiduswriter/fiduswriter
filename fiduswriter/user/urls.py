@@ -38,6 +38,7 @@ urlpatterns = [
         name="get_confirmkey_data",
     ),
     re_path(r"^signup/$", views.signup, name="account_signup"),
+    re_path(r"^login/$", views.login, name="account_login"),
     # Authentication handling
     re_path("", include("allauth.urls")),
 ]

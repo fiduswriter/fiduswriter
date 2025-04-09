@@ -112,7 +112,7 @@ msgstr "Nueva carpeta"
 #: user/static/js/modules/profile/templates.js:151
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
-msgstr "Añadir"
+msgstr "Enviar"
 
 #: base/static/js/modules/common/file/new_folder_dialog.js:16
 msgid "Create folder"

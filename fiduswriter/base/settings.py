@@ -159,6 +159,7 @@ BASE_MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "user.middleware.UserLanguageMiddleware",
 ]
 
 MIDDLEWARE = []

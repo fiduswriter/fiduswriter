@@ -1,3 +1,5 @@
+import {langName} from "../common"
+
 export const basePreloginTemplate = ({
     contents,
     language,
@@ -52,13 +54,12 @@ ${
                 .join("")}
         </ul>
         <select id="lang-selection" aria-label="${gettext("Select language")}">
-            <option value="bg" ${language === "bg" ? "selected" : ""}>Български</option>
-            <option value="de" ${language === "de" ? "selected" : ""}>Deutsch</option>
-            <option value="en" ${language === "en" ? "selected" : ""}>English</option>
-            <option value="es" ${language === "es" ? "selected" : ""}>Español</option>
-            <option value="fr" ${language === "fr" ? "selected" : ""}>Français</option>
-            <option value="it" ${language === "it" ? "selected" : ""}>Italiano</option>
-            <option value="pt-br" ${language === "pt-br" ? "selected" : ""}>Portuguese (Brazil)</option>
+            ${settings_LANGUAGES
+                .map(
+                    ([code, _name]) =>
+                        `<option value="${code}" ${language === code ? "selected" : ""}>${langName(code)}</option>`
+                )
+                .join("")}
         </select>
     </div>
 </footer>`

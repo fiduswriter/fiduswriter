@@ -5,6 +5,7 @@ export {
     activateWait,
     deactivateWait,
     addAlert,
+    langName,
     localizeDate,
     noSpaceTmp,
     escapeText,

@@ -165,7 +165,8 @@
             "settings_CONTACT_EMAIL",
             "settings_IS_FREE",
             "settings_FOOTER_LINKS",
-            "settings_BRANDING_LOGO"
+            "settings_BRANDING_LOGO",
+            "settings_LANGUAGES"
         ]
     }
 }

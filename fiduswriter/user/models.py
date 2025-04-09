@@ -38,6 +38,22 @@ class User(AbstractUser):
         object_id_field="holder_id",
         related_query_name="user",
     )
+    language = models.CharField(
+        max_length=10,
+        choices=[
+            ("en", "English"),
+            ("bg", "Bulgarian"),
+            ("de", "German"),
+            ("fr", "French"),
+            ("it", "Italian"),
+            ("es", "Spanish"),
+            ("pt-br", "Portuguese (Brazil)"),
+        ],
+        default=None,
+        help_text=_("Interface language preference"),
+        blank=True,
+        null=True,
+    )
 
     @property
     def readable_name(self):

@@ -1,6 +1,6 @@
 .ui-dialog {
     position: absolute;
-    background-color: white;
+    background-color: var(--cs-light-background);
     font-size: 14px;
     border-image: initial;
     overflow: hidden;
@@ -11,6 +11,10 @@
     border-radius: 0;
     z-index: 1000; /* Ensure dialog stays on top */
     user-select: none; /* Prevent interaction with background content */
+}
+
+.ui-dialog-fullpage {
+    position: initial !important;
 }
 
 .ui-dialog-content.ui-scrollable {

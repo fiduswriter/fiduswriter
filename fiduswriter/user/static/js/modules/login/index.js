@@ -159,7 +159,33 @@ export class LoginPage extends PreloginPage {
                                 </p>
                             </div>`
                     } else {
-                        this.app.init()
+                        // Check if user's language preference differs from current language
+                        const currentLang = document.documentElement.lang
+                        if (json.html && json.html.length > 0) {
+                            const htmlValues = JSON.parse(json.html)
+                            if (
+                                htmlValues.user &&
+                                htmlValues.user.language &&
+                                htmlValues.user.language !== currentLang
+                            ) {
+                                // Language preference differs, reload the page to apply it
+                                console.log(
+                                    "Language preference differs, reloading page"
+                                )
+                                window.location.reload()
+                            } else {
+                                // No language change needed, proceed with normal init
+                                console.log(
+                                    "No language change needed, proceeding with normal init"
+                                )
+                                this.app.init()
+                            }
+                        } else {
+                            console.log(
+                                "No language change needed, proceeding with normal init"
+                            )
+                            this.app.init()
+                        }
                     }
                 })
                 .catch(response =>

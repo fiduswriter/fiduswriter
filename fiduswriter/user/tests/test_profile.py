@@ -204,10 +204,10 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         urls = self.find_urls(outbox[0].body)
         self.driver.get(urls[0])
-        assert (
-            self.driver.find_element(By.CSS_SELECTOR, ".fw-login-title").text
-            == "CONFIRM E-MAIL ADDRESS"
-        )
+        login_title = self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-login-title"
+        ).text
+        self.assertEqual(login_title, "CONFIRM E-MAIL ADDRESS")
         self.driver.find_element(By.ID, "submit").click()
         self.assertEqual(
             len(

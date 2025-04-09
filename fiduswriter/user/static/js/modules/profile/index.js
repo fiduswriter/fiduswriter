@@ -92,7 +92,6 @@ export class Profile {
     render() {
         this.dom = document.createElement("body")
         this.dom.classList.add("scrollable")
-        console.log({settings_LANGUAGES})
         this.dom.innerHTML = baseBodyTemplate({
             contents: profileContents(this.user, this.socialaccount_providers),
             user: this.user,

@@ -188,12 +188,6 @@ export class DatatableBulk {
             const tr = target.closest("tr")
             const index = parseInt(tr.dataset.index)
             const row = this.table.data.data[index]
-            console.log({
-                row,
-                index,
-                checkboxColumn: this.checkboxColumn,
-                table: this.table
-            })
             const cell = row.cells[this.checkboxColumn]
             cell.data = !cell.data
             cell.text = String(cell.data)

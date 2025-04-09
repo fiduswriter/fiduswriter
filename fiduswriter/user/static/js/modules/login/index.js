@@ -169,21 +169,12 @@ export class LoginPage extends PreloginPage {
                                 htmlValues.user.language !== currentLang
                             ) {
                                 // Language preference differs, reload the page to apply it
-                                console.log(
-                                    "Language preference differs, reloading page"
-                                )
                                 window.location.reload()
                             } else {
                                 // No language change needed, proceed with normal init
-                                console.log(
-                                    "No language change needed, proceeding with normal init"
-                                )
                                 this.app.init()
                             }
                         } else {
-                            console.log(
-                                "No language change needed, proceeding with normal init"
-                            )
                             this.app.init()
                         }
                     }

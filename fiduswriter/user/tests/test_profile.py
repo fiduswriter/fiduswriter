@@ -150,7 +150,9 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog input[type=file]"
         ).send_keys(image_path)
-        driver.find_element(By.CSS_SELECTOR, ".ui-dialog .fw-dark").click()
+        driver.find_element(
+            By.XPATH, '//*[normalize-space()="Upload"]'
+        ).click()
         self.assertEqual(
             len(driver.find_elements(By.CSS_SELECTOR, "#profile-avatar img")),
             1,
@@ -159,7 +161,9 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(
             By.XPATH, '//*[normalize-space()="Delete picture"]'
         ).click()
-        driver.find_element(By.CSS_SELECTOR, ".ui-dialog .fw-dark").click()
+        driver.find_element(
+            By.XPATH, '//*[normalize-space()="Delete"]'
+        ).click()
         time.sleep(1)
         self.assertEqual(
             len(driver.find_elements(By.CSS_SELECTOR, "#profile-avatar img")),
@@ -325,7 +329,9 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "username-confirmation").send_keys("Yeti2")
         driver.find_element(By.ID, "password").send_keys("otter1")
         self.assertEqual(len(User.objects.filter(username="Yeti2")), 1)
-        driver.find_element(By.CSS_SELECTOR, ".ui-dialog .fw-dark").click()
+        driver.find_element(
+            By.XPATH, '//*[normalize-space()="Delete"]'
+        ).click()
         time.sleep(1)
         login_header = self.driver.find_elements(
             By.CSS_SELECTOR, "h1.fw-login-title"

@@ -383,6 +383,12 @@ body.header-closed #editor-content {
     background-color: var(--cs-5-background-hover);
 }
 
+div.search-result-count {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
 #paper-editable {
     display: table;
     width: 100%;

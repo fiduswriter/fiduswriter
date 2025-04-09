@@ -282,6 +282,9 @@ export class SearchReplaceDialog {
 
         this.searchInput = this.dialog.dialogEl.querySelector(".search")
         this.replaceInput = this.dialog.dialogEl.querySelector(".replace")
+        this.resultCountEl = this.dialog.dialogEl.querySelector(
+            ".search-result-count"
+        )
         this.dialog.dialogEl.querySelector("input[type=text]").focus()
 
         this.bind()
@@ -335,6 +338,12 @@ export class SearchReplaceDialog {
         this.dialog.refreshNote()
     }
 
+    updateResultCount() {
+        const totalMatches =
+            this.matches.matches.length + this.fnMatches.matches.length
+        this.resultCountEl.textContent = `(${totalMatches})`
+    }
+
     bind() {
         this.searchInput.addEventListener("input", () => {
             this.search(this.searchInput.value)
@@ -361,6 +370,7 @@ export class SearchReplaceDialog {
         }
         // listener for change in views
         this.setButtonState()
+        this.updateResultCount()
     }
 
     search(term) {
@@ -398,6 +408,7 @@ export class SearchReplaceDialog {
         }
         this.editor.mod.footnotes.fnEditor.view.dispatch(fnTr)
         this.editor.view.dispatch(tr)
+        this.updateResultCount()
     }
 
     endSearch() {

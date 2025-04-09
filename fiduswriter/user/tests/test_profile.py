@@ -206,7 +206,7 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.get(urls[0])
         login_title = self.driver.find_element(
             By.CSS_SELECTOR, ".fw-login-title"
-        ).text
+        ).text.upper()
         self.assertEqual(login_title, "CONFIRM E-MAIL ADDRESS")
         self.driver.find_element(By.ID, "submit").click()
         self.assertEqual(
@@ -287,17 +287,17 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         urls = self.find_urls(outbox[1].body)
         self.driver.get(urls[0])
-        assert (
-            self.driver.find_element(By.CSS_SELECTOR, ".fw-login-title").text
-            == "CONFIRM E-MAIL ADDRESS"
-        )
+        login_title = self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-login-title"
+        ).text.upper()
+        self.assertEqual(login_title, "CONFIRM E-MAIL ADDRESS")
         self.driver.find_element(By.ID, "submit").click()
         time.sleep(1)
-        assert (
+        self.assertEqual(
             self.driver.find_element(
                 By.CSS_SELECTOR, ".fw-contents.prelogin h1"
-            ).text
-            == "Thanks for verifying!"
+            ).text,
+            "Thanks for verifying!",
         )
         # This time we log in as a different user and then try to verify the
         # email. This should log us out automatically.
@@ -308,10 +308,10 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.get(self.base_url + "/")
         urls = self.find_urls(outbox[2].body)
         self.driver.get(urls[0])
-        assert (
-            self.driver.find_element(By.CSS_SELECTOR, ".fw-login-title").text
-            == "CONFIRM E-MAIL ADDRESS"
-        )
+        login_title = self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-login-title"
+        ).text.upper()
+        self.assertEqual(login_title, "CONFIRM E-MAIL ADDRESS")
         self.driver.find_element(By.ID, "submit").click()
         time.sleep(1)
         assert (

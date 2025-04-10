@@ -726,9 +726,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        accept_invite_button = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        accept_invite_button.click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
@@ -861,9 +866,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        accept_invite_button = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        accept_invite_button.click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
@@ -1052,9 +1062,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        accept_invite_button = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        accept_invite_button.click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
@@ -1085,9 +1100,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         invitation_link = self.find_urls(user5_invitation_email)[0]
         self.driver.get(invitation_link)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        accept_invite_button = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        accept_invite_button.click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
@@ -1158,9 +1178,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".respond-invite")
             )
         ).click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        accept_invite_button = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        accept_invite_button.click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.XPATH, '//*[normalize-space()="Documents"]')

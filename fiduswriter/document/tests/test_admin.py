@@ -341,9 +341,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Go to contacts"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        accept_invite_button = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        accept_invite_button.click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()

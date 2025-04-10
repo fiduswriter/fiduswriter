@@ -725,6 +725,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.XPATH, '//*[normalize-space()="Go to contacts"]')
             )
         ).click()
+        # wait for the page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".respond-invite")
+            )
+        )
+        # Wait an extra second for the handler to become activated.
+        time.sleep(1)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         accept_invite_button = WebDriverWait(
             self.driver, self.wait_time
@@ -865,6 +873,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.XPATH, '//*[normalize-space()="Go to contacts"]')
             )
         ).click()
+        # wait for the page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".respond-invite")
+            )
+        )
+        # Wait an extra second for the handler to become activated.
+        time.sleep(1)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         accept_invite_button = WebDriverWait(
             self.driver, self.wait_time
@@ -1061,6 +1077,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.XPATH, '//*[normalize-space()="Go to contacts"]')
             )
         ).click()
+        # wait for the page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".respond-invite")
+            )
+        )
+        # Wait an extra second for the handler to become activated.
+        time.sleep(1)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         accept_invite_button = WebDriverWait(
             self.driver, self.wait_time
@@ -1099,6 +1123,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assert_with_retry(self.check_document_count, 0)
         invitation_link = self.find_urls(user5_invitation_email)[0]
         self.driver.get(invitation_link)
+        # wait for the page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".respond-invite")
+            )
+        )
+        # Wait an extra second for the handler to become activated.
+        time.sleep(1)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         accept_invite_button = WebDriverWait(
             self.driver, self.wait_time
@@ -1137,6 +1169,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assert_with_retry(self.check_document_count, 0)
         invitation_link = self.find_urls(user6_invitation_email)[0]
         self.driver.get(invitation_link)
+        # wait for the page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".respond-invite")
+            )
+        )
+        # Wait an extra second for the handler to become activated.
+        time.sleep(1)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Decline invite"]'
@@ -1172,12 +1212,15 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(len(read_access_rights), 1)
         invitation_link = self.find_urls(user7_invitation_email)[0]
         self.driver.get(invitation_link)
-        time.sleep(1)
+        # wait for the page to load
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".respond-invite")
             )
-        ).click()
+        )
+        # Wait an extra second for the handler to become activated.
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         accept_invite_button = WebDriverWait(
             self.driver, self.wait_time
         ).until(

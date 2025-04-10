@@ -128,13 +128,14 @@ class SeleniumHelper(object):
         options.add_argument("--kiosk-printing")
         options.add_argument("--safebrowsing-disable-download-protection")
         options.add_argument("--safebrowsing-disable-extension-blacklist")
+        prefs = {
+            "profile.password_manager_leak_detection": False,
+        }
         if download_dir:
-            prefs = {
-                "download.default_directory": download_dir,
-                "download.prompt_for_download": False,
-                "download.directory_upgrade": True,
-            }
-            options.add_experimental_option("prefs", prefs)
+            prefs["download.default_directory"] = download_dir
+            prefs["download.prompt_for_download"] = False
+            prefs["download.directory_upgrade"] = True
+        options.add_experimental_option("prefs", prefs)
         if user_agent:
             options.add_argument("user-agent={}".format(user_agent))
         if os.getenv("CI"):

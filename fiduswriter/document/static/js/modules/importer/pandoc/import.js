@@ -18,26 +18,24 @@ export class PandocImporter {
             doc: null,
             docInfo: null
         }
+        this.title = gettext("Untitled")
     }
 
-    init() {
-        return this.getTemplate()
-            .then(() => this.file.text())
-            .then(text =>
-                this.handlePandocJson(
-                    text,
-                    this.additionalFiles?.images,
-                    this.additionalFiles?.bibliography
-                )
-            )
+    async init() {
+        await this.getTemplate()
+        const text = await this.file.text()
+        return this.handlePandocJson(
+            text,
+            this.additionalFiles?.images,
+            this.additionalFiles?.bibliography
+        )
     }
 
-    getTemplate() {
-        return postJson("/api/document/get_template/", {
+    async getTemplate() {
+        const {json} = await postJson("/api/document/get_template/", {
             import_id: this.importId
-        }).then(({json}) => {
-            this.template = json.template
         })
+        this.template = json.template
     }
 
     importJSON() {
@@ -122,15 +120,23 @@ export class PandocImporter {
                 console.error(error)
                 return this.output
             }
-            const title =
-                convertedDoc.content.content[0].content?.[0]?.text ||
-                gettext("Untitled")
+            if (
+                ["", "Untitled"].includes(
+                    convertedDoc.content.content[0].content?.[0]?.text
+                )
+            ) {
+                convertedDoc.content.content[0].content[0].text = this.title
+            } else {
+                this.title =
+                    convertedDoc.content.content[0].content[0].text ||
+                    this.title
+            }
 
             // Create a new NativeImporter instance
             const nativeImporter = new NativeImporter(
                 {
                     content: convertedDoc.content,
-                    title,
+                    title: this.title,
                     comments: {},
                     settings: convertedDoc.settings
                 },
@@ -142,7 +148,7 @@ export class PandocImporter {
                 })),
                 this.user,
                 null,
-                this.path + title
+                this.path + this.title
             )
 
             return nativeImporter

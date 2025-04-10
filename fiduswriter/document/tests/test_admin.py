@@ -340,6 +340,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Go to contacts"]'
         ).click()
+        # wait for the page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".respond-invite")
+            )
+        )
+        # Wait an extra second for the handler to become activated.
+        time.sleep(1)
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
         accept_invite_button = WebDriverWait(
             self.driver, self.wait_time

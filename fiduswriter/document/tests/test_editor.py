@@ -1131,7 +1131,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         # Wait an extra second for the handler to become activated.
         time.sleep(1)
-        self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
+        self.driver.find_element(
+            By.XPATH, '//*[normalize-space()="Respond"]'
+        ).click()
         accept_invite_button = WebDriverWait(
             self.driver, self.wait_time
         ).until(

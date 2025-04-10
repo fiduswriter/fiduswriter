@@ -44,6 +44,13 @@ export class HTMLExporter {
         this.contentFileName = "document.html"
         this.fileEnding = "html.zip"
         this.mimeType = "application/zip"
+
+        // Stylesheets will have one of:
+        // * a url - which means they will be fetched before they are included as a separate file
+        // * a filename and contents - which means they will be included as a separate file
+        // * only contents - which means they will be incldued inside <style></style> tags in the document header
+        // * only filename - which means they will be referenced as a separate file. You need to add the file yourself.
+        this.styleSheets = [{url: staticUrl("css/document.css")}]
     }
 
     async init() {
@@ -55,20 +62,14 @@ export class HTMLExporter {
         // Process the document and prepare files
         this.zipFileName = `${createSlug(this.docTitle)}.${this.fileEnding}`
         this.docContent = removeHidden(this.doc.content)
-        // Stylesheets will have one of:
-        // * a url - which means they will be fetched before they are included as a separate file
-        // * a filename and contents - which means they will be included as a separate file
-        // * only contents - which means they will be incldued inside <style></style> tags in the document header
-        // * only filename - which means they will be referenced as a separate file. You need to add the file yourself.
-        const styleSheets = [{url: staticUrl("css/document.css")}]
 
         const docStyle = this.getDocStyle(this.doc)
 
         if (docStyle) {
-            styleSheets.push(docStyle)
+            this.styleSheets.push(docStyle)
         }
         await Promise.all(
-            styleSheets.map(async sheet => await this.loadStyle(sheet))
+            this.styleSheets.map(async sheet => await this.loadStyle(sheet))
         )
 
         this.converter = new HTMLExporterConvert(
@@ -79,7 +80,7 @@ export class HTMLExporter {
             this.imageDB,
             this.bibDB,
             this.csl,
-            styleSheets,
+            this.styleSheets,
             this.converterOptions
         )
         const {html, imageIds, metaData, extraStyleSheets} =

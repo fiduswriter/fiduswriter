@@ -28,6 +28,8 @@ export const bulkMenuModel = () => ({
     ]
 })
 
+let currentlySearching = false
+
 export const menuModel = () => ({
     content: [
         {
@@ -42,6 +44,27 @@ export const menuModel = () => ({
                 })
             },
             order: 0
+        },
+        {
+            type: "search",
+            icon: "search",
+            title: gettext("Search contacts"),
+            keys: "Alt-s",
+            input: (overview, text) => {
+                if (text.length && !currentlySearching) {
+                    overview.initTable(true)
+                    currentlySearching = true
+                    overview.table.on("datatable.init", () =>
+                        overview.table.search(text)
+                    )
+                } else if (!text.length && currentlySearching) {
+                    overview.initTable(false)
+                    currentlySearching = false
+                } else if (text.length) {
+                    overview.table.search(text)
+                }
+            },
+            order: 5
         }
     ]
 })

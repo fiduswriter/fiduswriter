@@ -313,6 +313,7 @@ export class OverviewMenuView {
             const menuItem = this.model.content[menuNumber]
             if (menuItem.input) {
                 menuItem.input(this.overview, target.value)
+                target.focus()
             }
         }
     }

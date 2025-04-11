@@ -396,10 +396,7 @@ export class Dialog {
                 dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
             )
         zIndex += 2
-        document.documentElement.style.setProperty(
-            "--highest-dialog-z-index",
-            zIndex
-        )
+        document.body.style.setProperty("--highest-dialog-z-index", zIndex)
         return zIndex
     }
 

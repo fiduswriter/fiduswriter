@@ -583,10 +583,9 @@ class FidusLoginView(LoginView):
         is_ajax = (
             self.request.headers.get("x-requested-with") == "XMLHttpRequest"
         )
-
-        if is_ajax:
+        user = self.request.user
+        if is_ajax and isinstance(user, get_user_model()):
             # Add user's language preference to the response
-            user = self.request.user
             response = {"location": form_response["Location"], "user": {}}
             if user.language:
                 response["user"]["language"] = user.language

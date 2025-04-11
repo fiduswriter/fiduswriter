@@ -588,7 +588,7 @@ class FidusLoginView(LoginView):
             # Add user's language preference to the response
             user = self.request.user
             response = {"location": form_response["Location"], "user": {}}
-            if user.language:
+            if not user.is_anonymous and user.language:
                 response["user"]["language"] = user.language
             return JsonResponse(response)
         return form_response

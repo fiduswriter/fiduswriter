@@ -177,7 +177,7 @@ export class Dialog {
                 width: this.width,
                 icon: this.icon,
                 buttons: this.buttons,
-                zIndex: this.getHighestDialogZIndex() + 2,
+                zIndex: this.nextDialogZIndex(),
                 body: this.body,
                 scroll: this.scroll,
                 canClose: this.canClose,
@@ -388,13 +388,18 @@ export class Dialog {
         })
     }
 
-    getHighestDialogZIndex() {
+    nextDialogZIndex() {
         let zIndex = 100
         document
             .querySelectorAll("div.ui-dialog")
             .forEach(
                 dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
             )
+        zIndex += 2
+        document.documentElement.style.setProperty(
+            "--highest-dialog-z-index",
+            zIndex
+        )
         return zIndex
     }
 

@@ -4,7 +4,7 @@
     bottom: 10px;
     direction: rtl;
     column-width: 328px;
-    z-index: 101;
+    z-index: calc(var(--highest-dialog-z-index, 100) + 2);
 }
 
 #alerts-wrapper {

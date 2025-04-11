@@ -68,15 +68,198 @@ export class ModCitations {
                 false,
                 settings.language
             )
-            this.citRenderer.init().then(() => this.layoutCitationsTwo())
+            this.citRenderer
+                .init()
+                .then(() => this.layoutCitationsTwo())
+                .catch(() => this.recoverAfterCiteProcCrash())
         }
+    }
+
+    recoverAfterCiteProcCrash() {
+        console.warn(
+            "CitationProcessor crashed. Falling back to simplified citation rendering."
+        )
+
+        // Create simplified citation texts for all citations
+        const citationNodes = document.querySelectorAll(
+            "#paper-editable span.citation"
+        )
+        citationNodes.forEach(citation => {
+            try {
+                // Get citation data from dataset
+                const referencesData = JSON.parse(
+                    citation.dataset.references || "[]"
+                )
+                if (!referencesData.length) {
+                    citation.innerHTML = "[?]"
+                    return
+                }
+
+                // Create a basic fallback citation text
+                const citationText = referencesData
+                    .map(ref => {
+                        const entryId = ref.id
+                        const item = this.editor.mod.db.bibDB.db[entryId]
+
+                        if (!item) {
+                            return `[${entryId || "?"}]`
+                        }
+
+                        // Extract basic author info
+                        let authorText = ""
+                        if (item.fields.author && item.fields.author.length) {
+                            const author = item.fields.author[0]
+                            authorText =
+                                (
+                                    author.lastName ||
+                                    author.firstname ||
+                                    author.literal
+                                )
+                                    ?.map(part => part.text || "")
+                                    .join("") || "Unknown Author"
+                            if (item.fields.author.length > 1) {
+                                authorText += " et al."
+                            }
+                        } else {
+                            authorText = "Unknown Author"
+                        }
+
+                        // Extract year
+                        const year = item.fields.date
+                            ? item.fields.date.substring(0, 4)
+                            : "n.d."
+
+                        // Add locator if present
+                        const locator = ref.locator ? `, ${ref.locator}` : ""
+
+                        return `(${authorText}, ${year}${locator})`
+                    })
+                    .join("; ")
+
+                citation.innerHTML = citationText
+            } catch (error) {
+                console.error("Error creating fallback citation:", error)
+                citation.innerHTML = "[Citation]"
+            }
+        })
+
+        // Create a simplified bibliography
+        const docBibliography = document.querySelector(".doc-bibliography")
+        if (docBibliography) {
+            try {
+                const settings = this.editor.view.state.doc.attrs
+                const bibliographyHeader =
+                    settings.bibliography_header[settings.language] ||
+                    BIBLIOGRAPHY_HEADERS[settings.language]
+
+                let bibHTML = `<h1 class="doc-bibliography-header">${bibliographyHeader}</h1><div class="csl-bib-body">`
+
+                // Collect all citation references
+                const allCitations = Array.from(
+                    document.querySelectorAll("#paper-editable span.citation")
+                )
+                const allRefs = new Set()
+
+                allCitations.forEach(citation => {
+                    try {
+                        const refs = JSON.parse(
+                            citation.dataset.references || "[]"
+                        )
+                        refs.forEach(ref => allRefs.add(ref.id))
+                    } catch (_error) {
+                        // Skip invalid references
+                    }
+                })
+
+                // Create simple bibliography entries
+                const bibDB = this.editor.mod.db.bibDB.db
+                Array.from(allRefs)
+                    .sort()
+                    .forEach(id => {
+                        const item = bibDB[id]
+                        if (!item) {
+                            bibHTML += `<div class="csl-entry" data-reference="${id}">[Missing reference: ${id}]</div>`
+                            return
+                        }
+
+                        let authors = ""
+                        if (item.fields.author && item.fields.author.length) {
+                            authors = item.fields.author
+                                .map(author => {
+                                    return (
+                                        (
+                                            author.lastName ||
+                                            author.firstname ||
+                                            author.literal
+                                        )
+                                            ?.map(part => part.text || "")
+                                            .join("") || "Unknown"
+                                    )
+                                })
+                                .join(", ")
+                        } else {
+                            authors = "Unknown Author"
+                        }
+
+                        const year = item.fields.date
+                            ? `(${item.fields.date.substring(0, 4)})`
+                            : "(n.d.)"
+                        const title =
+                            item.fields.title
+                                ?.map(part => part.text || "")
+                                .join("") || "Untitled"
+                        const publisher =
+                            item.fields.publisher
+                                ?.map(part => part.text || "")
+                                .join("") || ""
+                        const itemType = item.bib_type || "misc"
+
+                        bibHTML += `<div class="csl-entry" data-reference="${id}">${authors} ${year}. <i>${title}</i>. ${publisher}. [${itemType}]</div>`
+                    })
+
+                bibHTML += "</div>"
+                docBibliography.innerHTML = bibHTML
+                // Add basic bibliography styling
+                let styleEl = document.querySelector(".doc-bibliography-style")
+                if (!styleEl) {
+                    document.body.insertAdjacentHTML(
+                        "beforeend",
+                        '<style type="text/css" class="doc-bibliography-style"></style>'
+                    )
+                    styleEl = document.querySelector(".doc-bibliography-style")
+                }
+
+                const basicCSS = `
+                    .csl-bib-body { line-height: 1.35; }
+                    .csl-entry { padding-bottom: 1em; padding-left: 2em; text-indent: -2em; }
+                    div.csl-entry { cursor: pointer; }
+                    div.csl-entry:hover { background-color: #f0f0f0; }
+                `
+                styleEl.innerHTML = basicCSS
+
+                // Rebind click handlers for bibliography entries
+                if (this.editor.docInfo.access_rights === "write") {
+                    this.bindBibliographyClicks()
+                }
+            } catch (error) {
+                console.error("Error creating fallback bibliography:", error)
+                docBibliography.innerHTML =
+                    "<h1>Bibliography (Error rendering)</h1>"
+            }
+        }
+
+        // Reset citation type to avoid footnote layout issues
+        this.citationType = "in-text"
+
+        return Promise.resolve()
     }
 
     bindBibliographyClicks() {
         document.querySelectorAll("div.csl-entry").forEach((el, index) => {
             el.addEventListener("click", () => {
                 const eID = Number.parseInt(
-                    this.citRenderer.fm.bibliography[0].entry_ids[index][0]
+                    this.citRenderer.fm.bibliography[0]?.entry_ids[index][0] ||
+                        el.dataset.reference
                 )
                 this.checkTrackingDialog()
                     .then(() => import("../../bibliography/form"))

@@ -64,7 +64,9 @@ export class ModCitations {
                 settings.citationstyle,
                 bibliographyHeader,
                 this.editor.mod.db.bibDB,
-                this.editor.app.csl
+                this.editor.app.csl,
+                false,
+                settings.language
             )
             this.citRenderer.init().then(() => this.layoutCitationsTwo())
         }

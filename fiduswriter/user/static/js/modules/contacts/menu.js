@@ -64,7 +64,7 @@ export const menuModel = () => ({
                     overview.table.search(text)
                 }
             },
-            order: 5
+            order: 1
         }
     ]
 })

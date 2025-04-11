@@ -1,6 +1,6 @@
 {
     dependencies: {
-        "biblatex-csl-converter": "3.1.0",
+        "biblatex-csl-converter": "3.1.1",
         "fix-utf8": "2.0.0",
         tokenfield: "^1.2.2"
     }

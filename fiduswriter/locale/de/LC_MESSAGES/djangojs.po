@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-17 14:58+0000\n"
-"PO-Revision-Date: 2025-04-03 09:32+0200\n"
+"PO-Revision-Date: 2025-04-17 18:50+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: German <johannes@fiduswriter.org>\n"
 "Language: de\n"
@@ -152,14 +152,12 @@ msgstr "Aktion ausgeführt"
 
 #: base/static/js/modules/common/overview_menu.js:590
 msgid "Type to search"
-msgstr ""
+msgstr "Suchbegriff eingeben"
 
 #: base/static/js/modules/common/templates.js:16
 #: base/static/js/modules/prelogin/templates.js:15
-#, fuzzy
-#| msgid "Citation"
 msgid "Site navigation"
-msgstr "Zitat"
+msgstr "Seitennavigation"
 
 #: base/static/js/modules/common/templates.js:31
 #: document/static/js/modules/documents/access_rights/templates.js:8
@@ -2329,7 +2327,7 @@ msgstr "Importieren als:"
 
 #: document/static/js/modules/documents/overview/actions.js:212
 msgid "File too large"
-msgstr ""
+msgstr "Datei zu groß"
 
 #: document/static/js/modules/documents/overview/actions.js:226
 msgid "No importable files found in ZIP"
@@ -2345,13 +2343,15 @@ msgstr "Importier eine Textdatei in einem anderem Format"
 
 #: document/static/js/modules/documents/overview/actions.js:349
 msgid "Supported formats"
-msgstr ""
+msgstr "Unterstütze Formate"
 
 #: document/static/js/modules/documents/overview/actions.js:351
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
 msgstr ""
+"Sie können auch eine ZIP-Datei hochladen, die eine Datei in einem dieser "
+"Formate sowie Bilder und/oder eine Bibtex-Datei enthält."
 
 #: document/static/js/modules/documents/overview/actions.js:411
 #: document/static/js/modules/editor/document_template/index.js:112
@@ -2682,10 +2682,8 @@ msgid "Common Document"
 msgstr "Gemeinsames Dokument"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:186
-#, fuzzy
-#| msgid "Offline Document"
 msgid "Online Document"
-msgstr "Offline-Dokument"
+msgstr "Online-Dokument"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:186
 msgid "Offline Document"
@@ -3373,26 +3371,19 @@ msgid "Session Expired"
 msgstr "Sitzung abgelaufen"
 
 #: document/static/js/modules/editor/index.js:375
-#, fuzzy
-#| msgid ""
-#| "Your session expired while you were offline, so we cannot save your work "
-#| "to the server any longer, and it is downloaded to your computer instead. "
-#| "Please consider importing it into a new document."
 msgid ""
 "Your session expired while you were offline, so we cannot save your work to "
 "the server any longer, but you can download it to your computer instead. "
 "Please consider importing it as a new document after logging in."
 msgstr ""
-"Ihre Sitzung ist abgelaufen während Sie offline waren. Daher können wir Ihre "
-"Arbeit nicht mehr auf dem Server speichern und sie wird stattdessen auf "
-"Ihren Computer heruntergeladen. Bitte erwägen Sie den Import in ein neues "
-"Dokument."
+"Ihre Sitzung ist abgelaufen, während Sie offline waren. Wir können Ihre "
+"Arbeit daher nicht mehr auf dem Server speichern. Sie können sie jedoch auf "
+"Ihren Computer herunterladen. Bitte importieren Sie sie nach der Anmeldung "
+"als neues Dokument."
 
 #: document/static/js/modules/editor/index.js:379
-#, fuzzy
-#| msgid "Untitled Document"
 msgid "Download Document"
-msgstr "Unbenanntes Dokument"
+msgstr "Dokument Downloaden"
 
 #: document/static/js/modules/editor/index.js:393
 msgid "Proceed to Login page"
@@ -3773,7 +3764,7 @@ msgstr "Exportieren Sie das Dokument in eine NISO JATS Version 1.2-Datei."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:286
 msgid "BITS"
-msgstr ""
+msgstr "BITS"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:289
 msgid ""
@@ -3784,7 +3775,7 @@ msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:312
 msgid "Pandoc JSON"
-msgstr ""
+msgstr "Pandoc JSON"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:315
 msgid "Export the document to a Pandoc JSON file."
@@ -3960,10 +3951,8 @@ msgid "You cannot close a document when you're offline."
 msgstr "Ein Dokument kann nicht geschlossen werden, wenn Sie offline sind."
 
 #: document/static/js/modules/editor/menus/headerbar/view.js:533
-#, fuzzy
-#| msgid "Move document"
 msgid "Close document"
-msgstr "Dokument verschieben"
+msgstr "Dokument schließen"
 
 #: document/static/js/modules/editor/menus/image/model.js:6
 #: usermedia/static/js/modules/images/edit_dialog/model.js:98
@@ -4152,10 +4141,8 @@ msgid "Untitled Document"
 msgstr "Unbenanntes Dokument"
 
 #: document/static/js/modules/editor/navigator/index.js:494
-#, fuzzy
-#| msgid "Document Navigator"
 msgid "Back to navigator"
-msgstr "Dokumentnavigator"
+msgstr "Zurück zum Navigator"
 
 #: document/static/js/modules/editor/navigator/index.js:497
 msgid "Document Navigator"
@@ -4163,29 +4150,23 @@ msgstr "Dokumentnavigator"
 
 #: document/static/js/modules/editor/navigator/index.js:498
 msgid "Navigator settings"
-msgstr ""
+msgstr "Navigator Einstellungen"
 
 #: document/static/js/modules/editor/navigator/index.js:502
-#, fuzzy
-#| msgid "Document language"
 msgid "Document headings"
-msgstr "Dokumentsprache"
+msgstr "Dokumentüberschriften"
 
 #: document/static/js/modules/editor/navigator/index.js:504
 msgid "Filter options"
-msgstr ""
+msgstr "Filteroptionen"
 
 #: document/static/js/modules/editor/navigator/index.js:509
-#, fuzzy
-#| msgid "Document Navigator"
 msgid "Toggle document navigator"
-msgstr "Dokumentnavigator"
+msgstr "Dokumentnavigator ein/ausschalten"
 
 #: document/static/js/modules/editor/navigator/index.js:510
-#, fuzzy
-#| msgid "Document Navigator"
 msgid "Document N̲avigator"
-msgstr "Dokumentnavigator"
+msgstr "DokumentN̲avigator"
 
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
@@ -4576,10 +4557,8 @@ msgid "Thank you for your report!"
 msgstr "Vielen Dank für Ihren Bericht!"
 
 #: feedback/static/js/modules/feedback/index.js:34
-#, fuzzy
-#| msgid "Technical support"
 msgid "Close technical support"
-msgstr "Technischer Support"
+msgstr "Technischen Support schließen"
 
 #: feedback/static/js/modules/feedback/index.js:59
 msgid "Technical support"
@@ -4655,10 +4634,8 @@ msgid "Invite contact"
 msgstr "Kontakt einladen"
 
 #: user/static/js/modules/contacts/menu.js:51
-#, fuzzy
-#| msgid "Search documents"
 msgid "Search contacts"
-msgstr "Dokumente durchsuchen"
+msgstr "Kontakte durchsuchen"
 
 #: user/static/js/modules/contacts/respond_invite.js:21
 msgid "Accept all invites"
@@ -4726,22 +4703,22 @@ msgstr "Bestätige die E-Mailadresse und stimme den Geschäftsbedingungen zu"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Please confirm that you own the email <a href=\"mailto:"
+"%(email)s\">%(email)s</a>."
 msgstr ""
 "Bitte bestätigen Sie, dass Sie Eigentümer der E-Mail-Adresse <a "
 "href=\"mailto:%(email)s\">%(email)s</a> sind."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
+"Please confirm that you own the email <a href=\"mailto:"
+"%(email)s\">%(email)s</a>, that you apply for the username %(username)s, and "
+"that you have read and agree to our <a href=\"/pages/terms/\" "
+"target=\"_blank\">Terms and Conditions</a> and <a href=\"/pages/privacy/\" "
+"target=\"_blank\">Privacy Policy</a>."
 msgstr ""
-"Bitte bestätigen Sie, dass Sie die E-Mail-Adresse <a href=\"mailto:%"
-"(email)s\">%(email)s</a> besitzen, dass Sie den Benutzernamen %(username)s "
+"Bitte bestätigen Sie, dass Sie die E-Mail-Adresse <a href=\"mailto:"
+"%(email)s\">%(email)s</a> besitzen, dass Sie den Benutzernamen %(username)s "
 "beantragen und dass Sie diese gelesen und akzeptiert haben zu unseren <a "
 "href=\"/pages/terms/\" target=\"_blank\"> Nutzungsbedingungen </a> und <a "
 "href=\"/pages/privacy/\" target=\"_blank\"> Datenschutzbestimmungen </a> ."
@@ -4931,11 +4908,11 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a href=\"mailto:%"
-"(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a href=\"mailto:"
+"%(contactEmail)s\">contact us</a>."
 msgstr ""
-"Wenn Sie Probleme beim Zurücksetzen Ihres Passworts haben, <a href=\"mailto:%"
-"(contactEmail)s\">kontaktieren Sie uns</a>."
+"Wenn Sie Probleme beim Zurücksetzen Ihres Passworts haben, <a href=\"mailto:"
+"%(contactEmail)s\">kontaktieren Sie uns</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -5185,8 +5162,8 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
 "verification. Follow the link provided to finalize the signup process."
 msgstr ""
-"Wir haben eine E-Mail zur Bestätigung an <a href=\"mailto:%(email)s\">%"
-"(email)s</a> gesendet. Folgen Sie dem angegebenen Link, um den "
+"Wir haben eine E-Mail zur Bestätigung an <a href=\"mailto:"
+"%(email)s\">%(email)s</a> gesendet. Folgen Sie dem angegebenen Link, um den "
 "Anmeldevorgang abzuschließen."
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:33

@@ -1,3 +1,6 @@
+#
+# Ana Carolina Vera Resquin <ani.tavr77@gmail.com>, 2025.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
@@ -7,7 +10,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: POEditor.com\n"
+"X-Generator: Gtranslator 46.0\n"
+"Last-Translator: Ana Carolina Vera Resquin <ani.tavr77@gmail.com>\n"
+"Language-Team:  <ani.tavr77@gmail.com>\n"
+"PO-Revision-Date: 2025-04-17 18:53+0200\n"
 
 #: base/settings.py:256
 msgid "English"
@@ -268,7 +274,7 @@ msgstr "Invitación para Fidus Writer aceptada"
 
 #: user/models.py:53
 msgid "Interface language preference"
-msgstr ""
+msgstr "Preferencia de idioma de la interfaz"
 
 #: user/models.py:66
 msgid "Can login as another user"

@@ -49,7 +49,7 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.user = self.create_user()
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
-        self.doc = self.create_new_document()
+        self.doc = self.create_new_document(self.user)
         super().setUp()
 
     def tearDown(self):
@@ -537,7 +537,7 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         self.user = self.create_user()
         self.login_user(self.user, self.driver, self.client)
         self.driver.execute_script("window.theApp.installServiceWorker()")
-        self.doc = self.create_new_document()
+        self.doc = self.create_new_document(self.user)
 
     def tearDown(self):
         super().tearDown()
@@ -879,7 +879,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         )
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user2, self.driver2, self.client2)
-        self.doc = self.create_new_document()
+        self.doc = self.create_new_document(self.user)
         # Since the test uses 2 different users ,
         # add access rights for the 2nd user.
         AccessRight.objects.create(

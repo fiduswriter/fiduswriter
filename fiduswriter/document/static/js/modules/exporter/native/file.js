@@ -11,7 +11,7 @@ export class ExportFidusFile {
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.includeTemplate = includeTemplate
-        this.init()
+        return this.init()
     }
 
     init() {

@@ -549,7 +549,7 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         """
         Test one client going offline after writing some text and inserting
         some images. While offline client tries to export to HTML
-        and prints the PDF of the document.
+        and print the PDF of the document.
         """
         self.load_document_editor(self.driver, self.doc)
 
@@ -858,7 +858,8 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_data = cls.get_drivers(2)
+        cls.download_dir = mkdtemp()
+        driver_data = cls.get_drivers(2, cls.download_dir)
         cls.driver = driver_data["drivers"][0]
         cls.driver2 = driver_data["drivers"][1]
         cls.client = driver_data["clients"][0]
@@ -890,6 +891,12 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         if "coverage" in sys.modules.keys():
             # Cool down
             time.sleep(self.wait_time / 3)
+
+    def get_title(self, driver):
+        # Title is child 0.
+        return driver.execute_script(
+            "return window.theApp.page.view.state.doc.firstChild.textContent;"
+        )
 
     def test_access_rights_deletion(self):
         """
@@ -933,6 +940,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
 
         # driver 2 goes online
         self.driver2.execute_script("window.theApp.page.ws.goOnline()")
+
         # Check that dialog is displayed
         element = WebDriverWait(self.driver2, self.wait_time).until(
             EC.visibility_of_element_located(
@@ -940,6 +948,24 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
             )
         )
         self.assertEqual(element.is_displayed(), True)
+
+        # Click "Download Document" button
+        download_button = self.driver2.find_element(
+            By.XPATH, "//button[contains(text(), 'Download Document')]"
+        )
+        download_button.click()
+
+        # Define the path where the file should be downloaded
+        doc_title = self.get_title(self.driver2).lower().replace(" ", "-")
+        path = os.path.join(self.download_dir, f"{doc_title}.fidus")
+
+        # Wait for the file to download and check it exists
+        self.wait_until_file_exists(path, self.wait_time)
+        self.assertTrue(os.path.isfile(path))
+
+        # Clean up - remove the downloaded file if it exists
+        if os.path.exists(path):
+            os.remove(path)
 
     def test_simple_access_rights_change(self):
         """

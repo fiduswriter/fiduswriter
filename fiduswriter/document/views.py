@@ -725,7 +725,7 @@ def get_template_for_doc(request):
         .first()
     )
     if doc is None:
-        return JsonResponse({}, status=405)
+        return JsonResponse({}, status=401)
     doc_template = doc.template
     serializer = PythonWithURLSerializer()
     export_templates = serializer.serialize(

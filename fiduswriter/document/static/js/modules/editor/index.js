@@ -368,18 +368,27 @@ export class Editor {
                             this.ws.connectionCount > 0
                         ) {
                             this.ws.online = false // To avoid Websocket trying to reconnect.
-                            new ExportFidusFile(
-                                this.getDoc({use_current_view: true}),
-                                this.mod.db.bibDB,
-                                this.mod.db.imageDB
-                            )
                             const sessionDialog = new Dialog({
                                 title: gettext("Session Expired"),
                                 id: "session_expiration_dialog",
                                 body: gettext(
-                                    "Your session expired while you were offline, so we cannot save your work to the server any longer, and it is downloaded to your computer instead. Please consider importing it into a new document."
+                                    "Your session expired while you were offline, so we cannot save your work to the server any longer, but you can download it to your computer instead. Please consider importing it as a new document after logging in."
                                 ),
                                 buttons: [
+                                    {
+                                        text: gettext("Download Document"),
+                                        click: () => {
+                                            const doc = this.getDoc({
+                                                use_current_view: true
+                                            })
+                                            new ExportFidusFile(
+                                                doc,
+                                                this.mod.db.bibDB,
+                                                this.mod.db.imageDB,
+                                                false
+                                            )
+                                        }
+                                    },
                                     {
                                         text: gettext("Proceed to Login page"),
                                         classes: "fw-dark",

@@ -39,7 +39,7 @@ class SimpleMessageExchangeTests(EditorHelper, ChannelsLiveServerTestCase):
     def setUp(self):
         self.user = self.create_user()
         self.login_user(self.user, self.driver, self.client)
-        self.doc = self.create_new_document()
+        self.doc = self.create_new_document(self.user)
 
     def test_client_losing_server_messages(self):
         """

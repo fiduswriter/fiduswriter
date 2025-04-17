@@ -13,9 +13,9 @@ class EditorHelper(SeleniumHelper):
     Common functions used in threaded tests
     """
 
-    def create_new_document(self):
+    def create_new_document(self, user):
         doc = Document.objects.create(
-            owner=self.user, template_id=1
+            owner=user, template_id=1
         )  # from fixture
         doc.save()
         return doc

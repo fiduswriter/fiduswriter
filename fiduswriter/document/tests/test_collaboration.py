@@ -54,7 +54,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.user = self.create_user()
         self.login_user(self.user, self.driver, self.client)
         self.login_user(self.user, self.driver2, self.client2)
-        self.doc = self.create_new_document()
+        self.doc = self.create_new_document(self.user)
         super().setUp()
 
     def get_title(self, driver):

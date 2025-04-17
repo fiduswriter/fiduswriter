@@ -101,6 +101,11 @@ export class WebSocketConnector {
                 url = "ws://offline"
             }
         }
+        if (this.ws) {
+            this.ws.onmessage = () => {}
+            this.ws.onclose = () => {}
+            this.ws.close()
+        }
         this.ws = new window.WebSocket(url)
         this.ws.onmessage = event => this.onmessage(event)
         this.ws.onclose = () => this.onclose()
@@ -235,7 +240,7 @@ export class WebSocketConnector {
     /** Sends data to server or keeps it in a list if currently offline. */
     send(getData, timer = 80) {
         if (this.connected && this.ws.readyState !== this.ws.OPEN) {
-            this.ws.onclose()
+            this.ws.close()
             return
         }
         if (this.connected && !this.recentlySent) {

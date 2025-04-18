@@ -2,6 +2,7 @@ import autobahn
 import uuid
 import atexit
 import logging
+import gc
 from time import mktime, time
 from copy import deepcopy
 
@@ -600,29 +601,57 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             hasattr(self, "session")
             and hasattr(self, "user_info")
             and hasattr(self.user_info, "document_id")
-            and self.user_info.document_id in WebsocketConsumer.sessions
-            and hasattr(self, "id")
-            and self.id
-            in WebsocketConsumer.sessions[self.user_info.document_id][
-                "participants"
-            ]
         ):
-            del self.session["participants"][self.id]
-            if len(self.session["participants"]) == 0:
-                WebsocketConsumer.save_document(self.user_info.document_id)
-                del WebsocketConsumer.sessions[self.user_info.document_id]
-                logger.debug(
-                    f"Action:No participants for the document. "
-                    f"URL:{self.endpoint} User:{self.user.id}"
-                )
-            else:
-                try:
-                    WebsocketConsumer.send_participant_list(
-                        self.user_info.document_id
-                    )
-                except autobahn.exception.Disconnected:
-                    pass
-        self.close()
+            doc_id = self.user_info.document_id
+            if doc_id in WebsocketConsumer.sessions:
+                # Clear this participant's specific resources
+                if (
+                    hasattr(self, "id")
+                    and self.id in self.session["participants"]
+                ):
+                    # Remove this participant
+                    self.session["participants"].pop(self.id)
+
+                # Complete document cleanup if no participants remain
+                if len(self.session["participants"]) == 0:
+                    # Save before cleanup
+                    WebsocketConsumer.save_document(doc_id)
+
+                    # Break references manually before deleting
+                    session = WebsocketConsumer.sessions[doc_id]
+
+                    # Clear prosemirror node structure
+                    if "node" in session:
+                        # Recursively break node references if possible
+                        session["node"] = None
+
+                    # Clear diff history completely
+                    if "doc" in session and hasattr(session["doc"], "diffs"):
+                        session["doc"].diffs = None  # Not just an empty list
+
+                    # Remove complete session
+                    WebsocketConsumer.sessions.pop(doc_id, None)
+
+                    # Force garbage collection
+                    gc.collect()
+
+                else:
+                    try:
+                        # Update participant list if there are still participants
+                        WebsocketConsumer.send_participant_list(
+                            self.user_info.document_id
+                        )
+                    except autobahn.exception.Disconnected:
+                        logger.error(
+                            "Error sending participant list over disconnected session"
+                        )
+
+            # Clear any remaining references to large objects
+            if hasattr(self, "session"):
+                self.session = None
+            if hasattr(self, "user_info"):
+                self.user_info = None
+            self.close()
 
     @classmethod
     def send_participant_list(cls, document_id):

@@ -94,7 +94,9 @@ export class MathDialog {
                 if (this.mathField) {
                     this.mathField = false
                 }
-                window.mathVirtualKeyboard.hide()
+                if (window.mathVirtualKeyboard) {
+                    window.mathVirtualKeyboard.hide()
+                }
             },
             classes: "math",
             onClose: () => this.editor.currentView.focus(),

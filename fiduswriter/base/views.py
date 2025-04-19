@@ -45,9 +45,13 @@ def configuration(request):
     if len(settings.PORTS) < 2:
         ws_url_base = "/ws"
     else:
-        ws_url_base = get_url_base(
-            request.headers["Origin"], random.choice(settings.PORTS)
-        )
+        # Get the Origin header safely with a fallback
+        origin = request.headers.get("Origin")
+        if not origin:
+            # Use the current host as fallback
+            protocol = "https" if request.is_secure() else "http"
+            origin = f"{protocol}://{request.get_host()}"
+        ws_url_base = get_url_base(origin, random.choice(settings.PORTS))
     socialaccount_providers = []
     for provider in get_adapter(request).list_providers(request):
         socialaccount_providers.append(

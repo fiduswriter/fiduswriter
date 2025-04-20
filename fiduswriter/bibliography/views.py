@@ -46,10 +46,14 @@ def biblist(request):
         or number_of_entries_onclient > number_of_entries_onserver
         or request.user.id != int(request.POST["user_id"])
     ):
-        response["bib_list"] = serializer.serialize(
-            Entry.objects.filter(entry_owner=request.user),
-            fields=("entry_key", "entry_owner", "bib_type", "cats", "fields"),
+        entries = Entry.objects.filter(entry_owner=request.user).values(
+            "entry_key",
+            "entry_owner",
+            "bib_type",
+            "cats",
+            "fields",
         )
+        response["bib_list"] = list(entries)
         response["last_modified"] = last_modified_onserver
         response["number_of_entries"] = number_of_entries_onserver
     response["bib_categories"] = serializer.serialize(

@@ -242,9 +242,21 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
         # Get document images
         document_images = await sync_to_async(list)(
-            DocumentImage.objects.filter(
-                document_id=self.session["doc"].id
-            ).select_related("image")
+            DocumentImage.objects.filter(document_id=self.session["doc"].id)
+            .select_related("image")
+            .only(
+                "id",
+                "title",
+                "copyright",
+                "image__id",
+                "image__image",
+                "image__file_type",
+                "image__added",
+                "image__checksum",
+                "image__thumbnail",
+                "image__height",
+                "image__width",
+            )
         )
 
         for dimage in document_images:
@@ -278,7 +290,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             response["doc"]["comments"] = self.session["doc"].comments
 
         # Get contacts asynchronously
-        contacts = await sync_to_async(list)(doc_owner.contacts.all())
+        contacts = await sync_to_async(list)(
+            doc_owner.contacts.all().only(
+                "id", "username", "first_name", "last_name"
+            )
+        )
 
         # Get all avatars in parallel
         contact_avatars = await asyncio.gather(

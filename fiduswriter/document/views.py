@@ -722,6 +722,12 @@ def get_template_for_doc(request):
     doc = (
         Document.objects.filter(id=doc_id)
         .filter(Q(owner=request.user) | Q(accessright__user=request.user))
+        .select_related("template")
+        .prefetch_related(
+            "template__exporttemplate_set",
+            "template__documentstyle_set",
+            "template__documentstyle_set__documentstylefile_set",
+        )
         .first()
     )
     if doc is None:

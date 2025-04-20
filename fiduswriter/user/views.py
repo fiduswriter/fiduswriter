@@ -284,7 +284,20 @@ def list_contacts(request):
     status = 200
     response["contacts"] = []
     avatars = Avatars()
-    for user in request.user.contacts.all():
+    contacts = request.user.contacts.all().only(
+        "id", "username", "first_name", "last_name", "email"
+    )
+    invites_by = request.user.invites_by.all().only("id", "username", "email")
+    invites_to = request.user.invites_to.select_related("by").only(
+        "id",
+        "by__id",
+        "by__username",
+        "by__first_name",
+        "by__last_name",
+        "by__email",
+    )
+
+    for user in contacts:
         response["contacts"].append(
             {
                 "id": user.id,
@@ -295,7 +308,7 @@ def list_contacts(request):
                 "type": "user",
             }
         )
-    for invite in request.user.invites_by.all():
+    for invite in invites_by:
         response["contacts"].append(
             {
                 "id": invite.id,
@@ -306,7 +319,7 @@ def list_contacts(request):
                 "type": "userinvite",
             }
         )
-    for invite in request.user.invites_to.select_related("by").all():
+    for invite in invites_to:
         response["contacts"].append(
             {
                 "id": invite.id,

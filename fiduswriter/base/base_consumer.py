@@ -1,27 +1,26 @@
 import json
-
-from channels.generic.websocket import WebsocketConsumer
 import logging
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 logger = logging.getLogger(__name__)
 
 
-class BaseWebsocketConsumer(WebsocketConsumer):
+class BaseWebsocketConsumer(AsyncWebsocketConsumer):
 
-    def init(self):
+    async def init(self):
         self.id = 0
-        self.accept()
+        await self.accept()
         self.messages = {"server": 0, "client": 0, "last_ten": []}
         self.endpoint = self.scope["path"]
         self.user = self.scope["user"]
         if not self.user.is_authenticated:
-            self.access_denied()
+            await self.access_denied()
             return False
         logger.debug("Action:Opening Websocket")
         return True
 
-    def connect(self):
-        if not self.init():
+    async def connect(self):
+        if not await self.init():
             return False
 
         logger.debug(
@@ -30,29 +29,29 @@ class BaseWebsocketConsumer(WebsocketConsumer):
         )
         response = dict()
         response["type"] = "welcome"
-        self.send_message(response)
+        await self.send_message(response)
         return True
 
-    def access_denied(self):
-        self.send_message({"type": "access_denied"})
-        self.do_close()
+    async def access_denied(self):
+        await self.send_message({"type": "access_denied"})
+        await self.do_close()
         return
 
-    def do_close(self):
-        self.close()
+    async def do_close(self):
+        await self.close()
 
-    def receive(self, text_data=None, bytes_data=None):
+    async def receive(self, text_data=None, bytes_data=None):
         if not text_data:
             return
         message = json.loads(text_data)
         if message["type"] == "ping":
-            self.send_pong()
+            await self.send_pong()
             return
         if message["type"] == "request_resend":
-            self.resend_messages(message["from"])
+            await self.resend_messages(message["from"])
             return
         if "c" not in message and "s" not in message:
-            self.access_denied()
+            await self.access_denied()
             # Message doesn't contain needed client/server info. Ignore.
             return
         logger.debug(
@@ -75,7 +74,7 @@ class BaseWebsocketConsumer(WebsocketConsumer):
                 f"ParticipantID:{self.id} from:{self.messages['client']}"
             )
 
-            self.send(
+            await self.send_json(
                 {"type": "request_resend", "from": self.messages["client"]}
             )
             return
@@ -90,8 +89,8 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             )
 
             self.messages["client"] += 1
-            self.resend_messages(message["s"])
-            self.reject_message(message)
+            await self.resend_messages(message["s"])
+            await self.reject_message(message)
             return
         # Message order is correct. We continue processing the data.
         self.messages["client"] += 1
@@ -99,20 +98,20 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             connection_count = 0
             if "connection" in message:
                 connection_count = message["connection"]
-            self.subscribe(connection_count)
+            await self.subscribe(connection_count)
             return
-        self.handle_message(message)
+        await self.handle_message(message)
 
-    def handle_message(self, message):
+    async def handle_message(self, message):
         pass
 
-    def reject_message(self, message):
+    async def reject_message(self, message):
         pass
 
-    def subscribe(self, connection_count):
-        self.send_message({"type": "subscribed"})
+    async def subscribe(self, connection_count):
+        await self.send_message({"type": "subscribed"})
 
-    def send_message(self, message):
+    async def send_message(self, message):
         self.messages["server"] += 1
         message["c"] = self.messages["client"]
         message["s"] = self.messages["server"]
@@ -123,12 +122,12 @@ class BaseWebsocketConsumer(WebsocketConsumer):
             f"ParticipantID:{self.id} Type:{message['type']} "
             f"S count server:{message['s']} C count server:{message['c']}"
         )
-        self.send(text_data=json.dumps(message))
+        await self.send(text_data=json.dumps(message))
 
-    def unfixable(self):
+    async def unfixable(self):
         pass
 
-    def resend_messages(self, from_no):
+    async def resend_messages(self, from_no):
         to_send = self.messages["server"] - from_no
         logger.debug(
             f"Action:Resending messages to User. URL:{self.endpoint} "
@@ -144,10 +143,10 @@ class BaseWebsocketConsumer(WebsocketConsumer):
                 f"User:{self.user.id} ParticipantID:{self.id} "
                 f"number of messages requested:{to_send}"
             )
-            self.unfixable()
+            await self.unfixable()
             return
         for message in self.messages["last_ten"][0 - to_send :]:
-            self.send_message(message)
+            await self.send_message(message)
 
-    def send_pong(self):
-        self.send(text_data='{"type": "pong"}')
+    async def send_pong(self):
+        await self.send(text_data='{"type": "pong"}')

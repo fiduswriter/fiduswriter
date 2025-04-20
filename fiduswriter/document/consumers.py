@@ -3,16 +3,16 @@ import uuid
 import atexit
 import logging
 import gc
+import asyncio
 from time import mktime, time
 from copy import deepcopy
 
-
+from asgiref.sync import sync_to_async
 from django.db.utils import DatabaseError
 from django.db.models import F, Q
 from django.conf import settings
 
 from base.helpers.ws import get_url_base
-
 from document.helpers.session_user_info import SessionUserInfo
 from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
@@ -35,14 +35,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     sessions = dict()
     history_length = 1000  # Only keep the last 1000 diffs
 
-    def connect(self):
+    async def connect(self):
         self.document_id = int(
             self.scope["url_route"]["kwargs"]["document_id"]
         )
-        redirected = self.check_server()
+        redirected = await self.check_server()
         if redirected:
             return
-        connected = super().connect()
+        connected = await super().connect()
         if not connected:
             return
         logger.debug(
@@ -50,7 +50,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}"
         )
 
-    def check_server(self):
+    async def check_server(self):
         # The correct server for the document may have changed since the client
         # received its initial connection information. For example, because the
         # number of servers has increased (all servers need to restart to have
@@ -67,27 +67,32 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         )
         if actual_port != expected_port:
             # Redirect to the correct URL
-            self.init()
+            await self.init()
             origin = (
                 dict(self.scope["headers"]).get(b"origin", b"").decode("utf-8")
             )
             expected = get_url_base(origin, expected_conn)
             logger.debug(f"Redirecting from {actual_port} to {expected}.")
-            self.send_message({"type": "redirect", "base": expected})
-            self.do_close()
+            await self.send_message({"type": "redirect", "base": expected})
+            await self.do_close()
             return True
         return False
 
-    def confirm_diff(self, rid):
+    async def confirm_diff(self, rid):
         response = {"type": "confirm_diff", "rid": rid}
-        self.send_message(response)
+        await self.send_message(response)
 
-    def subscribe(self, connection_count=0):
+    async def subscribe(self, connection_count=0):
+        # Create a new instance
         self.user_info = SessionUserInfo(self.user)
-        doc_db, can_access = self.user_info.init_access(self.document_id)
+
+        # Initialize access asynchronously
+        doc_db, can_access = await self.user_info.init_access(self.document_id)
+
         if not can_access or float(doc_db.doc_version) != FW_DOCUMENT_VERSION:
-            self.access_denied()
+            await self.access_denied()
             return
+
         if (
             doc_db.id in WebsocketConsumer.sessions
             and len(WebsocketConsumer.sessions[doc_db.id]["participants"]) > 0
@@ -114,7 +119,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     doc_db.content["type"] = "doc"
                 if "content" not in doc_db.content:
                     doc_db.content["content"] = [{type: "title"}]
-                doc_db.save()
+                await sync_to_async(doc_db.save)()
             node = prosemirror.from_json(doc_db.content)
             self.session = {
                 "doc": doc_db,
@@ -132,40 +137,56 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             f"Action:Participant ID Assigned. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}"
         )
-        self.send_message({"type": "subscribed"})
+        await self.send_message({"type": "subscribed"})
         if connection_count < 1:
-            self.send_styles()
-            self.send_document(False, template)
+            await self.send_styles()
+            await self.send_document(False, template)
         if connection_count >= 1:
             # If the user is reconnecting pass along access_rights to
             # front end to compare it with previous rights.
-            self.send_message(
+            await self.send_message(
                 {
                     "type": "access_right",
                     "access_right": self.user_info.access_rights,
                 }
             )
-        if self.can_communicate():
-            self.handle_participant_update()
+        if await self.can_communicate():
+            await self.handle_participant_update()
 
-    def send_styles(self):
+    async def send_styles(self):
         doc_db = self.session["doc"]
         response = dict()
         response["type"] = "styles"
+
+        # Create serializer and get data
         serializer = PythonWithURLSerializer()
-        export_temps = serializer.serialize(
+
+        # These operations could be expensive - run them in parallel
+        export_temps_task = sync_to_async(serializer.serialize)(
             doc_db.template.exporttemplate_set.all(),
             fields=["file_type", "template_file", "title"],
         )
-        document_styles = serializer.serialize(
+
+        document_styles_task = sync_to_async(serializer.serialize)(
             doc_db.template.documentstyle_set.all(),
             use_natural_foreign_keys=True,
             fields=["title", "slug", "contents", "documentstylefile_set"],
         )
+
+        # Run queries in parallel using asyncio.gather
+        export_temps, document_styles = await asyncio.gather(
+            export_temps_task, document_styles_task
+        )
+
+        # Get document templates
         document_templates = {}
-        for obj in DocumentTemplate.objects.filter(
-            Q(user=self.user) | Q(user=None)
-        ).order_by(F("user").desc(nulls_first=True)):
+        templates = await sync_to_async(list)(
+            DocumentTemplate.objects.filter(
+                Q(user=self.user) | Q(user=None)
+            ).order_by(F("user").desc(nulls_first=True))
+        )
+
+        for obj in templates:
             document_templates[obj.import_id] = {
                 "title": obj.title,
                 "id": obj.id,
@@ -176,16 +197,20 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             "document_styles": [obj["fields"] for obj in document_styles],
             "document_templates": document_templates,
         }
-        self.send_message(response)
+        await self.send_message(response)
 
-    def unfixable(self):
-        self.send_document()
+    async def unfixable(self):
+        await self.send_document()
 
-    def send_document(self, messages=False, template=False):
+    async def send_document(self, messages=False, template=False):
         response = dict()
         response["type"] = "doc_data"
         doc_owner = self.session["doc"].owner
         avatars = Avatars()
+
+        # Use async avatar URL generation
+        owner_avatar = await avatars.get_url_async(doc_owner)
+
         response["doc_info"] = {
             "id": self.session["doc"].id,
             "is_owner": self.user_info.is_owner,
@@ -195,11 +220,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "id": doc_owner.id,
                 "name": doc_owner.readable_name,
                 "username": doc_owner.username,
-                "avatar": avatars.get_url(doc_owner),
+                "avatar": owner_avatar,
                 "contacts": [],
             },
         }
-        WebsocketConsumer.serialize_content(self.session)
+        await sync_to_async(WebsocketConsumer.serialize_content)(self.session)
         response["doc"] = {
             "v": self.session["doc"].version,
             "content": self.session["doc"].content,
@@ -214,9 +239,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if messages:
             response["m"] = messages
         response["time"] = int(time()) * 1000
-        for dimage in DocumentImage.objects.filter(
-            document_id=self.session["doc"].id
-        ):
+
+        # Get document images
+        document_images = await sync_to_async(list)(
+            DocumentImage.objects.filter(document_id=self.session["doc"].id)
+        )
+
+        for dimage in document_images:
             image = dimage.image
             field_obj = {
                 "id": image.id,
@@ -233,6 +262,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 field_obj["height"] = image.height
                 field_obj["width"] = image.width
             response["doc"]["images"][image.id] = field_obj
+
         if self.user_info.access_rights == "read-without-comments":
             response["doc"]["comments"] = []
         elif self.user_info.access_rights in ["review", "review-tracked"]:
@@ -244,17 +274,29 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             response["doc"]["comments"] = filtered_comments
         else:
             response["doc"]["comments"] = self.session["doc"].comments
-        for contact in doc_owner.contacts.all():
+
+        # Get contacts asynchronously
+        contacts = await sync_to_async(list)(doc_owner.contacts.all())
+
+        # Get all avatars in parallel
+        contact_avatars = await asyncio.gather(
+            *[avatars.get_url_async(contact) for contact in contacts]
+        )
+
+        # Now add contacts with their avatars
+        for i, contact in enumerate(contacts):
             contact_object = {
                 "id": contact.id,
                 "name": contact.readable_name,
                 "username": contact.get_username(),
-                "avatar": avatars.get_url(contact),
+                "avatar": contact_avatars[i],
                 "type": "user",
             }
             response["doc_info"]["owner"]["contacts"].append(contact_object)
+
         if self.user_info.is_owner:
-            for contact in doc_owner.invites_by.all():
+            invites = await sync_to_async(list)(doc_owner.invites_by.all())
+            for contact in invites:
                 contact_object = {
                     "id": contact.id,
                     "name": contact.username,
@@ -265,14 +307,17 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 response["doc_info"]["owner"]["contacts"].append(
                     contact_object
                 )
+
         response["doc_info"]["session_id"] = self.id
-        self.send_message(response)
+        await self.send_message(response)
 
-    def reject_message(self, message):
+    async def reject_message(self, message):
         if message["type"] == "diff":
-            self.send_message({"type": "reject_diff", "rid": message["rid"]})
+            await self.send_message(
+                {"type": "reject_diff", "rid": message["rid"]}
+            )
 
-    def handle_message(self, message):
+    async def handle_message(self, message):
         if self.user_info.document_id not in WebsocketConsumer.sessions:
             logger.debug(
                 f"Action:Receiving message for closed document. "
@@ -281,23 +326,24 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
             return
         if message["type"] == "get_document":
-            self.send_document()
+            await self.send_document()
         elif (
-            message["type"] == "participant_update" and self.can_communicate()
+            message["type"] == "participant_update"
+            and await self.can_communicate()
         ):
-            self.handle_participant_update()
-        elif message["type"] == "chat" and self.can_communicate():
-            self.handle_chat(message)
+            await self.handle_participant_update()
+        elif message["type"] == "chat" and await self.can_communicate():
+            await self.handle_chat(message)
         elif message["type"] == "check_version":
-            self.check_version(message)
+            await self.check_version(message)
         elif message["type"] == "selection_change":
-            self.handle_selection_change(message)
-        elif message["type"] == "diff" and self.can_update_document():
-            self.handle_diff(message)
+            await self.handle_selection_change(message)
+        elif message["type"] == "diff" and await self.can_update_document():
+            await self.handle_diff(message)
         elif message["type"] == "path_change":
-            self.handle_path_change(message)
+            await self.handle_path_change(message)
 
-    def update_bibliography(self, bibliography_updates):
+    async def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
             if "id" not in bu:
                 continue
@@ -307,40 +353,53 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             elif bu["type"] == "delete":
                 del self.session["doc"].bibliography[id]
 
-    def update_images(self, image_updates):
+    async def update_images(self, image_updates):
         for iu in image_updates:
             if "id" not in iu:
                 continue
             id = iu["id"]
             if iu["type"] == "update":
                 # Ensure that access rights exist
-                if not UserImage.objects.filter(
-                    image__id=id, owner=self.user_info.user
-                ).exists():
+                has_access = await sync_to_async(
+                    UserImage.objects.filter(
+                        image__id=id, owner=self.user_info.user
+                    ).exists
+                )()
+
+                if not has_access:
                     continue
-                doc_image = DocumentImage.objects.filter(
-                    document_id=self.session["doc"].id, image_id=id
-                ).first()
+
+                doc_image = await sync_to_async(
+                    DocumentImage.objects.filter(
+                        document_id=self.session["doc"].id, image_id=id
+                    ).first
+                )()
+
                 if doc_image:
                     doc_image.title = iu["image"]["title"]
                     doc_image.copyright = iu["image"]["copyright"]
-                    doc_image.save()
+                    await sync_to_async(doc_image.save)()
                 else:
-                    DocumentImage.objects.create(
+                    await sync_to_async(DocumentImage.objects.create)(
                         document_id=self.session["doc"].id,
                         image_id=id,
                         title=iu["image"]["title"],
                         copyright=iu["image"]["copyright"],
                     )
             elif iu["type"] == "delete":
-                DocumentImage.objects.filter(
-                    document_id=self.session["doc"].id, image_id=id
-                ).delete()
-                for image in Image.objects.filter(id=id):
-                    if image.is_deletable():
-                        image.delete()
+                await sync_to_async(
+                    DocumentImage.objects.filter(
+                        document_id=self.session["doc"].id, image_id=id
+                    ).delete
+                )()
 
-    def update_comments(self, comments_updates):
+                images = await sync_to_async(list)(Image.objects.filter(id=id))
+                for image in images:
+                    can_delete = await sync_to_async(image.is_deletable)()
+                    if can_delete:
+                        await sync_to_async(image.delete)()
+
+    async def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
         for cd in comments_updates:
             if "id" not in cd:
@@ -400,42 +459,44 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     if answer["id"] == answer_id:
                         answer["answer"] = cd["answer"]
 
-    def handle_participant_update(self):
-        WebsocketConsumer.send_participant_list(self.user_info.document_id)
+    async def handle_participant_update(self):
+        await WebsocketConsumer.send_participant_list(
+            self.user_info.document_id
+        )
 
-    def handle_chat(self, message):
+    async def handle_chat(self, message):
         chat = {
             "id": str(uuid.uuid4()),
             "body": message["body"],
             "from": self.user_info.user.id,
             "type": "chat",
         }
-        WebsocketConsumer.send_updates(chat, self.user_info.document_id)
+        await WebsocketConsumer.send_updates(chat, self.user_info.document_id)
 
-    def handle_selection_change(self, message):
+    async def handle_selection_change(self, message):
         if (
             self.user_info.document_id in WebsocketConsumer.sessions
             and message["v"] == self.session["doc"].version
         ):
-            WebsocketConsumer.send_updates(
+            await WebsocketConsumer.send_updates(
                 message,
                 self.user_info.document_id,
                 self.id,
                 self.user_info.user.id,
             )
 
-    def handle_path_change(self, message):
+    async def handle_path_change(self, message):
         if (
             self.user_info.document_id in WebsocketConsumer.sessions
             and self.user_info.path_object
         ):
             self.user_info.path_object.path = message["path"]
-            self.user_info.path_object.save(
+            await sync_to_async(self.user_info.path_object.save)(
                 update_fields=[
                     "path",
                 ]
             )
-            WebsocketConsumer.send_updates(
+            await WebsocketConsumer.send_updates(
                 message,
                 self.user_info.document_id,
                 self.id,
@@ -455,7 +516,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     only_comment = False
         return only_comment
 
-    def handle_diff(self, message):
+    async def handle_diff(self, message):
         pv = message["v"]
         dv = self.session["doc"].version
         logger.debug(
@@ -482,14 +543,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     self.session["node"] = updated_node
                     self.session["node_updates"] = True
                 else:
-                    self.unfixable()
+                    await self.unfixable()
                     patch_msg = {
                         "type": "patch_error",
                         "user_id": self.user.id,
                     }
-                    self.send_message(patch_msg)
+                    await self.send_message(patch_msg)
                     # Reset collaboration to avoid any data loss issues.
-                    self.reset_collaboration(
+                    await self.reset_collaboration(
                         patch_msg, self.user_info.document_id, self.id
                     )
                     return
@@ -501,15 +562,17 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             if "ti" in message:  # ti = title
                 self.session["doc"].title = message["ti"][-255:]
             if "cu" in message:  # cu = comment updates
-                self.update_comments(message["cu"])
+                await self.update_comments(message["cu"])
             if "bu" in message:  # bu = bibliography updates
-                self.update_bibliography(message["bu"])
+                await self.update_bibliography(message["bu"])
             if "iu" in message:  # iu = image updates
-                self.update_images(message["iu"])
+                await self.update_images(message["iu"])
             if self.session["doc"].version % settings.DOC_SAVE_INTERVAL == 0:
-                WebsocketConsumer.save_document(self.user_info.document_id)
-            self.confirm_diff(message["rid"])
-            WebsocketConsumer.send_updates(
+                await WebsocketConsumer.save_document(
+                    self.user_info.document_id
+                )
+            await self.confirm_diff(message["rid"])
+            await WebsocketConsumer.send_updates(
                 message,
                 self.user_info.document_id,
                 self.id,
@@ -528,7 +591,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 for message in messages:
                     new_message = message.copy()
                     new_message["server_fix"] = True
-                    self.send_message(new_message)
+                    await self.send_message(new_message)
             else:
                 logger.debug(
                     f"Action:User is on a very old version of the document. "
@@ -536,7 +599,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     f"ParticipantID:{self.id}"
                 )
                 # Client has a version that is too old to be fixed
-                self.unfixable()
+                await self.unfixable()
                 return
         else:
             # Client has a higher version than server. Something is fishy!
@@ -546,7 +609,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"ParticipantID:{self.id}"
             )
 
-    def check_version(self, message):
+    async def check_version(self, message):
         pv = message["v"]
         dv = self.session["doc"].version
         logger.debug(
@@ -559,7 +622,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "type": "confirm_version",
                 "v": pv,
             }
-            self.send_message(response)
+            await self.send_message(response)
             return
         elif pv + len(self.session["doc"].diffs) >= dv:
             number_diffs = pv - dv
@@ -569,7 +632,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"number of messages to be resent:{number_diffs}"
             )
             messages = self.session["doc"].diffs[number_diffs:]
-            self.send_document(messages)
+            await self.send_document(messages)
             return
         else:
             logger.debug(
@@ -578,16 +641,16 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"ParticipantID:{self.id}"
             )
             # Client has a version that is too old
-            self.unfixable()
+            await self.unfixable()
             return
 
-    def can_update_document(self):
+    async def can_update_document(self):
         return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
 
-    def can_communicate(self):
+    async def can_communicate(self):
         return self.user_info.access_rights in CAN_COMMUNICATE
 
-    def disconnect(self, code):
+    async def disconnect(self, code):
         if (
             hasattr(self, "endpoint")
             and hasattr(self, "user")
@@ -615,7 +678,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 # Complete document cleanup if no participants remain
                 if len(self.session["participants"]) == 0:
                     # Save before cleanup
-                    WebsocketConsumer.save_document(doc_id)
+                    await WebsocketConsumer.save_document(doc_id)
 
                     # Break references manually before deleting
                     session = WebsocketConsumer.sessions[doc_id]
@@ -638,7 +701,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 else:
                     try:
                         # Update participant list if there are still participants
-                        WebsocketConsumer.send_participant_list(
+                        await WebsocketConsumer.send_participant_list(
                             self.user_info.document_id
                         )
                     except autobahn.exception.Disconnected:
@@ -651,76 +714,109 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 self.session = None
             if hasattr(self, "user_info"):
                 self.user_info = None
-            self.close()
+            await self.close()
 
     @classmethod
-    def send_participant_list(cls, document_id):
+    async def send_participant_list(cls, document_id):
         if document_id in WebsocketConsumer.sessions:
             avatars = Avatars()
             participant_list = []
+
+            # Create a list of tasks to get avatars
+            avatar_tasks = []
+            participants_data = []
+
             for session_id, waiter in list(
                 cls.sessions[document_id]["participants"].items()
             ):
                 access_rights = waiter.user_info.access_rights
                 if access_rights not in CAN_COMMUNICATE:
                     continue
-                participant_list.append(
+                participants_data.append(
                     {
                         "session_id": session_id,
                         "id": waiter.user_info.user.id,
                         "name": waiter.user_info.user.readable_name,
-                        "avatar": avatars.get_url(waiter.user_info.user),
+                        "user": waiter.user_info.user,
                     }
                 )
+                # Add task to get avatar
+                avatar_tasks.append(
+                    avatars.get_url_async(waiter.user_info.user)
+                )
+
+            # Get all avatars in parallel
+            if avatar_tasks:
+                avatar_urls = await asyncio.gather(*avatar_tasks)
+
+                # Now build the participant list with avatars
+                for i, data in enumerate(participants_data):
+                    participant_list.append(
+                        {
+                            "session_id": data["session_id"],
+                            "id": data["id"],
+                            "name": data["name"],
+                            "avatar": avatar_urls[i],
+                        }
+                    )
+
             message = {
                 "participant_list": participant_list,
                 "type": "connections",
             }
-            WebsocketConsumer.send_updates(message, document_id)
+            await WebsocketConsumer.send_updates(message, document_id)
 
     @classmethod
-    def reset_collaboration(cls, patch_exception_msg, document_id, sender_id):
+    async def reset_collaboration(
+        cls, patch_exception_msg, document_id, sender_id
+    ):
         logger.debug(
             f"Action:Resetting collaboration. DocumentID:{document_id} "
             f"Patch conflict triggered. ParticipantID:{sender_id} "
             f"waiters:{len(cls.sessions[document_id]['participants'])}"
         )
+
+        # Create a list of coroutines to execute
+        tasks = []
+
         for waiter in list(cls.sessions[document_id]["participants"].values()):
             if waiter.id != sender_id:
-                waiter.unfixable()
-                waiter.send_message(patch_exception_msg)
+                tasks.append(waiter.unfixable())
+                tasks.append(waiter.send_message(patch_exception_msg))
+
+        # Execute all tasks concurrently
+        if tasks:
+            await asyncio.gather(*tasks)
 
     @classmethod
-    def send_updates(cls, message, document_id, sender_id=None, user_id=None):
+    async def send_updates(
+        cls, message, document_id, sender_id=None, user_id=None
+    ):
         logger.debug(
             f"Action:Sending message to waiters. DocumentID:{document_id} "
             f"waiters:{len(cls.sessions[document_id]['participants'])}"
         )
+
+        # Create a list of send tasks to execute concurrently
+        send_tasks = []
+
         for waiter in list(cls.sessions[document_id]["participants"].values()):
             if waiter.id != sender_id:
                 access_rights = waiter.user_info.access_rights
+                msg_to_send = message
+
+                # Check if we need to modify the message based on access rights
+                need_copy = False
+
                 if "comments" in message and len(message["comments"]) > 0:
                     # Filter comments if needed
                     if access_rights == "read-without-comments":
-                        # The reader should not receive the comments update, so
-                        # we remove the comments from the copy of the message
-                        # sent to the reviewer. We still need to send the rest
-                        # of the message as it may contain other diff
-                        # information.
-                        message = deepcopy(message)
-                        message["comments"] = []
+                        need_copy = True
                     elif (
                         access_rights in ["review", "review-tracked"]
                         and user_id != waiter.user_info.user.id
                     ):
-                        # The reviewer should not receive comments updates from
-                        # others than themselves, so we remove the comments
-                        # from the copy of the message sent to the reviewer
-                        # that are not from them. We still need to send the
-                        # rest of the message as it may contain other diff
-                        # information.
-                        message = deepcopy(message)
-                        message["comments"] = []
+                        need_copy = True
                 elif (
                     message["type"] in ["chat", "connections"]
                     and access_rights not in CAN_COMMUNICATE
@@ -737,7 +833,18 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     and user_id != waiter.user_info.user.id
                 ):
                     continue
-                waiter.send_message(message)
+
+                # Create a copy of the message if needed to modify it
+                if need_copy:
+                    msg_to_send = deepcopy(message)
+                    msg_to_send["comments"] = []
+
+                # Add the send task to our list
+                send_tasks.append(waiter.send_message(msg_to_send))
+
+        # Execute all send tasks concurrently
+        if send_tasks:
+            await asyncio.gather(*send_tasks)
 
     @classmethod
     def serialize_content(cls, session):
@@ -746,7 +853,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             session["node_updates"] = False
 
     @classmethod
-    def save_document(cls, document_id):
+    async def save_document(cls, document_id):
         session = cls.sessions[document_id]
         if session["doc"].version == session["last_saved_version"]:
             return
@@ -760,7 +867,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             # in case the doc has been deleted from the db
             # in fiduswriter the owner of a doc could delete a doc
             # while an invited writer is editing the same doc
-            session["doc"].save(
+            await sync_to_async(session["doc"].save)(
                 update_fields=[
                     "title",
                     "version",
@@ -775,21 +882,21 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         except DatabaseError as e:
             expected_msg = "Save with update_fields did not affect any rows."
             if str(e) == expected_msg:
-                cls.__insert_document(doc=session["doc"])
+                await cls.__insert_document(doc=session["doc"])
             else:
                 raise e
         session["last_saved_version"] = session["doc"].version
 
     @classmethod
-    def __insert_document(cls, doc: Document) -> None:
+    async def __insert_document(cls, doc: Document) -> None:
         """
         Purpose:
         during plugin tests we experienced Integrity errors
-         at the end of tests.
+            at the end of tests.
         This exception occurs while handling another exception,
-         so in order to have a clean tests output
-          we raise the exception in a way we don't output
-           misleading error messages related to different exceptions
+            so in order to have a clean tests output
+            we raise the exception in a way we don't output
+            misleading error messages related to different exceptions
 
         :param doc: socket document model instance
         :return: None
@@ -797,7 +904,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         from django.db.utils import IntegrityError
 
         try:
-            doc.save()
+            await sync_to_async(doc.save)()
         except IntegrityError as e:
             if settings.TESTING:
                 pass
@@ -809,9 +916,24 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 ) from None
 
     @classmethod
-    def save_all_docs(cls):
+    async def save_all_docs_async(cls):
+        # Create a list of save tasks
+        save_tasks = []
         for document_id in cls.sessions:
-            cls.save_document(document_id)
+            save_tasks.append(cls.save_document(document_id))
+
+        # Execute all save tasks concurrently
+        if save_tasks:
+            await asyncio.gather(*save_tasks)
+
+    @classmethod
+    def save_all_docs(cls):
+        # For synchronous context (atexit)
+        loop = asyncio.new_event_loop()
+        try:
+            loop.run_until_complete(cls.save_all_docs_async())
+        finally:
+            loop.close()
 
 
 atexit.register(WebsocketConsumer.save_all_docs)

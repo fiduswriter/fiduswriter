@@ -242,7 +242,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
         # Get document images
         document_images = await sync_to_async(list)(
-            DocumentImage.objects.filter(document_id=self.session["doc"].id)
+            DocumentImage.objects.filter(
+                document_id=self.session["doc"].id
+            ).select_related("image")
         )
 
         for dimage in document_images:

@@ -1,12 +1,11 @@
 from typing import Tuple
-from asgiref.sync import sync_to_async
 
 from document.models import AccessRight, Document, DocumentTemplate
 
 
 class SessionUserInfo:
     """
-    Class for string information about users in session
+    Class for storing information about users in session
     author: akorovin
     """
 
@@ -23,19 +22,17 @@ class SessionUserInfo:
         Asynchronously create a new document
         """
         # Get the template asynchronously
-        template = await sync_to_async(
-            DocumentTemplate.objects.filter(id=int(template_id)).first
-        )()
+        template = await DocumentTemplate.objects.filter(
+            id=int(template_id)
+        ).afirst()
 
         # Create document asynchronously
         if template:
-            document = await sync_to_async(Document.objects.create)(
+            document = await Document.objects.acreate(
                 owner_id=self.user.id, template=template
             )
         else:
-            document = await sync_to_async(Document.objects.create)(
-                owner_id=self.user.id
-            )
+            document = await Document.objects.acreate(owner_id=self.user.id)
 
         return document
 
@@ -50,13 +47,11 @@ class SessionUserInfo:
         can_access = False
 
         # Use select_related to prefetch owner and template in one query
-        get_document = sync_to_async(
-            lambda: Document.objects.select_related("owner", "template")
+        document = (
+            await Document.objects.select_related("owner", "template")
             .filter(id=int(document_id))
-            .first()
+            .afirst()
         )
-
-        document = await get_document()
 
         if document is None:
             return (False, False)
@@ -74,13 +69,9 @@ class SessionUserInfo:
                 self.is_owner = False
 
                 # Get access rights asynchronously with prefetched relations
-                get_access_right = sync_to_async(
-                    lambda: AccessRight.objects.filter(
-                        document_id=document.id, user=self.user
-                    ).first()
-                )
-
-                access_right = await get_access_right()
+                access_right = await AccessRight.objects.filter(
+                    document_id=document.id, user=self.user
+                ).afirst()
 
                 if access_right:
                     self.access_rights = access_right.rights

@@ -1,6 +1,5 @@
 import atexit
 import asyncio
-from asgiref.sync import sync_to_async
 
 from base.models import Presence
 from base.base_consumer import BaseWebsocketConsumer
@@ -22,21 +21,21 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
         protocol = "wss://" if origin.startswith("https") else "ws://"
 
         # Create presence asynchronously
-        self.presence = await sync_to_async(Presence.objects.create)(
+        self.presence = await Presence.objects.acreate(
             user=self.user,
             server_url=protocol + host + self.scope["path"],
         )
 
     async def disconnect(self, close_code):
         if hasattr(self, "presence"):
-            await sync_to_async(self.presence.delete)()
+            await self.presence.adelete()
         if self in SystemMessageConsumer.clients:
             SystemMessageConsumer.clients.remove(self)
         await self.close()
 
     async def send_pong(self):
         if hasattr(self, "presence"):
-            await sync_to_async(self.presence.save)()
+            await self.presence.asave()
         await super().send_pong()
 
     async def handle_message(self, message):
@@ -50,7 +49,7 @@ async def remove_all_presences_async():
     delete_tasks = []
     for client in SystemMessageConsumer.clients:
         if hasattr(client, "presence"):
-            delete_tasks.append(sync_to_async(client.presence.delete)())
+            delete_tasks.append(client.presence.adelete())
 
     if delete_tasks:
         await asyncio.gather(*delete_tasks)

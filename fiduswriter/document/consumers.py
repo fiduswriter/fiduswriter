@@ -119,7 +119,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     doc_db.content["type"] = "doc"
                 if "content" not in doc_db.content:
                     doc_db.content["content"] = [{type: "title"}]
-                await sync_to_async(doc_db.save)()
+                await doc_db.asave()
             node = prosemirror.from_json(doc_db.content)
             self.session = {
                 "doc": doc_db,
@@ -180,10 +180,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
         # Get document templates
         document_templates = {}
-        templates = await sync_to_async(list)(
-            DocumentTemplate.objects.filter(
+        templates = (
+            await DocumentTemplate.objects.filter(
                 Q(user=self.user) | Q(user=None)
-            ).order_by(F("user").desc(nulls_first=True))
+            )
+            .order_by(F("user").desc(nulls_first=True))
+            .aiterator()
         )
 
         for obj in templates:
@@ -241,8 +243,10 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         response["time"] = int(time()) * 1000
 
         # Get document images
-        document_images = await sync_to_async(list)(
-            DocumentImage.objects.filter(document_id=self.session["doc"].id)
+        document_images = (
+            await DocumentImage.objects.filter(
+                document_id=self.session["doc"].id
+            )
             .select_related("image")
             .only(
                 "id",
@@ -257,6 +261,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "image__height",
                 "image__width",
             )
+            .aiterator()
         )
 
         for dimage in document_images:
@@ -290,10 +295,10 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             response["doc"]["comments"] = self.session["doc"].comments
 
         # Get contacts asynchronously
-        contacts = await sync_to_async(list)(
-            doc_owner.contacts.all().only(
-                "id", "username", "first_name", "last_name"
-            )
+        contacts = (
+            await doc_owner.contacts.all()
+            .only("id", "username", "first_name", "last_name")
+            .aiterator()
         )
 
         # Get all avatars in parallel
@@ -313,7 +318,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             response["doc_info"]["owner"]["contacts"].append(contact_object)
 
         if self.user_info.is_owner:
-            invites = await sync_to_async(list)(doc_owner.invites_by.all())
+            invites = await doc_owner.invites_by.all().aiterator()
             for contact in invites:
                 contact_object = {
                     "id": contact.id,
@@ -378,44 +383,38 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             id = iu["id"]
             if iu["type"] == "update":
                 # Ensure that access rights exist
-                has_access = await sync_to_async(
-                    UserImage.objects.filter(
-                        image__id=id, owner=self.user_info.user
-                    ).exists
-                )()
+                has_access = await UserImage.objects.filter(
+                    image__id=id, owner=self.user_info.user
+                ).aexists()
 
                 if not has_access:
                     continue
 
-                doc_image = await sync_to_async(
-                    DocumentImage.objects.filter(
-                        document_id=self.session["doc"].id, image_id=id
-                    ).first
-                )()
+                doc_image = await DocumentImage.objects.filter(
+                    document_id=self.session["doc"].id, image_id=id
+                ).afirst()
 
                 if doc_image:
                     doc_image.title = iu["image"]["title"]
                     doc_image.copyright = iu["image"]["copyright"]
-                    await sync_to_async(doc_image.save)()
+                    await doc_image.asave()
                 else:
-                    await sync_to_async(DocumentImage.objects.create)(
+                    await DocumentImage.objects.acreate(
                         document_id=self.session["doc"].id,
                         image_id=id,
                         title=iu["image"]["title"],
                         copyright=iu["image"]["copyright"],
                     )
             elif iu["type"] == "delete":
-                await sync_to_async(
-                    DocumentImage.objects.filter(
-                        document_id=self.session["doc"].id, image_id=id
-                    ).delete
-                )()
+                await DocumentImage.objects.filter(
+                    document_id=self.session["doc"].id, image_id=id
+                ).adelete()
 
-                images = await sync_to_async(list)(Image.objects.filter(id=id))
+                images = await Image.objects.filter(id=id).aiterator()
                 for image in images:
                     can_delete = await sync_to_async(image.is_deletable)()
                     if can_delete:
-                        await sync_to_async(image.delete)()
+                        await image.adelete()
 
     async def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
@@ -509,7 +508,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             and self.user_info.path_object
         ):
             self.user_info.path_object.path = message["path"]
-            await sync_to_async(self.user_info.path_object.save)(
+            await self.user_info.path_object.asave(
                 update_fields=[
                     "path",
                 ]
@@ -885,7 +884,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             # in case the doc has been deleted from the db
             # in fiduswriter the owner of a doc could delete a doc
             # while an invited writer is editing the same doc
-            await sync_to_async(session["doc"].save)(
+            await session["doc"].asave(
                 update_fields=[
                     "title",
                     "version",
@@ -922,7 +921,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         from django.db.utils import IntegrityError
 
         try:
-            await sync_to_async(doc.save)()
+            await doc.asave()
         except IntegrityError as e:
             if settings.TESTING:
                 pass

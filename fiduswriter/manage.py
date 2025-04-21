@@ -13,7 +13,53 @@ SRC_PATH = os.path.dirname(os.path.realpath(__file__))
 os.environ.setdefault("SRC_PATH", SRC_PATH)
 
 
+def load_settings(settings_module):
+    """
+    Load settings from three levels, each overriding the previous one:
+    1. Django's global_settings.py
+    2. Fiduswriter's base settings.py
+    3. User's configuration.py (or custom settings module)
+    """
+    from django.conf import global_settings as GLOBAL_SETTINGS
+    from base import settings as BASE_SETTINGS
+
+    settings_paths = [BASE_SETTINGS.__file__]
+
+    # Start with Django's global settings
+    settings_dict = {}
+    for setting in dir(GLOBAL_SETTINGS):
+        if setting.isupper():
+            settings_dict[setting] = getattr(GLOBAL_SETTINGS, setting)
+
+    # Override with Fiduswriter's base settings
+    for setting in dir(BASE_SETTINGS):
+        if setting.isupper():
+            settings_dict[setting] = getattr(BASE_SETTINGS, setting)
+
+    # Override with user's configuration settings if available
+    try:
+        config_module = import_module(settings_module)
+        settings_paths.append(config_module.__file__)
+        for setting in dir(config_module):
+            if setting.isupper():
+                settings_dict[setting] = getattr(config_module, setting)
+    except ModuleNotFoundError:
+        pass
+
+    # Add metadata about settings
+    settings_dict["SETTINGS_PATHS"] = settings_paths
+    settings_dict["SETTINGS_MODULE"] = settings_module
+
+    return settings_dict
+
+
 def inner(default_project_path):
+    """
+    Main entry point for the Django management commands.
+
+    Args:
+        default_project_path: The default path to use if no --pythonpath is provided
+    """
     sys.path.append(SRC_PATH)
     sys_argv = sys.argv
     PROJECT_PATH = False
@@ -37,35 +83,8 @@ def inner(default_project_path):
         SETTINGS_MODULE = sys_argv[index + 1]
     else:
         SETTINGS_MODULE = "configuration"
-    # There are three levels of settings, each overiding the previous one:
-    # global_settings.py, settings.py and configuration.py
-    from django.conf import global_settings as GLOBAL_SETTINGS
-    from base import settings as BASE_SETTINGS
-
-    SETTINGS_PATHS = [BASE_SETTINGS.__file__]
-
-    # Merge settings from different sources
-    settings_dict = {}
-    for setting in dir(GLOBAL_SETTINGS):
-        if setting.isupper():
-            settings_dict[setting] = getattr(GLOBAL_SETTINGS, setting)
-
-    for setting in dir(BASE_SETTINGS):
-        if setting.isupper():
-            settings_dict[setting] = getattr(BASE_SETTINGS, setting)
-
-    # Load configuration settings if available
-    try:
-        config_module = import_module(SETTINGS_MODULE)
-        SETTINGS_PATHS.append(config_module.__file__)
-        for setting in dir(config_module):
-            if setting.isupper():
-                settings_dict[setting] = getattr(config_module, setting)
-    except ModuleNotFoundError:
-        pass
-
-    settings_dict["SETTINGS_PATHS"] = SETTINGS_PATHS
-    settings_dict["SETTINGS_MODULE"] = SETTINGS_MODULE
+        # Load settings from all sources and merge them
+        settings_dict = load_settings(SETTINGS_MODULE)
 
     # Override PORTS setting if running tests
     if "test" in sys_argv:
@@ -113,6 +132,10 @@ def inner(default_project_path):
 
 
 def entry():
+    """
+    Entry point for the Fiduswriter application when installed as a package.
+    Uses the current working directory as the project path.
+    """
     os.environ.setdefault("NO_COMPILEMESSAGES", "true")
     inner(os.getcwd())
 

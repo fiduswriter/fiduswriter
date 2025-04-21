@@ -180,15 +180,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
         # Get document templates
         document_templates = {}
-        templates = (
-            await DocumentTemplate.objects.filter(
-                Q(user=self.user) | Q(user=None)
-            )
-            .order_by(F("user").desc(nulls_first=True))
-            .aiterator()
-        )
+        query = DocumentTemplate.objects.filter(
+            Q(user=self.user) | Q(user=None)
+        ).order_by(F("user").desc(nulls_first=True))
 
-        for obj in templates:
+        # Use async for to properly consume the async iterator
+        async for obj in query.aiterator():
             document_templates[obj.import_id] = {
                 "title": obj.title,
                 "id": obj.id,
@@ -243,10 +240,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         response["time"] = int(time()) * 1000
 
         # Get document images
-        document_images = (
-            await DocumentImage.objects.filter(
-                document_id=self.session["doc"].id
-            )
+        doc_id = self.session["doc"].id
+        async for dimage in (
+            DocumentImage.objects.filter(document_id=doc_id)
             .select_related("image")
             .only(
                 "id",
@@ -262,9 +258,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "image__width",
             )
             .aiterator()
-        )
-
-        for dimage in document_images:
+        ):
             image = dimage.image
             field_obj = {
                 "id": image.id,
@@ -295,11 +289,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             response["doc"]["comments"] = self.session["doc"].comments
 
         # Get contacts asynchronously
-        contacts = (
-            await doc_owner.contacts.all()
+        contacts = []
+        async for contact in (
+            doc_owner.contacts.all()
             .only("id", "username", "first_name", "last_name")
             .aiterator()
-        )
+        ):
+            contacts.append(contact)
 
         # Get all avatars in parallel
         contact_avatars = await asyncio.gather(
@@ -318,7 +314,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             response["doc_info"]["owner"]["contacts"].append(contact_object)
 
         if self.user_info.is_owner:
-            invites = await doc_owner.invites_by.all().aiterator()
+            invites = []
+            async for invite in doc_owner.invites_by.all().aiterator():
+                invites.append(invite)
             for contact in invites:
                 contact_object = {
                     "id": contact.id,
@@ -410,8 +408,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     document_id=self.session["doc"].id, image_id=id
                 ).adelete()
 
-                images = await Image.objects.filter(id=id).aiterator()
-                for image in images:
+                async for image in Image.objects.filter(id=id).aiterator():
                     can_delete = await sync_to_async(image.is_deletable)()
                     if can_delete:
                         await image.adelete()

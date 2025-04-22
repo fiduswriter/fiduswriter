@@ -116,7 +116,9 @@ def images(request):
         ImageCategory.objects.filter(category_owner=request.user)
     )
     response["images"] = []
-    user_images = UserImage.objects.filter(owner=request.user)
+    user_images = UserImage.objects.filter(owner=request.user).select_related(
+        "image"
+    )
     for user_image in user_images:
         image = user_image.image
         if image.image:

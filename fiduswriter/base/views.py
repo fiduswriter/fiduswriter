@@ -1,7 +1,7 @@
 import json
 import random
 from httpx_ws import connect_ws
-
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -66,22 +66,28 @@ def configuration(request):
         "socialaccount_providers": socialaccount_providers,
         "ws_url_base": ws_url_base,
     }
-    if request.user.is_authenticated:
+    user = request.user
+    if user.is_authenticated:
+        user = (
+            get_user_model()
+            .objects.prefetch_related("emailaddress_set", "socialaccount_set")
+            .get(id=user.id)
+        )
         avatars = Avatars()
         response["user"] = {
-            "id": request.user.id,
-            "username": request.user.username,
-            "first_name": request.user.first_name,
-            "name": request.user.readable_name,
-            "last_name": request.user.last_name,
-            "language": request.user.language,
-            "avatar": avatars.get_url(request.user),
+            "id": user.id,
+            "username": user.username,
+            "first_name": user.first_name,
+            "name": user.readable_name,
+            "last_name": user.last_name,
+            "language": user.language,
+            "avatar": avatars.get_url(user),
             "emails": [],
             "socialaccounts": [],
             "is_authenticated": True,
         }
 
-        for emailaddress in request.user.emailaddress_set.all():
+        for emailaddress in user.emailaddress_set.all():
             email = {
                 "address": emailaddress.email,
             }
@@ -90,7 +96,7 @@ def configuration(request):
             if emailaddress.verified:
                 email["verified"] = True
             response["user"]["emails"].append(email)
-        for account in request.user.socialaccount_set.all():
+        for account in user.socialaccount_set.all():
             try:
                 provider_account = account.get_provider_account()
                 response["user"]["socialaccounts"].append(
@@ -103,7 +109,7 @@ def configuration(request):
             except KeyError:
                 # Social account provider has been removed.
                 pass
-        response["user"]["waiting_invites"] = request.user.invites_to.exists()
+        response["user"]["waiting_invites"] = user.invites_to.exists()
 
     else:
         response["user"] = {"is_authenticated": False}
@@ -134,8 +140,10 @@ def connection_info(request):
     """
     response = {}
     Presence.prune()
-    response["sessions"] = Presence.objects.all().count()
-    response["users"] = Presence.objects.values("user").distinct().count()
+    response["sessions"] = Presence.objects.count()
+    response["users"] = (
+        Presence.objects.values_list("user", flat=True).distinct().count()
+    )
     return JsonResponse(response, status=200)
 
 

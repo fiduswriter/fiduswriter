@@ -1,4 +1,5 @@
 import atexit
+import asyncio
 
 from base.models import Presence
 from base.base_consumer import BaseWebsocketConsumer
@@ -7,8 +8,8 @@ from base.base_consumer import BaseWebsocketConsumer
 class SystemMessageConsumer(BaseWebsocketConsumer):
     clients = []
 
-    def connect(self):
-        if not super().connect():
+    async def connect(self):
+        if not await super().connect():
             return
         SystemMessageConsumer.clients.append(self)
         headers = dict(self.scope["headers"])
@@ -18,34 +19,51 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
         host = headers.get(b"host", b"").decode("utf-8")
         origin = headers.get(b"origin", b"").decode("utf-8")
         protocol = "wss://" if origin.startswith("https") else "ws://"
-        self.presence = Presence.objects.create(
+
+        # Create presence asynchronously
+        self.presence = await Presence.objects.acreate(
             user=self.user,
             server_url=protocol + host + self.scope["path"],
         )
 
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         if hasattr(self, "presence"):
-            self.presence.delete()
+            await self.presence.adelete()
         if self in SystemMessageConsumer.clients:
             SystemMessageConsumer.clients.remove(self)
-        self.close()
+        await self.close()
 
-    def send_pong(self):
-        self.presence.save()
-        super().send_pong()
+    async def send_pong(self):
+        if hasattr(self, "presence"):
+            await self.presence.asave()
+        await super().send_pong()
 
-    def handle_message(self, message):
+    async def handle_message(self, message):
         if message["type"] == "system_message":
             for client in SystemMessageConsumer.clients:
-                client.send_message(message)
+                await client.send_message(message)
+
+
+async def remove_all_presences_async():
+    # Removing all presences connected to this server using asyncio tasks
+    delete_tasks = []
+    for client in SystemMessageConsumer.clients:
+        if hasattr(client, "presence"):
+            delete_tasks.append(client.presence.adelete())
+
+    if delete_tasks:
+        await asyncio.gather(*delete_tasks)
+
+    SystemMessageConsumer.clients = []
 
 
 def remove_all_presences():
-    # Removing all presences connected to this server.
-    for client in SystemMessageConsumer.clients:
-        if client.presence:
-            client.presence.delete()
-    SystemMessageConsumer.clients = []
+    # For atexit handler which runs in synchronous context
+    loop = asyncio.new_event_loop()
+    try:
+        loop.run_until_complete(remove_all_presences_async())
+    finally:
+        loop.close()
 
 
 atexit.register(remove_all_presences)

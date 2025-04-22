@@ -1,5 +1,6 @@
 from django.core import serializers
 from django.db import models
+from asgiref.sync import sync_to_async
 
 PythonSerializer = serializers.get_serializer("python")
 
@@ -14,7 +15,7 @@ class PythonWithURLSerializer(PythonSerializer):
 
     def end_object(self, obj):
         # We add reverse foreign key relations if they are explicitly added.
-        # Needed to include DocumentStyleFont with DocumentStyle\
+        # Needed to include DocumentStyleFont with DocumentStyle
         if self.selected_fields is not None:
             for field in obj._meta.related_objects:
                 if not field.one_to_many:
@@ -43,3 +44,10 @@ class PythonWithURLSerializer(PythonSerializer):
                 ]
 
         return super().end_object(obj)
+
+    # Add an async version for Django 5.1 compatibility
+    async def aserialize(self, queryset, **options):
+        """
+        Asynchronous version of serialize method for use with async code
+        """
+        return await sync_to_async(self.serialize)(queryset, **options)

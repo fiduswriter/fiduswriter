@@ -43,10 +43,10 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         if not text_data:
             return
-        if text_data == "ping":
+        message = json.loads(text_data)
+        if message["type"] == "ping":
             await self.send_pong()
             return
-        message = json.loads(text_data)
         if message["type"] == "request_resend":
             await self.resend_messages(message["from"])
             return
@@ -149,4 +149,4 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
             await self.send_message(message)
 
     async def send_pong(self):
-        await self.send(text_data="pong")
+        await self.send(text_data='{"type": "pong"}')

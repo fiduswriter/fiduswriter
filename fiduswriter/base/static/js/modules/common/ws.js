@@ -137,14 +137,12 @@ export class WebSocketConnector {
     }
 
     onmessage(event) {
-        if (event.data === "pong") {
-            this.heartbeat()
-            return
-        }
         const data = JSON.parse(event.data)
         const expectedServer = this.messages.server + 1
         if (data.type === "request_resend") {
             this.resend_messages(data.from)
+        } else if (data.type === "pong") {
+            this.heartbeat()
         } else if (data.s < expectedServer) {
             // Receive a message already received at least once. Ignore.
             return
@@ -336,7 +334,7 @@ export class WebSocketConnector {
         clearTimeout(this.pingTimer)
         clearTimeout(this.pongTimer)
         this.pingTimer = setTimeout(() => {
-            this.ws.send("ping")
+            this.ws.send('{"type": "ping"}')
             this.pongTimer = setTimeout(() => {
                 this.listeners.onOffline()
             }, 10000)

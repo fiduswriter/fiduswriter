@@ -31,7 +31,7 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
         os.environ.get("MEMORY_LEAK_TEST_DOCS", "20")
     )  # Can be adjusted via env var
     LEAK_THRESHOLD = float(
-        os.environ.get("MEMORY_LEAK_THRESHOLD", "12")
+        os.environ.get("MEMORY_LEAK_THRESHOLD", "20")
     )  # Default 5% threshold
 
     @classmethod

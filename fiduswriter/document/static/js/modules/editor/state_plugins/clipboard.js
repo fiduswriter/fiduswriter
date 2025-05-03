@@ -1,6 +1,7 @@
 import fixUTF8 from "fix-utf8"
 
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
+import {ReplaceStep} from "prosemirror-transform"
 
 import {docClipboardSerializer, fnClipboardSerializer} from "../clipboard/copy"
 import {HTMLPaste, TextPaste} from "../clipboard/paste"
@@ -36,24 +37,34 @@ export const clipboardPlugin = options => {
                 const uiEventMeta = tr.getMeta("uiEvent")
                 let pasteRange
                 if (uiEventMeta && ["paste", "drop"].includes(uiEventMeta)) {
-                    // Set pasteRange on paste or drop
                     pasteRange = [
                         oldState.selection.from,
                         oldState.selection.to
                     ]
+                    tr.steps.forEach(step => {
+                        if (step instanceof ReplaceStep) {
+                            // paste and drop TRs will usually just consist of a single ReplaceStep
+                            pasteRange = [step.from, step.to]
+                        }
+                        const stepMap = step.getMap()
+                        pasteRange = [
+                            stepMap.map(pasteRange[0], -1),
+                            stepMap.map(pasteRange[1], 1)
+                        ] // map through step
+                    })
                 } else {
-                    pasteRange = this.getState(oldState).pasteRange
-                }
-
-                if (pasteRange && tr.docChanged) {
-                    const from = tr.mapping.mapResult(pasteRange[0], -1)
-                    const to = tr.mapping.mapResult(pasteRange[1], 1)
-                    if (from.deleted || to.deleted) {
-                        pasteRange = null
-                    } else {
-                        pasteRange = [from.pos, to.pos]
+                    pasteRange = this.getState(oldState)?.pasteRange
+                    if (pasteRange && tr.docChanged) {
+                        const from = tr.mapping.mapResult(pasteRange[0], -1)
+                        const to = tr.mapping.mapResult(pasteRange[1], 1)
+                        if (from.deleted || to.deleted) {
+                            pasteRange = null
+                        } else {
+                            pasteRange = [from.pos, to.pos]
+                        }
                     }
                 }
+
                 return {
                     pasteRange
                 }

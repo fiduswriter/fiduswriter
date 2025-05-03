@@ -24,22 +24,18 @@ export class TextPaste {
                     const citationNode = this.view.state.schema.nodes[
                         "citation"
                     ].create({format, references})
-                    const tr = this.view.state.tr
                     const pasteRange = getPasteRange(this.view.state)
                     if (pasteRange) {
-                        tr.setSelection(
-                            TextSelection.create(
-                                tr.doc,
-                                pasteRange[0],
-                                pasteRange[1]
-                            )
+                        const tr = this.view.state.tr
+                        tr.replaceRangeWith(
+                            pasteRange[0],
+                            pasteRange[1],
+                            citationNode
                         )
                         resetPasteRange(tr)
+                        tr.setMeta("addToHistory", false)
+                        this.view.dispatch(tr)
                     }
-
-                    tr.replaceSelectionWith(citationNode, true)
-
-                    this.view.dispatch(tr)
                 },
                 () => {
                     if (!this.foundBibEntries) {

@@ -334,10 +334,13 @@ export class WebSocketConnector {
         clearTimeout(this.pingTimer)
         clearTimeout(this.pongTimer)
         this.pingTimer = setTimeout(() => {
-            this.ws.send('{"type": "ping"}')
-            this.pongTimer = setTimeout(() => {
-                this.listeners.onOffline()
-            }, 10000)
+            // Don't send ping if WebSocket is not open
+            if (this.ws.readyState === this.ws.OPEN) {
+                this.ws.send('{"type": "ping"}')
+                this.pongTimer = setTimeout(() => {
+                    this.listeners.onOffline()
+                }, 10000)
+            }
         }, 60000)
     }
 }

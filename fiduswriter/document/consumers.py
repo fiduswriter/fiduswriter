@@ -953,7 +953,6 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     @classmethod
     def save_all_docs(cls):
         for document_id in cls.sessions:
-            print(f"Saving document {document_id}")
             cls.save_document(document_id)
 
 

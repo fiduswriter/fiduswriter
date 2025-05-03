@@ -1,5 +1,4 @@
 import atexit
-import asyncio
 
 from base.models import Presence
 from base.base_consumer import BaseWebsocketConsumer
@@ -44,26 +43,13 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
                 await client.send_message(message)
 
 
-async def remove_all_presences_async():
-    # Removing all presences connected to this server using asyncio tasks
-    delete_tasks = []
+def remove_all_presences():
+    # Removing all presences connected to this server
     for client in SystemMessageConsumer.clients:
         if hasattr(client, "presence"):
-            delete_tasks.append(client.presence.adelete())
-
-    if delete_tasks:
-        await asyncio.gather(*delete_tasks)
+            client.presence.delete()
 
     SystemMessageConsumer.clients = []
-
-
-def remove_all_presences():
-    # For atexit handler which runs in synchronous context
-    loop = asyncio.new_event_loop()
-    try:
-        loop.run_until_complete(remove_all_presences_async())
-    finally:
-        loop.close()
 
 
 atexit.register(remove_all_presences)

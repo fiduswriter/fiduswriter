@@ -11,6 +11,7 @@ from asgiref.sync import sync_to_async
 from django.db.utils import DatabaseError
 from django.db.models import F, Q
 from django.conf import settings
+from django.db.utils import IntegrityError
 
 from base.helpers.ws import get_url_base
 from document.helpers.session_user_info import SessionUserInfo
@@ -23,7 +24,6 @@ from document.models import (
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
     DocumentTemplate,
-    Document,
 )
 from usermedia.models import Image, DocumentImage, UserImage
 from user.helpers import Avatars
@@ -582,7 +582,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             if "iu" in message:  # iu = image updates
                 await self.update_images(message["iu"])
             if self.session["doc"].version % settings.DOC_SAVE_INTERVAL == 0:
-                await WebsocketConsumer.save_document(
+                await WebsocketConsumer.save_document_async(
                     self.user_info.document_id
                 )
             await self.confirm_diff(message["rid"])
@@ -595,13 +595,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif pv < dv:
             if pv + len(self.session["doc"].diffs) >= dv:
                 # We have enough diffs stored to fix it.
-                number_diffs = pv - dv
+                number_diffs = dv - pv
                 logger.debug(
                     f"Action:Resending document diffs. URL:{self.endpoint} "
                     f"User:{self.user.id} ParticipantID:{self.id} "
                     f"number of messages to be resent:{number_diffs}"
                 )
-                messages = self.session["doc"].diffs[number_diffs:]
+                messages = self.session["doc"].diffs[-number_diffs:]
                 for message in messages:
                     new_message = message.copy()
                     new_message["server_fix"] = True
@@ -638,14 +638,22 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             }
             await self.send_message(response)
             return
+        elif pv > dv:
+            logger.debug(
+                f"Action:User is on a newer version of the document. "
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f"ParticipantID:{self.id}"
+            )
+            await self.unfixable()
+            return
         elif pv + len(self.session["doc"].diffs) >= dv:
-            number_diffs = pv - dv
+            number_diffs = dv - pv
             logger.debug(
                 f"Action:Resending document diffs. URL:{self.endpoint} "
                 f"User:{self.user.id} ParticipantID:{self.id}"
                 f"number of messages to be resent:{number_diffs}"
             )
-            messages = self.session["doc"].diffs[number_diffs:]
+            messages = self.session["doc"].diffs[-number_diffs:]
             await self.send_document(messages)
             return
         else:
@@ -692,7 +700,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 # Complete document cleanup if no participants remain
                 if len(self.session["participants"]) == 0:
                     # Save before cleanup
-                    await WebsocketConsumer.save_document(doc_id)
+                    await WebsocketConsumer.save_document_async(doc_id)
 
                     # Break references manually before deleting
                     session = WebsocketConsumer.sessions[doc_id]
@@ -867,7 +875,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             session["node_updates"] = False
 
     @classmethod
-    async def save_document(cls, document_id):
+    async def save_document_async(cls, document_id):
         session = cls.sessions[document_id]
         if session["doc"].version == session["last_saved_version"]:
             return
@@ -896,58 +904,57 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         except DatabaseError as e:
             expected_msg = "Save with update_fields did not affect any rows."
             if str(e) == expected_msg:
-                await cls.__insert_document(doc=session["doc"])
+                try:
+                    await session["doc"].asave()
+                except IntegrityError:
+                    pass
             else:
                 raise e
         session["last_saved_version"] = session["doc"].version
 
     @classmethod
-    async def __insert_document(cls, doc: Document) -> None:
-        """
-        Purpose:
-        during plugin tests we experienced Integrity errors
-            at the end of tests.
-        This exception occurs while handling another exception,
-            so in order to have a clean tests output
-            we raise the exception in a way we don't output
-            misleading error messages related to different exceptions
-
-        :param doc: socket document model instance
-        :return: None
-        """
-        from django.db.utils import IntegrityError
-
+    def save_document(cls, document_id):
+        session = cls.sessions[document_id]
+        if session["doc"].version == session["last_saved_version"]:
+            return
+        logger.debug(
+            f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
+            f"Doc version:{session['doc'].version}"
+        )
+        cls.serialize_content(session)
         try:
-            await doc.asave()
-        except IntegrityError as e:
-            if settings.TESTING:
-                pass
+            # this try block is to avoid a db exception
+            # in case the doc has been deleted from the db
+            # in fiduswriter the owner of a doc could delete a doc
+            # while an invited writer is editing the same doc
+            session["doc"].save(
+                update_fields=[
+                    "title",
+                    "version",
+                    "content",
+                    "diffs",
+                    "comments",
+                    "bibliography",
+                    "updated",
+                ]
+            )
+
+        except DatabaseError as e:
+            expected_msg = "Save with update_fields did not affect any rows."
+            if str(e) == expected_msg:
+                try:
+                    session["doc"].save()
+                except IntegrityError:
+                    pass
             else:
-                raise IntegrityError(
-                    "plugin test error when we try to save a doc already deleted "
-                    "along with the rest of db data so it "
-                    "raises an Integrity error: {}".format(e)
-                ) from None
-
-    @classmethod
-    async def save_all_docs_async(cls):
-        # Create a list of save tasks
-        save_tasks = []
-        for document_id in cls.sessions:
-            save_tasks.append(cls.save_document(document_id))
-
-        # Execute all save tasks concurrently
-        if save_tasks:
-            await asyncio.gather(*save_tasks)
+                raise e
+        session["last_saved_version"] = session["doc"].version
 
     @classmethod
     def save_all_docs(cls):
-        # For synchronous context (atexit)
-        loop = asyncio.new_event_loop()
-        try:
-            loop.run_until_complete(cls.save_all_docs_async())
-        finally:
-            loop.close()
+        for document_id in cls.sessions:
+            print(f"Saving document {document_id}")
+            cls.save_document(document_id)
 
 
 atexit.register(WebsocketConsumer.save_all_docs)

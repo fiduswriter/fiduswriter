@@ -206,26 +206,8 @@ const createTagInputEditor = (view, getPos, node) => {
                 tagInputView.focus()
             }
         },
-        dispatchTransaction: tr => {
-            const submissionStep = tr.steps.find(step => {
-                if (!(step instanceof ReplaceStep)) {
-                    return false
-                }
-                const insertedText = step.slice.content.textBetween(
-                    0,
-                    step.slice.content.size
-                )
-                const triggerChars = [",", ".", ";"]
-                const triggerChar = triggerChars.find(char =>
-                    insertedText.includes(char)
-                )
-                if (triggerChar) {
-                    return true
-                }
-                return false
-            })
-
-            if (submissionStep) {
+        handleTextInput: (_view, _from, _to, text) => {
+            if ([",", ".", ";"].includes(text)) {
                 submitTag(
                     tagInputView.state,
                     undefined,
@@ -233,10 +215,10 @@ const createTagInputEditor = (view, getPos, node) => {
                     view,
                     getPos
                 )
-
-                // The tag has been submitted, cancel updating to this state
-                return
+                return true
             }
+        },
+        dispatchTransaction: tr => {
             const newState = tagInputView.state.apply(tr)
             tagInputView.updateState(newState)
         }

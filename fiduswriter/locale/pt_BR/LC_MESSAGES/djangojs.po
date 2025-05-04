@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-17 14:58+0000\n"
+"POT-Creation-Date: 2025-05-04 20:29+0000\n"
 "Language: pt-br\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -809,10 +809,10 @@ msgstr "Subtítulo"
 #: document/static/js/modules/document_template/templates.js:232
 #: document/static/js/modules/document_template/templates.js:305
 #: document/static/js/modules/document_template/templates.js:388
-#: document/static/js/modules/document_template/templates.js:460
-#: document/static/js/modules/document_template/templates.js:511
-#: document/static/js/modules/document_template/templates.js:692
-#: document/static/js/modules/document_template/templates.js:715
+#: document/static/js/modules/document_template/templates.js:461
+#: document/static/js/modules/document_template/templates.js:512
+#: document/static/js/modules/document_template/templates.js:693
+#: document/static/js/modules/document_template/templates.js:716
 #: document/static/js/modules/documents/overview/index.js:428
 #: document/static/js/modules/editor/dialogs/citation.js:247
 #: document/static/js/modules/editor/dialogs/templates.js:221
@@ -1466,7 +1466,7 @@ msgstr "Editar categorias"
 #: document/static/js/modules/document_template/document_style_dialog.js:172
 #: document/static/js/modules/document_template/export_template_dialog.js:82
 #: document/static/js/modules/document_template/export_template_dialog.js:178
-#: document/static/js/modules/document_template/templates.js:700
+#: document/static/js/modules/document_template/templates.js:701
 #: document/static/js/modules/documents/access_rights/templates.js:23
 #: document/static/js/modules/documents/overview/actions.js:84
 #: document/static/js/modules/documents/overview/index.js:140
@@ -1568,15 +1568,15 @@ msgstr "O modelo precisa de um ID."
 msgid "The template ID cannot contain spaces."
 msgstr "O ID do modelo não pode conter espaços."
 
-#: document/static/js/modules/document_template/designer.js:247
+#: document/static/js/modules/document_template/designer.js:255
 msgid "All document parts need an ID."
 msgstr "Tadas partes do documento precisa de um ID."
 
-#: document/static/js/modules/document_template/designer.js:254
+#: document/static/js/modules/document_template/designer.js:262
 msgid "IDs cannot contain spaces."
 msgstr "IDs não podem conter espaços."
 
-#: document/static/js/modules/document_template/designer.js:272
+#: document/static/js/modules/document_template/designer.js:280
 msgid "IDs have to be unique."
 msgstr "IDs devem ser únicos."
 
@@ -1726,8 +1726,8 @@ msgstr "Inserir Tabela"
 #: document/static/js/modules/document_template/schema.js:100
 #: document/static/js/modules/document_template/schema.js:194
 #: document/static/js/modules/document_template/schema.js:198
-#: document/static/js/modules/document_template/templates.js:88
-#: document/static/js/modules/document_template/templates.js:452
+#: document/static/js/modules/document_template/templates.js:89
+#: document/static/js/modules/document_template/templates.js:453
 #: document/static/js/modules/editor/menus/toolbar/model.js:747
 msgid "Table"
 msgstr "Tabela"
@@ -1835,9 +1835,9 @@ msgid "Heading 6"
 msgstr "Título 6"
 
 #: document/static/js/modules/document_template/templates.js:41
-#: document/static/js/modules/editor/menus/toolbar/model.js:24
-msgid "Code"
-msgstr "Código"
+#: document/static/js/modules/editor/marginboxes/templates.js:263
+msgid "Code block"
+msgstr "Bloco de código"
 
 #: document/static/js/modules/document_template/templates.js:46
 #: document/static/js/modules/editor/menus/toolbar/model.js:25
@@ -1878,7 +1878,7 @@ msgstr "Referência cruzada"
 msgid "Blockquote"
 msgstr "Bloco de citação"
 
-#: document/static/js/modules/document_template/templates.js:80
+#: document/static/js/modules/document_template/templates.js:81
 #: document/static/js/modules/editor/menus/toolbar/model.js:158
 #: document/static/js/modules/editor/menus/toolbar/model.js:622
 msgid "Footnote"
@@ -1908,8 +1908,8 @@ msgstr "Título"
 #: document/static/js/modules/document_template/templates.js:227
 #: document/static/js/modules/document_template/templates.js:300
 #: document/static/js/modules/document_template/templates.js:383
-#: document/static/js/modules/document_template/templates.js:455
-#: document/static/js/modules/document_template/templates.js:506
+#: document/static/js/modules/document_template/templates.js:456
+#: document/static/js/modules/document_template/templates.js:507
 #: document/static/js/modules/editor/menus/figure/model.js:7
 #: document/static/js/modules/editor/menus/table/model.js:388
 msgid "Configure"
@@ -1920,9 +1920,9 @@ msgstr "Configurar"
 #: document/static/js/modules/document_template/templates.js:304
 #: document/static/js/modules/document_template/templates.js:365
 #: document/static/js/modules/document_template/templates.js:387
-#: document/static/js/modules/document_template/templates.js:459
-#: document/static/js/modules/document_template/templates.js:510
-#: document/static/js/modules/document_template/templates.js:693
+#: document/static/js/modules/document_template/templates.js:460
+#: document/static/js/modules/document_template/templates.js:511
+#: document/static/js/modules/document_template/templates.js:694
 msgid "ID"
 msgstr "ID"
 
@@ -1950,7 +1950,7 @@ msgstr "Título (traduzido)"
 #: document/static/js/modules/document_template/templates.js:244
 #: document/static/js/modules/document_template/templates.js:324
 #: document/static/js/modules/document_template/templates.js:399
-#: document/static/js/modules/document_template/templates.js:464
+#: document/static/js/modules/document_template/templates.js:465
 msgid "Locking"
 msgstr "Bloqueio"
 
@@ -1958,7 +1958,7 @@ msgstr "Bloqueio"
 #: document/static/js/modules/document_template/templates.js:246
 #: document/static/js/modules/document_template/templates.js:326
 #: document/static/js/modules/document_template/templates.js:401
-#: document/static/js/modules/document_template/templates.js:466
+#: document/static/js/modules/document_template/templates.js:467
 msgid "User can change contents"
 msgstr "Usuário pode alterar conteúdos"
 
@@ -1966,7 +1966,7 @@ msgstr "Usuário pode alterar conteúdos"
 #: document/static/js/modules/document_template/templates.js:247
 #: document/static/js/modules/document_template/templates.js:327
 #: document/static/js/modules/document_template/templates.js:402
-#: document/static/js/modules/document_template/templates.js:467
+#: document/static/js/modules/document_template/templates.js:468
 msgid "User can not change contents"
 msgstr "Usuário não pode alterar conteúdos"
 
@@ -1981,8 +1981,8 @@ msgstr "Usuário pode apenas incluir conteúdo"
 #: document/static/js/modules/document_template/templates.js:251
 #: document/static/js/modules/document_template/templates.js:331
 #: document/static/js/modules/document_template/templates.js:406
-#: document/static/js/modules/document_template/templates.js:471
-#: document/static/js/modules/document_template/templates.js:515
+#: document/static/js/modules/document_template/templates.js:472
+#: document/static/js/modules/document_template/templates.js:516
 msgid "Optional"
 msgstr "Opcional"
 
@@ -1990,8 +1990,8 @@ msgstr "Opcional"
 #: document/static/js/modules/document_template/templates.js:253
 #: document/static/js/modules/document_template/templates.js:333
 #: document/static/js/modules/document_template/templates.js:408
-#: document/static/js/modules/document_template/templates.js:473
-#: document/static/js/modules/document_template/templates.js:517
+#: document/static/js/modules/document_template/templates.js:474
+#: document/static/js/modules/document_template/templates.js:518
 msgid "Obligatory field"
 msgstr "Campo obrigatório"
 
@@ -1999,8 +1999,8 @@ msgstr "Campo obrigatório"
 #: document/static/js/modules/document_template/templates.js:254
 #: document/static/js/modules/document_template/templates.js:334
 #: document/static/js/modules/document_template/templates.js:409
-#: document/static/js/modules/document_template/templates.js:474
-#: document/static/js/modules/document_template/templates.js:518
+#: document/static/js/modules/document_template/templates.js:475
+#: document/static/js/modules/document_template/templates.js:519
 msgid "Optional, shown by default"
 msgstr "Opcional, exibido por padrão"
 
@@ -2008,8 +2008,8 @@ msgstr "Opcional, exibido por padrão"
 #: document/static/js/modules/document_template/templates.js:255
 #: document/static/js/modules/document_template/templates.js:335
 #: document/static/js/modules/document_template/templates.js:410
-#: document/static/js/modules/document_template/templates.js:475
-#: document/static/js/modules/document_template/templates.js:519
+#: document/static/js/modules/document_template/templates.js:476
+#: document/static/js/modules/document_template/templates.js:520
 msgid "Optional, not shown by default"
 msgstr "Opcional, não exibido por padrão"
 
@@ -2019,14 +2019,14 @@ msgstr "Títulos permitidos"
 
 #: document/static/js/modules/document_template/templates.js:194
 #: document/static/js/modules/document_template/templates.js:340
-#: document/static/js/modules/document_template/templates.js:480
+#: document/static/js/modules/document_template/templates.js:481
 #: user/static/js/modules/profile/templates.js:155
 msgid "Language"
 msgstr "Idioma"
 
 #: document/static/js/modules/document_template/templates.js:196
 #: document/static/js/modules/document_template/templates.js:342
-#: document/static/js/modules/document_template/templates.js:482
+#: document/static/js/modules/document_template/templates.js:483
 msgid "Document language"
 msgstr "Idioma do documento"
 
@@ -2034,7 +2034,7 @@ msgstr "Idioma do documento"
 #: document/static/js/modules/document_template/templates.js:259
 #: document/static/js/modules/document_template/templates.js:350
 #: document/static/js/modules/document_template/templates.js:414
-#: document/static/js/modules/document_template/templates.js:490
+#: document/static/js/modules/document_template/templates.js:491
 msgid "Initial content"
 msgstr "Conteúdo Inicial"
 
@@ -2042,7 +2042,7 @@ msgstr "Conteúdo Inicial"
 #: document/static/js/modules/document_template/templates.js:263
 #: document/static/js/modules/document_template/templates.js:354
 #: document/static/js/modules/document_template/templates.js:418
-#: document/static/js/modules/document_template/templates.js:494
+#: document/static/js/modules/document_template/templates.js:495
 #: document/static/js/modules/editor/marginboxes/templates.js:422
 msgid "Instructions"
 msgstr "Instruções"
@@ -2112,72 +2112,72 @@ msgstr "Separador"
 msgid "Tags"
 msgstr "Rótulos"
 
-#: document/static/js/modules/document_template/templates.js:468
+#: document/static/js/modules/document_template/templates.js:469
 msgid "User can not change first row"
 msgstr "Usuário não pode alterar a primeira linha"
 
-#: document/static/js/modules/document_template/templates.js:503
+#: document/static/js/modules/document_template/templates.js:504
 msgid "Table of Contents"
 msgstr "Sumário"
 
-#: document/static/js/modules/document_template/templates.js:668
+#: document/static/js/modules/document_template/templates.js:669
 msgid "Add new document style"
 msgstr "Adicionar novo estilo de documento"
 
-#: document/static/js/modules/document_template/templates.js:680
+#: document/static/js/modules/document_template/templates.js:681
 msgid "Add new export template"
 msgstr "Adicionar novo modelo de exportação"
 
-#: document/static/js/modules/document_template/templates.js:698
+#: document/static/js/modules/document_template/templates.js:699
 msgid "Element types"
 msgstr "Tipos de elementos"
 
-#: document/static/js/modules/document_template/templates.js:699
+#: document/static/js/modules/document_template/templates.js:700
 msgid "Document structure"
 msgstr "Estrutura do documento"
 
-#: document/static/js/modules/document_template/templates.js:726
+#: document/static/js/modules/document_template/templates.js:727
 msgid "Setting"
 msgstr "Configuração"
 
-#: document/static/js/modules/document_template/templates.js:727
+#: document/static/js/modules/document_template/templates.js:728
 msgid "Value"
 msgstr "Valor"
 
-#: document/static/js/modules/document_template/templates.js:733
+#: document/static/js/modules/document_template/templates.js:734
 msgid "Footnote specifications"
 msgstr "Definições do rodapé"
 
-#: document/static/js/modules/document_template/templates.js:741
+#: document/static/js/modules/document_template/templates.js:742
 msgid "Available languages"
 msgstr "Idiomas disponíveis"
 
-#: document/static/js/modules/document_template/templates.js:749
+#: document/static/js/modules/document_template/templates.js:750
 #: user/static/js/modules/profile/templates.js:157
 msgid "Default language"
 msgstr "Idioma padrão"
 
-#: document/static/js/modules/document_template/templates.js:757
+#: document/static/js/modules/document_template/templates.js:758
 msgid "Permitted paper sizes"
 msgstr "Tamanhos permitidos de papel"
 
-#: document/static/js/modules/document_template/templates.js:765
+#: document/static/js/modules/document_template/templates.js:766
 msgid "Custom bibliography header"
 msgstr "Título bibliográfico personalizado"
 
-#: document/static/js/modules/document_template/templates.js:773
+#: document/static/js/modules/document_template/templates.js:774
 msgid "Available citation styles"
 msgstr "Estilos de citação disponíveis"
 
-#: document/static/js/modules/document_template/templates.js:781
+#: document/static/js/modules/document_template/templates.js:782
 msgid "Default citation style"
 msgstr "Estilo de citação padrão"
 
-#: document/static/js/modules/document_template/templates.js:791
+#: document/static/js/modules/document_template/templates.js:792
 msgid "Document styles"
 msgstr "Estilos de documento"
 
-#: document/static/js/modules/document_template/templates.js:801
+#: document/static/js/modules/document_template/templates.js:802
 msgid "Export templates"
 msgstr "Modelos de exportação"
 
@@ -3052,7 +3052,7 @@ msgstr "Por favor, selecione pelo menos uma fonte de citação!"
 #: document/static/js/modules/editor/dialogs/contributor.js:21
 #: document/static/js/modules/editor/dialogs/contributor.js:95
 #: document/static/js/modules/editor/state_plugins/contributor_input.js:89
-#: document/static/js/modules/editor/state_plugins/tag_input.js:49
+#: document/static/js/modules/editor/state_plugins/tag_input.js:50
 msgid "Add"
 msgstr "Incluir"
 
@@ -3069,49 +3069,49 @@ msgid "Insert image"
 msgstr "Inserir imagem"
 
 #: document/static/js/modules/editor/dialogs/figure.js:45
-#: document/static/js/modules/editor/dialogs/math.js:110
+#: document/static/js/modules/editor/dialogs/math.js:112
 msgid "Functions"
 msgstr "Funções"
 
 #: document/static/js/modules/editor/dialogs/figure.js:46
-#: document/static/js/modules/editor/dialogs/math.js:111
+#: document/static/js/modules/editor/dialogs/math.js:113
 msgid "Greek Letters"
 msgstr "Letras Gregas"
 
 #: document/static/js/modules/editor/dialogs/figure.js:47
-#: document/static/js/modules/editor/dialogs/math.js:112
+#: document/static/js/modules/editor/dialogs/math.js:114
 msgid "LaTeX Command Mode"
 msgstr "Modo de comando Latex"
 
 #: document/static/js/modules/editor/dialogs/figure.js:48
-#: document/static/js/modules/editor/dialogs/math.js:113
+#: document/static/js/modules/editor/dialogs/math.js:115
 msgid "Numeric"
 msgstr "Numérico"
 
 #: document/static/js/modules/editor/dialogs/figure.js:50
-#: document/static/js/modules/editor/dialogs/math.js:115
+#: document/static/js/modules/editor/dialogs/math.js:117
 msgid "Symbols and Roman Letters"
 msgstr "Letras e Símbolos Romanos"
 
 #: document/static/js/modules/editor/dialogs/figure.js:52
-#: document/static/js/modules/editor/dialogs/math.js:117
+#: document/static/js/modules/editor/dialogs/math.js:119
 msgid "Copy to Clipboard"
 msgstr "Copiar para área de trabalho"
 
 #: document/static/js/modules/editor/dialogs/figure.js:53
-#: document/static/js/modules/editor/dialogs/math.js:118
+#: document/static/js/modules/editor/dialogs/math.js:120
 #: document/static/js/modules/editor/menus/toolbar/model.js:783
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:65
 msgid "Redo"
 msgstr "Refazer"
 
 #: document/static/js/modules/editor/dialogs/figure.js:55
-#: document/static/js/modules/editor/dialogs/math.js:120
+#: document/static/js/modules/editor/dialogs/math.js:122
 msgid "Toggle Virtual Keyboard"
 msgstr "Ativar/Desativar Teclado Virtual"
 
 #: document/static/js/modules/editor/dialogs/figure.js:57
-#: document/static/js/modules/editor/dialogs/math.js:122
+#: document/static/js/modules/editor/dialogs/math.js:124
 #: document/static/js/modules/editor/menus/toolbar/model.js:770
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:61
 msgid "Undo"
@@ -3530,10 +3530,6 @@ msgstr "Removido"
 #: usermedia/static/js/modules/images/overview/index.js:254
 msgid "Added"
 msgstr "Adicionado"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:263
-msgid "Code block"
-msgstr "Bloco de código"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:269
 msgid "Was"
@@ -4103,6 +4099,10 @@ msgstr "5º Título"
 #: document/static/js/modules/editor/menus/toolbar/model.js:23
 msgid "6th Heading"
 msgstr "6º Título"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:24
+msgid "Code"
+msgstr "Código"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:129
 msgid "Open/close header menu"

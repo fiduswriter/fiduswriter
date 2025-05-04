@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-17 14:58+0000\n"
+"POT-Creation-Date: 2025-05-04 20:29+0000\n"
 "PO-Revision-Date: 2025-04-03 09:34+0200\n"
 "Last-Translator: None <>\n"
 "Language-Team: Bulgarian <mail@fiduswriter.org>\n"
@@ -809,10 +809,10 @@ msgstr "Подзаглавие"
 #: document/static/js/modules/document_template/templates.js:232
 #: document/static/js/modules/document_template/templates.js:305
 #: document/static/js/modules/document_template/templates.js:388
-#: document/static/js/modules/document_template/templates.js:460
-#: document/static/js/modules/document_template/templates.js:511
-#: document/static/js/modules/document_template/templates.js:692
-#: document/static/js/modules/document_template/templates.js:715
+#: document/static/js/modules/document_template/templates.js:461
+#: document/static/js/modules/document_template/templates.js:512
+#: document/static/js/modules/document_template/templates.js:693
+#: document/static/js/modules/document_template/templates.js:716
 #: document/static/js/modules/documents/overview/index.js:428
 #: document/static/js/modules/editor/dialogs/citation.js:247
 #: document/static/js/modules/editor/dialogs/templates.js:221
@@ -1465,7 +1465,7 @@ msgstr "Редактирай категории"
 #: document/static/js/modules/document_template/document_style_dialog.js:172
 #: document/static/js/modules/document_template/export_template_dialog.js:82
 #: document/static/js/modules/document_template/export_template_dialog.js:178
-#: document/static/js/modules/document_template/templates.js:700
+#: document/static/js/modules/document_template/templates.js:701
 #: document/static/js/modules/documents/access_rights/templates.js:23
 #: document/static/js/modules/documents/overview/actions.js:84
 #: document/static/js/modules/documents/overview/index.js:140
@@ -1567,15 +1567,15 @@ msgstr "Шаблонът се нуждае от идентификационен
 msgid "The template ID cannot contain spaces."
 msgstr "Идент. № на шаблон не може да съдържа интервали."
 
-#: document/static/js/modules/document_template/designer.js:247
+#: document/static/js/modules/document_template/designer.js:255
 msgid "All document parts need an ID."
 msgstr "Всички части на документа се нуждаят от идентификационен номер."
 
-#: document/static/js/modules/document_template/designer.js:254
+#: document/static/js/modules/document_template/designer.js:262
 msgid "IDs cannot contain spaces."
 msgstr "Идентификационните номера не могат да съдържат интервали."
 
-#: document/static/js/modules/document_template/designer.js:272
+#: document/static/js/modules/document_template/designer.js:280
 msgid "IDs have to be unique."
 msgstr "Идентификационните документи трябва да бъдат уникални."
 
@@ -1723,8 +1723,8 @@ msgstr "Вмъкване на таблица"
 #: document/static/js/modules/document_template/schema.js:100
 #: document/static/js/modules/document_template/schema.js:194
 #: document/static/js/modules/document_template/schema.js:198
-#: document/static/js/modules/document_template/templates.js:88
-#: document/static/js/modules/document_template/templates.js:452
+#: document/static/js/modules/document_template/templates.js:89
+#: document/static/js/modules/document_template/templates.js:453
 #: document/static/js/modules/editor/menus/toolbar/model.js:747
 msgid "Table"
 msgstr "Таблица"
@@ -1832,9 +1832,9 @@ msgid "Heading 6"
 msgstr "Позиция 6"
 
 #: document/static/js/modules/document_template/templates.js:41
-#: document/static/js/modules/editor/menus/toolbar/model.js:24
-msgid "Code"
-msgstr "Код"
+#: document/static/js/modules/editor/marginboxes/templates.js:263
+msgid "Code block"
+msgstr "Блок код"
 
 #: document/static/js/modules/document_template/templates.js:46
 #: document/static/js/modules/editor/menus/toolbar/model.js:25
@@ -1875,7 +1875,7 @@ msgstr "Препратка"
 msgid "Blockquote"
 msgstr "Текстов блок"
 
-#: document/static/js/modules/document_template/templates.js:80
+#: document/static/js/modules/document_template/templates.js:81
 #: document/static/js/modules/editor/menus/toolbar/model.js:158
 #: document/static/js/modules/editor/menus/toolbar/model.js:622
 msgid "Footnote"
@@ -1905,8 +1905,8 @@ msgstr "Заглавие"
 #: document/static/js/modules/document_template/templates.js:227
 #: document/static/js/modules/document_template/templates.js:300
 #: document/static/js/modules/document_template/templates.js:383
-#: document/static/js/modules/document_template/templates.js:455
-#: document/static/js/modules/document_template/templates.js:506
+#: document/static/js/modules/document_template/templates.js:456
+#: document/static/js/modules/document_template/templates.js:507
 #: document/static/js/modules/editor/menus/figure/model.js:7
 #: document/static/js/modules/editor/menus/table/model.js:388
 msgid "Configure"
@@ -1917,9 +1917,9 @@ msgstr "Конфигуриране"
 #: document/static/js/modules/document_template/templates.js:304
 #: document/static/js/modules/document_template/templates.js:365
 #: document/static/js/modules/document_template/templates.js:387
-#: document/static/js/modules/document_template/templates.js:459
-#: document/static/js/modules/document_template/templates.js:510
-#: document/static/js/modules/document_template/templates.js:693
+#: document/static/js/modules/document_template/templates.js:460
+#: document/static/js/modules/document_template/templates.js:511
+#: document/static/js/modules/document_template/templates.js:694
 msgid "ID"
 msgstr "документ за самоличност"
 
@@ -1947,7 +1947,7 @@ msgstr "Заглавие (преведено)"
 #: document/static/js/modules/document_template/templates.js:244
 #: document/static/js/modules/document_template/templates.js:324
 #: document/static/js/modules/document_template/templates.js:399
-#: document/static/js/modules/document_template/templates.js:464
+#: document/static/js/modules/document_template/templates.js:465
 msgid "Locking"
 msgstr "заключване"
 
@@ -1955,7 +1955,7 @@ msgstr "заключване"
 #: document/static/js/modules/document_template/templates.js:246
 #: document/static/js/modules/document_template/templates.js:326
 #: document/static/js/modules/document_template/templates.js:401
-#: document/static/js/modules/document_template/templates.js:466
+#: document/static/js/modules/document_template/templates.js:467
 msgid "User can change contents"
 msgstr "Потребителят може да променя съдържанието"
 
@@ -1963,7 +1963,7 @@ msgstr "Потребителят може да променя съдържани
 #: document/static/js/modules/document_template/templates.js:247
 #: document/static/js/modules/document_template/templates.js:327
 #: document/static/js/modules/document_template/templates.js:402
-#: document/static/js/modules/document_template/templates.js:467
+#: document/static/js/modules/document_template/templates.js:468
 msgid "User can not change contents"
 msgstr "Потребителят не може да променя съдържанието"
 
@@ -1978,8 +1978,8 @@ msgstr "Потребителят може да добавя само съдър�
 #: document/static/js/modules/document_template/templates.js:251
 #: document/static/js/modules/document_template/templates.js:331
 #: document/static/js/modules/document_template/templates.js:406
-#: document/static/js/modules/document_template/templates.js:471
-#: document/static/js/modules/document_template/templates.js:515
+#: document/static/js/modules/document_template/templates.js:472
+#: document/static/js/modules/document_template/templates.js:516
 msgid "Optional"
 msgstr "по избор"
 
@@ -1987,8 +1987,8 @@ msgstr "по избор"
 #: document/static/js/modules/document_template/templates.js:253
 #: document/static/js/modules/document_template/templates.js:333
 #: document/static/js/modules/document_template/templates.js:408
-#: document/static/js/modules/document_template/templates.js:473
-#: document/static/js/modules/document_template/templates.js:517
+#: document/static/js/modules/document_template/templates.js:474
+#: document/static/js/modules/document_template/templates.js:518
 msgid "Obligatory field"
 msgstr "Задължително поле"
 
@@ -1996,8 +1996,8 @@ msgstr "Задължително поле"
 #: document/static/js/modules/document_template/templates.js:254
 #: document/static/js/modules/document_template/templates.js:334
 #: document/static/js/modules/document_template/templates.js:409
-#: document/static/js/modules/document_template/templates.js:474
-#: document/static/js/modules/document_template/templates.js:518
+#: document/static/js/modules/document_template/templates.js:475
+#: document/static/js/modules/document_template/templates.js:519
 msgid "Optional, shown by default"
 msgstr "По избор, показва се по подразбиране"
 
@@ -2005,8 +2005,8 @@ msgstr "По избор, показва се по подразбиране"
 #: document/static/js/modules/document_template/templates.js:255
 #: document/static/js/modules/document_template/templates.js:335
 #: document/static/js/modules/document_template/templates.js:410
-#: document/static/js/modules/document_template/templates.js:475
-#: document/static/js/modules/document_template/templates.js:519
+#: document/static/js/modules/document_template/templates.js:476
+#: document/static/js/modules/document_template/templates.js:520
 msgid "Optional, not shown by default"
 msgstr "По избор, не се показва по подразбиране"
 
@@ -2016,14 +2016,14 @@ msgstr "Разрешени заглавия"
 
 #: document/static/js/modules/document_template/templates.js:194
 #: document/static/js/modules/document_template/templates.js:340
-#: document/static/js/modules/document_template/templates.js:480
+#: document/static/js/modules/document_template/templates.js:481
 #: user/static/js/modules/profile/templates.js:155
 msgid "Language"
 msgstr "език"
 
 #: document/static/js/modules/document_template/templates.js:196
 #: document/static/js/modules/document_template/templates.js:342
-#: document/static/js/modules/document_template/templates.js:482
+#: document/static/js/modules/document_template/templates.js:483
 msgid "Document language"
 msgstr "Език на документа"
 
@@ -2031,7 +2031,7 @@ msgstr "Език на документа"
 #: document/static/js/modules/document_template/templates.js:259
 #: document/static/js/modules/document_template/templates.js:350
 #: document/static/js/modules/document_template/templates.js:414
-#: document/static/js/modules/document_template/templates.js:490
+#: document/static/js/modules/document_template/templates.js:491
 msgid "Initial content"
 msgstr "Първоначално съдържание"
 
@@ -2039,7 +2039,7 @@ msgstr "Първоначално съдържание"
 #: document/static/js/modules/document_template/templates.js:263
 #: document/static/js/modules/document_template/templates.js:354
 #: document/static/js/modules/document_template/templates.js:418
-#: document/static/js/modules/document_template/templates.js:494
+#: document/static/js/modules/document_template/templates.js:495
 #: document/static/js/modules/editor/marginboxes/templates.js:422
 msgid "Instructions"
 msgstr "инструкции"
@@ -2109,72 +2109,72 @@ msgstr "сепаратор"
 msgid "Tags"
 msgstr "Tags"
 
-#: document/static/js/modules/document_template/templates.js:468
+#: document/static/js/modules/document_template/templates.js:469
 msgid "User can not change first row"
 msgstr "Потребителят не може да промени първия ред"
 
-#: document/static/js/modules/document_template/templates.js:503
+#: document/static/js/modules/document_template/templates.js:504
 msgid "Table of Contents"
 msgstr "Съдържание"
 
-#: document/static/js/modules/document_template/templates.js:668
+#: document/static/js/modules/document_template/templates.js:669
 msgid "Add new document style"
 msgstr "Добавете нов стил на документ"
 
-#: document/static/js/modules/document_template/templates.js:680
+#: document/static/js/modules/document_template/templates.js:681
 msgid "Add new export template"
 msgstr "Добавете нов шаблон за износ"
 
-#: document/static/js/modules/document_template/templates.js:698
+#: document/static/js/modules/document_template/templates.js:699
 msgid "Element types"
 msgstr "Типове елементи"
 
-#: document/static/js/modules/document_template/templates.js:699
+#: document/static/js/modules/document_template/templates.js:700
 msgid "Document structure"
 msgstr "Структура на документа"
 
-#: document/static/js/modules/document_template/templates.js:726
+#: document/static/js/modules/document_template/templates.js:727
 msgid "Setting"
 msgstr "обстановка"
 
-#: document/static/js/modules/document_template/templates.js:727
+#: document/static/js/modules/document_template/templates.js:728
 msgid "Value"
 msgstr "стойност"
 
-#: document/static/js/modules/document_template/templates.js:733
+#: document/static/js/modules/document_template/templates.js:734
 msgid "Footnote specifications"
 msgstr "Бележки под линия"
 
-#: document/static/js/modules/document_template/templates.js:741
+#: document/static/js/modules/document_template/templates.js:742
 msgid "Available languages"
 msgstr "Налични езици"
 
-#: document/static/js/modules/document_template/templates.js:749
+#: document/static/js/modules/document_template/templates.js:750
 #: user/static/js/modules/profile/templates.js:157
 msgid "Default language"
 msgstr "Език по подразбиране"
 
-#: document/static/js/modules/document_template/templates.js:757
+#: document/static/js/modules/document_template/templates.js:758
 msgid "Permitted paper sizes"
 msgstr "Разрешени размери на хартията"
 
-#: document/static/js/modules/document_template/templates.js:765
+#: document/static/js/modules/document_template/templates.js:766
 msgid "Custom bibliography header"
 msgstr "Персонализирана заглавка на библиография"
 
-#: document/static/js/modules/document_template/templates.js:773
+#: document/static/js/modules/document_template/templates.js:774
 msgid "Available citation styles"
 msgstr "Налични стилове на цитиране"
 
-#: document/static/js/modules/document_template/templates.js:781
+#: document/static/js/modules/document_template/templates.js:782
 msgid "Default citation style"
 msgstr "Стилът на цитиране по подразбиране"
 
-#: document/static/js/modules/document_template/templates.js:791
+#: document/static/js/modules/document_template/templates.js:792
 msgid "Document styles"
 msgstr "Стилове на документи"
 
-#: document/static/js/modules/document_template/templates.js:801
+#: document/static/js/modules/document_template/templates.js:802
 msgid "Export templates"
 msgstr "Експортиране на шаблони"
 
@@ -3051,7 +3051,7 @@ msgstr "Моля изберете поне един източник на цит
 #: document/static/js/modules/editor/dialogs/contributor.js:21
 #: document/static/js/modules/editor/dialogs/contributor.js:95
 #: document/static/js/modules/editor/state_plugins/contributor_input.js:89
-#: document/static/js/modules/editor/state_plugins/tag_input.js:49
+#: document/static/js/modules/editor/state_plugins/tag_input.js:50
 msgid "Add"
 msgstr "Добави"
 
@@ -3068,49 +3068,49 @@ msgid "Insert image"
 msgstr "Вмъкни изображение"
 
 #: document/static/js/modules/editor/dialogs/figure.js:45
-#: document/static/js/modules/editor/dialogs/math.js:110
+#: document/static/js/modules/editor/dialogs/math.js:112
 msgid "Functions"
 msgstr "Функции"
 
 #: document/static/js/modules/editor/dialogs/figure.js:46
-#: document/static/js/modules/editor/dialogs/math.js:111
+#: document/static/js/modules/editor/dialogs/math.js:113
 msgid "Greek Letters"
 msgstr "Гръцки букви"
 
 #: document/static/js/modules/editor/dialogs/figure.js:47
-#: document/static/js/modules/editor/dialogs/math.js:112
+#: document/static/js/modules/editor/dialogs/math.js:114
 msgid "LaTeX Command Mode"
 msgstr "LaTeX команден режим"
 
 #: document/static/js/modules/editor/dialogs/figure.js:48
-#: document/static/js/modules/editor/dialogs/math.js:113
+#: document/static/js/modules/editor/dialogs/math.js:115
 msgid "Numeric"
 msgstr "Цифрова"
 
 #: document/static/js/modules/editor/dialogs/figure.js:50
-#: document/static/js/modules/editor/dialogs/math.js:115
+#: document/static/js/modules/editor/dialogs/math.js:117
 msgid "Symbols and Roman Letters"
 msgstr "Символи и римски букви"
 
 #: document/static/js/modules/editor/dialogs/figure.js:52
-#: document/static/js/modules/editor/dialogs/math.js:117
+#: document/static/js/modules/editor/dialogs/math.js:119
 msgid "Copy to Clipboard"
 msgstr "Копиране в клипборда"
 
 #: document/static/js/modules/editor/dialogs/figure.js:53
-#: document/static/js/modules/editor/dialogs/math.js:118
+#: document/static/js/modules/editor/dialogs/math.js:120
 #: document/static/js/modules/editor/menus/toolbar/model.js:783
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:65
 msgid "Redo"
 msgstr "Redo"
 
 #: document/static/js/modules/editor/dialogs/figure.js:55
-#: document/static/js/modules/editor/dialogs/math.js:120
+#: document/static/js/modules/editor/dialogs/math.js:122
 msgid "Toggle Virtual Keyboard"
 msgstr "Превключване на виртуална клавиатура"
 
 #: document/static/js/modules/editor/dialogs/figure.js:57
-#: document/static/js/modules/editor/dialogs/math.js:122
+#: document/static/js/modules/editor/dialogs/math.js:124
 #: document/static/js/modules/editor/menus/toolbar/model.js:770
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:61
 msgid "Undo"
@@ -3531,10 +3531,6 @@ msgstr "Премахнато"
 #: usermedia/static/js/modules/images/overview/index.js:254
 msgid "Added"
 msgstr "Добавен"
-
-#: document/static/js/modules/editor/marginboxes/templates.js:263
-msgid "Code block"
-msgstr "Блок код"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:269
 msgid "Was"
@@ -4099,6 +4095,10 @@ msgstr "5-та позиция"
 #: document/static/js/modules/editor/menus/toolbar/model.js:23
 msgid "6th Heading"
 msgstr "6-та позиция"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:24
+msgid "Code"
+msgstr "Код"
 
 #: document/static/js/modules/editor/menus/toolbar/model.js:129
 msgid "Open/close header menu"

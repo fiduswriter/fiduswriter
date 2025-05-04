@@ -1,5 +1,6 @@
 import time
 import os
+import sys
 from tempfile import mkdtemp
 
 from channels.testing import ChannelsLiveServerTestCase
@@ -51,6 +52,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             username="User2", email="user2@user.com", passtext="password"
         )
         return super().setUp()
+
+    def tearDown(self):
+        self.driver.execute_script("window.localStorage.clear()")
+        self.driver.execute_script("window.sessionStorage.clear()")
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            # Cool down
+            time.sleep(self.wait_time / 3)
 
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)
@@ -175,7 +184,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             (
                 "#template-editor > table:nth-child(2) > tbody > tr > "
                 "td.to-column > div.to-container > div:nth-child(5) > "
-                "div.attrs > div:nth-child(28) > div.initial > div > "
+                "div.attrs > div:nth-child(29) > div.initial > div > "
                 "div.ProseMirror > div > p"
             ),
         ).click()
@@ -185,7 +194,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             (
                 "#template-editor > table:nth-child(2) > tbody > tr > "
                 "td.to-column > div.to-container > div:nth-child(5) > "
-                "div.attrs > div:nth-child(29) > div.instructions > div > "
+                "div.attrs > div:nth-child(30) > div.instructions > div > "
                 "div.ProseMirror > p"
             ),
         ).click()

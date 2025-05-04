@@ -3,6 +3,7 @@ import {history, redo, undo} from "prosemirror-history"
 import {keymap} from "prosemirror-keymap"
 import {Schema} from "prosemirror-model"
 import {EditorState, Plugin, PluginKey, TextSelection} from "prosemirror-state"
+import {ReplaceStep} from "prosemirror-transform"
 import {Decoration, DecorationSet, EditorView} from "prosemirror-view"
 
 import {addDeletedPartWidget} from "./document_template"
@@ -95,14 +96,15 @@ const pastePlugin = view => {
 }
 
 const submitTag = (tagState, _dispatch, tagInputView, view, getPos) => {
-    const tag = tagState.doc.textContent
+    const selectionTo = tagState.selection.to
+    const tag = tagState.doc.textBetween(0, selectionTo)
     if (tag.length) {
         const eState = view.state,
             startPos = getPos(),
             pos = startPos + view.state.doc.nodeAt(startPos).nodeSize - 1,
             node = eState.schema.nodes.tag.create({tag})
         view.dispatch(view.state.tr.insert(pos, node))
-        tagInputView.dispatch(tagState.tr.delete(1, tagState.doc.nodeSize - 3))
+        tagInputView.dispatch(tagState.tr.delete(1, selectionTo))
     }
     return true
 }
@@ -132,10 +134,6 @@ const createTagInputEditor = (view, getPos, node) => {
                     "Mod-shift-z": undo,
                     "Mod-y": redo,
                     Enter: (state, dispatch, tagInputView) =>
-                        submitTag(state, dispatch, tagInputView, view, getPos),
-                    ",": (state, dispatch, tagInputView) =>
-                        submitTag(state, dispatch, tagInputView, view, getPos),
-                    ";": (state, dispatch, tagInputView) =>
                         submitTag(state, dispatch, tagInputView, view, getPos),
                     ArrowUp: (_state, _dispatch, _tagInputView) => {
                         let validTextSelection = false,
@@ -209,6 +207,36 @@ const createTagInputEditor = (view, getPos, node) => {
             }
         },
         dispatchTransaction: tr => {
+            const submissionStep = tr.steps.find(step => {
+                if (!(step instanceof ReplaceStep)) {
+                    return false
+                }
+                const insertedText = step.slice.content.textBetween(
+                    0,
+                    step.slice.content.size
+                )
+                const triggerChars = [",", ".", ";"]
+                const triggerChar = triggerChars.find(char =>
+                    insertedText.includes(char)
+                )
+                if (triggerChar) {
+                    return true
+                }
+                return false
+            })
+
+            if (submissionStep) {
+                submitTag(
+                    tagInputView.state,
+                    undefined,
+                    tagInputView,
+                    view,
+                    getPos
+                )
+
+                // The tag has been submitted, cancel updating to this state
+                return
+            }
             const newState = tagInputView.state.apply(tr)
             tagInputView.updateState(newState)
         }

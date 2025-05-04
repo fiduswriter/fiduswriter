@@ -5,6 +5,7 @@ import {parseTracks} from "./track"
 export const table = {
     inline: false,
     group: "block",
+    tableRole: "table",
     attrs: {
         id: {default: false},
         track: {default: []},

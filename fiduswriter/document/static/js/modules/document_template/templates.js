@@ -1,7 +1,10 @@
 import {escapeText} from "../common"
 import {LANGUAGES, PAPER_SIZES} from "../schema/const"
 
-const allowedElementsTemplate = ({elements}, footnote = true, table = true) =>
+const allowedElementsTemplate = (
+    {elements},
+    {isFootnote = false, isTable = false} = {}
+) =>
     `<div class="label">
     ${gettext("Allowed elements")}
 </div>
@@ -34,11 +37,11 @@ const allowedElementsTemplate = ({elements}, footnote = true, table = true) =>
     ${gettext("Heading 6")}
 </label>
 ${
-    footnote
+    isFootnote
         ? ""
         : `<label>
         <input type="checkbox" class="elements" value="code_block" ${elements.includes("code_block") ? "checked" : ""}/>
-        ${gettext("Code")}
+        ${gettext("Code block")}
     </label>`
 }
 <label>
@@ -74,20 +77,20 @@ ${
     ${gettext("Blockquote")}
 </label>
 ${
-    footnote
-        ? `<label>
+    isFootnote
+        ? ""
+        : `<label>
         <input type="checkbox" class="elements" value="footnote" ${elements.includes("footnote") ? "checked" : ""}/>
         ${gettext("Footnote")}
     </label>`
-        : ""
 }
 ${
-    table
-        ? `<label>
+    isTable
+        ? ""
+        : `<label>
         <input type="checkbox" class="elements" value="table" ${elements.includes("table") ? "checked" : ""}/>
         ${gettext("Table")}
     </label>`
-        : ""
 }`
 
 const allowedMarksTemplate = ({marks}) =>
@@ -432,6 +435,7 @@ const tableTemplate = ({
         "heading4",
         "heading5",
         "heading6",
+        "code_block",
         "figure",
         "ordered_list",
         "bullet_list",
@@ -475,7 +479,7 @@ const tableTemplate = ({
                 <option value="hidden" ${optional === "hidden" ? "selected" : ""}>${gettext("Optional, not shown by default")}</option>
             </select>
         </div>
-        ${allowedElementsTemplate({elements}, true, false)}
+        ${allowedElementsTemplate({elements}, {isTable: true})}
         ${allowedMarksTemplate({marks})}
         <div class="label">${gettext("Language")}
             <select class="language">
@@ -543,7 +547,7 @@ const footnoteTemplate = ({
     ],
     footnote_marks = ["strong", "em", "underline", "link"]
 }) =>
-    `<div class="doc-part-block attrs">${allowedElementsTemplate({elements: footnote_elements}, false)}${allowedMarksTemplate({marks: footnote_marks})}</div>`
+    `<div class="doc-part-block attrs">${allowedElementsTemplate({elements: footnote_elements}, {isFootnote: true})}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
 const citationstylesTemplate = (
     {citationstyles = ["apa"]},

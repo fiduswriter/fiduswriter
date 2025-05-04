@@ -289,6 +289,7 @@ export const table_part = partSpec("table", "table", {
             "heading4",
             "heading5",
             "heading6",
+            "code_block",
             "figure",
             "ordered_list",
             "bullet_list",

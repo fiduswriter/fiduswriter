@@ -221,13 +221,21 @@ export function adjustDocToTemplate(
                                 {
                                     type: "table",
                                     content: [
+                                        {type: "table_caption"},
                                         {
-                                            type: "table_row",
+                                            type: "table_body",
                                             content: [
                                                 {
-                                                    type: "table_cell",
+                                                    type: "table_row",
                                                     content: [
-                                                        {type: "paragraph"}
+                                                        {
+                                                            type: "table_cell",
+                                                            content: [
+                                                                {
+                                                                    type: "paragraph"
+                                                                }
+                                                            ]
+                                                        }
                                                     ]
                                                 }
                                             ]

@@ -1,18 +1,16 @@
 import {GapCursor} from "prosemirror-gapcursor"
 import {history, redo, undo} from "prosemirror-history"
 import {keymap} from "prosemirror-keymap"
-import {Schema} from "prosemirror-model"
+import {DOMParser, Schema} from "prosemirror-model"
 import {
-    EditorState,
     NodeSelection,
     Plugin,
     PluginKey,
     TextSelection
 } from "prosemirror-state"
-import {ReplaceStep} from "prosemirror-transform"
+import {EditorState} from "prosemirror-state"
 import {Decoration, DecorationSet, EditorView} from "prosemirror-view"
 
-import {tags_part} from "../../schema/document/structure"
 import {addDeletedPartWidget} from "./document_template"
 
 const key = new PluginKey("tagInput")
@@ -64,38 +62,46 @@ const placeholderPlugin = nodeTitle =>
         }
     })
 
-const pastePlugin = view => {
-    const submitTags = tags => {
-        const eState = view.state,
-            pos = view.state.selection.from || view.state.doc.nodeSize - 1,
-            nodes = tags.map(tag => eState.schema.nodes.tag.create({tag}))
-        view.dispatch(view.state.tr.insert(pos, nodes))
-    }
-
+const pastePlugin = editorView => {
     return new Plugin({
         props: {
-            transformPastedHTML: (inHTML, _view) => {
-                const dom = document.createElement("div")
-                dom.innerHTML = inHTML
-                const tags = dom.innerText
-                    .split(/[,;]+/)
-                    .filter(tag => tag.length)
-                if (tags.length) {
-                    const lastTag = tags.pop()
-                    submitTags(tags)
-                    return lastTag
-                } else {
-                    return inHTML
-                }
-            },
-            transformPastedText: (inText, _view) => {
-                const tags = inText.split(/[,;]+/).filter(tag => tag.length)
-                if (tags.length) {
-                    const lastTag = tags.pop()
-                    submitTags(tags)
-                    return lastTag
-                } else {
-                    return inText
+            handleDOMEvents: {
+                paste(_view, event) {
+                    const html = event.clipboardData.getData("text/html"),
+                        text = event.clipboardData.getData("text/plain"),
+                        slice = text
+                            .split(/[,;.]/)
+                            .map(item => item.trim())
+                            .filter(item => item.length)
+                    let tags
+                    if (text && !html) {
+                        tags = slice
+                    } else {
+                        // Make a paste DOM document
+                        const clipboardDoc =
+                            document.implementation.createHTMLDocument(
+                                "paste document"
+                            )
+                        const pasteHTML = document.createElement("body")
+                        clipboardDoc.body.appendChild(pasteHTML)
+                        pasteHTML.innerHTML = html
+                        tags = Array.from(
+                            pasteHTML.querySelectorAll("span.tag")
+                        ).map(tag => tag.textContent)
+                    }
+                    if (!tags.length) {
+                        return
+                    }
+                    const pos = editorView.state.selection.from
+                    const tr = editorView.state.tr
+                    tags.reverse().forEach(tag => {
+                        const node = editorView.state.schema.nodes.tag.create({
+                            tag
+                        })
+                        tr.insert(pos, node)
+                    })
+                    editorView.dispatch(tr)
+                    return true
                 }
             }
         }
@@ -103,6 +109,7 @@ const pastePlugin = view => {
 }
 
 const submitTag = (tagState, _dispatch, tagInputView, view, getPos) => {
+    console.trace()
     const selectionTo = tagState.selection.to
     const tag = tagState.doc.textBetween(0, selectionTo)
     if (tag.length) {
@@ -113,7 +120,6 @@ const submitTag = (tagState, _dispatch, tagInputView, view, getPos) => {
         view.dispatch(view.state.tr.insert(pos, node))
         tagInputView.dispatch(tagState.tr.delete(1, selectionTo))
     }
-    return true
 }
 
 const createTagInputEditor = (view, getPos, node) => {
@@ -184,12 +190,46 @@ const createTagInputEditor = (view, getPos, node) => {
                             : new GapCursor($pos)
                         const tr = view.state.tr.setSelection(selection)
                         view.dispatch(tr)
+                    },
+                    ArrowLeft: (state, dispatch, _tagInputView) => {
+                        // If we're at the leftmost position (position 1), stopEvent will handle moving out of the tag
+                        if (state.selection.to > 1) {
+                            // Inside the tag input, move caret left normally
+                            const tr = state.tr.setSelection(
+                                TextSelection.create(
+                                    state.doc,
+                                    state.selection.from - 1,
+                                    state.selection.to - 1
+                                )
+                            )
+                            dispatch(tr)
+                            return true
+                        }
+                        return false
+                    },
+                    ArrowRight: (state, dispatch, _tagInputView) => {
+                        const docSize = state.doc.nodeSize - 3
+                        // If we're at the rightmost position, stopEvent will handle moving out of the tag
+                        if (state.selection.from < docSize) {
+                            // Inside the tag input, move caret right normally
+                            const tr = state.tr.setSelection(
+                                TextSelection.create(
+                                    state.doc,
+                                    state.selection.from + 1,
+                                    state.selection.to + 1
+                                )
+                            )
+                            dispatch(tr)
+                            return true
+                        }
+                        return false
                     }
                 })
             ]
         }),
         handleDOMEvents: {
             blur: (tagInputView, event) => {
+                // Handle blur event
                 event.preventDefault()
                 // Set a timeout so that change of focus can take place first
                 window.setTimeout(() => {
@@ -265,7 +305,7 @@ export class TagsPartView {
     }
 
     stopEvent(event) {
-        console.log("stopEvent start", {event})
+        // Handle events for tagInputView
         if (["click", "mousedown"].includes(event.type)) {
             return false
         } else if (!this.tagInputView || this.node.attrs.locking === "fixed") {
@@ -275,14 +315,9 @@ export class TagsPartView {
             !this.tagInputView.hasFocus() ||
             !["ArrowRight", "ArrowLeft"].includes(event.key)
         ) {
-            // Not event keydown ArrowRight or ArrowLeft
-            console.log("not responsible", {
-                focus: this.tagInputView.hasFocus(),
-                state: this.tagInputView.state
-            })
             return false
         }
-        console.log("handle with stopEvent")
+        // Handle arrow navigation out of tagInputView
 
         if (
             event.key === "ArrowRight" &&
@@ -292,13 +327,13 @@ export class TagsPartView {
             const startPos = this.getPos(),
                 pos = startPos + this.node.nodeSize
 
-            const {newPos, $newPos, selectionType} = findValidCaretPosition(
+            const {$newPos, selectionType} = findValidCaretPosition(
                 this.view.state,
                 pos,
                 1
             )
 
-            if (!newPos) {
+            if (!$newPos) {
                 return false
             }
             this.view.focus()
@@ -308,8 +343,8 @@ export class TagsPartView {
             } else {
                 newSelection = TextSelection.create(
                     this.view.state.doc,
-                    newPos,
-                    newPos
+                    $newPos.pos,
+                    $newPos.pos
                 )
             }
             this.view.dispatch(this.view.state.tr.setSelection(newSelection))
@@ -320,6 +355,7 @@ export class TagsPartView {
             event.key === "ArrowLeft" &&
             this.tagInputView.state.selection.to === 1
         ) {
+            // Exit tag input to the left
             this.view.focus()
             const startPos = this.getPos(),
                 pos =
@@ -333,8 +369,12 @@ export class TagsPartView {
             event.preventDefault()
             event.stopPropagation()
             return true
+        } else {
+            event.stopPropagation()
+            event.preventDefault()
+            // Prevent event from propagating
+            return true
         }
-        return false
     }
 
     ignoreMutation(_record) {
@@ -359,14 +399,14 @@ const findValidCaretPosition = (state, pos, dir) => {
             selectionType = "gap"
         }
     }
-    return {newPos, $newPos, selectionType}
+    return {$newPos, selectionType}
 }
 
 export const tagInputPlugin = options =>
     new Plugin({
         key,
         state: {
-            init(_config, _state) {
+            init(_config, state) {
                 if (options.editor.docInfo.access_rights === "write") {
                     this.spec.props.nodeViews["tags_part"] = (
                         node,
@@ -375,9 +415,29 @@ export const tagInputPlugin = options =>
                     ) => new TagsPartView(node, view, getPos)
                 }
 
-                return {}
+                // Find all tags_part nodes in the document
+                const tagsPartPositions = []
+                state.doc.descendants((node, pos) => {
+                    if (node.type.name === "tags_part") {
+                        tagsPartPositions.push({
+                            start: pos,
+                            end: pos + node.nodeSize
+                        })
+                    }
+                })
+
+                return {tagsPartPositions}
             },
-            apply(_tr, prev) {
+            apply(tr, prev) {
+                // If the document was modified, update all positions
+                if (tr.docChanged) {
+                    const newPositions = prev.tagsPartPositions.map(range => ({
+                        start: tr.mapping.map(range.start),
+                        end: tr.mapping.map(range.end)
+                    }))
+
+                    return {tagsPartPositions: newPositions}
+                }
                 return prev
             }
         },
@@ -385,15 +445,12 @@ export const tagInputPlugin = options =>
             nodeViews: {},
             // Handle keyboard selection between tags
             handleKeyDown(view, event) {
-                console.log("handleKeyDown start")
                 if (
                     !["ArrowLeft", "ArrowRight"].includes(event.key) ||
                     !view.hasFocus()
                 ) {
                     return false
                 }
-
-                console.log("handle with handleKeyDown")
 
                 const $pos = view.state.selection.$from,
                     pos = view.state.selection.from
@@ -408,16 +465,15 @@ export const tagInputPlugin = options =>
                     return
                 } else {
                     const dir = event.key === "ArrowRight" ? 1 : -1
-                    const foundCaretPos = findValidCaretPosition(
+                    $newPos = findValidCaretPosition(
                         view.state,
                         pos,
                         dir
-                    )
-                    $newPos = foundCaretPos.$newPos
+                    ).$newPos
                     if ($newPos?.parent.type.name === "tags_part") {
                         position =
                             event.key === "ArrowRight" ? "before" : "after"
-                        newPos = foundCaretPos.newPos
+                        newPos = $newPos.pos
                     }
                 }
                 if (!position) {
@@ -496,9 +552,9 @@ export const tagInputPlugin = options =>
                             return true
                         } else {
                             // No more tags, move to the last previous viable caret position
-                            const {newPos, $newPos, selectionType} =
+                            const {$newPos, selectionType} =
                                 findValidCaretPosition(view.state, pos, -1)
-                            if (!newPos) {
+                            if (!$newPos) {
                                 return false
                             }
                             let newSelection
@@ -508,8 +564,8 @@ export const tagInputPlugin = options =>
                                 // text selection
                                 newSelection = TextSelection.create(
                                     view.state.doc,
-                                    newPos,
-                                    newPos
+                                    $newPos.pos,
+                                    $newPos.pos
                                 )
                             }
                             const tr = view.state.tr.setSelection(newSelection)
@@ -544,37 +600,31 @@ export const tagInputPlugin = options =>
                 return false
             }
         },
-        appendTransaction: (trs, _oldState, state) => {
-            console.log("appendTransaction start")
-            // If selection is not collapsed, don't do anything
-            if (state.selection.from !== state.selection.to) {
+        appendTransaction: (trs, _oldState, newState) => {
+            // If selection is not collapsed or not changed, don't do anything
+            if (
+                newState.selection.from !== newState.selection.to ||
+                !trs.some(tr => tr.selectionSet)
+            ) {
                 return
             }
 
-            const selectionSet = trs.find(tr => tr.selectionSet)
-            if (selectionSet) {
-                console.log("handle with appendTransaction")
-                const $from = state.selection.$from
+            const selectionPos = newState.selection.from
+            const pluginState = key.getState(newState)
 
-                // Check if we're inside a tags_part
-                if ($from.parent.type.name === "tags_part") {
-                    if ($from.nodeAfter) {
-                        return state.tr.setSelection(
-                            NodeSelection.create(
-                                state.doc,
-                                state.selection.from
-                            )
-                        )
-                    } else if ($from.nodeBefore) {
-                        return state.tr.setSelection(
-                            NodeSelection.create(
-                                state.doc,
-                                state.selection.from - 1
-                            )
-                        )
-                    }
-                }
+            // Check if selection is within any tags_part node
+            const tagsPartRange = pluginState.tagsPartPositions.find(
+                range =>
+                    selectionPos > range.start && selectionPos < range.end - 1
+            )
+
+            if (tagsPartRange) {
+                // Select an entire tag node
+                return newState.tr.setSelection(
+                    NodeSelection.create(newState.doc, selectionPos)
+                )
             }
-            return
+
+            return null
         }
     })

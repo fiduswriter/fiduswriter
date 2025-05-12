@@ -37,7 +37,7 @@ export class TagsPartView {
     }
 
     stopEvent(event) {
-        // Handle events for tagInputView
+        // Trap events for tagInputView
         if (["click", "mousedown"].includes(event.type)) {
             return false
         } else if (!this.tagInputView || this.node.attrs.locking === "fixed") {

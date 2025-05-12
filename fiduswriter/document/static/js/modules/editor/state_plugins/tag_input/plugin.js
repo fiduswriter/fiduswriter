@@ -52,7 +52,7 @@ export const tagInputPlugin = options =>
         },
         props: {
             nodeViews: {},
-            // Handle keyboard selection between tags
+            // Handle keyboard selection between tags #  TODO: Move functionality to appendTransaction, etc. for performance
             handleKeyDown(view, event) {
                 if (
                     !["ArrowLeft", "ArrowRight"].includes(event.key) ||
@@ -209,7 +209,7 @@ export const tagInputPlugin = options =>
                 return false
             }
         },
-        appendTransaction: (trs, _oldState, newState) => {
+        appendTransaction: (trs, oldState, newState) => {
             // If selection is not collapsed or not changed, don't do anything
             if (
                 newState.selection.from !== newState.selection.to ||
@@ -223,15 +223,79 @@ export const tagInputPlugin = options =>
 
             // Check if selection is within any tags_part node
             const tagsPartRange = pluginState.tagsPartPositions.find(
-                range =>
-                    selectionPos > range.start && selectionPos < range.end - 1
+                range => selectionPos > range.start && selectionPos < range.end
             )
 
             if (tagsPartRange) {
-                // Select an entire tag node
-                return newState.tr.setSelection(
-                    NodeSelection.create(newState.doc, selectionPos)
-                )
+                const oldSelectionPos = oldState.selection.from
+
+                if (selectionPos + 1 === tagsPartRange.end) {
+                    // Selection is at end of tags_part.
+                    // Put caret into tag editor if write access is present.
+                    // Otherwise, move caret beyond tags_part.
+                    if (options.editor.docInfo.access_rights === "write") {
+                        // tag editor will be activated.
+                        return
+                    }
+                    if (oldSelectionPos < selectionPos) {
+                        const {$newPos, selectionType} = findValidCaretPosition(
+                            newState,
+                            tagsPartRange.end,
+                            1
+                        )
+                        if (!$newPos) {
+                            // Cannot find a location. Give up.
+                            return
+                        }
+                        let newSelection
+                        if (selectionType === "gap") {
+                            newSelection = new GapCursor($newPos)
+                        } else {
+                            // text selection
+                            newSelection = TextSelection.create(
+                                newState.doc,
+                                $newPos.pos,
+                                $newPos.pos
+                            )
+                        }
+                        return newState.tr.setSelection(newSelection)
+                    }
+                }
+
+                const selectedNodePos =
+                    oldSelectionPos < selectionPos
+                        ? selectionPos
+                        : selectionPos - 1
+
+                if (selectedNodePos === tagsPartRange.start) {
+                    // selection is at start of tags node. Find previous possible selection location.
+                    const {$newPos, selectionType} = findValidCaretPosition(
+                        newState,
+                        selectedNodePos,
+                        -1
+                    )
+                    if (!$newPos) {
+                        // Cannot find a location. Give up.
+                        return
+                    }
+                    let newSelection
+                    if (selectionType === "gap") {
+                        newSelection = new GapCursor($newPos)
+                    } else {
+                        // text selection
+                        newSelection = TextSelection.create(
+                            newState.doc,
+                            $newPos.pos,
+                            $newPos.pos
+                        )
+                    }
+                    return newState.tr.setSelection(newSelection)
+                } else {
+                    // Select an entire tag node
+                    return newState.tr.setSelection(
+                        NodeSelection.create(newState.doc, selectedNodePos)
+                    )
+                }
             }
 
             return null

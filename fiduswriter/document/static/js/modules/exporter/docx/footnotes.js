@@ -213,7 +213,7 @@ export class DOCXExporterFootnotes {
             this.math,
             this.tables,
             this.fnRels,
-            this.citations,
+            this.augmentedCitations,
             this.images
         )
         this.fnXML = this.richtext.transformRichtext(this.fnPmJSON)

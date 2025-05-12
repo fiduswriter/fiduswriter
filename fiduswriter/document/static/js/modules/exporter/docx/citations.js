@@ -77,15 +77,17 @@ export class DOCXExporterCitations {
             citationsHTML += `<p>${ct}</p>`
         })
 
-        // We create a standard body footnotecontainer node, add the citations into it, and parse it back.
-        const fnNode = fnSchema.nodeFromJSON({type: "footnotecontainer"})
+        if (citationsHTML.length) {
+            // We create a standard body footnotecontainer node, add the citations into it, and parse it back.
+            const fnNode = fnSchema.nodeFromJSON({type: "footnotecontainer"})
 
-        const serializer = DOMSerializer.fromSchema(fnSchema)
-        let dom = serializer.serializeNode(fnNode)
-        dom.innerHTML = citationsHTML
-        this.pmCits = DOMParser.fromSchema(fnSchema)
-            .parse(dom, {topNode: fnNode})
-            .toJSON().content
+            const serializer = DOMSerializer.fromSchema(fnSchema)
+            const dom = serializer.serializeNode(fnNode)
+            dom.innerHTML = citationsHTML
+            this.pmCits = DOMParser.fromSchema(fnSchema)
+                .parse(dom, {topNode: fnNode})
+                .toJSON().content
+        }
 
         // Now we do the same for the bibliography.
         const cslBib = this.citFm.bibliography
@@ -93,7 +95,7 @@ export class DOCXExporterCitations {
             this.addReferenceStyle(cslBib[0])
             const bibNode = cslBibSchema.nodeFromJSON({type: "cslbib"})
             const cslSerializer = DOMSerializer.fromSchema(cslBibSchema)
-            dom = cslSerializer.serializeNode(bibNode)
+            const dom = cslSerializer.serializeNode(bibNode)
             dom.innerHTML = cslBib[1].join("")
             this.pmBib = DOMParser.fromSchema(cslBibSchema)
                 .parse(dom, {topNode: bibNode})

@@ -27,7 +27,7 @@ export class ODTExporterFootnotes {
         docContent,
         settings,
         xml,
-        citations,
+        bodyCitations,
         styles,
         bibDB,
         imageDB,
@@ -36,7 +36,7 @@ export class ODTExporterFootnotes {
         this.docContent = docContent
         this.settings = settings
         this.xml = xml
-        this.citations = citations
+        this.bodyCitations = bodyCitations
         this.styles = styles
         this.bibDB = bibDB
         this.imageDB = imageDB
@@ -45,6 +45,7 @@ export class ODTExporterFootnotes {
         this.pmBib = false
         this.fnPmJSON = false
         this.images = false
+        this.citations = false
         this.footnotes = []
         this.styleFilePath = "styles.xml"
     }
@@ -53,19 +54,19 @@ export class ODTExporterFootnotes {
         this.findFootnotes()
         if (
             this.footnotes.length ||
-            (this.citations.citFm.citationType === "note" &&
-                this.citations.citInfos.length)
+            (this.bodyCitations.citFm.citationType === "note" &&
+                this.bodyCitations.citInfos.length)
         ) {
             this.convertFootnotes()
             // Include the citinfos from the main document so that they will be
             // used for calculating the bibliography as well
-            const augmentedCitations = new ODTExporterCitations(
+            this.citations = new ODTExporterCitations(
                 this.fnPmJSON,
                 this.settings,
                 this.styles,
                 this.bibDB,
                 this.csl,
-                this.citations.citInfos
+                this.bodyCitations.citInfos
             )
             this.images = new ODTExporterImages(
                 this.fnPmJSON,
@@ -73,12 +74,12 @@ export class ODTExporterFootnotes {
                 this.imageDB
             )
 
-            return augmentedCitations
+            return this.citations
                 .init()
                 .then(() => {
                     // Replace the main bibliography with the new one that includes
                     // both citations in main document and in the footnotes.
-                    this.pmBib = augmentedCitations.pmBib
+                    this.pmBib = this.citations.pmBib
                     return this.images.init()
                 })
                 .then(() => {

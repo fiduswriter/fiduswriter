@@ -1,6 +1,7 @@
 import {GapCursor} from "prosemirror-gapcursor"
+import {TextSelection} from "prosemirror-state"
 
-export const findValidCaretPosition = (state, pos, dir) => {
+export const nextSelection = (state, pos, dir) => {
     let selectionType
     let newPos = pos
     let $newPos
@@ -17,7 +18,13 @@ export const findValidCaretPosition = (state, pos, dir) => {
             selectionType = "gap"
         }
     }
-    return {$newPos, selectionType}
+
+    if (!$newPos) {
+        return false
+    }
+    const newSelection =
+        selectionType === "gap" ? GapCursor($newPos) : TextSelection($newPos)
+    return newSelection
 }
 
 export const submitTag = (tagInputView, view, getPos) => {

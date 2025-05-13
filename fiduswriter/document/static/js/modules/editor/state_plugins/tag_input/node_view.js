@@ -2,7 +2,6 @@ import {GapCursor} from "prosemirror-gapcursor"
 import {TextSelection} from "prosemirror-state"
 import {addDeletedPartWidget} from "../document_template"
 
-import {findValidCaretPosition} from "./helpers"
 import {createTagEditor} from "./tag_editor"
 
 export class TagsPartView {
@@ -49,16 +48,32 @@ export class TagsPartView {
         }
     }
 
-    ignoreMutation(_record) {
-        return true
-    }
-
     update(node, _decorations, _innerDecorations) {
         this.node = node
+        if (node.attrs.hidden) {
+            this.dom.dataset.hidden = true
+        } else {
+            delete this.dom.dataset.hidden
+        }
         return true
     }
 
     getNode() {
         return this.node
+    }
+
+    setSelection(anchor, head, _root) {
+        if (anchor === head && this.view.hasFocus()) {
+            // We must be in last position.
+            // Activate the tag input tag editor.
+            this.tagInputView.focus()
+        }
+    }
+
+    ignoreMutation(_record) {
+        if (this.tagInputView.hasFocus()) {
+            return true
+        }
+        return false
     }
 }

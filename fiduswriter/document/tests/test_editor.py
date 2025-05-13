@@ -263,7 +263,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         cross_reference = self.driver.find_element(
             By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
-        assert cross_reference.text == "An abstract title"
+        self.assertEqual(cross_reference.text, "An abstract title")
         # We add a second cross reference to the figure
         self.driver.find_element(
             By.CSS_SELECTOR,

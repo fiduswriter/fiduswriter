@@ -1,4 +1,3 @@
-import {GapCursor} from "prosemirror-gapcursor"
 import {history, redo, undo} from "prosemirror-history"
 import {keymap} from "prosemirror-keymap"
 import {Schema} from "prosemirror-model"
@@ -6,7 +5,7 @@ import {NodeSelection, TextSelection} from "prosemirror-state"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 
-import {findValidCaretPosition, submitTag} from "./helpers"
+import {nextSelection, submitTag} from "./helpers"
 import {pastePlugin, placeholderPlugin} from "./tag_editor_plugins"
 
 const doc = {content: "tag"},
@@ -46,7 +45,6 @@ const ArrowLeft = (state, dispatch, getNode, view, getPos) => {
     } else {
         const node = getNode()
         // Exit tag input to the left
-        view.focus()
         if (node.nodeSize > 2) {
             // At least one tag
             const startPos = getPos() + node.nodeSize - 2
@@ -55,20 +53,27 @@ const ArrowLeft = (state, dispatch, getNode, view, getPos) => {
                     NodeSelection.create(view.state.doc, startPos)
                 )
             )
+            view.focus()
             return true
         } else {
-            // There is no tag. We jump to the section before this one.
-            const startPos = getPos()
-
-            view.dispatch(
-                view.state.tr.setSelection(
-                    NodeSelection.create(view.state.doc, startPos)
-                )
-            )
-            // We now let the prosemirror move the selection to before this.
+            return ArrowUp(state, dispatch, getNode, view, getPos)
         }
     }
-    return false
+}
+
+const ArrowUp = (_state, _dispatch, _getNode, view, getPos) => {
+    // There is no tag. We jump to the section before this one.
+    const startPos = getPos()
+
+    const newSelection = nextSelection(view.state, startPos, -1)
+
+    if (!newSelection) {
+        return false
+    }
+
+    view.dispatch(view.state.tr.setSelection(newSelection))
+    view.focus()
+    return true
 }
 
 const ArrowRight = (state, dispatch, getNode, view, getPos) => {
@@ -86,34 +91,25 @@ const ArrowRight = (state, dispatch, getNode, view, getPos) => {
         dispatch(tr)
         return true
     } else {
-        // We are at the end of the tag input. Move the cursor beyond
-        const node = getNode()
-        const startPos = getPos(),
-            pos = startPos + node.nodeSize
-
-        const {$newPos, selectionType} = findValidCaretPosition(
-            view.state,
-            pos,
-            1
-        )
-
-        if (!$newPos) {
-            return false
-        }
-        view.focus()
-        let newSelection
-        if (selectionType === "gap") {
-            newSelection = GapCursor($newPos)
-        } else {
-            newSelection = TextSelection.create(
-                view.state.doc,
-                $newPos.pos,
-                $newPos.pos
-            )
-        }
-        view.dispatch(view.state.tr.setSelection(newSelection))
-        return true
+        return ArrowDown(state, dispatch, getNode, view, getPos)
     }
+}
+
+const ArrowDown = (_state, _dispatch, getNode, view, getPos) => {
+    // We are at the end of the tag input. Move the cursor beyond
+    const node = getNode()
+    const startPos = getPos(),
+        pos = startPos + node.nodeSize + 1
+
+    const newSelection = nextSelection(view.state, pos, 1)
+
+    if (!newSelection) {
+        return false
+    }
+
+    view.dispatch(view.state.tr.setSelection(newSelection))
+    view.focus()
+    return true
 }
 
 export const createTagEditor = (view, getPos, getNode) => {
@@ -148,9 +144,9 @@ export const createTagEditor = (view, getPos, getNode) => {
                     ArrowRight: (state, dispatch, _tagInputView) =>
                         ArrowRight(state, dispatch, getNode, view, getPos),
                     ArrowUp: (state, dispatch, _tagInputView) =>
-                        ArrowLeft(state, dispatch, getNode, view, getPos),
+                        ArrowUp(state, dispatch, getNode, view, getPos),
                     ArrowDown: (state, dispatch, _tagInputView) =>
-                        ArrowRight(state, dispatch, getNode, view, getPos)
+                        ArrowDown(state, dispatch, getNode, view, getPos)
                 })
             ]
         }),

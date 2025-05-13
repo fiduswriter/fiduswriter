@@ -1,10 +1,9 @@
-import {GapCursor} from "prosemirror-gapcursor"
-import {TextSelection} from "prosemirror-state"
+import {keyName} from "w3c-keyname"
 import {addDeletedPartWidget} from "../document_template"
 
-import {createTagEditor} from "./tag_editor"
+import {AddButton} from "./add_button"
 
-export class TagsPartView {
+export class ContributorsPartView {
     constructor(node, view, getPos) {
         this.node = node
         this.view = view
@@ -18,17 +17,17 @@ export class TagsPartView {
         }
 
         this.contentDOM = document.createElement("span")
-        this.contentDOM.classList.add("tags-inner")
+        this.contentDOM.classList.add("contributors-inner")
         this.contentDOM.contentEditable = node.attrs.locking !== "fixed"
         this.dom.appendChild(this.contentDOM)
         if (node.attrs.locking !== "fixed") {
-            const [tagInputDOM, tagInputView] = createTagEditor(
-                view,
-                getPos,
-                () => this.getNode()
+            this.addButton = new AddButton(
+                this.dom,
+                () => this.getNode(),
+                this.getPos,
+                this.view
             )
-            this.tagInputView = tagInputView
-            this.dom.appendChild(tagInputDOM)
+            this.addButton.init()
         }
 
         if (node.attrs.deleted) {
@@ -37,12 +36,12 @@ export class TagsPartView {
     }
 
     stopEvent(event) {
-        // Trap events for tagInputView
+        // Trap events for addButton
         if (["click", "mousedown"].includes(event.type)) {
             return false
-        } else if (!this.tagInputView || this.node.attrs.locking === "fixed") {
+        } else if (!this.addButton || this.node.attrs.locking === "fixed") {
             return false
-        } else if (event.type === "keydown" && this.tagInputView.hasFocus()) {
+        } else if (this.addButton.hasFocus() && event.type === "keydown") {
             return true
         } else {
             return false
@@ -67,12 +66,12 @@ export class TagsPartView {
         if (anchor === head && this.view.hasFocus()) {
             // We must be in last position.
             // Activate the tag input tag editor.
-            this.tagInputView.focus()
+            this.addButton.focus()
         }
     }
 
     ignoreMutation(_record) {
-        if (this.tagInputView?.hasFocus()) {
+        if (this.addButton?.hasFocus()) {
             return true
         }
         return false

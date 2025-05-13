@@ -78,8 +78,7 @@ export const tagInputPlugin = options =>
                     // Put caret into tag editor if write access is present.
                     // Otherwise, move caret beyond tags_part.
                     if (options.editor.docInfo.access_rights === "write") {
-                        // tag editor will be activated.
-                        // TODO: switch the focus to the tagEditor
+                        // tag editor will be activated by node view.
                         return
                     }
                     if (oldSelectionPos < selectionPos) {

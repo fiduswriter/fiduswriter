@@ -56,13 +56,14 @@ const ArrowLeft = (state, dispatch, getNode, view, getPos) => {
             view.focus()
             return true
         } else {
+            // There is no tag
             return ArrowUp(state, dispatch, getNode, view, getPos)
         }
     }
 }
 
 const ArrowUp = (_state, _dispatch, _getNode, view, getPos) => {
-    // There is no tag. We jump to the section before this one.
+    // We jump to the section before this one.
     const startPos = getPos()
 
     const newSelection = nextSelection(view.state, startPos, -1)

@@ -20,9 +20,9 @@
     cursor: pointer;
 }
 
-.fw-button:focus {
-    outline-width: 5px;
-    outline-color: var(--cs-6-background-focus);
+.fw-button:focus,
+.fw-button:active {
+    outline: 5px solid var(--cs-6-background-focus);
 }
 
 .fw-button.fw-uppercase {

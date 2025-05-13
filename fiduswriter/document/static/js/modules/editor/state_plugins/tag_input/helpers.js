@@ -2,10 +2,11 @@ import {GapCursor} from "prosemirror-gapcursor"
 import {TextSelection} from "prosemirror-state"
 
 export const nextSelection = (state, pos, dir) => {
-    let selectionType
+    let newSelection
     let newPos = pos
     let $newPos
-    while (!selectionType) {
+
+    while (!newSelection) {
         newPos += dir
         if (newPos === 0 || newPos === state.doc.nodeSize) {
             // Could not find any valid position
@@ -13,17 +14,12 @@ export const nextSelection = (state, pos, dir) => {
         }
         $newPos = state.doc.resolve(newPos)
         if ($newPos.parent.inlineContent) {
-            selectionType = "text"
+            newSelection = new TextSelection($newPos)
         } else if (GapCursor.valid($newPos)) {
-            selectionType = "gap"
+            newSelection = new GapCursor($newPos)
         }
     }
 
-    if (!$newPos) {
-        return false
-    }
-    const newSelection =
-        selectionType === "gap" ? GapCursor($newPos) : TextSelection($newPos)
     return newSelection
 }
 

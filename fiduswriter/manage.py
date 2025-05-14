@@ -83,8 +83,8 @@ def inner(default_project_path):
         SETTINGS_MODULE = sys_argv[index + 1]
     else:
         SETTINGS_MODULE = "configuration"
-        # Load settings from all sources and merge them
-        settings_dict = load_settings(SETTINGS_MODULE)
+    # Load settings from all sources and merge them
+    settings_dict = load_settings(SETTINGS_MODULE)
 
     # Override PORTS setting if running tests
     if "test" in sys_argv:

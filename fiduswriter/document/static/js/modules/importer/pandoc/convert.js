@@ -797,12 +797,24 @@ export class PandocConvert {
     convertCitation(cite) {
         const references = cite.c[0]
             .map(ref => {
-                const [bibId, _bibEntry] = Object.entries(
-                    this.bibliography
-                ).find(
+                // Handle empty bibliography case
+                if (
+                    !this.bibliography ||
+                    Object.keys(this.bibliography).length === 0
+                ) {
+                    return
+                }
+
+                const foundEntry = Object.entries(this.bibliography).find(
                     ([_id, definition]) =>
                         definition.entry_key === ref.citationId
                 )
+
+                if (!foundEntry) {
+                    return
+                }
+
+                const [bibId, _bibEntry] = foundEntry
                 if (!bibId) {
                     return
                 }

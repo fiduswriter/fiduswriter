@@ -343,7 +343,7 @@ export class DocumentOverviewActions {
                         </button>
                         <label id="import-external-name" class="ajax-upload-label"></label>
                     </div>
-                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")},zip" style="display: none;">
+                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")},.zip" style="display: none;">
                 </div>
             </form>
             <div class="noteEl">${gettext("Supported formats")}:</div>

@@ -18,20 +18,24 @@
     white-space: pre;
 }
 
-.csl-entry i {
+.csl-entry i,
+.citation i {
     font-style: italic;
 }
 
-.csl-entry b {
+.csl-entry b,
+.citation b {
     font-weight: bold;
 }
 
-.csl-entry sup {
+.csl-entry sup,
+.citation sup {
     vertical-align: super;
     font-size: smaller;
 }
 
-.csl-entry sub {
+.csl-entry sub,
+.citation sub {
     vertical-align: sub;
     font-size: smaller;
 }

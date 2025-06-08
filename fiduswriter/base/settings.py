@@ -210,7 +210,6 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admindocs",
     "django.contrib.flatpages",
     "channels",
-    # "channels_presence",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",

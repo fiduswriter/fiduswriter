@@ -37,7 +37,7 @@ export const link = {
     attrs: {
         href: {},
         title: {
-            default: null
+            default: ""
         }
     },
     inclusive: false,

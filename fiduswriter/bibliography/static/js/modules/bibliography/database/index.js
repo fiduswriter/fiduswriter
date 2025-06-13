@@ -1,7 +1,7 @@
 import {activateWait, addAlert, deactivateWait} from "../../common"
 import {BibliographyDBServerConnector} from "./server_connector"
 
-const FW_LOCALSTORAGE_VERSION = "1.1"
+const FW_LOCALSTORAGE_VERSION = "1.2"
 
 export class BibliographyDB {
     constructor(app) {

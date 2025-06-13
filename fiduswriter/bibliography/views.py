@@ -47,6 +47,7 @@ def biblist(request):
         or request.user.id != int(request.POST["user_id"])
     ):
         entries = Entry.objects.filter(entry_owner=request.user).values(
+            "id",
             "entry_key",
             "entry_owner",
             "bib_type",

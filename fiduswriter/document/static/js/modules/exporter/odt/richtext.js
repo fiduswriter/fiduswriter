@@ -320,10 +320,18 @@ export class ODTExporterRichtext {
                 break
             }
             case "text": {
-                let hyperlink, strong, em, underline, sup, sub, smallcaps
+                let hyperlink,
+                    strong,
+                    em,
+                    underline,
+                    sup,
+                    sub,
+                    smallcaps,
+                    anchor
                 // Check for hyperlink, bold/strong and italic/em
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === "link")
+                    anchor = node.marks.find(mark => mark.type === "anchor")
                     strong = node.marks.find(mark => mark.type === "strong")
                     em = node.marks.find(mark => mark.type === "em")
                     underline = node.marks.find(
@@ -339,6 +347,17 @@ export class ODTExporterRichtext {
                 if (hyperlink) {
                     start += `<text:a xlink:type="simple" xlink:href="${escapeText(hyperlink.attrs.href)}">`
                     end = "</text:a>" + end
+                }
+                if (anchor) {
+                    start += `<text:reference-mark-start text:name="${anchor.attrs.id}"/>`
+                    end =
+                        `<text:reference-mark-end text:name="${anchor.attrs.id}"/>` +
+                        end
+
+                    start += `<text:bookmark-start text:name="${anchor.attrs.id}"/>`
+                    end =
+                        `<text:bookmark-end text:name="${anchor.attrs.id}"/>` +
+                        end
                 }
 
                 let attributes = ""

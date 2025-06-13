@@ -3,12 +3,14 @@ export const convertText = text => {
     if (!text.length) {
         return []
     }
-    const words = text.trim().split(" ")
+    const words = text.split(" ")
     words.forEach((c, index) => {
-        textContent.push({
-            t: "Str",
-            c
-        })
+        if (c) {
+            textContent.push({
+                t: "Str",
+                c
+            })
+        }
         if (index < words.length - 1) {
             textContent.push({
                 t: "Space"

@@ -827,7 +827,7 @@ export class PandocExporterConvert {
                 case "text": {
                     if (node.text) {
                         let containerContent = pandocContent
-                        let strong, em, underline, hyperlink
+                        let strong, em, underline, hyperlink, anchor
                         if (node.marks) {
                             strong = node.marks.find(
                                 mark => mark.type === "strong"
@@ -838,6 +838,9 @@ export class PandocExporterConvert {
                             )
                             hyperlink = node.marks.find(
                                 mark => mark.type === "link"
+                            )
+                            anchor = node.marks.find(
+                                mark => mark.type === "anchor"
                             )
                         }
                         if (em) {
@@ -872,6 +875,15 @@ export class PandocExporterConvert {
                             })
                             containerContent = c
                         }
+                        if (anchor) {
+                            const c = []
+                            containerContent.push({
+                                t: "Span",
+                                c: [[anchor.attrs.id, [], []], c]
+                            })
+                            containerContent = c
+                        }
+
                         if (options.inCode) {
                             containerContent.push({
                                 t: "Code",

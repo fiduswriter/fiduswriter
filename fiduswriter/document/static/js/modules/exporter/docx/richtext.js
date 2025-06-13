@@ -361,6 +361,7 @@ export class DOCXExporterRichtext {
                 break
             case "text": {
                 let hyperlink,
+                    anchor,
                     em,
                     strong,
                     underline,
@@ -368,9 +369,10 @@ export class DOCXExporterRichtext {
                     sup,
                     sub,
                     formatChange
-                // Check for hyperlink, bold/strong and italic/em
+                // Check for hyperlink, anchor, bold/strong and italic/em
                 if (node.marks) {
                     hyperlink = node.marks.find(mark => mark.type === "link")
+                    anchor = node.marks.find(mark => mark.type === "anchor")
                     em = node.marks.find(mark => mark.type === "em")
                     strong = node.marks.find(mark => mark.type === "strong")
                     underline = node.marks.find(
@@ -384,6 +386,12 @@ export class DOCXExporterRichtext {
                     formatChange = node.marks.find(
                         mark => mark.type === "format_change"
                     )
+                }
+                if (anchor) {
+                    start += `<w:bookmarkStart w:name="${anchor.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>`
+                    end =
+                        `<w:bookmarkStart w:name="${anchor.attrs.id}" w:id="${++this.bookmarkCounter}"/><w:bookmarkEnd w:id="${this.bookmarkCounter}"/>` +
+                        end
                 }
                 if (hyperlink) {
                     const href = hyperlink.attrs.href

@@ -473,7 +473,7 @@ export class HTMLExporterConvert {
                 end = "</aside>" + end
                 break
             case "text": {
-                let strong, em, underline, hyperlink
+                let strong, em, underline, hyperlink, anchor
                 // Check for hyperlink, bold/strong, italic/em and underline
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === "strong")
@@ -482,6 +482,7 @@ export class HTMLExporterConvert {
                         mark => mark.type === "underline"
                     )
                     hyperlink = node.marks.find(mark => mark.type === "link")
+                    anchor = node.marks.find(mark => mark.type === "anchor")
                 }
                 if (em) {
                     start += "<em>"
@@ -502,6 +503,11 @@ export class HTMLExporterConvert {
                         : href
                     start += `<a href="${link}">`
                     end = "</a>" + end
+                }
+                if (anchor) {
+                    const id = anchor.attrs.id
+                    start += `<span class="anchor" id="${this.idPrefix}${id}" data-id="${this.idPrefix}${id}">`
+                    end = "</span>" + end
                 }
                 content += escapeText(node.text).normalize("NFC")
                 break

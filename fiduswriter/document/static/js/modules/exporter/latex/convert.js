@@ -333,7 +333,7 @@ export class LatexExporterConvert {
                 }
                 break
             case "text": {
-                let strong, em, underline, hyperlink
+                let strong, em, underline, hyperlink, anchor
                 // Check for hyperlink, bold/strong, italic/em and underline
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === "strong")
@@ -342,6 +342,7 @@ export class LatexExporterConvert {
                         mark => mark.type === "underline"
                     )
                     hyperlink = node.marks.find(mark => mark.type === "link")
+                    anchor = node.marks.find(mark => mark.type === "anchor")
                 }
                 if (em) {
                     start += "\\emph{"
@@ -366,6 +367,11 @@ export class LatexExporterConvert {
                     }
                     end = "}" + end
                     this.features.hyperlinks = true
+                }
+                if (anchor && this.internalLinks.includes(anchor.attrs.id)) {
+                    // Add a link target
+                    start += `\\hypertarget{${anchor.attrs.id}}{`
+                    end = "}" + end
                 }
                 content += escapeLatexText(node.text)
                 break

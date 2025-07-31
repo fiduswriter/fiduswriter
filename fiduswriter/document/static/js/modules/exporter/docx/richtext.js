@@ -317,6 +317,54 @@ export class DOCXExporterRichtext {
                 options = Object.assign({}, options)
                 options.section = "Quote"
                 break
+            case "code_block":
+                if (!node.content?.length) {
+                    start += "<w:p/>"
+                } else {
+                    options = Object.assign({}, options)
+                    options.section = "Code"
+                    start += `
+                        <w:p${options.paragraphId ? ` w14:paraId="${options.paragraphId}"` : ""}>
+                            <w:pPr><w:pStyle w:val="${options.section}"/>`
+                    if (options.list_type) {
+                        start += `<w:numPr><w:ilvl w:val="${options.list_depth}"/>`
+                        start += `<w:numId w:val="${options.list_type}"/></w:numPr>`
+                    } else {
+                        start += `
+                        <w:rPr>
+                        ${
+                            nextBlockInsert
+                                ? `<w:ins w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockInsert.username)}" w:date="${new Date(nextBlockInsert.date * 60000).toISOString().split(".")[0]}Z"/>`
+                                : ""
+                        }
+                        ${
+                            nextBlockDelete
+                                ? `<w:del w:id="${++this.changeCounter}" w:author="${escapeText(nextBlockDelete.username)}" w:date="${new Date(nextBlockDelete.date * 60000).toISOString().split(".")[0]}Z"/>`
+                                : ""
+                        }
+                        </w:rPr>`
+                    }
+                    if (blockChange) {
+                        start += `
+                        <w:pPrChange w:id="${++this.changeCounter}" w:author="${escapeText(blockChange.username)}" w:date="${new Date(blockChange.date * 60000).toISOString().split(".")[0]}Z">
+                            <w:pPr>
+                                <w:pStyle w:val="${translateBlockType(blockChange.before.type)}"/>
+                            </w:pPr>
+                        </w:pPrChange>`
+                    }
+                    start += "</w:pPr>"
+                    end = "</w:p>" + end
+                    if (!node.content?.length) {
+                        start += "<w:r><w:rPr></w:rPr></w:r>"
+                    }
+                }
+                if (options.commentReference) {
+                    end =
+                        '<w:r><w:rPr><w:rStyle w:val="CommentReference"/></w:rPr><w:annotationRef/></w:r>' +
+                        end
+                    options.commentReference = false
+                }
+                break
             case "ordered_list":
                 options = Object.assign({}, options)
                 options.section = "ListParagraph"
@@ -945,6 +993,7 @@ export class DOCXExporterRichtext {
             case "cslrightinline":
                 break
             default:
+                console.warn("Unknown node type:", node.type, node)
                 break
         }
 

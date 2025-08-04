@@ -4,7 +4,6 @@ from builtins import object
 import os
 import uuid
 from PIL import Image as PilImage
-import pillow_avif  # noqa: F401
 from io import BytesIO
 
 from django.db import models
@@ -184,6 +183,8 @@ class Image(models.Model):
 
         self.create_thumbnail()
         # create a thumbnail. Name based on main image file
+        # Save a second time with info about thumbnail and dimensions
+        super().save(*args, **kwargs)
 
 
 def default_copyright():

@@ -1,0 +1,206 @@
+name: Check Dependencies
+
+on:
+  schedule:
+    # Run every Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      update_dependencies:
+        description: 'Update dependencies automatically'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  check-python-dependencies:
+    name: Check Python Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check for outdated Python packages
+        id: check_python
+        run: |
+          cd fiduswriter
+          python manage.py check_dependencies --python-only > check_output.txt 2>&1 || true
+          cat check_output.txt
+
+          # Check if there are outdated packages
+          if grep -q "can be updated" check_output.txt; then
+            echo "outdated=true" >> $GITHUB_OUTPUT
+            echo "::warning::Outdated Python dependencies found"
+          else
+            echo "outdated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Python dependencies
+        if: github.event.inputs.update_dependencies == 'true' && steps.check_python.outputs.outdated == 'true'
+        run: |
+          cd fiduswriter
+          python manage.py update_dependencies --python-only
+
+      - name: Upload Python dependency report
+        if: steps.check_python.outputs.outdated == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dependency-report
+          path: fiduswriter/check_output.txt
+          retention-days: 30
+
+  check-javascript-dependencies:
+    name: Check JavaScript Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check for outdated JavaScript packages
+        id: check_js
+        run: |
+          cd fiduswriter
+          python manage.py check_dependencies --js-only > check_output_js.txt 2>&1 || true
+          cat check_output_js.txt
+
+          # Check if there are outdated packages
+          if grep -q "can be updated" check_output_js.txt; then
+            echo "outdated=true" >> $GITHUB_OUTPUT
+            echo "::warning::Outdated JavaScript dependencies found"
+          else
+            echo "outdated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update JavaScript dependencies
+        if: github.event.inputs.update_dependencies == 'true' && steps.check_js.outputs.outdated == 'true'
+        run: |
+          cd fiduswriter
+          python manage.py update_dependencies --js-only
+
+      - name: Upload JavaScript dependency report
+        if: steps.check_js.outputs.outdated == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: javascript-dependency-report
+          path: fiduswriter/check_output_js.txt
+          retention-days: 30
+
+  create-pr:
+    name: Create Pull Request with Updates
+    needs: [check-python-dependencies, check-javascript-dependencies]
+    if: github.event.inputs.update_dependencies == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Update all dependencies
+        run: |
+          cd fiduswriter
+          python manage.py update_dependencies
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update dependencies'
+          title: 'Automated Dependency Updates'
+          body: |
+            ## Automated Dependency Updates
+
+            This PR contains automated updates to Python and JavaScript dependencies.
+
+            ### Changes
+            - Updated Python packages in `requirements.txt` and related files
+            - Updated JavaScript packages in `package.json5` files
+
+            ### Next Steps
+            1. Review the changes carefully
+            2. Run tests to ensure compatibility
+            3. Update any code that may be affected by breaking changes
+            4. Merge if all tests pass
+
+            **Note:** This PR was automatically created by the dependency check workflow.
+          branch: automated-dependency-updates
+          delete-branch: true
+          labels: dependencies, automated
+
+  notify:
+    name: Send Notification
+    needs: [check-python-dependencies, check-javascript-dependencies]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+
+      - name: Send notification summary
+        run: |
+          echo "Dependency check workflow completed"
+          echo "Check the workflow logs and artifacts for details"
+
+      # Uncomment and configure to send Slack notifications
+      # - name: Send Slack notification
+      #   if: steps.check_python.outputs.outdated == 'true' || steps.check_js.outputs.outdated == 'true'
+      #   uses: slackapi/slack-github-action@v1
+      #   with:
+      #     payload: |
+      #       {
+      #         "text": "⚠️ Outdated dependencies detected in Fidus Writer",
+      #         "blocks": [
+      #           {
+      #             "type": "section",
+      #             "text": {
+      #               "type": "mrkdwn",
+      #               "text": "Outdated dependencies have been detected. Please review the workflow logs."
+      #             }
+      #           }
+      #         ]
+      #       }
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

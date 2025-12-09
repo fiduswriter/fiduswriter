@@ -12,13 +12,29 @@ Fidus Writer is an online collaborative editor especially made for academics who
 Installation
 ------------
 
-The installation procedures can be found in our [WIKI](https://github.com/fiduswriter/fiduswriter/wiki/).
+The installation procedures can be found in our [documentation](docs/installation/).
 
+**Quick Start:**
+- **Ubuntu**: [Snap Installation](docs/installation/snap.md)
+- **Docker**: [Docker Installation](docs/installation/docker.md)
+- **Developers**: [Development Setup](docs/installation/developer-install.md)
+
+Documentation
+-------------
+
+📚 **[Full Documentation](docs/README.md)**
+
+- [Installation Guides](docs/installation/)
+- [Configuration](docs/configuration/)
+- [Development](docs/development/)
+- [Contributing](docs/contributing.md)
 
 Contributing
 ------------
 
-For details on contributing, please check http://fiduswriter.org/help-us/ .
+We welcome contributions! Please read our [Contributing Guide](docs/contributing.md) for details on how to get started.
+
+To get started, [sign the Contributor License Agreement](https://cla-assistant.io/fiduswriter/fiduswriter).
 
 
 License

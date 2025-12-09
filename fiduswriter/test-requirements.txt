@@ -1,4 +1,4 @@
 webdriver-manager
-selenium==4.14.0
+selenium==4.39.0
 packaging
-psutil==7.0.0
+psutil==7.1.3

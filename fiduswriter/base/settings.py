@@ -271,12 +271,12 @@ def can_login_as(request, target_user):
 
 CAN_LOGIN_AS = can_login_as
 
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 
 # allow login either with email or username
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_LOGIN_METHODS = {"email", "username"}
 ACCOUNT_ADAPTER = "user.adapter.AccountAdapter"
 
 AUTH_PROFILE_MODULE = "account.Profile"

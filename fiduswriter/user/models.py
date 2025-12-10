@@ -1,6 +1,6 @@
 import uuid
 
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext as _
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -114,53 +114,79 @@ class UserInvite(models.Model):
         if not self.to.id:
             # User must have a valid ID before we can apply
             return
+
+        # Refresh the user from database to ensure it's in a valid state
+        self.to.refresh_from_db()
+
         user_ct = ContentType.objects.get_for_model(User)
-        rights_to_delete = []
-        # Evaluate QuerySet upfront to avoid issues with lazy evaluation during modification
-        for right in list(self.document_rights.all()):
-            # Check if the user already has access rights for this document
-            # using explicit ContentType filter to avoid GenericRelation issues
-            old_ar = AccessRight.objects.filter(
-                holder_type=user_ct,
-                holder_id=self.to.id,
-                document=right.document,
-            ).first()
-            if old_ar:
-                # If the user already has rights, we should only be upgrading
-                # them, not downgrade. Unfortuantely it is not easy to
-                # say how each right compares. So unless the invite gives read
-                # access, or the user already has write access, we change to
-                # the access right of the invite.
-                if right.rights == "read":
-                    pass
-                elif old_ar.rights == "write":
-                    pass
-                else:
-                    old_ar.rights = right.rights
-                    old_ar.save()
-                # Mark the invite's access right for deletion since we're using the existing one
-                rights_to_delete.append(right)
-            elif right.document.owner == self.to:
-                # User already owns the document, mark the redundant access right for deletion
-                rights_to_delete.append(right)
-            else:
-                # Transfer the access right from the invite to the user
-                # Instead of UPDATE-ing (which can cause FK constraint issues in SQLite),
-                # we DELETE the old record and CREATE a new one
-                AccessRight.objects.create(
+        rights_to_transfer = []
+
+        # Use atomic transaction to ensure database consistency
+        with transaction.atomic():
+            # Evaluate QuerySet upfront to avoid issues with lazy evaluation during modification
+            for right in list(self.document_rights.all()):
+                # Check if the user already has access rights for this document
+                # using explicit ContentType filter to avoid GenericRelation issues
+                old_ar = AccessRight.objects.filter(
+                    holder_type=user_ct,
+                    holder_id=self.to.id,
                     document=right.document,
-                    path=right.path,
-                    holder_obj=self.to,
-                    rights=right.rights,
+                ).first()
+                if old_ar:
+                    # If the user already has rights, we should only be upgrading
+                    # them, not downgrade. Unfortuantely it is not easy to
+                    # say how each right compares. So unless the invite gives read
+                    # access, or the user already has write access, we change to
+                    # the access right of the invite.
+                    if right.rights == "read":
+                        pass
+                    elif old_ar.rights == "write":
+                        pass
+                    else:
+                        old_ar.rights = right.rights
+                        old_ar.save()
+                    # Delete the invite's access right since user already has one
+                    right.delete()
+                elif right.document.owner == self.to:
+                    # User already owns the document, delete the redundant access right
+                    right.delete()
+                else:
+                    # Save info about rights to transfer (use IDs to avoid stale references)
+                    rights_to_transfer.append(
+                        {
+                            "document_id": right.document_id,
+                            "path": right.path,
+                            "rights": right.rights,
+                        }
+                    )
+                    # Delete the old access right from the invite
+                    right.delete()
+
+            # After all old rights are deleted, create new ones for the user
+            for right_info in rights_to_transfer:
+                # Create the access right with explicit holder_type and holder_id
+                # instead of using holder_obj to avoid GenericForeignKey issues
+                AccessRight.objects.create(
+                    document_id=right_info["document_id"],
+                    path=right_info["path"],
+                    holder_type=user_ct,
+                    holder_id=self.to.id,
+                    rights=right_info["rights"],
                 )
-                rights_to_delete.append(right)
-        # Delete marked rights after iteration to avoid modifying queryset during iteration
-        for right in rights_to_delete:
-            right.delete()
-        if self.to not in list(self.by.contacts.all()):
-            self.by.contacts.add(self.to)
-        self._apply = True
-        self.delete()
+
+            if self.to not in list(self.by.contacts.all()):
+                self.by.contacts.add(self.to)
+            self._apply = True
+
+            # Ensure ALL AccessRights pointing to this UserInvite are deleted
+            # before we delete the invite itself to avoid FK constraint issues
+            userinvite_ct = ContentType.objects.get_for_model(UserInvite)
+            remaining_rights = AccessRight.objects.filter(
+                holder_type=userinvite_ct, holder_id=self.id
+            )
+            remaining_rights.delete()
+
+            self.delete()
 
     def __str__(self):
         return f"{self.to or self.username} by {self.by}"

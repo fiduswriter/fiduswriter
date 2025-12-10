@@ -788,8 +788,10 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
+        # Find and click the delete button for the user (not userinvite) collaborator
+        # The collaborator row has id="collaborator-user-2" for user Yeti2
         self.driver.find_element(
-            By.CSS_SELECTOR, ".delete-collaborator"
+            By.CSS_SELECTOR, "#collaborator-user-2 .delete-collaborator"
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"

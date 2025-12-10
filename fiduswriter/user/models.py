@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AbstractUser
 from avatar.utils import get_default_avatar_url
 
@@ -110,9 +111,19 @@ class UserInvite(models.Model):
         if not self.to:
             # Cannot apply
             return
-        for right in self.document_rights.all():
+        if not self.to.id:
+            # User must have a valid ID before we can apply
+            return
+        user_ct = ContentType.objects.get_for_model(User)
+        rights_to_delete = []
+        # Evaluate QuerySet upfront to avoid issues with lazy evaluation during modification
+        for right in list(self.document_rights.all()):
+            # Check if the user already has access rights for this document
+            # using explicit ContentType filter to avoid GenericRelation issues
             old_ar = AccessRight.objects.filter(
-                user=self.to, document=right.document
+                holder_type=user_ct,
+                holder_id=self.to.id,
+                document=right.document
             ).first()
             if old_ar:
                 # If the user already has rights, we should only be upgrading
@@ -127,11 +138,18 @@ class UserInvite(models.Model):
                 else:
                     old_ar.rights = right.rights
                     old_ar.save()
+                # Mark the invite's access right for deletion since we're using the existing one
+                rights_to_delete.append(right)
             elif right.document.owner == self.to:
-                pass
+                # User already owns the document, mark the redundant access right for deletion
+                rights_to_delete.append(right)
             else:
+                # Transfer the access right from the invite to the user
                 right.holder_obj = self.to
                 right.save()
+        # Delete marked rights after iteration to avoid modifying queryset during iteration
+        for right in rights_to_delete:
+            right.delete()
         if self.to not in list(self.by.contacts.all()):
             self.by.contacts.add(self.to)
         self._apply = True

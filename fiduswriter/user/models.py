@@ -123,7 +123,7 @@ class UserInvite(models.Model):
             old_ar = AccessRight.objects.filter(
                 holder_type=user_ct,
                 holder_id=self.to.id,
-                document=right.document
+                document=right.document,
             ).first()
             if old_ar:
                 # If the user already has rights, we should only be upgrading

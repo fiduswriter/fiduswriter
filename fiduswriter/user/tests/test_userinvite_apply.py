@@ -14,13 +14,10 @@ class UserInviteApplyTest(TestCase):
         )
         # Create a document template
         self.template = DocumentTemplate.objects.create(
-            title="Test Template",
-            content={}
+            title="Test Template", content={}
         )
         self.doc = Document.objects.create(
-            owner=self.user1, 
-            title="Test Doc",
-            template=self.template
+            owner=self.user1, title="Test Doc", template=self.template
         )
 
     def test_apply_transfers_access_right(self):
@@ -81,6 +78,7 @@ class UserInviteApplyTest(TestCase):
         initial_count = AccessRight.objects.filter(
             document=self.doc, holder_type=user_ct, holder_id=self.user2.id
         ).count()
+        self.assertEqual(initial_count, 1)
 
         # Apply the invite
         invite.apply()
@@ -95,17 +93,13 @@ class UserInviteApplyTest(TestCase):
         self.assertEqual(ars.first().rights, "write")
 
         # Check that the invite's access right was deleted
-        self.assertFalse(
-            AccessRight.objects.filter(id=invite_ar.id).exists()
-        )
+        self.assertFalse(AccessRight.objects.filter(id=invite_ar.id).exists())
 
     def test_apply_when_user_owns_document(self):
         """Test that apply() handles case where user owns the document"""
         # Create document owned by user2
         doc2 = Document.objects.create(
-            owner=self.user2, 
-            title="User2's Doc",
-            template=self.template
+            owner=self.user2, title="User2's Doc", template=self.template
         )
 
         # Create a user invite
@@ -186,7 +180,7 @@ class UserInviteApplyTest(TestCase):
         """Test that apply() handles multiple invites for the same document correctly"""
         # This simulates the scenario where a user might receive multiple
         # invites for the same document (e.g., shared multiple times)
-        
+
         # Create first invite with read access
         invite1 = UserInvite.objects.create(
             email="user2@test.com",
@@ -194,13 +188,13 @@ class UserInviteApplyTest(TestCase):
             by=self.user1,
             to=self.user2,
         )
-        ar1 = AccessRight.objects.create(
+        AccessRight.objects.create(
             document=self.doc, holder_obj=invite1, rights="read"
         )
-        
+
         # Apply first invite - user2 gets read access
         invite1.apply()
-        
+
         # Verify user2 has read access
         user_ct = ContentType.objects.get_for_model(User)
         ar = AccessRight.objects.filter(
@@ -208,7 +202,7 @@ class UserInviteApplyTest(TestCase):
         ).first()
         self.assertIsNotNone(ar)
         self.assertEqual(ar.rights, "read")
-        
+
         # Create second invite with write access (upgrade scenario)
         invite2 = UserInvite.objects.create(
             email="user2@test.com",
@@ -219,16 +213,16 @@ class UserInviteApplyTest(TestCase):
         ar2 = AccessRight.objects.create(
             document=self.doc, holder_obj=invite2, rights="write"
         )
-        
+
         # Apply second invite - should upgrade to write
         invite2.apply()
-        
+
         # Verify user2 now has write access and only ONE access right
         ars = AccessRight.objects.filter(
             document=self.doc, holder_type=user_ct, holder_id=self.user2.id
         )
         self.assertEqual(ars.count(), 1)
         self.assertEqual(ars.first().rights, "write")
-        
+
         # Verify the second invite's access right was properly cleaned up
         self.assertFalse(AccessRight.objects.filter(id=ar2.id).exists())

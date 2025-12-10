@@ -1,5 +1,5 @@
 bleach==6.1.0
-channels==4.2.1
+channels==4.3.2
 daphne==4.1.2
 Twisted[tls,http2] # Version is given by daphne.
 Django==5.2.9

@@ -4,7 +4,7 @@ repos:
       hooks:
           - id: black
             args: [--line-length=79]
-            language_version: python3.13
+            language_version: python3.14
     - repo: https://github.com/pycqa/flake8
       rev: '7.1.1'
       hooks:

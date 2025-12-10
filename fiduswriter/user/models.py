@@ -145,8 +145,15 @@ class UserInvite(models.Model):
                 rights_to_delete.append(right)
             else:
                 # Transfer the access right from the invite to the user
-                right.holder_obj = self.to
-                right.save()
+                # Instead of UPDATE-ing (which can cause FK constraint issues in SQLite),
+                # we DELETE the old record and CREATE a new one
+                AccessRight.objects.create(
+                    document=right.document,
+                    path=right.path,
+                    holder_obj=self.to,
+                    rights=right.rights,
+                )
+                rights_to_delete.append(right)
         # Delete marked rights after iteration to avoid modifying queryset during iteration
         for right in rights_to_delete:
             right.delete()

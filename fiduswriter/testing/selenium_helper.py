@@ -17,6 +17,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import Client
+from django.contrib.contenttypes.models import ContentType
 import logging
 
 logger = logging.getLogger(__name__)
@@ -165,6 +166,12 @@ class SeleniumHelper(object):
             drivers.append(driver)
         cls.drivers = drivers
         return {"clients": clients, "drivers": drivers, "wait_time": wait_time}
+
+    def setUp(self):
+        # Clear ContentType cache during testing to prevent FK constraint errors
+        # Content types get new IDs after each test but cached values don't update
+        ContentType.objects.clear_cache()
+        self.addCleanup(ContentType.objects.clear_cache)
 
     def tearDown(self):
         # Source: https://stackoverflow.com/a/39606065

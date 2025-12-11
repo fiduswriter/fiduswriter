@@ -41,9 +41,14 @@ export class DocumentOverview {
         this.contacts = []
         this.mod = {}
         this.lastSort = {column: 0, dir: "asc"}
+        this.active = false
     }
 
     init() {
+        if (this.active) {
+            return Promise.resolve()
+        }
+        this.active = true
         return whenReady().then(() => {
             this.render()
             const smenu = new SiteMenu(this.app, "documents")
@@ -207,7 +212,8 @@ export class DocumentOverview {
         if (this.app.isOffline()) {
             return cachedPromise
         }
-        return postJson("/api/document/documentlist/")
+        return whenReady()
+            .then(() => postJson("/api/document/documentlist/"))
             .then(({json}) => {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
@@ -258,7 +264,7 @@ export class DocumentOverview {
     }
 
     initializeView(json) {
-        if (!this.app.page === this) {
+        if (!this.active) {
             // page has been updated
             return json
         }
@@ -709,6 +715,9 @@ export class DocumentOverview {
     }
 
     close() {
+        if (!this.active) {
+            return
+        }
         if (this.table) {
             this.table.destroy()
             this.table = null
@@ -721,5 +730,6 @@ export class DocumentOverview {
             this.menu.destroy()
             this.menu = null
         }
+        this.active = false
     }
 }

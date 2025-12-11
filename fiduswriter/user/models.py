@@ -1,5 +1,4 @@
 import uuid
-import sys
 from django.db import models
 from django.utils.translation import gettext as _
 from django.contrib.contenttypes.fields import GenericRelation
@@ -114,12 +113,6 @@ class UserInvite(models.Model):
         if not self.to.id:
             # User must have a valid ID before we can apply
             return
-
-        # Clear ContentType cache during testing to prevent FK constraint errors
-        # Content types get new IDs after each test but cached values don't update
-        # Only do this during testing to avoid performance impact in production
-        if "test" in sys.argv:
-            ContentType.objects.clear_cache()
 
         user_ct = ContentType.objects.get_for_model(User)
 

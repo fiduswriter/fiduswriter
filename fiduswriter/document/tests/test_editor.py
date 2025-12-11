@@ -560,7 +560,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(len(change_tracking_boxes), 6)
 
     def test_share_document(self):
-        self.create_user(
+        yeti2_user = self.create_user(
             username="Yeti2", email="yeti2@snowman.com", passtext="otter"
         )
         self.driver.get(self.base_url)
@@ -726,12 +726,28 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        # Wait for Accept invite button to appear and use JavaScript click to ensure it works
+        accept_button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        # Use JavaScript click to bypass any event handler timing issues
+        time.sleep(1)
+        self.driver.execute_script("arguments[0].click();", accept_button)
+        # Wait for the dialog to close completely
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
+        # Wait for document list page to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".new_document button")
+            )
+        )
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr"
         )
@@ -791,7 +807,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Find and click the delete button for the user (not userinvite) collaborator
         # The collaborator row has id="collaborator-user-2" for user Yeti2
         self.driver.find_element(
-            By.CSS_SELECTOR, "#collaborator-user-2 .delete-collaborator"
+            By.CSS_SELECTOR,
+            f"#collaborator-user-{yeti2_user.id} .delete-collaborator",
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"

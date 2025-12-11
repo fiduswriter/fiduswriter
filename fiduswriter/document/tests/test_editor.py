@@ -50,6 +50,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.user1 = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter"
         )
+        return super().setUp()
 
     def tearDown(self):
         self.driver.execute_script("window.localStorage.clear()")

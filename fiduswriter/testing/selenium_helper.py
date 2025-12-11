@@ -172,6 +172,7 @@ class SeleniumHelper(object):
         # Content types get new IDs after each test but cached values don't update
         ContentType.objects.clear_cache()
         self.addCleanup(ContentType.objects.clear_cache)
+        return super().setUp()
 
     def tearDown(self):
         # Source: https://stackoverflow.com/a/39606065

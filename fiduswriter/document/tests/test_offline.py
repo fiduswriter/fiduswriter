@@ -873,6 +873,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
+        super().setUp()
         self.user = self.create_user()
         self.user2 = self.create_user(
             username="UserB", email="testB@example.com"

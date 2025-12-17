@@ -6,7 +6,7 @@ from tempfile import mkdtemp
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from channels.testing import ChannelsLiveServerTestCase
+from testing.channels_patch import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from document.consumers import WebsocketConsumer
 from django.conf import settings

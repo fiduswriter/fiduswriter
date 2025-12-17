@@ -1,5 +1,4 @@
 import uuid
-import sys
 
 from django.db import models
 from django.utils.translation import gettext as _
@@ -115,12 +114,6 @@ class UserInvite(models.Model):
         if not self.to.id:
             # User must have a valid ID before we can apply
             return
-
-        # ContentType objects change betwen tests and therefore need to be cleared
-        # during tests.
-        # See issue https://github.com/django/channels/issues/2208
-        if "test" in sys.argv:
-            ContentType.objects.clear_cache()
 
         user_ct = ContentType.objects.get_for_model(User)
 

@@ -1,6 +1,3 @@
-from builtins import str
-from builtins import object
-
 import os
 import uuid
 from PIL import Image as PilImage
@@ -35,7 +32,7 @@ def get_file_path(instance, filename):
     ext = filename.split(".")[-1].lower()
     if ext not in ALLOWED_EXTENSIONS:
         raise IntegrityError
-    filename = "%s.%s" % (uuid.uuid4(), ext)
+    filename = f"{uuid.uuid4()}.{ext}"
     return os.path.join("images", filename)
 
 
@@ -168,7 +165,7 @@ class Image(models.Model):
         )
         # Save SimpleUploadedFile into image field
         self.thumbnail.save(
-            "%s.%s" % (os.path.splitext(suf.name)[0], "avif"),
+            "{}.{}".format(os.path.splitext(suf.name)[0], "avif"),
             suf,
             save=False,
         )
@@ -238,5 +235,5 @@ class ImageCategory(models.Model):
     def __str__(self):
         return self.category_title
 
-    class Meta(object):
+    class Meta:
         verbose_name_plural = "Image categories"

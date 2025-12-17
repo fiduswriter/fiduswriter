@@ -22,9 +22,7 @@ class Command(BaseCommand):
                     password = getenv("ADMIN_PASSWORD")
                 else:
                     password = "admin"
-                self.stdout.write(
-                    "Creating account for %s (%s)" % (username, email)
-                )
+                self.stdout.write(f"Creating account for {username} ({email})")
                 admin = User.objects.create_superuser(
                     username=username, email=email, password=password
                 )

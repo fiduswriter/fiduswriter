@@ -250,9 +250,9 @@ def save_access_rights(request):
                             )
                 else:
                     # Make the shared path "/filename" or ""
-                    path = "/%(last_path_part)s" % {
-                        "last_path_part": doc.path.split("/").pop()
-                    }
+                    path = "/{last_path_part}".format(
+                        last_path_part=doc.path.split("/").pop()
+                    )
                     if len(path) == 1:
                         path = ""
                     if right["holder"]["type"] == "userinvite":

@@ -469,11 +469,9 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Disable file dialog
         self.driver.execute_script(
-            (
-                "HTMLInputElement.prototype.click = function() {"
-                "if(this.type !== 'file') {HTMLElement.prototype.click.call(this)}"
-                "}"
-            )
+            "HTMLInputElement.prototype.click = function() {"
+            "if(this.type !== 'file') {HTMLElement.prototype.click.call(this)}"
+            "}"
         )
         # Upload template again
         self.driver.find_element(By.CSS_SELECTOR, "#upload-template").click()

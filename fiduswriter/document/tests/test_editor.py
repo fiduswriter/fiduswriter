@@ -448,7 +448,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "return window.theApp.page.view.state.doc.child(5).textContent;"
         )
         if seconds < 0:
-            assert False, "Body text incorrect: {}".format(current_body_text)
+            assert False, f"Body text incorrect: {current_body_text}"
         elif current_body_text == body_text:
             return True
         else:

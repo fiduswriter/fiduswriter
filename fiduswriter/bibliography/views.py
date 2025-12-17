@@ -1,6 +1,5 @@
 import time
 import json
-from builtins import range
 
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required

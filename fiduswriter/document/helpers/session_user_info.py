@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from document.models import AccessRight, Document, DocumentTemplate
 
 
@@ -36,7 +34,7 @@ class SessionUserInfo:
 
         return document
 
-    async def init_access(self, document_id) -> Tuple[Document, bool]:
+    async def init_access(self, document_id) -> tuple[Document, bool]:
         """
         Asynchronously initializes access to document by id
 

@@ -1,6 +1,3 @@
-from builtins import str
-from builtins import object
-
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.core import checks
@@ -116,11 +113,11 @@ class Document(models.Model):
 
     def __str__(self):
         if len(self.title) > 0:
-            return "%(title)s (%(id)s)" % {"title": self.title, "id": self.id}
+            return f"{self.title} ({self.id})"
         else:
             return str(self.id)
 
-    class Meta(object):
+    class Meta:
         ordering = ["-id"]
 
     def clean(self, *args, **kwargs):
@@ -253,7 +250,7 @@ class AccessRight(models.Model):
         max_length=21, choices=RIGHTS_CHOICES, blank=False
     )
 
-    class Meta(object):
+    class Meta:
         unique_together = (("document", "holder_type", "holder_id"),)
 
     def __str__(self):
@@ -265,7 +262,7 @@ class AccessRight(models.Model):
 
 
 def revision_filename(instance, filename):
-    return "document-revisions/{id}.fidus".format(id=instance.pk)
+    return f"document-revisions/{instance.pk}.fidus"
 
 
 class DocumentRevision(models.Model):
@@ -287,20 +284,20 @@ class DocumentRevision(models.Model):
             super().save(*args, **kwargs)
             self.file_object = file_object
             kwargs.pop("force_insert", None)
-        super(DocumentRevision, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         if len(self.note) > 0:
-            return "%(note)s (%(id)s) of %(doc_id)s" % {
-                "note": self.note,
-                "id": self.id,
-                "doc_id": self.document.id,
-            }
+            return "{note} ({id}) of {doc_id}".format(
+                note=self.note,
+                id=self.id,
+                doc_id=self.document.id,
+            )
         else:
-            return "%(id)s of %(doc_id)s" % {
-                "id": self.id,
-                "doc_id": self.document.id,
-            }
+            return "{id} of {doc_id}".format(
+                id=self.id,
+                doc_id=self.document.id,
+            )
 
     @classmethod
     def check(cls, **kwargs):

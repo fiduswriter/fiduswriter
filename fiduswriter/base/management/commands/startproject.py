@@ -27,6 +27,6 @@ class Command(BaseCommand):
         with open(os.path.join(SRC_PATH, "configuration-default.py")) as file:
             CONFIGURATION = file.read()
         CONFIGURATION += "\n# Don't share the SECRET_KEY with anyone."
-        CONFIGURATION += "\nSECRET_KEY = '{}'".format(SECRET_KEY)
+        CONFIGURATION += f"\nSECRET_KEY = '{SECRET_KEY}'"
         with open(os.path.join(TARGET_PATH, "configuration.py"), "w") as file:
             file.write(CONFIGURATION)

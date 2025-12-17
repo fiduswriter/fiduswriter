@@ -1,4 +1,3 @@
-from builtins import map
 from urllib.request import urlopen
 from urllib.parse import urlparse
 
@@ -71,7 +70,7 @@ def copy_avatar(request, user, account):
             content = urlopen(url).read()
             name = name_from_url(url)
             ava.avatar.save(name, ContentFile(content))
-        except IOError:
+        except OSError:
             # Let's not make a big deal out of this...
             pass
 

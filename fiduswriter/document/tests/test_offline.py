@@ -190,10 +190,8 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         )
         # driver 2 sets remote tracking limit that will not be reached
         self.driver2.execute_script(
-            (
-                "window.theApp.page.mod.collab.doc.merge."
-                "remoteTrackOfflineLimit = 10000"
-            )
+            "window.theApp.page.mod.collab.doc.merge."
+            "remoteTrackOfflineLimit = 10000"
         )
 
         # driver 2 goes offline
@@ -262,16 +260,12 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
 
         # driver 2 sets remote tracking limit that will be reached
         self.driver2.execute_script(
-            (
-                "window.theApp.page.mod.collab.doc.merge."
-                "remoteTrackOfflineLimit = 0"
-            )
+            "window.theApp.page.mod.collab.doc.merge."
+            "remoteTrackOfflineLimit = 0"
         )
         # driver 2 sets local tracking limit that will not be reached
         self.driver2.execute_script(
-            (
-                "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 10000"
-            )
+            "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 10000"
         )
 
         # driver 2 goes offline

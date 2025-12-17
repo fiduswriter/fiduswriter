@@ -59,9 +59,7 @@ class Command(django.core.management.commands.dumpdata.Command):
                 ser_format
             )
         except KeyError:
-            raise CommandError(
-                "Unknown serialization format: {}".format(ser_format)
-            )
+            raise CommandError(f"Unknown serialization format: {ser_format}")
 
         global Serializer, Deserializer
 

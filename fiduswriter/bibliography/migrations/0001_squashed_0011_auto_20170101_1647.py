@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name="entry",
-            unique_together=set([]),
+            unique_together=set(),
         ),
         migrations.AlterField(
             model_name="entry",

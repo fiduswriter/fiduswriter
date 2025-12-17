@@ -46,7 +46,7 @@ class Command(BaseCommand):
             settings.PROJECT_PATH, ".schema_export_cache.json"
         )
         if os.path.exists(cache_file):
-            with open(cache_file, "r") as f:
+            with open(cache_file) as f:
                 cached_data = json.load(f)
                 return cached_data.get("hash") != current_hash
         return True

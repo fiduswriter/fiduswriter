@@ -1,4 +1,3 @@
-from builtins import object
 import re
 import os
 import time
@@ -23,7 +22,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class SeleniumHelper(object):
+class SeleniumHelper:
     """
     Methods for manipulating django and the browser for testing purposes.
     """
@@ -67,7 +66,7 @@ class SeleniumHelper(object):
         logger.debug("cookie: %s" % cookie.value)
         if driver.current_url == "data:,":
             # To set the cookie at the right domain we load the front page.
-            driver.get("%s%s" % (self.live_server_url, self.login_page))
+            driver.get(f"{self.live_server_url}{self.login_page}")
             WebDriverWait(driver, self.wait_time).until(
                 EC.presence_of_element_located((By.ID, "id-login"))
             )
@@ -83,7 +82,7 @@ class SeleniumHelper(object):
     def login_user_manually(self, user, driver, passtext="p4ssw0rd"):
         username = user.username
         driver.delete_cookie(settings.SESSION_COOKIE_NAME)
-        driver.get("%s%s" % (self.live_server_url, "/"))
+        driver.get("{}{}".format(self.live_server_url, "/"))
         driver.find_element(By.ID, "id-login").send_keys(username)
         driver.find_element(By.ID, "id-password").send_keys(passtext)
         driver.find_element(By.ID, "login-submit").click()
@@ -138,7 +137,7 @@ class SeleniumHelper(object):
             prefs["download.directory_upgrade"] = True
         options.add_experimental_option("prefs", prefs)
         if user_agent:
-            options.add_argument("user-agent={}".format(user_agent))
+            options.add_argument(f"user-agent={user_agent}")
         if os.getenv("CI"):
             options.binary_location = "/usr/bin/google-chrome-stable"
             if os.getenv("DEBUG_MODE") != "1":

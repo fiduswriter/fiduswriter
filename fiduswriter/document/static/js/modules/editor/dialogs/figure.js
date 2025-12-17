@@ -346,6 +346,9 @@ export class FigureDialog {
                 if (this.mathField) {
                     this.mathField = false
                 }
+                if (window.mathVirtualKeyboard) {
+                    window.mathVirtualKeyboard.hide()
+                }
             },
             onClose: () => this.editor.currentView.focus(),
             restoreActiveElement: false

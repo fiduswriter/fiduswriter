@@ -266,6 +266,7 @@ export class SearchReplaceDialog {
                 : gettext("Search"),
             body: searchDialogTemplate({canWrite: this.canWrite}),
             buttons,
+            blur: false,
             onClose: () => {
                 this.endSearch()
                 this.editor.currentView.focus()

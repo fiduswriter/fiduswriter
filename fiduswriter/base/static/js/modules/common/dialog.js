@@ -15,7 +15,8 @@ const dialogTemplate = ({
     scroll,
     help,
     canClose,
-    note
+    note,
+    blur
 }) =>
     `<div tabindex="-1" role="dialog"
         class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-dialog-buttons"
@@ -51,7 +52,7 @@ const dialogTemplate = ({
         <div class="ui-dialog-buttonset">${buttonsTemplate({buttons})}</div>
     </div>
 </div>
-<div class="ui-widget-overlay ui-front" style="z-index: ${zIndex - 1}"></div>`
+<div class="ui-widget-overlay ui-front${blur === false ? " no-blur" : ""}" style="z-index: ${zIndex - 1}"></div>`
 
 const noteTemplate = note => {
     return note.text
@@ -103,6 +104,7 @@ export class Dialog {
         this.canClose = "canClose" in options ? options.canClose : true
         this.help = "help" in options ? options.help : false
         this.note = "note" in options ? options.note : {}
+        this.blur = "blur" in options ? options.blur : true
         this.buttons = []
         if (options.buttons) {
             this.setButtons(options.buttons)
@@ -182,7 +184,8 @@ export class Dialog {
                 scroll: this.scroll,
                 canClose: this.canClose,
                 help: this.help,
-                note: this.note
+                note: this.note,
+                blur: this.blur
             })
         )
         this.backdropEl = document.body.lastElementChild

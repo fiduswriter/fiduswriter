@@ -1,10 +1,12 @@
 import fixUTF8 from "fix-utf8"
 
+import {Fragment, Slice} from "prosemirror-model"
 import {Plugin, PluginKey, TextSelection} from "prosemirror-state"
 import {ReplaceStep} from "prosemirror-transform"
 
 import {docClipboardSerializer, fnClipboardSerializer} from "../clipboard/copy"
 import {HTMLPaste, TextPaste} from "../clipboard/paste"
+import {getAllowedElementsAndMarks} from "./document_template"
 
 const key = new PluginKey("clipboard")
 
@@ -15,6 +17,113 @@ export const getPasteRange = state => {
 
 export const resetPasteRange = tr => {
     tr.setMeta(key, {pasteRange: null})
+}
+
+// Filter a fragment to only include allowed nodes and marks
+// parentNode is optional - used to check if converted nodes are valid children
+const filterFragment = (
+    fragment,
+    allowedElements,
+    allowedMarks,
+    schema,
+    parentNode = null
+) => {
+    const nodes = []
+
+    fragment.forEach(node => {
+        // Check if this node type is allowed
+        const nodeTypeAllowed =
+            !allowedElements || allowedElements.includes(node.type.name)
+
+        if (!nodeTypeAllowed) {
+            // Try to convert to paragraph if allowed
+            if (
+                allowedElements &&
+                allowedElements.includes("paragraph") &&
+                node.isBlock
+            ) {
+                const paragraph = schema.nodes.paragraph
+                if (paragraph) {
+                    // Check if paragraph can be a child of the parent node
+                    const canUseParagraph =
+                        !parentNode ||
+                        parentNode.type.contentMatch.matchType(paragraph)
+
+                    if (canUseParagraph) {
+                        // Convert the node to a paragraph, recursively filtering its content
+                        const filteredContent =
+                            node.content.size > 0
+                                ? filterFragment(
+                                      node.content,
+                                      allowedElements,
+                                      allowedMarks,
+                                      schema,
+                                      node
+                                  )
+                                : Fragment.empty
+                        nodes.push(paragraph.create(null, filteredContent))
+                    } else if (parentNode && parentNode.isTextblock) {
+                        // Parent is a text block but doesn't allow paragraphs
+                        // Extract text content and add as plain text
+                        const textContent = node.textContent
+                        if (textContent) {
+                            nodes.push(schema.text(textContent))
+                        }
+                    } else {
+                        // Can't convert to paragraph, extract and process children
+                        const filteredContent = filterFragment(
+                            node.content,
+                            allowedElements,
+                            allowedMarks,
+                            schema,
+                            parentNode
+                        )
+                        filteredContent.forEach(child => nodes.push(child))
+                    }
+                }
+            } else if (node.isBlock) {
+                // Extract content from disallowed block nodes
+                const filteredContent = filterFragment(
+                    node.content,
+                    allowedElements,
+                    allowedMarks,
+                    schema,
+                    parentNode
+                )
+                filteredContent.forEach(child => nodes.push(child))
+            } else {
+                // For inline nodes, just skip them
+            }
+            return
+        }
+
+        // Node type is allowed, but filter marks
+        let filteredNode = node
+        if (allowedMarks !== false && node.marks.length > 0) {
+            const filteredMarks = node.marks.filter(mark =>
+                allowedMarks.includes(mark.type.name)
+            )
+            if (filteredMarks.length !== node.marks.length) {
+                filteredNode = node.mark(filteredMarks)
+            }
+        }
+
+        // Recursively filter content
+        if (filteredNode.content.size > 0) {
+            const filteredContent = filterFragment(
+                filteredNode.content,
+                allowedElements,
+                allowedMarks,
+                schema,
+                filteredNode
+            )
+            filteredNode = filteredNode.copy(filteredContent)
+        }
+
+        nodes.push(filteredNode)
+    })
+
+    return Fragment.from(nodes)
 }
 
 export const clipboardPlugin = options => {
@@ -140,7 +249,41 @@ export const clipboardPlugin = options => {
             clipboardSerializer:
                 options.viewType === "main"
                     ? docClipboardSerializer(options.editor)
-                    : fnClipboardSerializer(options.editor)
+                    : fnClipboardSerializer(options.editor),
+            transformPasted: (slice, view, plain) => {
+                // Only filter if not plain text paste
+                if (plain) {
+                    return slice
+                }
+
+                // Get allowed elements and marks at the current selection position
+                const {elements, marks} = getAllowedElementsAndMarks(view.state)
+
+                // If no restrictions, return slice unchanged
+                if (elements === false && marks === false) {
+                    return slice
+                }
+
+                // Get the parent node at the selection position to check compatibility
+                const $pos = view.state.selection.$from
+                const parentNode = $pos.parent
+
+                // Filter the slice content
+                const filteredContent = filterFragment(
+                    slice.content,
+                    elements,
+                    marks,
+                    view.state.schema,
+                    parentNode
+                )
+
+                // Return new slice with filtered content
+                return new Slice(
+                    filteredContent,
+                    slice.openStart,
+                    slice.openEnd
+                )
+            }
         }
     })
 }

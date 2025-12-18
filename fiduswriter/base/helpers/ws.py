@@ -22,6 +22,6 @@ def get_url_base(origin, conn):
         elif isinstance(conn["external"], int):
             parsed_origin = urlparse(origin)
             origin_name = parsed_origin.hostname
-            return f"{origin_name}:{conn["external"]}/ws"
+            return f"{origin_name}:{conn['external']}/ws"
 
     return "/ws"

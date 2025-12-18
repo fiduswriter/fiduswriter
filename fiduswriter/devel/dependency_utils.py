@@ -7,7 +7,6 @@ import re
 import json
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
 
 # Try to import the shared JSON5 parser from npm_mjs
 try:
@@ -20,7 +19,7 @@ except ImportError:
 
 def parse_requirements_txt(
     file_path: str,
-) -> List[Tuple[str, Optional[str], str]]:
+) -> list[tuple[str, str | None, str]]:
     """
     Parse a requirements.txt file and return a list of (package_name, version_spec, original_line).
 
@@ -35,7 +34,7 @@ def parse_requirements_txt(
     if not os.path.exists(file_path):
         return packages
 
-    with open(file_path, "r") as f:
+    with open(file_path) as f:
         for line in f:
             line = line.strip()
 
@@ -62,7 +61,7 @@ def parse_requirements_txt(
     return packages
 
 
-def get_latest_pypi_version(package_name: str) -> Optional[str]:
+def get_latest_pypi_version(package_name: str) -> str | None:
     """
     Get the latest version of a package from PyPI.
 
@@ -90,7 +89,7 @@ def get_latest_pypi_version(package_name: str) -> Optional[str]:
 
 def update_requirements_txt(
     file_path: str, dry_run: bool = False
-) -> Dict[str, Tuple[str, str]]:
+) -> dict[str, tuple[str, str]]:
     """
     Update all packages in a requirements.txt file to their latest versions.
 
@@ -143,7 +142,7 @@ def update_requirements_txt(
     return updates
 
 
-def parse_package_json5(file_path: str) -> Dict:
+def parse_package_json5(file_path: str) -> dict:
     """
     Parse a package.json5 or package.json file (JSON5 format with comments).
 
@@ -156,7 +155,7 @@ def parse_package_json5(file_path: str) -> Dict:
     if not os.path.exists(file_path):
         return {}
 
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         content = f.read()
 
     # If it's a regular .json file, try parsing as JSON first
@@ -198,7 +197,7 @@ def parse_package_json5(file_path: str) -> Dict:
         return {}
 
 
-def write_package_json5(file_path: str, data: Dict, original_content: str):
+def write_package_json5(file_path: str, data: dict, original_content: str):
     """
     Write data to a package.json5 or package.json file, preserving the original format as much as possible.
 
@@ -208,7 +207,7 @@ def write_package_json5(file_path: str, data: Dict, original_content: str):
         original_content: Original file content for format reference
     """
     # Read the original file to preserve formatting
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         lines = f.readlines()
 
     new_lines = []
@@ -255,7 +254,7 @@ def write_package_json5(file_path: str, data: Dict, original_content: str):
         f.writelines(new_lines)
 
 
-def get_latest_npm_version(package_name: str) -> Optional[str]:
+def get_latest_npm_version(package_name: str) -> str | None:
     """
     Get the latest version of an npm package.
 
@@ -285,7 +284,7 @@ def get_latest_npm_version(package_name: str) -> Optional[str]:
 
 def update_package_json5(
     file_path: str, dry_run: bool = False
-) -> Dict[str, Tuple[str, str]]:
+) -> dict[str, tuple[str, str]]:
     """
     Update all packages in a package.json5 or package.json file to their latest versions.
 
@@ -296,7 +295,7 @@ def update_package_json5(
     Returns:
         Dictionary mapping package names to (old_version, new_version) tuples
     """
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         original_content = f.read()
 
     data = parse_package_json5(file_path)
@@ -328,7 +327,7 @@ def update_package_json5(
     return updates
 
 
-def find_package_json_files(root_path: str) -> List[str]:
+def find_package_json_files(root_path: str) -> list[str]:
     """
     Find all package.json5 and package.json files in Django app directories.
 
@@ -360,7 +359,7 @@ def find_package_json_files(root_path: str) -> List[str]:
 find_package_json5_files = find_package_json_files
 
 
-def find_requirements_files(root_path: str) -> List[str]:
+def find_requirements_files(root_path: str) -> list[str]:
     """
     Find all requirements*.txt files in the project.
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import multiprocessing
 from importlib import import_module
 
 
@@ -141,4 +142,9 @@ def entry():
 
 
 if __name__ == "__main__":
+    # Force fork method for multiprocessing (needed for Python 3.14)
+    try:
+        multiprocessing.set_start_method("fork", force=True)
+    except RuntimeError:
+        pass
     inner(SRC_PATH)

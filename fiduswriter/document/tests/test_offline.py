@@ -6,7 +6,7 @@ from tempfile import mkdtemp
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from channels.testing import ChannelsLiveServerTestCase
+from testing.channels_patch import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from document.consumers import WebsocketConsumer
 from django.conf import settings
@@ -190,10 +190,8 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         )
         # driver 2 sets remote tracking limit that will not be reached
         self.driver2.execute_script(
-            (
-                "window.theApp.page.mod.collab.doc.merge."
-                "remoteTrackOfflineLimit = 10000"
-            )
+            "window.theApp.page.mod.collab.doc.merge."
+            "remoteTrackOfflineLimit = 10000"
         )
 
         # driver 2 goes offline
@@ -262,16 +260,12 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
 
         # driver 2 sets remote tracking limit that will be reached
         self.driver2.execute_script(
-            (
-                "window.theApp.page.mod.collab.doc.merge."
-                "remoteTrackOfflineLimit = 0"
-            )
+            "window.theApp.page.mod.collab.doc.merge."
+            "remoteTrackOfflineLimit = 0"
         )
         # driver 2 sets local tracking limit that will not be reached
         self.driver2.execute_script(
-            (
-                "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 10000"
-            )
+            "window.theApp.page.mod.collab.doc.merge.trackOfflineLimit = 10000"
         )
 
         # driver 2 goes offline
@@ -873,6 +867,7 @@ class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
+        super().setUp()
         self.user = self.create_user()
         self.user2 = self.create_user(
             username="UserB", email="testB@example.com"

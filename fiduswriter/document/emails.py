@@ -18,11 +18,9 @@ def send_share_notification(
         document_title = _("Untitled")
     if change:
         message_text = _(
-            (
-                "Hey %(collaborator_name)s,\n%(owner)s has changed your access "
-                "rights to %(rights)s on the document '%(document_title)s'. "
-                "\nOpen the document: %(link)s"
-            )
+            "Hey %(collaborator_name)s,\n%(owner)s has changed your access "
+            "rights to %(rights)s on the document '%(document_title)s'. "
+            "\nOpen the document: %(link)s"
         ) % {
             "owner": owner,
             "rights": rights,
@@ -31,11 +29,9 @@ def send_share_notification(
             "document_title": document_title,
         }
         body_html_intro = _(
-            (
-                "<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your "
-                "access rights to %(rights)s on the document "
-                "'%(document_title)s'.</p>"
-            )
+            "<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your "
+            "access rights to %(rights)s on the document "
+            "'%(document_title)s'.</p>"
         ) % {
             "owner": owner,
             "rights": rights,
@@ -44,12 +40,10 @@ def send_share_notification(
         }
     else:
         message_text = _(
-            (
-                "Hey %(collaborator_name)s,\n%(owner)s has shared the document "
-                "'%(document_title)s' with you and given you %(rights)s access "
-                "rights. "
-                "\nOpen document: %(link)s"
-            )
+            "Hey %(collaborator_name)s,\n%(owner)s has shared the document "
+            "'%(document_title)s' with you and given you %(rights)s access "
+            "rights. "
+            "\nOpen document: %(link)s"
         ) % {
             "owner": owner,
             "rights": rights,
@@ -58,11 +52,9 @@ def send_share_notification(
             "document_title": document_title,
         }
         body_html_intro = _(
-            (
-                "<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the "
-                "document '%(document_title)s' with you and given you "
-                "%(rights)s access rights.</p>"
-            )
+            "<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the "
+            "document '%(document_title)s' with you and given you "
+            "%(rights)s access rights.</p>"
         ) % {
             "owner": owner,
             "rights": rights,
@@ -128,12 +120,10 @@ def send_comment_notification(
 ):
     if notification_type == "mention":
         message_text = _(
-            (
-                "Hey %(collaborator_name)s,\n%(commentator)s has mentioned you "
-                "in a comment in the document '%(document)s':"
-                "\n\n%(comment_text)s"
-                "\n\nGo to the document here: %(link)s"
-            )
+            "Hey %(collaborator_name)s,\n%(commentator)s has mentioned you "
+            "in a comment in the document '%(document)s':"
+            "\n\n%(comment_text)s"
+            "\n\nGo to the document here: %(link)s"
         ) % {
             "commentator": commentator,
             "collaborator_name": collaborator_name,
@@ -143,10 +133,8 @@ def send_comment_notification(
         }
 
         body_html_title = _(
-            (
-                "Hey %(collaborator_name)s,<br>%(commentator)s has mentioned "
-                "you in a comment in the document '%(document_title)s'."
-            )
+            "Hey %(collaborator_name)s,<br>%(commentator)s has mentioned "
+            "you in a comment in the document '%(document_title)s'."
         ) % {
             "commentator": commentator,
             "collaborator_name": collaborator_name,
@@ -157,11 +145,9 @@ def send_comment_notification(
         }
     else:
         message_text = _(
-            (
-                "Hey %(collaborator_name)s,\n%(commentator)s has assigned you to "
-                "a comment in the document '%(document)s':\n\n%(comment_text)s"
-                "\n\nGo to the document here: %(link)s"
-            )
+            "Hey %(collaborator_name)s,\n%(commentator)s has assigned you to "
+            "a comment in the document '%(document)s':\n\n%(comment_text)s"
+            "\n\nGo to the document here: %(link)s"
         ) % {
             "commentator": commentator,
             "collaborator_name": collaborator_name,
@@ -170,10 +156,8 @@ def send_comment_notification(
             "comment_text": comment_text,
         }
         body_html_title = _(
-            (
-                "Hey %(collaborator_name)s,<br>%(commentator)s has assigned you "
-                "to a comment in the document '%(document_title)s'."
-            )
+            "Hey %(collaborator_name)s,<br>%(commentator)s has assigned you "
+            "to a comment in the document '%(document_title)s'."
         ) % {
             "commentator": commentator,
             "collaborator_name": collaborator_name,
@@ -184,12 +168,10 @@ def send_comment_notification(
         }
 
     body_html = _(
-        (
-            "<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned "
-            "you to a comment in the document '%(document)s':</p>"
-            "%(comment_html)s"
-            '<p>Go to the document <a href="%(link)s">here</a>.</p>'
-        )
+        "<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned "
+        "you to a comment in the document '%(document)s':</p>"
+        "%(comment_html)s"
+        '<p>Go to the document <a href="%(link)s">here</a>.</p>'
     ) % {
         "commentator": commentator,
         "collaborator_name": collaborator_name,

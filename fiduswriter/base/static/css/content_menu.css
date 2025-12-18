@@ -34,6 +34,10 @@
     backdrop-filter: blur(2px);
 }
 
+.ui-widget-overlay.no-blur {
+    backdrop-filter: none;
+}
+
 .content-menu-list {
     list-style: none;
     padding: 0 0 5px;

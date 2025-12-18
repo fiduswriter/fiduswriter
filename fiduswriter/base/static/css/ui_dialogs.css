@@ -9,6 +9,10 @@
     backdrop-filter: blur(2px);
 }
 
+.ui-widget-overlay.no-blur {
+    backdrop-filter: none;
+}
+
 .ui-dialog {
     position: absolute;
     padding: 19px;

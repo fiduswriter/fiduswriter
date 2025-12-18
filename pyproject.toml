@@ -10,11 +10,16 @@ license = "AGPL-3.0-or-later"
 authors = [
   {email = "mail@lundinfo.com", name = "Lund Info AB"},
 ]
+requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
   "Framework :: Django :: 5.1",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering",
   "Topic :: Text Editors :: Word Processors",
   "Topic :: Text Processing",

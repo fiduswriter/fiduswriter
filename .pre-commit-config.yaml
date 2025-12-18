@@ -4,7 +4,12 @@ repos:
       hooks:
           - id: black
             args: [--line-length=79]
-            language_version: python3.13
+            language_version: python3.14
+    - repo: https://github.com/asottile/pyupgrade
+      rev: v3.21.2
+      hooks:
+          - id: pyupgrade
+            args: [--py311-plus]
     - repo: https://github.com/pycqa/flake8
       rev: '7.1.1'
       hooks:

@@ -32,7 +32,7 @@ jobs:
         - uses: actions/checkout@v4.1.2
         - uses: actions/setup-python@v5.1.0
           with:
-            python-version: "3.13"
+            python-version: "3.14"
         - uses: pre-commit/action@v3.0.1
     test:
         runs-on: ubuntu-latest
@@ -48,6 +48,7 @@ jobs:
                     - document.tests.test_export
                     - document.tests.test_admin
                     #- document.tests.test_message_exchange
+                    - document.tests.test_paste_template_filter
                     - document.tests.test_memory_leak
                     - document.tests.test_merge
                     - document.tests.test_path
@@ -58,7 +59,7 @@ jobs:
             - name: Set up Python
               uses: actions/setup-python@v5.1.0
               with:
-                  python-version: "3.13"
+                  python-version: "3.14"
             - name: Set up Node
               uses: actions/setup-node@v4
               with:

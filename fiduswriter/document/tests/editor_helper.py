@@ -21,14 +21,14 @@ class EditorHelper(SeleniumHelper):
         return doc
 
     def load_document_editor(self, driver, doc):
-        driver.get("%s%s" % (self.live_server_url, doc.get_absolute_url()))
+        driver.get(f"{self.live_server_url}{doc.get_absolute_url()}")
         WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
         self.inject_helpers(driver)
 
     def inject_helpers(self, driver):
-        with open("static-transpile/js/test_caret.js", "r") as file:
+        with open("static-transpile/js/test_caret.js") as file:
             test_caret_script = file.read()
         driver.execute_script(test_caret_script)
 

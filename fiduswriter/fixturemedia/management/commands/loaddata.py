@@ -22,8 +22,7 @@ def get_apps():
 
 
 def get_modelclasses():
-    for modelclass in apps.get_models():
-        yield modelclass
+    yield from apps.get_models()
 
 
 def models_with_filefields():

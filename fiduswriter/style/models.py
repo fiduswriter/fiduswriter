@@ -23,7 +23,7 @@ class DocumentStyle(models.Model):
     def __str__(self):
         return self.title
 
-    class Meta(object):
+    class Meta:
         unique_together = (("slug", "document_template"),)
 
 
@@ -54,7 +54,7 @@ class DocumentStyleFile(models.Model):
     def natural_key(self):
         return (self.file.url, self.filename)
 
-    class Meta(object):
+    class Meta:
         unique_together = (("filename", "style"),)
 
 
@@ -83,5 +83,5 @@ class ExportTemplate(models.Model):
     def __str__(self):
         return self.title + " (" + self.file_type + ")"
 
-    class Meta(object):
+    class Meta:
         unique_together = (("title", "document_template"),)

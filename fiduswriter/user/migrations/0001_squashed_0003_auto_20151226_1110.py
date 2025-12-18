@@ -191,6 +191,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name="teammember",
-            unique_together=set([("leader", "member")]),
+            unique_together={("leader", "member")},
         ),
     ]

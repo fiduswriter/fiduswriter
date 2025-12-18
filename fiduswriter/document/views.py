@@ -4,6 +4,8 @@ import bleach
 import json
 from copy import deepcopy
 
+from django.contrib.contenttypes.models import ContentType
+
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
@@ -206,17 +208,16 @@ def save_access_rights(request):
         if not doc:
             continue
         for right in rights:
-            holder_selector = "%(type)s__id" % {
-                "type": right["holder"]["type"]
-            }
+            holder_type = ContentType.objects.get(
+                app_label="user", model=right["holder"]["type"]
+            )
             if right["rights"] == "delete":
                 # Status 'delete' means the access right is marked for
                 # deletion.
                 AccessRight.objects.filter(
-                    **{
-                        "document_id": doc_id,
-                        holder_selector: right["holder"]["id"],
-                    }
+                    document_id=doc_id,
+                    holder_id=right["holder"]["id"],
+                    holder_type=holder_type,
                 ).delete()
             else:
                 owner = request.user.readable_name
@@ -224,10 +225,9 @@ def save_access_rights(request):
                     request, doc.get_absolute_url()
                 )
                 access_right = AccessRight.objects.filter(
-                    **{
-                        "document_id": doc_id,
-                        holder_selector: right["holder"]["id"],
-                    }
+                    document_id=doc_id,
+                    holder_id=right["holder"]["id"],
+                    holder_type=holder_type,
                 ).first()
                 document_title = doc.title
                 if access_right:
@@ -250,9 +250,9 @@ def save_access_rights(request):
                             )
                 else:
                     # Make the shared path "/filename" or ""
-                    path = "/%(last_path_part)s" % {
-                        "last_path_part": doc.path.split("/").pop()
-                    }
+                    path = "/{last_path_part}".format(
+                        last_path_part=doc.path.split("/").pop()
+                    )
                     if len(path) == 1:
                         path = ""
                     if right["holder"]["type"] == "userinvite":

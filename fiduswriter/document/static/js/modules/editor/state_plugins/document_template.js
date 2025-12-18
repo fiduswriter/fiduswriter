@@ -23,6 +23,39 @@ export function getProtectedRanges(state) {
     return key.getState(state).protectedRanges
 }
 
+export function getAllowedElementsAndMarks(state) {
+    // Get the allowed elements and marks at the current selection position
+    const {$anchor} = state.selection
+    const docPart = $anchor.node(1) // Get the part node (richtext_part, heading_part, etc.)
+
+    if (!docPart) {
+        return {elements: false, marks: false}
+    }
+
+    const allowedElements = docPart.attrs.elements
+        ? docPart.attrs.elements.concat(
+              "table_caption",
+              "table_body",
+              "table_row",
+              "table_cell",
+              "table_header",
+              "list_item",
+              "text"
+          )
+        : false
+
+    const allowedMarks = docPart.attrs.marks
+        ? docPart.attrs.marks.concat(
+              "insertion",
+              "deletion",
+              "comment",
+              "anchor"
+          )
+        : false
+
+    return {elements: allowedElements, marks: allowedMarks}
+}
+
 export function checkProtectedInSelection(state) {
     // Checks whether there is a protected range
     // within a selection
@@ -239,6 +272,8 @@ export const documentTemplatePlugin = options =>
                         if (parent === tr.doc) {
                             allowedElements = node.attrs.elements
                                 ? node.attrs.elements.concat(
+                                      "table_caption",
+                                      "table_body",
                                       "table_row",
                                       "table_cell",
                                       "table_header",

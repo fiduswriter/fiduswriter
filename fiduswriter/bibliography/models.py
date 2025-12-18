@@ -1,5 +1,3 @@
-from builtins import object
-
 from django.db import models
 from django.conf import settings
 
@@ -13,7 +11,7 @@ class EntryCategory(models.Model):
     def __str__(self):
         return self.category_title
 
-    class Meta(object):
+    class Meta:
         verbose_name_plural = "Entry categories"
 
 
@@ -32,5 +30,5 @@ class Entry(models.Model):
     def __str__(self):
         return self.entry_key
 
-    class Meta(object):
+    class Meta:
         verbose_name_plural = "Entries"

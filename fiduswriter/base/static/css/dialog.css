@@ -121,6 +121,10 @@
     backdrop-filter: blur(2px);
 }
 
+.ui-widget-overlay.no-blur {
+    backdrop-filter: none;
+}
+
 .ui-dialog-content textarea {
     min-height: 112px;
     min-width: 350px;

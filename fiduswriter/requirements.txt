@@ -6,7 +6,7 @@ Django==6.0
 django-allauth[socialaccount]==65.13.1
 django-avatar==8.0.1
 django-js-error-hook==1.0
-django-npm-mjs==3.2.1
+django-npm-mjs==3.3.0
 django-loginas==0.3.13
 httpx==0.28.1
 httpx-ws==0.8.2

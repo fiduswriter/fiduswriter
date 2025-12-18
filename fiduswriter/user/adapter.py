@@ -9,7 +9,7 @@ class AccountAdapter(DefaultAccountAdapter):
         confirmations are sent outside of the request context `request`
         can be `None` here.
         """
-        url = "/account/confirm-email/{}/".format(emailconfirmation.key)
+        url = f"/account/confirm-email/{emailconfirmation.key}/"
         ret = build_absolute_uri(request, url)
         return ret
 
@@ -17,7 +17,7 @@ class AccountAdapter(DefaultAccountAdapter):
         if template_prefix == "account/email/password_reset_key":
             # We replace the password reset URL to avoid a '/api' in the URL.
             key = context["password_reset_url"].split("/")[-2]
-            url = "/account/change-password/{}/".format(key)
+            url = f"/account/change-password/{key}/"
             context["password_reset_url"] = build_absolute_uri(
                 context["request"], url
             )

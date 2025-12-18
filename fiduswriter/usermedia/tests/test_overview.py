@@ -24,7 +24,7 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
-        super(UsermediaOverviewTest, cls).tearDownClass()
+        super().tearDownClass()
 
     def setUp(self):
         self.base_url = self.live_server_url

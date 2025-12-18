@@ -20,7 +20,8 @@ export {
 export {
     documentTemplatePlugin,
     checkProtectedInSelection,
-    getProtectedRanges
+    getProtectedRanges,
+    getAllowedElementsAndMarks
 } from "./document_template"
 export {
     findFootnoteMarkers,

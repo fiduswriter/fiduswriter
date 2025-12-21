@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "fiduswriter"
 description = "A semantic wordprocessor for academic purposes"
 readme = "README.md"
-license = "AGPL-3.0-or-later"
+license = {text = "AGPL-3.0-or-later"}
 authors = [
   {email = "mail@lundinfo.com", name = "Lund Info AB"},
 ]

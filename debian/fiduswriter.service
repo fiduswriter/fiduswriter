@@ -1,0 +1,48 @@
+[Unit]
+Description=Fidus Writer ASGI Application
+Documentation=https://www.fiduswriter.org
+After=network.target postgresql.service mysql.service mariadb.service redis.service
+
+[Service]
+Type=notify
+User=fiduswriter
+Group=fiduswriter
+WorkingDirectory=/var/lib/fiduswriter
+Environment="PYTHONUNBUFFERED=1"
+Environment="PROJECT_PATH=/var/lib/fiduswriter"
+Environment="DJANGO_SETTINGS_MODULE=configuration"
+Environment="PATH=/opt/fiduswriter/venv/bin:/opt/fiduswriter/python3.14/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="LD_LIBRARY_PATH=/opt/fiduswriter/python3.14/lib"
+ExecStartPre=/opt/fiduswriter/venv/bin/python3 -m fiduswriter.manage migrate --noinput
+ExecStartPre=/opt/fiduswriter/venv/bin/python3 -m fiduswriter.manage transpile
+ExecStartPre=/opt/fiduswriter/venv/bin/python3 -m fiduswriter.manage collectstatic --noinput
+ExecStart=/opt/fiduswriter/venv/bin/daphne -b 127.0.0.1 -p 8000 --access-log /var/log/fiduswriter/access.log fiduswriter.asgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+Restart=on-failure
+RestartSec=5s
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/fiduswriter /var/log/fiduswriter
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+LockPersonality=true
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=512
+
+[Install]
+WantedBy=multi-user.target

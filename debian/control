@@ -1,0 +1,86 @@
+Source: fiduswriter
+Section: web
+Priority: optional
+Maintainer: Lund Info AB <mail@lundinfo.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               dh-virtualenv (>= 1.2),
+               python3,
+               python3-setuptools,
+               python3-babel,
+               python3-wheel,
+               python3-pip,
+               build-essential,
+               wget,
+               libssl-dev,
+               libffi-dev,
+               libbz2-dev,
+               libreadline-dev,
+               libsqlite3-dev,
+               libncurses5-dev,
+               libncursesw5-dev,
+               xz-utils,
+               tk-dev,
+               liblzma-dev,
+               libjpeg-dev,
+               zlib1g-dev,
+               libmagic1,
+               nodejs (>= 18),
+               npm
+Standards-Version: 4.6.2
+Homepage: https://www.fiduswriter.org
+Vcs-Browser: https://github.com/fiduswriter/fiduswriter
+Vcs-Git: https://github.com/fiduswriter/fiduswriter.git
+Rules-Requires-Root: no
+
+Package: fiduswriter
+Architecture: all
+Depends: ${misc:Depends},
+         adduser,
+         lsb-base,
+         libmagic1,
+         libjpeg62-turbo | libjpeg8,
+         libssl3 | libssl1.1,
+         libffi8 | libffi7,
+         libbz2-1.0,
+         libreadline8 | libreadline7,
+         libsqlite3-0,
+         libncurses6 | libncurses5,
+         liblzma5
+Recommends: nginx | apache2,
+            postgresql | mysql-server | mariadb-server,
+            python3-psycopg2 | python3-mysqlclient,
+            languagetool,
+            pandoc,
+            git
+Suggests: redis-server
+Description: Collaborative academic word processor (bundled)
+ Fidus Writer is an online collaborative editor especially made for academics
+ who need to use citations and/or formulas. The editor focuses on the content
+ rather than the layout, so that with the same text, you can later on publish
+ it in multiple ways: On a website, as a printed book, or as an ebook.
+ .
+ Features:
+  * Semantic word processing
+  * Real-time collaboration
+  * Citation management
+  * Formula support with LaTeX
+  * Multiple export formats (HTML, EPUB, LaTeX, DOCX)
+  * Template system
+  * Plugin architecture
+ .
+ This package includes Python compiled from source and all Python
+ dependencies bundled in a virtualenv at /opt/fiduswriter/, making it
+ self-contained and working on different versions of Ubuntu and Debian
+ without requiring a modern system Python.
+ .
+ This package includes all optional modules:
+  * fiduswriter-books - Book document type support
+  * fiduswriter-citation-api-import - Import citations from external APIs
+  * fiduswriter-languagetool - Grammar and spell checking
+  * fiduswriter-ojs - Open Journal Systems integration
+  * fiduswriter-pandoc - Additional export formats via Pandoc
+  * fiduswriter-phplist - PHPList newsletter integration
+  * fiduswriter-gitrepo-export - Export to Git repositories
+  * fiduswriter-payment-paddle - Paddle payment processing
+  * fiduswriter-website - Static website generation

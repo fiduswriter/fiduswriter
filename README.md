@@ -17,6 +17,7 @@ The installation procedures can be found in our [documentation](docs/installatio
 **Quick Start:**
 - **Ubuntu**: [Snap Installation](docs/installation/snap.md)
 - **Docker**: [Docker Installation](docs/installation/docker.md)
+- **Debian/Ubuntu Package**: [Build Debian Package](docs/debian-packaging.md)
 - **Developers**: [Development Setup](docs/installation/developer-install.md)
 
 Documentation
@@ -25,6 +26,7 @@ Documentation
 📚 **[Full Documentation](docs/README.md)**
 
 - [Installation Guides](docs/installation/)
+- [Debian Packaging](docs/debian-packaging.md)
 - [Configuration](docs/configuration/)
 - [Development](docs/development/)
 - [Contributing](docs/contributing.md)

@@ -1,0 +1,32 @@
+Fidus Writer Debian Packaging
+==============================
+
+This directory contains Debian packaging files for Fidus Writer.
+
+For complete documentation on building and installing the Debian packages,
+please see:
+
+    docs/debian-packaging.md
+
+Quick Start
+-----------
+
+Build packages:
+    ./build-deb.sh
+
+Install:
+    sudo dpkg -i debian-build/fiduswriter_*.deb
+    sudo apt-get install -f
+
+Files in this directory:
+- control       Package metadata and dependencies
+- rules         Build instructions
+- changelog     Version history
+- copyright     License information
+- *.service     Systemd service files
+- *.postinst    Post-installation scripts
+- *.postrm      Post-removal scripts
+- nginx-example.conf    Example nginx configuration
+- README.Debian         User documentation (installed with package)
+
+Last Updated: 2025-12-19

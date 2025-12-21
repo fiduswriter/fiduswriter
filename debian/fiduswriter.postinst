@@ -1,0 +1,137 @@
+#!/bin/sh
+set -e
+
+# Source debconf library
+. /usr/share/debconf/confmodule
+
+case "$1" in
+    configure)
+        # Create fiduswriter system user and group if they don't exist
+        if ! getent group fiduswriter >/dev/null; then
+            addgroup --system fiduswriter
+        fi
+
+        if ! getent passwd fiduswriter >/dev/null; then
+            adduser --system --home /var/lib/fiduswriter --no-create-home \
+                --ingroup fiduswriter --disabled-password --shell /bin/false \
+                --gecos "Fidus Writer daemon" fiduswriter
+        fi
+
+        # Set up directory permissions
+        install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter
+        install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter/media
+        install -d -o fiduswriter -g fiduswriter -m 0750 /var/log/fiduswriter
+
+        # Create configuration directory if it doesn't exist
+        install -d -o root -g root -m 0755 /etc/fiduswriter
+
+        # Copy default configuration if configuration.py doesn't exist
+        if [ ! -f /etc/fiduswriter/configuration.py ]; then
+            if [ -f /etc/fiduswriter/configuration.py.template ]; then
+                cp /etc/fiduswriter/configuration.py.template /etc/fiduswriter/configuration.py
+                chmod 640 /etc/fiduswriter/configuration.py
+                chown root:fiduswriter /etc/fiduswriter/configuration.py
+                echo "Default configuration created at /etc/fiduswriter/configuration.py"
+                echo "Please edit this file to configure your Fidus Writer installation."
+            fi
+        fi
+
+        # Create symlink to configuration in working directory
+        if [ ! -L /var/lib/fiduswriter/configuration.py ]; then
+            ln -sf /etc/fiduswriter/configuration.py /var/lib/fiduswriter/configuration.py
+        fi
+
+        # Generate SECRET_KEY if not present in configuration
+        if [ -f /etc/fiduswriter/configuration.py ]; then
+            if ! grep -q "^SECRET_KEY" /etc/fiduswriter/configuration.py; then
+                SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
+                echo "" >> /etc/fiduswriter/configuration.py
+                echo "# Auto-generated secret key" >> /etc/fiduswriter/configuration.py
+                echo "SECRET_KEY = '$SECRET_KEY'" >> /etc/fiduswriter/configuration.py
+                echo "Generated SECRET_KEY in configuration file."
+            fi
+        fi
+
+        # Set proper ownership for all fiduswriter files
+        chown -R fiduswriter:fiduswriter /var/lib/fiduswriter
+        chown -R fiduswriter:fiduswriter /var/log/fiduswriter
+
+        # Ensure virtualenv and Python are readable
+        chmod -R a+rX /opt/fiduswriter
+
+        # Ensure Python shared libraries are accessible
+        if [ ! -f /etc/ld.so.conf.d/fiduswriter.conf ]; then
+            echo "/opt/fiduswriter/python3.14/lib" > /etc/ld.so.conf.d/fiduswriter.conf
+            ldconfig
+        fi
+
+        # Reload systemd daemon
+        if [ -d /run/systemd/system ]; then
+            systemctl --system daemon-reload >/dev/null || true
+        fi
+
+        # Display post-installation message
+        db_version 2.0
+
+        echo ""
+        echo "=========================================="
+        echo "Fidus Writer Installation Complete"
+        echo "=========================================="
+        echo ""
+        echo "Python, all dependencies, and all optional modules bundled in:"
+        echo "  /opt/fiduswriter/"
+        echo ""
+        echo "Included modules:"
+        echo "  - books, citation-api-import, languagetool, ojs, pandoc"
+        echo "  - phplist, gitrepo-export, payment-paddle, website"
+        echo ""
+        echo "Next steps:"
+        echo "1. Configure database in /etc/fiduswriter/configuration.py"
+        echo "   Default uses SQLite at /var/lib/fiduswriter/fiduswriter.db"
+        echo "   For production, use PostgreSQL or MySQL"
+        echo ""
+        echo "2. Install database adapter (choose one):"
+        echo "   For PostgreSQL: sudo apt install python3-psycopg2"
+        echo "   For MySQL: sudo apt install python3-mysqlclient"
+        echo ""
+        echo "3. Review and customize /etc/fiduswriter/configuration.py"
+        echo "   Set ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS, etc."
+        echo "   Enable modules by adding to INSTALLED_APPS (e.g., 'book', 'ojs')"
+        echo ""
+        echo "4. Run database migrations:"
+        echo "   sudo -u fiduswriter fiduswriter migrate"
+        echo ""
+        echo "5. Create superuser account:"
+        echo "   sudo -u fiduswriter fiduswriter createsuperuser"
+        echo ""
+        echo "6. Collect static files:"
+        echo "   sudo -u fiduswriter fiduswriter collectstatic --noinput"
+        echo ""
+        echo "7. Transpile JavaScript:"
+        echo "   sudo -u fiduswriter fiduswriter transpile"
+        echo ""
+        echo "8. Start the service:"
+        echo "   sudo systemctl enable fiduswriter"
+        echo "   sudo systemctl start fiduswriter"
+        echo ""
+        echo "9. Configure a reverse proxy (nginx or apache2) for production"
+        echo "   The service runs on http://127.0.0.1:8000"
+        echo ""
+        echo "Documentation: https://www.fiduswriter.org"
+        echo "=========================================="
+        echo ""
+
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

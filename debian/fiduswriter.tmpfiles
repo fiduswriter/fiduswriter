@@ -1,0 +1,7 @@
+# tmpfiles.d configuration for Fidus Writer
+# This ensures runtime directories are created with proper permissions
+
+d /var/lib/fiduswriter 0750 fiduswriter fiduswriter -
+d /var/lib/fiduswriter/media 0750 fiduswriter fiduswriter -
+d /var/log/fiduswriter 0750 fiduswriter fiduswriter -
+d /run/fiduswriter 0755 fiduswriter fiduswriter -

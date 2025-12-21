@@ -1,0 +1,51 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    purge)
+        # Remove bundled Python and virtualenv
+        echo "Removing bundled Python and virtualenv..."
+        rm -rf /opt/fiduswriter
+
+        # Remove ld.so.conf entry
+        rm -f /etc/ld.so.conf.d/fiduswriter.conf
+        ldconfig
+
+        # Remove user and group
+        if getent passwd fiduswriter >/dev/null; then
+            deluser --quiet --system fiduswriter >/dev/null || true
+        fi
+
+        if getent group fiduswriter >/dev/null; then
+            delgroup --quiet --system fiduswriter >/dev/null || true
+        fi
+
+        # Remove data directories (only on purge)
+        rm -rf /var/lib/fiduswriter
+        rm -rf /var/log/fiduswriter
+        rm -rf /etc/fiduswriter
+
+        # Remove systemd service files
+        rm -f /lib/systemd/system/fiduswriter.service
+
+        if [ -d /run/systemd/system ]; then
+            systemctl --system daemon-reload >/dev/null || true
+        fi
+    ;;
+
+    remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        # Stop service on removal but keep data
+        if [ -d /run/systemd/system ]; then
+            deb-systemd-invoke stop fiduswriter.service >/dev/null || true
+        fi
+    ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

@@ -13,7 +13,12 @@ os.environ.setdefault("SRC_PATH", SRC_PATH)
 
 sys.path.append(SRC_PATH)
 sys_argv = sys.argv
-PROJECT_PATH = os.getcwd()
+PROJECT_PATH = os.environ.get("PROJECT_PATH", os.getcwd())
+# Add PROJECT_PATH to sys.path for consistency with manage.py
+# Note: In production, PYTHONPATH should include both /etc/fiduswriter
+# (for configuration.py) and /var/lib/fiduswriter (for project files)
+if PROJECT_PATH and PROJECT_PATH not in sys.path:
+    sys.path.insert(0, PROJECT_PATH)
 os.environ.setdefault("PROJECT_PATH", PROJECT_PATH)
 SETTINGS_MODULE = "configuration"
 mod = False

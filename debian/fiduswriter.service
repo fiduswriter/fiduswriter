@@ -12,6 +12,7 @@ Environment="PYTHONUNBUFFERED=1"
 Environment="PROJECT_PATH=/var/lib/fiduswriter"
 Environment="SRC_PATH=/opt/fiduswriter/python3.14/lib/python3.14/site-packages/fiduswriter"
 Environment="DJANGO_SETTINGS_MODULE=configuration"
+Environment="PYTHONPATH=/etc/fiduswriter:/var/lib/fiduswriter"
 Environment="PATH=/opt/fiduswriter/python3.14/bin:/usr/local/bin:/usr/bin:/bin"
 Environment="LD_LIBRARY_PATH=/opt/fiduswriter/python3.14/lib"
 ExecStartPre=/opt/fiduswriter/python3.14/bin/python3.14 -m fiduswriter.manage --pythonpath /etc/fiduswriter migrate --noinput

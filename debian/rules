@@ -115,6 +115,11 @@ override_dh_auto_install:
 	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir \
 		--no-deps .
 	
+	# Fix all shebang lines in bin directory (pip hardcodes build paths)
+	@echo "Fixing shebang lines in all Python scripts..."
+	find $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX)/bin -type f -exec \
+		sed -i '1s|^#!.*python.*|#!/opt/fiduswriter/python$(PYTHON_MAJORMINOR)/bin/python$(PYTHON_MAJORMINOR)|' {} +
+	
 	# Create wrapper script
 	install -d debian/fiduswriter/usr/bin
 	echo '#!/bin/sh' > debian/fiduswriter/usr/bin/fiduswriter

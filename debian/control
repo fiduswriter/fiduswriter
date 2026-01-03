@@ -38,6 +38,7 @@ Architecture: all
 Depends: ${misc:Depends},
          adduser,
          lsb-base,
+         gettext,
          libmagic1,
          libjpeg62-turbo | libjpeg8,
          libssl3 | libssl1.1,

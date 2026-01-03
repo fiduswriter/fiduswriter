@@ -4,7 +4,7 @@ Documentation=https://www.fiduswriter.org
 After=network.target postgresql.service mysql.service mariadb.service redis.service
 
 [Service]
-Type=notify
+Type=simple
 User=fiduswriter
 Group=fiduswriter
 WorkingDirectory=/var/lib/fiduswriter

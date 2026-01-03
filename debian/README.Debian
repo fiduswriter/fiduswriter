@@ -1,0 +1,263 @@
+Fidus Writer for Debian
+========================
+
+This package provides Fidus Writer, a collaborative academic word processor,
+packaged for Debian and Ubuntu systems.
+
+**For complete build and packaging documentation, see:** `docs/debian-packaging.md`
+
+Important Notes
+---------------
+
+**Python 3.14.2 and Node.js Bundled:** This package includes Python 3.14.2 compiled 
+from source and installed to `/opt/fiduswriter/python3.14/`. All dependencies 
+(Django 6.0, Channels, Daphne, Node.js via nodejs-wheel, and 30+ packages) are 
+bundled. This means:
+
+- Works on Ubuntu 20.04+, Debian 11+ (even with older system Python)
+- No internet required during installation
+- Completely isolated from system Python
+- No conflicts with other Python applications
+
+**Node.js for Transpilation:** Node.js is bundled via the `nodejs-wheel` Python 
+package, which provides Node.js binaries in the Python environment. This is used 
+by the `transpile` command (via django-npm-mjs) to build JavaScript assets.
+
+**Database Adapters Included:** PostgreSQL (psycopg2-binary) and MySQL (mysqlclient) 
+database adapters are bundled in the package. You can use either database without 
+installing additional packages. For SQLite (default), no additional setup is needed.
+
+Installation
+------------
+
+After installing the package, follow these steps to set up Fidus Writer:
+
+1. Configure the application:
+   Edit /etc/fiduswriter/configuration.py to set:
+   - Database settings (PostgreSQL or MySQL recommended for production)
+   - ALLOWED_HOSTS (your domain name or IP address)
+   - CSRF_TRUSTED_ORIGINS (with protocol, e.g., https://example.com)
+   - SECRET_KEY (auto-generated on first install)
+   - Email settings (for user registration)
+   
+   Note: Database adapters for PostgreSQL and MySQL are already bundled!
+
+2. Set up the database:
+   For PostgreSQL:
+   
+   $ sudo -u postgres createdb fiduswriter
+   $ sudo -u postgres createuser fiduswriter
+   $ sudo -u postgres psql
+   postgres=# ALTER USER fiduswriter WITH PASSWORD 'your_password';
+   postgres=# GRANT ALL PRIVILEGES ON DATABASE fiduswriter TO fiduswriter;
+   postgres=# \q
+
+   Then update /etc/fiduswriter/configuration.py:
+   
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.postgresql',
+           'NAME': 'fiduswriter',
+           'USER': 'fiduswriter',
+           'PASSWORD': 'your_password',
+           'HOST': 'localhost',
+           'PORT': '5432',
+       }
+   }
+
+3. Run database migrations:
+   $ sudo -u fiduswriter fiduswriter migrate
+
+4. Create a superuser account:
+   $ sudo -u fiduswriter fiduswriter createsuperuser
+
+5. Transpile JavaScript assets:
+   $ sudo -u fiduswriter fiduswriter transpile
+
+6. Collect static files:
+   $ sudo -u fiduswriter fiduswriter collectstatic --noinput
+
+7. Enable and start the service:
+   $ sudo systemctl enable fiduswriter
+   $ sudo systemctl start fiduswriter
+
+8. Configure a reverse proxy (recommended for production):
+   See /usr/share/doc/fiduswriter/nginx-example.conf for an nginx example.
+   The service runs on http://127.0.0.1:8000 by default.
+
+Service Management
+------------------
+
+Start service:     sudo systemctl start fiduswriter
+Stop service:      sudo systemctl stop fiduswriter
+Restart service:   sudo systemctl restart fiduswriter
+Check status:      sudo systemctl status fiduswriter
+View logs:         sudo journalctl -u fiduswriter -f
+
+File Locations
+--------------
+
+Bundled Python:    /opt/fiduswriter/python3.14/
+Virtualenv:        /opt/fiduswriter/venv/
+Configuration:     /etc/fiduswriter/configuration.py
+Data directory:    /var/lib/fiduswriter/  (PROJECT_PATH)
+Media files:       /var/lib/fiduswriter/media/
+Static files:      /var/lib/fiduswriter/static-collected/  (STATIC_ROOT)
+Transpiled JS:     /var/lib/fiduswriter/static-transpile/
+Log files:         /var/log/fiduswriter/
+Systemd service:   /lib/systemd/system/fiduswriter.service
+
+Note: The configuration file is in /etc/fiduswriter/, but all data files
+(database, media, static files) are stored in /var/lib/fiduswriter/.
+
+Plugin Packages
+---------------
+
+The following optional plugin packages are available:
+
+- fiduswriter-books              Book document type support
+- fiduswriter-citation-api-import  Import citations from external APIs
+- fiduswriter-languagetool       Grammar and spell checking integration
+- fiduswriter-ojs                Open Journal Systems integration
+- fiduswriter-pandoc             Additional export formats via Pandoc
+- fiduswriter-phplist            PHPList newsletter integration
+- fiduswriter-gitrepo-export     Export documents to Git repositories
+- fiduswriter-payment-paddle     Paddle payment processing
+- fiduswriter-website            Generate static websites from documents
+
+Install plugins with apt:
+  $ sudo apt install fiduswriter-books fiduswriter-citation-api-import
+
+After installing a plugin, enable it by adding the app name to INSTALLED_APPS
+in /etc/fiduswriter/configuration.py and restart the service.
+
+Management Commands
+-------------------
+
+All Django management commands are available via the 'fiduswriter' command
+(which uses the bundled Python 3.14.2):
+
+  fiduswriter migrate              Run database migrations
+  fiduswriter createsuperuser      Create admin user
+  fiduswriter collectstatic        Collect static files
+  fiduswriter transpile            Transpile JavaScript
+  fiduswriter shell                Open Django shell
+  fiduswriter dbshell              Open database shell
+  fiduswriter check                Check for issues
+
+Run as the fiduswriter user:
+  $ sudo -u fiduswriter fiduswriter <command>
+
+Or directly with bundled Python:
+  $ sudo -u fiduswriter /opt/fiduswriter/venv/bin/python3 -m fiduswriter.manage <command>
+
+Production Deployment
+---------------------
+
+For production deployments:
+
+1. Use PostgreSQL or MySQL (not SQLite)
+2. Set up a reverse proxy (nginx or Apache) with HTTPS
+3. Configure firewall to block direct access to port 8000
+4. Set DEBUG = False in configuration.py
+5. Configure proper ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS
+6. Set up email for user notifications
+7. Consider Redis for caching and session storage
+8. Set up regular backups of /var/lib/fiduswriter/
+
+Note: Python 3.14.2 is bundled and provides excellent performance with
+optimizations and JIT compilation enabled.
+
+Example nginx configuration is provided in:
+  /usr/share/doc/fiduswriter/nginx-example.conf
+
+HTTPS Setup with Let's Encrypt
+-------------------------------
+
+1. Install certbot:
+   $ sudo apt install certbot python3-certbot-nginx
+
+2. Obtain certificate:
+   $ sudo certbot --nginx -d your-domain.com
+
+3. Update /etc/fiduswriter/configuration.py:
+   ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+   CSRF_TRUSTED_ORIGINS = ['https://your-domain.com']
+
+4. Restart service:
+   $ sudo systemctl restart fiduswriter
+
+Database Backup
+---------------
+
+To backup the database and media files:
+
+PostgreSQL:
+  $ sudo -u postgres pg_dump fiduswriter > fiduswriter-backup.sql
+  $ sudo tar -czf media-backup.tar.gz /var/lib/fiduswriter/media/
+
+MySQL:
+  $ mysqldump -u fiduswriter -p fiduswriter > fiduswriter-backup.sql
+  $ sudo tar -czf media-backup.tar.gz /var/lib/fiduswriter/media/
+
+Restore:
+  $ sudo -u postgres psql fiduswriter < fiduswriter-backup.sql
+  $ sudo tar -xzf media-backup.tar.gz -C /
+  $ sudo chown -R fiduswriter:fiduswriter /var/lib/fiduswriter/media/
+
+Troubleshooting
+---------------
+
+Service won't start:
+  - Check logs: sudo journalctl -u fiduswriter -n 50
+  - Verify configuration syntax: sudo -u fiduswriter fiduswriter check
+  - Ensure database is accessible
+  - Check port 8000 is not in use: sudo netstat -tlnp | grep 8000
+
+Permission errors:
+  - Ensure proper ownership: sudo chown -R fiduswriter:fiduswriter /var/lib/fiduswriter
+  - Check log directory: sudo chown -R fiduswriter:fiduswriter /var/log/fiduswriter
+
+Static files not loading:
+  - Run: sudo -u fiduswriter fiduswriter collectstatic --noinput
+  - Restart service: sudo systemctl restart fiduswriter
+  - Check nginx configuration
+
+Database connection errors:
+  - Verify database credentials in /etc/fiduswriter/configuration.py
+  - Ensure database server is running
+  - Check firewall rules
+
+Upgrading
+---------
+
+When upgrading to a new version:
+
+1. Stop the service:
+   $ sudo systemctl stop fiduswriter
+
+2. Upgrade the package:
+   $ sudo apt update
+   $ sudo apt upgrade fiduswriter
+
+3. Run migrations:
+   $ sudo -u fiduswriter fiduswriter migrate
+
+4. Collect static files:
+   $ sudo -u fiduswriter fiduswriter collectstatic --noinput
+
+5. Transpile JavaScript:
+   $ sudo -u fiduswriter fiduswriter transpile
+
+6. Start the service:
+   $ sudo systemctl start fiduswriter
+
+Support
+-------
+
+Build Guide: docs/debian-packaging.md
+Documentation: https://www.fiduswriter.org
+GitHub: https://github.com/fiduswriter/fiduswriter
+Issues: https://github.com/fiduswriter/fiduswriter/issues
+
+ -- Lund Info AB <mail@lundinfo.com>  Thu, 19 Dec 2025 12:00:00 +0000

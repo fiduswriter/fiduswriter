@@ -1,0 +1,179 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+export PYBUILD_NAME=fiduswriter
+export DH_VIRTUALENV_INSTALL_ROOT=/opt
+export DH_VIRTUALENV_INSTALL_SUFFIX=fiduswriter
+
+# Python 3.14.2 configuration
+PYTHON_VERSION=3.14.2
+PYTHON_MAJORMINOR=3.14
+PYTHON_URL=https://www.python.org/ftp/python/$(PYTHON_VERSION)/Python-$(PYTHON_VERSION).tar.xz
+PYTHON_PREFIX=/opt/fiduswriter/python$(PYTHON_MAJORMINOR)
+PYTHON_BIN=$(PYTHON_PREFIX)/bin/python$(PYTHON_MAJORMINOR)
+
+# Prevent setuptools from downloading dependencies
+export PYTHONDONTWRITEBYTECODE=1
+export NO_COMPILEMESSAGES=true
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_clean:
+	# Skip pybuild auto_clean since we're building our own Python
+	rm -rf build
+	rm -rf *.egg-info
+	rm -rf fiduswriter/.transpile
+	rm -rf fiduswriter/static-transpile
+	rm -rf fiduswriter/static-collected
+	rm -rf fiduswriter/static-libs
+	rm -rf fiduswriter/node_modules
+	rm -rf debian/fiduswriter/
+	rm -rf .pybuild
+	rm -rf Python-$(PYTHON_VERSION)
+	rm -f Python-$(PYTHON_VERSION).tar.xz
+	find . -name "*.pyc" -delete
+	find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+	find . -name "*.mo" -delete 2>/dev/null || true
+
+override_dh_auto_build:
+	# Build phase - just compile message catalogs with system Python
+	# Note: We need python3-babel in Build-Depends for this
+	python3 setup.py compile_catalog || echo "Warning: Could not compile catalogs, will try later"
+
+override_dh_auto_install:
+	# Check if Python is already built and cached
+	@if [ -d "$(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR)" ] && \
+	    [ -f "$(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR)/bin/python$(PYTHON_MAJORMINOR)" ]; then \
+		echo "Using cached Python $(PYTHON_VERSION)..."; \
+		mkdir -p $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX); \
+		cp -r $(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR)/* $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX)/; \
+	else \
+		echo "Downloading Python $(PYTHON_VERSION)..."; \
+		wget -q $(PYTHON_URL) || curl -sLO $(PYTHON_URL); \
+		tar -xf Python-$(PYTHON_VERSION).tar.xz; \
+		echo "Building Python $(PYTHON_VERSION) (this will be cached)..."; \
+		cd Python-$(PYTHON_VERSION) && \
+			./configure \
+				--prefix=$(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX) \
+				--enable-optimizations \
+				--with-lto \
+				--enable-shared \
+				--with-system-ffi \
+				--with-computed-gotos \
+				--enable-loadable-sqlite-extensions \
+				LDFLAGS="-Wl,-rpath=$(PYTHON_PREFIX)/lib" && \
+			make -j$$(nproc) && \
+			make install; \
+		echo "Caching Python build for future use..."; \
+		mkdir -p $(CURDIR)/.python-build-cache; \
+		cp -r $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX) $(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR); \
+		echo "Python build cached in .python-build-cache/"; \
+	fi
+	
+	# Install setuptools, wheel, and babel in bundled Python
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir setuptools wheel babel
+	
+	# Compile message catalogs with bundled Python (in case it failed earlier)
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) setup.py compile_catalog || true
+	
+	# Install directly into bundled Python (no venv needed)
+	@echo "Installing packages into bundled Python..."
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir \
+		--upgrade pip setuptools wheel
+	
+	# Install all dependencies from requirements.txt
+	@echo "Installing Python dependencies..."
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir \
+		-r fiduswriter/requirements.txt
+	
+	# Install nodejs-wheel to bundle Node.js in Python environment (required for transpile)
+	@echo "Installing Node.js via nodejs-wheel..."
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir \
+		nodejs-wheel
+	
+	# Install database adapters (PostgreSQL and MySQL)
+	@echo "Installing database adapters..."
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir \
+		psycopg2-binary \
+		mysqlclient
+	
+	# Install all optional dependencies (plugins)
+	@echo "Installing optional plugin modules..."
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir --upgrade \
+		"fiduswriter-books~=4.0.0" \
+		"fiduswriter-citation-api-import~=4.0.0" \
+		"fiduswriter-languagetool~=4.0.0" \
+		"fiduswriter-ojs~=4.0.0" \
+		"fiduswriter-pandoc~=4.0.3" \
+		"fiduswriter-phplist~=4.0.0" \
+		"fiduswriter-gitrepo-export~=4.0.0" \
+		"fiduswriter-payment-paddle~=4.0.0" \
+		"fiduswriter-website~=4.0.0"
+	
+	# Install fiduswriter package itself
+	$(CURDIR)/debian/fiduswriter$(PYTHON_BIN) -m pip install --no-cache-dir \
+		--no-deps .
+	
+	# Fix all shebang lines in bin directory (pip hardcodes build paths)
+	@echo "Fixing shebang lines in all Python scripts..."
+	find $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX)/bin -type f -exec \
+		sed -i '1s|^#!.*python.*|#!/opt/fiduswriter/python$(PYTHON_MAJORMINOR)/bin/python$(PYTHON_MAJORMINOR)|' {} +
+	
+	# Create wrapper script
+	install -d debian/fiduswriter/usr/bin
+	echo '#!/bin/sh' > debian/fiduswriter/usr/bin/fiduswriter
+	echo 'export PATH=$(PYTHON_PREFIX)/bin:/usr/local/bin:/usr/bin:/bin' >> debian/fiduswriter/usr/bin/fiduswriter
+	echo 'export LD_LIBRARY_PATH=$(PYTHON_PREFIX)/lib:$$LD_LIBRARY_PATH' >> debian/fiduswriter/usr/bin/fiduswriter
+	echo 'export PROJECT_PATH=/var/lib/fiduswriter' >> debian/fiduswriter/usr/bin/fiduswriter
+	echo 'export SRC_PATH=$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/fiduswriter' >> debian/fiduswriter/usr/bin/fiduswriter
+	echo 'cd /var/lib/fiduswriter' >> debian/fiduswriter/usr/bin/fiduswriter
+	echo 'exec $(PYTHON_PREFIX)/bin/python$(PYTHON_MAJORMINOR) -m fiduswriter.manage --pythonpath /etc/fiduswriter "$$@"' >> debian/fiduswriter/usr/bin/fiduswriter
+	chmod +x debian/fiduswriter/usr/bin/fiduswriter
+	
+	# Install configuration template
+	install -D -m 644 fiduswriter/configuration-default.py \
+		debian/fiduswriter/etc/fiduswriter/configuration.py.template
+	
+	# Install requirements.txt for reference
+	install -D -m 644 fiduswriter/requirements.txt \
+		debian/fiduswriter/usr/share/fiduswriter/requirements.txt
+	
+	# Create necessary directories
+	install -d debian/fiduswriter/var/lib/fiduswriter
+	install -d debian/fiduswriter/var/lib/fiduswriter/media
+	install -d debian/fiduswriter/var/log/fiduswriter
+	install -d debian/fiduswriter/usr/share/fiduswriter
+	
+	# Install systemd service file (with Python version substitution)
+	install -d debian/fiduswriter/usr/lib/systemd/system
+	sed 's|python3\.14|python$(PYTHON_MAJORMINOR)|g' debian/fiduswriter.service > \
+		debian/fiduswriter/usr/lib/systemd/system/fiduswriter.service
+	chmod 644 debian/fiduswriter/usr/lib/systemd/system/fiduswriter.service
+
+override_dh_fixperms:
+	dh_fixperms
+	# Ensure proper permissions for runtime directories
+	chmod 750 debian/fiduswriter/var/lib/fiduswriter || true
+	chmod 750 debian/fiduswriter/var/log/fiduswriter || true
+	# Fix virtualenv and Python permissions
+	chmod 755 debian/fiduswriter/opt/fiduswriter/venv/bin/* || true
+	chmod 755 debian/fiduswriter$(PYTHON_PREFIX)/bin/* || true
+
+override_dh_installinit:
+	dh_installinit --name=fiduswriter --no-start
+
+override_dh_installsystemd:
+	dh_installsystemd --name=fiduswriter --no-start
+
+# Strip binaries in virtualenv and Python
+override_dh_strip:
+	dh_strip --exclude=_cext --exclude=.so
+
+# Don't compress files in virtualenv
+override_dh_compress:
+	dh_compress -X.py -X.txt -X.so
+
+# Skip shlibs processing for bundled libraries
+override_dh_shlibdeps:
+	dh_shlibdeps -X/opt/fiduswriter/

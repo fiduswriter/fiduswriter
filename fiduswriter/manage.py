@@ -138,7 +138,7 @@ def entry():
     Uses the current working directory as the project path.
     """
     os.environ.setdefault("NO_COMPILEMESSAGES", "true")
-    inner(os.getcwd())
+    inner(os.environ.get("PROJECT_PATH", os.getcwd()))
 
 
 if __name__ == "__main__":
@@ -147,4 +147,4 @@ if __name__ == "__main__":
         multiprocessing.set_start_method("fork", force=True)
     except RuntimeError:
         pass
-    inner(SRC_PATH)
+    inner(os.environ.get("PROJECT_PATH", SRC_PATH))

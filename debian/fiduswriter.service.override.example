@@ -1,0 +1,63 @@
+# Systemd service override example for Fidus Writer
+# Copy this file to /etc/systemd/system/fiduswriter.service.d/override.conf
+# to customize the service configuration without modifying the main service file.
+#
+# Create the directory:
+#   sudo mkdir -p /etc/systemd/system/fiduswriter.service.d/
+#
+# Copy and edit this file:
+#   sudo cp /usr/share/doc/fiduswriter/fiduswriter.service.override.example \
+#       /etc/systemd/system/fiduswriter.service.d/override.conf
+#   sudo nano /etc/systemd/system/fiduswriter.service.d/override.conf
+#
+# Reload systemd and restart service:
+#   sudo systemctl daemon-reload
+#   sudo systemctl restart fiduswriter
+
+[Service]
+# Change the bind address and port
+# Environment="DAPHNE_BIND=0.0.0.0"
+# Environment="DAPHNE_PORT=8080"
+
+# Increase resource limits
+# LimitNOFILE=131072
+# LimitNPROC=1024
+
+# Add additional environment variables
+# Environment="DJANGO_DEBUG=False"
+# Environment="CACHE_BACKEND=redis"
+
+# Change working directory if needed
+# WorkingDirectory=/var/lib/fiduswriter
+
+# Modify restart behavior
+# Restart=always
+# RestartSec=10s
+
+# Add additional dependencies
+# After=redis.service
+
+# Change timeout values
+# TimeoutStopSec=30
+# TimeoutStartSec=120
+
+# Adjust process execution
+# Nice=10
+# IOSchedulingClass=best-effort
+# IOSchedulingPriority=4
+
+# Customize logging
+# StandardOutput=journal
+# StandardError=journal
+# SyslogIdentifier=fiduswriter
+
+# Security options (uncomment to override defaults)
+# NoNewPrivileges=false
+# PrivateTmp=false
+# ProtectSystem=full
+
+# Run pre-start commands (uncomment if needed)
+# ExecStartPre=/usr/local/bin/custom-pre-start.sh
+
+# Run post-stop commands (uncomment if needed)
+# ExecStopPost=/usr/local/bin/custom-post-stop.sh

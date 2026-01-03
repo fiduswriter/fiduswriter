@@ -85,8 +85,10 @@ if settings.MEDIA_URL[0] == "/":
     ]
 
 
-if not settings.DEBUG and settings.STATIC_URL[0] == "/":
-    # Only serve static files from collecting folder if not running in debug mode.
+if settings.STATIC_URL[0] == "/":
+    # Serve static files from collecting folder.
+    # This is safe for production when using Daphne/ASGI servers.
+    # For higher performance, consider using a reverse proxy (nginx/apache).
     urlpatterns += [
         re_path(
             r"^%s(?P<path>.*)$" % re.escape(settings.STATIC_URL.lstrip("/")),

@@ -1,0 +1,25 @@
+# Default settings for Fidus Writer
+# This file is sourced by the systemd service
+
+# Project path where Fidus Writer data is stored
+PROJECT_PATH=/var/lib/fiduswriter
+
+# Python settings
+PYTHONUNBUFFERED=1
+
+# Django settings module (configuration.py in PROJECT_PATH)
+DJANGO_SETTINGS_MODULE=configuration
+
+# Daphne bind address and port
+DAPHNE_BIND=127.0.0.1
+DAPHNE_PORT=8000
+
+# Logging
+ACCESS_LOG=/var/log/fiduswriter/access.log
+ERROR_LOG=/var/log/fiduswriter/error.log
+
+# Number of worker processes (adjust based on CPU cores)
+# WORKERS=4
+
+# Additional Daphne options
+# DAPHNE_OPTS="--verbosity 2"

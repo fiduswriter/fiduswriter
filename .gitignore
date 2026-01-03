@@ -24,6 +24,31 @@ build
 /parts/
 /venv/
 /fiduswriter/venv/
+
+# Python build cache for Debian packaging
+/.python-build-cache/
+
+# Debian package build artifacts
+/debian-build/
+/Python*/
+*.deb
+*.dsc
+*.tar.xz
+*.tar.gz
+*.changes
+*.buildinfo
+*.build
+/.pybuild/
+*.upload
+.debhelper/
+debian/files
+debian/.debhelper/
+debian/tmp/
+debian/fiduswriter/
+debian/fiduswriter-*/
+debian/*.substvars
+debian/*.debhelper.log
+debian/*-stamp
 /fiduswriter/.envrc
 /fiduswriter/.direnv
 .envrc

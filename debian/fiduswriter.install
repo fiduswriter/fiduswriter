@@ -1,0 +1,4 @@
+# Install documentation and examples
+debian/README.Debian usr/share/doc/fiduswriter/
+debian/nginx-example.conf usr/share/doc/fiduswriter/
+debian/fiduswriter.service.override.example usr/share/doc/fiduswriter/

@@ -1,0 +1,21 @@
+fiduswriter (4.0.17-1) unstable; urgency=medium
+
+  * Initial Debian package release
+  * Upstream version 4.0.17
+  * Single package with all modules included
+  * Bundled Python 3.14.2 compiled from source
+  * All dependencies and optional modules included:
+    - fiduswriter-books
+    - fiduswriter-citation-api-import
+    - fiduswriter-languagetool
+    - fiduswriter-ojs
+    - fiduswriter-pandoc
+    - fiduswriter-phplist
+    - fiduswriter-gitrepo-export
+    - fiduswriter-payment-paddle
+    - fiduswriter-website
+  * Works on Ubuntu 20.04+, Debian 11+ (no Python 3.11+ required)
+  * Add systemd service integration
+  * Self-contained package (~250-300 MB)
+
+ -- Johannes Wilm <johannes@fiduswriter.org>  Thu, 19 Dec 2025 12:00:00 +0000

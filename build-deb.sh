@@ -74,6 +74,17 @@ echo ""
 echo "Building single package with all modules included..."
 echo ""
 
+# Check if Python build is cached (any version)
+CACHED_PYTHON=$(ls -d .python-build-cache/python* 2>/dev/null | head -1)
+if [ -n "$CACHED_PYTHON" ]; then
+    CACHED_VERSION=$(basename "$CACHED_PYTHON" | sed 's/python//')
+    echo "✓ Python $CACHED_VERSION build cache found - build will be faster!"
+else
+    echo "⚠ Python will be compiled from source (10-15 minutes)"
+    echo "  Future builds will use cached Python and be much faster."
+fi
+echo ""
+
 # Check and install build dependencies
 echo "Checking build dependencies..."
 if ! dpkg-checkbuilddeps 2>/dev/null; then
@@ -106,8 +117,8 @@ mv ../*.buildinfo "$BUILD_DIR/" 2>/dev/null || true
 
 # Final cleanup
 echo "Cleaning up build artifacts..."
-rm -f Python-3.14.2.tar.xz
-rm -rf Python-3.14.2
+rm -f Python-*.tar.xz
+rm -rf Python-3.*
 echo "Done!"
 echo ""
 
@@ -129,7 +140,7 @@ echo "Documentation:"
 echo "  Build guide: docs/debian-packaging.md"
 echo "  User guide:  /usr/share/doc/fiduswriter/README.Debian (after install)"
 echo ""
-echo "Package includes all optional modules (books, ojs, pandoc, languagetool, etc.)"
+echo "Package includes all optional modules: books, ojs, pandoc, languagetool, etc."
 echo ""
-echo "Works on all versions of Ubuntu and Debian that have not reacehd EOL."
+echo "Works on all versions of Ubuntu and Debian that have not reached EOL."
 echo ""

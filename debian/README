@@ -18,13 +18,30 @@ Install:
     sudo dpkg -i debian-build/fiduswriter_*.deb
     sudo apt-get install -f
 
+Updating Python Version
+-----------------------
+
+To update to a new Python version (e.g., from 3.14.2 to 3.15.0):
+
+1. Edit debian/rules:
+   - Change PYTHON_VERSION=3.14.2 to PYTHON_VERSION=3.15.0
+   - Change PYTHON_MAJORMINOR=3.14 to PYTHON_MAJORMINOR=3.15
+
+2. Delete the build cache:
+   rm -rf .python-build-cache
+
+3. Rebuild:
+   ./build-deb.sh
+
+That's it! All references to python3.14 will automatically update to python3.15.
+
 Files in this directory:
 - control       Package metadata and dependencies
-- rules         Build instructions
+- rules         Build instructions (contains PYTHON_VERSION and PYTHON_MAJORMINOR)
 - changelog     Version history
 - copyright     License information
-- *.service     Systemd service files
-- *.postinst    Post-installation scripts
+- *.service     Systemd service files (Python version auto-substituted)
+- *.postinst    Post-installation scripts (auto-detects Python version)
 - *.postrm      Post-removal scripts
 - nginx-example.conf    Example nginx configuration
 - README.Debian         User documentation (installed with package)

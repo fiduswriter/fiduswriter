@@ -9,21 +9,23 @@ packaged for Debian and Ubuntu systems.
 Important Notes
 ---------------
 
-**Python 3.14.2 Bundled:** This package includes Python 3.14.2 compiled from source
-and installed to `/opt/fiduswriter/python3.14/`. All dependencies (Django 6.0, 
-Channels, Daphne, and 30+ packages) are bundled in a virtualenv at 
-`/opt/fiduswriter/venv/`. This means:
+**Python 3.14.2 and Node.js Bundled:** This package includes Python 3.14.2 compiled 
+from source and installed to `/opt/fiduswriter/python3.14/`. All dependencies 
+(Django 6.0, Channels, Daphne, Node.js via nodejs-wheel, and 30+ packages) are 
+bundled. This means:
 
 - Works on Ubuntu 20.04+, Debian 11+ (even with older system Python)
 - No internet required during installation
 - Completely isolated from system Python
 - No conflicts with other Python applications
 
-**Database Adapter:** You can install a database adapter either system-wide or
-in the bundled virtualenv:
-- System-wide: `sudo apt install python3-psycopg2` (PostgreSQL)
-- System-wide: `sudo apt install python3-mysqlclient` (MySQL)
-- Or in virtualenv: `sudo /opt/fiduswriter/venv/bin/pip install psycopg2-binary`
+**Node.js for Transpilation:** Node.js is bundled via the `nodejs-wheel` Python 
+package, which provides Node.js binaries in the Python environment. This is used 
+by the `transpile` command (via django-npm-mjs) to build JavaScript assets.
+
+**Database Adapters Included:** PostgreSQL (psycopg2-binary) and MySQL (mysqlclient) 
+database adapters are bundled in the package. You can use either database without 
+installing additional packages. For SQLite (default), no additional setup is needed.
 
 Installation
 ------------
@@ -37,15 +39,10 @@ After installing the package, follow these steps to set up Fidus Writer:
    - CSRF_TRUSTED_ORIGINS (with protocol, e.g., https://example.com)
    - SECRET_KEY (auto-generated on first install)
    - Email settings (for user registration)
-
-2. Install database adapter (required):
-   For PostgreSQL (recommended):
-   $ sudo apt install python3-psycopg2
    
-   For MySQL:
-   $ sudo apt install python3-mysqlclient
+   Note: Database adapters for PostgreSQL and MySQL are already bundled!
 
-3. Set up the database:
+2. Set up the database:
    For PostgreSQL:
    
    $ sudo -u postgres createdb fiduswriter
@@ -68,23 +65,23 @@ After installing the package, follow these steps to set up Fidus Writer:
        }
    }
 
-4. Run database migrations:
+3. Run database migrations:
    $ sudo -u fiduswriter fiduswriter migrate
 
-5. Create a superuser account:
+4. Create a superuser account:
    $ sudo -u fiduswriter fiduswriter createsuperuser
+
+5. Transpile JavaScript assets:
+   $ sudo -u fiduswriter fiduswriter transpile
 
 6. Collect static files:
    $ sudo -u fiduswriter fiduswriter collectstatic --noinput
 
-7. Transpile JavaScript assets:
-   $ sudo -u fiduswriter fiduswriter transpile
-
-8. Enable and start the service:
+7. Enable and start the service:
    $ sudo systemctl enable fiduswriter
    $ sudo systemctl start fiduswriter
 
-9. Configure a reverse proxy (recommended for production):
+8. Configure a reverse proxy (recommended for production):
    See /usr/share/doc/fiduswriter/nginx-example.conf for an nginx example.
    The service runs on http://127.0.0.1:8000 by default.
 
@@ -103,11 +100,15 @@ File Locations
 Bundled Python:    /opt/fiduswriter/python3.14/
 Virtualenv:        /opt/fiduswriter/venv/
 Configuration:     /etc/fiduswriter/configuration.py
-Data directory:    /var/lib/fiduswriter/
+Data directory:    /var/lib/fiduswriter/  (PROJECT_PATH)
 Media files:       /var/lib/fiduswriter/media/
-Static files:      /var/lib/fiduswriter/static-collected/
+Static files:      /var/lib/fiduswriter/static-collected/  (STATIC_ROOT)
+Transpiled JS:     /var/lib/fiduswriter/static-transpile/
 Log files:         /var/log/fiduswriter/
 Systemd service:   /lib/systemd/system/fiduswriter.service
+
+Note: The configuration file is in /etc/fiduswriter/, but all data files
+(database, media, static files) are stored in /var/lib/fiduswriter/.
 
 Plugin Packages
 ---------------

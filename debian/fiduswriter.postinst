@@ -36,9 +36,32 @@ case "$1" in
             fi
         fi
 
-        # Create symlink to configuration in working directory
-        if [ ! -L /var/lib/fiduswriter/configuration.py ]; then
-            ln -sf /etc/fiduswriter/configuration.py /var/lib/fiduswriter/configuration.py
+        # Ensure configuration.py exists (create minimal one if template is missing)
+        if [ ! -f /etc/fiduswriter/configuration.py ]; then
+            cat > /etc/fiduswriter/configuration.py << 'EOF'
+# Fidus Writer Configuration
+# Add your configuration settings here
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/var/lib/fiduswriter/fiduswriter.db',
+    }
+}
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
+
+# Add your installed apps here
+# INSTALLED_APPS = [
+#     'book',
+#     'ojs',
+#     'pandoc',
+# ]
+EOF
+            chmod 640 /etc/fiduswriter/configuration.py
+            chown root:fiduswriter /etc/fiduswriter/configuration.py
+            echo "Minimal configuration created at /etc/fiduswriter/configuration.py"
         fi
 
         # Generate SECRET_KEY if not present in configuration
@@ -56,13 +79,17 @@ case "$1" in
         chown -R fiduswriter:fiduswriter /var/lib/fiduswriter
         chown -R fiduswriter:fiduswriter /var/log/fiduswriter
 
-        # Ensure virtualenv and Python are readable
+        # Ensure fiduswriter Python folder is readable
         chmod -R a+rX /opt/fiduswriter
 
         # Ensure Python shared libraries are accessible
         if [ ! -f /etc/ld.so.conf.d/fiduswriter.conf ]; then
-            echo "/opt/fiduswriter/python3.14/lib" > /etc/ld.so.conf.d/fiduswriter.conf
-            ldconfig
+            # Use wildcard to match any Python 3.x version
+            PYTHON_LIB=$(ls -d /opt/fiduswriter/python*/lib 2>/dev/null | head -1)
+            if [ -n "$PYTHON_LIB" ]; then
+                echo "$PYTHON_LIB" > /etc/ld.so.conf.d/fiduswriter.conf
+                ldconfig
+            fi
         fi
 
         # Reload systemd daemon
@@ -78,23 +105,27 @@ case "$1" in
         echo "Fidus Writer Installation Complete"
         echo "=========================================="
         echo ""
-        echo "Python, all dependencies, and all optional modules bundled in:"
-        echo "  /opt/fiduswriter/"
+        # Detect bundled Python version
+        PYTHON_VERSION=$(ls -d /opt/fiduswriter/python* 2>/dev/null | head -1 | sed 's|.*/python||')
+        echo "Python ${PYTHON_VERSION:-3.14+}, Node.js (via nodejs-wheel), and database adapters"
+        echo "(PostgreSQL/MySQL) with all dependencies and optional modules installed in:"
+        echo "  /opt/fiduswriter/python${PYTHON_VERSION:-3.14+}/"
         echo ""
         echo "Included modules:"
         echo "  - books, citation-api-import, languagetool, ojs, pandoc"
         echo "  - phplist, gitrepo-export, payment-paddle, website"
         echo ""
+        echo "Bundled components:"
+        echo "  - Node.js (via nodejs-wheel) for JavaScript transpilation"
+        echo "  - PostgreSQL adapter (psycopg2-binary)"
+        echo "  - MySQL adapter (mysqlclient)"
+        echo ""
         echo "Next steps:"
         echo "1. Configure database in /etc/fiduswriter/configuration.py"
         echo "   Default uses SQLite at /var/lib/fiduswriter/fiduswriter.db"
-        echo "   For production, use PostgreSQL or MySQL"
+        echo "   For production, use PostgreSQL or MySQL (adapters already bundled!)"
         echo ""
-        echo "2. Install database adapter (choose one):"
-        echo "   For PostgreSQL: sudo apt install python3-psycopg2"
-        echo "   For MySQL: sudo apt install python3-mysqlclient"
-        echo ""
-        echo "3. Review and customize /etc/fiduswriter/configuration.py"
+        echo "2. Review and customize /etc/fiduswriter/configuration.py"
         echo "   Set ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS, etc."
         echo "   Enable modules by adding to INSTALLED_APPS (e.g., 'book', 'ojs')"
         echo ""
@@ -104,17 +135,17 @@ case "$1" in
         echo "5. Create superuser account:"
         echo "   sudo -u fiduswriter fiduswriter createsuperuser"
         echo ""
-        echo "6. Collect static files:"
-        echo "   sudo -u fiduswriter fiduswriter collectstatic --noinput"
-        echo ""
-        echo "7. Transpile JavaScript:"
+        echo "6. Transpile JavaScript:"
         echo "   sudo -u fiduswriter fiduswriter transpile"
+        echo ""
+        echo "7. Collect static files:"
+        echo "   sudo -u fiduswriter fiduswriter collectstatic --noinput"
         echo ""
         echo "8. Start the service:"
         echo "   sudo systemctl enable fiduswriter"
         echo "   sudo systemctl start fiduswriter"
         echo ""
-        echo "9. Configure a reverse proxy (nginx or apache2) for production"
+        echo "8. Configure a reverse proxy (nginx or apache2) for production"
         echo "   The service runs on http://127.0.0.1:8000"
         echo ""
         echo "Documentation: https://www.fiduswriter.org"

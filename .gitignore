@@ -25,6 +25,9 @@ build
 /venv/
 /fiduswriter/venv/
 
+# Python build cache for Debian packaging
+/.python-build-cache/
+
 # Debian package build artifacts
 /debian-build/
 /Python*/

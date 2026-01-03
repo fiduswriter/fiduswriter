@@ -4,9 +4,11 @@ This guide explains how to build and install Fidus Writer as a Debian/Ubuntu pac
 
 ## Overview
 
-This package bundles a recent **Python**, all dependencies (Django, Channels, Daphne, and 30+ packages), and **all optional modules** into a single self-contained installation at `/opt/fiduswriter/`. This means:
+This package bundles a recent **Python**, **Node.js** (via nodejs-wheel), **database adapters** (PostgreSQL and MySQL), all dependencies (Django, Channels, Daphne, and 30+ packages), and **all optional modules** into a single self-contained installation at `/opt/fiduswriter/`. This means:
 
 - ✅ **Python included** - No system Python 3.11+ required
+- ✅ **Node.js included** - Bundled via nodejs-wheel for JavaScript transpilation
+- ✅ **Database adapters included** - PostgreSQL and MySQL adapters bundled
 - ✅ No internet required during installation
 - ✅ All dependencies and optional modules bundled
 - ✅ Works on recent Ubuntu, Debian (even with older Python)
@@ -50,10 +52,10 @@ sudo -u fiduswriter fiduswriter migrate
 # 3. Create admin user
 sudo -u fiduswriter fiduswriter createsuperuser
 
-# 4. Transpile JavaScript
+# 4. Transpile JavaScript (requires bundled Node.js via nodejs-wheel)
 sudo -u fiduswriter fiduswriter transpile
 
-# 5. Collect static files
+# 5. Collect static files (must run after transpile)
 sudo -u fiduswriter fiduswriter collectstatic --noinput
 
 # 6. Start service
@@ -67,10 +69,9 @@ sudo systemctl start fiduswriter
 
 | Component | Location |
 |-----------|----------|
-| Bundled Python 3.14+ | `/opt/fiduswriter/python3.X/` |
-| Virtualenv | `/opt/fiduswriter/venv/` |
-| Python packages | `/opt/fiduswriter/venv/lib/python3.X/site-packages/` |
-| Bundled binaries | `/opt/fiduswriter/venv/bin/` |
+| Bundled Python 3.14 | `/opt/fiduswriter/python3.14/` |
+| Python packages | `/opt/fiduswriter/python3.14/lib/python3.14/site-packages/` |
+| Bundled binaries | `/opt/fiduswriter/python3.14/bin/` |
 | Configuration | `/etc/fiduswriter/configuration.py` |
 | Data directory | `/var/lib/fiduswriter/` |
 | Media files | `/var/lib/fiduswriter/media/` |
@@ -80,25 +81,27 @@ sudo systemctl start fiduswriter
 ### How It Works
 
 **Build Process:**
-1. Downloads and compiles Python 3.14+ from source
-2. Creates virtualenv using bundled Python
-3. Installs all packages from `fiduswriter/requirements.txt`
-4. Bundles Python + virtualenv into .deb package
-5. Output: `debian-build/fiduswriter_*.deb` (~200-250 MB)
+1. Downloads and compiles Python 3.14.2 from source
+2. Installs all packages from `fiduswriter/requirements.txt` into bundled Python
+3. Installs Node.js via `nodejs-wheel` Python package for JavaScript transpilation
+4. Installs database adapters (psycopg2-binary for PostgreSQL, mysqlclient for MySQL)
+5. Bundles Python with all packages into .deb package
+6. Output: `debian-build/fiduswriter_*.deb` (~250-300 MB)
 
 **Installation:**
-1. Extracts Python 3.14+ to `/opt/fiduswriter/python3.X/`
-2. Extracts virtualenv to `/opt/fiduswriter/venv/`
-3. Creates wrapper script at `/usr/bin/fiduswriter`
-4. Sets up systemd service
-5. No internet connection needed
-6. Works even if system has only Python 3.8 or 3.9
+1. Extracts Python 3.14 to `/opt/fiduswriter/python3.14/`
+2. Creates wrapper script at `/usr/bin/fiduswriter`
+3. Sets up systemd service
+4. No internet connection needed
+5. Works even if system has only Python 3.8 or 3.9
 
 **Runtime:**
-- Service uses bundled Python 3.14+
-- Service uses `/opt/fiduswriter/venv/bin/daphne`
-- Commands use `/opt/fiduswriter/venv/bin/python3`
-- All dependencies resolved from bundled virtualenv
+- Service uses bundled Python 3.14.2
+- Service uses `/opt/fiduswriter/python3.14/bin/daphne`
+- Commands use `/opt/fiduswriter/python3.14/bin/python3.14`
+- All dependencies installed directly in bundled Python
+- Node.js binaries provided by nodejs-wheel for transpilation
+- Database adapters (PostgreSQL/MySQL) bundled - no separate installation needed
 
 ## Building from Source
 
@@ -139,6 +142,11 @@ debian/rules clean
 dpkg-buildpackage -b -us -uc
 ```
 
+**Note:** Python 3.14.2 is compiled from source during the first build (~10-15 minutes). 
+The compiled Python is cached in `.python-build-cache/` so subsequent builds are much 
+faster (~2-3 minutes). The cache is automatically reused unless you delete it or change 
+the Python version.
+
 ### Build Output
 
 ```
@@ -150,7 +158,7 @@ debian-build/
 
 ### Database Setup
 
-#### PostgreSQL (Recommended)
+### PostgreSQL (Recommended)
 
 ```bash
 # Create database
@@ -158,8 +166,8 @@ sudo -u postgres createdb fiduswriter
 sudo -u postgres createuser fiduswriter
 sudo -u postgres psql -c "ALTER USER fiduswriter WITH PASSWORD 'your_password';"
 
-# Install adapter
-sudo apt-get install python3-psycopg2
+# Note: PostgreSQL adapter (psycopg2-binary) is already bundled!
+# No need to install python3-psycopg2
 
 # Configure
 sudo nano /etc/fiduswriter/configuration.py
@@ -184,10 +192,11 @@ CSRF_TRUSTED_ORIGINS = ['https://your-domain.com']
 #### MySQL
 
 ```bash
-# Install adapter
-sudo apt-get install python3-mysqlclient
+# Note: MySQL adapter (mysqlclient) is already bundled!
+# No need to install python3-mysqlclient
 
 # Configure
+sudo nano /etc/fiduswriter/configuration.py
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -271,16 +280,19 @@ sudo systemctl restart fiduswriter
 ## Management Commands
 
 ```bash
-# All commands run as fiduswriter user (uses bundled Python 3.14+)
+# All commands run as fiduswriter user (uses bundled Python 3.14)
 sudo -u fiduswriter fiduswriter <command>
 
 # Examples
 fiduswriter migrate              # Run migrations
 fiduswriter createsuperuser      # Create admin
-fiduswriter collectstatic        # Collect static files
-fiduswriter transpile            # Transpile JavaScript
+fiduswriter transpile            # Transpile JavaScript (run before collectstatic)
+fiduswriter collectstatic        # Collect static files (run after transpile)
 fiduswriter shell                # Django shell
 fiduswriter check                # System check
+
+# Or use bundled Python directly
+sudo -u fiduswriter /opt/fiduswriter/python3.14/bin/python3.14 -m fiduswriter.manage <command>
 ```
 
 ## Service Management
@@ -321,7 +333,7 @@ sudo tar -czf media-backup.tar.gz /var/lib/fiduswriter/media/
 # Install new version
 sudo dpkg -i debian-build/fiduswriter_4.0.18-1_all.deb
 
-# Run migrations
+# Run migrations and asset generation (transpile must run before collectstatic)
 sudo -u fiduswriter fiduswriter migrate
 sudo -u fiduswriter fiduswriter transpile
 sudo -u fiduswriter fiduswriter collectstatic --noinput
@@ -349,6 +361,11 @@ either `wget` or `curl` installed:
 ```bash
 sudo apt-get install wget
 ```
+
+**Slow builds:**
+First build compiles Python 3.14.2 from source (~10-15 minutes). Subsequent builds use 
+the cached Python from `.python-build-cache/` and are much faster (~2-3 minutes). If you 
+need to rebuild Python, delete `.python-build-cache/`.
 
 ### Installation Issues
 
@@ -383,21 +400,41 @@ ls -la /opt/fiduswriter/lib/python3.*/site-packages/
 
 ### Database Adapters
 
-Database adapters can be installed either way:
+Database adapters are **already bundled** in the package:
 
-**Option 1: System-wide (recommended for ease):**
+- **PostgreSQL**: `psycopg2-binary` is included
+- **MySQL**: `mysqlclient` is included
+- **SQLite**: Built into Python (no additional adapter needed)
+
+No additional installation is required! Simply configure your database settings in `/etc/fiduswriter/configuration.py` and the appropriate adapter will be used automatically.
+
+If you need a different version or adapter, you can install it manually:
 ```bash
-sudo apt-get install python3-psycopg2  # PostgreSQL
-sudo apt-get install python3-mysqlclient  # MySQL
+sudo /opt/fiduswriter/python3.14/bin/pip install psycopg2-binary
+sudo /opt/fiduswriter/python3.14/bin/pip install mysqlclient
 ```
 
-**Option 2: In virtualenv (works with bundled Python):**
-```bash
-sudo /opt/fiduswriter/venv/bin/pip install psycopg2-binary
-sudo /opt/fiduswriter/venv/bin/pip install mysqlclient
-```
+### Node.js for Transpilation
 
-The bundled Python can compile C extensions, so both options work.
+Node.js is bundled automatically via the `nodejs-wheel` Python package. This provides:
+- Node.js binaries within the Python environment
+- No separate Node.js installation required
+- Used by `django-npm-mjs` for JavaScript transpilation
+- The `transpile` command must be run before `collectstatic`
+
+The build process automatically installs `nodejs-wheel` and database adapters after installing dependencies from `requirements.txt`.
+
+### Database Adapters Bundled
+
+Both PostgreSQL and MySQL database adapters are bundled in the package:
+- **psycopg2-binary** - PostgreSQL adapter (pure Python, no compilation needed)
+- **mysqlclient** - MySQL adapter
+
+This means:
+- No separate package installation required
+- Works immediately after configuring database settings
+- Reduces deployment complexity
+- Same package works for any database choice
 
 
 ---

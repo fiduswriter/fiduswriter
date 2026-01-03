@@ -18,4 +18,4 @@ fiduswriter (4.0.17-1) unstable; urgency=medium
   * Add systemd service integration
   * Self-contained package (~250-300 MB)
 
- -- Lund Info AB <mail@lundinfo.com>  Thu, 19 Dec 2025 12:00:00 +0000
+ -- Johannes Wilm <johannes@fiduswriter.org>  Thu, 19 Dec 2025 12:00:00 +0000

@@ -327,6 +327,7 @@ export class ODTExporterRichtext {
                     sup,
                     sub,
                     smallcaps,
+                    code,
                     anchor
                 // Check for hyperlink, bold/strong and italic/em
                 if (node.marks) {
@@ -342,6 +343,7 @@ export class ODTExporterRichtext {
                     )
                     sup = node.marks.find(mark => mark.type === "sup")
                     sub = node.marks.find(mark => mark.type === "sub")
+                    code = node.marks.find(mark => mark.type === "code")
                 }
 
                 if (hyperlink) {
@@ -378,6 +380,9 @@ export class ODTExporterRichtext {
                     attributes += "p"
                 } else if (sub) {
                     attributes += "b"
+                }
+                if (code) {
+                    attributes += "t"
                 }
 
                 if (attributes.length) {

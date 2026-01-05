@@ -246,7 +246,7 @@ export const richtext_part = partSpec("richtext", "block+", {
         ]
     },
     marks: {
-        default: ["strong", "em", "link", "anchor"]
+        default: ["strong", "em", "link", "anchor", "sup", "sub", "code"]
     },
     metadata: {
         default: false
@@ -257,7 +257,7 @@ export const heading_part = partSpec("heading", "heading", {
         default: ["heading1"]
     },
     marks: {
-        default: ["strong", "em", "link", "anchor"]
+        default: ["strong", "em", "link", "anchor", "sup", "sub", "code"]
     },
     metadata: {
         default: false
@@ -301,7 +301,7 @@ export const table_part = partSpec("table", "table", {
         ]
     },
     marks: {
-        default: ["strong", "em", "link", "anchor"]
+        default: ["strong", "em", "link", "anchor", "sup", "sub", "code"]
     }
 })
 

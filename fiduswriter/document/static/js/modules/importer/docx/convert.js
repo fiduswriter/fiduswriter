@@ -1146,6 +1146,36 @@ export class DocxConvert {
         if (formatting.underline) {
             marks.push({type: "underline"})
         }
+        // Handle superscript and subscript
+        if (formatting.vertAlign === "superscript") {
+            marks.push({type: "sup"})
+        }
+        if (formatting.vertAlign === "subscript") {
+            marks.push({type: "sub"})
+        }
+        // Handle inline code (monospace fonts)
+        if (formatting.fontFamily) {
+            const monospacePatterns = [
+                /^courier/i,
+                /^consolas/i,
+                /^monaco/i,
+                /^menlo/i,
+                /^lucida console/i,
+                /^liberation mono/i,
+                /^dejavu sans mono/i,
+                /^bitstream vera sans mono/i,
+                /^source code pro/i,
+                /^fira code/i,
+                /^ubuntu mono/i,
+                /^droid sans mono/i
+            ]
+            const isMonospace = monospacePatterns.some(pattern =>
+                pattern.test(formatting.fontFamily)
+            )
+            if (isMonospace) {
+                marks.push({type: "code"})
+            }
+        }
         if (insertion) {
             const date = new Date(insertion.getAttribute("w:date"))
             const date10 = Math.floor(date.getTime() / 600000) * 10

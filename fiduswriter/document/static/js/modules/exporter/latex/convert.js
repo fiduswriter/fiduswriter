@@ -333,7 +333,7 @@ export class LatexExporterConvert {
                 }
                 break
             case "text": {
-                let strong, em, underline, hyperlink, anchor
+                let strong, em, underline, hyperlink, anchor, sup, sub, code
                 // Check for hyperlink, bold/strong, italic/em and underline
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === "strong")
@@ -343,6 +343,9 @@ export class LatexExporterConvert {
                     )
                     hyperlink = node.marks.find(mark => mark.type === "link")
                     anchor = node.marks.find(mark => mark.type === "anchor")
+                    sup = node.marks.find(mark => mark.type === "sup")
+                    sub = node.marks.find(mark => mark.type === "sub")
+                    code = node.marks.find(mark => mark.type === "code")
                 }
                 if (em) {
                     start += "\\emph{"
@@ -354,6 +357,18 @@ export class LatexExporterConvert {
                 }
                 if (underline) {
                     start += "\\underline{"
+                    end = "}" + end
+                }
+                if (sup) {
+                    start += "\\textsuperscript{"
+                    end = "}" + end
+                }
+                if (sub) {
+                    start += "\\textsubscript{"
+                    end = "}" + end
+                }
+                if (code) {
+                    start += "\\texttt{"
                     end = "}" + end
                 }
                 if (hyperlink) {

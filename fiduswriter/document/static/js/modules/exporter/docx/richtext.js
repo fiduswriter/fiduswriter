@@ -416,6 +416,7 @@ export class DOCXExporterRichtext {
                     smallcaps,
                     sup,
                     sub,
+                    code,
                     formatChange
                 // Check for hyperlink, anchor, bold/strong and italic/em
                 if (node.marks) {
@@ -431,6 +432,7 @@ export class DOCXExporterRichtext {
                     )
                     sup = node.marks.find(mark => mark.type === "sup")
                     sub = node.marks.find(mark => mark.type === "sub")
+                    code = node.marks.find(mark => mark.type === "code")
                     formatChange = node.marks.find(
                         mark => mark.type === "format_change"
                     )
@@ -465,7 +467,8 @@ export class DOCXExporterRichtext {
                     underline ||
                     smallcaps ||
                     sup ||
-                    sub
+                    sub ||
+                    code
                 ) {
                     if (hyperlink) {
                         this.rels.addLinkStyle()
@@ -487,6 +490,10 @@ export class DOCXExporterRichtext {
                         start += '<w:vertAlign w:val="superscript"/>'
                     } else if (sub) {
                         start += '<w:vertAlign w:val="subscript"/>'
+                    }
+                    if (code) {
+                        start +=
+                            '<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/>'
                     }
                 }
                 if (formatChange) {

@@ -112,6 +112,18 @@ const allowedMarksTemplate = ({marks}) =>
 <label>
     <input type="checkbox" class="marks" value="link" ${marks.includes("link") ? "checked" : ""}/>
     ${gettext("Link")}
+</label>
+<label>
+    <input type="checkbox" class="marks" value="sup" ${marks.includes("sup") ? "checked" : ""}/>
+    ${gettext("Superscript")}
+</label>
+<label>
+    <input type="checkbox" class="marks" value="sub" ${marks.includes("sub") ? "checked" : ""}/>
+    ${gettext("Subscript")}
+</label>
+<label>
+    <input type="checkbox" class="marks" value="code" ${marks.includes("code") ? "checked" : ""}/>
+    ${gettext("Code")}
 </label>`
 
 const headingTemplate = ({
@@ -125,7 +137,7 @@ const headingTemplate = ({
         "heading5",
         "heading6"
     ],
-    marks = ["strong", "em", "underline", "link"],
+    marks = ["strong", "em", "underline", "link", "sup", "sub", "code"],
     locking = "false",
     optional = "false",
     language = false,
@@ -290,7 +302,7 @@ const richtextTemplate = ({
         "blockquote",
         "footnote"
     ],
-    marks = ["strong", "em", "underline", "link"],
+    marks = ["strong", "em", "underline", "link", "sup", "sub", "code"],
     locking = "false",
     optional = "false",
     language = false,
@@ -446,7 +458,7 @@ const tableTemplate = ({
         "blockquote",
         "footnote"
     ],
-    marks = ["strong", "em", "underline", "link"],
+    marks = ["strong", "em", "underline", "link", "sup", "sub", "code"],
     locking = "false",
     optional = "false",
     language = false
@@ -545,7 +557,7 @@ const footnoteTemplate = ({
         "blockquote",
         "table"
     ],
-    footnote_marks = ["strong", "em", "underline", "link"]
+    footnote_marks = ["strong", "em", "underline", "link", "sup", "sub", "code"]
 }) =>
     `<div class="doc-part-block attrs">${allowedElementsTemplate({elements: footnote_elements}, {isFootnote: true})}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 

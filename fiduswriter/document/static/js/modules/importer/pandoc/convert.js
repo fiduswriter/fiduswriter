@@ -471,16 +471,22 @@ export class PandocConvert {
                 const inner = this.convertInlines(inline.c)
                 return applyAnnotation(inner, "smallcaps")
             }
-            case "Superscript":
-                return applyAnnotation(
-                    this.convertInlines(inline.c),
-                    "superscript"
-                )
-            case "Subscript":
-                return applyAnnotation(
-                    this.convertInlines(inline.c),
-                    "subscript"
-                )
+            case "Superscript": {
+                const innerNodes = this.convertInlines(inline.c)
+                return mergeTextNodes(applyMarkToNodes(innerNodes, "sup"))
+            }
+            case "Subscript": {
+                const innerNodes = this.convertInlines(inline.c)
+                return mergeTextNodes(applyMarkToNodes(innerNodes, "sub"))
+            }
+            case "Code": {
+                const text = inline.c[1]
+                return {
+                    type: "text",
+                    text: text,
+                    marks: [{type: "code"}]
+                }
+            }
             case "Link": {
                 const innerNodes = this.convertInlines(inline.c[1])
                 return mergeTextNodes(

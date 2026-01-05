@@ -224,7 +224,10 @@ export class OdtConvert {
                 ),
                 textDecoration:
                     textProperties.getAttribute("style:text-underline-style") ||
-                    textProperties.getAttribute("style:text-line-through-style")
+                    textProperties.getAttribute(
+                        "style:text-line-through-style"
+                    ),
+                textPosition: textProperties.getAttribute("style:text-position")
             }
         }
 
@@ -1198,6 +1201,40 @@ export class OdtConvert {
         }
         if (style?.textProperties?.italic) {
             currentStyleMarks = [...currentStyleMarks, {type: "em"}]
+        }
+        // Handle superscript and subscript
+        if (style?.textProperties?.textPosition) {
+            const position = style.textProperties.textPosition
+            if (position.includes("super")) {
+                currentStyleMarks = [...currentStyleMarks, {type: "sup"}]
+            } else if (position.includes("sub")) {
+                currentStyleMarks = [...currentStyleMarks, {type: "sub"}]
+            }
+        }
+        // Handle inline code (monospace fonts)
+        if (style?.textProperties?.fontFamily) {
+            const fontFamily = style.textProperties.fontFamily.toLowerCase()
+            const monospacePatterns = [
+                "courier",
+                "consolas",
+                "monaco",
+                "menlo",
+                "lucida console",
+                "liberation mono",
+                "dejavu sans mono",
+                "bitstream vera sans mono",
+                "source code pro",
+                "fira code",
+                "ubuntu mono",
+                "droid sans mono",
+                "monospace"
+            ]
+            const isMonospace = monospacePatterns.some(pattern =>
+                fontFamily.includes(pattern)
+            )
+            if (isMonospace) {
+                currentStyleMarks = [...currentStyleMarks, {type: "code"}]
+            }
         }
         return this.convertNodeChildren(node, currentStyleMarks)
     }

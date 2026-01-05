@@ -827,7 +827,14 @@ export class PandocExporterConvert {
                 case "text": {
                     if (node.text) {
                         let containerContent = pandocContent
-                        let strong, em, underline, hyperlink, anchor
+                        let strong,
+                            em,
+                            underline,
+                            hyperlink,
+                            anchor,
+                            sup,
+                            sub,
+                            code
                         if (node.marks) {
                             strong = node.marks.find(
                                 mark => mark.type === "strong"
@@ -842,6 +849,9 @@ export class PandocExporterConvert {
                             anchor = node.marks.find(
                                 mark => mark.type === "anchor"
                             )
+                            sup = node.marks.find(mark => mark.type === "sup")
+                            sub = node.marks.find(mark => mark.type === "sub")
+                            code = node.marks.find(mark => mark.type === "code")
                         }
                         if (em) {
                             const c = []
@@ -866,6 +876,29 @@ export class PandocExporterConvert {
                                 c
                             })
                             containerContent = c
+                        }
+                        if (sup) {
+                            const c = []
+                            containerContent.push({
+                                t: "Superscript",
+                                c
+                            })
+                            containerContent = c
+                        }
+                        if (sub) {
+                            const c = []
+                            containerContent.push({
+                                t: "Subscript",
+                                c
+                            })
+                            containerContent = c
+                        }
+                        if (code && !options.inCode) {
+                            containerContent.push({
+                                t: "Code",
+                                c: [["", [], []], node.text]
+                            })
+                            break
                         }
                         if (hyperlink) {
                             const c = []

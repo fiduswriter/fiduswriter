@@ -224,7 +224,10 @@ export class OdtConvert {
                 ),
                 textDecoration:
                     textProperties.getAttribute("style:text-underline-style") ||
-                    textProperties.getAttribute("style:text-line-through-style")
+                    textProperties.getAttribute(
+                        "style:text-line-through-style"
+                    ),
+                textPosition: textProperties.getAttribute("style:text-position")
             }
         }
 
@@ -929,6 +932,50 @@ export class OdtConvert {
         return sections
     }
 
+    isCodeBlockStyle(styleName, style) {
+        if (!styleName) {
+            return false
+        }
+
+        // Check if style name contains preformatted or code indicators
+        const lowerStyleName = styleName.toLowerCase()
+        if (
+            lowerStyleName.includes("preformatted") ||
+            lowerStyleName.includes("code") ||
+            styleName === "Preformatted_20_Text"
+        ) {
+            return true
+        }
+
+        // Check if parent style is a code block style
+        if (style?.parentStyleName) {
+            const parentStyle = this.styles[style.parentStyleName]
+            return this.isCodeBlockStyle(style.parentStyleName, parentStyle)
+        }
+
+        // Check text properties for monospace fonts
+        if (style?.textProperties?.fontFamily) {
+            const fontFamily = style.textProperties.fontFamily.toLowerCase()
+            const monospacePatterns = [
+                "courier",
+                "consolas",
+                "monaco",
+                "menlo",
+                "lucida console",
+                "liberation mono",
+                "dejavu sans mono",
+                "bitstream vera sans mono",
+                "source code pro",
+                "fira code"
+            ]
+            return monospacePatterns.some(pattern =>
+                fontFamily.includes(pattern)
+            )
+        }
+
+        return false
+    }
+
     isHeadingStyle(styleName) {
         if (!styleName) {
             return false
@@ -1017,6 +1064,25 @@ export class OdtConvert {
     convertParagraph(node, attrs = {}) {
         const styleName = node.getAttribute("text:style-name")
         const style = this.styles[styleName]
+
+        // Check if this is a code block (preformatted text)
+        if (this.isCodeBlockStyle(styleName, style)) {
+            attrs = Object.assign(
+                {
+                    track: [],
+                    language: "",
+                    category: "",
+                    title: "",
+                    id: ""
+                },
+                attrs
+            )
+            return {
+                type: "code_block",
+                attrs,
+                content: this.convertNodeChildren(node)
+            }
+        }
 
         // Check if this paragraph is title-like
         if (this.isTitleStyle(style)) {
@@ -1198,6 +1264,40 @@ export class OdtConvert {
         }
         if (style?.textProperties?.italic) {
             currentStyleMarks = [...currentStyleMarks, {type: "em"}]
+        }
+        // Handle superscript and subscript
+        if (style?.textProperties?.textPosition) {
+            const position = style.textProperties.textPosition
+            if (position.includes("super")) {
+                currentStyleMarks = [...currentStyleMarks, {type: "sup"}]
+            } else if (position.includes("sub")) {
+                currentStyleMarks = [...currentStyleMarks, {type: "sub"}]
+            }
+        }
+        // Handle inline code (monospace fonts)
+        if (style?.textProperties?.fontFamily) {
+            const fontFamily = style.textProperties.fontFamily.toLowerCase()
+            const monospacePatterns = [
+                "courier",
+                "consolas",
+                "monaco",
+                "menlo",
+                "lucida console",
+                "liberation mono",
+                "dejavu sans mono",
+                "bitstream vera sans mono",
+                "source code pro",
+                "fira code",
+                "ubuntu mono",
+                "droid sans mono",
+                "monospace"
+            ]
+            const isMonospace = monospacePatterns.some(pattern =>
+                fontFamily.includes(pattern)
+            )
+            if (isMonospace) {
+                currentStyleMarks = [...currentStyleMarks, {type: "code"}]
+            }
         }
         return this.convertNodeChildren(node, currentStyleMarks)
     }

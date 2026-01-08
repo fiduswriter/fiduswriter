@@ -419,10 +419,62 @@ export class HTMLExporterConvert {
                 end = `</h${level}>` + end
                 break
             }
-            case "code_block":
-                start += "<code>"
-                end = "</code>" + end
+            case "code_block": {
+                const attrs = []
+                if (node.attrs.language) {
+                    attrs.push(
+                        `data-language="${escapeText(node.attrs.language)}"`
+                    )
+                }
+                if (node.attrs.category) {
+                    attrs.push(`data-category="${node.attrs.category}"`)
+                }
+                if (node.attrs.title) {
+                    attrs.push(`data-title="${escapeText(node.attrs.title)}"`)
+                }
+                if (node.attrs.id) {
+                    attrs.push(`data-id="${node.attrs.id}"`)
+                }
+                const attrString = attrs.length ? ` ${attrs.join(" ")}` : ""
+
+                // If there's a category, wrap in figure for proper numbering
+                if (node.attrs.category && node.attrs.id) {
+                    const language = this.doc.attrs.language || "en-US"
+                    const {CATS} = require("../../schema/i18n")
+                    const categoryLabel =
+                        CATS[node.attrs.category]?.[language] ||
+                        node.attrs.category
+
+                    // Count code blocks to get the number
+                    const categories = {}
+                    this.doc.descendants(n => {
+                        if (
+                            n.type === "code_block" &&
+                            n.attrs.category &&
+                            n.attrs.id
+                        ) {
+                            if (!categories[n.attrs.category]) {
+                                categories[n.attrs.category] = 0
+                            }
+                            categories[n.attrs.category]++
+                            if (n.attrs.id === node.attrs.id) {
+                                return false
+                            }
+                        }
+                    })
+                    const number = categories[node.attrs.category] || 1
+                    const label = node.attrs.title
+                        ? `${categoryLabel} ${number}: ${escapeText(node.attrs.title)}`
+                        : `${categoryLabel} ${number}`
+
+                    start += `<figure class="code-block-figure" id="${this.idPrefix}${node.attrs.id}"><figcaption><span class="label">${label}</span></figcaption><pre${attrString}><code>`
+                    end = `</code></pre></figure>` + end
+                } else {
+                    start += `<code${attrString}>`
+                    end = "</code>" + end
+                }
                 break
+            }
             case "blockquote":
                 start += "<blockquote>"
                 end = "</blockquote>" + end
@@ -473,7 +525,7 @@ export class HTMLExporterConvert {
                 end = "</aside>" + end
                 break
             case "text": {
-                let strong, em, underline, hyperlink, anchor
+                let strong, em, underline, hyperlink, anchor, sup, sub, code
                 // Check for hyperlink, bold/strong, italic/em and underline
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === "strong")
@@ -483,6 +535,9 @@ export class HTMLExporterConvert {
                     )
                     hyperlink = node.marks.find(mark => mark.type === "link")
                     anchor = node.marks.find(mark => mark.type === "anchor")
+                    sup = node.marks.find(mark => mark.type === "sup")
+                    sub = node.marks.find(mark => mark.type === "sub")
+                    code = node.marks.find(mark => mark.type === "code")
                 }
                 if (em) {
                     start += "<em>"
@@ -495,6 +550,18 @@ export class HTMLExporterConvert {
                 if (underline) {
                     start += '<span class="underline">'
                     end = "</span>" + end
+                }
+                if (sup) {
+                    start += "<sup>"
+                    end = "</sup>" + end
+                }
+                if (sub) {
+                    start += "<sub>"
+                    end = "</sub>" + end
+                }
+                if (code) {
+                    start += "<code>"
+                    end = "</code>" + end
                 }
                 if (hyperlink) {
                     const href = hyperlink.attrs.href

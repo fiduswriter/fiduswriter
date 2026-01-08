@@ -184,7 +184,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             (
                 "#template-editor > table:nth-child(2) > tbody > tr > "
                 "td.to-column > div.to-container > div:nth-child(5) > "
-                "div.attrs > div:nth-child(29) > div.initial > div > "
+                "div.attrs > div:nth-child(32) > div.initial > div > "
                 "div.ProseMirror > div > p"
             ),
         ).click()
@@ -194,7 +194,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             (
                 "#template-editor > table:nth-child(2) > tbody > tr > "
                 "td.to-column > div.to-container > div:nth-child(5) > "
-                "div.attrs > div:nth-child(30) > div.instructions > div > "
+                "div.attrs > div:nth-child(33) > div.instructions > div > "
                 "div.ProseMirror > p"
             ),
         ).click()
@@ -204,7 +204,18 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "#id_user > option:nth-child(3)"
         ).click()
         # Modify a document style
-        self.driver.find_element(By.CSS_SELECTOR, ".document-style").click()
+        document_style_element = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".document-style")
+            )
+        )
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView(true);", document_style_element
+        )
+        time.sleep(0.5)
+        document_style_element.click()
         self.driver.find_element(By.CSS_SELECTOR, "input.slug").send_keys(
             "fish"
         )
@@ -214,7 +225,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         time.sleep(1)
         # Delete a document style
-        self.driver.find_element(By.CSS_SELECTOR, ".document-style").click()
+        document_style_element = self.driver.find_element(
+            By.CSS_SELECTOR, ".document-style"
+        )
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView(true);", document_style_element
+        )
+        time.sleep(0.5)
+        document_style_element.click()
         self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=document-style-dialog] button.fw-orange",
@@ -224,7 +242,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "[aria-describedby=confirmdeletion] button.fw-dark",
         ).click()
         # Download export template file
-        self.driver.find_element(By.CSS_SELECTOR, ".export-template").click()
+        export_template_element = self.driver.find_element(
+            By.CSS_SELECTOR, ".export-template"
+        )
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView(true);", export_template_element
+        )
+        time.sleep(0.5)
+        export_template_element.click()
         export_template_link = self.driver.find_element(
             By.CSS_SELECTOR, ".export-template-file a"
         )
@@ -251,9 +276,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(old_len_export_templates - 1, len_export_templates)
         old_len_export_templates = len_export_templates
         # Upload export template file
-        self.driver.find_element(
+        upload_template_element = self.driver.find_element(
             By.CSS_SELECTOR, ".export-template .fa-plus-circle"
-        ).click()
+        )
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView(true);", upload_template_element
+        )
+        time.sleep(0.5)
+        upload_template_element.click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".fw-media-file-input")
@@ -269,7 +299,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.assertEqual(old_len_export_templates + 1, len_export_templates)
         os.remove(os.path.join(self.download_dir, et_file))
-        self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
+        submit_button = self.driver.find_element(
+            By.CSS_SELECTOR, "input[type=submit]"
+        )
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView(true);", submit_button
+        )
+        time.sleep(0.5)
+        submit_button.click()
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, "td.field-user").text,
             "User1",

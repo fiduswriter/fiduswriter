@@ -132,6 +132,66 @@ export const doc = {
                 freeToRead: true,
                 licenses: []
             }
+        },
+        code_categories: {
+            default: {
+                listing: {
+                    counter: 0,
+                    enabled: true
+                },
+                example: {
+                    counter: 0,
+                    enabled: true
+                },
+                snippet: {
+                    counter: 0,
+                    enabled: false
+                },
+                tutorial: {
+                    counter: 0,
+                    enabled: false
+                },
+                exercise: {
+                    counter: 0,
+                    enabled: false
+                },
+                exercise_solution: {
+                    counter: 0,
+                    enabled: false
+                }
+            }
+        },
+        code_languages: {
+            default: [
+                "javascript",
+                "python",
+                "java",
+                "cpp",
+                "c",
+                "csharp",
+                "php",
+                "ruby",
+                "go",
+                "rust",
+                "swift",
+                "kotlin",
+                "typescript",
+                "html",
+                "css",
+                "sql",
+                "bash",
+                "shell",
+                "r",
+                "matlab",
+                "scala",
+                "perl",
+                "lua",
+                "haskell",
+                "xml",
+                "json",
+                "yaml",
+                "markdown"
+            ]
         }
     },
     parseDOM: [

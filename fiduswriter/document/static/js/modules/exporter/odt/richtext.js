@@ -262,6 +262,25 @@ export class ODTExporterRichtext {
                         `<text:bookmark-end text:name="${node.attrs.id}"/>` +
                         end
                 }
+                // Handle code block category labels
+                if (node.type === "code_block") {
+                    const category = node.attrs.category
+                    if (category && node.attrs.id) {
+                        const categoryCounter = options.inFootnote
+                            ? this.fnCategoryCounter
+                            : this.categoryCounter
+                        if (!categoryCounter[category]) {
+                            categoryCounter[category] = 1
+                        }
+                        const catCount = categoryCounter[category]++
+                        const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? "A" : ""}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? "A" : ""}</text:sequence>`
+                        const title = node.attrs.title
+                            ? `: ${escapeText(node.attrs.title)}`
+                            : ""
+                        const categoryLabel = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.settings.language]} ${catCountXml}${title}<text:bookmark-end text:name="${node.attrs.id}"/><text:line-break/>`
+                        start += categoryLabel
+                    }
+                }
                 break
             }
             case "blockquote":

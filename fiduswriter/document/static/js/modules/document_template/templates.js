@@ -648,6 +648,111 @@ export const bibliographyHeaderTemplate = ({
         .join("")}</table>`
 }
 
+const codeLanguagesTemplate = ({
+    code_languages = [
+        "javascript",
+        "python",
+        "java",
+        "cpp",
+        "c",
+        "csharp",
+        "php",
+        "ruby",
+        "go",
+        "rust",
+        "swift",
+        "kotlin",
+        "typescript",
+        "html",
+        "css",
+        "sql",
+        "bash",
+        "shell",
+        "r",
+        "matlab",
+        "scala",
+        "perl",
+        "lua",
+        "haskell",
+        "xml",
+        "json",
+        "yaml",
+        "markdown"
+    ]
+}) => {
+    const allLanguages = [
+        "javascript",
+        "python",
+        "java",
+        "cpp",
+        "c",
+        "csharp",
+        "php",
+        "ruby",
+        "go",
+        "rust",
+        "swift",
+        "kotlin",
+        "typescript",
+        "html",
+        "css",
+        "sql",
+        "bash",
+        "shell",
+        "r",
+        "matlab",
+        "scala",
+        "perl",
+        "lua",
+        "haskell",
+        "xml",
+        "json",
+        "yaml",
+        "markdown"
+    ]
+    return `<select multiple size=10>
+${allLanguages.map(lang => `<option value="${lang}"${code_languages.includes(lang) ? " selected" : ""}>${lang}</option>`).join("")}
+</select>`
+}
+
+const codeCategoriesTemplate = ({code_categories = {}}) => {
+    const {CATS} = require("../schema/i18n")
+    const allCategories = Object.keys(CATS)
+    const defaultCategories = {
+        listing: {counter: 0, enabled: true},
+        example: {counter: 0, enabled: true},
+        snippet: {counter: 0, enabled: false},
+        tutorial: {counter: 0, enabled: false},
+        exercise: {counter: 0, enabled: false},
+        exercise_solution: {counter: 0, enabled: false}
+    }
+    const categories = Object.assign({}, defaultCategories, code_categories)
+
+    return `<div class="code-categories-config">
+        <p>${gettext("Select which code block categories are available:")}</p>
+        ${allCategories
+            .map(cat => {
+                const isCodeCategory = [
+                    "listing",
+                    "example",
+                    "snippet",
+                    "tutorial",
+                    "exercise",
+                    "exercise_solution"
+                ].includes(cat)
+                if (!isCodeCategory) {
+                    return ""
+                }
+                const enabled = categories[cat]?.enabled || false
+                return `<label>
+                    <input type="checkbox" class="code-category" value="${cat}" ${enabled ? "checked" : ""}/>
+                    ${CATS[cat]["en-US"] || cat}
+                </label>`
+            })
+            .join("")}
+    </div>`
+}
+
 const templateEditorValueTemplate = ({content}) =>
     content
         .map(docPart => {
@@ -774,6 +879,22 @@ export const documentDesignerTemplate = ({
                 </td>
                 <td class="papersizes-value">
                     ${papersizesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext("Code block languages")}
+                </td>
+                <td class="code-languages-value">
+                    ${codeLanguagesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext("Code block categories")}
+                </td>
+                <td class="code-categories-value">
+                    ${codeCategoriesTemplate(value.attrs || {})}
                 </td>
             </tr>
             <tr>

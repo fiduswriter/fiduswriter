@@ -271,11 +271,50 @@ export class LatexExporterConvert {
                 }
                 break
             }
-            case "code_block":
-                start += "\n\\begin{code}\n\n"
-                end = "\n\n\\end{code}\n" + end
+            case "code_block": {
+                // Support language and category attributes
+                if (node.attrs.category && node.attrs.id) {
+                    const language = this.doc.attrs.language || "en-US"
+                    const {CATS} = require("../../schema/i18n")
+                    const categoryLabel =
+                        CATS[node.attrs.category]?.[language] ||
+                        node.attrs.category
+
+                    // Count code blocks to get the number
+                    const categories = {}
+                    this.doc.descendants(n => {
+                        if (
+                            n.type === "code_block" &&
+                            n.attrs.category &&
+                            n.attrs.id
+                        ) {
+                            if (!categories[n.attrs.category]) {
+                                categories[n.attrs.category] = 0
+                            }
+                            categories[n.attrs.category]++
+                            if (n.attrs.id === node.attrs.id) {
+                                return false
+                            }
+                        }
+                    })
+                    const number = categories[node.attrs.category] || 1
+                    const caption = node.attrs.title
+                        ? `${categoryLabel} ${number}: ${this.convertText(node.attrs.title)}`
+                        : `${categoryLabel} ${number}`
+
+                    start += `\n\\begin{listing}\n\\caption{${caption}}\\label{${node.attrs.id}}\n\\begin{code}\n\n`
+                    end = `\n\n\\end{code}\n\\end{listing}\n` + end
+                    this.features.listing = true
+                } else if (node.attrs.language) {
+                    start += `\n\\begin{code}[${this.convertText(node.attrs.language)}]\n\n`
+                    end = `\n\n\\end{code}\n` + end
+                } else {
+                    start += "\n\\begin{code}\n\n"
+                    end = "\n\n\\end{code}\n" + end
+                }
                 this.features.code = true
                 break
+            }
             case "blockquote":
                 start += "\n\\begin{quote}\n\n"
                 end = "\n\n\\end{quote}\n" + end

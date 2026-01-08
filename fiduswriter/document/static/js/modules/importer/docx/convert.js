@@ -622,6 +622,27 @@ export class DocxConvert {
     }
 
     convertParagraph(node) {
+        const pStyle = node.query("w:pStyle")
+        const styleId = pStyle?.getAttribute("w:val")
+
+        // Check if this is a code block (Code style)
+        if (
+            styleId &&
+            (styleId === "Code" || styleId.toLowerCase().includes("code"))
+        ) {
+            return {
+                type: "code_block",
+                attrs: {
+                    track: [],
+                    language: "",
+                    category: "",
+                    title: "",
+                    id: ""
+                },
+                content: this.convertInline(node)
+            }
+        }
+
         return {
             type: "paragraph",
             content: this.convertInline(node)

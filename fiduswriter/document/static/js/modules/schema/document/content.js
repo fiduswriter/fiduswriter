@@ -2,6 +2,10 @@ import {escapeText} from "../../common"
 import {parseTracks} from "../common"
 import {fnNodeToHtml, htmlToFnNode} from "../footnotes_convert"
 
+export const randomCodeBlockId = () => {
+    return `C${Math.round(Math.random() * 10000000) + 1}`
+}
+
 export const contributor = {
     inline: true,
     draggable: true,
@@ -116,6 +120,18 @@ export const code_block = {
     attrs: {
         track: {
             default: []
+        },
+        language: {
+            default: ""
+        },
+        category: {
+            default: ""
+        },
+        title: {
+            default: ""
+        },
+        id: {
+            default: ""
         }
     },
     parseDOM: [
@@ -124,15 +140,32 @@ export const code_block = {
             preserveWhitespace: "full",
             getAttrs(dom) {
                 return {
-                    track: parseTracks(dom.dataset.track)
+                    track: parseTracks(dom.dataset.track),
+                    language: dom.dataset.language || "",
+                    category: dom.dataset.category || "",
+                    title: dom.dataset.title || "",
+                    id: dom.dataset.id || ""
                 }
             }
         }
     ],
     toDOM(node) {
-        const attrs = node.attrs.track.length
-            ? {"data-track": JSON.stringify(node.attrs.track)}
-            : {}
+        const attrs = {}
+        if (node.attrs.track.length) {
+            attrs["data-track"] = JSON.stringify(node.attrs.track)
+        }
+        if (node.attrs.language) {
+            attrs["data-language"] = node.attrs.language
+        }
+        if (node.attrs.category) {
+            attrs["data-category"] = node.attrs.category
+        }
+        if (node.attrs.title) {
+            attrs["data-title"] = node.attrs.title
+        }
+        if (node.attrs.id) {
+            attrs["data-id"] = node.attrs.id
+        }
         return ["pre", attrs, ["code", 0]]
     }
 }

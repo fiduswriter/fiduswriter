@@ -538,7 +538,7 @@ span.delete {
 
 #unobtrusive-messages .warn {
     color: var(--warning-text-color);
-    background-color: rgba(var(--warning-background-color));
+    background-color: rgb(var(--warning-background-color));
 }
 
 #unobtrusive-messages:empty {
@@ -722,7 +722,7 @@ table.insert-table-selection td.selected {
 }
 
 .link.drop-up-inner {
-    box-shadow: 0 0 20px rgba(var(--dropup-box-shadow-color));
+    box-shadow: 0 0 20px rgb(var(--dropup-box-shadow-color));
     border-radius: 6px;
 }
 
@@ -800,7 +800,7 @@ as much black as possible. */
 html[hc="a3"] .ui-widget-overlay,
 html[hc="a4"] .ui-widget-overlay,
 html[hc="a5"] .ui-widget-overlay {
-    background-color: rgba(var(--highcontrast-overlay-color));
+    background-color: rgb(var(--highcontrast-overlay-color));
 }
 
 html[hc="a3"] body,
@@ -835,7 +835,7 @@ html[hc="a5"] #toolbar {
 }
 
 .doc-part.doc-deleted {
-    border: 3px solid rgba(var(--warning-border-color));
+    border: 3px solid rgb(var(--warning-border-color));
     border-radius: 5px;
     padding: 10px 20px 10px 10px;
     margin: 5px 0;
@@ -873,7 +873,7 @@ html[hc="a5"] #toolbar {
     top: auto;
     left: 0;
     display: block;
-    background-color: rgba(var(--editor-navigator-background-color));
+    background-color: rgb(var(--editor-navigator-background-color));
     min-width: 216px;
     max-width: 480px;
     color: var(--editor-navigator-color);
@@ -892,7 +892,7 @@ html[hc="a5"] #toolbar {
 
 #navigator-list {
     max-height: min(550px, 100vh - 315px);
-    overflow-y: hidden scroll;
+    overflow-y: hidden;
 }
 
 #navigator-content a {
@@ -981,7 +981,7 @@ html[hc="a5"] #toolbar {
     height: 42px;
     text-align: center;
     line-height: 42px;
-    background-color: rgba(var(--editor-navigator-background-color));
+    background-color: rgb(var(--editor-navigator-background-color));
     cursor: pointer;
     z-index: 4;
 }
@@ -1191,4 +1191,84 @@ body.no-scroll {
     .editor-toolbar div.multi-buttons .multi-buttons-cover {
         padding: 0 25px 0 15px;
     }
+}
+
+/* Code block styling */
+.code-block-wrapper {
+    position: relative;
+    margin: 1em 0;
+}
+
+.code-block-wrapper.ProseMirror-selectednode {
+    outline: 2px solid #4a90e2;
+}
+
+.code-block-language-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #4a90e2;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.code-block-menu-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgb(255 255 255 / 80%);
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    padding: 2px 6px;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.code-block-menu-btn:hover {
+    background: rgb(255 255 255 / 100%);
+}
+
+.code-block-wrapper:hover .code-block-menu-btn {
+    opacity: 1;
+}
+
+.code-block-label {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+    color: #333333;
+}
+
+.code-block-label .label-text {
+    background: #f5f5f5;
+    padding: 2px 8px;
+    border-left: 3px solid #4a90e2;
+    display: inline-block;
+}
+
+/* Language indicator for code blocks */
+pre[data-language]:not([data-language=""], [data-category])::after {
+    content: attr(data-language);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgb(0 0 0 / 10%);
+    padding: 2px 6px;
+    font-size: 0.75em;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: bold;
+    opacity: 0.6;
+}
+
+pre[data-language] {
+    position: relative;
 }

@@ -43,6 +43,7 @@ export {selectionMenuPlugin} from "./selection_menu"
 export {settingsPlugin} from "./settings"
 export {tablePlugin} from "./table"
 export {figurePlugin} from "./figure"
+export {codeBlockPlugin} from "./code_block"
 export {
     tagInputPlugin,
     TagsPartView

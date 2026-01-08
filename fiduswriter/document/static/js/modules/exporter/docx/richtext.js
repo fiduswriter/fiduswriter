@@ -317,13 +317,54 @@ export class DOCXExporterRichtext {
                 options = Object.assign({}, options)
                 options.section = "Quote"
                 break
-            case "code_block":
+            case "code_block": {
+                // Handle code blocks with category support
+                const category = node.attrs.category
+                let categoryLabel = ""
+
+                if (category && node.attrs.id) {
+                    const categoryCounter = options.inFootnote
+                        ? this.fnCategoryCounter
+                        : this.categoryCounter
+                    if (!categoryCounter[category]) {
+                        categoryCounter[category] = 1
+                    }
+                    const catCount = categoryCounter[category]++
+                    const {CATS} = require("../../schema/i18n")
+                    const categoryLabelText =
+                        CATS[category]?.[this.settings.language] || category
+                    const title = node.attrs.title
+                        ? `: ${escapeText(node.attrs.title)}`
+                        : ""
+
+                    // Create category label paragraph with SEQ field for numbering
+                    categoryLabel = `
+                        <w:p>
+                            <w:pPr><w:pStyle w:val="Caption"/></w:pPr>
+                            <w:bookmarkStart w:name="${node.attrs.id}" w:id="${++this.bookmarkCounter}"/>
+                            <w:r>
+                                <w:t xml:space="preserve">${categoryLabelText} </w:t>
+                            </w:r>
+                            <w:fldSimple w:instr=" SEQ ${category} \\* ARABIC ">
+                                <w:r>
+                                    <w:t>${catCount}${options.inFootnote ? "A" : ""}</w:t>
+                                </w:r>
+                            </w:fldSimple>
+                            <w:r>
+                                <w:t xml:space="preserve">${title}</w:t>
+                            </w:r>
+                            <w:bookmarkEnd w:id="${this.bookmarkCounter}"/>
+                        </w:p>`
+                }
+
                 if (!node.content?.length) {
-                    start += "<w:p/>"
+                    start += categoryLabel + "<w:p/>"
                 } else {
                     options = Object.assign({}, options)
                     options.section = "Code"
-                    start += `
+                    start +=
+                        categoryLabel +
+                        `
                         <w:p${options.paragraphId ? ` w14:paraId="${options.paragraphId}"` : ""}>
                             <w:pPr><w:pStyle w:val="${options.section}"/>`
                     if (options.list_type) {
@@ -365,7 +406,8 @@ export class DOCXExporterRichtext {
                     options.commentReference = false
                 }
                 break
-            case "ordered_list":
+            }
+            case "ordered_list": {
                 options = Object.assign({}, options)
                 options.section = "ListParagraph"
                 if (options.list_depth === undefined) {
@@ -375,6 +417,7 @@ export class DOCXExporterRichtext {
                 }
                 options.list_type = this.lists.getNumberedType()
                 break
+            }
             case "bullet_list":
                 options = Object.assign({}, options)
                 options.section = "ListParagraph"

@@ -216,12 +216,43 @@ export class PandocConvert {
         switch (block.t) {
             case "CodeBlock": {
                 const [attrs, code] = block.c
+                // attrs structure: [id, classes, keyValuePairs]
+                // Example: ["ref-label", ["python3"], [["caption", "The Caption"], ["linenos", ""]]]
+                const id = attrs?.[0] || ""
+                const language = attrs?.[1]?.[0] || "" // First class is language
+                const keyValuePairs = attrs?.[2] || []
+
+                // Extract caption and category from key-value pairs
+                let title = ""
+                let category = ""
+
+                const captionPair = keyValuePairs.find(
+                    pair => pair[0] === "caption"
+                )
+                if (captionPair) {
+                    title = captionPair[1]
+                }
+
+                const categoryPair = keyValuePairs.find(
+                    pair => pair[0] === "category"
+                )
+                if (categoryPair) {
+                    category = categoryPair[1]
+                } else if (title) {
+                    // If there's a caption but no explicit category, default to 'listing'
+                    // This makes the code block referenceable and properly numbered
+                    category = "listing"
+                }
+
                 return [
                     {
                         type: "code_block",
                         attrs: {
                             track: [],
-                            language: attrs?.classes?.[0] || "" // Store first class as language
+                            language: language,
+                            category: category,
+                            title: title,
+                            id: id
                         },
                         content: [{type: "text", text: code}]
                     }

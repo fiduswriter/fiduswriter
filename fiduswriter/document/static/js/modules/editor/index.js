@@ -31,6 +31,7 @@ import {ModDocumentTemplate} from "./document_template"
 import {ModFootnotes} from "./footnotes"
 import {ModMarginboxes} from "./marginboxes"
 import {
+    codeBlockMenuModel,
     figureMenuModel,
     figureWidthMenuModel,
     headerbarModel,
@@ -51,6 +52,7 @@ import {
     accessRightsPlugin,
     citationRenderPlugin,
     clipboardPlugin,
+    codeBlockPlugin,
     collabCaretsPlugin,
     commentsPlugin,
     contributorInputPlugin,
@@ -122,7 +124,8 @@ export class Editor {
             tableMenuModel: tableMenuModel(),
             figureMenuModel: figureMenuModel(),
             toolbarModel: toolbarModel(),
-            figureWidthMenuModel: figureWidthMenuModel()
+            figureWidthMenuModel: figureWidthMenuModel(),
+            codeBlockMenuModel: codeBlockMenuModel()
         }
         this.client_id = Math.floor(Math.random() * 0xffffffff)
         this.clientTimeAdjustment = 0
@@ -159,6 +162,7 @@ export class Editor {
             [tablePlugin, () => ({editor: this})],
             [orderedListMenuPlugin, () => ({editor: this})],
             [figurePlugin, () => ({editor: this})],
+            [codeBlockPlugin, () => ({editor: this})],
             [tocRenderPlugin, () => ({editor: this})],
             [searchPlugin]
         ]

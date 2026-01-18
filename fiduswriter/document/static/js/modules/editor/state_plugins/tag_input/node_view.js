@@ -2,6 +2,7 @@ import {GapCursor} from "prosemirror-gapcursor"
 import {TextSelection} from "prosemirror-state"
 import {addDeletedPartWidget} from "../document_template"
 
+import {shouldPreventTagInputFocus} from "./plugin"
 import {createTagEditor} from "./tag_editor"
 
 export class TagsPartView {
@@ -65,6 +66,10 @@ export class TagsPartView {
 
     setSelection(anchor, head, _root) {
         if (anchor === head && this.view.hasFocus()) {
+            // Check if we should prevent refocusing (e.g., user just clicked on a tag)
+            if (shouldPreventTagInputFocus()) {
+                return
+            }
             // We must be in last position.
             // Activate the tag input tag editor.
             this.tagInputView.focus()

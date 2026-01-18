@@ -8,6 +8,9 @@ import {EditorView} from "prosemirror-view"
 import {nextSelection, submitTag} from "./helpers"
 import {pastePlugin, placeholderPlugin} from "./tag_editor_plugins"
 
+// WeakMap to store tag input references for access from the plugin
+export const tagInputReferences = new WeakMap()
+
 const doc = {content: "tag"},
     tag = {
         content: "inline*",
@@ -118,6 +121,7 @@ export const createTagEditor = (view, getPos, getNode) => {
     dom.classList.add("tag-input")
     dom.setAttribute("contenteditable", false)
     const node = getNode()
+
     const tagInputView = new EditorView(dom, {
         state: EditorState.create({
             schema,
@@ -157,7 +161,11 @@ export const createTagEditor = (view, getPos, getNode) => {
                 event.preventDefault()
                 // Set a timeout so that change of focus can take place first
                 window.setTimeout(() => {
-                    submitTag(tagInputView, view, getPos)
+                    // Check if getPos still returns a valid position
+                    const pos = getPos()
+                    if (pos !== undefined && pos !== null) {
+                        submitTag(tagInputView, view, getPos)
+                    }
                 }, 1)
             },
             focus: (tagInputView, _event) => {
@@ -182,5 +190,13 @@ export const createTagEditor = (view, getPos, getNode) => {
             tagInputView.updateState(newState)
         }
     })
+
+    // Store references in WeakMap for access from the plugin
+    tagInputReferences.set(dom, {
+        tagInputView,
+        mainView: view,
+        getPos
+    })
+
     return [dom, tagInputView]
 }

@@ -160,6 +160,7 @@ BASE_MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "user.middleware.UserLanguageMiddleware",
+    "axes.middleware.AxesMiddleware",  # django-axes for brute-force protection
 ]
 
 MIDDLEWARE = []
@@ -210,6 +211,7 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admindocs",
     "django.contrib.flatpages",
     "channels",
+    "axes",  # django-axes for brute-force protection
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -235,6 +237,8 @@ REMOVED_APPS = []
 
 
 AUTHENTICATION_BACKENDS = (
+    # AxesStandaloneBackend should be the first backend in the tuple
+    "axes.backends.AxesStandaloneBackend",
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
     # `allauth` specific authentication methods, such as login by e-mail
@@ -365,9 +369,63 @@ ADMIN_SITE_TITLE = gettext("Fidus Writer Admin")
 ADMIN_SITE_HEADER = gettext("Fidus Writer Administration Site")
 ADMIN_INDEX_TITLE = gettext("Welcome to the Fidus Writer Administration Site")
 
-# The below allow login via JavaScript
+# The below allow login via JavaScript which is required by Fidus Writer
 SESSION_COOKIE_HTTPONLY = False
 CSRF_COOKIE_HTTPONLY = False
+
+# Security settings for session cookies (GDPR compliance)
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SAMESITE = "Lax"  # Protects against CSRF
+SESSION_COOKIE_AGE = 1209600  # 2 weeks (default)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = False
+
+# Security settings for CSRF cookies (GDPR compliance)
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SAMESITE = "Lax"  # Protects against CSRF
+
+# django-axes configuration for brute-force protection
+AXES_FAILURE_LIMIT = 5  # Number of failed login attempts before lockout
+AXES_COOLOFF_TIME = 1  # Lockout duration in hours
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True  # More secure lockout strategy
+AXES_RESET_ON_SUCCESS = True  # Reset failed login count after successful login
+AXES_LOCKOUT_PARAMETERS = [
+    "username",
+    "ip_address",
+]  # Track both username and IP
+AXES_ENABLE_ACCESS_FAILURE_LOG = True  # Log failed login attempts
+AXES_ONLY_ADMIN_SITE = False  # Protect all login forms, not just admin
+AXES_VERBOSE = True  # Enable verbose logging
+AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = (
+    True  # Extend lockout on continued attempts
+)
+AXES_LOCKOUT_TEMPLATE = None  # Use default lockout message
+AXES_HANDLER = (
+    "axes.handlers.database.AxesDatabaseHandler"  # Store attempts in database
+)
+AXES_META_PRECEDENCE_ORDER = [
+    "HTTP_X_FORWARDED_FOR",
+    "REMOTE_ADDR",
+]  # For proxy/load balancer support
+
+# GDPR Compliance Settings
+# Data retention and privacy settings
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000  # Already set above, kept for reference
+
+# Password policy for GDPR compliance (already set above, kept for reference)
+# AUTH_PASSWORD_VALIDATORS is already configured with strong requirements
+
+# Additional GDPR-related settings
+# Admins should configure these appropriately for their jurisdiction:
+# - CONTACT_EMAIL: Already set for GDPR contact requirements
+# - Privacy policy and terms should be added via FOOTER_LINKS or flatpages
+# - Data export functionality should be implemented for GDPR subject access requests
+# - Data deletion functionality should respect user privacy rights
+
+# Security headers (can be overridden in configuration.py for production)
+SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
+X_FRAME_OPTIONS = "DENY"  # Prevent clickjacking
 
 # To make npm-mjs enable the webpack offline plugin
 RSPACK_CONFIG_TEMPLATE = os.path.join(

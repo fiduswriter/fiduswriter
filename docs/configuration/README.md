@@ -6,6 +6,7 @@ This section provides guides for configuring and customizing Fidus Writer for yo
 
 ### Essential Configuration
 
+- [Security Configuration](security.md) - Brute-force protection, GDPR compliance, and production hardening
 - [Login Providers](login-providers.md) - Set up OAuth, SAML, and social authentication
 - [SSL/HTTPS Setup](ssl.md) - Secure your deployment with SSL certificates
 - [Advanced Configuration](advanced.md) - Environment variables and Django settings
@@ -257,6 +258,8 @@ See [Developer Installation Guide](../installation/developer-install.md) for det
 6. ✅ **Use environment variables** for sensitive data
 7. ✅ **Regular security audits** of configuration
 
+See the [Security Configuration Guide](security.md) for detailed security and GDPR compliance information.
+
 ### Performance
 
 1. ✅ **Use PostgreSQL** for production (not SQLite)
@@ -298,7 +301,9 @@ Before going to production:
 - [ ] Configure authentication providers
 - [ ] Test all functionality
 - [ ] Document your configuration
-- [ ] Review security settings
+- [ ] Review security settings (see [Security Configuration](security.md))
+- [ ] Configure brute-force protection (django-axes)
+- [ ] Ensure GDPR compliance (privacy policy, terms, etc.)
 
 ## Troubleshooting
 
@@ -358,10 +363,11 @@ Before going to production:
 Choose a configuration guide based on your needs:
 
 - **Just Getting Started?** → [Advanced Configuration](advanced.md)
+- **Need Security/GDPR?** → [Security Configuration](security.md)
 - **Need Authentication?** → [Login Providers](login-providers.md)
 - **Want Customization?** → [Branding](branding.md) and [Footer Links](footer-links.md)
 - **Scaling Up?** → [Load Balancer](load-balancer.md) and [Performance](performance.md)
-- **Production Deployment?** → Review all security-related guides
+- **Production Deployment?** → Review [Security Configuration](security.md) and all security-related guides
 
 ---
 

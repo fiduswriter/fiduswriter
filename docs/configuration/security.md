@@ -5,6 +5,7 @@ This guide covers security configuration for Fidus Writer, including brute-force
 ## Table of Contents
 
 - [Brute-Force Protection](#brute-force-protection)
+- [IP-Based Admin Access Restriction](#ip-based-admin-access-restriction)
 - [GDPR Compliance](#gdpr-compliance)
 - [Production Security Checklist](#production-security-checklist)
 - [Security Headers](#security-headers)
@@ -174,6 +175,472 @@ Or use a management command:
 ```bash
 # Add to crontab
 0 2 * * * cd /path/to/fiduswriter && python manage.py axes_reset_logs --age 30
+```
+
+## IP-Based Admin Access Restriction
+
+For enhanced security, you can restrict access to the Django admin interface (`/admin/`) to specific IP addresses. This is best implemented at the web server level (NGINX or Apache) rather than in Django.
+
+### Why Restrict Admin Access?
+
+- **Reduces attack surface** - Attackers can't even reach the login page
+- **Prevents brute-force attempts** - Only trusted IPs can attempt login
+- **Compliance requirements** - Some regulations require administrative access restrictions
+- **Defense in depth** - Additional layer beyond authentication
+
+### NGINX Configuration
+
+#### Restrict to Single IP Address
+
+Edit your NGINX configuration file (e.g., `/etc/nginx/sites-available/fidus`):
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    
+    # Admin access - single IP only
+    location /admin/ {
+        allow 203.0.113.50;  # Your office/home IP
+        deny all;
+        
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # All other locations accessible to everyone
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+**Note:** For snap installations, use `http://127.0.0.1:4386` instead of port 8000.
+
+#### Restrict to Multiple IP Addresses
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    
+    # Admin access - multiple IPs
+    location /admin/ {
+        allow 203.0.113.50;    # Office IP
+        allow 198.51.100.25;   # Home IP
+        allow 192.0.2.100;     # VPN IP
+        deny all;
+        
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+#### Restrict to IP Range (CIDR Notation)
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    
+    # Admin access - IP range
+    location /admin/ {
+        allow 10.0.0.0/8;        # Private network (10.x.x.x)
+        allow 192.168.1.0/24;    # Local subnet
+        allow 203.0.113.0/24;    # Office network range
+        deny all;
+        
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+#### Complete Example with HTTPS
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    
+    # Static files
+    location /static/ {
+        alias /var/www/fiduswriter/static-collected/;
+        expires max;
+    }
+    
+    # Admin - IP restricted
+    location /admin/ {
+        allow 203.0.113.50;    # Office IP
+        allow 198.51.100.25;   # Home IP
+        deny all;
+        
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        
+        client_max_body_size 8M;
+    }
+    
+    # All other locations
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        
+        client_max_body_size 8M;
+    }
+}
+```
+
+#### Apply NGINX Changes
+
+```bash
+# Test configuration
+sudo nginx -t
+
+# Reload NGINX
+sudo systemctl reload nginx
+```
+
+### Apache Configuration
+
+#### Restrict to Single IP Address
+
+Edit your Apache virtual host configuration (e.g., `/etc/apache2/sites-available/fiduswriter.conf`):
+
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    
+    # Admin access restriction
+    <Location /admin/>
+        Require ip 203.0.113.50
+    </Location>
+    
+    # Proxy configuration
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8000/
+    ProxyPassReverse / http://127.0.0.1:8000/
+</VirtualHost>
+```
+
+**Note:** For snap installations, use `http://127.0.0.1:4386/` instead of port 8000.
+
+#### Restrict to Multiple IP Addresses
+
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    
+    # Admin access - multiple IPs
+    <Location /admin/>
+        Require ip 203.0.113.50 198.51.100.25 192.0.2.100
+    </Location>
+    
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8000/
+    ProxyPassReverse / http://127.0.0.1:8000/
+</VirtualHost>
+```
+
+#### Restrict to IP Range
+
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    
+    # Admin access - IP ranges
+    <Location /admin/>
+        Require ip 10.0.0.0/8
+        Require ip 192.168.1.0/24
+        Require ip 203.0.113.0/24
+    </Location>
+    
+    ProxyPreserveHost On
+    ProxyPass / http://127.0.0.1:8000/
+    ProxyPassReverse / http://127.0.0.1:8000/
+</VirtualHost>
+```
+
+#### Complete Example with HTTPS
+
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    Redirect permanent / https://yourdomain.com/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName yourdomain.com
+    
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/yourdomain.com/privkey.pem
+    
+    # Static files
+    Alias /static/ /var/www/fiduswriter/static-collected/
+    <Directory /var/www/fiduswriter/static-collected/>
+        Require all granted
+    </Directory>
+    
+    # Admin access restriction
+    <Location /admin/>
+        Require ip 203.0.113.50
+        Require ip 198.51.100.25
+    </Location>
+    
+    # Proxy configuration
+    ProxyPreserveHost On
+    ProxyPass /static/ !
+    ProxyPass / http://127.0.0.1:8000/
+    ProxyPassReverse / http://127.0.0.1:8000/
+    
+    # WebSocket support
+    RewriteEngine On
+    RewriteCond %{HTTP:Upgrade} =websocket [NC]
+    RewriteRule /(.*)           ws://127.0.0.1:8000/$1 [P,L]
+</VirtualHost>
+```
+
+#### Enable Required Apache Modules
+
+```bash
+# Enable proxy modules
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_wstunnel
+sudo a2enmod rewrite
+sudo a2enmod ssl
+
+# Test configuration
+sudo apache2ctl configtest
+
+# Restart Apache
+sudo systemctl restart apache2
+```
+
+### Testing Your Configuration
+
+#### 1. Test from Allowed IP
+
+From a machine with an allowed IP address:
+
+```bash
+curl -I https://yourdomain.com/admin/
+```
+
+You should see a `200 OK` or `302 Found` (redirect to login).
+
+#### 2. Test from Denied IP
+
+From a machine with a non-allowed IP address:
+
+```bash
+curl -I https://yourdomain.com/admin/
+```
+
+You should see `403 Forbidden`.
+
+#### 3. Check Your Current IP
+
+Find your current public IP address:
+
+```bash
+curl ifconfig.me
+```
+
+Or visit: https://whatismyipaddress.com/
+
+#### 4. Monitor Access Logs
+
+**NGINX:**
+```bash
+sudo tail -f /var/log/nginx/access.log | grep /admin/
+```
+
+**Apache:**
+```bash
+sudo tail -f /var/log/apache2/access.log | grep /admin/
+```
+
+### Dynamic IP Address Considerations
+
+If you don't have a static IP address:
+
+#### Option 1: Use a VPN
+
+Set up a VPN with a static IP and allow only the VPN IP:
+
+```nginx
+location /admin/ {
+    allow 203.0.113.50;  # Your VPN IP
+    deny all;
+    # ... proxy settings ...
+}
+```
+
+#### Option 2: Use a Wider IP Range
+
+Allow your ISP's IP range (less secure):
+
+```nginx
+location /admin/ {
+    allow 203.0.113.0/24;  # Your ISP's range
+    deny all;
+    # ... proxy settings ...
+}
+```
+
+#### Option 3: Use Dynamic DNS with Script
+
+Create a script to update NGINX configuration when your IP changes:
+
+```bash
+#!/bin/bash
+# /usr/local/bin/update-admin-ip.sh
+
+NEW_IP=$(curl -s ifconfig.me)
+CONFIG_FILE="/etc/nginx/sites-available/fiduswriter"
+
+# Update the IP in the config file
+sed -i "s/allow [0-9.]*;  # Dynamic IP/allow $NEW_IP;  # Dynamic IP/" $CONFIG_FILE
+
+# Reload NGINX
+nginx -t && systemctl reload nginx
+```
+
+Run this script periodically via cron or when your IP changes.
+
+#### Option 4: Use SSH Tunnel (Most Secure)
+
+Access admin only through an SSH tunnel:
+
+```bash
+# On your local machine
+ssh -L 8001:localhost:8000 user@yourdomain.com
+
+# Then access admin at
+http://localhost:8001/admin/
+```
+
+Configure NGINX to only allow admin access from localhost:
+
+```nginx
+location /admin/ {
+    allow 127.0.0.1;
+    deny all;
+    # ... proxy settings ...
+}
+```
+
+### Important Security Notes
+
+1. **Always use HTTPS** when restricting by IP to prevent session hijacking
+2. **Keep a backup access method** in case you get locked out (e.g., console access)
+3. **Document allowed IPs** and keep the list updated
+4. **Monitor 403 errors** to detect legitimate access attempts
+5. **Combine with other security measures** (2FA, strong passwords, etc.)
+6. **Test thoroughly** before deploying to production
+7. **Consider IPv6** if your network uses it - add both IPv4 and IPv6 addresses
+
+### Troubleshooting
+
+#### Getting Locked Out
+
+If you accidentally lock yourself out:
+
+1. **Via server console access:**
+   ```bash
+   sudo nano /etc/nginx/sites-available/fiduswriter
+   # Remove or comment out the IP restrictions
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+2. **Via SSH tunnel:**
+   ```bash
+   ssh user@yourdomain.com
+   # Edit config to allow 127.0.0.1
+   # Create SSH tunnel to access admin
+   ```
+
+#### IP Restrictions Not Working
+
+1. Check if you're behind a load balancer or CDN (Cloudflare, etc.)
+2. Verify the actual IP reaching your server:
+   ```bash
+   sudo tail -f /var/log/nginx/access.log
+   ```
+3. If behind a proxy, you may need to check `X-Forwarded-For` header instead
+
+#### Using with Load Balancers
+
+If using a load balancer, configure it to pass the real client IP:
+
+**NGINX with real IP:**
+```nginx
+# Get real IP from load balancer
+set_real_ip_from 10.0.0.0/8;  # Load balancer IP range
+real_ip_header X-Forwarded-For;
+
+location /admin/ {
+    allow 203.0.113.50;  # Your actual IP
+    deny all;
+    # ... proxy settings ...
+}
 ```
 
 ## GDPR Compliance

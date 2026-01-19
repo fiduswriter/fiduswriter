@@ -36,35 +36,47 @@ export class CodeBlockDialog {
         const {state} = view
         const {schema} = state
 
-        if (this.insideCodeBlock) {
-            // Update existing code block
-            const newAttrs = Object.assign({}, this.node.attrs, {
-                language: this.language,
-                category: this.category,
-                title: this.title,
-                id: this.id || (this.category ? randomCodeBlockId() : "")
-            })
-
-            const tr = state.tr.setNodeMarkup(
-                state.selection.$from.before(
-                    state.selection.$from.depth - (state.selection.node ? 0 : 1)
-                ),
-                null,
-                newAttrs
-            )
-            view.dispatch(tr)
-        } else {
-            // Insert new code block
-            const codeBlockNode = schema.nodes.code_block.create({
-                language: this.language,
-                category: this.category,
-                title: this.title,
-                id: this.category ? randomCodeBlockId() : ""
-            })
-            const tr = state.tr.replaceSelectionWith(codeBlockNode)
-            view.dispatch(tr)
+        const newAttrs = {
+            language: this.language,
+            category: this.category,
+            title: this.title,
+            id: this.insideCodeBlock
+                ? this.node.attrs.id ||
+                  (this.category ? randomCodeBlockId() : "")
+                : this.category
+                  ? randomCodeBlockId()
+                  : "",
+            track: this.insideCodeBlock ? this.node.attrs.track : []
         }
 
+        let tr
+
+        if (this.insideCodeBlock) {
+            // Update existing code block using setNodeMarkup
+            const $from = state.selection.$from
+
+            // Find the actual code_block position
+            let codeBlockDepth = -1
+            for (let d = $from.depth; d > 0; d--) {
+                if ($from.node(d).type.name === "code_block") {
+                    codeBlockDepth = d
+                    break
+                }
+            }
+
+            const pos =
+                codeBlockDepth > 0
+                    ? $from.before(codeBlockDepth)
+                    : state.selection.from
+
+            tr = state.tr.setNodeMarkup(pos, null, newAttrs)
+        } else {
+            // Insert new code block
+            const codeBlockNode = schema.nodes.code_block.create(newAttrs)
+            tr = state.tr.replaceSelectionWith(codeBlockNode, false)
+        }
+
+        view.dispatch(tr)
         this.dialog.close()
     }
 

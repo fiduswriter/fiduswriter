@@ -1,5 +1,13 @@
 export {annotation_tag, comment, randomCommentId} from "./annotate"
-export {paragraph, blockquote, horizontal_rule, underline} from "./base"
+export {
+    paragraph,
+    blockquote,
+    horizontal_rule,
+    underline,
+    sup,
+    sub,
+    code
+} from "./base"
 export {citation} from "./citation"
 export {equation} from "./equation"
 export {

@@ -2,12 +2,12 @@
     position: absolute;
     background-color: var(--cs-light-background);
     font-size: 14px;
-    border-image: initial;
     overflow: hidden;
     outline: 0;
     padding: 0 19px 19px;
     box-shadow: none;
     border: 0 none;
+    border-image: initial;
     border-radius: 0;
     z-index: 1000; /* Ensure dialog stays on top */
     user-select: none; /* Prevent interaction with background content */
@@ -116,7 +116,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(var(--overlay-color));
+    background-color: rgb(var(--overlay-color));
     z-index: 100;
     backdrop-filter: blur(2px);
 }

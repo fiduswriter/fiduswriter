@@ -124,7 +124,8 @@ export class DocxParser {
             vertAlign: rPr.query("w:vertAlign")?.getAttribute("w:val") || false,
             fontSize:
                 parseInt(rPr.query("w:sz")?.getAttribute("w:val") || "0") / 2,
-            color: rPr.query("w:color")?.getAttribute("w:val") || false
+            color: rPr.query("w:color")?.getAttribute("w:val") || false,
+            fontFamily: rPr.query("w:rFonts")?.getAttribute("w:ascii") || false
         }
     }
 

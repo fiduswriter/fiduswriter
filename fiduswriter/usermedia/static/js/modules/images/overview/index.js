@@ -51,6 +51,9 @@ export class ImageOverview {
             this.bindEvents()
             this.mod.categories.setImageCategoryList(this.app.imageDB.cats)
             this.initTable(Object.keys(this.app.imageDB.db))
+            // Reset scroll position to top to prevent Safari from auto-scrolling
+            // to the focused table element, which would hide the header/menu
+            window.scrollTo(0, 0)
         })
     }
 

@@ -281,6 +281,9 @@ export class DocumentOverview {
         this.documentStyles = json.document_styles
         this.documentTemplates = json.document_templates
         this.initTable()
+        // Reset scroll position to top to prevent Safari from auto-scrolling
+        // to the focused table element, which would hide the header/menu
+        window.scrollTo(0, 0)
         if (Object.keys(this.documentTemplates).length > 1) {
             this.multipleNewDocumentMenuItem()
         } else {

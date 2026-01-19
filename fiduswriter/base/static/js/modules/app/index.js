@@ -216,6 +216,14 @@ export class App {
                 })
         }
         ensureCSS([staticUrl("css/fontawesome/css/all.css")])
+        // Disable automatic scroll restoration to prevent Safari from
+        // auto-scrolling to focused elements (like the document table)
+        // which causes the header/menu to be hidden on page load
+        if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual"
+        }
+        // Ensure we start at the top of the page
+        window.scrollTo(0, 0)
         if (this.isOffline()) {
             this.page = this.openOfflinePage()
             return this.page.init()
@@ -376,6 +384,14 @@ export class App {
         if (this.page && this.page.close) {
             this.page.close()
         }
+        // Disable automatic scroll restoration to prevent Safari from
+        // auto-scrolling to focused elements (like the document table)
+        // which causes the header/menu to be hidden on page load
+        if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual"
+        }
+        // Ensure we start at the top of the page
+        window.scrollTo(0, 0)
         const pathnameParts = decodeURI(window.location.pathname).split("/")
         const route = this.routes[pathnameParts[1]]
         if (route) {

@@ -43,6 +43,9 @@ export class BibliographyOverview {
             this.menu.init()
             this.setBibCategoryList(this.app.bibDB.cats)
             this.initTable(Object.keys(this.app.bibDB.db))
+            // Reset scroll position to top to prevent Safari from auto-scrolling
+            // to the focused table element, which would hide the header/menu
+            window.scrollTo(0, 0)
             this.activatePlugins()
             this.bindEvents()
         })

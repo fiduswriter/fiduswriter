@@ -5,12 +5,12 @@
 #wait.active {
     position: fixed;
     inset: 0;
-    background-color: rgba(var(--wait-active-background-color));
+    background-color: rgb(var(--wait-active-background-color));
     z-index: 1500;
 }
 
 #wait.active.full {
-    background-color: rgba(var(--wait-active-full-background-color));
+    background-color: rgb(var(--wait-active-full-background-color));
 }
 
 #wait.active i {

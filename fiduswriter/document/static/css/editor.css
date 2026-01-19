@@ -1199,19 +1199,24 @@ body.no-scroll {
     margin: 1em 0;
 }
 
+.code-block-wrapper pre {
+    padding-top: 30px;
+    position: relative;
+}
+
 .code-block-wrapper.ProseMirror-selectednode {
     outline: 2px solid #4a90e2;
 }
 
 .code-block-language-badge {
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 8px;
+    left: 8px;
     background: #4a90e2;
     color: white;
-    padding: 2px 8px;
+    padding: 3px 8px;
     border-radius: 3px;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
     text-transform: uppercase;
     z-index: 10;

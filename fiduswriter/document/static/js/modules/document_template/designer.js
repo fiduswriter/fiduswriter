@@ -321,6 +321,22 @@ export class DocumentTemplateDesigner {
                         ".papersizes-value option:checked"
                     )
                 ).map(el => el.value),
+                code_languages: Array.from(
+                    this.dom.querySelectorAll(
+                        ".code-languages-value option:checked"
+                    )
+                ).map(el => el.value),
+                code_categories: Array.from(
+                    this.dom.querySelectorAll(
+                        ".code-categories-value .code-category:checked"
+                    )
+                ).reduce((obj, el) => {
+                    obj[el.value] = {
+                        counter: 0,
+                        enabled: true
+                    }
+                    return obj
+                }, {}),
                 bibliography_header: Array.from(
                     this.dom.querySelectorAll(".bibliography-header-value tr")
                 ).reduce((stringObj, trEl) => {

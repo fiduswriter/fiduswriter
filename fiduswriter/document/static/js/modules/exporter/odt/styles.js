@@ -107,6 +107,7 @@ export class ODTExporterStyles {
     c = small caps
     p = super
     b = sub
+    t = code (monospace)
     */
     getInlineStyleId(attributes) {
         if (this.inlineStyleIds[attributes]) {
@@ -133,6 +134,10 @@ export class ODTExporterStyles {
             styleProperties += ' style:text-position="super 58%"'
         } else if (attributes.includes("b")) {
             styleProperties += ' style:text-position="sub 58%"'
+        }
+        if (attributes.includes("t")) {
+            styleProperties +=
+                ' style:font-name="Courier New" fo:font-family="Courier New"'
         }
         const styleCounter = ++this.inlineStyleCounter
         this.inlineStyleIds[attributes] = styleCounter

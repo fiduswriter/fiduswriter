@@ -84,6 +84,30 @@ export const getInternalTargets = (state, language, editor) => {
             })
             return true
         }
+
+        if (
+            node.type.name === "code_block" &&
+            node.attrs.category &&
+            node.attrs.id
+        ) {
+            if (!categories[node.attrs.category]) {
+                categories[node.attrs.category] = 0
+            }
+            categories[node.attrs.category]++
+
+            const categoryLabel =
+                CATS[node.attrs.category]?.[language] || node.attrs.category
+            const text = node.attrs.title
+                ? `${categoryLabel} ${categories[node.attrs.category]}: ${node.attrs.title}`
+                : `${categoryLabel} ${categories[node.attrs.category]}`
+
+            internalTargets.push({
+                id: node.attrs.id,
+                text: editor === "main" ? text : `${text}A`
+            })
+            return true
+        }
+
         if (node.type.name === "text") {
             const anchor = node.marks.find(mark => mark.type.name === "anchor")
             if (anchor) {

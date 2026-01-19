@@ -2,7 +2,8 @@ import {
     chainCommands,
     deleteSelection,
     joinBackward,
-    selectNodeBackward
+    selectNodeBackward,
+    toggleMark
 } from "prosemirror-commands"
 import {redo, undo} from "prosemirror-history"
 import {liftListItem} from "prosemirror-schema-list"
@@ -71,7 +72,22 @@ export const buildEditorKeymap = schema => {
             redo(state, tr => dispatch(addInputType(tr, "historyRedo")), view),
         "Shift-Ctrl-0": setBlockType(schema.nodes.paragraph),
         "Shift-Ctrl-\\": setBlockType(schema.nodes.code_block),
-        "Ctrl-<": liftListItem(schema.nodes.list_item)
+        "Ctrl-<": liftListItem(schema.nodes.list_item),
+        "Mod-.": (state, dispatch) => {
+            const mark = schema.marks.sup
+            const command = toggleMark(mark)
+            return command(state, dispatch)
+        },
+        "Mod-,": (state, dispatch) => {
+            const mark = schema.marks.sub
+            const command = toggleMark(mark)
+            return command(state, dispatch)
+        },
+        "Mod-'": (state, dispatch) => {
+            const mark = schema.marks.code
+            const command = toggleMark(mark)
+            return command(state, dispatch)
+        }
     }
     for (let i = 1; i <= 6; i++) {
         editorKeymap["Shift-Ctrl-" + i] = setBlockType(schema.nodes.heading, {

@@ -283,6 +283,24 @@ ACCOUNT_ADAPTER = "user.adapter.AccountAdapter"
 AUTH_PROFILE_MODULE = "account.Profile"
 AUTH_USER_MODEL = "user.User"
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 12,  # Recommended length
+        },
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

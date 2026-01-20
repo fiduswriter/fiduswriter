@@ -229,6 +229,9 @@ export class ContactsOverview {
     initializeView() {
         if (this.app.page === this) {
             this.initTable()
+            // Reset scroll position to top to prevent Safari from auto-scrolling
+            // to the focused table element, which would hide the header/menu
+            window.scrollTo(0, 0)
         }
     }
 

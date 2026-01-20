@@ -743,8 +743,14 @@ table.insert-table-selection td.selected {
     cursor: pointer;
 }
 
-ul.drop-up-options li:hover {
+ul.drop-up-options li:hover,
+ul.drop-up-options li.focused {
     background-color: var(--cs-light-background-hover);
+}
+
+ul.drop-up-options li.focused {
+    outline: 2px solid var(--cs-light-border);
+    outline-offset: -2px;
 }
 
 .drop-up-options .remove-link::after {

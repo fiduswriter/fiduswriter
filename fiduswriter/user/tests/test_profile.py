@@ -95,14 +95,34 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-password-input2").clear()
         driver.find_element(By.ID, "new-password-input2").send_keys("otter2")
         driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
+        time.sleep(1)
+        self.assertEqual(
+            driver.find_element(By.ID, "fw-password-change-error").text,
+            "This password is too short. It must contain at least 12 characters.",
+        )
+        driver.find_element(By.ID, "new-password-input1").clear()
+        driver.find_element(By.ID, "new-password-input1").send_keys(
+            "otter1234567"
+        )
+        driver.find_element(By.ID, "new-password-input2").clear()
+        driver.find_element(By.ID, "new-password-input2").send_keys(
+            "otter1234567"
+        )
+        driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
         self.assertInfoAlert("The password has been changed.")
         driver.find_element(By.ID, "fw-edit-profile-pwd").click()
         driver.find_element(By.ID, "old-password-input").clear()
-        driver.find_element(By.ID, "old-password-input").send_keys("otter2")
+        driver.find_element(By.ID, "old-password-input").send_keys(
+            "otter1234567"
+        )
         driver.find_element(By.ID, "new-password-input1").clear()
-        driver.find_element(By.ID, "new-password-input1").send_keys("otter1")
+        driver.find_element(By.ID, "new-password-input1").send_keys(
+            "BigPassword123!"
+        )
         driver.find_element(By.ID, "new-password-input2").clear()
-        driver.find_element(By.ID, "new-password-input2").send_keys("otter1")
+        driver.find_element(By.ID, "new-password-input2").send_keys(
+            "BigPassword123!"
+        )
         driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.invisibility_of_element_located(

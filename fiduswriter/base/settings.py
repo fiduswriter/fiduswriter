@@ -387,10 +387,10 @@ CSRF_COOKIE_SAMESITE = "Lax"  # Protects against CSRF
 # django-axes configuration for brute-force protection
 AXES_FAILURE_LIMIT = 5  # Number of failed login attempts before lockout
 AXES_COOLOFF_TIME = 1  # Lockout duration in hours
-AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True  # More secure lockout strategy
 AXES_RESET_ON_SUCCESS = True  # Reset failed login count after successful login
 AXES_LOCKOUT_PARAMETERS = [
     "username",
+    "user_agent",
     "ip_address",
 ]  # Track both username and IP
 AXES_ENABLE_ACCESS_FAILURE_LOG = True  # Log failed login attempts
@@ -403,7 +403,7 @@ AXES_LOCKOUT_TEMPLATE = None  # Use default lockout message
 AXES_HANDLER = (
     "axes.handlers.database.AxesDatabaseHandler"  # Store attempts in database
 )
-AXES_META_PRECEDENCE_ORDER = [
+AXES_IPWARE_META_PRECEDENCE_ORDER = [
     "HTTP_X_FORWARDED_FOR",
     "REMOTE_ADDR",
 ]  # For proxy/load balancer support

@@ -202,14 +202,14 @@ MEDIA_MAX_SIZE = False
 # Lockout duration in hours (default: 1)
 # AXES_COOLOFF_TIME = 1
 
-# Lock out by combination of username and IP (default: True)
-# AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
+# Lock out parameters by (default: [["ip_address", "user_agent", "username"]])
+# AXES_LOCKOUT_PARAMETERS = [["ip_address", "user_agent", "username"]]
 
 # Reset failed attempts after successful login (default: True)
 # AXES_RESET_ON_SUCCESS = True
 
 # For deployments behind a proxy/load balancer, ensure IP detection is correct:
-# AXES_META_PRECEDENCE_ORDER = [
+# AXES_IPWARE_META_PRECEDENCE_ORDER = [
 #     'HTTP_X_FORWARDED_FOR',
 #     'REMOTE_ADDR',
 # ]

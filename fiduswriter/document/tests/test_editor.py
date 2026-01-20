@@ -842,8 +842,12 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Third user signs up
         self.driver.find_element(By.CSS_SELECTOR, 'a[title="Sign up"]').click()
         self.driver.find_element(By.ID, "id-username").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password1").send_keys("password")
-        self.driver.find_element(By.ID, "id-password2").send_keys("password")
+        self.driver.find_element(By.ID, "id-password1").send_keys(
+            "TestPassword123!"
+        )
+        self.driver.find_element(By.ID, "id-password2").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "id-email").send_keys(
             "yeti3@snowman.com"
         )
@@ -873,7 +877,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.driver.find_element(By.CSS_SELECTOR, 'a[href="/"]').click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1040,8 +1046,12 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.get(invitation_link)
         self.driver.find_element(By.CSS_SELECTOR, 'a[title="Sign up"]').click()
         self.driver.find_element(By.ID, "id-username").send_keys("Yeti4")
-        self.driver.find_element(By.ID, "id-password1").send_keys("password")
-        self.driver.find_element(By.ID, "id-password2").send_keys("password")
+        self.driver.find_element(By.ID, "id-password1").send_keys(
+            "TestPassword123!"
+        )
+        self.driver.find_element(By.ID, "id-password2").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "id-email").send_keys(
             "yeti4a@snowman.com"
         )
@@ -1064,7 +1074,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.driver.find_element(By.CSS_SELECTOR, 'a[href="/"]').click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti4")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1091,10 +1103,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # User 5 signs up with a different email first and then clicks the
         # invitation link and accepts the invite.
         self.create_user(
-            username="Yeti5", email="yeti5a@snowman.com", passtext="password"
+            username="Yeti5",
+            email="yeti5a@snowman.com",
+            passtext="TestPassword123!",
         )
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti5")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1124,10 +1140,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # User 6 signs up with a different email first and then clicks the
         # invitation link and declines the invite.
         self.create_user(
-            username="Yeti6", email="yeti6a@snowman.com", passtext="password"
+            username="Yeti6",
+            email="yeti6a@snowman.com",
+            passtext="TestPassword123!",
         )
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti6")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1157,7 +1177,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # User3 signs in and accepts the invite of user7. Access rights
         # should be upgraded to write access.
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
@@ -1268,7 +1290,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -1285,7 +1309,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti4")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(

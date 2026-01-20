@@ -160,6 +160,10 @@ BASE_MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "user.middleware.UserLanguageMiddleware",
+]
+
+# Axes middleware (added conditionally if axes is enabled)
+AXES_BASE_MIDDLEWARE = [
     "axes.middleware.AxesMiddleware",  # django-axes for brute-force protection
 ]
 
@@ -211,7 +215,7 @@ BASE_INSTALLED_APPS = [
     "django.contrib.admindocs",
     "django.contrib.flatpages",
     "channels",
-    "axes",  # django-axes for brute-force protection
+    "axes",  # django-axes for brute-force protection (can be disabled via REMOVED_APPS)
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -236,14 +240,22 @@ INSTALLED_APPS = []
 REMOVED_APPS = []
 
 
-AUTHENTICATION_BACKENDS = (
-    # AxesStandaloneBackend should be the first backend in the tuple
-    "axes.backends.AxesStandaloneBackend",
+# Base authentication backends (axes backend will be added conditionally)
+BASE_AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
     # `allauth` specific authentication methods, such as login by e-mail
     "allauth.account.auth_backends.AuthenticationBackend",
-)
+]
+
+# Axes authentication backend (added conditionally if axes is enabled)
+AXES_AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend should be the first backend in the tuple
+    "axes.backends.AxesStandaloneBackend",
+]
+
+# This will be overridden after configuration.py is loaded to conditionally include axes
+AUTHENTICATION_BACKENDS = tuple(BASE_AUTHENTICATION_BACKENDS)
 
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 TESTING = False  # Overriden by test runner.
@@ -350,6 +362,16 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
+        "axes": {
+            "handlers": ["null"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+        "axes.watch_login": {
+            "handlers": ["null"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
     },
 }
 
@@ -395,7 +417,9 @@ AXES_LOCKOUT_PARAMETERS = [
 ]  # Track both username and IP
 AXES_ENABLE_ACCESS_FAILURE_LOG = True  # Log failed login attempts
 AXES_ONLY_ADMIN_SITE = False  # Protect all login forms, not just admin
-AXES_VERBOSE = True  # Enable verbose logging
+AXES_VERBOSE = (
+    False  # Disable verbose logging by default (reduce console output)
+)
 AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = (
     True  # Extend lockout on continued attempts
 )
@@ -407,6 +431,10 @@ AXES_IPWARE_META_PRECEDENCE_ORDER = [
     "HTTP_X_FORWARDED_FOR",
     "REMOTE_ADDR",
 ]  # For proxy/load balancer support
+
+# To disable axes entirely (e.g., for local development or testing),
+# add 'axes' to REMOVED_APPS in your configuration.py:
+# REMOVED_APPS = ['axes']
 
 # GDPR Compliance Settings
 # Data retention and privacy settings

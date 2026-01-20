@@ -105,11 +105,32 @@ def inner(default_project_path):
         for app in settings_dict["REMOVED_APPS"]:
             settings_dict["INSTALLED_APPS"].remove(app)
 
-    # Merge MIDDLEWARE
+    # Check if axes is enabled (not in REMOVED_APPS)
+    axes_enabled = "axes" in settings_dict.get("INSTALLED_APPS", [])
+
+    # Merge MIDDLEWARE - conditionally add AXES_BASE_MIDDLEWARE
     if "BASE_MIDDLEWARE" in settings_dict and "MIDDLEWARE" in settings_dict:
-        settings_dict["MIDDLEWARE"] = settings_dict["BASE_MIDDLEWARE"] + list(
-            settings_dict["MIDDLEWARE"]
-        )
+        middleware_list = list(settings_dict["BASE_MIDDLEWARE"])
+        if axes_enabled and "AXES_BASE_MIDDLEWARE" in settings_dict:
+            middleware_list.extend(settings_dict["AXES_BASE_MIDDLEWARE"])
+        middleware_list.extend(settings_dict["MIDDLEWARE"])
+        settings_dict["MIDDLEWARE"] = middleware_list
+
+    # Merge AUTHENTICATION_BACKENDS - conditionally add AXES_AUTHENTICATION_BACKENDS
+    if axes_enabled:
+        if (
+            "AXES_AUTHENTICATION_BACKENDS" in settings_dict
+            and "BASE_AUTHENTICATION_BACKENDS" in settings_dict
+        ):
+            settings_dict["AUTHENTICATION_BACKENDS"] = tuple(
+                settings_dict["AXES_AUTHENTICATION_BACKENDS"]
+                + settings_dict["BASE_AUTHENTICATION_BACKENDS"]
+            )
+    else:
+        if "BASE_AUTHENTICATION_BACKENDS" in settings_dict:
+            settings_dict["AUTHENTICATION_BACKENDS"] = tuple(
+                settings_dict["BASE_AUTHENTICATION_BACKENDS"]
+            )
 
     # Configure Django settings
     from django.conf import settings

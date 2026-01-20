@@ -45,6 +45,33 @@ INSTALLED_APPS = CONFIGURATION.BASE_INSTALLED_APPS + list(
 )
 for app in CONFIGURATION.REMOVED_APPS:
     INSTALLED_APPS.remove(app)
+
+# Check if axes is enabled (not in REMOVED_APPS)
+axes_enabled = "axes" in INSTALLED_APPS
+
+# Merge MIDDLEWARE - conditionally add AXES_BASE_MIDDLEWARE
+middleware_list = list(CONFIGURATION.BASE_MIDDLEWARE)
+if axes_enabled and hasattr(CONFIGURATION, "AXES_BASE_MIDDLEWARE"):
+    middleware_list.extend(CONFIGURATION.AXES_BASE_MIDDLEWARE)
+middleware_list.extend(CONFIGURATION.MIDDLEWARE)
+
+# Merge AUTHENTICATION_BACKENDS - conditionally add AXES_AUTHENTICATION_BACKENDS
+if axes_enabled:
+    if hasattr(CONFIGURATION, "AXES_AUTHENTICATION_BACKENDS") and hasattr(
+        CONFIGURATION, "BASE_AUTHENTICATION_BACKENDS"
+    ):
+        auth_backends = tuple(
+            CONFIGURATION.AXES_AUTHENTICATION_BACKENDS
+            + CONFIGURATION.BASE_AUTHENTICATION_BACKENDS
+        )
+    else:
+        auth_backends = CONFIGURATION.AUTHENTICATION_BACKENDS
+else:
+    if hasattr(CONFIGURATION, "BASE_AUTHENTICATION_BACKENDS"):
+        auth_backends = tuple(CONFIGURATION.BASE_AUTHENTICATION_BACKENDS)
+    else:
+        auth_backends = CONFIGURATION.AUTHENTICATION_BACKENDS
+
 from django.conf import settings  # noqa
 
 settings.configure(
@@ -52,9 +79,8 @@ settings.configure(
     SETTINGS_MODULE=SETTINGS_MODULE,
     SETTINGS_PATHS=SETTINGS_PATHS,
     INSTALLED_APPS=INSTALLED_APPS,
-    MIDDLEWARE=(
-        CONFIGURATION.BASE_MIDDLEWARE + list(CONFIGURATION.MIDDLEWARE)
-    ),
+    MIDDLEWARE=middleware_list,
+    AUTHENTICATION_BACKENDS=auth_backends,
 )
 django.setup()
 

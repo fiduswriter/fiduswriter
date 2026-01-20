@@ -485,6 +485,10 @@ export class DocumentOverview {
                     select: 2,
                     type: "boolean"
                 },
+                /*{
+                    select: 3,
+                    type: "string"
+                },*/
                 {
                     select: [5, 6],
                     type: "date"

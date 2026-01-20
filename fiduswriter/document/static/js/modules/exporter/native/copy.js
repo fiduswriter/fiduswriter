@@ -1,4 +1,4 @@
-import {addAlert, longFilePath} from "../../common"
+import {addAlert, escapeText, longFilePath} from "../../common"
 import {NativeImporter} from "../../importer/native"
 import {ShrinkFidus} from "./shrink"
 
@@ -33,7 +33,7 @@ export class SaveCopy {
             .then(({doc, docInfo}) => {
                 addAlert(
                     "info",
-                    `${doc.title} ${gettext(" successfully copied.")}`
+                    `${escapeText(doc.title)} ${gettext(" successfully copied.")}`
                 )
                 return Promise.resolve({doc, docInfo})
             })

@@ -1,10 +1,11 @@
+import {escapeText} from "../basic"
 import {postJson} from "../network"
 
 export const shortFileTitle = (title, path) => {
     if (!path.length || path.endsWith("/")) {
-        return title || gettext("Untitled")
+        return escapeText(title || gettext("Untitled"))
     }
-    return path.split("/").pop()
+    return escapeText(path.split("/").pop())
 }
 
 export const longFilePath = (title, path, prefix = "") => {
@@ -21,7 +22,7 @@ export const longFilePath = (title, path, prefix = "") => {
         path = pathParts.join("/")
     }
 
-    return path
+    return escapeText(path)
 }
 
 export const cleanPath = (title, path) => {
@@ -40,7 +41,7 @@ export const cleanPath = (title, path) => {
     if (path === "/") {
         path = ""
     }
-    return path
+    return escapeText(path)
 }
 
 export const moveFile = (fileId, title, path, moveUrl) => {

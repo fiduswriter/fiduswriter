@@ -317,6 +317,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Password reset timeout in seconds (24 hours for security)
+# Django default is 3 days (259200 seconds)
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

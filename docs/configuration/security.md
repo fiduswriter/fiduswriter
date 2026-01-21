@@ -10,6 +10,7 @@ This guide covers security configuration for Fidus Writer, including brute-force
 - [Production Security Checklist](#production-security-checklist)
 - [Security Headers](#security-headers)
 - [Password Policies](#password-policies)
+- [Password Reset Timeout](#password-reset-timeout)
 - [Session Management](#session-management)
 - [Monitoring and Auditing](#monitoring-and-auditing)
 
@@ -938,6 +939,55 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 ```
+
+## Password Reset Timeout
+
+For security reasons, password reset links should expire after a limited time to prevent unauthorized access if a reset email is intercepted or accessed later.
+
+### Default Configuration
+
+Fidus Writer sets the password reset timeout to **24 hours** (86400 seconds) by default, which is more secure than Django's default of 3 days.
+
+```python
+# Already configured in base/settings.py
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours
+```
+
+### Customizing the Timeout
+
+You can adjust this value in your `configuration.py` based on your security requirements:
+
+```python
+# More secure options
+PASSWORD_RESET_TIMEOUT = 43200  # 12 hours
+PASSWORD_RESET_TIMEOUT = 3600   # 1 hour (very secure)
+
+# Less secure (not recommended)
+PASSWORD_RESET_TIMEOUT = 259200  # 3 days (Django default)
+```
+
+### Security Recommendations
+
+- **24 hours or less**: Recommended for most deployments
+- **12 hours**: Suitable for high-security environments
+- **1 hour**: Appropriate for critical systems requiring maximum security
+- **Avoid longer timeouts**: Reset links valid for multiple days increase the risk window
+
+### How It Works
+
+1. User requests a password reset
+2. System generates a unique, time-limited token
+3. Token is sent via email as part of a reset link
+4. Token expires after `PASSWORD_RESET_TIMEOUT` seconds
+5. Expired tokens cannot be used to reset passwords
+
+### User Impact
+
+Shorter timeouts improve security but may require users to request new reset links if they don't act quickly. Consider your user base when setting this value:
+
+- **Tech-savvy users**: Can handle 1-6 hour timeouts
+- **General users**: 12-24 hours provides good balance
+- **Users with limited email access**: May need 24+ hours (balance with security needs)
 
 ## Session Management
 

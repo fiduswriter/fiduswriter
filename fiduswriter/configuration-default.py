@@ -215,6 +215,18 @@ MEDIA_MAX_SIZE = False
 # ]
 
 #############################################
+# Password Reset Security                   #
+#############################################
+
+# Password reset link timeout in seconds
+# Default is 24 hours (86400 seconds) for security reasons
+# Django's default is 3 days (259200 seconds)
+# Recommended: Keep at 24 hours or less for better security
+# PASSWORD_RESET_TIMEOUT = 86400  # 24 hours
+# PASSWORD_RESET_TIMEOUT = 43200  # 12 hours (more secure)
+# PASSWORD_RESET_TIMEOUT = 3600   # 1 hour (very secure)
+
+#############################################
 # GDPR Compliance Settings                 #
 #############################################
 

@@ -1,3 +1,4 @@
+import {escapeText} from "../../common"
 import {updateTemplateFile} from "../../document_template"
 import {FW_DOCUMENT_VERSION} from "../../schema"
 import {NativeImporter} from "./index"
@@ -200,7 +201,7 @@ export class FidusFileImporter {
                 this.ok = true
                 this.doc = doc
                 this.docInfo = docInfo
-                this.statusText = `${doc.title} ${gettext("successfully imported.")}`
+                this.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
                 return this
             })
         } else {

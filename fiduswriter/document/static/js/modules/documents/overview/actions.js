@@ -31,7 +31,7 @@ export class DocumentOverviewActions {
             if (json.done) {
                 addAlert(
                     "success",
-                    `${gettext("Document has been deleted")}: '${longFilePath(doc.title, doc.path)}'`
+                    `${gettext("Document has been deleted")}: '${escapeText(longFilePath(doc.title, doc.path))}'`
                 )
                 this.documentOverview.documentList =
                     this.documentOverview.documentList.filter(
@@ -41,7 +41,7 @@ export class DocumentOverviewActions {
             } else {
                 addAlert(
                     "error",
-                    `${gettext("Could not delete document")}: '${longFilePath(doc.title, doc.path)}'`
+                    `${gettext("Could not delete document")}: '${escapeText(longFilePath(doc.title, doc.path))}'`
                 )
             }
         })

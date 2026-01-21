@@ -22,7 +22,7 @@ export const longFilePath = (title, path, prefix = "") => {
         path = pathParts.join("/")
     }
 
-    return escapeText(path)
+    return path
 }
 
 export const cleanPath = (title, path) => {
@@ -41,7 +41,7 @@ export const cleanPath = (title, path) => {
     if (path === "/") {
         path = ""
     }
-    return escapeText(path)
+    return path
 }
 
 export const moveFile = (fileId, title, path, moveUrl) => {

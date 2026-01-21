@@ -1,4 +1,4 @@
-import {postJson} from "../common"
+import {escapeText, postJson} from "../common"
 import {
     MAX_FW_DOCUMENT_VERSION,
     MIN_FW_DOCUMENT_VERSION
@@ -156,7 +156,7 @@ export class DocumentTemplateImporter {
                     added: json.added,
                     updated: json.updated
                 }
-                this.statusText = `${title} ${gettext("successfully imported.")}`
+                this.statusText = `${escapeText(title)} ${gettext("successfully imported.")}`
                 return this
             })
         } else {

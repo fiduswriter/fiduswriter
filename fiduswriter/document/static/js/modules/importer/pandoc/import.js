@@ -1,5 +1,5 @@
 import {BibLatexImporter} from "../../bibliography/import"
-import {postJson} from "../../common"
+import {escapeText, postJson} from "../../common"
 import {NativeImporter} from "../native"
 import {PandocConvert} from "./convert"
 
@@ -157,7 +157,7 @@ export class PandocImporter {
                     this.output.ok = true
                     this.output.doc = doc
                     this.output.docInfo = docInfo
-                    this.output.statusText = `${doc.title} ${gettext("successfully imported.")}`
+                    this.output.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
                     return this.output
                 })
                 .catch(error => {

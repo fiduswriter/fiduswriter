@@ -1,4 +1,4 @@
-import {postJson} from "../../common"
+import {escapeText, postJson} from "../../common"
 import {NativeImporter} from "../native"
 import {DocxConvert} from "./convert"
 
@@ -66,7 +66,7 @@ export class DocxImporter {
                             this.output.ok = true
                             this.output.doc = doc
                             this.output.docInfo = docInfo
-                            this.output.statusText = `${doc.title} ${gettext("successfully imported.")}`
+                            this.output.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
                             return this.output
                         })
                         .catch(error => {

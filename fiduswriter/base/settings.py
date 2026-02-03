@@ -156,6 +156,7 @@ BASE_MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",  # Two-factor authentication (can be disabled via REMOVED_APPS)
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -216,6 +217,8 @@ BASE_INSTALLED_APPS = [
     "django.contrib.flatpages",
     "channels",
     "axes",  # django-axes for brute-force protection (can be disabled via REMOVED_APPS)
+    "django_otp",  # Two-factor authentication (can be disabled via REMOVED_APPS)
+    "django_otp.plugins.otp_totp",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -439,6 +442,13 @@ AXES_IPWARE_META_PRECEDENCE_ORDER = [
 # To disable axes entirely (e.g., for local development or testing),
 # add 'axes' to REMOVED_APPS in your configuration.py:
 # REMOVED_APPS = ['axes']
+
+# Two-factor authentication (OTP) configuration
+OTP_TOTP_ISSUER = "Fidus Writer"  # The issuer name for TOTP devices
+
+# To disable OTP entirely (e.g., for local development or testing),
+# add 'django_otp' to REMOVED_APPS in your configuration.py:
+# REMOVED_APPS = ['django_otp']
 
 # GDPR Compliance Settings
 # Data retention and privacy settings

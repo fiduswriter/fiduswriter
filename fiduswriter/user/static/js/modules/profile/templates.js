@@ -103,6 +103,27 @@ export const profileContents = (user, socialaccount_providers) =>
                 </div>
             </form>
             <div class="profile-data-row">
+                <label class="form-label">${gettext("Two-Factor Authentication")}</label>
+                <div id="two-factor-status">
+                    <span id="two-factor-enabled-status" style="display: none;">
+                        <i class="fa fa-check"></i>
+                        ${gettext("Enabled")}
+                    </span>
+                    <span id="two-factor-disabled-status" style="display: none;">
+                        <i class="fa fa-times"></i>
+                        ${gettext("Disabled")}
+                    </span>
+                </div>
+                <span id="setup-two-factor" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-shield-alt"></i>
+                    ${gettext("Enable 2FA")}
+                </span>
+                <span id="disable-two-factor" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-shield-alt"></i>
+                    ${gettext("Disable 2FA")}
+                </span>
+            </div>
+            <div class="profile-data-row">
                 <table class="fw-data-table profile-email-table">
                     <thead class="fw-data-table-header">
                         <tr>

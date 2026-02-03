@@ -43,5 +43,31 @@ urlpatterns = [
     re_path("", include("allauth.urls")),
 ]
 
+# Two-factor authentication URL patterns (only if django_otp is available)
+if "django_otp" in settings.INSTALLED_APPS:
+    # Add 2FA URL patterns
+    urlpatterns += [
+        re_path(
+            "^two-factor/setup/$",
+            views.two_factor_setup,
+            name="two_factor_setup",
+        ),
+        re_path(
+            "^two-factor/verify/$",
+            views.two_factor_verify,
+            name="two_factor_verify",
+        ),
+        re_path(
+            "^two-factor/disable/$",
+            views.two_factor_disable,
+            name="two_factor_disable",
+        ),
+        re_path(
+            "^two-factor/status/$",
+            views.two_factor_status,
+            name="two_factor_status",
+        ),
+    ]
+
 if not settings.PASSWORD_LOGIN:
     urlpatterns.insert(0, re_path("^login/$", RedirectView.as_view(url="/")))

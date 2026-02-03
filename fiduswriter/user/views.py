@@ -1,4 +1,5 @@
 import json
+from base64 import b32encode
 
 from django.http import JsonResponse, HttpRequest
 from django.db.models import Q
@@ -11,9 +12,13 @@ from django.contrib.auth import get_user_model
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.files import File
+from django.utils.translation import gettext as _
+
+from django_otp import user_has_device
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from base.decorators import ajax_required
-from .forms import UserForm
+from .forms import UserForm, FidusLoginForm
 from document.models import AccessRight
 from .models import UserInvite
 from .helpers import Avatars
@@ -591,19 +596,211 @@ signup = FidusSignupView.as_view()
 
 
 class FidusLoginView(LoginView):
+    form_class = FidusLoginForm
+
     def form_valid(self, form):
-        form_response = super().form_valid(form)
         is_ajax = (
             self.request.headers.get("x-requested-with") == "XMLHttpRequest"
         )
-        user = self.request.user
+        user = form.user
         if is_ajax and isinstance(user, get_user_model()):
+            # Check if user has 2FA enabled and is not verified yet
+            location = None
+            if "django_otp" in settings.INSTALLED_APPS:
+                if user_has_device(user):
+                    # Check if user has a verified TOTP device
+                    verified_device = TOTPDevice.objects.filter(
+                        user=user, confirmed=True
+                    ).first()
+                    if verified_device:
+                        if "twofactor" in self.request.POST:
+                            code = self.request.POST["twofactor"]
+                            if verified_device.verify_token(code):
+                                # User has verified their device, continue normally
+                                form_response = super().form_valid(form)
+                                location = form_response["Location"]
+                            else:
+                                # Invalid code, show error message
+                                form.add_error(
+                                    "twofactor", _("Code is invalid")
+                                )
+                        elif "twofactor" not in self.request.POST:
+                            # User has a confirmed device but needs to verify with token
+                            # Ask to add 2FA verification code
+                            # Not translated as frontend will handle it.
+                            form.add_error("twofactor", "required")
+                    else:
+                        form_response = super().form_valid(form)
+                        location = form_response["Location"]
+                else:
+                    form_response = super().form_valid(form)
+                    location = form_response["Location"]
+            else:
+                # django_otp not available, continue normally
+                # Authorize user
+                form_response = super().form_valid(form)
+                location = form_response["Location"]
             # Add user's language preference to the response
-            response = {"location": form_response["Location"], "user": {}}
+            response = {"user": {}}
+            if location:
+                response["Location"] = location
             if user.language:
                 response["user"]["language"] = user.language
             return JsonResponse(response)
         return form_response
+
+
+# Two-factor authentication views
+
+
+@login_required
+@ajax_required
+@require_POST
+def two_factor_setup(request):
+    """
+    Setup a new TOTP device for the user.
+    Returns a QR code URL and secret key.
+    """
+    # Check if user already has a device
+    existing_device = TOTPDevice.objects.filter(
+        user=request.user, confirmed=True
+    ).first()
+    if existing_device:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Two-factor authentication is already enabled. Disable it first to set up a new device.",
+            },
+            status=400,
+        )
+
+    # Check if there's an existing unconfirmed device to reuse
+    unconfirmed_device = TOTPDevice.objects.filter(
+        user=request.user, confirmed=False
+    ).first()
+
+    if unconfirmed_device:
+        # Reuse the existing unconfirmed device
+        device = unconfirmed_device
+    else:
+        # Create new unconfirmed TOTP device
+        device = TOTPDevice.objects.create(
+            user=request.user,
+            name=f"{request.user.username}'s TOTP Device",
+            confirmed=False,
+            step=30,
+            t0=0,
+            digits=6,
+        )
+
+    secret_key = b32encode(device.bin_key).decode("utf-8")
+    provisioning_uri = device.config_url
+
+    return JsonResponse(
+        {
+            "status": "success",
+            "secret_key": secret_key,
+            "provisioning_uri": provisioning_uri,
+            "device_id": device.id,
+        }
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def two_factor_verify(request):
+    """
+    Verify a TOTP code during setup.
+    """
+
+    code = request.POST.get("code", "").strip()
+    device_id = request.POST.get("device_id")
+
+    if not code or len(code) != 6:
+        return JsonResponse(
+            {"status": "error", "message": "Invalid code format."},
+            status=400,
+        )
+
+    # Get the device
+    try:
+        device = TOTPDevice.objects.get(
+            id=device_id, user=request.user, confirmed=False
+        )
+    except TOTPDevice.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Device not found."}, status=404
+        )
+
+    if device.verify_token(code):  # Verify the code
+        # totp = pyotp.TOTP(device.bin_key)
+        # if totp.verify(code):
+        # Code is valid, confirm the device
+        device.confirmed = True
+        device.save()
+
+        # Delete any other unconfirmed devices for this user to clean up
+        TOTPDevice.objects.filter(user=request.user, confirmed=False).exclude(
+            id=device.id  # Don't delete the one we just confirmed
+        ).delete()
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": "Two-factor authentication has been enabled successfully.",
+            }
+        )
+    else:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Invalid code. Please try again.",
+            },
+            status=400,
+        )
+
+
+@login_required
+@ajax_required
+@require_POST
+def two_factor_disable(request):
+    """
+    Disable 2FA for the user by removing all TOTP devices.
+    """
+
+    # Delete all TOTP devices for this user
+    deleted_count = TOTPDevice.objects.filter(user=request.user).delete()[0]
+
+    if deleted_count > 0:
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": "Two-factor authentication has been disabled.",
+            }
+        )
+    else:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "No two-factor authentication devices found.",
+            },
+            status=400,
+        )
+
+
+@login_required
+@ajax_required
+def two_factor_status(request):
+    """
+    Check if user has 2FA enabled.
+    """
+
+    has_device = TOTPDevice.objects.filter(
+        user=request.user, confirmed=True
+    ).exists()
+
+    return JsonResponse({"status": "success", "enabled": has_device})
 
 
 login = FidusLoginView.as_view()

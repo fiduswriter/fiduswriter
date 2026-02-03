@@ -12,6 +12,11 @@ import {
 } from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
+import {
+    checkTwoFactorStatus,
+    twoFactorDisableDialog,
+    twoFactorSetupDialog
+} from "../two_factor"
 import {DeleteUserDialog} from "./delete_user"
 import {
     addEmailDialog,
@@ -75,6 +80,12 @@ export class Profile {
                     case findTarget(event, ".delete-socialaccount", el):
                         deleteSocialaccountDialog(el.target, this.app)
                         break
+                    case findTarget(event, "#setup-two-factor", el):
+                        dialog = twoFactorSetupDialog()
+                        break
+                    case findTarget(event, "#disable-two-factor", el):
+                        dialog = twoFactorDisableDialog()
+                        break
                     default:
                         break
                 }
@@ -86,6 +97,8 @@ export class Profile {
                         changePrimaryEmailDialog(this.app)
                     )
                 )
+            // Check and display two-factor authentication status
+            this.updateTwoFactorStatus()
         })
     }
 
@@ -99,11 +112,39 @@ export class Profile {
         })
         document.body = this.dom
 
-        ensureCSS([staticUrl("css/show_profile.css")])
+        ensureCSS([
+            staticUrl("css/show_profile.css"),
+            staticUrl("css/two_factor.css")
+        ])
 
         setDocTitle(gettext("Configure profile"), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
+    }
+
+    updateTwoFactorStatus() {
+        checkTwoFactorStatus().then(enabled => {
+            const enabledStatus = this.dom.querySelector(
+                "#two-factor-enabled-status"
+            )
+            const disabledStatus = this.dom.querySelector(
+                "#two-factor-disabled-status"
+            )
+            const setupBtn = this.dom.querySelector("#setup-two-factor")
+            const disableBtn = this.dom.querySelector("#disable-two-factor")
+
+            if (enabled) {
+                enabledStatus.style.display = "inline"
+                disabledStatus.style.display = "none"
+                setupBtn.style.display = "none"
+                disableBtn.style.display = "inline"
+            } else {
+                enabledStatus.style.display = "none"
+                disabledStatus.style.display = "inline"
+                setupBtn.style.display = "inline"
+                disableBtn.style.display = "none"
+            }
+        })
     }
 
     save() {

@@ -254,87 +254,122 @@ sudo certbot renew --dry-run
 
 ## Two-Factor Authentication for Admin
 
-### Enable OTP Support
+Two-factor authentication (2FA) using TOTP (Time-based One-Time Password) is **enabled by default** for the admin interface. This adds an extra layer of security by requiring a verification code from an authenticator app (like Google Authenticator, Authy, etc.) in addition to your password.
+
+### Disabling 2FA (Not Recommended)
+
+If you need to disable 2FA for development or testing purposes:
 
 1. Open configuration:
    ```bash
    sudo fiduswriter.configure
    ```
 
-2. Enable OTP plugins in `INSTALLED_APPS`:
+2. Add `django_otp` to `REMOVED_APPS`:
    ```python
-   INSTALLED_APPS = [
-       # ... other apps ...
+   REMOVED_APPS = [
        'django_otp',
-       'django_otp.plugins.otp_totp',
-       # ... other apps ...
    ]
    ```
 
-3. Add middleware:
-   ```python
-   MIDDLEWARE = [
-       'django.contrib.auth.middleware.AuthenticationMiddleware',
-       'django_otp.middleware.OTPMiddleware',
-       # ... other middleware ...
-   ]
-   ```
+3. Save and exit (CTRL+X, then Y)
 
-4. Set issuer name:
-   ```python
-   OTP_TOTP_ISSUER = 'Fidus Writer'  # Or your organization name
-   ```
+**Warning:** Disabling 2FA reduces the security of your admin interface. We strongly recommend keeping it enabled for production deployments.
 
-5. Save and exit (CTRL+X, then Y)
+### Set Up TOTP Device for Admin Access
 
-### Set Up TOTP Device
+Once 2FA is enabled (default), follow these steps to add a TOTP device:
 
 1. Log into the admin interface at `http://your-domain/admin/`
 
-2. Under "TOTP devices", click "Add"
+2. Under "Authentication and Authorization", click on "TOTP devices"
 
-3. Create an entry for your authenticator app (Google Authenticator, Authy, etc.)
+3. Click "Add TOTP device"
 
-4. Scan the QR code with your phone's authenticator app
+4. Fill in the form:
+   - **User**: Select your admin user account
+   - **Name**: Give your device a name (e.g., "My Phone")
+   - **Confirmed**: Leave unchecked for now
 
-### Configure OTP Admin Site
+5. Click "Save" - you'll see a QR code
 
-1. Create a configuration file:
-   ```bash
-   sudo nano /var/snap/fiduswriter/current/two_factor_authentication.py
-   ```
+6. Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.)
 
-2. Add this content:
-   ```python
-   from django.contrib.admin.apps import AdminConfig
+7. Enter the 6-digit code from your app to verify the setup
 
-   class FidusConfig(AdminConfig):
-       default_site = 'django_otp.admin.OTPAdminSite'
-   ```
+8. Check "Confirmed" and click "Save" again
 
-3. Save and exit
+Now admin login will require 2FA. When you log in, you'll need to enter both your password and the TOTP code from your authenticator app.
 
-4. Open Fidus Writer configuration:
-   ```bash
-   sudo fiduswriter.configure
-   ```
+### Using 2FA
 
-5. Enable the custom admin config in `INSTALLED_APPS`:
-   ```python
-   INSTALLED_APPS = [
-       'two_factor_authentication.FidusConfig',
-       # ... other apps ...
-   ]
-   ```
+- **Initial Login**: Enter your username and password as usual
+- **2FA Prompt**: After successful password authentication, you'll be prompted for your TOTP code
+- **Enter Code**: Open your authenticator app and enter the current 6-digit code
+- **Code Validity**: TOTP codes expire every 30 seconds, so make sure to use a fresh code
 
-6. Disable the default admin:
-   ```python
-   REMOVED_APPS = ['django.contrib.admin']
-   ```
+### Managing TOTP Devices
 
-7. Save and exit
+- **View Devices**: Go to Admin → TOTP devices to see all configured devices
+- **Add Multiple Devices**: You can add multiple devices (e.g., phone and tablet) as backups
+- **Revoke Access**: Delete a device if you lose your phone or suspect unauthorized access
 
-Now admin login will require 2FA.
+## Two-Factor Authentication for Users
+
+Two-factor authentication (2FA) is also available for regular users to protect their accounts. Users can enable 2FA in their profile settings.
+
+### Enabling 2FA for Your Account
+
+1. Log in to your Fidus Writer account
+
+2. Click on your username in the top-right corner and select **Profile**
+
+3. In the profile page, you'll see a "Two-Factor Authentication" section
+
+4. Click **Enable 2FA** to start the setup process
+
+5. A dialog will appear with:
+   - A QR code to scan with your authenticator app
+   - A secret key (for manual entry if needed)
+
+6. Scan the QR code with your preferred authenticator app (Google Authenticator, Authy, etc.)
+
+7. Enter the 6-digit code displayed in your authenticator app
+
+8. Click **Verify** to complete setup
+
+9. 2FA is now enabled for your account!
+
+### Disabling 2FA
+
+1. Go to your profile page
+
+2. In the "Two-Factor Authentication" section, click **Disable 2FA**
+
+3. Confirm the action in the dialog
+
+4. 2FA will be disabled for your account
+
+### Using 2FA for Login
+
+When 2FA is enabled:
+
+1. Enter your username and password on the login page
+
+2. After successful password authentication, a 2FA dialog will appear
+
+3. Open your authenticator app and get the current 6-digit code
+
+4. Enter the code in the dialog and click **Verify**
+
+5. You'll be logged in if the code is correct
+
+**Important Notes:**
+
+- TOTP codes change every 30 seconds - make sure to use a fresh code
+- If you lose access to your authenticator, contact an administrator to reset 2FA
+- You can add multiple backup devices for redundancy
+- 2FA adds an important layer of security to protect your documents and data
 
 ## LanguageTool Configuration
 
@@ -754,7 +789,7 @@ For better performance with multiple users:
 2. ✅ **Block direct access** to port 4386 from internet
 3. ✅ **Keep snap updated** for security patches
 4. ✅ **Use strong passwords** for admin accounts
-5. ✅ **Enable 2FA** for admin access
+5. ✅ **2FA is enabled by default** for admin access (can be disabled if needed)
 6. ✅ **Regular backups** of data and configuration
 7. ✅ **Configure firewall** properly with ufw
 8. ✅ **Restrict ALLOWED_HOSTS** to actual domains

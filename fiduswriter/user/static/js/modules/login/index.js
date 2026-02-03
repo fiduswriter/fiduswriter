@@ -1,6 +1,7 @@
 import * as pluginLoaders from "../../plugins/login"
-import {escapeText, postJson} from "../common"
+import {escapeText, post, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
+import {twoFactorLoginDialog} from "../two_factor"
 
 export class LoginPage extends PreloginPage {
     constructor({app, language, socialaccount_providers}) {
@@ -143,58 +144,90 @@ export class LoginPage extends PreloginPage {
                 return
             }
             return postJson("/api/user/login/", {login, password, remember})
-                .then(({json}) => {
-                    if (json.location === "/api/account/confirm-email/") {
-                        // Email has not yet been confirmed.
-                        fwContents.innerHTML = `<div class="fw-login-left">
-                                <h1 class="fw-login-title">${gettext("Verify Your E-mail Address")}</h1>
-                                <p>
-                                    ${gettext(
-                                        "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
-                                    )}
-                                    <br />
-                                    ${gettext(
-                                        "Please contact us if you do not receive it within a few minutes."
-                                    )}
-                                </p>
-                            </div>`
-                    } else {
-                        // Check if user's language preference differs from current language
-                        const currentLang = document.documentElement.lang
-                        if (json.html && json.html.length > 0) {
-                            const htmlValues = JSON.parse(json.html)
-                            if (
-                                htmlValues.user &&
-                                htmlValues.user.language &&
-                                htmlValues.user.language !== currentLang
-                            ) {
-                                // Language preference differs, reload the page to apply it
-                                window.location.reload()
-                            } else {
-                                // No language change needed, proceed with normal init
-                                this.app.init()
-                            }
-                        } else {
-                            this.app.init()
-                        }
+                .catch(response => {
+                    if (
+                        !(response instanceof Response) ||
+                        response.status !== 400
+                    ) {
+                        return Promise.reject(response)
                     }
-                })
-                .catch(response =>
-                    response.json().then(json => {
-                        json.form.errors.forEach(
-                            error =>
-                                (nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`)
-                        )
-                        json.form.fields.login.errors.forEach(
-                            error =>
-                                (idLoginErrors.innerHTML += `<li>${escapeText(error)}</li>`)
-                        )
-                        json.form.fields.password.errors.forEach(
-                            error =>
-                                (idPasswordErrors.innerHTML += `<li>${escapeText(error)}</li>`)
-                        )
+                    return response.json().then(json => {
+                        const needCode =
+                            json.form.fields.twofactor.errors.includes(
+                                "required"
+                            )
+                        if (
+                            needCode &&
+                            !json.form.errors.length &&
+                            !json.form.fields.login.errors.length &&
+                            !json.form.fields.password.errors.length
+                        ) {
+                            // User needs to complete 2FA verification
+                            twoFactorLoginDialog({
+                                login,
+                                password,
+                                remember,
+                                loginPage: this
+                            })
+                        } else {
+                            json.form.errors.forEach(
+                                error =>
+                                    (nonFieldErrors.innerHTML += `<li>${escapeText(error)}</li>`)
+                            )
+                            json.form.fields.login.errors.forEach(
+                                error =>
+                                    (idLoginErrors.innerHTML += `<li>${escapeText(error)}</li>`)
+                            )
+                            json.form.fields.password.errors.forEach(
+                                error =>
+                                    (idPasswordErrors.innerHTML += `<li>${escapeText(error)}</li>`)
+                            )
+                        }
+
+                        return {json, status: response.status}
                     })
-                )
+                })
+                .then(({json, status}) => {
+                    if (status === 400) {
+                        return
+                    }
+                    this.afterLogin(json)
+                })
         })
+    }
+
+    afterLogin(json) {
+        // Check if user's language preference differs from current language
+        const currentLang = document.documentElement.lang
+        if (json.html && json.html.length > 0) {
+            const htmlValues = JSON.parse(json.html)
+
+            if (htmlValues.Location === "/api/account/confirm-email/") {
+                // Email has not yet been confirmed.
+                document.querySelector(".fw-contents").innerHTML = `<div class="fw-login-left">
+                        <h1 class="fw-login-title">${gettext("Verify Your E-mail Address")}</h1>
+                        <p>
+                            ${gettext(
+                                "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
+                            )}
+                            <br />
+                            ${gettext(
+                                "Please contact us if you do not receive it within a few minutes."
+                            )}
+                        </p>
+                    </div>`
+            } else if (
+                htmlValues.user?.language &&
+                htmlValues.user?.language !== currentLang
+            ) {
+                // Language preference differs, reload the page to apply it
+                window.location.reload()
+            } else {
+                // No language change needed, proceed with normal init
+                this.app.init()
+            }
+        } else {
+            this.app.init()
+        }
     }
 }

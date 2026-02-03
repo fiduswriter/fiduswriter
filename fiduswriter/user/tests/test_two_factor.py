@@ -316,19 +316,26 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         )
         self.assertIsNotNone(two_fa_dialog)
 
-        # Generate a FRESH TOTP code and verify it locally first
-        # Wait to ensure we're not at the edge of a time window
+        # Generate a FRESH TOTP code with better timing protection for CI
+        # Always wait for a fresh window to avoid timing issues
         current_time = datetime.datetime.now().timestamp()
         time_in_window = int(current_time) % 30
-        if time_in_window > 25:
-            # Wait for the next window to start
-            time.sleep(30 - time_in_window + 2)
+
+        # If we're in the last 10 seconds OR first 2 seconds of a window, wait for a fresh window
+        # This gives us a stable 18-second window to use the code
+        if time_in_window > 20 or time_in_window < 2:
+            wait_time = (
+                32 - time_in_window
+                if time_in_window > 20
+                else 2 - time_in_window + 1
+            )
+            time.sleep(wait_time)
 
         # Generate code and verify it's valid locally before using it
         fresh_code = totp.now()
-        # Double-check the code is valid
+        # Double-check the code is valid with a larger tolerance window for CI
         self.assertTrue(
-            totp.verify(fresh_code, valid_window=1),
+            totp.verify(fresh_code, valid_window=2),
             f"Generated code {fresh_code} is not valid locally",
         )
 

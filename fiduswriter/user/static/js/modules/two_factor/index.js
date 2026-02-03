@@ -11,69 +11,19 @@ export const twoFactorSetupDialog = () => {
     let secretKey = null
     let deviceId = null
 
-    const buttons = [
-        {
-            text: gettext("Verify"),
-            classes: "fw-dark",
-            click: () => {
-                const codeInput = document.querySelector("#two-factor-code")
-                const code = codeInput.value.trim()
-
-                if (code.length !== 6) {
-                    addAlert("error", gettext("Please enter a 6-digit code."))
-                    return
-                }
-
-                postJson("/api/user/two-factor/verify/", {
-                    code,
-                    device_id: deviceId
-                })
-                    .then(({json}) => {
-                        if (json.status === "success") {
-                            addAlert("success", json.message)
-                            dialog.close()
-                            window.location.reload()
-                        } else {
-                            addAlert("error", json.message)
-                        }
-                    })
-                    .catch(() => {
-                        addAlert("error", gettext("Could not verify the code."))
-                    })
-            }
-        },
-        {
-            type: "cancel"
-        }
-    ]
-
-    const dialog = new Dialog({
-        id: "two-factor-setup-dialog",
-        title: gettext("Set Up Two-Factor Authentication"),
-        body: `<p>${gettext("Loading...")}</p>`,
-        buttons: [],
-        icon: "shield-alt",
-        width: 500
-    })
-
-    dialog.open()
-
     // Load setup data
-    activateWait(dialog.dialogEl)
-    postJson("/api/user/two-factor/setup/").then(({json}) => {
-        deactivateWait(dialog.dialogEl)
+    activateWait()
+    return postJson("/api/user/two-factor/setup/").then(({json}) => {
+        deactivateWait()
 
         if (json.status !== "success") {
             addAlert("error", json.message)
-            dialog.close()
             return Promise.reject(json.message)
         }
 
         secretKey = json.secret_key
         deviceId = json.device_id
         const provisioningUri = json.provisioning_uri
-
-        dialog.refreshButtons(buttons)
 
         const qrContainer = document.createElement("div")
         qrContainer.className = "two-factor-qr-container"
@@ -98,16 +48,67 @@ export const twoFactorSetupDialog = () => {
             }
         )
 
-        dialog.dialogEl.querySelector(".ui-dialog-content").innerHTML = `
-                <p>${gettext("Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)")}</p>
-                <div class="two-factor-qr-wrapper"></div>
-                <p><strong>${gettext("Or enter this code manually:")}</strong></p>
-                <code class="two-factor-secret">${secretKey}</code>
-                <div class="two-factor-verify-section">
-                    <p>${gettext("Enter the 6-digit code from your authenticator app to verify:")}</p>
-                    <input type="text" id="two-factor-code" placeholder="123456" maxlength="6" class="fw-button fw-large" autocomplete="one-time-code" />
-                </div>
-            `
+        const buttons = [
+            {
+                text: gettext("Verify"),
+                classes: "fw-dark",
+                click: () => {
+                    const codeInput = document.querySelector("#two-factor-code")
+                    const code = codeInput.value.trim()
+
+                    if (code.length !== 6) {
+                        addAlert(
+                            "error",
+                            gettext("Please enter a 6-digit code.")
+                        )
+                        return
+                    }
+
+                    postJson("/api/user/two-factor/verify/", {
+                        code,
+                        device_id: deviceId
+                    })
+                        .then(({json}) => {
+                            if (json.status === "success") {
+                                addAlert("success", json.message)
+                                dialog.close()
+                                window.location.reload()
+                            } else {
+                                addAlert("error", json.message)
+                            }
+                        })
+                        .catch(() => {
+                            addAlert(
+                                "error",
+                                gettext("Could not verify the code.")
+                            )
+                        })
+                }
+            },
+            {
+                type: "cancel"
+            }
+        ]
+
+        const dialog = new Dialog({
+            id: "two-factor-setup-dialog",
+            title: gettext("Set Up Two-Factor Authentication"),
+            body: `
+                    <p>${gettext("Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)")}</p>
+                    <div class="two-factor-qr-wrapper"></div>
+                    <p><strong>${gettext("Or enter this code manually:")}</strong></p>
+                    <code class="two-factor-secret">${secretKey}</code>
+                    <div class="two-factor-verify-section">
+                        <p>${gettext("Enter the 6-digit code from your authenticator app to verify:")}</p>
+                        <input type="text" id="two-factor-code" placeholder="123456" maxlength="6" class="fw-button fw-large" autocomplete="one-time-code" />
+                    </div>
+                `,
+            buttons,
+            icon: "shield-alt",
+            width: 500
+        })
+
+        dialog.open()
 
         const qrWrapper = dialog.dialogEl.querySelector(
             ".two-factor-qr-wrapper"
@@ -126,8 +127,6 @@ export const twoFactorSetupDialog = () => {
             })
         }
     })
-
-    return dialog
 }
 
 export const twoFactorDisableDialog = () => {
@@ -183,19 +182,6 @@ export const twoFactorLoginDialog = ({
     remember,
     loginPage
 }) => {
-    const _codeInputEvents = () => {
-        const codeInput = dialog.dialogEl.querySelector("#two-factor-code")
-        if (codeInput) {
-            //codeInput.focus()
-            codeInput.addEventListener("keypress", event => {
-                if (event.key === "Enter") {
-                    event.preventDefault()
-                    buttons[0].click()
-                }
-            })
-        }
-    }
-
     const buttons = [
         {
             text: gettext("Verify"),
@@ -245,7 +231,6 @@ export const twoFactorLoginDialog = ({
     dialog.open()
     const codeInput = dialog.dialogEl.querySelector("#two-factor-code")
     if (codeInput) {
-        //codeInput.focus()
         codeInput.addEventListener("keypress", event => {
             if (event.key === "Enter") {
                 event.preventDefault()
@@ -253,7 +238,6 @@ export const twoFactorLoginDialog = ({
             }
         })
     }
-    //codeInputEvents()
     return dialog
 }
 

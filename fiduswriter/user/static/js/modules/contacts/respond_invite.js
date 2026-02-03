@@ -1,4 +1,4 @@
-import {Dialog, postJson} from "../common"
+import {Dialog, escapeText, postJson} from "../common"
 
 export class RespondInviteDialog {
     constructor(
@@ -66,7 +66,7 @@ export class RespondInviteDialog {
                     ? gettext("Do you want to accept the below invites?")
                     : gettext("Do you want to accept the below invite?")
             }</p>
-            ${this.invites.map(invite => `<p>${invite.name} (${invite.email})</p>`).join("")}`,
+            ${this.invites.map(invite => `<p>${escapeText(invite.name)} (${escapeText(invite.email)})</p>`).join("")}`,
             height: 60,
             buttons
         })

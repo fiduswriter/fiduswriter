@@ -197,35 +197,37 @@ export class LoginPage extends PreloginPage {
     }
 
     afterLogin(json) {
-        if (json.location === "/api/account/confirm-email/") {
-            // Email has not yet been confirmed.
-            document.querySelector(".fw-contents").innerHTML = `<div class="fw-login-left">
-                    <h1 class="fw-login-title">${gettext("Verify Your E-mail Address")}</h1>
-                    <p>
-                        ${gettext(
-                            "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
-                        )}
-                        <br />
-                        ${gettext(
-                            "Please contact us if you do not receive it within a few minutes."
-                        )}
-                    </p>
-                </div>`
-        } else {
-            // Check if user's language preference differs from current language
-            const currentLang = document.documentElement.lang
-            if (json.html && json.html.length > 0) {
-                const htmlValues = JSON.parse(json.html)
-                if (htmlValues.user?.language !== currentLang) {
-                    // Language preference differs, reload the page to apply it
-                    window.location.reload()
-                } else {
-                    // No language change needed, proceed with normal init
-                    this.app.init()
-                }
+        // Check if user's language preference differs from current language
+        const currentLang = document.documentElement.lang
+        if (json.html && json.html.length > 0) {
+            const htmlValues = JSON.parse(json.html)
+
+            if (htmlValues.Location === "/api/account/confirm-email/") {
+                // Email has not yet been confirmed.
+                document.querySelector(".fw-contents").innerHTML = `<div class="fw-login-left">
+                        <h1 class="fw-login-title">${gettext("Verify Your E-mail Address")}</h1>
+                        <p>
+                            ${gettext(
+                                "We have sent an e-mail to your email address for verification. Follow the link provided to finalize the signup process."
+                            )}
+                            <br />
+                            ${gettext(
+                                "Please contact us if you do not receive it within a few minutes."
+                            )}
+                        </p>
+                    </div>`
+            } else if (
+                htmlValues.user?.language &&
+                htmlValues.user?.language !== currentLang
+            ) {
+                // Language preference differs, reload the page to apply it
+                window.location.reload()
             } else {
+                // No language change needed, proceed with normal init
                 this.app.init()
             }
+        } else {
+            this.app.init()
         }
     }
 }

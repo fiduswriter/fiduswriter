@@ -24,7 +24,6 @@ export const twoFactorSetupDialog = () => {
                     return
                 }
 
-                activateWait()
                 postJson("/api/user/two-factor/verify/", {
                     code,
                     device_id: deviceId
@@ -40,9 +39,6 @@ export const twoFactorSetupDialog = () => {
                     })
                     .catch(() => {
                         addAlert("error", gettext("Could not verify the code."))
-                    })
-                    .then(() => {
-                        deactivateWait()
                     })
             }
         },
@@ -187,15 +183,10 @@ export const twoFactorLoginDialog = ({
     remember,
     loginPage
 }) => {
-    const renderLoginForm = () => {
-        dialog.dialogEl.querySelector(".ui-dialog-content").innerHTML = `
-            <p>${gettext("Enter the 6-digit code from your authenticator app:")}</p>
-            <input type="text" id="two-factor-code" placeholder="123456" maxlength="6" class="fw-button fw-large" autocomplete="one-time-code" autofocus />
-        `
-
+    const _codeInputEvents = () => {
         const codeInput = dialog.dialogEl.querySelector("#two-factor-code")
         if (codeInput) {
-            codeInput.focus()
+            //codeInput.focus()
             codeInput.addEventListener("keypress", event => {
                 if (event.key === "Enter") {
                     event.preventDefault()
@@ -229,13 +220,13 @@ export const twoFactorLoginDialog = ({
                     twofactor
                 })
                     .then(({json}) => {
+                        deactivateWait()
                         dialog.close()
                         loginPage.afterLogin(json)
                     })
                     .catch(() => {
                         addAlert("error", gettext("Could not verify the code."))
                         deactivateWait()
-                        renderLoginForm()
                     })
             }
         }
@@ -244,14 +235,25 @@ export const twoFactorLoginDialog = ({
     const dialog = new Dialog({
         id: "two-factor-login-dialog",
         title: gettext("Two-Factor Authentication"),
-        body: `<p>${gettext("Loading...")}</p>`,
+        body: `<p>${gettext("Enter the 6-digit code from your authenticator app:")}</p>
+            <input type="text" id="two-factor-code" placeholder="123456" maxlength="6" class="fw-button fw-large" autocomplete="one-time-code" autofocus />`,
         buttons,
         icon: "shield-alt",
         width: 500
     })
 
     dialog.open()
-    renderLoginForm()
+    const codeInput = dialog.dialogEl.querySelector("#two-factor-code")
+    if (codeInput) {
+        //codeInput.focus()
+        codeInput.addEventListener("keypress", event => {
+            if (event.key === "Enter") {
+                event.preventDefault()
+                buttons[0].click()
+            }
+        })
+    }
+    //codeInputEvents()
     return dialog
 }
 

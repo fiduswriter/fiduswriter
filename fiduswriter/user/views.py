@@ -632,6 +632,9 @@ class FidusLoginView(LoginView):
                     else:
                         form_response = super().form_valid(form)
                         location = form_response["Location"]
+                else:
+                    form_response = super().form_valid(form)
+                    location = form_response["Location"]
             else:
                 # django_otp not available, continue normally
                 # Authorize user

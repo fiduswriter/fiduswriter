@@ -105,6 +105,21 @@ def inner(default_project_path):
         for app in settings_dict["REMOVED_APPS"]:
             settings_dict["INSTALLED_APPS"].remove(app)
 
+    # Add appropriate admin app based on whether django_otp is enabled
+    # OTPAdminConfig should be used when django_otp is present, otherwise use standard admin
+    if "django_otp" in settings_dict.get("INSTALLED_APPS", []):
+        # Use OTP-enabled admin
+        settings_dict["INSTALLED_APPS"].insert(
+            settings_dict["INSTALLED_APPS"].index("django.contrib.admindocs"),
+            "base.twofactor_admin.OTPAdminConfig",
+        )
+    else:
+        # Use standard admin
+        settings_dict["INSTALLED_APPS"].insert(
+            settings_dict["INSTALLED_APPS"].index("django.contrib.admindocs"),
+            "django.contrib.admin",
+        )
+
     # Check if axes is enabled (not in REMOVED_APPS)
     axes_enabled = "axes" in settings_dict.get("INSTALLED_APPS", [])
 

@@ -128,6 +128,7 @@ class SeleniumHelper:
         options.add_argument("--kiosk-printing")
         options.add_argument("--safebrowsing-disable-download-protection")
         options.add_argument("--safebrowsing-disable-extension-blacklist")
+        options.add_argument("--window-size=1920,1080")
         prefs = {
             "profile.password_manager_leak_detection": False,
         }

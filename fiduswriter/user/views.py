@@ -420,10 +420,9 @@ def invites_connect(user, key=None):
             key=key,
         )
     else:
-        invites = invites.filter(
-            Q(email__in=user.emailaddress_set.all()) | Q(email=user.email)
-        )
-    if len(invites) == 0:
+        email_list = user.emailaddress_set.values_list("email", flat=True)
+        invites = invites.filter(Q(email__in=email_list) | Q(email=user.email))
+    if not invites.exists():
         return False
     for invite in invites:
         invite.to = user

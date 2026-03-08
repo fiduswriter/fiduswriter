@@ -1,4 +1,4 @@
-import {BibLatexImporter} from "../../bibliography/import"
+import {BibliographyImporter} from "../../bibliography/import"
 import {escapeText, postJson} from "../../common"
 import {NativeImporter} from "../native"
 import {PandocConvert} from "./convert"
@@ -78,8 +78,8 @@ export class PandocImporter {
                 // Create a temporary addToList function
                 const tempAddToList = () => {}
 
-                // Use BibLatexImporter to parse the bibliography
-                const importer = new BibLatexImporter(
+                // Use BibliographyImporter to parse the bibliography
+                const importer = new BibliographyImporter(
                     bibString,
                     tempBibDB,
                     tempAddToList,

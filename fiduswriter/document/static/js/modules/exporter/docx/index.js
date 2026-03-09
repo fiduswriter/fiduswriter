@@ -51,7 +51,11 @@ export class DOCXExporter {
         const math = new DOCXExporterMath(xml)
         const render = new DOCXExporterRender(xml)
         const rels = new DOCXExporterRels(xml, "document")
-        const metadata = new DOCXExporterMetadata(xml, this.getBaseMetadata())
+        const metadata = new DOCXExporterMetadata(
+            xml,
+            this.getBaseMetadata(),
+            this.csl
+        )
 
         const images = new DOCXExporterImages(
             this.docContent,

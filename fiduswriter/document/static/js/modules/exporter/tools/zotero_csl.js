@@ -58,10 +58,10 @@ export function createZoteroCitation(
             if (!entry) {
                 return null
             }
-
             const citationKey = entry.entry_key || String(ref.id)
             const item = {
-                id: citationKey,
+                id: ref.id,
+                uris: [],
                 itemData: {
                     ...ref.item,
                     id: citationKey
@@ -82,12 +82,12 @@ export function createZoteroCitation(
 
     return {
         citationID,
-        schema: "https://raw.githubusercontent.com/citation-style-language/schema/master/schemas/input/csl-citation.json",
         properties: {
             formattedCitation,
             plainCitation: formattedCitation,
             noteIndex: 0
         },
-        citationItems
+        citationItems,
+        schema: "https://github.com/citation-style-language/schema/raw/master/csl-citation.json"
     }
 }

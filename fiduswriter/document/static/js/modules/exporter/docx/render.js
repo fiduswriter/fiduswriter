@@ -147,8 +147,9 @@ export class DOCXExporterRender {
                 {
                     type: "bibliography_heading",
                     content: [{type: "text", text: bibliographyHeader}]
-                }
-            ].concat(pmBib.content)
+                },
+                pmBib
+            ]
         } else {
             // No bibliography content, add a placeholder paragraph
             bibliographyContent = [

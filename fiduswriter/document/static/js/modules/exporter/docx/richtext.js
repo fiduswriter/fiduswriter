@@ -1128,7 +1128,7 @@ export class DOCXExporterRichtext {
                 start += `
                     <w:p>
                         <w:pPr>
-                            <w:pStyle w:val="Bibliography"/>
+                            <w:pStyle w:val="${options.section}"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
                 // Note - beginning is in same par as first item, whereas end is in its own par

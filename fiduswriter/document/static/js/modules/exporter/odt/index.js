@@ -49,7 +49,8 @@ export class ODTExporter {
         const metadata = new ODTExporterMetadata(
             xml,
             styles,
-            this.getBaseMetadata()
+            this.getBaseMetadata(),
+            this.csl
         )
         const citations = new ODTExporterCitations(
             this.docContent,
@@ -136,7 +137,8 @@ export class ODTExporter {
                 }
             }, []),
             title: textContent(this.docContent.content[0]),
-            language: this.doc.settings.language
+            language: this.doc.settings.language,
+            citationStyle: this.doc.settings.citationstyle
         }
     }
 

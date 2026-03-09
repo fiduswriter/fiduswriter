@@ -130,20 +130,38 @@ export class DOCXExporterRender {
             }
             return tag
         })
-        const bibliographyHeader =
-            settings.bibliography_header[settings.language] ||
-            BIBLIOGRAPHY_HEADERS[settings.language]
+
+        let bibliographyContent
+        if (pmBib && pmBib.content && pmBib.content.length > 0) {
+            // Add bibliography heading and mark first/last items
+            const firstPmBib = pmBib.content[0]
+            const lastPmBib = pmBib.content[pmBib.content.length - 1]
+            firstPmBib.attrs = firstPmBib.attrs || {}
+            firstPmBib.attrs.first = true
+            lastPmBib.attrs = lastPmBib.attrs || {}
+            lastPmBib.attrs.last = true
+            const bibliographyHeader =
+                settings.bibliography_header[settings.language] ||
+                BIBLIOGRAPHY_HEADERS[settings.language]
+            bibliographyContent = [
+                {
+                    type: "bibliography_heading",
+                    content: [{type: "text", text: bibliographyHeader}]
+                }
+            ].concat(pmBib.content)
+        } else {
+            // No bibliography content, add a placeholder paragraph
+            bibliographyContent = [
+                {type: "paragraph", content: [{type: "text", text: " "}]}
+            ]
+        }
+
+        // Add bibliography content
         tags.push({
             title: "@bibliography", // The '@' triggers handling as block
-            content: pmBib
-                ? [
-                      {
-                          type: "bibliography_heading",
-                          content: [{type: "text", text: bibliographyHeader}]
-                      }
-                  ].concat(pmBib.content)
-                : [{type: "paragraph", content: [{type: "text", text: " "}]}]
+            content: bibliographyContent
         })
+
         tags.push({
             title: "@copyright", // The '@' triggers handling as block
             content:

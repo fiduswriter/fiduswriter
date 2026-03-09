@@ -128,10 +128,10 @@ export class DOCXExporterCitations {
                 </w:style>`
             stylesEl.appendXML(headingStyleDef)
         }
-        // The style called "Bibliography1" will override any previous style
+        // The style called "Bibliography" will override any previous style
         // of the same name.
         const stylesParStyle = this.styleXML.query("w:style", {
-            "w:styleId": "Bibliography1"
+            "w:styleId": "Bibliography"
         })
         if (stylesParStyle) {
             stylesParStyle.parentElement.removeChild(stylesParStyle)
@@ -160,8 +160,8 @@ export class DOCXExporterCitations {
             }
         }
         const styleDef = `
-            <w:style w:type="paragraph" w:styleId="Bibliography1">
-                <w:name w:val="Bibliography 1"/>
+            <w:style w:type="paragraph" w:styleId="Bibliography">
+                <w:name w:val="Bibliography"/>
                 <w:basedOn w:val="Normal"/>
                 <w:qFormat/>
                 <w:pPr>

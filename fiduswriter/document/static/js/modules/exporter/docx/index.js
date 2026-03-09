@@ -166,7 +166,8 @@ export class DOCXExporter {
                 }
             }, []),
             title: textContent(this.docContent.content[0]),
-            language: this.doc.settings.language
+            language: this.doc.settings.language,
+            citationStyle: this.doc.settings.citationstyle
         }
     }
 }

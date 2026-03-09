@@ -2,6 +2,7 @@ import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
 
 import {xmlDOM} from "../tools/xml"
+import {createZoteroCitation} from "../tools/zotero_csl"
 
 import {translateBlockType} from "./tools"
 
@@ -31,6 +32,34 @@ const INLINE_TYPES = [
     "image",
     "text"
 ]
+
+/**
+ * Create Zotero citation field instruction for DOCX.
+ * @param {Array} references - Array of {id, prefix?, locator?} from citation node
+ * @param {Object} bibDB - Bibliography database
+ * @param {string} formattedCitation - Pre-formatted citation text from citeproc
+ * @param {string} citationId - Optional citation ID (generated if not provided)
+ * @returns {string} Field instruction text
+ */
+
+function createZoteroCitationField(
+    references,
+    bibDB,
+    formattedCitation,
+    citationId = null
+) {
+    const zoteroCitation = createZoteroCitation(
+        references,
+        bibDB,
+        formattedCitation,
+        citationId
+    )
+    if (!zoteroCitation) {
+        return null
+    }
+    const jsonStr = JSON.stringify(zoteroCitation)
+    return ` ADDIN ZOTERO_ITEM CSL_CITATION${jsonStr} `
+}
 
 export class DOCXExporterRichtext {
     constructor(
@@ -62,6 +91,7 @@ export class DOCXExporterRichtext {
         this.categoryCounter = {} // counters for each type of figure (figure/table/photo)
         this.fncategoryCounter = {}
         this.docPrCount = -1
+        this.citationCounter = 0 // Track which citation we're processing
     }
 
     run(node, options = {}, nextNode = null) {
@@ -601,6 +631,23 @@ export class DOCXExporterRichtext {
             case "citation": {
                 // We take the first citation from the stack and remove it.
                 const cit = this.citations.pmCits.shift()
+
+                // Get citation info and formatted text for Zotero export
+                const citInfo = this.citations.citInfos[this.citationCounter]
+                const formattedText =
+                    this.citations.citationTexts[this.citationCounter]
+                this.citationCounter++
+
+                // Create Zotero citation data on-the-fly
+                const fieldInstruction =
+                    citInfo && formattedText
+                        ? createZoteroCitationField(
+                              citInfo.references,
+                              this.citations.bibDB,
+                              formattedText
+                          )
+                        : null
+
                 if (options.citationType === "note" && !options.inFootnote) {
                     // If the citations are in notes (footnotes), we need to
                     // put the content of this citation in a footnote.
@@ -614,11 +661,37 @@ export class DOCXExporterRichtext {
                             </w:rPr>
                             <w:footnoteReference w:id="${this.fnCounter}"/>
                         </w:r>`
-                    const fnContents = this.transformRichtext(cit, {
-                        footnoteRefMissing: true,
-                        section: "Footnote"
-                    })
-                    const fnXML = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+
+                    // Create footnote with Zotero field if available
+                    let fnXML
+                    if (fieldInstruction && formattedText) {
+                        fnXML = `<w:footnote w:id="${this.fnCounter}">
+                            <w:p>
+                                <w:r>
+                                    <w:fldChar w:fldCharType="begin"/>
+                                </w:r>
+                                <w:r>
+                                    <w:instrText xml:space="preserve">${fieldInstruction}</w:instrText>
+                                </w:r>
+                                <w:r>
+                                    <w:fldChar w:fldCharType="separate"/>
+                                </w:r>
+                                <w:r>
+                                    <w:t>${formattedText}</w:t>
+                                </w:r>
+                                <w:r>
+                                    <w:fldChar w:fldCharType="end"/>
+                                </w:r>
+                            </w:p>
+                        </w:footnote>`
+                    } else {
+                        const fnContents = this.transformRichtext(cit, {
+                            footnoteRefMissing: true,
+                            section: "Footnote"
+                        })
+                        fnXML = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+                    }
+
                     const xml = this.footnotes.xml
                     const lastId = this.fnCounter - 1
                     const footnotes = xml.queryAll("w:footnote")
@@ -638,12 +711,33 @@ export class DOCXExporterRichtext {
                     })
                     this.fnCounter++
                 } else {
-                    for (let i = 0; i < cit.content.length; i++) {
-                        content += this.transformRichtext(
-                            cit.content[i],
-                            options,
-                            cit.content[i + 1]
-                        )
+                    // In-text citation - create Zotero field if available
+                    if (fieldInstruction && formattedText) {
+                        content += `
+                            <w:r>
+                                <w:fldChar w:fldCharType="begin"/>
+                            </w:r>
+                            <w:r>
+                                <w:instrText xml:space="preserve">${fieldInstruction}</w:instrText>
+                            </w:r>
+                            <w:r>
+                                <w:fldChar w:fldCharType="separate"/>
+                            </w:r>
+                            <w:r>
+                                <w:t>${formattedText}</w:t>
+                            </w:r>
+                            <w:r>
+                                <w:fldChar w:fldCharType="end"/>
+                            </w:r>`
+                    } else {
+                        // Fallback to formatted text only
+                        for (let i = 0; i < cit.content.length; i++) {
+                            content += this.transformRichtext(
+                                cit.content[i],
+                                options,
+                                cit.content[i + 1]
+                            )
+                        }
                     }
                 }
                 break
@@ -1018,7 +1112,7 @@ export class DOCXExporterRichtext {
             // CSL bib entries
             case "cslbib":
                 options = Object.assign({}, options)
-                options.section = "Bibliography1"
+                options.section = "Bibliography"
                 break
             case "cslblock":
                 end = "<w:r><w:br/></w:r>" + end
@@ -1034,10 +1128,34 @@ export class DOCXExporterRichtext {
                 start += `
                     <w:p>
                         <w:pPr>
-                            <w:pStyle w:val="${options.section || ""}"/>
+                            <w:pStyle w:val="Bibliography"/>
                             <w:rPr></w:rPr>
                         </w:pPr>`
+                // Note - beginning is in same par as first item, whereas end is in its own par
+                if (node.attrs?.first) {
+                    start += `<w:r>
+                        <w:fldChar w:fldCharType="begin"/>
+                    </w:r>
+                    <w:r>
+                        <w:instrText xml:space="preserve"> ADDIN ZOTERO_BIBL CSL_BIBLIOGRAPHY </w:instrText>
+                    </w:r>
+                    <w:r>
+                        <w:fldChar w:fldCharType="separate"/>
+                    </w:r>`
+                }
                 end = "</w:p>" + end
+                if (node.attrs?.last) {
+                    end =
+                        end +
+                        `<w:p>
+                        <w:pPr>
+                            <w:rPr/>
+                        </w:pPr>
+                        <w:r>
+                            <w:fldChar w:fldCharType="end"/>
+                        </w:r>
+                    </w:p>`
+                }
                 break
             case "cslinline":
             case "cslrightinline":

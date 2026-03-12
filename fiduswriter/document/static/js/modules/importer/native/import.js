@@ -120,7 +120,7 @@ export class NativeImporter {
             ? this.template
             : extractTemplate(this.doc.content)
 
-        // We create the document on the sever so that we have an ID for it and
+        // We create the document on the server so that we have an ID for it and
         // can link the images to it.
         return postJson("/api/document/import/create/", {
             template: JSON.stringify(template.content),

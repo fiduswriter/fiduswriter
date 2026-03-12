@@ -32,13 +32,14 @@ export class DocxImporter {
     }
 
     importDocx() {
+        const bibliography = {} // Initial empty bibliography
         return import("jszip").then(({default: JSZip}) => {
             return JSZip.loadAsync(this.file).then(zip => {
                 const docx = new DocxConvert(
                     zip,
                     this.importId,
                     this.template,
-                    {} // Initial empty bibliography
+                    bibliography
                 )
 
                 return docx.init().then(convertedDoc => {
@@ -52,7 +53,7 @@ export class DocxImporter {
                             comments: convertedDoc.comments,
                             settings: convertedDoc.settings
                         },
-                        {},
+                        bibliography,
                         docx.images,
                         [], // No additional image files needed
                         this.user,

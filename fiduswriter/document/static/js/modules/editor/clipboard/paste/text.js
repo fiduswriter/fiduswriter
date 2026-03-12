@@ -12,45 +12,47 @@ export class TextPaste {
     }
 
     init() {
-        import("../../../bibliography/import").then(({BibLatexImporter}) => {
-            const importer = new BibLatexImporter(
-                this.text,
-                this.editor.mod.db.bibDB,
-                newIds => {
-                    this.foundBibEntries = true
-                    const format = "autocite",
-                        references = newIds.map(id => ({id}))
+        import("../../../bibliography/import").then(
+            ({BibliographyImporter}) => {
+                const importer = new BibliographyImporter(
+                    this.text,
+                    this.editor.mod.db.bibDB,
+                    newIds => {
+                        this.foundBibEntries = true
+                        const format = "autocite",
+                            references = newIds.map(id => ({id}))
 
-                    const citationNode = this.view.state.schema.nodes[
-                        "citation"
-                    ].create({format, references})
-                    const pasteRange = getPasteRange(this.view.state)
-                    if (pasteRange) {
-                        const tr = this.view.state.tr
-                        tr.replaceRangeWith(
-                            pasteRange[0],
-                            pasteRange[1],
-                            citationNode
-                        )
-                        resetPasteRange(tr)
-                        tr.setMeta("addToHistory", false)
-                        this.view.dispatch(tr)
-                    }
-                },
-                () => {
-                    if (!this.foundBibEntries) {
-                        // There were no citations in the pasted text.
+                        const citationNode = this.view.state.schema.nodes[
+                            "citation"
+                        ].create({format, references})
                         const pasteRange = getPasteRange(this.view.state)
                         if (pasteRange) {
                             const tr = this.view.state.tr
+                            tr.replaceRangeWith(
+                                pasteRange[0],
+                                pasteRange[1],
+                                citationNode
+                            )
                             resetPasteRange(tr)
+                            tr.setMeta("addToHistory", false)
                             this.view.dispatch(tr)
                         }
-                    }
-                },
-                false // no messages to end user. Would be confusing if user just wants to paste unrelated text.
-            )
-            importer.init()
-        })
+                    },
+                    () => {
+                        if (!this.foundBibEntries) {
+                            // There were no citations in the pasted text.
+                            const pasteRange = getPasteRange(this.view.state)
+                            if (pasteRange) {
+                                const tr = this.view.state.tr
+                                resetPasteRange(tr)
+                                this.view.dispatch(tr)
+                            }
+                        }
+                    },
+                    false // no messages to end user. Would be confusing if user just wants to paste unrelated text.
+                )
+                importer.init()
+            }
+        )
     }
 }

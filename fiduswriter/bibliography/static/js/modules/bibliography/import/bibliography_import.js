@@ -1,10 +1,11 @@
+import {sniffFormat} from "biblatex-csl-converter"
 import {addAlert, makeWorker} from "../../common"
 
 const ERROR_MSG = {
     no_entries: gettext(
         "No bibliography entries could be found in import file."
     ),
-    entry_error: gettext("An error occured while reading a bibtex entry"),
+    entry_error: gettext("An error occured while reading a bibliography entry"),
     unknown_field: gettext(
         "Field cannot not be saved. Fidus Writer does not support the field."
     ),
@@ -12,10 +13,11 @@ const ERROR_MSG = {
         'Entry has been saved as "misc". Fidus Writer does not support the entry type.'
     ),
     unknown_date: gettext("Field does not contain a valid EDTF string."),
-    server_save: gettext("The bibliography could not be updated")
+    server_save: gettext("The bibliography could not be updated"),
+    unsupported_format: gettext("The file format could not be recognized.")
 }
 
-export class BibLatexImporter {
+export class BibliographyImporter {
     constructor(
         fileContents,
         bibDB,
@@ -31,11 +33,28 @@ export class BibLatexImporter {
     }
 
     init() {
+        // Detect the format of the input file
+        const format = sniffFormat(this.fileContents)
+
+        if (!format) {
+            if (this.showAlerts) {
+                addAlert("error", ERROR_MSG.unsupported_format)
+            }
+            if (this.callback) {
+                this.callback()
+            }
+            return
+        }
+
+        // Use the worker for the detected format
         const importWorker = makeWorker(
-            staticUrl("js/biblatex_import_worker.js")
+            staticUrl("js/bibliography_import_worker.js")
         )
         importWorker.onmessage = message => this.onMessage(message.data)
-        importWorker.postMessage({fileContents: this.fileContents})
+        importWorker.postMessage({
+            fileContents: this.fileContents,
+            format: format
+        })
     }
 
     onMessage(message) {
@@ -46,7 +65,7 @@ export class BibLatexImporter {
                 errorMsg = ERROR_MSG[message.errorCode]
                 if (!errorMsg) {
                     errorMsg = gettext(
-                        "There was an issue with the bibtex import"
+                        "There was an issue with the bibliography import"
                     )
                 }
                 if (message.errorType) {

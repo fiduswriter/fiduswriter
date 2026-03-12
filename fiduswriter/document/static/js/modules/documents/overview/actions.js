@@ -292,11 +292,17 @@ export class DocumentOverviewActions {
 
                     activateWait()
 
+                    const options = {
+                        bibDB: this.documentOverview.app.bibDB,
+                        files: {} // Additional files to import
+                    }
+
                     const importer = new importerInfo.importer(
                         file,
                         this.documentOverview.user,
                         this.documentOverview.path,
-                        importId
+                        importId,
+                        options
                     )
 
                     importer

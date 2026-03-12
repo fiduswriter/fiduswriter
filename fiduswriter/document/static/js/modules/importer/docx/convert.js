@@ -1,6 +1,14 @@
 import {MathMLToLaTeX} from "mathml-to-latex"
 import {xmlDOM} from "../../exporter/tools/xml"
 import {randomFigureId, randomHeadingId} from "../../schema/common"
+import {
+    isDocxBibliographyField,
+    isDocxCitationField,
+    isDocxSdtBibliography,
+    isDocxSdtCitation,
+    parseDocxFieldCitation,
+    parseDocxSdtCitation
+} from "./citations"
 import {normalizeText} from "./helpers"
 import {omml2mathml} from "./omml2mathml"
 import {DocxParser} from "./parse"
@@ -15,10 +23,17 @@ export class DocxConvert {
         this.parser = new DocxParser(zip)
         this.tracks = {}
         this.currentTracks = []
+        this.currentFields = []
+        this.sourcesXml = null
     }
 
     async init() {
         await this.parser.init()
+        // Load Word-native bibliography sources if present.
+        // This file is required by DocxCitationsParser for CITATION field codes.
+        this.sourcesXml =
+            (await this.zip.file("customXml/item1.xml")?.async("string")) ??
+            null
         const body = this.parser.document.query("w:body")
         if (!body) {
             return {
@@ -509,10 +524,31 @@ export class DocxConvert {
         }
     }
 
+    inBibliography(node) {
+        // Check if we currently are in a field.
+        const currentField = this.currentFields[this.currentFields.length - 1]
+
+        if (
+            currentField &&
+            isDocxBibliographyField(currentField.instructions)
+        ) {
+            return true
+        }
+        // Check every SDT block inside this paragraph.
+        for (const sdt of node.queryAll("w:sdt")) {
+            if (isDocxSdtBibliography(sdt)) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     convertBlock(node, skippedBlocks = []) {
         if (node.tagName !== "w:p") {
             return null
         }
+        const inBibliography = this.inBibliography(node)
         let converted
         const style = this.getParaStyle(node)
         if (style.isHeading) {
@@ -544,6 +580,10 @@ export class DocxConvert {
             }
         } else {
             converted = this.convertParagraph(node)
+        }
+        if (inBibliography || this.inBibliography(node)) {
+            // We skip bibliography paragraphs
+            return null
         }
         return this.wrapTrackChanges(node, converted)
     }
@@ -764,20 +804,122 @@ export class DocxConvert {
     convertInline(node) {
         const content = []
 
-        // We'll process all nodes (runs and hyperlinks) in their original order
-        const children = []
-
-        // Collect all direct children that we need to process in order
-        // This includes both w:r (runs) and w:hyperlink elements
+        // We'll process all inline nodes in document order
         node.children.forEach(child => {
-            if (["w:r", "w:hyperlink", "m:oMath"].includes(child.tagName)) {
-                children.push(child)
+            let contentReceiver = content
+            const currentField =
+                this.currentFields[this.currentFields.length - 1]
+            if (currentField) {
+                if (currentField.status === "instruction") {
+                    // We're currently inside the instruction part of a fieldChar
+                    const instrText = child.query("w:instrText")
+                    if (instrText) {
+                        currentField.instructions += instrText.textContent
+                    }
+                }
+                if (currentField.status === "display") {
+                    // We're currently inside the display part of a fieldChar
+                    contentReceiver = currentField.display
+                }
             }
-        })
+            if (child.tagName === "w:r") {
+                // A run
+                const fieldChar = child.query("w:fldChar")
+                if (fieldChar) {
+                    let currentField
+                    let rendercurrentField = false
+                    const type = fieldChar.getAttribute("w:fldCharType")
+                    if (type === "begin") {
+                        currentField = {
+                            status: "instruction",
+                            display: [],
+                            instructions: "",
+                            data: null
+                        }
+                        this.currentFields.push(currentField)
+                    } else if (type === "separate") {
+                        currentField =
+                            this.currentFields[this.currentFields.length - 1]
+                        currentField.status = "display"
+                        contentReceiver = currentField.display
+                    } else if (type === "end") {
+                        currentField = this.currentFields.pop()
+                        // If a fieldChar is closed and there was no display part,
+                        // or it is inside another fieldChar, do nothing
+                        if (
+                            currentField &&
+                            currentField.status === "display" &&
+                            this.currentFields.length === 0
+                        ) {
+                            rendercurrentField = true
+                            contentReceiver = content
+                        }
+                    }
+                    // Capture base64-encoded field data (used by EndNote)
+                    const fldDataNode = fieldChar.query("w:fldData")
+                    if (fldDataNode && currentField) {
+                        currentField.data = fldDataNode.textContent || null
+                    }
 
-        // Process each child in document order
-        children.forEach(child => {
-            if (child.tagName === "w:hyperlink") {
+                    if (rendercurrentField && currentField) {
+                        this.renderField(currentField).forEach(node =>
+                            contentReceiver.push(node)
+                        )
+                    }
+                    return
+                }
+
+                // Process footnote references
+                const footnoteRef = child.query("w:footnoteReference")
+                if (footnoteRef) {
+                    const footnoteId = footnoteRef.getAttribute("w:id")
+                    if (this.parser.footnotes[footnoteId]) {
+                        contentReceiver.push(this.convertFootnote(footnoteId))
+                    }
+                    return
+                }
+
+                // Process endnote references
+                const endnoteRef = child.query("w:endnoteReference")
+                if (endnoteRef) {
+                    const endnoteId = endnoteRef.getAttribute("w:id")
+                    if (this.parser.endnotes[endnoteId]) {
+                        contentReceiver.push(
+                            this.convertFootnote(endnoteId, true)
+                        )
+                    }
+                    return
+                }
+
+                // Process text with formatting
+                const text =
+                    child.query("w:t")?.textContent ||
+                    child.query("w:delText")?.textContent
+                if (!text) {
+                    // Process line breaks
+                    if (child.query("w:br")) {
+                        contentReceiver.push({type: "hard_break"})
+                    }
+                    return
+                }
+
+                const rPr = child.query("w:rPr")
+                const formatting = rPr
+                    ? this.parser.extractRunProperties(rPr)
+                    : {}
+                const insertion = child.closest("w:ins")
+                const deletion = child.closest("w:del")
+
+                contentReceiver.push({
+                    type: "text",
+                    text,
+                    marks: this.createMarksFromFormatting(
+                        formatting,
+                        insertion,
+                        deletion
+                    )
+                })
+            } else if (child.tagName === "w:hyperlink") {
                 // Process hyperlink
                 const rId = child.getAttribute("r:id")
                 const anchor = child.getAttribute("w:anchor")
@@ -807,7 +949,7 @@ export class DocxConvert {
                                     /^(Figure|Table|Equation)\s+\d+(\.\d+)*(\:|\.)?\s*$/i
                                 )
                             ) {
-                                content.push(
+                                contentReceiver.push(
                                     this.convertCrossReference(anchor, text)
                                 )
                                 return
@@ -825,93 +967,31 @@ export class DocxConvert {
                             type: "link",
                             attrs: {href, title: text}
                         })
-
-                        content.push({
+                        contentReceiver.push({
                             type: "text",
                             text,
                             marks
                         })
                     }
                 }
-            } else if (child.tagName === "w:r") {
-                // Process regular run
-
-                // Skip processing if this run is part of a complex field code
-                // This avoids duplicate text content from field codes
-                if (
-                    child.query("w:fldChar")?.getAttribute("w:fldCharType") !==
-                    undefined
-                ) {
-                    return
-                }
-
-                // Process footnote references
-                const footnoteRef = child.query("w:footnoteReference")
-                if (footnoteRef) {
-                    const footnoteId = footnoteRef.getAttribute("w:id")
-                    if (this.parser.footnotes[footnoteId]) {
-                        content.push(this.convertFootnote(footnoteId))
-                    }
-                    return
-                }
-
-                // Process endnote references
-                const endnoteRef = child.query("w:endnoteReference")
-                if (endnoteRef) {
-                    const endnoteId = endnoteRef.getAttribute("w:id")
-                    if (this.parser.endnotes[endnoteId]) {
-                        content.push(this.convertFootnote(endnoteId, true))
-                    }
-                    return
-                }
-
-                // Process text with formatting
-                const text =
-                    child.query("w:t")?.textContent ||
-                    child.query("w:delText")?.textContent
-                if (!text) {
-                    // Process line breaks
-                    if (child.query("w:br")) {
-                        content.push({type: "hard_break"})
-                    }
-                    return
-                }
-
-                const rPr = child.query("w:rPr")
-                const formatting = rPr
-                    ? this.parser.extractRunProperties(rPr)
-                    : {}
-                const insertion = child.closest("w:ins")
-                const deletion = child.closest("w:del")
-
-                content.push({
-                    type: "text",
-                    text,
-                    marks: this.createMarksFromFormatting(
-                        formatting,
-                        insertion,
-                        deletion
-                    )
-                })
             } else if (child.tagName === "m:oMath") {
                 const equationNode = this.convertEquation(child)
                 if (equationNode) {
-                    content.push(equationNode)
+                    contentReceiver.push(equationNode)
                 }
-            }
-        })
-
-        // Process cross-references from field codes
-        const fields = this.extractFieldContents(node)
-        fields.forEach(field => {
-            if (field.type === "REF" && field.target) {
-                // Find where this reference should be placed
-                // For simplicity, we're just appending them, but ideally
-                // you'd want to insert them at the correct position
-                // This is a limitation of the current approach
-                content.push(
-                    this.convertCrossReference(field.target, field.text)
-                )
+            } else if (child.tagName === "w:sdt") {
+                if (isDocxSdtCitation(child)) {
+                    // Used by Mendeley Cite & Citavi
+                    const citationNode = parseDocxSdtCitation(
+                        child,
+                        this.bibliography
+                    )
+                    if (citationNode) {
+                        contentReceiver.push(citationNode)
+                    }
+                }
+            } else {
+                console.warn("unhandled node", child)
             }
         })
 
@@ -1055,80 +1135,44 @@ export class DocxConvert {
         return textContent || "x^2" // Default fallback
     }
 
-    extractFieldContents(node) {
-        // This method extracts field code information from Word documents
-        // Field codes are used for cross-references, page numbers, etc.
-        const fields = []
-        let currentField = null
-        let collectingInstrText = false
-        let collectingFieldResult = false
+    renderField(field) {
+        const instr = field.instructions.trim()
 
-        // Process all runs in the node to find field codes
-        const runs = node.queryAll("w:r")
-
-        for (let i = 0; i < runs.length; i++) {
-            const run = runs[i]
-
-            // Check for field chars which mark the beginning/end of fields
-            const fieldChar = run.query("w:fldChar")
-            if (fieldChar) {
-                const type = fieldChar.getAttribute("w:fldCharType")
-
-                if (type === "begin") {
-                    // Start a new field
-                    currentField = {
-                        type: null,
-                        text: "",
-                        target: null
-                    }
-                    collectingInstrText = true
-                    collectingFieldResult = false
-                } else if (type === "separate") {
-                    // Switch from collecting instruction to collecting result
-                    collectingInstrText = false
-                    collectingFieldResult = true
-
-                    // Parse the instruction text to determine field type and parameters
-                    if (currentField && currentField.text) {
-                        const instr = currentField.text.trim()
-
-                        // Handle REF fields (cross-references)
-                        if (instr.startsWith("REF ")) {
-                            currentField.type = "REF"
-                            // Extract the target bookmark/heading ID
-                            const parts = instr.substring(4).trim().split(/\s+/)
-                            if (parts.length > 0) {
-                                currentField.target = parts[0]
-                            }
+        // Handle REF fields (cross-references)
+        if (instr.startsWith("REF ")) {
+            // Extract the target bookmark/heading ID
+            const parts = instr.substring(4).trim().split(/\s+/)
+            if (parts.length > 0) {
+                const target = parts[0]
+                const text = field.display.reduce(
+                    (accumulator, currentValue) => {
+                        if (currentValue.type === "text") {
+                            return accumulator + currentValue.text
                         }
-                        // Could add more field types here as needed
-                    }
-                } else if (type === "end") {
-                    // End the current field and add it to the list
-                    if (currentField) {
-                        fields.push(currentField)
-                        currentField = null
-                    }
-                    collectingInstrText = false
-                    collectingFieldResult = false
-                }
-            } else {
-                // Process the content of the field
-                if (collectingInstrText) {
-                    // Collecting the instruction text
-                    const instrText = run.query("w:instrText")
-                    if (instrText && currentField) {
-                        currentField.text += instrText.textContent
-                    }
-                } else if (collectingFieldResult && currentField) {
-                    // Collecting the result text (what's displayed in Word)
-                    const text = run.query("w:t")?.textContent || ""
-                    currentField.text = text || currentField.text
-                }
+                        return accumulator
+                    },
+                    ""
+                )
+                return [this.convertCrossReference(target, text)]
             }
         }
-
-        return fields
+        // Handle citation fields
+        else if (isDocxCitationField(instr)) {
+            return [
+                parseDocxFieldCitation(
+                    instr,
+                    field.data,
+                    this.sourcesXml,
+                    this.bibliography
+                )
+            ]
+        } else if (isDocxBibliographyField(instr)) {
+            // We don't render the contents of bibliography fields
+            return []
+        } else {
+            // We do not support this field type, so instead we return the display content.
+            return field.display || []
+        }
     }
 
     convertCrossReference(targetId, displayText) {

@@ -199,6 +199,28 @@ export class ODTExporterStyles {
         }
     }
 
+    checkSectionStyle(styleName) {
+        const stylesSection = this.stylesXml.query("style:style", {
+            "style:name": styleName,
+            "style:family": "section"
+        })
+        const contentSection = this.contentXml.query("style:style", {
+            "style:name": styleName,
+            "style:family": "section"
+        })
+        if (!stylesSection && !contentSection) {
+            const stylesEl = this.stylesXml.query("office:styles")
+            // Add a basic section style if it doesn't exist
+            stylesEl.appendXML(
+                `<style:style style:name="${styleName}" style:family="section">
+                    <style:section-properties text:dont-balance-text-columns="false" fo:background-color="transparent">
+                        <style:columns fo:column-count="1" fo:column-gap="0in"/>
+                    </style:section-properties>
+                </style:style>`
+            )
+        }
+    }
+
     /*
     styleName: Frame/Formula/Graphics
     aligned: left/center/right (not used for Formula)

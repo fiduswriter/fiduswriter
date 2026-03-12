@@ -508,8 +508,8 @@ export class BibliographyOverview {
 
     // find bibtex in pasted or dropped data.
     getBibtex(text) {
-        import("../import").then(({BibLatexImporter}) => {
-            const importer = new BibLatexImporter(
+        import("../import").then(({BibliographyImporter}) => {
+            const importer = new BibliographyImporter(
                 text,
                 this.app.bibDB,
                 newIds => this.updateTable(newIds),

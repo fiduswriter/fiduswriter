@@ -1,10 +1,11 @@
 import {escapeText} from "../../common"
 
 export class ODTExporterMetadata {
-    constructor(xml, styles, metadata) {
+    constructor(xml, styles, metadata, csl = null) {
         this.xml = xml
         this.styles = styles
         this.metadata = metadata
+        this.csl = csl
         this.metaXml = false
     }
 
@@ -12,20 +13,38 @@ export class ODTExporterMetadata {
         return this.xml.getXml("meta.xml").then(metaXml => {
             this.metaXml = metaXml
             this.addMetadata()
-            return Promise.resolve()
+            return this.addZoteroPrefs()
         })
+    }
+
+    async hasBibliography() {
+        if (!this.csl || !this.metadata.citationStyle) {
+            return "0"
+        }
+        try {
+            const style = await this.csl.getStyle(this.metadata.citationStyle)
+            // Check if the style has a bibliography section
+            const hasBib = style.children.some(
+                section => section.name === "bibliography"
+            )
+            return hasBib ? "1" : "0"
+        } catch (_error) {
+            return "0"
+        }
     }
 
     addMetadata() {
         const metaEl = this.metaXml.query("office:meta")
 
         // Title
-        let titleEl = this.metaXml.query("dc:title")
-        if (!titleEl) {
-            metaEl.appendXML("<dc:title></dc:title>")
-            titleEl = this.metaXml.children[this.metaXml.children.length - 1]
+        const titleEl = this.metaXml.query("dc:title")
+        if (titleEl) {
+            titleEl.innerXML = escapeText(this.metadata.title)
+        } else {
+            metaEl.appendXML(
+                `<dc:title>${escapeText(this.metadata.title)}</dc:title>`
+            )
         }
-        titleEl.innerXML = escapeText(this.metadata.title)
 
         // Authors
         const authors = this.metadata.authors.map(author => {
@@ -49,20 +68,20 @@ export class ODTExporterMetadata {
         // TODO: We likely want to differentiate between first and last author.
         const lastAuthor = initialAuthor
 
-        let lastAuthorEl = this.metaXml.query("dc:creator")
-        if (!lastAuthorEl) {
-            metaEl.appendXML("<dc:creator></dc:creator>")
-            lastAuthorEl =
-                this.metaXml.children[this.metaXml.children.length - 1]
+        const lastAuthorEl = this.metaXml.query("dc:creator")
+        if (lastAuthorEl) {
+            lastAuthorEl.innerXML = lastAuthor
+        } else {
+            metaEl.appendXML(`<dc:creator>${lastAuthor}</dc:creator>`)
         }
-        lastAuthorEl.innerXML = lastAuthor
-        let initialAuthorEl = this.metaXml.query("meta:initial-creator")
-        if (!initialAuthorEl) {
-            metaEl.appendXML("<meta:initial-creator></meta:initial-creator>")
-            initialAuthorEl =
-                this.metaXml.children[this.metaXml.children.length - 1]
+        const initialAuthorEl = this.metaXml.query("meta:initial-creator")
+        if (initialAuthorEl) {
+            initialAuthorEl.innerXML = initialAuthor
+        } else {
+            metaEl.appendXML(
+                `<meta:initial-creator>${initialAuthor}</meta:initial-creator>`
+            )
         }
-        initialAuthorEl.innerXML = initialAuthor
 
         // Keywords
         // Remove all existing keywords
@@ -82,22 +101,70 @@ export class ODTExporterMetadata {
         // LibreOffice seems to ignore the value set in metadata and instead uses
         // the one set in default styles. So we set both.
         this.styles.setLanguage(this.metadata.language)
-        let languageEl = this.metaXml.query("dc:language")
-        if (!languageEl) {
-            metaEl.appendXML("<dc:language></dc:language>")
-            languageEl = this.metaXml.children[this.metaXml.children.length - 1]
+        const languageEl = this.metaXml.query("dc:language")
+        if (languageEl) {
+            languageEl.innerXML = this.metadata.language
+        } else {
+            metaEl.appendXML(
+                `<dc:language>${this.metadata.language}</dc:language>`
+            )
         }
-        languageEl.innerXML = this.metadata.language
         // time
         const date = new Date()
         const dateString = date.toISOString().split(".")[0]
         const createdEl = metaEl.query("meta:creation-date")
         createdEl.innerXML = dateString
-        let dateEl = this.metaXml.query("dc:date")
-        if (!dateEl) {
-            metaEl.appendXML("<dc:date></dc:date>")
-            dateEl = this.metaXml.children[this.metaXml.children.length - 1]
+        const dateEl = this.metaXml.query("dc:date")
+        if (dateEl) {
+            dateEl.innerXML = `${dateString}.000000000`
+        } else {
+            metaEl.appendXML(`<dc:date>${dateString}.000000000</dc:date>`)
         }
-        dateEl.innerXML = `${dateString}.000000000`
+    }
+
+    async addZoteroPrefs() {
+        // Add citation style property to meta.xml
+        if (!this.metadata.citationStyle) {
+            return Promise.resolve()
+        }
+
+        const metaEl = this.metaXml.query("office:meta")
+
+        // Remove any existing ZOTERO_PREF_ properties
+        const existingZoteroProps = this.metaXml
+            .queryAll("meta:user-defined")
+            .filter(
+                prop =>
+                    prop.getAttribute("meta:name") &&
+                    prop.getAttribute("meta:name").startsWith("ZOTERO_PREF_")
+            )
+        existingZoteroProps.forEach(prop =>
+            prop.parentElement.removeChild(prop)
+        )
+
+        // Determine if the citation style has a bibliography
+        const hasBib = await this.hasBibliography()
+
+        // Create the data content
+        const citationStyleUrl = `http://www.zotero.org/styles/${escapeText(this.metadata.citationStyle)}`
+        const dataContent = escapeText(
+            `<data data-version="3" zotero-version="8.0.2"><session id=""/><style id="${citationStyleUrl}" locale="${escapeText(this.metadata.language || "en-US")}" hasBibliography="${hasBib}" bibliographyStyleHasBeenSet="1"/><prefs><pref name="fieldType" value="ReferenceMark"/><pref name="automaticJournalAbbreviations" value="true"/></prefs></data>`
+        )
+
+        // Split content into chunks of 378 characters (ODT limit)
+        const chunkSize = 378
+        const chunks = []
+        for (let i = 0; i < dataContent.length; i += chunkSize) {
+            chunks.push(dataContent.substring(i, i + chunkSize))
+        }
+
+        // Create meta:user-defined elements for each chunk
+        chunks.forEach((chunk, index) => {
+            const propName = `ZOTERO_PREF_${index + 1}`
+            const userDefinedEl = `<meta:user-defined meta:name="${propName}">${chunk}</meta:user-defined>`
+            metaEl.appendXML(userDefinedEl)
+        })
+
+        return Promise.resolve()
     }
 }

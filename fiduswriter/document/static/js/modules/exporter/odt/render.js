@@ -3,6 +3,14 @@ import {BIBLIOGRAPHY_HEADERS} from "../../schema/i18n"
 import {textContent} from "../tools/doc_content"
 import {xmlDOM} from "../tools/xml"
 
+/**
+ * Create Zotero bibliography reference mark name for ODT.
+ * @returns {string} Reference mark name
+ */
+export function createOdtBibliographyMark() {
+    return "ZOTERO_BIBL CSL_BIBLIOGRAPHY"
+}
+
 export class ODTExporterRender {
     constructor(xml) {
         this.xml = xml
@@ -94,8 +102,9 @@ export class ODTExporterRender {
                       {
                           type: "bibliography_heading",
                           content: [{type: "text", text: bibliographyHeader}]
-                      }
-                  ].concat(pmBib.content)
+                      },
+                      pmBib
+                  ]
                 : [{type: "paragraph", content: [{type: "text", text: " "}]}]
         })
         tags.push({
@@ -213,6 +222,7 @@ export class ODTExporterRender {
                   )
                   .join("")
             : ""
+
         if (!outXML.length) {
             // If there is no content, we need to put in a space to prevent the
             // tag from being removed by LibreOffice.

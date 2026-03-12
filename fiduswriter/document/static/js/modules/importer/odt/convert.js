@@ -1,4 +1,3 @@
-import {parseCSL} from "biblatex-csl-converter"
 import {MathMLToLaTeX} from "mathml-to-latex"
 
 import {xmlDOM} from "../../exporter/tools/xml"
@@ -10,6 +9,13 @@ import {
     randomTableId
 } from "../../schema/common"
 import {parseTracks} from "../../schema/common/track"
+import {
+    isOdtBibliographyReferenceMark,
+    isOdtBibliographySection,
+    isOdtCitationMark,
+    parseOdtBibliographyMark,
+    parseOdtReferenceMark
+} from "./citations"
 
 export class OdtConvert {
     constructor(
@@ -18,11 +24,13 @@ export class OdtConvert {
         manifestXml,
         importId,
         template,
-        bibliography
+        bibliography,
+        bibDb
     ) {
         this.importId = importId
         this.template = template
         this.bibliography = bibliography
+        this.bibDB = bibDb
         this.images = {}
         this.styles = {}
 
@@ -341,7 +349,8 @@ export class OdtConvert {
                     comment: annotation
                         .queryAll("text:p")
                         .map(par => this.convertBlockNode(par))
-                        .filter(par => par),
+                        .filter(par => par)
+                        .flat(),
                     answers: [],
                     resolved:
                         annotation.getAttribute("loext:resolved") === "true"
@@ -364,6 +373,7 @@ export class OdtConvert {
                             .slice(1)
                             .map(par => this.convertBlockNode(par))
                             .filter(par => par)
+                            .flat()
                     })
                 }
             }
@@ -918,10 +928,10 @@ export class OdtConvert {
                 }
             }
 
-            const converted = this.convertBlockNode(node)
-            if (converted) {
-                currentSection.content.push(converted)
-            }
+            const converted = [this.convertBlockNode(node)]
+                .filter(node => node)
+                .flat()
+            converted.forEach(node => currentSection.content.push(node))
         })
 
         // Add final section
@@ -1019,6 +1029,7 @@ export class OdtConvert {
         return container.children
             .map(node => this.convertBlockNode(node))
             .filter(node => node)
+            .flat()
     }
 
     convertBlockNode(node) {
@@ -1055,6 +1066,22 @@ export class OdtConvert {
             case "office:forms":
             case "text:tracked-changes":
                 return null
+            case "text:bibliography":
+                // LibreOffice native bibliography — rendered output only,
+                // skip entirely in favour of Fidus Writer's own system.
+                return null
+            case "text:section": {
+                // Skip bibliography sections inserted by citation managers
+                // (Zotero: name contains "ZOTERO_BIBL"/"CSL_BIBLIOGRAPHY",
+                //  JabRef: name is "JR_bib" / "JR_BIB").
+                const sectionName = node.getAttribute("text:name") || ""
+                if (isOdtBibliographySection(sectionName)) {
+                    return null
+                }
+                // Other named sections are not bibliographies — fall through
+                // to default handling (treat children as block content).
+                return this.convertContainer(node)
+            }
             default:
                 console.warn(`Unsupported block node: ${node.tagName}`)
                 return null
@@ -1137,19 +1164,29 @@ export class OdtConvert {
     }
 
     convertNodeChildren(node, currentStyleMarks = []) {
-        let insideZoteroReferenceMark = false
+        let insideCitationReferenceMark = false
+        let insideBibliographyReferenceMark = false
 
         return node.children
             .map(child => {
-                if (insideZoteroReferenceMark) {
+                if (insideBibliographyReferenceMark) {
+                    // Swallow all rendered bibliography content until the
+                    // closing mark — we have our own bibliography system.
+                    if (child.tagName === "text:reference-mark-end") {
+                        const name = child.getAttribute("text:name")
+                        if (name && isOdtBibliographyReferenceMark(name)) {
+                            insideBibliographyReferenceMark = false
+                        }
+                    }
+                    return null
+                }
+
+                if (insideCitationReferenceMark) {
                     if (child.tagName === "text:reference-mark-end") {
                         // Process citation when we hit the end mark
                         const name = child.getAttribute("text:name")
-                        if (
-                            name &&
-                            name.startsWith("ZOTERO_ITEM CSL_CITATION")
-                        ) {
-                            insideZoteroReferenceMark = false
+                        if (name && isOdtCitationMark(name)) {
+                            insideCitationReferenceMark = false
                             return this.convertCitation(name, currentStyleMarks)
                         }
                     }
@@ -1206,14 +1243,21 @@ export class OdtConvert {
                         return this.convertAnnotationEnd(child)
                     case "text:reference-mark-start": {
                         const name = child.getAttribute("text:name")
-                        if (
+                        if (name && isOdtCitationMark(name)) {
+                            insideCitationReferenceMark = true
+                        } else if (
                             name &&
-                            name.startsWith("ZOTERO_ITEM CSL_CITATION")
+                            isOdtBibliographyReferenceMark(name)
                         ) {
-                            insideZoteroReferenceMark = true
+                            insideBibliographyReferenceMark = true
                         }
                         return null
                     }
+                    case "text:bibliography-mark":
+                        return this.convertBibliographyMark(
+                            child,
+                            currentStyleMarks
+                        )
                     case "text:bookmark-ref":
                         return this.convertHeadingReference(child)
                     case "text:sequence-ref":
@@ -1320,12 +1364,12 @@ export class OdtConvert {
         )
         const referenceMarkEnd = firstParagraph.query("text:reference-mark-end")
 
+        const markName = referenceMarkStart?.getAttribute("text:name")
         if (
             referenceMarkStart &&
             referenceMarkEnd &&
-            referenceMarkStart
-                .getAttribute("text:name")
-                .startsWith("ZOTERO_ITEM CSL_CITATION") &&
+            markName &&
+            isOdtCitationMark(markName) &&
             // Check that there's no content outside the reference marks
             firstParagraph.children.every(
                 child =>
@@ -1339,8 +1383,7 @@ export class OdtConvert {
             )
         ) {
             // If it's a citation-only footnote, convert it directly to a citation
-            const citationData = referenceMarkStart.getAttribute("text:name")
-            return this.convertCitation(citationData, currentStyleMarks)
+            return this.convertCitation(markName, currentStyleMarks)
         }
 
         // Otherwise, convert as regular footnote
@@ -1353,68 +1396,29 @@ export class OdtConvert {
         }
     }
 
-    convertCitation(citationData, currentStyleMarks) {
-        // Handle both string citation data and reference mark names
-        try {
-            const jsonStr = citationData.replace(
-                "ZOTERO_ITEM CSL_CITATION ",
-                ""
-            )
-
-            // Parse the CSL citation data
-            const lastBrace = jsonStr.lastIndexOf("}") + 1
-            const cslData = JSON.parse(jsonStr.substring(0, lastBrace))
-
-            // Create citation references
-            const citations = cslData.citationItems
-                .map(item => {
-                    const id = String(item.itemData.id)
-
-                    // Find in bibliography
-                    let [bibKey, _] =
-                        Object.entries(this.bibliography || {}).find(
-                            ([_key, entry]) => entry.entry_key === id
-                        ) || []
-
-                    if (!bibKey && item.itemData) {
-                        // Not yet present in bibliography. Parse the CSL data and add it.
-                        const parseData = parseCSL({
-                            [id]: item.itemData
-                        })
-                        const bibEntry = parseData["1"]
-                        bibKey = `${Object.keys(this.bibliography || {}).length + 1}`
-                        if (!this.bibliography) {
-                            this.bibliography = {}
-                        }
-                        this.bibliography[bibKey] = bibEntry
-                    }
-
-                    return bibKey
-                        ? {
-                              id: bibKey,
-                              prefix: item.prefix || "",
-                              locator: item.locator || ""
-                          }
-                        : null
-                })
-                .filter(citation => citation)
-
-            if (!citations.length) {
-                return null
-            }
-
-            return {
-                type: "citation",
-                attrs: {
-                    format: "cite", // Could be determined from properties if needed
-                    references: citations
-                },
-                marks: this.getCurrentMarks(currentStyleMarks)
-            }
-        } catch (error) {
-            console.warn("Failed to parse CSL citation:", error)
-            return null
+    convertCitation(markName, currentStyleMarks) {
+        const citationNode = parseOdtReferenceMark(
+            markName,
+            this.bibliography,
+            this.bibDB
+        )
+        if (citationNode) {
+            citationNode.marks = this.getCurrentMarks(currentStyleMarks)
+            return citationNode
         }
+        return null
+    }
+
+    convertBibliographyMark(bibMarkNode, currentStyleMarks) {
+        const citationNode = parseOdtBibliographyMark(
+            bibMarkNode,
+            this.bibliography
+        )
+        if (citationNode) {
+            citationNode.marks = this.getCurrentMarks(currentStyleMarks)
+            return citationNode
+        }
+        return null
     }
 
     convertList(node, attrs) {

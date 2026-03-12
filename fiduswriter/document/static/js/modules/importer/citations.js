@@ -18,7 +18,7 @@
  * @param {Object} bibliography  Fidus Writer bibliography (mutated in place)
  * @returns {Object}  Map of entry_key → bibKey string
  */
-function mergeBibEntries(entries, bibliography, _useExternalDB = false) {
+function mergeBibEntries(entries, bibliography, bibDB) {
     const keyMap = {}
 
     for (const entry of Object.values(entries)) {
@@ -35,6 +35,16 @@ function mergeBibEntries(entries, bibliography, _useExternalDB = false) {
         if (existing) {
             keyMap[entryKey] = existing[0]
         } else {
+            if (bibDB && Object.keys(entry.fields).length === 0) {
+                // Jabref citations don't contain any fields. Look up values in bibDB instead
+                const bibEntry = Object.values(bibDB.db).find(
+                    bibEntry => bibEntry && bibEntry.entry_key === entryKey
+                )
+                if (bibEntry) {
+                    entry.fields = JSON.parse(JSON.stringify(bibEntry.fields))
+                    entry.bib_type = bibEntry.bib_type
+                }
+            }
             // TODO: add for jabref citations - according to entry_key import from user
             // library if useExternalDB is true
             const bibKey = String(Object.keys(bibliography).length + 1)
@@ -69,7 +79,7 @@ function mergeBibEntries(entries, bibliography, _useExternalDB = false) {
  * @param {Object} bibliography Fidus Writer bibliography (mutated in place)
  * @returns {Object|null}  ProseMirror citation node or null
  */
-export function citationResultToNode(result, bibliography) {
+export function citationResultToNode(result, bibliography, bibDB = false) {
     if (!result || !result.isCitation || !result.entries) {
         return null
     }
@@ -79,7 +89,7 @@ export function citationResultToNode(result, bibliography) {
     if (Object.keys(entries).length === 0) {
         return null
     }
-    const keyMap = mergeBibEntries(entries, bibliography)
+    const keyMap = mergeBibEntries(entries, bibliography, bibDB)
     // Build the references array from entries.
     //
     const references = Object.entries(entries).map(([_entryId, entry]) => {

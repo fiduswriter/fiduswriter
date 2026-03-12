@@ -4,12 +4,12 @@ import {NativeImporter} from "../native"
 import {PandocConvert} from "./convert"
 
 export class PandocImporter {
-    constructor(file, user, path, importId, additionalFiles) {
+    constructor(file, user, path, importId, options) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
-        this.additionalFiles = additionalFiles
+        this.additionalFiles = options.files
 
         this.template = null
         this.output = {

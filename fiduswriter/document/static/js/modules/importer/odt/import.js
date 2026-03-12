@@ -3,13 +3,13 @@ import {NativeImporter} from "../native"
 import {OdtConvert} from "./convert"
 
 export class OdtImporter {
-    constructor(file, user, path, importId, additionalFiles) {
+    constructor(file, user, path, importId, options = {}) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
 
-        this._additionalFiles = additionalFiles // We do not use these files in the ODT importer
+        this.bibDB = options.bibDB
 
         this.template = null
         this.output = {
@@ -87,13 +87,16 @@ export class OdtImporter {
     }
 
     handleOdtContent(contentXml, stylesXml, manifestXml, images = {}) {
+        const bibliography = {} // Initial empty bibliography that will be populated during conversion
+
         const converter = new OdtConvert(
             contentXml,
             stylesXml,
             manifestXml,
             this.importId,
             this.template,
-            {} // Initial empty bibliography that will be populated during conversion
+            bibliography,
+            this.bibDB
         )
 
         let convertedDoc
@@ -116,7 +119,7 @@ export class OdtImporter {
                 comments: convertedDoc.comments,
                 settings: convertedDoc.settings
             },
-            converter.bibliography || {}, // Pass the populated bibliography
+            bibliography, // Pass the populated bibliography
             converter.images,
             Object.entries(images).map(([filename, blob]) => ({
                 filename,

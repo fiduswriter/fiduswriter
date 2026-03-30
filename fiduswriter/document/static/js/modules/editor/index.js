@@ -13,6 +13,7 @@ import {
     WebSocketConnector,
     activateWait,
     addAlert,
+    deactivateWait,
     ensureCSS,
     postJson,
     showSystemMessage,
@@ -75,6 +76,10 @@ import {
     trackPlugin
 } from "./state_plugins"
 
+// UUID v4 pattern for share tokens
+const uuid4Pattern =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 export const COMMENT_ONLY_ROLES = ["review", "comment"]
 export const READ_ONLY_ROLES = ["read", "read-without-comments"]
 export const REVIEW_ROLES = ["review", "review-tracked"]
@@ -86,7 +91,11 @@ export class Editor {
     // contains bindings to menu items, etc. that are uniquely defined.
     constructor({app, user}, path, idString) {
         this.app = app
-        this.user = user
+        // For unauthenticated guests, replace the bare config object with a
+        // proper placeholder that has all the fields templates expect.
+        this.user = user.is_authenticated
+            ? user
+            : {id: undefined, username: "", name: "", is_authenticated: false}
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
@@ -102,16 +111,22 @@ export class Editor {
             dir: "ltr", // standard direction, used in input fields, etc.
             path // Default doc path.
         }
-        let id = Number.parseInt(idString)
-        if (isNaN(id)) {
-            id = 0
-            let templateId = Number.parseInt(idString.slice(1))
-            if (isNaN(templateId)) {
-                templateId = 1
+        if (uuid4Pattern.test(idString)) {
+            // Share token — store the raw UUID; init() will resolve it to a real doc id
+            this.docInfo.id = idString
+            this.docInfo.token = idString
+        } else {
+            let id = Number.parseInt(idString)
+            if (isNaN(id)) {
+                id = 0
+                let templateId = Number.parseInt(idString.slice(1))
+                if (isNaN(templateId)) {
+                    templateId = 1
+                }
+                this.docInfo.templateId = templateId
             }
-            this.docInfo.templateId = templateId
+            this.docInfo.id = id
         }
-        this.docInfo.id = id
         this.schema = docSchema
 
         this.menu = {
@@ -212,22 +227,73 @@ export class Editor {
                 })
             )
         }
+        // Handle token-based access (share links)
+        if (uuid4Pattern.test(this.docInfo.id)) {
+            this.docInfo.token = this.docInfo.id
+            initPromises.push(
+                postJson(
+                    `/api/document/share_token/validate/${this.docInfo.token}/`
+                ).then(({json, status}) => {
+                    if (status === 200 && json.document_id) {
+                        this.docInfo.id = json.document_id
+                        this.docInfo.access_rights = json.rights
+                        this.docInfo.wsBase = json.ws_base
+                        return Promise.resolve()
+                    } else {
+                        // Token is invalid or expired
+                        return Promise.reject(
+                            new Error("Invalid or expired share link")
+                        )
+                    }
+                })
+            )
+        }
         return Promise.all(initPromises)
             .then(() => {
                 new ModCitations(this)
                 new ModFootnotes(this)
                 return this.activateFidusPlugins()
             })
-            .then(() =>
-                postJson("/api/document/get_ws_base/", {
-                    id: this.docInfo.id
+            .catch(error => {
+                // Handle token validation failure
+                deactivateWait()
+                const errorDialog = new Dialog({
+                    title: gettext("Invalid Share Link"),
+                    id: "invalid_share_link_dialog",
+                    body: gettext(
+                        "This share link has expired or is invalid. Please ask the document owner for a new link."
+                    ),
+                    buttons: [
+                        {
+                            text: gettext("OK"),
+                            classes: "fw-dark",
+                            click: () => {
+                                window.location.href = "/"
+                            }
+                        }
+                    ],
+                    canClose: false
                 })
+                errorDialog.open()
+                return Promise.reject(error)
+            })
+            .then(() =>
+                this.docInfo.wsBase
+                    ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
+                    : postJson("/api/document/get_ws_base/", {
+                          id: this.docInfo.id
+                      })
             )
             .then(({json}) => {
                 let resubScribed = false
+                // Include token in WebSocket path if present
+                let wsPath = `/document/${this.docInfo.id}/`
+                if (this.docInfo.token) {
+                    wsPath += `?token=${this.docInfo.token}`
+                }
                 this.ws = new WebSocketConnector({
                     base: json.ws_base,
-                    path: `/document/${this.docInfo.id}/`,
+                    path: wsPath,
                     appLoaded: () => this.view.state.plugins.length,
                     anythingToSend: () => sendableSteps(this.view.state),
                     initialMessage: () => {
@@ -366,6 +432,28 @@ export class Editor {
                         }
                     },
                     failedAuth: () => {
+                        if (this.docInfo.token) {
+                            // Token-based access failed
+                            const tokenDialog = new Dialog({
+                                title: gettext("Invalid Share Link"),
+                                id: "invalid_token_dialog",
+                                body: gettext(
+                                    "This share link has expired or is invalid. Please ask the document owner for a new link."
+                                ),
+                                buttons: [
+                                    {
+                                        text: gettext("OK"),
+                                        classes: "fw-dark",
+                                        click: () => {
+                                            window.location.href = "/"
+                                        }
+                                    }
+                                ],
+                                canClose: false
+                            })
+                            tokenDialog.open()
+                            return
+                        }
                         if (
                             this.view.state.plugins.length &&
                             sendableSteps(this.view.state) &&

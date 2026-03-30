@@ -11,7 +11,8 @@ export class ZipFidus {
         shrunkImageDB,
         shrunkBibDB,
         httpFiles,
-        includeTemplate = true
+        includeTemplate = true,
+        token = false
     ) {
         this.docId = docId
         this.doc = doc
@@ -19,6 +20,7 @@ export class ZipFidus {
         this.shrunkBibDB = shrunkBibDB
         this.httpFiles = httpFiles
         this.includeTemplate = includeTemplate
+        this.token = token
 
         this.textFiles = [
             {
@@ -47,7 +49,8 @@ export class ZipFidus {
         const templateExporter = new DocumentTemplateExporter(
             this.docId,
             "/api/document/get_template_for_doc/",
-            false
+            false,
+            this.token
         )
         return templateExporter.init().then(() => {
             this.textFiles = this.textFiles.concat(templateExporter.textFiles)

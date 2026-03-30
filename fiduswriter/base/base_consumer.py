@@ -1,8 +1,33 @@
 import json
 import logging
+from dataclasses import dataclass
 from channels.generic.websocket import AsyncWebsocketConsumer
+from urllib.parse import parse_qs
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class GuestUser:
+    """Represents an unauthenticated user accessing via a share token."""
+
+    id: str  # token UUID string
+    token: str  # same UUID string
+    token_rights: str
+    is_authenticated: bool = True
+    readable_name: str = "Guest"
+
+    @property
+    def username(self):
+        """
+        Return a slug-safe username derived from readable_name.
+        Django's UnicodeUsernameValidator allows letters, digits, _, ., @, +, -.
+        readable_name may contain spaces, so we convert "Guest 5" -> "guest5".
+        """
+        return self.readable_name.lower().replace(" ", "")
+
+    def get_full_name(self):
+        return self.readable_name
 
 
 class BaseWebsocketConsumer(AsyncWebsocketConsumer):
@@ -14,8 +39,18 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
         self.endpoint = self.scope["path"]
         self.user = self.scope["user"]
         if not self.user.is_authenticated:
-            await self.access_denied()
-            return False
+            # Check for a share token in the query string
+            token_str = self._extract_token_from_scope()
+            if token_str:
+                guest = await self._resolve_guest_user(token_str)
+                if guest:
+                    self.user = guest
+                else:
+                    await self.access_denied()
+                    return False
+            else:
+                await self.access_denied()
+                return False
         logger.debug("Action:Opening Websocket")
         return True
 
@@ -31,6 +66,22 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
         response["type"] = "welcome"
         await self.send_message(response)
         return True
+
+    def _extract_token_from_scope(self):
+        """Extract token from query string in the WebSocket scope."""
+        query_string = self.scope.get("query_string", b"")
+        if isinstance(query_string, bytes):
+            query_string = query_string.decode("utf-8")
+        params = parse_qs(query_string)
+        tokens = params.get("token", [])
+        return tokens[0] if tokens else None
+
+    async def _resolve_guest_user(self, token_str):
+        """
+        Validate a share token and return a GuestUser if valid.
+        Subclasses should override this to provide token validation logic.
+        """
+        return None
 
     async def access_denied(self):
         await self.send_message({"type": "access_denied"})

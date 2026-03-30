@@ -37,6 +37,26 @@ urlpatterns = [
         views.save_access_rights,
         name="save_access_rights",
     ),
+    re_path(
+        "^share_token/create/$",
+        views.create_share_token,
+        name="create_share_token",
+    ),
+    re_path(
+        "^share_token/list/$",
+        views.list_share_tokens,
+        name="list_share_tokens",
+    ),
+    re_path(
+        "^share_token/revoke/$",
+        views.revoke_share_token,
+        name="revoke_share_token",
+    ),
+    re_path(
+        "^share_token/validate/(?P<token>[^/]+)/$",
+        views.validate_share_token,
+        name="validate_share_token",
+    ),
     re_path("^comment_notify/$", views.comment_notify, name="comment_notify"),
     re_path(
         "^admin/get_template/$",

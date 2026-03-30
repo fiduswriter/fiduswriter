@@ -5,3 +5,90 @@
 #access-rights-dialog .edit-right {
     cursor: pointer;
 }
+
+/* Tab bar */
+#access-rights-dialog .fw-ar-tabs {
+    display: flex;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 16px;
+}
+
+#access-rights-dialog .fw-ar-tab {
+    padding: 6px 18px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #888888;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+#access-rights-dialog .fw-ar-tab:hover {
+    color: #333333;
+}
+
+#access-rights-dialog .fw-ar-tab.fw-ar-tab-active {
+    color: #333333;
+    border-bottom-color: #42a061;
+}
+
+#access-rights-dialog .fw-ar-tab-hidden {
+    display: none;
+}
+
+/* People tab: keep existing side-by-side layout */
+#access-rights-dialog [data-tab-content="people"] {
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Share-link tab */
+#access-rights-dialog [data-tab-content="sharelink"] {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#access-rights-dialog .share-token-row {
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background: #fafafa;
+}
+
+#access-rights-dialog .share-token-meta {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+#access-rights-dialog .share-token-url-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#access-rights-dialog .share-token-url-input {
+    flex: 1;
+    font-size: 0.82em;
+    padding: 3px 6px;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    background: #ffffff;
+    color: #444444;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#access-rights-dialog .fw-ar-loading,
+#access-rights-dialog .fw-ar-error,
+#access-rights-dialog .fw-ar-no-tokens {
+    color: #888888;
+    font-style: italic;
+    margin: 8px 0;
+}
+
+#access-rights-dialog .fw-ar-error {
+    color: #c0392b;
+}

@@ -1,4 +1,5 @@
 from document.models import AccessRight, Document, DocumentTemplate
+from base.base_consumer import GuestUser
 
 
 class SessionUserInfo:
@@ -43,6 +44,23 @@ class SessionUserInfo:
         :rtype: tuple
         """
         can_access = False
+
+        # Handle GuestUser (token-based access)
+        if isinstance(self.user, GuestUser):
+            # Token rights were already validated in the consumer
+            document = (
+                await Document.objects.select_related("owner", "template")
+                .filter(id=int(document_id))
+                .afirst()
+            )
+            if document is None:
+                return (False, False)
+            self.document_id = document.id
+            self.access_rights = self.user.token_rights
+            self.is_owner = False
+            self.path = ""
+            self.path_object = None
+            return (document, True)
 
         # Use select_related to prefetch owner and template in one query
         document = (

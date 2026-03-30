@@ -62,14 +62,31 @@ export const headerbarModel = () => ({
                     }
                 },
                 {
-                    title: gettext("Close"),
+                    title: editor =>
+                        editor.docInfo.token
+                            ? gettext("Sign up / Log in")
+                            : gettext("Close"),
                     type: "action",
                     //icon: 'times-circle',
-                    tooltip: gettext(
-                        "Close the document and return to the document overview menu."
-                    ),
+                    tooltip: editor =>
+                        editor.docInfo.token
+                            ? gettext("Sign up for an account or log in.")
+                            : gettext(
+                                  "Close the document and return to the document overview menu."
+                              ),
                     order: 1,
                     action: editor => {
+                        if (editor.docInfo.token) {
+                            if (
+                                settings_REGISTRATION_OPEN ||
+                                settings_SOCIALACCOUNT_OPEN
+                            ) {
+                                window.location.href = "/account/sign-up/"
+                            } else {
+                                window.location.href = "/"
+                            }
+                            return
+                        }
                         const folderPath = editor.docInfo.path.slice(
                             0,
                             editor.docInfo.path.lastIndexOf("/")
@@ -107,7 +124,8 @@ export const headerbarModel = () => ({
                     },
                     disabled: editor =>
                         editor.docInfo.access_rights !== "write" ||
-                        editor.app.isOffline()
+                        editor.app.isOffline() ||
+                        !!editor.docInfo.token
                 },
                 {
                     title: gettext("Create copy"),
@@ -129,7 +147,8 @@ export const headerbarModel = () => ({
                             )
                             .catch(() => false)
                     },
-                    disabled: editor => editor.app.isOffline()
+                    disabled: editor =>
+                        editor.app.isOffline() || !!editor.docInfo.token
                 },
                 {
                     title: gettext("Download"),
@@ -143,7 +162,9 @@ export const headerbarModel = () => ({
                         new ExportFidusFile(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
-                            editor.mod.db.imageDB
+                            editor.mod.db.imageDB,
+                            true,
+                            editor.docInfo.token
                         )
                     },
                     disabled: editor => editor.app.isOffline()

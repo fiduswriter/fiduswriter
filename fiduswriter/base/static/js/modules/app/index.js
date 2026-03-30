@@ -107,6 +107,21 @@ export class App {
                     }
                 }
             },
+            share: {
+                // Document shared via document link
+                app: "document",
+                requireLogin: false,
+                open: pathnameParts => {
+                    let token = pathnameParts.pop()
+                    if (!token.length) {
+                        token = pathnameParts.pop()
+                    }
+                    const path = "/"
+                    return import(
+                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "../editor"
+                    ).then(({Editor}) => new Editor(this.config, path, token))
+                }
+            },
             documents: {
                 app: "document",
                 requireLogin: true,
@@ -262,13 +277,13 @@ export class App {
     }
 
     setup() {
+        this.csl = new CSL()
         if (!this.config.user.is_authenticated) {
             this.activateFidusPlugins()
             return this.selectPage().then(() => this.bind())
         }
         this.bibDB = new BibliographyDB(this)
         this.imageDB = new ImageDB()
-        this.csl = new CSL()
         this.connectWs()
         return Promise.all([this.bibDB.getDB(), this.imageDB.getDB()])
             .then(() => {

@@ -520,17 +520,27 @@ export class HeaderbarView {
             // header is closed
             return "<div></div>"
         }
-        const folderPath = this.editor.docInfo.path.slice(
-            0,
-            this.editor.docInfo.path.lastIndexOf("/")
-        )
-        const exitUrl =
-            !folderPath.length && this.editor.app.routes[""].app === "document"
-                ? "/"
-                : `/documents${encodeURI(folderPath)}/`
+        let exitUrl
+        if (this.editor.docInfo.token) {
+            // Guest user — send to sign-up if open, otherwise to login
+            exitUrl =
+                settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN
+                    ? "/account/sign-up/"
+                    : "/"
+        } else {
+            const folderPath = this.editor.docInfo.path.slice(
+                0,
+                this.editor.docInfo.path.lastIndexOf("/")
+            )
+            exitUrl =
+                !folderPath.length &&
+                this.editor.app.routes[""].app === "document"
+                    ? "/"
+                    : `/documents${encodeURI(folderPath)}/`
+        }
         return `<div>
-            <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
-                <a href="${exitUrl}" aria-label="${gettext("Close document")}" title="${gettext("Close document")}">
+            <div id="close-document-top" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
+                <a href="${exitUrl}" aria-label="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close document")}" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
                     <i class="fa fa-times"></i>
                 </a>
             </div>

@@ -17,7 +17,7 @@ from base.helpers.ws import get_url_base
 from document.helpers.session_user_info import SessionUserInfo
 from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
-from base.base_consumer import BaseWebsocketConsumer
+from base.base_consumer import BaseWebsocketConsumer, GuestUser
 from document.models import (
     COMMENT_ONLY,
     CAN_UPDATE_DOCUMENT,
@@ -25,6 +25,7 @@ from document.models import (
     FW_DOCUMENT_VERSION,
     DocumentTemplate,
 )
+from document.helpers.token_access import get_token_access
 from usermedia.models import Image, DocumentImage, UserImage
 from user.helpers import Avatars
 
@@ -57,7 +58,6 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         # the right setting).
         if len(settings.PORTS) < 2:
             return False
-        # We compare the internal port
         actual_port = self.scope["server"][1]
         expected_conn = settings.PORTS[self.document_id % len(settings.PORTS)]
         expected_port = (
@@ -77,6 +77,18 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.do_close()
             return True
         return False
+
+    async def _resolve_guest_user(self, token_str):
+        """
+        Validate a share token and return a GuestUser if valid.
+        This overrides the base class method to provide document-specific token validation.
+        """
+        document, rights = await sync_to_async(get_token_access)(token_str)
+        if document and document.id == self.document_id:
+            return GuestUser(
+                id=str(token_str), token=str(token_str), token_rights=rights
+            )
+        return None
 
     async def confirm_diff(self, rid):
         response = {"type": "confirm_diff", "rid": rid}
@@ -106,11 +118,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             self.id = max(self.session["participants"]) + 1
             self.session["participants"][self.id] = self
             template = False
+            if isinstance(self.user, GuestUser):
+                self.user.readable_name = f"Guest {self.id}"
         else:
             logger.debug(
                 f"Action:Opening document from DB. "
                 f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
+                f" ParticipantID:{self.id}"
             )
             self.id = 0
             if "type" not in doc_db.content:
@@ -129,6 +143,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "last_saved_version": doc_db.version,
             }
             WebsocketConsumer.sessions[doc_db.id] = self.session
+            if isinstance(self.user, GuestUser):
+                self.user.readable_name = f"Guest {self.id}"
             if self.user_info.access_rights == "write":
                 template = True
             else:
@@ -178,18 +194,20 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             export_temps_task, document_styles_task
         )
 
-        # Get document templates
+        # Get document templates (used for "copy with template" menu — guests
+        # cannot create copies, so we skip the query entirely for them)
         document_templates = {}
-        query = DocumentTemplate.objects.filter(
-            Q(user=self.user) | Q(user=None)
-        ).order_by(F("user").desc(nulls_first=True))
+        from base.base_consumer import GuestUser
 
-        # Use async for to properly consume the async iterator
-        async for obj in query.aiterator():
-            document_templates[obj.import_id] = {
-                "title": obj.title,
-                "id": obj.id,
-            }
+        if not isinstance(self.user, GuestUser):
+            query = DocumentTemplate.objects.filter(
+                Q(user=self.user) | Q(user=None)
+            ).order_by(F("user").desc(nulls_first=True))
+            async for obj in query.aiterator():
+                document_templates[obj.import_id] = {
+                    "title": obj.title,
+                    "id": obj.id,
+                }
 
         response["styles"] = {
             "export_templates": [obj["fields"] for obj in export_temps],

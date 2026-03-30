@@ -10,7 +10,10 @@ import {AddContactDialog} from "../../contacts/add_dialog"
 import {
     accessRightOverviewTemplate,
     collaboratorsTemplate,
-    contactsTemplate
+    contactsTemplate,
+    createShareTokenDialogTemplate,
+    shareTokenListTemplate,
+    shareTokenRowTemplate
 } from "./templates"
 
 /**
@@ -22,6 +25,8 @@ export class DocumentAccessRightsDialog {
         this.documentIds = documentIds
         this.contacts = contacts
         this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
+        // Share-link tab is only available when a single document is selected
+        this.singleDocumentId = documentIds.length === 1 ? documentIds[0] : null
     }
 
     init() {
@@ -253,7 +258,138 @@ export class DocumentAccessRightsDialog {
         })
         this.dialog.open()
         this.bindDialogEvents()
+        // Hide the share-link tab when multiple documents are selected
+        if (!this.singleDocumentId) {
+            const shareTab = this.dialog.dialogEl.querySelector(
+                ".fw-ar-tab[data-tab='sharelink']"
+            )
+            if (shareTab) {
+                shareTab.style.display = "none"
+            }
+        }
     }
+
+    // ------------------------------------------------------------------ //
+    //  Share-link tab
+    // ------------------------------------------------------------------ //
+
+    activateTab(tabName) {
+        this.dialog.dialogEl
+            .querySelectorAll(".fw-ar-tab")
+            .forEach(el =>
+                el.classList.toggle(
+                    "fw-ar-tab-active",
+                    el.dataset.tab === tabName
+                )
+            )
+        this.dialog.dialogEl
+            .querySelectorAll(".fw-ar-tab-content")
+            .forEach(el =>
+                el.classList.toggle(
+                    "fw-ar-tab-hidden",
+                    el.dataset.tabContent !== tabName
+                )
+            )
+    }
+
+    loadShareTokens() {
+        const listEl = this.dialog.dialogEl.querySelector("#share-token-list")
+        listEl.innerHTML = `<p class="fw-ar-loading">${gettext("Loading…")}</p>`
+        postJson("/api/document/share_token/list/", {
+            document_id: this.singleDocumentId
+        })
+            .then(({json}) => {
+                listEl.innerHTML = shareTokenListTemplate({tokens: json.tokens})
+            })
+            .catch(() => {
+                listEl.innerHTML = `<p class="fw-ar-error">${gettext("Could not load share links.")}</p>`
+            })
+    }
+
+    openCreateShareTokenDialog() {
+        const createDialog = new Dialog({
+            title: gettext("Create share link"),
+            id: "create-share-token-dialog",
+            width: 420,
+            body: createShareTokenDialogTemplate(),
+            buttons: [
+                {
+                    text: gettext("Create"),
+                    classes: "fw-dark",
+                    click: () => {
+                        const rights = createDialog.dialogEl.querySelector(
+                            "#share-token-rights"
+                        ).value
+                        const expiresRaw = createDialog.dialogEl.querySelector(
+                            "#share-token-expires"
+                        ).value
+                        const note = createDialog.dialogEl
+                            .querySelector("#share-token-note")
+                            .value.trim()
+                        postJson("/api/document/share_token/create/", {
+                            document_id: this.singleDocumentId,
+                            rights,
+                            expires_at: expiresRaw || "",
+                            note
+                        })
+                            .then(({json}) => {
+                                const listEl =
+                                    this.dialog.dialogEl.querySelector(
+                                        "#share-token-list"
+                                    )
+                                // Remove the "no tokens" placeholder if present
+                                const placeholder =
+                                    listEl.querySelector(".fw-ar-no-tokens")
+                                if (placeholder) {
+                                    placeholder.remove()
+                                }
+                                listEl.insertAdjacentHTML(
+                                    "beforeend",
+                                    shareTokenRowTemplate({token: json})
+                                )
+                                addAlert(
+                                    "success",
+                                    gettext("Share link created.")
+                                )
+                            })
+                            .catch(() =>
+                                addAlert(
+                                    "error",
+                                    gettext("Could not create share link.")
+                                )
+                            )
+                        createDialog.close()
+                    }
+                },
+                {type: "cancel"}
+            ]
+        })
+        createDialog.open()
+    }
+
+    revokeShareToken(tokenId, rowEl) {
+        postJson("/api/document/share_token/revoke/", {token_id: tokenId})
+            .then(({json}) => {
+                if (json.success) {
+                    rowEl.remove()
+                    const listEl =
+                        this.dialog.dialogEl.querySelector("#share-token-list")
+                    if (!listEl.querySelector(".share-token-row")) {
+                        listEl.innerHTML = shareTokenListTemplate({tokens: []})
+                    }
+                    addAlert("success", gettext("Share link revoked."))
+                } else {
+                    addAlert("error", gettext("Could not revoke share link."))
+                }
+            })
+            .catch(() =>
+                addAlert("error", gettext("Could not revoke share link."))
+            )
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Event binding
+    // ------------------------------------------------------------------ //
 
     bindDialogEvents() {
         this.dialog.dialogEl
@@ -317,6 +453,46 @@ export class DocumentAccessRightsDialog {
                         })
                     )
             })
+        // Tab switching
+        this.dialog.dialogEl.querySelectorAll(".fw-ar-tab").forEach(tab => {
+            tab.addEventListener("click", () => {
+                const tabName = tab.dataset.tab
+                this.activateTab(tabName)
+                if (tabName === "sharelink" && this.singleDocumentId) {
+                    this.loadShareTokens()
+                }
+            })
+        })
+
+        // Share-link tab: create / copy / revoke
+        this.dialog.dialogEl.addEventListener("click", event => {
+            const el = {}
+            if (findTarget(event, "#create-share-token-btn", el)) {
+                this.openCreateShareTokenDialog()
+                return
+            }
+            if (findTarget(event, ".copy-share-token-btn", el)) {
+                const url = el.target.closest(".copy-share-token-btn").dataset
+                    .url
+                navigator.clipboard.writeText(url).then(
+                    () =>
+                        addAlert(
+                            "success",
+                            gettext("Link copied to clipboard.")
+                        ),
+                    () => addAlert("error", gettext("Could not copy link."))
+                )
+                return
+            }
+            if (findTarget(event, ".revoke-share-token-btn", el)) {
+                const btn = el.target.closest(".revoke-share-token-btn")
+                const tokenId = Number.parseInt(btn.dataset.tokenId)
+                const rowEl = btn.closest(".share-token-row")
+                this.revokeShareToken(tokenId, rowEl)
+                return
+            }
+        })
+
         this.dialog.dialogEl.addEventListener("click", event => {
             const el = {}
             switch (true) {

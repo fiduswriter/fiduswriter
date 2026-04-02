@@ -85,6 +85,10 @@ Comprehensive testing documentation:
 - Coverage reports
 - Continuous integration
 
+#### [Anonymous Document Access](anonymous-access.md)
+
+Share documents and allow editing without an account using secure share tokens.
+
 #### [Plugin Development](plugin-development.md)
 
 Create custom plugins:

@@ -1,7 +1,7 @@
 import download from "downloadjs"
 import pretty from "pretty"
 
-import {get, shortFileTitle} from "../../common"
+import {shortFileTitle} from "../../common"
 import {removeHidden} from "../tools/doc_content"
 import {createSlug} from "../tools/file"
 import {ZipFileCreator} from "../tools/zip"
@@ -157,7 +157,12 @@ export class HTMLExporter {
 
     async loadStyle(sheet) {
         if (sheet.url) {
-            const response = await get(sheet.url)
+            // Use simple fetch without X-Requested-With header and credentials
+            // to avoid CORS preflight redirect issues with CDNs
+            const response = await fetch(sheet.url)
+            if (!response.ok) {
+                throw response
+            }
             const text = await response.text()
             sheet.contents = text
             sheet.filename = `css/${sheet.url.split("/").pop().split("?")[0]}`

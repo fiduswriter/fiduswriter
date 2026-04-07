@@ -81,6 +81,9 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
 
             User = get_user_model()
             self.original_user = await User.objects.aget(pk=self.user.pk)
+            # Replace the UserLazyObject with the resolved User instance
+            # so downstream code (e.g. ORM filters) never receives a proxy.
+            self.user = self.original_user
         else:
             self.original_user = self.user
 

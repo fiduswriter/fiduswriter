@@ -5,7 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from channels.testing import ChannelsLiveServerTestCase
+from testing.channels_patch import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.common.exceptions import StaleElementReferenceException
 

@@ -37,7 +37,7 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
         <div id="share-token-list">
             <p class="fw-ar-loading">${gettext("Loading…")}</p>
         </div>
-        <button class="fw-button fw-light fw-add-button" id="create-share-token-btn">
+        <button class="fw-button fw-light" id="create-share-token-btn">
             <i class="fa fa-plus"></i>&nbsp;${gettext("Create new share link")}
         </button>
     </div>`

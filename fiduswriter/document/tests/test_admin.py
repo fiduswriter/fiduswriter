@@ -3,6 +3,7 @@ import os
 import sys
 from tempfile import mkdtemp
 
+from django.conf import settings
 from channels.testing import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
@@ -315,10 +316,16 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             self.driver.find_element(By.CSS_SELECTOR, "th.field-title").text,
             "Special Article",
         )
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button[type=submit]"
-        ).click()
+        # Clear the admin session and navigate to the Fidus Writer app.
+        # (In Django 5.x the admin "Log out" became a <button type="submit">
+        # which collides with the action "Go" button, so we clear the
+        # session cookie directly instead.)
+        self.driver.delete_cookie(settings.SESSION_COOKIE_NAME)
         self.driver.get(self.base_url)
+        # Wait for the SPA login form to render before typing
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "id-login"))
+        )
         # Logging in as User 1
         self.driver.find_element(By.ID, "id-login").send_keys("User1")
         self.driver.find_element(By.ID, "id-password").send_keys("password")

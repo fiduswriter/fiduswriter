@@ -52,6 +52,7 @@ jobs:
                     - document.tests.test_memory_leak
                     - document.tests.test_merge
                     - document.tests.test_path
+                    - document.tests.test_share_link_access
                     - bibliography
                     - usermedia
                     - user_template_manager

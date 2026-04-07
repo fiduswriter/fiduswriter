@@ -103,7 +103,7 @@ class SessionUserInfo:
             else:
                 # Check for regular access rights for this user
                 access_right = await AccessRight.objects.filter(
-                    document_id=document.id, user_id=self.user._user.id
+                    document_id=document.id, user=self.user._user
                 ).afirst()
                 if access_right:
                     # User has direct access - use the better of token rights and direct rights
@@ -151,7 +151,7 @@ class SessionUserInfo:
 
                 # Get access rights asynchronously with prefetched relations
                 access_right = await AccessRight.objects.filter(
-                    document_id=document.id, user_id=self.user.id
+                    document_id=document.id, user=self.user
                 ).afirst()
 
                 if access_right:

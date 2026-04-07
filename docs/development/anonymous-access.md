@@ -100,36 +100,98 @@ class GuestUser:
 
 `id` is the token UUID — stable across reconnections — so that a guest can always edit/delete their own comments regardless of how many times they reconnect.
 
+### TokenUser Class
+
+**File:** `base/base_consumer.py`
+
+When a logged-in user accesses a document via a share token, their Django `User` instance is wrapped in a `TokenUser`:
+
+```python
+class TokenUser:
+    """
+    Represents a logged-in user who is accessing a document via a share token.
+    The user retains their real identity but also has token-based access rights.
+    """
+
+    def __init__(self, user, token, token_rights):
+        self._user = user
+        self.token = token
+        self.token_rights = token_rights
+        self.is_authenticated = True
+
+    @property
+    def id(self):
+        return self._user.id
+
+    @property
+    def pk(self):
+        return self._user.pk
+
+    @property
+    def username(self):
+        return self._user.username
+
+    def get_full_name(self):
+        return self._user.get_full_name()
+
+    @property
+    def readable_name(self):
+        return self._user.get_full_name() or self._user.username
+
+    def __getattr__(self, name):
+        """Delegate any undefined attributes to the underlying user object."""
+        return getattr(self._user, name)
+```
+
+The `original_user` property stores the actual Django `User` instance for operations that require it (like `Presence` records).
+
 ### Base Consumer
 
 **File:** `base/base_consumer.py`
 
-The `init()` method is extended to check for a `token` query-string parameter on the WebSocket URL when the user is not authenticated:
+The `init()` method is extended to check for a `token` query-string parameter on the WebSocket URL. If the user is already authenticated and provides a token, they become a `TokenUser`:
 
 ```python
 async def init(self):
     # ...
-    if not self.user.is_authenticated:
-        token_str = self._extract_token_from_scope()
-        if token_str:
+    self.user = self.scope["user"]
+    # Preserve original user for Presence records
+    if self.user.is_authenticated:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        self.original_user = await User.objects.aget(pk=self.user.pk)
+    else:
+        self.original_user = self.user
+
+    # Check for a share token in the query string
+    token_str = self._extract_token_from_scope()
+    if token_str:
+        if self.user.is_authenticated:
+            # Logged-in user accessing via share link - wrap in TokenUser
+            token_user = await self._resolve_token_user(self.user, token_str)
+            if token_user:
+                self.user = token_user
+            else:
+                # Token is invalid, but logged-in users can still access
+                # if they have regular access rights
+                pass
+        else:
+            # Unauthenticated user - try guest access
             guest = await self._resolve_guest_user(token_str)
             if guest:
                 self.user = guest
             else:
                 await self.access_denied()
                 return False
-        else:
-            await self.access_denied()
-            return False
 ```
 
-Subclasses override `_resolve_guest_user()` to validate the token against the document they manage.
+Subclasses override `_resolve_guest_user()` and `_resolve_token_user()` to validate the token against the document they manage.
 
 ### Document Consumer
 
 **File:** `document/consumers.py`
 
-The document consumer overrides `_resolve_guest_user()` to validate the token against the document's ID:
+The document consumer overrides `_resolve_guest_user()` and `_resolve_token_user()` to validate the token against the document's ID:
 
 ```python
 async def _resolve_guest_user(self, token_str):
@@ -139,6 +201,18 @@ async def _resolve_guest_user(self, token_str):
             id=str(token_str),
             token=str(token_str),
             token_rights=rights
+        )
+    return None
+
+async def _resolve_token_user(self, user, token_str):
+    """
+    Validate a share token for a logged-in user and return a TokenUser if valid.
+    The user retains their real identity but also has token-based access rights.
+    """
+    document, rights = await sync_to_async(get_token_access)(token_str)
+    if document and document.id == self.document_id:
+        return TokenUser(
+            user=user, token=str(token_str), token_rights=rights
         )
     return None
 ```
@@ -152,22 +226,51 @@ if isinstance(self.user, GuestUser):
 
 The `can_communicate()` check uses `token_rights` for guests, so comment and chat rights are respected.
 
-### Guest User Document Templates
+### Document Templates for Logged-in Users
 
 **File:** `document/consumers.py`
 
-Guest users cannot create document copies, so the document-templates query in `send_styles()` is skipped for them:
+Guest users cannot create document copies, so the document-templates query in `send_styles()` is skipped for them. Logged-in users (including `TokenUser`) can create copies:
 
 ```python
 if isinstance(self.user, GuestUser):
     document_templates = {}
 else:
+    # For TokenUser, use underlying _user for database query
+    query_user = self.user._user if isinstance(self.user, TokenUser) else self.user
     query = DocumentTemplate.objects.filter(
-        Q(user=self.user) | Q(user=None)
+        Q(user=query_user) | Q(user=None)
     ).order_by(F("user").desc(nulls_first=True))
     async for obj in query.aiterator():
         document_templates[obj.import_id] = {"title": obj.title, "id": obj.id}
 ```
+
+### SessionUserInfo for TokenUser
+
+**File:** `document/helpers/session_user_info.py`
+
+The `SessionUserInfo.init_access()` method handles `TokenUser` by combining token rights with regular access rights:
+
+```python
+if isinstance(self.user, TokenUser):
+    # Check if the real user is the owner
+    if document.owner.id == self.user.id:
+        self.access_rights = "write"
+        self.is_owner = True
+        # ...
+    else:
+        # Check for regular access rights for this user
+        access_right = await AccessRight.objects.filter(
+            document_id=document.id, user=self.user._user
+        ).afirst()
+        if access_right:
+            # User has direct access - use the better of token rights and direct rights
+            self.access_rights = get_better_rights(
+                self.user.token_rights, access_right.rights
+            )
+```
+
+Rights hierarchy (higher is better): `write` > `write-tracked` > `comment` > `review-tracked` > `review` > `read` > `read-without-comments`
 
 ## Frontend Editor Integration
 
@@ -300,18 +403,37 @@ API calls:
 | Revoke | `POST /api/document/share_token/revoke/` |
 | Copy | `navigator.clipboard.writeText(url)` (client-side only) |
 
-## Menu Adaptations for Guests
+## Menu Adaptations
 
 **File:** `document/static/js/modules/editor/menus/headerbar/model.js`, `document/static/js/modules/editor/menus/headerbar/view.js`
 
-| Menu item | Change for guests |
-|---|---|
-| Share | Hidden (`disabled: !!editor.docInfo.token`) |
-| Create copy | Hidden (`disabled: editor.app.isOffline() || !!editor.docInfo.token`) |
-| Download | Enabled (token sent in request; `get_template_for_doc` accepts token) |
-| Save revision | Hidden (`disabled: access_rights !== "write" || isOffline() || token`) |
-| Close | Title/tooltip change to "Sign up / Log in" (function, evaluated at render) |
-| Print/PDF | Enabled |
+| Menu item | Change for guests | Change for logged-in users with token |
+|---|---|---|
+| Share / Request Access | Hidden | Shows "Request Access" instead of "Share" for non-owners |
+| Create copy | Hidden | Enabled (logged-in users with tokens can create copies) |
+| Download | Enabled | Enabled |
+| Save revision | Hidden | Hidden for guests only |
+| Close | Title/tooltip change to "Sign up / Log in" for guests | Normal behavior for logged-in users |
+| Print/PDF | Enabled | Enabled |
+
+The "Request Access" option allows logged-in users accessing via share link to request to be added as collaborators. When clicked, it sends a request to the document owner via email.
+
+**File:** `document/views.py`
+
+The `request_access` endpoint handles these requests:
+
+```python
+@login_required
+@ajax_required
+@require_POST
+def request_access(request):
+    """
+    Allow a logged-in user to request access to a document.
+    """
+    document_id = int(request.POST.get("document_id"))
+    requested_rights = request.POST.get("rights", "read")
+    # ... sends email notification to document owner
+```
 
 The `×` button in the header bar also redirects to `/account/sign-up/` or `/` depending on registration settings.
 
@@ -354,7 +476,7 @@ def get_template_for_doc(request):
 | Privilege escalation | Token rights enforced server-side; client-side UI changes are cosmetic only |
 | Guest re-sharing | Guest users receive no token in outbound WS messages; Share UI is hidden |
 | Comment authorization | `comment.user` stored as token UUID; integer user IDs never collide with UUID strings |
+| TokenUser database queries | `TokenUser._user` used for Django ORM queries; `TokenUser.id` used for display |
+| Presence records | Only created for authenticated Django users; skipped for GuestUser, TokenUser, and AnonymousUser |
 
----
-
-**Last Updated:** March 2026
+**Last Updated:** April 2026

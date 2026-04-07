@@ -103,7 +103,7 @@ class SessionUserInfo:
             else:
                 # Check for regular access rights for this user
                 access_right = await AccessRight.objects.filter(
-                    document_id=document.id, user=self.user._user
+                    document_id=document.id, user_id=self.user._user.id
                 ).afirst()
                 if access_right:
                     # User has direct access - use the better of token rights and direct rights
@@ -122,6 +122,10 @@ class SessionUserInfo:
                     self.path_object = None
                     can_access = True
             return (document, can_access)
+
+        # Unauthenticated users (not GuestUser or TokenUser) cannot access
+        if not self.user.is_authenticated:
+            return (False, False)
 
         # Use select_related to prefetch owner and template in one query
         document = (
@@ -147,7 +151,7 @@ class SessionUserInfo:
 
                 # Get access rights asynchronously with prefetched relations
                 access_right = await AccessRight.objects.filter(
-                    document_id=document.id, user=self.user
+                    document_id=document.id, user_id=self.user.id
                 ).afirst()
 
                 if access_right:

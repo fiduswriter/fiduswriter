@@ -57,6 +57,11 @@ urlpatterns = [
         views.validate_share_token,
         name="validate_share_token",
     ),
+    re_path(
+        "^request_access/$",
+        views.request_access,
+        name="request_access",
+    ),
     re_path("^comment_notify/$", views.comment_notify, name="comment_notify"),
     re_path(
         "^admin/get_template/$",

@@ -17,7 +17,7 @@ from base.helpers.ws import get_url_base
 from document.helpers.session_user_info import SessionUserInfo
 from document import prosemirror
 from document.helpers.serializers import PythonWithURLSerializer
-from base.base_consumer import BaseWebsocketConsumer, GuestUser
+from base.base_consumer import BaseWebsocketConsumer, GuestUser, TokenUser
 from document.models import (
     COMMENT_ONLY,
     CAN_UPDATE_DOCUMENT,
@@ -87,6 +87,18 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if document and document.id == self.document_id:
             return GuestUser(
                 id=str(token_str), token=str(token_str), token_rights=rights
+            )
+        return None
+
+    async def _resolve_token_user(self, user, token_str):
+        """
+        Validate a share token for a logged-in user and return a TokenUser if valid.
+        The user retains their real identity but also has token-based access rights.
+        """
+        document, rights = await sync_to_async(get_token_access)(token_str)
+        if document and document.id == self.document_id:
+            return TokenUser(
+                user=user, token=str(token_str), token_rights=rights
             )
         return None
 
@@ -197,11 +209,18 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         # Get document templates (used for "copy with template" menu — guests
         # cannot create copies, so we skip the query entirely for them)
         document_templates = {}
-        from base.base_consumer import GuestUser
+        from base.base_consumer import GuestUser, TokenUser
 
+        # Guests cannot create copies; logged-in users (including TokenUsers) can
         if not isinstance(self.user, GuestUser):
+            # For TokenUser, use underlying _user for database query
+            query_user = (
+                self.user._user
+                if isinstance(self.user, TokenUser)
+                else self.user
+            )
             query = DocumentTemplate.objects.filter(
-                Q(user=self.user) | Q(user=None)
+                Q(user=query_user) | Q(user=None)
             ).order_by(F("user").desc(nulls_first=True))
             async for obj in query.aiterator():
                 document_templates[obj.import_id] = {
@@ -240,6 +259,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "avatar": owner_avatar,
                 "contacts": [],
             },
+            "accessed_via_token": isinstance(self.user, TokenUser),
         }
         await sync_to_async(WebsocketConsumer.serialize_content)(self.session)
         response["doc"] = {

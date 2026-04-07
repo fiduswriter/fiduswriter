@@ -154,10 +154,3 @@ Modal header
     vertical-align: middle;
     margin: 0;
 }
-
-.bib-dialog-header .ui-tabs-nav {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0;
-    height: auto;
-}

@@ -575,8 +575,8 @@ export class HeaderbarView {
                 menu => `
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}"
-                          title="${menu.tooltip}"
-                          aria-label="${menu.tooltip}"
+                          title="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
+                          aria-label="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
                           role="menuitem"
                           aria-haspopup="true">
                         ${this.getAccessKeyHTML(menu.title, menu.keys?.slice(-1))}
@@ -640,7 +640,7 @@ export class HeaderbarView {
         role="menuitem"
         ${menuItem.disabled && menuItem.disabled(this.editor) ? 'aria-disabled="true"' : ""}
         ${menuItem.selected && menuItem.selected(this.editor) ? 'aria-checked="true"' : ""}
-        ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
+        ${menuItem.tooltip ? (typeof menuItem.tooltip === "function" ? `title="${menuItem.tooltip(this.editor)}" aria-label="${menuItem.tooltip(this.editor)}"` : `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"`) : ""}>
             ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
         </span>`

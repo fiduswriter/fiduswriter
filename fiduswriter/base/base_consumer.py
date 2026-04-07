@@ -30,6 +30,42 @@ class GuestUser:
         return self.readable_name
 
 
+class TokenUser:
+    """
+    Represents a logged-in user who is accessing a document via a share token.
+    The user retains their real identity but also has token-based access rights.
+    """
+
+    def __init__(self, user, token, token_rights):
+        self._user = user
+        self.token = token
+        self.token_rights = token_rights
+        self.is_authenticated = True
+
+    @property
+    def id(self):
+        return self._user.id
+
+    @property
+    def pk(self):
+        return self._user.pk
+
+    @property
+    def username(self):
+        return self._user.username
+
+    def get_full_name(self):
+        return self._user.get_full_name()
+
+    @property
+    def readable_name(self):
+        return self._user.get_full_name() or self._user.username
+
+    def __getattr__(self, name):
+        """Delegate any undefined attributes to the underlying user object."""
+        return getattr(self._user, name)
+
+
 class BaseWebsocketConsumer(AsyncWebsocketConsumer):
 
     async def init(self):
@@ -38,19 +74,39 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
         self.messages = {"server": 0, "client": 0, "last_ten": []}
         self.endpoint = self.scope["path"]
         self.user = self.scope["user"]
-        if not self.user.is_authenticated:
-            # Check for a share token in the query string
-            token_str = self._extract_token_from_scope()
-            if token_str:
+        # Preserve original user for Presence records and other non-websocket uses.
+        # Fetch actual User instance to resolve UserLazyObject.
+        if self.user.is_authenticated:
+            from django.contrib.auth import get_user_model
+
+            User = get_user_model()
+            self.original_user = await User.objects.aget(pk=self.user.pk)
+        else:
+            self.original_user = self.user
+
+        # Check for a share token in the query string
+        token_str = self._extract_token_from_scope()
+        if token_str:
+            if self.user.is_authenticated:
+                # Logged-in user accessing via share link - wrap in TokenUser
+                token_user = await self._resolve_token_user(
+                    self.user, token_str
+                )
+                if token_user:
+                    self.user = token_user
+                else:
+                    # Token is invalid, but logged-in users can still access
+                    # if they have regular access rights
+                    pass
+            else:
+                # Unauthenticated user - try guest access
                 guest = await self._resolve_guest_user(token_str)
                 if guest:
                     self.user = guest
                 else:
                     await self.access_denied()
                     return False
-            else:
-                await self.access_denied()
-                return False
+
         logger.debug("Action:Opening Websocket")
         return True
 
@@ -80,6 +136,14 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
         """
         Validate a share token and return a GuestUser if valid.
         Subclasses should override this to provide token validation logic.
+        """
+        return None
+
+    async def _resolve_token_user(self, user, token_str):
+        """
+        Validate a share token for a logged-in user and return a TokenUser if valid.
+        The user retains their real identity but also has token-based access rights.
+        Subclasses should override this to provide document-specific token validation.
         """
         return None
 

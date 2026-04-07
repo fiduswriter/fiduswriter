@@ -2,11 +2,11 @@ import {avatarTemplate, escapeText} from "../../common"
 
 /** Outer wrapper with two tabs: "People" and "Share link" */
 export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
-    `<div class="fw-ar-tabs">
-        <span class="fw-ar-tab fw-ar-tab-active" data-tab="people">${gettext("People")}</span>
-        <span class="fw-ar-tab" data-tab="sharelink">${gettext("Share link")}</span>
-    </div>
-    <div class="fw-ar-tab-content" data-tab-content="people">
+    `<ul class="ui-tabs-nav">
+        <li class="tab-link current-tab"><a href="#people" class="tab-link-inner">${gettext("People")}</a></li>
+        <li class="tab-link"><a href="#sharelink" class="tab-link-inner">${gettext("Share link")}</a></li>
+    </ul>
+    <div id="people" class="tab-content ui-tabs-panel">
         <div id="my-contacts" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My contacts")}</h3>
             <table class="fw-data-table">
@@ -33,7 +33,7 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
             </table>
         </div>
     </div>
-    <div class="fw-ar-tab-content fw-ar-tab-hidden" data-tab-content="sharelink">
+    <div id="sharelink" class="tab-content ui-tabs-panel" style="display: none;">
         <div id="share-token-list">
             <p class="fw-ar-loading">${gettext("Loading…")}</p>
         </div>
@@ -80,25 +80,29 @@ export const createShareTokenDialogTemplate = () =>
         <tbody>
             <tr>
                 <th><label for="share-token-rights">${gettext("Rights")}</label></th>
-                <td>
-                    <select id="share-token-rights" class="fw-button fw-light">
+                <td class="entry-field">
+                    <select id="share-token-rights" class="fw-button fw-light fw-large">
                         <option value="read">${gettext("Read")}</option>
+                        <option value="read-without-comments">${gettext("Read without comments")}</option>
+                        <option value="review">${gettext("Review")}</option>
+                        <option value="review-tracked">${gettext("Review tracked")}</option>
                         <option value="comment">${gettext("Comment")}</option>
                         <option value="write">${gettext("Write")}</option>
                         <option value="write-tracked">${gettext("Write tracked")}</option>
                     </select>
+                    <div class="fw-select-arrow fa fa-caret-down"></div>
                 </td>
             </tr>
             <tr>
                 <th><label for="share-token-expires">${gettext("Expires")}</label></th>
-                <td>
-                    <input id="share-token-expires" type="date" class="fw-button fw-light" placeholder="${gettext("leave empty for no expiry")}" />
+                <td class="entry-field">
+                    <input id="share-token-expires" type="text" class="fw-light" placeholder="${gettext("YYYY-MM-DD or empty")}" pattern="\d{4}-\d{2}-\d{2}" />
                 </td>
             </tr>
             <tr>
                 <th><label for="share-token-note">${gettext("Note")}</label></th>
-                <td>
-                    <input id="share-token-note" type="text" class="fw-input" style="width:100%" placeholder="${gettext('optional label, e.g. "for reviewers"')}"/>
+                <td class="entry-field">
+                    <input id="share-token-note" type="text" class="fw-light" placeholder="${gettext('optional label, e.g. "for reviewers"')}"/>
                 </td>
             </tr>
         </tbody>

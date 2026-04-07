@@ -73,6 +73,7 @@
     position: relative;
     margin-top: 24px;
     overflow: hidden auto;
+    padding: 6px;
     max-height: calc(100vh - 133px);
     min-height: 20px;
     max-width: calc(100vw - 4px);

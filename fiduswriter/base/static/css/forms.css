@@ -74,6 +74,10 @@ textarea:focus {
     display: inline-block;
 }
 
+.entry-field select.fw-large {
+    width: 664px;
+}
+
 .ui-dialog input[type="text"]:not(.fw-inline),
 .ui-dialog input[type="password"]:not(.fw-inline),
 .ui-dialog input[type="search"]:not(.fw-inline),

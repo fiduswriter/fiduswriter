@@ -918,6 +918,64 @@ def validate_share_token(request, token):
     return JsonResponse(response, status=status)
 
 
+@login_required
+@ajax_required
+@require_POST
+def request_access(request):
+    """
+    Allow a logged-in user to request access to a document.
+    This is called when a user accesses a document via a share link and
+    wants to be added as a collaborator.
+    """
+
+    response = {}
+    document_id = int(request.POST.get("document_id"))
+    requested_rights = request.POST.get("rights", "read")
+
+    # Only allow upgrade requests (only 'write' makes sense as upgrade from read/comment)
+    valid_rights = ["write", "write-tracked", "comment", "review", "read"]
+    if requested_rights not in valid_rights:
+        return JsonResponse({"error": "Invalid access rights"}, status=400)
+
+    document = (
+        Document.objects.select_related("owner").filter(id=document_id).first()
+    )
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+
+    # Check if user already has access
+    user_access = AccessRight.objects.filter(
+        document=document, user=request.user
+    ).first()
+
+    if user_access:
+        # User already has access, no need to request
+        return JsonResponse(
+            {"success": True, "message": "You already have access"}
+        )
+
+    # Check if user is the owner
+    if document.owner == request.user:
+        return JsonResponse({"error": "You are the owner of this document"})
+
+    # Send notification to the document owner
+    owner = document.owner
+    link = request.build_absolute_uri(document.get_absolute_url())
+
+    emails.send_access_request_notification(
+        document_title=document.title,
+        requester_name=request.user.readable_name,
+        requester_email=request.user.email,
+        owner_name=owner.readable_name,
+        owner_email=owner.email,
+        link=link,
+        requested_rights=requested_rights,
+    )
+
+    response["success"] = True
+    return JsonResponse(response, status=201)
+
+
 # maintenance views
 @staff_member_required
 @ajax_required

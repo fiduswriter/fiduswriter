@@ -19,9 +19,16 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
         origin = headers.get(b"origin", b"").decode("utf-8")
         protocol = "wss://" if origin.startswith("https") else "ws://"
 
-        # Create presence asynchronously
+        # Only create Presence for authenticated Django users.
+        # Skip for GuestUser/TokenUser/anonymous users - they cannot be assigned to ForeignKey.
+        from base.base_consumer import GuestUser, TokenUser
+        from django.contrib.auth.models import AnonymousUser
+
+        if isinstance(self.user, (GuestUser, TokenUser, AnonymousUser)):
+            return
+
         self.presence = await Presence.objects.acreate(
-            user=self.user,
+            user=self.original_user,
             server_url=protocol + host + self.scope["path"],
         )
 

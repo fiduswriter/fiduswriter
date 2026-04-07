@@ -2,6 +2,7 @@ import {
     ContentMenu,
     Dialog,
     addAlert,
+    enableDatePicker,
     findTarget,
     postJson,
     setCheckableLabel
@@ -261,35 +262,12 @@ export class DocumentAccessRightsDialog {
         // Hide the share-link tab when multiple documents are selected
         if (!this.singleDocumentId) {
             const shareTab = this.dialog.dialogEl.querySelector(
-                ".fw-ar-tab[data-tab='sharelink']"
+                ".ui-tabs-nav .tab-link:last-child"
             )
             if (shareTab) {
                 shareTab.style.display = "none"
             }
         }
-    }
-
-    // ------------------------------------------------------------------ //
-    //  Share-link tab
-    // ------------------------------------------------------------------ //
-
-    activateTab(tabName) {
-        this.dialog.dialogEl
-            .querySelectorAll(".fw-ar-tab")
-            .forEach(el =>
-                el.classList.toggle(
-                    "fw-ar-tab-active",
-                    el.dataset.tab === tabName
-                )
-            )
-        this.dialog.dialogEl
-            .querySelectorAll(".fw-ar-tab-content")
-            .forEach(el =>
-                el.classList.toggle(
-                    "fw-ar-tab-hidden",
-                    el.dataset.tabContent !== tabName
-                )
-            )
     }
 
     loadShareTokens() {
@@ -310,7 +288,7 @@ export class DocumentAccessRightsDialog {
         const createDialog = new Dialog({
             title: gettext("Create share link"),
             id: "create-share-token-dialog",
-            width: 420,
+            width: 860,
             body: createShareTokenDialogTemplate(),
             buttons: [
                 {
@@ -365,6 +343,10 @@ export class DocumentAccessRightsDialog {
             ]
         })
         createDialog.open()
+        const expiresInput = createDialog.dialogEl.querySelector(
+            "#share-token-expires"
+        )
+        enableDatePicker(expiresInput, true)
     }
 
     revokeShareToken(tokenId, rowEl) {
@@ -454,15 +436,36 @@ export class DocumentAccessRightsDialog {
                     )
             })
         // Tab switching
-        this.dialog.dialogEl.querySelectorAll(".fw-ar-tab").forEach(tab => {
-            tab.addEventListener("click", () => {
-                const tabName = tab.dataset.tab
-                this.activateTab(tabName)
-                if (tabName === "sharelink" && this.singleDocumentId) {
-                    this.loadShareTokens()
-                }
+        this.dialog.dialogEl
+            .querySelectorAll(".ui-tabs-nav .tab-link a")
+            .forEach(linkEl => {
+                linkEl.addEventListener("click", event => {
+                    event.preventDefault()
+                    const href = linkEl.getAttribute("href")
+                    const tabName = href.substring(1)
+
+                    this.dialog.dialogEl
+                        .querySelectorAll(".tab-link")
+                        .forEach(tabLinkEl =>
+                            tabLinkEl.classList.remove("current-tab")
+                        )
+                    linkEl.parentNode.classList.add("current-tab")
+
+                    this.dialog.dialogEl
+                        .querySelectorAll(".tab-content")
+                        .forEach(contentEl => {
+                            if (contentEl.matches(href)) {
+                                contentEl.style.display = ""
+                            } else {
+                                contentEl.style.display = "none"
+                            }
+                        })
+
+                    if (tabName === "sharelink" && this.singleDocumentId) {
+                        this.loadShareTokens()
+                    }
+                })
             })
-        })
 
         // Share-link tab: create / copy / revoke
         this.dialog.dialogEl.addEventListener("click", event => {

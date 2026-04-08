@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
-from channels.testing import ChannelsLiveServerTestCase
+from testing.channels_patch import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 

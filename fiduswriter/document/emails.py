@@ -221,3 +221,84 @@ def send_comment_notification(
         fail_silently=True,
         html_message=html_email(body_html),
     )
+
+
+def send_access_request_notification(
+    document_title,
+    requester_name,
+    requester_email,
+    owner_name,
+    owner_email,
+    link,
+    requested_rights,
+):
+    if len(document_title) == 0:
+        document_title = _("Untitled")
+
+    message_text = _(
+        "Hey %(owner_name)s,\n%(requester_name)s has requested %(rights)s "
+        "access to the document '%(document_title)s'. "
+        "\nOpen the document to grant access: %(link)s"
+    ) % {
+        "owner_name": owner_name,
+        "requester_name": requester_name,
+        "rights": requested_rights,
+        "document_title": document_title,
+        "link": link,
+    }
+
+    body_html_intro = _(
+        "<p>Hey %(owner_name)s,<br>%(requester_name)s has requested "
+        "%(rights)s access to the document '%(document_title)s'.</p>"
+    ) % {
+        "owner_name": owner_name,
+        "requester_name": requester_name,
+        "rights": requested_rights,
+        "document_title": document_title,
+    }
+
+    body_html = (
+        "<h1>%(document_title)s %(access_request)s</h1>"
+        "%(body_html_intro)s"
+        "<table>"
+        "<tr><td>"
+        "%(Document)s"
+        "</td><td>"
+        "<b>%(document_title)s</b>"
+        "</td></tr>"
+        "<tr><td>"
+        "%(RequestedBy)s"
+        "</td><td>"
+        "%(requester_name)s"
+        "</td></tr>"
+        "<tr><td>"
+        "%(RequestedRights)s"
+        "</td><td>"
+        "%(requested_rights)s"
+        "</td></tr>"
+        "</table>"
+        '<div class="actions"><a class="button" href="%(link)s">'
+        "%(GrantAccess)s"
+        "</a></div>"
+    ) % {
+        "access_request": _("access request"),
+        "body_html_intro": body_html_intro,
+        "Document": _("Document"),
+        "document_title": document_title,
+        "RequestedBy": _("Requested by"),
+        "requester_name": requester_name,
+        "RequestedRights": _("Requested rights"),
+        "requested_rights": requested_rights,
+        "link": link,
+        "GrantAccess": _("Grant access"),
+    }
+
+    send_mail(
+        _("Access request: %(document_title)s")
+        % {"document_title": document_title},
+        message_text,
+        settings.DEFAULT_FROM_EMAIL,
+        [owner_email],
+        fail_silently=True,
+        html_message=html_email(body_html),
+    )

@@ -23,6 +23,7 @@ from document.models import (
     AccessRight,
     DocumentRevision,
     DocumentTemplate,
+    ShareToken,
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
@@ -37,6 +38,7 @@ from base.helpers.ws import get_url_base
 from user.models import UserInvite
 from . import emails
 from user.helpers import Avatars
+from document.helpers.token_access import get_token_access
 
 
 @login_required
@@ -714,22 +716,38 @@ def comment_notify(request):
     return JsonResponse(response, status=200)
 
 
-@login_required
 @ajax_required
 @require_POST
 def get_template_for_doc(request):
     doc_id = request.POST.get("id")
-    doc = (
-        Document.objects.filter(id=doc_id)
-        .filter(Q(owner=request.user) | Q(accessright__user=request.user))
-        .select_related("template")
-        .prefetch_related(
-            "template__exporttemplate_set",
-            "template__documentstyle_set",
-            "template__documentstyle_set__documentstylefile_set",
+    if request.user.is_authenticated:
+        doc = (
+            Document.objects.filter(id=doc_id)
+            .filter(Q(owner=request.user) | Q(accessright__user=request.user))
+            .select_related("template")
+            .prefetch_related(
+                "template__exporttemplate_set",
+                "template__documentstyle_set",
+                "template__documentstyle_set__documentstylefile_set",
+            )
+            .first()
         )
-        .first()
-    )
+    else:
+        token_str = request.POST.get("token", "")
+        token_doc, _rights = get_token_access(token_str)
+        if token_doc and str(token_doc.id) == str(doc_id):
+            doc = (
+                Document.objects.filter(id=doc_id)
+                .select_related("template")
+                .prefetch_related(
+                    "template__exporttemplate_set",
+                    "template__documentstyle_set",
+                    "template__documentstyle_set__documentstylefile_set",
+                )
+                .first()
+            )
+        else:
+            doc = None
     if doc is None:
         return JsonResponse({}, status=401)
     doc_template = doc.template
@@ -785,6 +803,177 @@ def get_ws_base(request):
         ws_url_base = get_url_base(request.headers["Origin"], conn)
     response["ws_base"] = ws_url_base
     return JsonResponse(response, status=200)
+
+
+@login_required
+@ajax_required
+@require_POST
+def create_share_token(request):
+    response = {}
+    document_id = int(request.POST.get("document_id"))
+    rights = request.POST.get("rights")
+    expires_at = request.POST.get("expires_at") or None
+    note = request.POST.get("note", "")
+
+    # Check if user owns the document
+    document = Document.objects.filter(
+        id=document_id, owner=request.user
+    ).first()
+    if not document:
+        return JsonResponse(
+            {"error": "Document not found or access denied"}, status=403
+        )
+
+    share_token = ShareToken.objects.create(
+        document_id=document_id,
+        rights=rights,
+        expires_at=expires_at,
+        note=note,
+        created_by=request.user,
+    )
+    share_url = request.build_absolute_uri(f"/share/{share_token.token}/")
+    response["token"] = str(share_token.token)
+    response["share_url"] = share_url
+    response["rights"] = share_token.rights
+    response["expires_at"] = share_token.expires_at
+    response["note"] = share_token.note
+    return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
+def list_share_tokens(request):
+    response = {}
+    document_id = int(request.POST.get("document_id"))
+
+    # Check if user owns the document
+    document = Document.objects.filter(
+        id=document_id, owner=request.user
+    ).first()
+    if not document:
+        return JsonResponse(
+            {"error": "Document not found or access denied"}, status=403
+        )
+
+    tokens = ShareToken.objects.filter(
+        document_id=document_id,
+        is_active=True,
+    )
+    response["tokens"] = [
+        {
+            "id": token.id,
+            "token": str(token.token),
+            "rights": token.rights,
+            "expires_at": token.expires_at,
+            "note": token.note,
+            "created_at": token.created_at,
+            "share_url": request.build_absolute_uri(f"/share/{token.token}/"),
+        }
+        for token in tokens
+    ]
+    return JsonResponse(response, status=200)
+
+
+@login_required
+@ajax_required
+@require_POST
+def revoke_share_token(request):
+    response = {}
+    token_id = int(request.POST.get("token_id"))
+    token = ShareToken.objects.filter(
+        id=token_id,
+        document__owner=request.user,
+    ).first()
+    if token:
+        token.is_active = False
+        token.save()
+        response["success"] = True
+    else:
+        response["success"] = False
+    return JsonResponse(response, status=200)
+
+
+def validate_share_token(request, token):
+    """Public endpoint to validate a share token without authentication."""
+    response = {}
+    document, rights = get_token_access(token)
+    if document:
+        response["document_id"] = document.id
+        response["rights"] = rights
+        response["title"] = document.title
+        # Include the WebSocket base so guests don't need a second
+        # authenticated request to get_ws_base.
+        if len(settings.PORTS) < 2:
+            ws_base = "/ws"
+        else:
+            from base.helpers.ws import get_url_base
+
+            conn = settings.PORTS[document.id % len(settings.PORTS)]
+            ws_base = get_url_base(request.headers.get("Origin", ""), conn)
+        response["ws_base"] = ws_base
+        status = 200
+    else:
+        status = 404
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def request_access(request):
+    """
+    Allow a logged-in user to request access to a document.
+    This is called when a user accesses a document via a share link and
+    wants to be added as a collaborator.
+    """
+
+    response = {}
+    document_id = int(request.POST.get("document_id"))
+    requested_rights = request.POST.get("rights", "read")
+
+    # Only allow upgrade requests (only 'write' makes sense as upgrade from read/comment)
+    valid_rights = ["write", "write-tracked", "comment", "review", "read"]
+    if requested_rights not in valid_rights:
+        return JsonResponse({"error": "Invalid access rights"}, status=400)
+
+    document = (
+        Document.objects.select_related("owner").filter(id=document_id).first()
+    )
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+
+    # Check if user already has access
+    user_access = AccessRight.objects.filter(
+        document=document, user=request.user
+    ).first()
+
+    if user_access:
+        # User already has access, no need to request
+        return JsonResponse(
+            {"success": True, "message": "You already have access"}
+        )
+
+    # Check if user is the owner
+    if document.owner == request.user:
+        return JsonResponse({"error": "You are the owner of this document"})
+
+    # Send notification to the document owner
+    owner = document.owner
+    link = request.build_absolute_uri(document.get_absolute_url())
+
+    emails.send_access_request_notification(
+        document_title=document.title,
+        requester_name=request.user.readable_name,
+        requester_email=request.user.email,
+        owner_name=owner.readable_name,
+        owner_email=owner.email,
+        link=link,
+        requested_rights=requested_rights,
+    )
+
+    response["success"] = True
+    return JsonResponse(response, status=201)
 
 
 # maintenance views

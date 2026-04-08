@@ -5,3 +5,71 @@
 #access-rights-dialog .edit-right {
     cursor: pointer;
 }
+
+/* People tab: keep existing side-by-side layout */
+#access-rights-dialog #people {
+    display: flex;
+    align-items: flex-start;
+}
+
+/* Share-link tab */
+#access-rights-dialog #sharelink {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#access-rights-dialog .share-token-row {
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background: #fafafa;
+}
+
+#access-rights-dialog .share-token-meta {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+#access-rights-dialog .share-token-url-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#access-rights-dialog .share-token-url-input {
+    flex: 1;
+    font-size: 0.82em;
+    padding: 3px 6px;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    background: #ffffff;
+    color: #444444;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#access-rights-dialog .fw-ar-loading,
+#access-rights-dialog .fw-ar-error,
+#access-rights-dialog .fw-ar-no-tokens {
+    color: #888888;
+    font-style: italic;
+    margin: 8px 0;
+}
+
+#access-rights-dialog .fw-ar-error {
+    color: #c0392b;
+}
+
+/* Allow overflow in create share token dialog so focus outlines aren't clipped */
+#create-share-token-dialog.ui-dialog {
+    overflow: visible;
+}
+
+#create-share-token-dialog .fw-button:focus,
+#create-share-token-dialog .fw-button:active {
+    outline: 5px solid var(--cs-6-background-focus);
+    outline-offset: 2px;
+}

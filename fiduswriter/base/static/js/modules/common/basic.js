@@ -394,3 +394,84 @@ const LANGUAGES = {
 export const langName = code => {
     return LANGUAGES[code] || code
 }
+
+/** Enable ISO date picker on a text input by overlaying a native date picker.
+ * The text input displays ISO format (YYYY-MM-DD) while using the native picker for selection.
+ * @param {HTMLInputElement} inputEl - The text input element to enhance
+ * @param {boolean} minToday - If true, sets min date to today (default: false)
+ */
+export const enableDatePicker = (inputEl, minToday = false) => {
+    const datePicker = document.createElement("input")
+    datePicker.type = "date"
+    if (minToday) {
+        datePicker.min = new Date().toISOString().split("T")[0]
+    }
+    datePicker.style.position = "absolute"
+    datePicker.style.opacity = "0"
+    datePicker.style.pointerEvents = "none"
+
+    const parent = inputEl.parentElement
+    parent.style.position = "relative"
+    parent.appendChild(datePicker)
+
+    inputEl.addEventListener("click", () => datePicker.showPicker())
+    datePicker.addEventListener("change", () => {
+        inputEl.value = datePicker.value
+    })
+
+    // Validate and normalize date on blur or form submission
+    const validateDate = () => {
+        const value = inputEl.value
+        if (!value) {
+            return // Empty is valid (optional field)
+        }
+        const date = new Date(value)
+        if (isNaN(date.getTime())) {
+            inputEl.value = "" // Invalid date, clear it
+            return
+        }
+        // Re-format to ensure consistent YYYY-MM-DD format
+        const yyyy = date.getFullYear()
+        const mm = String(date.getMonth() + 1).padStart(2, "0")
+        const dd = String(date.getDate()).padStart(2, "0")
+        inputEl.value = `${yyyy}-${mm}-${dd}`
+    }
+
+    inputEl.addEventListener("blur", validateDate)
+    inputEl.addEventListener("keydown", event => {
+        // Intercept Enter to validate before form submission
+        if (event.key === "Enter") {
+            validateDate()
+            return
+        }
+        // Allow typing when date picker is open (it takes focus)
+        if (document.activeElement === datePicker) {
+            return // Let datePicker handle all keys
+        }
+        const key = event.key
+        // Open picker on Enter
+        if (key === "Enter") {
+            event.preventDefault()
+            datePicker.showPicker()
+            return
+        }
+        // Allow editing: digits, dashes, backspace, delete, arrow keys
+        if (
+            /^\d$/.test(key) ||
+            key === "-" ||
+            key === "Backspace" ||
+            key === "Delete" ||
+            key === "ArrowLeft" ||
+            key === "ArrowRight" ||
+            key === "Tab"
+        ) {
+            return // Allow default behavior
+        }
+        // Block other keys
+        event.preventDefault()
+    })
+    // Allow typing while date picker is open
+    datePicker.addEventListener("keydown", event => {
+        event.stopPropagation()
+    })
+}

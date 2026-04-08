@@ -268,6 +268,45 @@ Fidus Writer uses Django Channels for WebSocket-based real-time collaboration:
 - **Consumers**: Handle WebSocket connections (e.g., `document/consumers.py`)
 - **Collaboration**: Multiple users can edit the same document simultaneously
 
+## Frontend Routing Architecture
+
+Fidus Writer is a single-page application (SPA). The Django backend serves the same HTML shell for all non-API paths; client-side JavaScript then decides what to render based on the URL.
+
+### Client-Side Router
+
+**File:** `base/static/js/modules/app/index.js`
+
+This file is the client-side router. It maps URL path segments to page modules:
+
+```javascript
+// Example route definition
+document: {
+    app: "document",           // Which Django app the page belongs to
+    requireLogin: true,        // If true, redirect unauthenticated users to login
+    open: pathnameParts => {   // Function to load and instantiate the page
+        return import("../editor")
+            .then(({Editor}) => new Editor(this.config, path, id))
+    }
+}
+```
+
+### Key Points
+
+1. **Django `urls.py` files are for API endpoints only** — they handle AJAX/fetch requests from the browser, not page navigation.
+
+2. **Page navigation is entirely client-side** — the router in `app/index.js` reads `window.location.pathname` and dynamically imports the appropriate page module.
+
+3. **The `share` route already exists** — it handles `/share/<token>/` URLs with `requireLogin: false`, opening the Editor directly without authentication.
+
+4. **Route `open()` functions** receive `pathnameParts` (the URL path split by `/`) and return either a page instance or a Promise that resolves to one.
+
+### Adding a New Page Route
+
+1. Add a new entry to the `routes` object in `app/index.js`
+2. Set `app` to the relevant Django app name
+3. Set `requireLogin` appropriately
+4. Implement `open()` to dynamically import and instantiate your page module
+
 ## Common Tasks
 
 ### Adding a New Django App
@@ -360,3 +399,9 @@ See http://fiduswriter.org/help-us/ for contribution guidelines.
 7. **Test database**: Tests automatically use a separate test database (testdb.sqlite3).
 
 8. **Service worker**: In production mode, a service worker is generated for offline support. This is handled automatically during transpilation.
+
+9. **Frontend routing is client-side**: The file `base/static/js/modules/app/index.js` is the router. Django `urls.py` files are **only for API endpoints** (AJAX/fetch calls). When adding a new user-facing page, you typically need to add a route in the frontend router, not a Django URL pattern.
+
+10. **SPA architecture**: The Django backend serves the same HTML shell for all non-API paths. The frontend JavaScript reads the URL and decides what to render. This means you cannot rely on Django URL patterns for page-level access control — use the `requireLogin` flag in the frontend route definition instead.
+
+11. **Editor can receive different identifier types**: The `Editor` class constructor accepts an `id` parameter that can be either a numeric document ID (normal flow) or a UUID string (share-token flow). Code that instantiates the Editor should be aware of both cases.

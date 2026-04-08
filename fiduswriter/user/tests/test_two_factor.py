@@ -289,6 +289,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
 
         time.sleep(2)
 
+        # Wait until a new TOTP 30-second window begins. The setup
+        # verification above called device.verify_token() which records
+        # the current timestep in last_t. If we attempt login in the
+        # same window, django_otp rejects the code as a replay.
+        current_time = datetime.datetime.now().timestamp()
+        seconds_into_window = int(current_time) % 30
+        time.sleep(30 - seconds_into_window + 1)
+
         # Logout
         self.logout_user(self.drivers[0], self.clients[0])
 

@@ -1,3 +1,4 @@
+import {addAlert, postJson} from "../../../common"
 import {CopyrightDialog} from "../../../copyright_dialog"
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
@@ -40,12 +41,60 @@ export const headerbarModel = () => ({
             order: 0,
             content: [
                 {
-                    title: gettext("Share"),
+                    title: editor =>
+                        editor.user.is_authenticated &&
+                        editor.docInfo.token &&
+                        !editor.docInfo.is_owner
+                            ? gettext("Request Access")
+                            : gettext("Share"),
                     type: "action",
                     //icon: 'share',
-                    tooltip: gettext("Share the document with other users."),
+                    tooltip: editor =>
+                        editor.user.is_authenticated &&
+                        editor.docInfo.token &&
+                        !editor.docInfo.is_owner
+                            ? gettext("Request to be added as a collaborator.")
+                            : gettext("Share the document with other users."),
                     order: 0,
                     action: editor => {
+                        if (
+                            editor.user.is_authenticated &&
+                            editor.docInfo.token &&
+                            !editor.docInfo.is_owner
+                        ) {
+                            // TokenUser requesting access
+                            postJson("/api/document/request_access/", {
+                                document_id: editor.docInfo.id,
+                                rights: "write"
+                            })
+                                .then(({json}) => {
+                                    if (json.success) {
+                                        addAlert(
+                                            "success",
+                                            gettext(
+                                                "Your access request has been sent to the document owner."
+                                            )
+                                        )
+                                    } else {
+                                        addAlert(
+                                            "error",
+                                            json.error ||
+                                                gettext(
+                                                    "Could not send access request."
+                                                )
+                                        )
+                                    }
+                                })
+                                .catch(() => {
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "Could not send access request."
+                                        )
+                                    )
+                                })
+                            return
+                        }
                         const dialog = new DocumentAccessRightsDialog(
                             [editor.docInfo.id],
                             editor.docInfo.owner.contacts,
@@ -57,31 +106,50 @@ export const headerbarModel = () => ({
                     },
                     disabled: editor => {
                         return (
-                            !editor.docInfo.is_owner || editor.app.isOffline()
+                            editor.app.isOffline() ||
+                            !editor.user.is_authenticated
                         )
                     }
                 },
                 {
-                    title: gettext("Close"),
+                    title: editor =>
+                        editor.user.is_authenticated
+                            ? gettext("Close")
+                            : gettext("Sign up / Log in"),
                     type: "action",
                     //icon: 'times-circle',
-                    tooltip: gettext(
-                        "Close the document and return to the document overview menu."
-                    ),
+                    tooltip: editor =>
+                        editor.user.is_authenticated
+                            ? gettext(
+                                  "Close the document and return to the document overview menu."
+                              )
+                            : gettext("Sign up for an account or log in."),
                     order: 1,
                     action: editor => {
-                        const folderPath = editor.docInfo.path.slice(
-                            0,
-                            editor.docInfo.path.lastIndexOf("/")
-                        )
-                        if (
-                            !folderPath.length &&
-                            editor.app.routes[""].app === "document"
-                        ) {
-                            editor.app.goTo("/")
+                        if (editor.user.is_authenticated) {
+                            const folderPath = editor.docInfo.path.slice(
+                                0,
+                                editor.docInfo.path.lastIndexOf("/")
+                            )
+                            if (
+                                !folderPath.length &&
+                                editor.app.routes[""].app === "document"
+                            ) {
+                                editor.app.goTo("/")
+                            } else {
+                                editor.app.goTo(`/documents${folderPath}/`)
+                            }
                         } else {
-                            editor.app.goTo(`/documents${folderPath}/`)
+                            if (
+                                settings_REGISTRATION_OPEN ||
+                                settings_SOCIALACCOUNT_OPEN
+                            ) {
+                                window.location.href = "/account/sign-up/"
+                            } else {
+                                window.location.href = "/"
+                            }
                         }
+                        return
                     },
                     disabled: editor => editor.app.isOffline()
                 },
@@ -107,7 +175,8 @@ export const headerbarModel = () => ({
                     },
                     disabled: editor =>
                         editor.docInfo.access_rights !== "write" ||
-                        editor.app.isOffline()
+                        editor.app.isOffline() ||
+                        !!editor.docInfo.token
                 },
                 {
                     title: gettext("Create copy"),
@@ -129,7 +198,10 @@ export const headerbarModel = () => ({
                             )
                             .catch(() => false)
                     },
-                    disabled: editor => editor.app.isOffline()
+                    disabled: editor =>
+                        editor.app.isOffline() ||
+                        (!!editor.docInfo.token &&
+                            !editor.user.is_authenticated)
                 },
                 {
                     title: gettext("Download"),
@@ -143,7 +215,9 @@ export const headerbarModel = () => ({
                         new ExportFidusFile(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
-                            editor.mod.db.imageDB
+                            editor.mod.db.imageDB,
+                            true,
+                            editor.docInfo.token
                         )
                     },
                     disabled: editor => editor.app.isOffline()

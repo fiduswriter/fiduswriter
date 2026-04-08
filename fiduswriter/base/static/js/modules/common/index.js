@@ -7,6 +7,7 @@ export {
     addAlert,
     langName,
     localizeDate,
+    enableDatePicker,
     noSpaceTmp,
     escapeText,
     unescapeText,

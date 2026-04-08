@@ -85,7 +85,21 @@ export class ModCollabDoc {
 
         this.mod.editor.clientTimeAdjustment = Date.now() - time
 
+        const token = this.mod.editor.docInfo.token
         this.mod.editor.docInfo = doc_info
+        this.mod.editor.docInfo.token = token
+        // For guests, update user object with the token UUID (stable identity)
+        // and session_id (for display). Token UUID persists across reconnections.
+        if (!this.mod.editor.user.is_authenticated) {
+            const sessionId = doc_info.session_id
+            this.mod.editor.user = {
+                id: token, // stable — same token UUID even after reconnect
+                username: `guest${sessionId}`, // display name per session
+                name: `Guest ${sessionId}`,
+                is_authenticated: false
+            }
+        }
+        this.mod.editor.docInfo.token = token
         this.mod.editor.docInfo.version = doc.v
         this.mod.editor.docInfo.updated = new Date()
         this.mod.editor.mod.db.bibDB.setDB(doc.bibliography)

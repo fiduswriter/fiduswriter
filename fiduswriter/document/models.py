@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.core import checks
@@ -259,6 +260,22 @@ class AccessRight(models.Model):
             "rights": self.rights,
             "doc_id": self.document.id,
         }
+
+
+class ShareToken(models.Model):
+    token = models.UUIDField(unique=True, default=uuid.uuid4)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    rights = models.CharField(choices=RIGHTS_CHOICES, max_length=21)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
+    expires_at = models.DateTimeField(null=True, blank=True)
+    note = models.CharField(max_length=255, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("document", "rights", "created_by")
 
 
 def revision_filename(instance, filename):

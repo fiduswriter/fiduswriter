@@ -520,17 +520,27 @@ export class HeaderbarView {
             // header is closed
             return "<div></div>"
         }
-        const folderPath = this.editor.docInfo.path.slice(
-            0,
-            this.editor.docInfo.path.lastIndexOf("/")
-        )
-        const exitUrl =
-            !folderPath.length && this.editor.app.routes[""].app === "document"
-                ? "/"
-                : `/documents${encodeURI(folderPath)}/`
+        let exitUrl
+        if (this.editor.docInfo.token) {
+            // Guest user — send to sign-up if open, otherwise to login
+            exitUrl =
+                settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN
+                    ? "/account/sign-up/"
+                    : "/"
+        } else {
+            const folderPath = this.editor.docInfo.path.slice(
+                0,
+                this.editor.docInfo.path.lastIndexOf("/")
+            )
+            exitUrl =
+                !folderPath.length &&
+                this.editor.app.routes[""].app === "document"
+                    ? "/"
+                    : `/documents${encodeURI(folderPath)}/`
+        }
         return `<div>
-            <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
-                <a href="${exitUrl}" aria-label="${gettext("Close document")}" title="${gettext("Close document")}">
+            <div id="close-document-top" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
+                <a href="${exitUrl}" aria-label="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close document")}" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
                     <i class="fa fa-times"></i>
                 </a>
             </div>
@@ -565,8 +575,8 @@ export class HeaderbarView {
                 menu => `
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}"
-                          title="${menu.tooltip}"
-                          aria-label="${menu.tooltip}"
+                          title="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
+                          aria-label="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
                           role="menuitem"
                           aria-haspopup="true">
                         ${this.getAccessKeyHTML(menu.title, menu.keys?.slice(-1))}
@@ -630,7 +640,7 @@ export class HeaderbarView {
         role="menuitem"
         ${menuItem.disabled && menuItem.disabled(this.editor) ? 'aria-disabled="true"' : ""}
         ${menuItem.selected && menuItem.selected(this.editor) ? 'aria-checked="true"' : ""}
-        ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
+        ${menuItem.tooltip ? (typeof menuItem.tooltip === "function" ? `title="${menuItem.tooltip(this.editor)}" aria-label="${menuItem.tooltip(this.editor)}"` : `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"`) : ""}>
             ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
         </span>`

@@ -6,6 +6,8 @@
 # Password 'admin' is used unless defined by ADMIN_PASSWORD
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from allauth.account.models import EmailAddress
+
 from base.management import BaseCommand
 
 from os import getenv
@@ -29,6 +31,9 @@ class Command(BaseCommand):
                 admin.is_active = True
                 admin.is_admin = True
                 admin.save()
+                EmailAddress.objects.create(
+                    user=admin, email=email, verified=True, primary=True
+                )
         else:
             self.stdout.write(
                 "Admin accounts can only be initialized if no accounts exist"

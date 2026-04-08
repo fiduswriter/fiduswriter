@@ -8,11 +8,13 @@ export class DocumentTemplateExporter {
     constructor(
         id,
         getUrl = "/api/document/admin/get_template/",
-        download = true
+        download = true,
+        token = false
     ) {
         this.id = id
         this.getUrl = getUrl
         this.download = download
+        this.token = token
 
         this.zipFileName = false
         this.docVersion = false
@@ -21,7 +23,10 @@ export class DocumentTemplateExporter {
     }
 
     init() {
-        return postJson(this.getUrl, {id: this.id}).then(({json}) => {
+        const params = this.token
+            ? {id: this.id, token: this.token}
+            : {id: this.id}
+        return postJson(this.getUrl, params).then(({json}) => {
             this.docVersion = json.doc_version
             this.zipFileName = `${createSlug(json.title)}.fidustemplate`
             this.textFiles.push({

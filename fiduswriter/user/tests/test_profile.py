@@ -5,7 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from channels.testing import ChannelsLiveServerTestCase
+from testing.channels_patch import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.common.exceptions import StaleElementReferenceException
 
@@ -52,7 +52,8 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
     def assertInfoAlert(self, message):
         i = 0
         message_found = False
-        while i < 100:
+        max_attempts = max(100, int(self.wait_time / 0.1))
+        while i < max_attempts:
             i = i + 1
             try:
                 if (
@@ -67,7 +68,7 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 else:
                     time.sleep(0.1)
                     continue
-            except StaleElementReferenceException:
+            except (StaleElementReferenceException, NoSuchElementException):
                 time.sleep(0.1)
                 continue
         self.assertTrue(message_found)

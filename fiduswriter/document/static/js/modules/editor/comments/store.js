@@ -148,7 +148,9 @@ export class ModCommentStore {
     }
 
     addLocalComment(commentData, local) {
+        // Don't add to pastParticipants if user is undefined (e.g. new unsaved comments)
         if (
+            commentData.user !== undefined &&
             !this.mod.editor.mod.collab.pastParticipants.find(
                 participant => participant.id === commentData.user
             )

@@ -183,6 +183,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     async def send_styles(self):
         doc_db = self.session["doc"]
+
+        if "styles" in self.session:
+            response = self.session["styles"]
+            await self.send_message(response)
+            return
+
         response = dict()
         response["type"] = "styles"
 
@@ -233,6 +239,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             "document_styles": [obj["fields"] for obj in document_styles],
             "document_templates": document_templates,
         }
+        self.session["styles"] = response
         await self.send_message(response)
 
     async def unfixable(self):

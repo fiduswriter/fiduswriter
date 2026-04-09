@@ -254,36 +254,71 @@ export class Editor {
                 new ModFootnotes(this)
                 return this.activateFidusPlugins()
             })
+            .then(() => {
+                // Render and initialize editor before fetching REST data
+                // (the ProseMirror view must exist for receiveDocument to work)
+                this.render()
+                activateWait(true)
+                this.initEditor()
+                // Fetch document data via REST before WebSocket connects
+                const stylesPayload = {id: this.docInfo.id}
+                if (this.docInfo.token) {
+                    stylesPayload.token = this.docInfo.token
+                }
+                const stylesPromise = postJson(
+                    "/api/document/get_doc_styles/",
+                    stylesPayload
+                )
+                const docDataPromise = postJson(
+                    "/api/document/get_doc_data/",
+                    stylesPayload
+                )
+                return Promise.all([stylesPromise, docDataPromise])
+            })
+            .then(([stylesResult, docResult]) => {
+                // Apply styles
+                this.mod.documentTemplate.setStyles(stylesResult.json)
+                // Load document from REST data
+                this.mod.collab.doc.receiveDocument(docResult.json)
+                return Promise.resolve()
+            })
             .catch(error => {
-                // Handle token validation failure
-                deactivateWait()
-                const errorDialog = new Dialog({
-                    title: gettext("Invalid Share Link"),
-                    id: "invalid_share_link_dialog",
-                    body: gettext(
-                        "This share link has expired or is invalid. Please ask the document owner for a new link."
-                    ),
-                    buttons: [
-                        {
-                            text: gettext("OK"),
-                            classes: "fw-dark",
-                            click: () => {
-                                window.location.href = "/"
+                // Only show "Invalid Share Link" for token validation errors.
+                // Other errors (REST failures, etc.) should not show this dialog.
+                if (error.message === "Invalid or expired share link") {
+                    deactivateWait()
+                    const errorDialog = new Dialog({
+                        title: gettext("Invalid Share Link"),
+                        id: "invalid_share_link_dialog",
+                        body: gettext(
+                            "This share link has expired or is invalid. Please ask the document owner for a new link."
+                        ),
+                        buttons: [
+                            {
+                                text: gettext("OK"),
+                                classes: "fw-dark",
+                                click: () => {
+                                    window.location.href = "/"
+                                }
                             }
-                        }
-                    ],
-                    canClose: false
-                })
-                errorDialog.open()
+                        ],
+                        canClose: false
+                    })
+                    errorDialog.open()
+                } else {
+                    deactivateWait()
+                    console.error("Editor initialization failed:", error)
+                }
                 return Promise.reject(error)
             })
-            .then(() =>
-                this.docInfo.wsBase
+            .then(() => {
+                const wsBasePromise = this.docInfo.wsBase
                     ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
                     : postJson("/api/document/get_ws_base/", {
                           id: this.docInfo.id
                       })
-            )
+                return wsBasePromise
+            })
             .then(({json}) => {
                 let resubScribed = false
                 // Include token in WebSocket path if present
@@ -304,6 +339,11 @@ export class Editor {
                         if (this.ws.connectionCount) {
                             message.connection = this.ws.connectionCount
                         }
+                        // Send the document version so the server can reconcile
+                        // (skip diffs we already have from the REST response)
+                        if (this.docInfo.version) {
+                            message.v = this.docInfo.version
+                        }
                         return message
                     },
                     resubScribed: () => {
@@ -318,7 +358,20 @@ export class Editor {
                         this.mod.footnotes.fnEditor.renderAllFootnotes()
                         this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
                     },
-                    restartMessage: () => ({type: "get_document"}), // Too many messages have been lost and we need to restart
+                    restartMessage: () => {
+                        // Too many messages have been lost. Re-subscribe with
+                        // current version so the server can reconcile.
+                        const message = {
+                            type: "subscribe"
+                        }
+                        if (this.ws.connectionCount) {
+                            message.connection = this.ws.connectionCount
+                        }
+                        if (this.docInfo.version) {
+                            message.v = this.docInfo.version
+                        }
+                        return message
+                    },
                     messagesElement: () =>
                         this.dom.querySelector("#unobtrusive-messages"),
                     warningNotAllSent: gettext(
@@ -345,11 +398,32 @@ export class Editor {
                                     resubScribed = false
                                 }
                                 break
-                            case "styles":
-                                this.mod.documentTemplate.setStyles(data.styles)
+                            case "session_info":
+                                this.docInfo.session_id = data.session_id
+                                // Update access rights from server
+                                if (data.access_right) {
+                                    this.docInfo.access_rights =
+                                        data.access_right
+                                }
+                                // Update guest user identity with session_id
+                                if (!this.user.is_authenticated) {
+                                    this.user = {
+                                        id: this.docInfo.token,
+                                        username: `guest${data.session_id}`,
+                                        name: `Guest ${data.session_id}`,
+                                        is_authenticated: false
+                                    }
+                                }
                                 break
-                            case "doc_data":
-                                this.mod.collab.doc.receiveDocument(data)
+                            case "refetch_doc":
+                                // Server cannot reconcile version via diffs.
+                                // Re-fetch the document via REST and reload.
+                                postJson("/api/document/get_doc_data/", {
+                                    id: this.docInfo.id,
+                                    token: this.docInfo.token
+                                }).then(({json}) => {
+                                    this.mod.collab.doc.receiveDocument(json)
+                                })
                                 break
                             case "confirm_version":
                                 this.mod.collab.doc.cancelCurrentlyCheckingVersion()
@@ -497,10 +571,9 @@ export class Editor {
                         }
                     }
                 })
-                this.render()
-                activateWait(true)
-                this.initEditor()
-
+                // Initialize the WebSocket connection
+                this.ws.init()
+                // Add the close listener
                 this.ws.ws.addEventListener("close", () => {
                     // Listen to close event and update the headerbar and toolbar view.
                     if (this.menu.toolbarViews) {
@@ -675,7 +748,6 @@ export class Editor {
         new ModComments(this)
         new ModNavigator(this)
         this.mod.navigator.init()
-        this.ws.init()
     }
 
     activateFidusPlugins() {

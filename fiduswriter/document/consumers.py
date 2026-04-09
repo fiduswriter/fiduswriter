@@ -4,26 +4,24 @@ import atexit
 import logging
 import gc
 import asyncio
-from time import mktime, time
 from copy import deepcopy
 
 from asgiref.sync import sync_to_async
 from django.db.utils import DatabaseError
-from django.db.models import F, Q
+
 from django.conf import settings
 from django.db.utils import IntegrityError
 
 from base.helpers.ws import get_url_base
 from document.helpers.session_user_info import SessionUserInfo
 from document import prosemirror
-from document.helpers.serializers import PythonWithURLSerializer
+
 from base.base_consumer import BaseWebsocketConsumer, GuestUser, TokenUser
 from document.models import (
     COMMENT_ONLY,
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
-    DocumentTemplate,
 )
 from document.helpers.token_access import get_token_access
 from usermedia.models import Image, DocumentImage, UserImage
@@ -106,7 +104,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         response = {"type": "confirm_diff", "rid": rid}
         await self.send_message(response)
 
-    async def subscribe(self, connection_count=0):
+    async def subscribe(self, connection_count=0, client_version=None):
         # Create a new instance
         self.user_info = SessionUserInfo(self.user)
 
@@ -129,7 +127,6 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             self.session = WebsocketConsumer.sessions[doc_db.id]
             self.id = max(self.session["participants"]) + 1
             self.session["participants"][self.id] = self
-            template = False
             if isinstance(self.user, GuestUser):
                 self.user.readable_name = f"Guest {self.id}"
         else:
@@ -157,21 +154,24 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             WebsocketConsumer.sessions[doc_db.id] = self.session
             if isinstance(self.user, GuestUser):
                 self.user.readable_name = f"Guest {self.id}"
-            if self.user_info.access_rights == "write":
-                template = True
-            else:
-                template = False
         logger.debug(
             f"Action:Participant ID Assigned. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}"
         )
         await self.send_message({"type": "subscribed"})
         if connection_count < 1:
-            await self.send_styles()
-            await self.send_document(False, template)
-        if connection_count >= 1:
-            # If the user is reconnecting pass along access_rights to
-            # front end to compare it with previous rights.
+            # Send session_id so the client knows its participant ID
+            await self.send_message(
+                {
+                    "type": "session_info",
+                    "session_id": self.id,
+                    "access_right": self.user_info.access_rights,
+                }
+            )
+            # Reconcile version: send missing diffs if client is behind
+            await self.reconcile_version(client_version)
+        else:
+            # Reconnecting user — send access rights for comparison
             await self.send_message(
                 {
                     "type": "access_right",
@@ -181,201 +181,62 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if await self.can_communicate():
             await self.handle_participant_update()
 
-    async def send_styles(self):
-        doc_db = self.session["doc"]
+    async def unfixable(self):
+        await self.send_message({"type": "refetch_doc"})
 
-        if "styles" in self.session:
-            response = self.session["styles"]
-            await self.send_message(response)
+    async def reconcile_version(self, client_version):
+        """Reconcile the client's document version with the server's.
+
+        If the client fetched the document via REST before connecting, it may
+        have a version that is behind the server's current version (because
+        other users submitted diffs in the meantime). This method sends the
+        missing diffs to catch the client up.
+
+        If client_version is None, the client didn't send a version — we
+        ask it to re-fetch the document via REST.
+        """
+        server_version = self.session["doc"].version
+
+        if client_version is None:
+            # Client didn't send a version — ask it to re-fetch via REST
+            await self.send_message({"type": "refetch_doc"})
             return
 
-        response = dict()
-        response["type"] = "styles"
-
-        # Create serializer and get data
-        serializer = PythonWithURLSerializer()
-
-        # These operations could be expensive - run them in parallel
-        export_temps_task = sync_to_async(serializer.serialize)(
-            doc_db.template.exporttemplate_set.all(),
-            fields=["file_type", "template_file", "title"],
-        )
-
-        document_styles_task = sync_to_async(serializer.serialize)(
-            doc_db.template.documentstyle_set.all(),
-            use_natural_foreign_keys=True,
-            fields=["title", "slug", "contents", "documentstylefile_set"],
-        )
-
-        # Run queries in parallel using asyncio.gather
-        export_temps, document_styles = await asyncio.gather(
-            export_temps_task, document_styles_task
-        )
-
-        # Get document templates (used for "copy with template" menu — guests
-        # cannot create copies, so we skip the query entirely for them)
-        document_templates = {}
-        from base.base_consumer import GuestUser, TokenUser
-
-        # Guests cannot create copies; logged-in users (including TokenUsers) can
-        if not isinstance(self.user, GuestUser):
-            # For TokenUser, use underlying _user for database query
-            query_user = (
-                self.user._user
-                if isinstance(self.user, TokenUser)
-                else self.user
-            )
-            query = DocumentTemplate.objects.filter(
-                Q(user=query_user) | Q(user=None)
-            ).order_by(F("user").desc(nulls_first=True))
-            async for obj in query.aiterator():
-                document_templates[obj.import_id] = {
-                    "title": obj.title,
-                    "id": obj.id,
+        if client_version == server_version:
+            # Client is up to date — nothing to send
+            await self.send_message(
+                {
+                    "type": "confirm_version",
+                    "v": server_version,
                 }
-
-        response["styles"] = {
-            "export_templates": [obj["fields"] for obj in export_temps],
-            "document_styles": [obj["fields"] for obj in document_styles],
-            "document_templates": document_templates,
-        }
-        self.session["styles"] = response
-        await self.send_message(response)
-
-    async def unfixable(self):
-        await self.send_document()
-
-    async def send_document(self, messages=False, template=False):
-        response = dict()
-        response["type"] = "doc_data"
-        doc_owner = self.session["doc"].owner
-        avatars = Avatars()
-
-        # Use async avatar URL generation
-        owner_avatar = await avatars.get_url_async(doc_owner)
-
-        response["doc_info"] = {
-            "id": self.session["doc"].id,
-            "is_owner": self.user_info.is_owner,
-            "access_rights": self.user_info.access_rights,
-            "path": self.user_info.path,
-            "owner": {
-                "id": doc_owner.id,
-                "name": doc_owner.readable_name,
-                "username": doc_owner.username,
-                "avatar": owner_avatar,
-                "contacts": [],
-            },
-            "accessed_via_token": isinstance(self.user, TokenUser),
-        }
-        await sync_to_async(WebsocketConsumer.serialize_content)(self.session)
-        response["doc"] = {
-            "v": self.session["doc"].version,
-            "content": self.session["doc"].content,
-            "bibliography": self.session["doc"].bibliography,
-            "images": {},
-        }
-        if template:
-            response["doc"]["template"] = {
-                "id": self.session["doc"].template.id,
-                "content": self.session["doc"].template.content,
-            }
-        if messages:
-            response["m"] = messages
-        response["time"] = int(time()) * 1000
-
-        # Get document images
-        doc_id = self.session["doc"].id
-        async for dimage in (
-            DocumentImage.objects.filter(document_id=doc_id)
-            .select_related("image")
-            .only(
-                "id",
-                "title",
-                "copyright",
-                "image__id",
-                "image__image",
-                "image__file_type",
-                "image__added",
-                "image__checksum",
-                "image__thumbnail",
-                "image__height",
-                "image__width",
             )
-            .aiterator()
-        ):
-            image = dimage.image
-            field_obj = {
-                "id": image.id,
-                "title": dimage.title,
-                "copyright": dimage.copyright,
-                "image": image.image.url,
-                "file_type": image.file_type,
-                "added": mktime(image.added.timetuple()) * 1000,
-                "checksum": image.checksum,
-                "cats": [],
-            }
-            if image.thumbnail:
-                field_obj["thumbnail"] = image.thumbnail.url
-                field_obj["height"] = image.height
-                field_obj["width"] = image.width
-            response["doc"]["images"][image.id] = field_obj
+            return
 
-        if self.user_info.access_rights == "read-without-comments":
-            response["doc"]["comments"] = []
-        elif self.user_info.access_rights in ["review", "review-tracked"]:
-            # Reviewer should only get his/her own comments
-            filtered_comments = {}
-            for key, value in list(self.session["doc"].comments.items()):
-                if value["user"] == self.user_info.user.id:
-                    filtered_comments[key] = value
-            response["doc"]["comments"] = filtered_comments
-        else:
-            response["doc"]["comments"] = self.session["doc"].comments
-
-        # Get contacts asynchronously
-        contacts = []
-        async for contact in (
-            doc_owner.contacts.all()
-            .only("id", "username", "first_name", "last_name")
-            .aiterator()
-        ):
-            contacts.append(contact)
-
-        # Get all avatars in parallel
-        contact_avatars = await asyncio.gather(
-            *[avatars.get_url_async(contact) for contact in contacts]
-        )
-
-        # Now add contacts with their avatars
-        for i, contact in enumerate(contacts):
-            contact_object = {
-                "id": contact.id,
-                "name": contact.readable_name,
-                "username": contact.get_username(),
-                "avatar": contact_avatars[i],
-                "type": "user",
-            }
-            response["doc_info"]["owner"]["contacts"].append(contact_object)
-
-        if self.user_info.is_owner:
-            invites = []
-            async for invite in doc_owner.invites_by.all().aiterator():
-                invites.append(invite)
-            for contact in invites:
-                contact_object = {
-                    "id": contact.id,
-                    "name": contact.username,
-                    "username": contact.username,
-                    "avatar": None,
-                    "type": "userinvite",
-                }
-                response["doc_info"]["owner"]["contacts"].append(
-                    contact_object
+        if client_version < server_version:
+            diffs_behind = server_version - client_version
+            if (
+                client_version + len(self.session["doc"].diffs)
+                >= server_version
+            ):
+                # We have enough diffs to catch the client up
+                messages = self.session["doc"].diffs[-diffs_behind:]
+                for msg in messages:
+                    new_message = msg.copy()
+                    new_message["server_fix"] = True
+                    await self.send_message(new_message)
+                await self.send_message(
+                    {
+                        "type": "confirm_version",
+                        "v": server_version,
+                    }
                 )
+            else:
+                # Too many diffs — client needs a full document reset
+                await self.unfixable()
+            return
 
-        response["doc_info"]["session_id"] = self.id
-        await self.send_message(response)
+        # client_version > server_version should not happen
+        await self.unfixable()
 
     async def reject_message(self, message):
         if message["type"] == "diff":
@@ -391,9 +252,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"ParticipantID:{self.id}"
             )
             return
-        if message["type"] == "get_document":
-            await self.send_document()
-        elif (
+        if (
             message["type"] == "participant_update"
             and await self.can_communicate()
         ):
@@ -699,7 +558,16 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"number of messages to be resent:{number_diffs}"
             )
             messages = self.session["doc"].diffs[-number_diffs:]
-            await self.send_document(messages)
+            for msg in messages:
+                new_message = msg.copy()
+                new_message["server_fix"] = True
+                await self.send_message(new_message)
+            await self.send_message(
+                {
+                    "type": "confirm_version",
+                    "v": dv,
+                }
+            )
             return
         else:
             logger.debug(

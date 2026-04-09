@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_POST
 from django.db import transaction
 from django.core.files import File
@@ -802,6 +803,265 @@ def get_ws_base(request):
         conn = settings.PORTS[doc_id % len(settings.PORTS)]
         ws_url_base = get_url_base(request.headers["Origin"], conn)
     response["ws_base"] = ws_url_base
+    return JsonResponse(response, status=200)
+
+
+@ajax_required
+@require_POST
+@cache_control(max_age=3600)
+def get_doc_styles(request):
+    """Return styles data for a document (export templates, document styles,
+    document templates). This was previously sent via WebSocket on subscribe.
+    """
+    doc_id = request.POST.get("id")
+    token_str = request.POST.get("token", "")
+
+    # Resolve the document and access rights
+    if request.user.is_authenticated:
+        doc = (
+            Document.objects.filter(id=doc_id)
+            .filter(Q(owner=request.user) | Q(accessright__user=request.user))
+            .select_related("template")
+            .first()
+        )
+        # is_owner = doc and doc.owner_id == request.user.id
+        if not doc:
+            # Check token access for authenticated users
+            token_doc, rights = get_token_access(token_str)
+            if token_doc and str(token_doc.id) == str(doc_id):
+                doc = token_doc
+            else:
+                return JsonResponse({}, status=401)
+    else:
+        # Unauthenticated user — must use token
+        token_doc, rights = get_token_access(token_str)
+        if token_doc and str(token_doc.id) == str(doc_id):
+            doc = token_doc
+        else:
+            return JsonResponse({}, status=401)
+
+    doc_template = doc.template
+    serializer = PythonWithURLSerializer()
+
+    export_templates = serializer.serialize(
+        doc_template.exporttemplate_set.all(),
+        fields=["file_type", "template_file", "title"],
+    )
+    document_styles = serializer.serialize(
+        doc_template.documentstyle_set.all(),
+        use_natural_foreign_keys=True,
+        fields=["title", "slug", "contents", "documentstylefile_set"],
+    )
+
+    # Document templates (for "copy with template" menu)
+    # Skip for unauthenticated/guest users — they cannot create copies
+    document_templates = {}
+    if request.user.is_authenticated:
+        query = DocumentTemplate.objects.filter(
+            Q(user=request.user) | Q(user=None)
+        ).order_by(F("user").desc(nulls_first=True))
+        for obj in query:
+            document_templates[obj.import_id] = {
+                "title": obj.title,
+                "id": obj.id,
+            }
+
+    response = {
+        "export_templates": [obj["fields"] for obj in export_templates],
+        "document_styles": [obj["fields"] for obj in document_styles],
+        "document_templates": document_templates,
+    }
+    return JsonResponse(response, status=200)
+
+
+@ajax_required
+@require_POST
+def get_doc_data(request):
+    """Return document data for the editor. This was previously sent via
+    WebSocket as the 'doc_data' message. The client will reconcile any
+    version drift via the WebSocket after connecting."""
+    doc_id = request.POST.get("id")
+    token_str = request.POST.get("token", "")
+
+    # Resolve document and access rights (same logic as get_doc_styles)
+    doc = None
+    access_rights = "read"
+    is_owner = False
+    path = ""
+    # user_id is used for comment filtering (review/review-tracked rights).
+    # For authenticated users it's their numeric ID. For guest users
+    # accessing via a share token, it's the token UUID string (matching
+    # how the WebSocket consumer identifies GuestUser).
+    user_id = None
+
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        doc = (
+            Document.objects.filter(id=doc_id)
+            .filter(Q(owner=request.user) | Q(accessright__user=request.user))
+            .select_related("owner", "template")
+            .first()
+        )
+        if doc:
+            if doc.owner_id == request.user.id:
+                is_owner = True
+                access_rights = "write"
+                path = doc.path
+            else:
+                ar = AccessRight.objects.filter(
+                    document_id=doc.id, user=request.user
+                ).first()
+                if ar:
+                    access_rights = ar.rights
+                    path = ar.path
+        if not doc and token_str:
+            token_doc, rights = get_token_access(token_str)
+            if token_doc and str(token_doc.id) == str(doc_id):
+                doc = token_doc
+                access_rights = rights
+                is_owner = False
+                path = ""
+    else:
+        if token_str:
+            token_doc, rights = get_token_access(token_str)
+            if token_doc and str(token_doc.id) == str(doc_id):
+                doc = token_doc
+                access_rights = rights
+                is_owner = False
+                path = ""
+                user_id = (
+                    token_str  # Guest users are identified by their token
+                )
+
+    if not doc:
+        return JsonResponse({}, status=401)
+
+    doc_owner = doc.owner
+    avatars = Avatars()
+    owner_avatar = avatars.get_url(doc_owner)
+
+    # Build doc_info
+    doc_info = {
+        "id": doc.id,
+        "is_owner": is_owner,
+        "access_rights": access_rights,
+        "path": path,
+        "owner": {
+            "id": doc_owner.id,
+            "name": doc_owner.readable_name,
+            "username": doc_owner.username,
+            "avatar": owner_avatar,
+            "contacts": [],
+        },
+        "accessed_via_token": bool(token_str),
+    }
+
+    # Build doc data
+    doc_data = {
+        "v": doc.version,
+        "content": doc.content,
+        "bibliography": doc.bibliography,
+        "images": {},
+    }
+
+    # Include template for write-access users.
+    #
+    # The consumer currently sends the template only for the first
+    # write-access user in a new session (when no other participants are
+    # present). The REST view cannot know whether a WebSocket session
+    # already exists, so we always include the template for write-access
+    # users. This is safe because:
+    #
+    # - If this is the first user, the template is needed for the
+    #   adjust-doc-to-template logic in loadDocument().
+    # - If the document has already been initialized, loadDocument() will
+    #   find no differences between the document and template, so the
+    #   adjustment is a no-op.
+    # - The template content is static (set by admins) and does not change
+    #   during editing, so the DB value is always current.
+    if access_rights == "write":
+        doc_data["template"] = {
+            "id": doc.template.id,
+            "content": doc.template.content,
+        }
+
+    # Get document images
+    for dimage in (
+        DocumentImage.objects.filter(document_id=doc.id)
+        .select_related("image")
+        .only(
+            "id",
+            "title",
+            "copyright",
+            "image__id",
+            "image__image",
+            "image__file_type",
+            "image__added",
+            "image__checksum",
+            "image__thumbnail",
+            "image__height",
+            "image__width",
+        )
+    ):
+        image = dimage.image
+        field_obj = {
+            "id": image.id,
+            "title": dimage.title,
+            "copyright": dimage.copyright,
+            "image": image.image.url,
+            "file_type": image.file_type,
+            "added": int(image.added.timestamp()) * 1000,
+            "checksum": image.checksum,
+            "cats": [],
+        }
+        if image.thumbnail:
+            field_obj["thumbnail"] = image.thumbnail.url
+            field_obj["height"] = image.height
+            field_obj["width"] = image.width
+        doc_data["images"][image.id] = field_obj
+
+    # Filter comments based on access rights
+    if access_rights == "read-without-comments":
+        doc_data["comments"] = []
+    elif access_rights in ["review", "review-tracked"]:
+        filtered_comments = {}
+        for key, value in doc.comments.items():
+            if value["user"] == user_id:
+                filtered_comments[key] = value
+        doc_data["comments"] = filtered_comments
+    else:
+        doc_data["comments"] = doc.comments
+
+    # Get owner contacts
+    for contact in doc_owner.contacts.all().only(
+        "id", "username", "first_name", "last_name"
+    ):
+        contact_object = {
+            "id": contact.id,
+            "name": contact.readable_name,
+            "username": contact.get_username(),
+            "avatar": avatars.get_url(contact),
+            "type": "user",
+        }
+        doc_info["owner"]["contacts"].append(contact_object)
+
+    # Get invites (only for owner)
+    if is_owner:
+        for invite in doc_owner.invites_by.all():
+            contact_object = {
+                "id": invite.id,
+                "name": invite.username,
+                "username": invite.username,
+                "avatar": None,
+                "type": "userinvite",
+            }
+            doc_info["owner"]["contacts"].append(contact_object)
+
+    response = {
+        "doc_info": doc_info,
+        "doc": doc_data,
+        "time": int(time.time()) * 1000,
+    }
     return JsonResponse(response, status=200)
 
 

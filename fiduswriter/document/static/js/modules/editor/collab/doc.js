@@ -29,6 +29,11 @@ export class ModCollabDoc {
     }
 
     checkVersion() {
+        // Guard: WebSocket may not be initialized yet (e.g. during
+        // loadDocument before the WS connector is created).
+        if (!this.mod.editor.ws) {
+            return
+        }
         this.mod.editor.ws.send(() => {
             if (
                 this.currentlyCheckingVersion | !this.mod.editor.docInfo.version
@@ -90,7 +95,12 @@ export class ModCollabDoc {
         this.mod.editor.docInfo.token = token
         // For guests, update user object with the token UUID (stable identity)
         // and session_id (for display). Token UUID persists across reconnections.
-        if (!this.mod.editor.user.is_authenticated) {
+        // session_id may not be present when loading from REST (it comes via
+        // the session_info WebSocket message). Only update if available.
+        if (
+            !this.mod.editor.user.is_authenticated &&
+            doc_info.session_id !== undefined
+        ) {
             const sessionId = doc_info.session_id
             this.mod.editor.user = {
                 id: token, // stable — same token UUID even after reconnect
@@ -190,6 +200,11 @@ export class ModCollabDoc {
     }
 
     sendToCollaborators() {
+        // Guard: WebSocket may not be initialized yet (e.g. during
+        // loadDocument before the WS connector is created).
+        if (!this.mod.editor.ws) {
+            return
+        }
         // Handle either doc change and comment updates OR caret update. Priority
         // for doc change/comment update.
         this.mod.editor.ws.send(() => {

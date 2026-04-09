@@ -187,20 +187,29 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     async def reconcile_version(self, client_version):
         """Reconcile the client's document version with the server's.
 
-        If the client fetched the document via REST before connecting, it may
-        have a version that is behind the server's current version (because
-        other users submitted diffs in the meantime). This method sends the
-        missing diffs to catch the client up.
-
-        If client_version is None, the client didn't send a version — we
-        ask it to re-fetch the document via REST.
+        Called on subscribe (with the version from the subscribe message) and
+        when the client sends a check_version message. If the client is
+        behind, sends the missing diffs. If too many diffs are missing or
+        the client didn't send a version, asks the client to re-fetch via
+        REST.
         """
         server_version = self.session["doc"].version
 
         if client_version is None:
             # Client didn't send a version — ask it to re-fetch via REST
+            logger.debug(
+                f"Action:Reconcile version — no client version. "
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f"ParticipantID:{self.id}"
+            )
             await self.send_message({"type": "refetch_doc"})
             return
+
+        logger.debug(
+            f"Action:Reconcile version. URL:{self.endpoint} "
+            f"User:{self.user.id} ParticipantID:{self.id} "
+            f"Client version:{client_version} Server version:{server_version}"
+        )
 
         if client_version == server_version:
             # Client is up to date — nothing to send
@@ -219,6 +228,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 >= server_version
             ):
                 # We have enough diffs to catch the client up
+                logger.debug(
+                    f"Action:Sending {diffs_behind} diffs to catch client up. "
+                    f"URL:{self.endpoint} User:{self.user.id} "
+                    f"ParticipantID:{self.id}"
+                )
                 messages = self.session["doc"].diffs[-diffs_behind:]
                 for msg in messages:
                     new_message = msg.copy()
@@ -231,11 +245,22 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     }
                 )
             else:
+                logger.debug(
+                    f"Action:Client too far behind ({diffs_behind} diffs, "
+                    f"only {len(self.session['doc'].diffs)} stored). "
+                    f"URL:{self.endpoint} User:{self.user.id} "
+                    f"ParticipantID:{self.id}"
+                )
                 # Too many diffs — client needs a full document reset
                 await self.unfixable()
             return
 
         # client_version > server_version should not happen
+        logger.debug(
+            f"Action:Client version ahead of server. "
+            f"URL:{self.endpoint} User:{self.user.id} "
+            f"ParticipantID:{self.id}"
+        )
         await self.unfixable()
 
     async def reject_message(self, message):
@@ -260,7 +285,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif message["type"] == "chat" and await self.can_communicate():
             await self.handle_chat(message)
         elif message["type"] == "check_version":
-            await self.check_version(message)
+            await self.reconcile_version(message["v"])
         elif message["type"] == "selection_change":
             await self.handle_selection_change(message)
         elif message["type"] == "diff" and await self.can_update_document():
@@ -526,58 +551,6 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
             )
-
-    async def check_version(self, message):
-        pv = message["v"]
-        dv = self.session["doc"].version
-        logger.debug(
-            f"Action:Checking version of document. URL:{self.endpoint} "
-            f"User:{self.user.id} ParticipantID:{self.id} "
-            f"Client document version:{pv} Server document version:{dv}"
-        )
-        if pv == dv:
-            response = {
-                "type": "confirm_version",
-                "v": pv,
-            }
-            await self.send_message(response)
-            return
-        elif pv > dv:
-            logger.debug(
-                f"Action:User is on a newer version of the document. "
-                f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
-            )
-            await self.unfixable()
-            return
-        elif pv + len(self.session["doc"].diffs) >= dv:
-            number_diffs = dv - pv
-            logger.debug(
-                f"Action:Resending document diffs. URL:{self.endpoint} "
-                f"User:{self.user.id} ParticipantID:{self.id}"
-                f"number of messages to be resent:{number_diffs}"
-            )
-            messages = self.session["doc"].diffs[-number_diffs:]
-            for msg in messages:
-                new_message = msg.copy()
-                new_message["server_fix"] = True
-                await self.send_message(new_message)
-            await self.send_message(
-                {
-                    "type": "confirm_version",
-                    "v": dv,
-                }
-            )
-            return
-        else:
-            logger.debug(
-                f"Action:User is on a very old version of the document. "
-                f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
-            )
-            # Client has a version that is too old
-            await self.unfixable()
-            return
 
     async def can_update_document(self):
         return self.user_info.access_rights in CAN_UPDATE_DOCUMENT

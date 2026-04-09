@@ -956,6 +956,16 @@ def get_doc_data(request):
         "accessed_via_token": bool(token_str),
     }
 
+    # Initialize document content from template if empty (same logic as
+    # WebSocket consumer's subscribe handler)
+    if "type" not in doc.content:
+        doc.content = deepcopy(doc.template.content)
+        if "type" not in doc.content:
+            doc.content["type"] = "doc"
+        if "content" not in doc.content:
+            doc.content["content"] = [{"type": "title"}]
+        doc.save()
+
     # Build doc data
     doc_data = {
         "v": doc.version,

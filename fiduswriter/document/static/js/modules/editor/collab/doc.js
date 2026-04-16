@@ -147,6 +147,13 @@ export class ModCollabDoc {
             this.mod.editor.scrollIdIntoView(locationHash.slice(1))
         }
         this.mod.editor.waitingForDocument = false
+        // Update the header bar to reflect the loaded document's title.
+        // This is needed because setStyles() (which calls headerView.update())
+        // runs before loadDocument(), so the header still shows "Untitled"
+        // from the empty initial document.
+        if (this.mod.editor.menu.headerView) {
+            this.mod.editor.menu.headerView.update()
+        }
         if (doc.template) {
             // We received the template. That means we are the first user present with write access.
             // We will adjust the document to the template if necessary.

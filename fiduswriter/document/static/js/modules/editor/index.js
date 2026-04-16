@@ -731,6 +731,10 @@ export class Editor {
                     if (tr.steps.length) {
                         this.docInfo.updated = new Date()
                     }
+                    // Update the header bar to reflect any title changes
+                    if (this.menu.headerView) {
+                        this.menu.headerView.update()
+                    }
 
                     this.mod.collab.doc.sendToCollaborators()
                 }

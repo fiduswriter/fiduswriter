@@ -283,9 +283,14 @@ export class Editor {
                 return Promise.resolve()
             })
             .catch(error => {
-                // Only show "Invalid Share Link" for token validation errors.
-                // Other errors (REST failures, etc.) should not show this dialog.
-                if (error.message === "Invalid or expired share link") {
+                // Show "Invalid Share Link" for explicit token errors and
+                // for 401 responses when a token was part of the request
+                // (e.g. token expired/revoked between validation and the
+                // REST fetch).
+                if (
+                    error.message === "Invalid or expired share link" ||
+                    (error.status === 401 && this.docInfo.token)
+                ) {
                     deactivateWait()
                     const errorDialog = new Dialog({
                         title: gettext("Invalid Share Link"),
@@ -418,12 +423,23 @@ export class Editor {
                             case "refetch_doc":
                                 // Server cannot reconcile version via diffs.
                                 // Re-fetch the document via REST and reload.
-                                postJson("/api/document/get_doc_data/", {
-                                    id: this.docInfo.id,
-                                    token: this.docInfo.token
-                                }).then(({json}) => {
-                                    this.mod.collab.doc.receiveDocument(json)
-                                })
+                                {
+                                    const refetchParams = {
+                                        id: this.docInfo.id
+                                    }
+                                    if (this.docInfo.token) {
+                                        refetchParams.token =
+                                            this.docInfo.token
+                                    }
+                                    postJson(
+                                        "/api/document/get_doc_data/",
+                                        refetchParams
+                                    ).then(({json}) => {
+                                        this.mod.collab.doc.receiveDocument(
+                                            json
+                                        )
+                                    })
+                                }
                                 break
                             case "confirm_version":
                                 this.mod.collab.doc.cancelCurrentlyCheckingVersion()

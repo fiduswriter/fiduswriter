@@ -808,7 +808,7 @@ def get_ws_base(request):
 
 @ajax_required
 @require_POST
-@cache_control(max_age=3600)
+@cache_control(private=True, max_age=3600)
 def get_doc_styles(request):
     """Return styles data for a document (export templates, document styles,
     document templates). This was previously sent via WebSocket on subscribe.
@@ -824,23 +824,29 @@ def get_doc_styles(request):
             .select_related("template")
             .first()
         )
-        # is_owner = doc and doc.owner_id == request.user.id
         if not doc:
             # Check token access for authenticated users
-            token_doc, rights = get_token_access(token_str)
+            token_doc, _rights = get_token_access(token_str)
             if token_doc and str(token_doc.id) == str(doc_id):
                 doc = token_doc
             else:
                 return JsonResponse({}, status=401)
     else:
         # Unauthenticated user — must use token
-        token_doc, rights = get_token_access(token_str)
+        token_doc, _rights = get_token_access(token_str)
         if token_doc and str(token_doc.id) == str(doc_id):
             doc = token_doc
         else:
             return JsonResponse({}, status=401)
 
-    doc_template = doc.template
+    # Fetch template with prefetched relations to avoid N+1 queries when
+    # PythonWithURLSerializer iterates documentstyle_set and their file sets.
+    doc_template = (
+        DocumentTemplate.objects.prefetch_related(
+            "exporttemplate_set",
+            "documentstyle_set__documentstylefile_set",
+        ).get(id=doc.template_id)
+    )
     serializer = PythonWithURLSerializer()
 
     export_templates = serializer.serialize(
@@ -874,6 +880,30 @@ def get_doc_styles(request):
     return JsonResponse(response, status=200)
 
 
+_RIGHTS_ORDER = [
+    "write",
+    "write-tracked",
+    "comment",
+    "review-tracked",
+    "review",
+    "read",
+    "read-without-comments",
+]
+
+
+def _better_rights(rights1, rights2):
+    """Return the more permissive of two access-rights strings."""
+    try:
+        idx1 = _RIGHTS_ORDER.index(rights1)
+    except ValueError:
+        return rights2
+    try:
+        idx2 = _RIGHTS_ORDER.index(rights2)
+    except ValueError:
+        return rights1
+    return rights1 if idx1 <= idx2 else rights2
+
+
 @ajax_required
 @require_POST
 def get_doc_data(request):
@@ -888,6 +918,7 @@ def get_doc_data(request):
     access_rights = "read"
     is_owner = False
     path = ""
+    accessed_via_token = False
     # user_id is used for comment filtering (review/review-tracked rights).
     # For authenticated users it's their numeric ID. For guest users
     # accessing via a share token, it's the token UUID string (matching
@@ -914,13 +945,28 @@ def get_doc_data(request):
                 if ar:
                     access_rights = ar.rights
                     path = ar.path
-        if not doc and token_str:
+            # If a share token is also present, check whether it grants
+            # better rights than the user's direct access (mirrors the
+            # TokenUser behaviour in SessionUserInfo.init_access).
+            if token_str:
+                token_doc, token_rights = get_token_access(token_str)
+                if (
+                    token_doc
+                    and str(token_doc.id) == str(doc_id)
+                    and token_rights
+                ):
+                    better = _better_rights(access_rights, token_rights)
+                    if better != access_rights:
+                        access_rights = better
+                        accessed_via_token = True
+        elif token_str:
             token_doc, rights = get_token_access(token_str)
             if token_doc and str(token_doc.id) == str(doc_id):
                 doc = token_doc
                 access_rights = rights
                 is_owner = False
                 path = ""
+                accessed_via_token = True
     else:
         if token_str:
             token_doc, rights = get_token_access(token_str)
@@ -929,6 +975,7 @@ def get_doc_data(request):
                 access_rights = rights
                 is_owner = False
                 path = ""
+                accessed_via_token = True
                 user_id = (
                     token_str  # Guest users are identified by their token
                 )
@@ -953,7 +1000,7 @@ def get_doc_data(request):
             "avatar": owner_avatar,
             "contacts": [],
         },
-        "accessed_via_token": bool(token_str),
+        "accessed_via_token": accessed_via_token,
     }
 
     # Initialize document content from template if empty (same logic as

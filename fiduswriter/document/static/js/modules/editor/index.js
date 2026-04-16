@@ -276,10 +276,10 @@ export class Editor {
                 return Promise.all([stylesPromise, docDataPromise])
             })
             .then(([stylesResult, docResult]) => {
-                // Load document from REST data
-                this.mod.collab.doc.receiveDocument(docResult.json)
                 // Apply styles
                 this.mod.documentTemplate.setStyles(stylesResult.json)
+                // Load document from REST data
+                this.mod.collab.doc.receiveDocument(docResult.json)
                 return Promise.resolve()
             })
             .catch(error => {

@@ -19,6 +19,7 @@ from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
+from document import prosemirror
 from document.models import (
     Document,
     AccessRight,
@@ -958,7 +959,9 @@ def get_doc_data(request):
 
     # Initialize document content from template if empty (same logic as
     # WebSocket consumer's subscribe handler)
+    initialized_from_template = False
     if "type" not in doc.content:
+        initialized_from_template = True
         doc.content = deepcopy(doc.template.content)
         if "type" not in doc.content:
             doc.content["type"] = "doc"
@@ -969,7 +972,9 @@ def get_doc_data(request):
     # Build doc data
     doc_data = {
         "v": doc.version,
-        "content": doc.content,
+        "content": prosemirror.to_mini_json(
+            prosemirror.from_json(doc.content)
+        ),
         "bibliography": doc.bibliography,
         "images": {},
     }
@@ -989,7 +994,7 @@ def get_doc_data(request):
     #   adjustment is a no-op.
     # - The template content is static (set by admins) and does not change
     #   during editing, so the DB value is always current.
-    if access_rights == "write":
+    if access_rights == "write" and initialized_from_template:
         doc_data["template"] = {
             "id": doc.template.id,
             "content": doc.template.content,

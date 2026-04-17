@@ -26,7 +26,7 @@ const answerCommentTemplate = ({
                 </div>
            </div>`
                 : `<div class="comment-text-wrapper">
-               <p class="comment-p">${serializeComment(answer.answer).html}</p>
+               <div class="comment-p">${serializeComment(answer.answer).html}</div>
            </div>
         <div class="comment-collapsible-buttons">
                 ${

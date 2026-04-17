@@ -255,16 +255,16 @@ export class Editor {
                 return this.activateFidusPlugins()
             })
             .then(() => {
-                // Render and initialize editor before fetching REST data
-                // (the ProseMirror view must exist for receiveDocument to work)
-                this.render()
                 activateWait(true)
-                this.initEditor()
-                // Fetch document data via REST before WebSocket connects
                 const stylesPayload = {id: this.docInfo.id}
                 if (this.docInfo.token) {
                     stylesPayload.token = this.docInfo.token
                 }
+                const wsBasePromise = this.docInfo.wsBase
+                    ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
+                    : postJson("/api/document/get_ws_base/", {
+                          id: this.docInfo.id
+                      })
                 const stylesPromise = postJson(
                     "/api/document/get_doc_styles/",
                     stylesPayload
@@ -273,14 +273,11 @@ export class Editor {
                     "/api/document/get_doc_data/",
                     stylesPayload
                 )
-                return Promise.all([stylesPromise, docDataPromise])
-            })
-            .then(([stylesResult, docResult]) => {
-                // Apply styles
-                this.mod.documentTemplate.setStyles(stylesResult.json)
-                // Load document from REST data
-                this.mod.collab.doc.receiveDocument(docResult.json)
-                return Promise.resolve()
+                return Promise.all([
+                    wsBasePromise,
+                    stylesPromise,
+                    docDataPromise
+                ])
             })
             .catch(error => {
                 // Only show "Invalid Share Link" for token validation errors.
@@ -311,23 +308,17 @@ export class Editor {
                 }
                 return Promise.reject(error)
             })
-            .then(() => {
-                const wsBasePromise = this.docInfo.wsBase
-                    ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
-                    : postJson("/api/document/get_ws_base/", {
-                          id: this.docInfo.id
-                      })
-                return wsBasePromise
-            })
-            .then(({json}) => {
+            .then(([wsResult, stylesResult, docResult]) => {
                 let resubScribed = false
+                this.render()
+                this.initEditor()
                 // Include token in WebSocket path if present
                 let wsPath = `/document/${this.docInfo.id}/`
                 if (this.docInfo.token) {
                     wsPath += `?token=${this.docInfo.token}`
                 }
                 this.ws = new WebSocketConnector({
-                    base: json.ws_base,
+                    base: wsResult.json.ws_base,
                     path: wsPath,
                     appLoaded: () => this.view.state.plugins.length,
                     anythingToSend: () => sendableSteps(this.view.state),
@@ -341,7 +332,7 @@ export class Editor {
                         }
                         // Send the document version so the server can reconcile
                         // (skip diffs we already have from the REST response)
-                        if (this.docInfo.version) {
+                        if (this.docInfo.version !== undefined) {
                             message.v = this.docInfo.version
                         }
                         return message
@@ -359,18 +350,9 @@ export class Editor {
                         this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
                     },
                     restartMessage: () => {
-                        // Too many messages have been lost. Re-subscribe with
-                        // current version so the server can reconcile.
-                        const message = {
-                            type: "subscribe"
-                        }
-                        if (this.ws.connectionCount) {
-                            message.connection = this.ws.connectionCount
-                        }
-                        if (this.docInfo.version) {
-                            message.v = this.docInfo.version
-                        }
-                        return message
+                        // Too many websocket messages were lost; ask the server
+                        // for a full document payload so merge logic can run.
+                        return {type: "get_document"}
                     },
                     messagesElement: () =>
                         this.dom.querySelector("#unobtrusive-messages"),
@@ -415,6 +397,9 @@ export class Editor {
                                     }
                                 }
                                 break
+                            case "doc_data":
+                                this.mod.collab.doc.receiveDocument(data)
+                                break
                             case "refetch_doc":
                                 // Server cannot reconcile version via diffs.
                                 // Re-fetch the document via REST and reload.
@@ -431,6 +416,7 @@ export class Editor {
                                     this.mod.collab.doc.checkVersion()
                                     return
                                 }
+                                this.mod.collab.doc.confirmVersion(data["v"])
                                 this.mod.collab.doc.enableDiffSending()
                                 break
                             case "selection_change":
@@ -571,6 +557,8 @@ export class Editor {
                         }
                     }
                 })
+                this.mod.documentTemplate.setStyles(stylesResult.json)
+                this.mod.collab.doc.receiveDocument(docResult.json)
                 // Initialize the WebSocket connection
                 this.ws.init()
                 // Add the close listener
@@ -702,6 +690,11 @@ export class Editor {
                     schema: this.schema
                 }),
                 handleDOMEvents: {
+                    mousedown: (view, _event) => {
+                        this.currentView = this.view
+                        view.focus()
+                        return false
+                    },
                     focus: (view, _event) => {
                         if (!setFocus) {
                             this.currentView = this.view

@@ -107,8 +107,17 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "button.button[type=submit]"
         ).click()
-        template_links = self.driver.find_elements(
-            By.CSS_SELECTOR, "#result_list tbody a"
+        template_links = WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: (
+                links
+                if len(
+                    links := driver.find_elements(
+                        By.CSS_SELECTOR, "#result_list tbody a"
+                    )
+                )
+                == 2
+                else False
+            )
         )
         self.assertEqual(2, len(template_links))
         self.driver.find_element(By.CSS_SELECTOR, ".field-title a").click()

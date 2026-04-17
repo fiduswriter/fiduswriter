@@ -4,7 +4,10 @@ import atexit
 import logging
 import gc
 import asyncio
+import multiprocessing
+from time import mktime, time
 from copy import deepcopy
+from dataclasses import dataclass
 
 from asgiref.sync import sync_to_async
 from django.db.utils import DatabaseError
@@ -30,9 +33,91 @@ from user.helpers import Avatars
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class SessionParticipantSnapshot:
+    id: int
+    messages: dict
+
+
 class WebsocketConsumer(BaseWebsocketConsumer):
     sessions = dict()
+    runtime_sessions = dict()
+    snapshot_sessions = dict()
+    snapshot_manager = None
     history_length = 1000  # Only keep the last 1000 diffs
+
+    @classmethod
+    def get_session(cls, document_id):
+        return cls.runtime_sessions.get(document_id)
+
+    @classmethod
+    def set_session(cls, document_id, session):
+        cls.runtime_sessions[document_id] = session
+        cls.sync_session_snapshot(document_id)
+
+    @classmethod
+    def remove_session(cls, document_id):
+        cls.runtime_sessions.pop(document_id, None)
+        cls.snapshot_sessions.pop(document_id, None)
+        try:
+            cls.sessions.pop(document_id, None)
+        except (AttributeError, FileNotFoundError):
+            pass
+
+    @classmethod
+    def sync_session_snapshot(cls, document_id):
+        session = cls.get_session(document_id)
+        if not session:
+            cls.remove_session(document_id)
+            return
+        manager = getattr(cls.sessions, "_manager", None)
+        if not manager and not isinstance(cls.sessions, dict):
+            if cls.snapshot_manager is None:
+                cls.snapshot_manager = multiprocessing.Manager()
+            manager = cls.snapshot_manager
+        if manager:
+            snapshot = cls.snapshot_sessions.get(document_id)
+            if not snapshot:
+                snapshot = {"participants": manager.dict()}
+                cls.snapshot_sessions[document_id] = snapshot
+            participants = snapshot["participants"]
+            active_ids = set(session["participants"])
+            for session_id in list(participants.keys()):
+                if session_id not in active_ids:
+                    participants.pop(session_id, None)
+            for session_id, waiter in session["participants"].items():
+                if session_id not in participants:
+                    participants[session_id] = manager.Namespace()
+                participant = participants[session_id]
+                last_ten = manager.list()
+                for item in waiter.messages["last_ten"]:
+                    last_ten.append(deepcopy(item))
+                participant.id = waiter.id
+                participant.messages = manager.dict(
+                    {
+                        "server": waiter.messages["server"],
+                        "client": waiter.messages["client"],
+                        "last_ten": last_ten,
+                    }
+                )
+            cls.sessions[document_id] = snapshot
+            return
+        try:
+            cls.sessions[document_id] = {
+                "participants": {
+                    session_id: SessionParticipantSnapshot(
+                        id=waiter.id, messages=deepcopy(waiter.messages)
+                    )
+                    for session_id, waiter in session["participants"].items()
+                }
+            }
+        except (TypeError, FileNotFoundError):
+            pass
+
+    async def send_message(self, message):
+        await super().send_message(message)
+        if hasattr(self, "document_id"):
+            self.sync_session_snapshot(self.document_id)
 
     async def connect(self):
         self.document_id = int(
@@ -115,18 +200,17 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.access_denied()
             return
 
-        if (
-            doc_db.id in WebsocketConsumer.sessions
-            and len(WebsocketConsumer.sessions[doc_db.id]["participants"]) > 0
-        ):
+        existing_session = WebsocketConsumer.get_session(doc_db.id)
+        if existing_session and len(existing_session["participants"]) > 0:
             logger.debug(
                 f"Action:Serving already opened document. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f" ParticipantID:{self.id}"
             )
-            self.session = WebsocketConsumer.sessions[doc_db.id]
+            self.session = existing_session
             self.id = max(self.session["participants"]) + 1
             self.session["participants"][self.id] = self
+            WebsocketConsumer.sync_session_snapshot(doc_db.id)
             if isinstance(self.user, GuestUser):
                 self.user.readable_name = f"Guest {self.id}"
         else:
@@ -151,7 +235,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "participants": {0: self},
                 "last_saved_version": doc_db.version,
             }
-            WebsocketConsumer.sessions[doc_db.id] = self.session
+            WebsocketConsumer.set_session(doc_db.id, self.session)
             if isinstance(self.user, GuestUser):
                 self.user.readable_name = f"Guest {self.id}"
         logger.debug(
@@ -182,7 +266,129 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.handle_participant_update()
 
     async def unfixable(self):
-        await self.send_message({"type": "refetch_doc"})
+        await self.send_document()
+
+    async def send_document(self, messages=False, template=False):
+        response = {"type": "doc_data"}
+        doc_owner = self.session["doc"].owner
+        avatars = Avatars()
+
+        owner_avatar = await avatars.get_url_async(doc_owner)
+
+        response["doc_info"] = {
+            "id": self.session["doc"].id,
+            "is_owner": self.user_info.is_owner,
+            "access_rights": self.user_info.access_rights,
+            "path": self.user_info.path,
+            "owner": {
+                "id": doc_owner.id,
+                "name": doc_owner.readable_name,
+                "username": doc_owner.username,
+                "avatar": owner_avatar,
+                "contacts": [],
+            },
+            "accessed_via_token": isinstance(self.user, TokenUser),
+        }
+        await sync_to_async(WebsocketConsumer.serialize_content)(self.session)
+        response["doc"] = {
+            "v": self.session["doc"].version,
+            "content": self.session["doc"].content,
+            "bibliography": self.session["doc"].bibliography,
+            "images": {},
+        }
+        if template:
+            response["doc"]["template"] = {
+                "id": self.session["doc"].template.id,
+                "content": self.session["doc"].template.content,
+            }
+        if messages:
+            response["m"] = messages
+        response["time"] = int(time()) * 1000
+
+        doc_id = self.session["doc"].id
+        async for dimage in (
+            DocumentImage.objects.filter(document_id=doc_id)
+            .select_related("image")
+            .only(
+                "id",
+                "title",
+                "copyright",
+                "image__id",
+                "image__image",
+                "image__file_type",
+                "image__added",
+                "image__checksum",
+                "image__thumbnail",
+                "image__height",
+                "image__width",
+            )
+            .aiterator()
+        ):
+            image = dimage.image
+            field_obj = {
+                "id": image.id,
+                "title": dimage.title,
+                "copyright": dimage.copyright,
+                "image": image.image.url,
+                "file_type": image.file_type,
+                "added": mktime(image.added.timetuple()) * 1000,
+                "checksum": image.checksum,
+                "cats": [],
+            }
+            if image.thumbnail:
+                field_obj["thumbnail"] = image.thumbnail.url
+                field_obj["height"] = image.height
+                field_obj["width"] = image.width
+            response["doc"]["images"][image.id] = field_obj
+
+        if self.user_info.access_rights == "read-without-comments":
+            response["doc"]["comments"] = []
+        elif self.user_info.access_rights in ["review", "review-tracked"]:
+            filtered_comments = {}
+            for key, value in list(self.session["doc"].comments.items()):
+                if value["user"] == self.user_info.user.id:
+                    filtered_comments[key] = value
+            response["doc"]["comments"] = filtered_comments
+        else:
+            response["doc"]["comments"] = self.session["doc"].comments
+
+        contacts = []
+        async for contact in (
+            doc_owner.contacts.all()
+            .only("id", "username", "first_name", "last_name")
+            .aiterator()
+        ):
+            contacts.append(contact)
+
+        contact_avatars = await asyncio.gather(
+            *[avatars.get_url_async(contact) for contact in contacts]
+        )
+        for contact, avatar in zip(contacts, contact_avatars):
+            response["doc_info"]["owner"]["contacts"].append(
+                {
+                    "id": contact.id,
+                    "name": contact.readable_name,
+                    "username": contact.get_username(),
+                    "avatar": avatar,
+                    "type": "user",
+                }
+            )
+
+        if self.user_info.is_owner:
+            async for invite in (
+                doc_owner.invites_by.all().only("id", "username").aiterator()
+            ):
+                response["doc_info"]["owner"]["contacts"].append(
+                    {
+                        "id": invite.id,
+                        "name": invite.username,
+                        "username": invite.username,
+                        "avatar": None,
+                        "type": "userinvite",
+                    }
+                )
+
+        await self.send_message(response)
 
     async def reconcile_version(self, client_version):
         """Reconcile the client's document version with the server's.
@@ -196,13 +402,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         server_version = self.session["doc"].version
 
         if client_version is None:
-            # Client didn't send a version — ask it to re-fetch via REST
+            # Old client or restart path without a version - fall back to
+            # sending the full document over the websocket.
             logger.debug(
                 f"Action:Reconcile version — no client version. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
             )
-            await self.send_message({"type": "refetch_doc"})
+            await self.send_document()
             return
 
         logger.debug(
@@ -270,7 +477,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
 
     async def handle_message(self, message):
-        if self.user_info.document_id not in WebsocketConsumer.sessions:
+        if not WebsocketConsumer.get_session(self.user_info.document_id):
             logger.debug(
                 f"Action:Receiving message for closed document. "
                 f"URL:{self.endpoint} User:{self.user.id} "
@@ -285,13 +492,51 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif message["type"] == "chat" and await self.can_communicate():
             await self.handle_chat(message)
         elif message["type"] == "check_version":
-            await self.reconcile_version(message["v"])
+            await self.check_version(message)
+        elif message["type"] == "get_document":
+            await self.send_document()
         elif message["type"] == "selection_change":
             await self.handle_selection_change(message)
         elif message["type"] == "diff" and await self.can_update_document():
             await self.handle_diff(message)
         elif message["type"] == "path_change":
             await self.handle_path_change(message)
+
+    async def check_version(self, message):
+        pv = message["v"]
+        dv = self.session["doc"].version
+        logger.debug(
+            f"Action:Checking version of document. URL:{self.endpoint} "
+            f"User:{self.user.id} ParticipantID:{self.id} "
+            f"Client document version:{pv} Server document version:{dv}"
+        )
+        if pv == dv:
+            await self.send_message({"type": "confirm_version", "v": pv})
+            return
+        if pv > dv:
+            logger.debug(
+                f"Action:User is on a newer version of the document. "
+                f"URL:{self.endpoint} User:{self.user.id} "
+                f"ParticipantID:{self.id}"
+            )
+            await self.unfixable()
+            return
+        if pv + len(self.session["doc"].diffs) >= dv:
+            number_diffs = dv - pv
+            logger.debug(
+                f"Action:Resending document diffs. URL:{self.endpoint} "
+                f"User:{self.user.id} ParticipantID:{self.id}"
+                f"number of messages to be resent:{number_diffs}"
+            )
+            messages = self.session["doc"].diffs[-number_diffs:]
+            await self.send_document(messages)
+            return
+        logger.debug(
+            f"Action:User is on a very old version of the document. "
+            f"URL:{self.endpoint} User:{self.user.id} "
+            f"ParticipantID:{self.id}"
+        )
+        await self.unfixable()
 
     async def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
@@ -418,7 +663,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     async def handle_selection_change(self, message):
         if (
-            self.user_info.document_id in WebsocketConsumer.sessions
+            WebsocketConsumer.get_session(self.user_info.document_id)
             and message["v"] == self.session["doc"].version
         ):
             await WebsocketConsumer.send_updates(
@@ -430,7 +675,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     async def handle_path_change(self, message):
         if (
-            self.user_info.document_id in WebsocketConsumer.sessions
+            WebsocketConsumer.get_session(self.user_info.document_id)
             and self.user_info.path_object
         ):
             self.user_info.path_object.path = message["path"]
@@ -574,7 +819,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             and hasattr(self.user_info, "document_id")
         ):
             doc_id = self.user_info.document_id
-            if doc_id in WebsocketConsumer.sessions:
+            if WebsocketConsumer.get_session(doc_id):
                 # Clear this participant's specific resources
                 if (
                     hasattr(self, "id")
@@ -582,6 +827,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 ):
                     # Remove this participant
                     self.session["participants"].pop(self.id)
+                    WebsocketConsumer.sync_session_snapshot(doc_id)
 
                 # Complete document cleanup if no participants remain
                 if len(self.session["participants"]) == 0:
@@ -589,7 +835,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     await WebsocketConsumer.save_document_async(doc_id)
 
                     # Break references manually before deleting
-                    session = WebsocketConsumer.sessions[doc_id]
+                    session = WebsocketConsumer.get_session(doc_id)
 
                     # Clear prosemirror node structure
                     if "node" in session:
@@ -601,7 +847,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                         session["doc"].diffs = None  # Not just an empty list
 
                     # Remove complete session
-                    WebsocketConsumer.sessions.pop(doc_id, None)
+                    WebsocketConsumer.remove_session(doc_id)
 
                     # Force garbage collection
                     gc.collect()
@@ -626,7 +872,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     @classmethod
     async def send_participant_list(cls, document_id):
-        if document_id in WebsocketConsumer.sessions:
+        session = cls.get_session(document_id)
+        if session:
             avatars = Avatars()
             participant_list = []
 
@@ -634,9 +881,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             avatar_tasks = []
             participants_data = []
 
-            for session_id, waiter in list(
-                cls.sessions[document_id]["participants"].items()
-            ):
+            for session_id, waiter in list(session["participants"].items()):
                 access_rights = waiter.user_info.access_rights
                 if access_rights not in CAN_COMMUNICATE:
                     continue
@@ -678,16 +923,19 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     async def reset_collaboration(
         cls, patch_exception_msg, document_id, sender_id
     ):
+        session = cls.get_session(document_id)
+        if not session:
+            return
         logger.debug(
             f"Action:Resetting collaboration. DocumentID:{document_id} "
             f"Patch conflict triggered. ParticipantID:{sender_id} "
-            f"waiters:{len(cls.sessions[document_id]['participants'])}"
+            f"waiters:{len(session['participants'])}"
         )
 
         # Create a list of coroutines to execute
         tasks = []
 
-        for waiter in list(cls.sessions[document_id]["participants"].values()):
+        for waiter in list(session["participants"].values()):
             if waiter.id != sender_id:
                 tasks.append(waiter.unfixable())
                 tasks.append(waiter.send_message(patch_exception_msg))
@@ -700,15 +948,18 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     async def send_updates(
         cls, message, document_id, sender_id=None, user_id=None
     ):
+        session = cls.get_session(document_id)
+        if not session:
+            return
         logger.debug(
             f"Action:Sending message to waiters. DocumentID:{document_id} "
-            f"waiters:{len(cls.sessions[document_id]['participants'])}"
+            f"waiters:{len(session['participants'])}"
         )
 
         # Create a list of send tasks to execute concurrently
         send_tasks = []
 
-        for waiter in list(cls.sessions[document_id]["participants"].values()):
+        for waiter in list(session["participants"].values()):
             if waiter.id != sender_id:
                 access_rights = waiter.user_info.access_rights
                 msg_to_send = message
@@ -762,7 +1013,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     @classmethod
     async def save_document_async(cls, document_id):
-        session = cls.sessions[document_id]
+        session = cls.get_session(document_id)
+        if not session:
+            return
         if session["doc"].version == session["last_saved_version"]:
             return
         logger.debug(
@@ -800,7 +1053,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     @classmethod
     def save_document(cls, document_id):
-        session = cls.sessions[document_id]
+        session = cls.get_session(document_id)
+        if not session:
+            return
         if session["doc"].version == session["last_saved_version"]:
             return
         logger.debug(
@@ -838,7 +1093,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     @classmethod
     def save_all_docs(cls):
-        for document_id in cls.sessions:
+        try:
+            document_ids = list(cls.runtime_sessions)
+        except (TypeError, FileNotFoundError):
+            return
+        for document_id in document_ids:
             cls.save_document(document_id)
 
 

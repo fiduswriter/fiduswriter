@@ -51,12 +51,6 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        # Wait for the editor to be fully initialized before typing.
-        # The editor-toolbar appearing doesn't guarantee that the
-        # ProseMirror editor is ready for input — the document load
-        # via REST and subsequent initialization (headerView, etc.)
-        # may still be in progress.
-        time.sleep(0.5)
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test"
@@ -108,12 +102,6 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
-        # Wait for the editor to be fully initialized before typing.
-        # The editor-toolbar appearing doesn't guarantee that the
-        # ProseMirror editor is ready for input — the document load
-        # via REST and subsequent initialization (headerView, etc.)
-        # may still be in progress.
-        time.sleep(0.5)
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "February Doc"

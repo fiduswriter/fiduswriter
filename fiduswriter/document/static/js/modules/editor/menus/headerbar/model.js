@@ -186,7 +186,7 @@ export const headerbarModel = () => ({
                     order: 3,
                     action: editor => {
                         const copier = new SaveCopy(
-                            editor.getDoc(),
+                            editor.getDoc({use_current_view: true}),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             editor.user

@@ -62,6 +62,7 @@ export class WebSocketConnector {
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1421357
         // https://bugs.chromium.org/p/chromium/issues/detail?id=423246
         this.online = false
+        this.connected = false
         this.ws.close()
     }
 

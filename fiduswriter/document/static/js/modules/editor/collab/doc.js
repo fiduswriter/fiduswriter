@@ -21,6 +21,9 @@ export class ModCollabDoc {
         this.receiving = false
         this.currentlyCheckingVersion = false
         this.footnoteRender = false // If the offline user edited a footnote , it needs to be rendered properly to connected users too!
+        this.initialVersionConfirmed = false
+        this.initialDocLoaded = false
+        this.templateAdjustmentPending = false
     }
 
     cancelCurrentlyCheckingVersion() {
@@ -36,7 +39,8 @@ export class ModCollabDoc {
         }
         this.mod.editor.ws.send(() => {
             if (
-                this.currentlyCheckingVersion | !this.mod.editor.docInfo.version
+                this.currentlyCheckingVersion ||
+                this.mod.editor.docInfo.version === undefined
             ) {
                 return
             }
@@ -79,7 +83,31 @@ export class ModCollabDoc {
         }
     }
 
+    finishInitialLoad() {
+        if (
+            this.initialDocLoaded &&
+            this.initialVersionConfirmed &&
+            !this.templateAdjustmentPending
+        ) {
+            deactivateWait()
+            this.mod.editor.waitingForDocument = false
+        }
+    }
+
+    confirmVersion(version) {
+        if (!this.mod.editor.docInfo.confirmedDoc) {
+            return
+        }
+        if (!this.initialVersionConfirmed) {
+            this.initialVersionConfirmed = true
+            if (version === this.mod.editor.docInfo.version) {
+                this.finishInitialLoad()
+            }
+        }
+    }
+
     loadDocument({doc, time, doc_info}) {
+        const isInitialLoad = !this.mod.editor.docInfo.confirmedDoc
         // Reset collaboration
         this.unconfirmedDiffs = {}
         if (this.awaitingDiffResponse) {
@@ -142,11 +170,9 @@ export class ModCollabDoc {
         this.mod.editor.mod.comments.store.reset()
         this.mod.editor.mod.comments.store.loadComments(doc.comments)
         this.mod.editor.mod.marginboxes.view(this.mod.editor.view)
-        deactivateWait()
         if (locationHash.length) {
             this.mod.editor.scrollIdIntoView(locationHash.slice(1))
         }
-        this.mod.editor.waitingForDocument = false
         // Update the header bar to reflect the loaded document's title.
         // This is needed because setStyles() (which calls headerView.update())
         // runs before loadDocument(), so the header still shows "Untitled"
@@ -154,9 +180,18 @@ export class ModCollabDoc {
         if (this.mod.editor.menu.headerView) {
             this.mod.editor.menu.headerView.update()
         }
+        if (isInitialLoad) {
+            this.initialDocLoaded = true
+        } else {
+            deactivateWait()
+            this.mod.editor.waitingForDocument = false
+        }
         if (doc.template) {
             // We received the template. That means we are the first user present with write access.
             // We will adjust the document to the template if necessary.
+            if (isInitialLoad) {
+                this.templateAdjustmentPending = true
+            }
             activateWait(true, gettext("Updating document. Please wait..."))
             const activateWaitTimer = setTimeout(() => {
                 activateWait(
@@ -181,7 +216,12 @@ export class ModCollabDoc {
                     }
                     // clearing timer for updating message since operation is completed
                     clearTimeout(activateWaitTimer)
-                    deactivateWait()
+                    if (isInitialLoad) {
+                        this.templateAdjustmentPending = false
+                        this.finishInitialLoad()
+                    } else {
+                        deactivateWait()
+                    }
                     this.setDocSettings()
                 }
             }
@@ -197,6 +237,9 @@ export class ModCollabDoc {
             })
         } else {
             this.setDocSettings()
+            if (isInitialLoad) {
+                this.finishInitialLoad()
+            }
         }
     }
 

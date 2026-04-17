@@ -134,9 +134,7 @@ export class ModDocumentTemplate {
                                     selectTemplateDialog.close()
                                 } else {
                                     const copier = new SaveCopy(
-                                        editor.getDoc({
-                                            use_current_view: true
-                                        }),
+                                        editor.getDoc(),
                                         editor.mod.db.bibDB,
                                         editor.mod.db.imageDB,
                                         editor.user,

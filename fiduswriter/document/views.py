@@ -959,9 +959,7 @@ def get_doc_data(request):
 
     # Initialize document content from template if empty (same logic as
     # WebSocket consumer's subscribe handler)
-    initialized_from_template = False
     if "type" not in doc.content:
-        initialized_from_template = True
         doc.content = deepcopy(doc.template.content)
         if "type" not in doc.content:
             doc.content["type"] = "doc"
@@ -994,7 +992,7 @@ def get_doc_data(request):
     #   adjustment is a no-op.
     # - The template content is static (set by admins) and does not change
     #   during editing, so the DB value is always current.
-    if access_rights == "write" and initialized_from_template:
+    if access_rights == "write":
         doc_data["template"] = {
             "id": doc.template.id,
             "content": doc.template.content,

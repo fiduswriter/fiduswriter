@@ -397,9 +397,6 @@ export class Editor {
                                     }
                                 }
                                 break
-                            case "doc_data":
-                                this.mod.collab.doc.receiveDocument(data)
-                                break
                             case "refetch_doc":
                                 // Server cannot reconcile version via diffs.
                                 // Re-fetch the document via REST and reload.

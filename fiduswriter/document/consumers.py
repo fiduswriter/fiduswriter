@@ -5,7 +5,6 @@ import logging
 import gc
 import asyncio
 import multiprocessing
-from time import mktime, time
 from copy import deepcopy
 from dataclasses import dataclass
 
@@ -266,129 +265,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.handle_participant_update()
 
     async def unfixable(self):
-        await self.send_document()
-
-    async def send_document(self, messages=False, template=False):
-        response = {"type": "doc_data"}
-        doc_owner = self.session["doc"].owner
-        avatars = Avatars()
-
-        owner_avatar = await avatars.get_url_async(doc_owner)
-
-        response["doc_info"] = {
-            "id": self.session["doc"].id,
-            "is_owner": self.user_info.is_owner,
-            "access_rights": self.user_info.access_rights,
-            "path": self.user_info.path,
-            "owner": {
-                "id": doc_owner.id,
-                "name": doc_owner.readable_name,
-                "username": doc_owner.username,
-                "avatar": owner_avatar,
-                "contacts": [],
-            },
-            "accessed_via_token": isinstance(self.user, TokenUser),
-        }
-        await sync_to_async(WebsocketConsumer.serialize_content)(self.session)
-        response["doc"] = {
-            "v": self.session["doc"].version,
-            "content": self.session["doc"].content,
-            "bibliography": self.session["doc"].bibliography,
-            "images": {},
-        }
-        if template:
-            response["doc"]["template"] = {
-                "id": self.session["doc"].template.id,
-                "content": self.session["doc"].template.content,
-            }
-        if messages:
-            response["m"] = messages
-        response["time"] = int(time()) * 1000
-
-        doc_id = self.session["doc"].id
-        async for dimage in (
-            DocumentImage.objects.filter(document_id=doc_id)
-            .select_related("image")
-            .only(
-                "id",
-                "title",
-                "copyright",
-                "image__id",
-                "image__image",
-                "image__file_type",
-                "image__added",
-                "image__checksum",
-                "image__thumbnail",
-                "image__height",
-                "image__width",
-            )
-            .aiterator()
-        ):
-            image = dimage.image
-            field_obj = {
-                "id": image.id,
-                "title": dimage.title,
-                "copyright": dimage.copyright,
-                "image": image.image.url,
-                "file_type": image.file_type,
-                "added": mktime(image.added.timetuple()) * 1000,
-                "checksum": image.checksum,
-                "cats": [],
-            }
-            if image.thumbnail:
-                field_obj["thumbnail"] = image.thumbnail.url
-                field_obj["height"] = image.height
-                field_obj["width"] = image.width
-            response["doc"]["images"][image.id] = field_obj
-
-        if self.user_info.access_rights == "read-without-comments":
-            response["doc"]["comments"] = []
-        elif self.user_info.access_rights in ["review", "review-tracked"]:
-            filtered_comments = {}
-            for key, value in list(self.session["doc"].comments.items()):
-                if value["user"] == self.user_info.user.id:
-                    filtered_comments[key] = value
-            response["doc"]["comments"] = filtered_comments
-        else:
-            response["doc"]["comments"] = self.session["doc"].comments
-
-        contacts = []
-        async for contact in (
-            doc_owner.contacts.all()
-            .only("id", "username", "first_name", "last_name")
-            .aiterator()
-        ):
-            contacts.append(contact)
-
-        contact_avatars = await asyncio.gather(
-            *[avatars.get_url_async(contact) for contact in contacts]
-        )
-        for contact, avatar in zip(contacts, contact_avatars):
-            response["doc_info"]["owner"]["contacts"].append(
-                {
-                    "id": contact.id,
-                    "name": contact.readable_name,
-                    "username": contact.get_username(),
-                    "avatar": avatar,
-                    "type": "user",
-                }
-            )
-
-        if self.user_info.is_owner:
-            async for invite in (
-                doc_owner.invites_by.all().only("id", "username").aiterator()
-            ):
-                response["doc_info"]["owner"]["contacts"].append(
-                    {
-                        "id": invite.id,
-                        "name": invite.username,
-                        "username": invite.username,
-                        "avatar": None,
-                        "type": "userinvite",
-                    }
-                )
-
-        await self.send_message(response)
+        await self.send_message({"type": "refetch_doc"})
 
     async def reconcile_version(self, client_version):
         """Reconcile the client's document version with the server's.
@@ -402,14 +279,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         server_version = self.session["doc"].version
 
         if client_version is None:
-            # Old client or restart path without a version - fall back to
-            # sending the full document over the websocket.
+            # Old client or restart path without a version — ask client to
+            # re-fetch via REST.
             logger.debug(
                 f"Action:Reconcile version — no client version. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
             )
-            await self.send_document()
+            await self.send_message({"type": "refetch_doc"})
             return
 
         logger.debug(
@@ -494,7 +371,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif message["type"] == "check_version":
             await self.check_version(message)
         elif message["type"] == "get_document":
-            await self.send_document()
+            await self.send_message({"type": "refetch_doc"})
         elif message["type"] == "selection_change":
             await self.handle_selection_change(message)
         elif message["type"] == "diff" and await self.can_update_document():
@@ -529,7 +406,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"number of messages to be resent:{number_diffs}"
             )
             messages = self.session["doc"].diffs[-number_diffs:]
-            await self.send_document(messages)
+            for msg in messages:
+                new_message = msg.copy()
+                new_message["server_fix"] = True
+                await self.send_message(new_message)
+            await self.send_message({"type": "confirm_version", "v": dv})
             return
         logger.debug(
             f"Action:User is on a very old version of the document. "

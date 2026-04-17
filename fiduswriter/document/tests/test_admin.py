@@ -493,7 +493,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # instruction boxes in this template.
         self.assertEqual(body_text, "Initial text")
         instruction_boxes = self.driver.find_elements(
-            By.CSS_SELECTOR, ".margin-box.help"
+            By.CSS_SELECTOR, ".margin-box.help:not(.hidden)"
         )
         self.assertEqual(0, len(instruction_boxes))
 

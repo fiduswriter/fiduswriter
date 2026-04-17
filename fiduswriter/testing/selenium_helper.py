@@ -146,7 +146,8 @@ class SeleniumHelper:
             options.add_argument("--disable-gpu")
             wait_time = 20
         else:
-            wait_time = 6
+
+            wait_time = 10
         for i in range(number):
             driver_env = os.environ.copy()
             if os.getenv("CI") and os.getenv("DEBUG_MODE") == "1" and i < 2:

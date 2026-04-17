@@ -265,6 +265,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.handle_participant_update()
 
     async def unfixable(self):
+        await WebsocketConsumer.save_document_async(self.user_info.document_id)
         await self.send_message({"type": "refetch_doc"})
 
     async def reconcile_version(self, client_version):
@@ -285,6 +286,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"Action:Reconcile version — no client version. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
+            )
+            await WebsocketConsumer.save_document_async(
+                self.user_info.document_id
             )
             await self.send_message({"type": "refetch_doc"})
             return
@@ -371,6 +375,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif message["type"] == "check_version":
             await self.check_version(message)
         elif message["type"] == "get_document":
+            await WebsocketConsumer.save_document_async(
+                self.user_info.document_id
+            )
             await self.send_message({"type": "refetch_doc"})
         elif message["type"] == "selection_change":
             await self.handle_selection_change(message)
@@ -401,16 +408,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if pv + len(self.session["doc"].diffs) >= dv:
             number_diffs = dv - pv
             logger.debug(
-                f"Action:Resending document diffs. URL:{self.endpoint} "
-                f"User:{self.user.id} ParticipantID:{self.id}"
-                f"number of messages to be resent:{number_diffs}"
+                f"Action:Client behind by {number_diffs} diffs, saving and asking to re-fetch. "
+                f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}"
             )
-            messages = self.session["doc"].diffs[-number_diffs:]
-            for msg in messages:
-                new_message = msg.copy()
-                new_message["server_fix"] = True
-                await self.send_message(new_message)
-            await self.send_message({"type": "confirm_version", "v": dv})
+            await WebsocketConsumer.save_document_async(
+                self.user_info.document_id
+            )
+            await self.send_message({"type": "refetch_doc"})
             return
         logger.debug(
             f"Action:User is on a very old version of the document. "

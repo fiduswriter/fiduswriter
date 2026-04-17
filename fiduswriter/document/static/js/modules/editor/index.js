@@ -398,11 +398,16 @@ export class Editor {
                                 }
                                 break
                             case "refetch_doc":
-                                // Server cannot reconcile version via diffs.
-                                // Re-fetch the document via REST and reload.
+                                // The server has forced a DB save before
+                                // sending this message, so the REST response
+                                // will be at the current server version. Passing
+                                // our version (v) lets the endpoint include the
+                                // covering diffs as `m` so adjustDocument can
+                                // do a precise merge.
                                 postJson("/api/document/get_doc_data/", {
                                     id: this.docInfo.id,
-                                    token: this.docInfo.token
+                                    token: this.docInfo.token,
+                                    v: this.docInfo.version
                                 }).then(({json}) => {
                                     this.mod.collab.doc.receiveDocument(json)
                                 })

@@ -883,6 +883,7 @@ def get_doc_data(request):
     version drift via the WebSocket after connecting."""
     doc_id = request.POST.get("id")
     token_str = request.POST.get("token", "")
+    v_str = request.POST.get("v")
 
     # Resolve document and access rights (same logic as get_doc_styles)
     doc = None
@@ -1075,6 +1076,18 @@ def get_doc_data(request):
         "doc": doc_data,
         "time": int(time.time()) * 1000,
     }
+    # If the client sent its current version and the DB is ahead, include the
+    # covering diffs so adjustDocument can do a precise merge instead of
+    # falling back to recreateTransform.
+    if v_str is not None:
+        try:
+            client_version = int(v_str)
+            if doc.version > client_version:
+                diffs_needed = doc.version - client_version
+                if client_version + len(doc.diffs) >= doc.version:
+                    response["m"] = doc.diffs[-diffs_needed:]
+        except (ValueError, TypeError):
+            pass
     return JsonResponse(response, status=200)
 
 

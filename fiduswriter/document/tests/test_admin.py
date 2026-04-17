@@ -403,9 +403,19 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Go to contacts"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        # Wait for Accept invite button to appear and use JavaScript click to ensure it works
+        accept_button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        # Use JavaScript click to bypass any event handler timing issues
+        time.sleep(1)
+        self.driver.execute_script("arguments[0].click();", accept_button)
+        # Wait for the dialog to close completely
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()

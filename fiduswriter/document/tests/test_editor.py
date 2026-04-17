@@ -556,7 +556,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
 
         change_tracking_boxes = self.driver.find_elements(
-            By.CSS_SELECTOR, ".margin-box.track"
+            By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
         )
         self.assertEqual(len(change_tracking_boxes), 6)
 

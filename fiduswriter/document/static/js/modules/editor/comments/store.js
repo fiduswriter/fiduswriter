@@ -271,6 +271,9 @@ export class ModCommentStore {
 
         if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
+            if (!local && this.mod.interactions.activeCommentId === id) {
+                this.mod.interactions.activateComment(id)
+            }
         }
     }
 
@@ -293,6 +296,9 @@ export class ModCommentStore {
         }
         if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
+            if (!local && this.mod.interactions.activeCommentId === id) {
+                this.mod.interactions.activateComment(id)
+            }
         }
     }
 
@@ -317,6 +323,9 @@ export class ModCommentStore {
         }
         if (local || !this.mod.interactions.isCurrentlyEditing()) {
             this.mod.editor.mod.marginboxes.updateDOM()
+            if (!local && this.mod.interactions.activeCommentId === id) {
+                this.mod.interactions.activateComment(id)
+            }
         }
     }
 

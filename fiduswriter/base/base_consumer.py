@@ -216,7 +216,8 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
             connection_count = 0
             if "connection" in message:
                 connection_count = message["connection"]
-            await self.subscribe(connection_count)
+            client_version = message.get("v")
+            await self.subscribe(connection_count, client_version)
             return
         await self.handle_message(message)
 
@@ -226,7 +227,7 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
     async def reject_message(self, message):
         pass
 
-    async def subscribe(self, connection_count):
+    async def subscribe(self, connection_count, client_version=None):
         await self.send_message({"type": "subscribed"})
 
     async def send_message(self, message):

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path
 from django.utils.translation import gettext as _
@@ -53,6 +54,7 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
                 et.pk = None
                 et.document_template = template
                 et.save()
+        return HttpResponseRedirect(request.get_full_path())
 
     duplicate.short_description = _("Duplicate selected document templates")
 

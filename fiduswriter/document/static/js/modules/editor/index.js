@@ -254,51 +254,78 @@ export class Editor {
                 new ModFootnotes(this)
                 return this.activateFidusPlugins()
             })
-            .catch(error => {
-                // Handle token validation failure
-                deactivateWait()
-                const errorDialog = new Dialog({
-                    title: gettext("Invalid Share Link"),
-                    id: "invalid_share_link_dialog",
-                    body: gettext(
-                        "This share link has expired or is invalid. Please ask the document owner for a new link."
-                    ),
-                    buttons: [
-                        {
-                            text: gettext("OK"),
-                            classes: "fw-dark",
-                            click: () => {
-                                window.location.href = "/"
-                            }
-                        }
-                    ],
-                    canClose: false
-                })
-                errorDialog.open()
-                return Promise.reject(error)
-            })
-            .then(() =>
-                this.docInfo.wsBase
+            .then(() => {
+                activateWait(true)
+                const stylesPayload = {id: this.docInfo.id}
+                if (this.docInfo.token) {
+                    stylesPayload.token = this.docInfo.token
+                }
+                const wsBasePromise = this.docInfo.wsBase
                     ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
                     : postJson("/api/document/get_ws_base/", {
                           id: this.docInfo.id
                       })
-            )
-            .then(({json}) => {
+                const stylesPromise = postJson(
+                    "/api/document/get_doc_styles/",
+                    stylesPayload
+                )
+                const docDataPromise = postJson(
+                    "/api/document/get_doc_data/",
+                    stylesPayload
+                )
+                return Promise.all([
+                    wsBasePromise,
+                    stylesPromise,
+                    docDataPromise
+                ])
+            })
+            .catch(error => {
+                // Only show "Invalid Share Link" for token validation errors.
+                // Other errors (REST failures, etc.) should not show this dialog.
+                if (error.message === "Invalid or expired share link") {
+                    deactivateWait()
+                    const errorDialog = new Dialog({
+                        title: gettext("Invalid Share Link"),
+                        id: "invalid_share_link_dialog",
+                        body: gettext(
+                            "This share link has expired or is invalid. Please ask the document owner for a new link."
+                        ),
+                        buttons: [
+                            {
+                                text: gettext("OK"),
+                                classes: "fw-dark",
+                                click: () => {
+                                    window.location.href = "/"
+                                }
+                            }
+                        ],
+                        canClose: false
+                    })
+                    errorDialog.open()
+                } else {
+                    deactivateWait()
+                    console.error("Editor initialization failed:", error)
+                }
+                return Promise.reject(error)
+            })
+            .then(([wsResult, stylesResult, docResult]) => {
                 let resubScribed = false
+                this.render()
+                this.initEditor()
                 // Include token in WebSocket path if present
                 let wsPath = `/document/${this.docInfo.id}/`
                 if (this.docInfo.token) {
                     wsPath += `?token=${this.docInfo.token}`
                 }
                 this.ws = new WebSocketConnector({
-                    base: json.ws_base,
+                    base: wsResult.json.ws_base,
                     path: wsPath,
                     appLoaded: () => this.view.state.plugins.length,
                     anythingToSend: () => sendableSteps(this.view.state),
                     initialMessage: () => {
                         const message = {
-                            type: "subscribe"
+                            type: "subscribe",
+                            v: this.docInfo.version
                         }
 
                         if (this.ws.connectionCount) {
@@ -318,7 +345,10 @@ export class Editor {
                         this.mod.footnotes.fnEditor.renderAllFootnotes()
                         this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
                     },
-                    restartMessage: () => ({type: "get_document"}), // Too many messages have been lost and we need to restart
+                    restartMessage: () => ({
+                        type: "check_version",
+                        v: this.docInfo.version
+                    }),
                     messagesElement: () =>
                         this.dom.querySelector("#unobtrusive-messages"),
                     warningNotAllSent: gettext(
@@ -340,16 +370,52 @@ export class Editor {
                                     data.participant_list
                                 )
                                 if (resubScribed) {
-                                    // check version if only reconnected after being offline
-                                    this.mod.collab.doc.checkVersion() // check version to sync the doc
+                                    // Reconnecting after offline with
+                                    // local edits: ask the server to
+                                    // save first so that the REST
+                                    // refetch reflects the definitive
+                                    // server state and adjustDocument
+                                    // can run the tracked-changes merge.
+                                    const missingSteps = sendableSteps(
+                                        this.view.state
+                                    )
+                                    this.mod.collab.doc.checkVersion(
+                                        missingSteps
+                                    )
                                     resubScribed = false
                                 }
                                 break
-                            case "styles":
-                                this.mod.documentTemplate.setStyles(data.styles)
+                            case "session_info":
+                                this.docInfo.session_id = data.session_id
+                                // Update access rights from server
+                                if (data.access_right) {
+                                    this.docInfo.access_rights =
+                                        data.access_right
+                                }
+                                // Update guest user identity with session_id
+                                if (!this.user.is_authenticated) {
+                                    this.user = {
+                                        id: this.docInfo.token,
+                                        username: `guest${data.session_id}`,
+                                        name: `Guest ${data.session_id}`,
+                                        is_authenticated: false
+                                    }
+                                }
                                 break
-                            case "doc_data":
-                                this.mod.collab.doc.receiveDocument(data)
+                            case "refetch_doc":
+                                // The server has forced a DB save before
+                                // sending this message, so the REST response
+                                // will be at the current server version. Passing
+                                // our version (v) lets the endpoint include the
+                                // covering diffs as `m` so adjustDocument can
+                                // do a precise merge.
+                                postJson("/api/document/get_doc_data/", {
+                                    id: this.docInfo.id,
+                                    token: this.docInfo.token,
+                                    v: this.docInfo.version
+                                }).then(({json}) => {
+                                    this.mod.collab.doc.receiveDocument(json)
+                                })
                                 break
                             case "confirm_version":
                                 this.mod.collab.doc.cancelCurrentlyCheckingVersion()
@@ -357,6 +423,7 @@ export class Editor {
                                     this.mod.collab.doc.checkVersion()
                                     return
                                 }
+                                this.mod.collab.doc.confirmVersion(data["v"])
                                 this.mod.collab.doc.enableDiffSending()
                                 break
                             case "selection_change":
@@ -497,10 +564,11 @@ export class Editor {
                         }
                     }
                 })
-                this.render()
-                activateWait(true)
-                this.initEditor()
-
+                this.mod.documentTemplate.setStyles(stylesResult.json)
+                this.mod.collab.doc.receiveDocument(docResult.json)
+                // Initialize the WebSocket connection
+                this.ws.init()
+                // Add the close listener
                 this.ws.ws.addEventListener("close", () => {
                     // Listen to close event and update the headerbar and toolbar view.
                     if (this.menu.toolbarViews) {
@@ -629,6 +697,11 @@ export class Editor {
                     schema: this.schema
                 }),
                 handleDOMEvents: {
+                    mousedown: (view, _event) => {
+                        this.currentView = this.view
+                        view.focus()
+                        return false
+                    },
                     focus: (view, _event) => {
                         if (!setFocus) {
                             this.currentView = this.view
@@ -658,6 +731,10 @@ export class Editor {
                     if (tr.steps.length) {
                         this.docInfo.updated = new Date()
                     }
+                    // Update the header bar to reflect any title changes
+                    if (this.menu.headerView) {
+                        this.menu.headerView.update()
+                    }
 
                     this.mod.collab.doc.sendToCollaborators()
                 }
@@ -675,7 +752,6 @@ export class Editor {
         new ModComments(this)
         new ModNavigator(this)
         this.mod.navigator.init()
-        this.ws.init()
     }
 
     activateFidusPlugins() {

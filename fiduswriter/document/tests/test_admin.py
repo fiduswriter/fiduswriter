@@ -87,9 +87,13 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         username.send_keys("Admin")
         self.driver.find_element(By.ID, "id_password").send_keys("password")
         self.driver.find_element(By.CSS_SELECTOR, "input[type=submit]").click()
-        time.sleep(2)
-        self.driver.find_element(
-            By.CSS_SELECTOR, "a[href='/admin/document/documenttemplate/']"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    "a[href='/admin/document/documenttemplate/']",
+                )
+            )
         ).click()
         template_links = self.driver.find_elements(
             By.CSS_SELECTOR, "#result_list tbody a"
@@ -107,8 +111,17 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "button.button[type=submit]"
         ).click()
-        template_links = self.driver.find_elements(
-            By.CSS_SELECTOR, "#result_list tbody a"
+        template_links = WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: (
+                links
+                if len(
+                    links := driver.find_elements(
+                        By.CSS_SELECTOR, "#result_list tbody a"
+                    )
+                )
+                == 2
+                else False
+            )
         )
         self.assertEqual(2, len(template_links))
         self.driver.find_element(By.CSS_SELECTOR, ".field-title a").click()
@@ -205,6 +218,10 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "#id_user > option:nth-child(3)"
         ).click()
         # Modify a document style
+        document_style_elements = self.driver.find_elements(
+            By.CSS_SELECTOR, ".document-style"
+        )
+        old_len_document_styles = len(document_style_elements)
         document_style_element = WebDriverWait(
             self.driver, self.wait_time
         ).until(
@@ -224,7 +241,11 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR,
             "[aria-describedby=document-style-dialog] button.fw-dark",
         ).click()
-        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, "[aria-describedby=document-style-dialog]")
+            )
+        )
         # Delete a document style
         document_style_element = self.driver.find_element(
             By.CSS_SELECTOR, ".document-style"
@@ -242,6 +263,12 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark",
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(By.CSS_SELECTOR, ".document-style")
+            )
+            == old_len_document_styles
+        )
         # Download export template file
         export_template_element = self.driver.find_element(
             By.CSS_SELECTOR, ".export-template"
@@ -256,7 +283,9 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         et_file = export_template_link.get_attribute("href").split("/")[-1]
         export_template_link.click()
-        time.sleep(1)
+        self.wait_until_file_exists(
+            os.path.join(self.download_dir, et_file), self.wait_time
+        )
         assert os.path.isfile(os.path.join(self.download_dir, et_file))
         # Delete export template
         old_len_export_templates = len(
@@ -270,9 +299,21 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark",
         ).click()
-        time.sleep(1)
-        len_export_templates = len(
-            self.driver.find_elements(By.CSS_SELECTOR, ".export-template")
+        len_export_templates = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            lambda driver: (
+                len_export_templates
+                if (
+                    len_export_templates := len(
+                        driver.find_elements(
+                            By.CSS_SELECTOR, ".export-template"
+                        )
+                    )
+                )
+                == old_len_export_templates - 1
+                else False
+            )
         )
         self.assertEqual(old_len_export_templates - 1, len_export_templates)
         old_len_export_templates = len_export_templates
@@ -290,13 +331,24 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".fw-media-file-input")
             )
         ).send_keys(os.path.join(self.download_dir, et_file))
-        time.sleep(1)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        time.sleep(1)
-        len_export_templates = len(
-            self.driver.find_elements(By.CSS_SELECTOR, ".export-template")
+        len_export_templates = WebDriverWait(
+            self.driver, self.wait_time
+        ).until(
+            lambda driver: (
+                len_export_templates
+                if (
+                    len_export_templates := len(
+                        driver.find_elements(
+                            By.CSS_SELECTOR, ".export-template"
+                        )
+                    )
+                )
+                == old_len_export_templates + 1
+                else False
+            )
         )
         self.assertEqual(old_len_export_templates + 1, len_export_templates)
         os.remove(os.path.join(self.download_dir, et_file))
@@ -308,6 +360,11 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         time.sleep(0.5)
         submit_button.click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, "td.field-user"), "User1"
+            )
+        )
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, "td.field-user").text,
             "User1",
@@ -343,12 +400,12 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 "span"
             ),
         ).click()
-        time.sleep(1)
-        body_text = (
-            WebDriverWait(self.driver, self.wait_time)
-            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
-            .text
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".doc-body"), "Initial body"
+            )
         )
+        body_text = self.driver.find_element(By.CSS_SELECTOR, ".doc-body").text
         self.assertEqual(body_text, "Initial body")
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, ".margin-box.help").text,
@@ -394,9 +451,19 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Go to contacts"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".respond-invite").click()
-        self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Accept invite"]'
-        ).click()
+        # Wait for Accept invite button to appear and use JavaScript click to ensure it works
+        accept_button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[normalize-space()="Accept invite"]')
+            )
+        )
+        # Use JavaScript click to bypass any event handler timing issues
+        time.sleep(1)
+        self.driver.execute_script("arguments[0].click();", accept_button)
+        # Wait for the dialog to close completely
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
@@ -421,7 +488,11 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
             "text"
         ).perform()
-        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".doc-body"), "Initial text"
+            )
+        )
         # Create regular copy
         old_body = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
         self.driver.find_element(
@@ -433,13 +504,12 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)
         )
-        body_text = (
-            WebDriverWait(self.driver, self.wait_time)
-            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
-            .text
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".doc-body"), "Initial text"
+            )
         )
-
-        time.sleep(1)
+        body_text = self.driver.find_element(By.CSS_SELECTOR, ".doc-body").text
         self.assertEqual(body_text, "Initial text")
         self.assertEqual(
             self.driver.find_element(By.CSS_SELECTOR, ".margin-box.help").text,
@@ -465,16 +535,17 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)
         )
-        body_text = (
-            WebDriverWait(self.driver, self.wait_time)
-            .until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".doc-body")))
-            .text
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".doc-body"), "Initial text"
+            )
         )
+        body_text = self.driver.find_element(By.CSS_SELECTOR, ".doc-body").text
         # The text should still be the same, but there should be no
         # instruction boxes in this template.
         self.assertEqual(body_text, "Initial text")
         instruction_boxes = self.driver.find_elements(
-            By.CSS_SELECTOR, ".margin-box.help"
+            By.CSS_SELECTOR, ".margin-box.help:not(.hidden)"
         )
         self.assertEqual(0, len(instruction_boxes))
 

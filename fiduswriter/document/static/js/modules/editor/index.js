@@ -324,16 +324,12 @@ export class Editor {
                     anythingToSend: () => sendableSteps(this.view.state),
                     initialMessage: () => {
                         const message = {
-                            type: "subscribe"
+                            type: "subscribe",
+                            v: this.docInfo.version
                         }
 
                         if (this.ws.connectionCount) {
                             message.connection = this.ws.connectionCount
-                        }
-                        // Send the document version so the server can reconcile
-                        // (skip diffs we already have from the REST response)
-                        if (this.docInfo.version !== undefined) {
-                            message.v = this.docInfo.version
                         }
                         return message
                     },
@@ -349,11 +345,10 @@ export class Editor {
                         this.mod.footnotes.fnEditor.renderAllFootnotes()
                         this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
                     },
-                    restartMessage: () => {
-                        // Too many websocket messages were lost; ask the server
-                        // for a full document payload so merge logic can run.
-                        return {type: "get_document"}
-                    },
+                    restartMessage: () => ({
+                        type: "check_version",
+                        v: this.docInfo.version
+                    }),
                     messagesElement: () =>
                         this.dom.querySelector("#unobtrusive-messages"),
                     warningNotAllSent: gettext(

@@ -273,25 +273,10 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
         Called on subscribe (with the version from the subscribe message) and
         when the client sends a check_version message. If the client is
-        behind, sends the missing diffs. If too many diffs are missing or
-        the client didn't send a version, asks the client to re-fetch via
-        REST.
+        behind, sends the missing diffs. If too many diffs are missing,
+        asks the client to re-fetch via REST.
         """
         server_version = self.session["doc"].version
-
-        if client_version is None:
-            # Old client or restart path without a version — ask client to
-            # re-fetch via REST.
-            logger.debug(
-                f"Action:Reconcile version — no client version. "
-                f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
-            )
-            await WebsocketConsumer.save_document_async(
-                self.user_info.document_id
-            )
-            await self.send_message({"type": "refetch_doc"})
-            return
 
         logger.debug(
             f"Action:Reconcile version. URL:{self.endpoint} "
@@ -373,55 +358,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif message["type"] == "chat" and await self.can_communicate():
             await self.handle_chat(message)
         elif message["type"] == "check_version":
-            await self.check_version(message)
-        elif message["type"] == "get_document":
-            await WebsocketConsumer.save_document_async(
-                self.user_info.document_id
-            )
-            await self.send_message({"type": "refetch_doc"})
+            await self.reconcile_version(message["v"])
         elif message["type"] == "selection_change":
             await self.handle_selection_change(message)
         elif message["type"] == "diff" and await self.can_update_document():
             await self.handle_diff(message)
         elif message["type"] == "path_change":
             await self.handle_path_change(message)
-
-    async def check_version(self, message):
-        pv = message["v"]
-        dv = self.session["doc"].version
-        logger.debug(
-            f"Action:Checking version of document. URL:{self.endpoint} "
-            f"User:{self.user.id} ParticipantID:{self.id} "
-            f"Client document version:{pv} Server document version:{dv}"
-        )
-        if pv == dv:
-            await self.send_message({"type": "confirm_version", "v": pv})
-            return
-        if pv > dv:
-            logger.debug(
-                f"Action:User is on a newer version of the document. "
-                f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
-            )
-            await self.unfixable()
-            return
-        if pv + len(self.session["doc"].diffs) >= dv:
-            number_diffs = dv - pv
-            logger.debug(
-                f"Action:Client behind by {number_diffs} diffs, saving and asking to re-fetch. "
-                f"URL:{self.endpoint} User:{self.user.id} ParticipantID:{self.id}"
-            )
-            await WebsocketConsumer.save_document_async(
-                self.user_info.document_id
-            )
-            await self.send_message({"type": "refetch_doc"})
-            return
-        logger.debug(
-            f"Action:User is on a very old version of the document. "
-            f"URL:{self.endpoint} User:{self.user.id} "
-            f"ParticipantID:{self.id}"
-        )
-        await self.unfixable()
 
     async def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:

@@ -370,8 +370,18 @@ export class Editor {
                                     data.participant_list
                                 )
                                 if (resubScribed) {
-                                    // check version if only reconnected after being offline
-                                    this.mod.collab.doc.checkVersion() // check version to sync the doc
+                                    // Reconnecting after offline with
+                                    // local edits: ask the server to
+                                    // save first so that the REST
+                                    // refetch reflects the definitive
+                                    // server state and adjustDocument
+                                    // can run the tracked-changes merge.
+                                    const missingSteps = sendableSteps(
+                                        this.view.state
+                                    )
+                                    this.mod.collab.doc.checkVersion(
+                                        missingSteps
+                                    )
                                     resubScribed = false
                                 }
                                 break

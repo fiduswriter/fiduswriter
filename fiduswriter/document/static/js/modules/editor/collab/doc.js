@@ -31,7 +31,7 @@ export class ModCollabDoc {
         window.clearTimeout(this.enableCheckVersion)
     }
 
-    checkVersion() {
+    checkVersion(offline = false) {
         // Guard: WebSocket may not be initialized yet (e.g. during
         // loadDocument before the WS connector is created).
         if (!this.mod.editor.ws) {
@@ -51,10 +51,15 @@ export class ModCollabDoc {
             if (this.mod.editor.ws.connected) {
                 this.disableDiffSending()
             }
-            return {
+
+            const msg = {
                 type: "check_version",
                 v: this.mod.editor.docInfo.version
             }
+            if (offline) {
+                msg.offline = true
+            }
+            return msg
         })
     }
 

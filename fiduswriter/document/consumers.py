@@ -252,7 +252,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 }
             )
             # Reconcile version: send missing diffs if client is behind
-            await self.reconcile_version(client_version)
+            await self.check_version(client_version)
         else:
             # Reconnecting user — send access rights for comparison
             await self.send_message(
@@ -268,7 +268,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         await WebsocketConsumer.save_document_async(self.user_info.document_id)
         await self.send_message({"type": "refetch_doc"})
 
-    async def reconcile_version(self, client_version):
+    async def check_version(self, client_version, offline=False):
         """Reconcile the client's document version with the server's.
 
         Called on subscribe (with the version from the subscribe message) and
@@ -294,7 +294,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
             return
 
-        if client_version < server_version:
+        if client_version < server_version and not offline:
             diffs_behind = server_version - client_version
             if (
                 client_version + len(self.session["doc"].diffs)
@@ -358,7 +358,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif message["type"] == "chat" and await self.can_communicate():
             await self.handle_chat(message)
         elif message["type"] == "check_version":
-            await self.reconcile_version(message["v"])
+            await self.check_version(
+                message["v"], message.get("offline", False)
+            )
         elif message["type"] == "selection_change":
             await self.handle_selection_change(message)
         elif message["type"] == "diff" and await self.can_update_document():

@@ -167,7 +167,7 @@
             "settings_FOOTER_LINKS",
             "settings_BRANDING_LOGO",
             "settings_LANGUAGES",
-            "settings_E2EE"
+            "settings_E2EE_MODE"
         ]
     }
 }

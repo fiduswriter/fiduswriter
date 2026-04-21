@@ -154,6 +154,26 @@ export class E2EEEncryptor {
         return E2EEEncryptor.decryptBuffer(ciphertextBase64, key)
     }
 
+    /**
+     * Decrypt a Base64-encoded ciphertext and return as a Base64 string.
+     *
+     * Useful for decrypting encrypted images that need to be stored
+     * as Base64 data URLs or re-exported.
+     *
+     * @param {string} ciphertextBase64 - Base64-encoded encrypted data
+     * @param {CryptoKey} key - An AES-GCM key
+     * @returns {Promise<string>} Base64-encoded decrypted data
+     */
+    static async decryptBufferToBase64(ciphertextBase64, key) {
+        const buffer = await E2EEEncryptor.decryptBuffer(ciphertextBase64, key)
+        const bytes = new Uint8Array(buffer)
+        let binary = ""
+        for (let i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i])
+        }
+        return btoa(binary)
+    }
+
     // --- Private helper methods ---
 
     /**

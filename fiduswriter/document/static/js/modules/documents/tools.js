@@ -37,22 +37,32 @@ export const getMissingDocumentListData = (
                     const doc = documentList.find(
                         entry => entry.id === extraValues.id
                     )
-                    if (rawContent) {
-                        doc.rawContent = JSON.parse(
-                            JSON.stringify(
-                                schema
-                                    .nodeFromJSON(extraValues.content)
-                                    .toJSON()
+                    if (extraValues.e2ee) {
+                        // For E2EE documents, content is an encrypted string.
+                        // Store as-is without ProseMirror parsing.
+                        if (rawContent) {
+                            doc.rawContent = extraValues.content
+                        }
+                        doc.content = extraValues.content
+                        doc.settings = {}
+                    } else {
+                        if (rawContent) {
+                            doc.rawContent = JSON.parse(
+                                JSON.stringify(
+                                    schema
+                                        .nodeFromJSON(extraValues.content)
+                                        .toJSON()
+                                )
                             )
-                        )
+                        }
+                        doc.content = acceptAllNoInsertions(
+                            schema.nodeFromJSON(extraValues.content)
+                        ).toJSON()
+                        doc.settings = getSettings(doc.content)
                     }
-                    doc.content = acceptAllNoInsertions(
-                        schema.nodeFromJSON(extraValues.content)
-                    ).toJSON()
                     doc.comments = extraValues.comments
                     doc.bibliography = extraValues.bibliography
                     doc.images = extraValues.images
-                    doc.settings = getSettings(doc.content)
                 })
             })
             .catch(error => {

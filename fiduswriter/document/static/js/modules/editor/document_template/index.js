@@ -1,5 +1,10 @@
 import {Dialog, addAlert, escapeText, get} from "../../common"
 import {SaveCopy} from "../../exporter/native"
+import {E2EEKeyManager} from "../e2ee/key-manager"
+import {
+    createPasswordDialog,
+    enterPasswordDialog
+} from "../e2ee/password-dialog"
 
 export class ModDocumentTemplate {
     constructor(editor) {
@@ -108,6 +113,25 @@ export class ModDocumentTemplate {
             ),
             order: 3.5,
             action: editor => {
+                const isE2EE = editor.docInfo.e2ee
+                const e2eeMode = settings_E2EE_MODE
+                const canToggleE2EE =
+                    e2eeMode === "enabled" ||
+                    (e2eeMode === "required" && !isE2EE) ||
+                    (e2eeMode === "disabled" && isE2EE)
+
+                let e2eeHtml = ""
+                if (canToggleE2EE) {
+                    e2eeHtml = `
+                        <div class="e2ee-copy-toggle" style="margin-top: 15px;">
+                            <label>
+                                <input type="checkbox" id="e2ee-copy-toggle" ${e2eeMode === "required" || isE2EE ? "checked" : ""}>
+                                ${gettext("Encrypt the copy")}
+                            </label>
+                        </div>
+                    `
+                }
+
                 const selectTemplateDialog = new Dialog({
                     title: gettext("Choose document template"),
                     body: `<p>
@@ -120,7 +144,8 @@ export class ModDocumentTemplate {
                                 ([importId, dt]) =>
                                     `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
                             )
-                            .join("")}</select>`,
+                            .join("")}</select>
+                        ${e2eeHtml}`,
                     buttons: [
                         {
                             text: gettext("Copy"),
@@ -132,7 +157,16 @@ export class ModDocumentTemplate {
                                         "You are offline. Please try again after you are online."
                                     )
                                     selectTemplateDialog.close()
-                                } else {
+                                    return
+                                }
+
+                                const targetE2EE =
+                                    canToggleE2EE &&
+                                    selectTemplateDialog.dialogEl.querySelector(
+                                        "#e2ee-copy-toggle"
+                                    )?.checked
+
+                                const doCopy = e2eeOptions => {
                                     const copier = new SaveCopy(
                                         editor.getDoc(),
                                         editor.mod.db.bibDB,
@@ -140,17 +174,121 @@ export class ModDocumentTemplate {
                                         editor.user,
                                         selectTemplateDialog.dialogEl.querySelector(
                                             "select"
-                                        ).value
+                                        ).value,
+                                        e2eeOptions
                                     )
                                     copier
                                         .init()
-                                        .then(({docInfo}) =>
-                                            editor.app.goTo(
-                                                `/document/${docInfo.id}/`
-                                            )
-                                        )
+                                        .then(({docInfo}) => {
+                                            const url = targetE2EE
+                                                ? `/document/${docInfo.id}/?e2ee=1`
+                                                : `/document/${docInfo.id}/`
+                                            editor.app.goTo(url)
+                                        })
                                         .catch(() => false)
                                     selectTemplateDialog.close()
+                                }
+
+                                if (isE2EE && !targetE2EE) {
+                                    // Decrypting: need source key
+                                    if (editor.e2ee && editor.e2ee.key) {
+                                        doCopy({
+                                            sourceKey: editor.e2ee.key,
+                                            targetE2EE: false
+                                        })
+                                    } else {
+                                        enterPasswordDialog(async password => {
+                                            try {
+                                                const key =
+                                                    await E2EEKeyManager.deriveKey(
+                                                        password,
+                                                        new Uint8Array(
+                                                            atob(
+                                                                editor.docInfo
+                                                                    .e2ee_salt
+                                                            )
+                                                                .split("")
+                                                                .map(c =>
+                                                                    c.charCodeAt(
+                                                                        0
+                                                                    )
+                                                                )
+                                                        ),
+                                                        editor.docInfo
+                                                            .e2ee_iterations ||
+                                                            600000
+                                                    )
+                                                doCopy({
+                                                    sourceKey: key,
+                                                    targetE2EE: false
+                                                })
+                                            } catch (_err) {
+                                                addAlert(
+                                                    "error",
+                                                    gettext(
+                                                        "Incorrect password."
+                                                    )
+                                                )
+                                            }
+                                        })
+                                    }
+                                } else if (!isE2EE && targetE2EE) {
+                                    // Encrypting: need new password
+                                    createPasswordDialog(password => {
+                                        doCopy({
+                                            targetE2EE: true,
+                                            targetPassword: password
+                                        })
+                                    })
+                                } else if (isE2EE && targetE2EE) {
+                                    // E2EE -> E2EE: need source key, then new password
+                                    const handlePasswords = sourceKey => {
+                                        createPasswordDialog(password => {
+                                            doCopy({
+                                                sourceKey: sourceKey,
+                                                targetE2EE: true,
+                                                targetPassword: password
+                                            })
+                                        })
+                                    }
+                                    if (editor.e2ee && editor.e2ee.key) {
+                                        handlePasswords(editor.e2ee.key)
+                                    } else {
+                                        enterPasswordDialog(async password => {
+                                            try {
+                                                const key =
+                                                    await E2EEKeyManager.deriveKey(
+                                                        password,
+                                                        new Uint8Array(
+                                                            atob(
+                                                                editor.docInfo
+                                                                    .e2ee_salt
+                                                            )
+                                                                .split("")
+                                                                .map(c =>
+                                                                    c.charCodeAt(
+                                                                        0
+                                                                    )
+                                                                )
+                                                        ),
+                                                        editor.docInfo
+                                                            .e2ee_iterations ||
+                                                            600000
+                                                    )
+                                                handlePasswords(key)
+                                            } catch (_err) {
+                                                addAlert(
+                                                    "error",
+                                                    gettext(
+                                                        "Incorrect password."
+                                                    )
+                                                )
+                                            }
+                                        })
+                                    }
+                                } else {
+                                    // Plain -> plain
+                                    doCopy(null)
                                 }
                             }
                         },

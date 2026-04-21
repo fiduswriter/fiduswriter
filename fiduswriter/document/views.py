@@ -2,6 +2,7 @@ import time
 import os
 import bleach
 import json
+import base64
 from copy import deepcopy
 
 from django.contrib.contenttypes.models import ContentType
@@ -93,6 +94,12 @@ def get_documentlist_extra(request):
                 "bibliography": doc.bibliography,
                 "id": doc.id,
                 "e2ee": doc.e2ee,
+                "e2ee_salt": (
+                    base64.b64encode(doc.e2ee_salt).decode("ascii")
+                    if doc.e2ee_salt
+                    else None
+                ),
+                "e2ee_iterations": doc.e2ee_iterations,
             }
         )
     return JsonResponse(response, status=status)
@@ -453,8 +460,6 @@ def create_doc(request):
     e2ee_salt = None
     e2ee_iterations = 600000
     if e2ee:
-        import base64
-
         salt_b64 = request.POST.get("e2ee_salt")
         if salt_b64:
             e2ee_salt = base64.b64decode(salt_b64)
@@ -479,6 +484,20 @@ def import_create(request):
     # First step of import: Create a document and return the id of it
     response = {}
     status = 201
+
+    # Check E2EE mode
+    e2ee = request.POST.get("e2ee", "") == "true"
+    e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
+    if e2ee and e2ee_mode == "disabled":
+        return JsonResponse(
+            {"error": "E2EE is not enabled on this server"}, status=403
+        )
+    if not e2ee and e2ee_mode == "required":
+        return JsonResponse(
+            {"error": "Only E2EE documents are allowed on this server"},
+            status=403,
+        )
+
     import_id = request.POST["import_id"]
     document_template = (
         DocumentTemplate.objects.filter(
@@ -568,11 +587,26 @@ def import_create(request):
         ):
             counter += 1
             path = f"{base_path} {counter}"
+
+    e2ee_salt = None
+    e2ee_iterations = 600000
+    if e2ee:
+        salt_b64 = request.POST.get("e2ee_salt")
+        if salt_b64:
+            e2ee_salt = base64.b64decode(salt_b64)
+        e2ee_iterations = int(request.POST.get("e2ee_iterations", 600000))
+
     document = Document.objects.create(
-        owner=request.user, template=document_template, path=path
+        owner=request.user,
+        template=document_template,
+        path=path,
+        e2ee=e2ee,
+        e2ee_salt=e2ee_salt,
+        e2ee_iterations=e2ee_iterations,
     )
     response["id"] = document.id
     response["path"] = document.path
+    response["e2ee"] = document.e2ee
     return JsonResponse(response, status=status)
 
 
@@ -643,9 +677,18 @@ def import_doc(request):
         status = 403
         return JsonResponse(response, status=status)
     document.title = request.POST["title"]
-    document.content = json.loads(request.POST["content"])
-    document.comments = json.loads(request.POST["comments"])
-    document.bibliography = json.loads(request.POST["bibliography"])
+    if document.e2ee:
+        # For E2EE documents, content/comments/bibliography are
+        # encrypted strings (opaque Base64 ciphertext). Store as-is
+        # and record that a snapshot exists at version 0.
+        document.content = request.POST["content"]
+        document.comments = request.POST["comments"]
+        document.bibliography = request.POST["bibliography"]
+        document.e2ee_snapshot_version = 0
+    else:
+        document.content = json.loads(request.POST["content"])
+        document.comments = json.loads(request.POST["comments"])
+        document.bibliography = json.loads(request.POST["bibliography"])
     # document.doc_version should always be the current version, so don't
     # bother about it.
     document.save()
@@ -1025,8 +1068,6 @@ def get_doc_data(request):
     }
 
     if doc.e2ee:
-        import base64
-
         doc_info["e2ee"] = True
         doc_info["e2ee_salt"] = (
             base64.b64encode(doc.e2ee_salt).decode("ascii")

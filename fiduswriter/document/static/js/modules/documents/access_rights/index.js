@@ -22,12 +22,15 @@ import {
  */
 
 export class DocumentAccessRightsDialog {
-    constructor(documentIds, contacts, newContactCall) {
+    constructor(documentIds, contacts, newContactCall, e2ee = false) {
         this.documentIds = documentIds
         this.contacts = contacts
         this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
         // Share-link tab is only available when a single document is selected
         this.singleDocumentId = documentIds.length === 1 ? documentIds[0] : null
+        // Whether the document(s) are E2EE encrypted. For E2EE documents,
+        // only a subset of access rights are available.
+        this.e2ee = e2ee
     }
 
     init() {
@@ -45,98 +48,141 @@ export class DocumentAccessRightsDialog {
     }
 
     getDropdownMenu(currentRight, onChange) {
-        return {
-            content: [
-                {
-                    type: "header",
-                    title: gettext("Basic"),
-                    tooltip: gettext("Basic access rights")
+        // E2EE documents only support a subset of access rights because
+        // the server cannot process encrypted content for features like
+        // tracked changes, review filtering, etc.
+        const E2EE_ALLOWED_RIGHTS = ["write", "read-without-comments", "read"]
+
+        const allItems = [
+            {
+                type: "header",
+                title: gettext("Basic"),
+                tooltip: gettext("Basic access rights")
+            },
+            {
+                type: "action",
+                title: gettext("Write"),
+                icon: "pencil-alt",
+                tooltip: gettext("Write"),
+                right: "write",
+                action: () => {
+                    onChange("write")
                 },
-                {
-                    type: "action",
-                    title: gettext("Write"),
-                    icon: "pencil-alt",
-                    tooltip: gettext("Write"),
-                    action: () => {
-                        onChange("write")
-                    },
-                    selected: currentRight === "write"
+                selected: currentRight === "write"
+            },
+            {
+                type: "action",
+                title: gettext("Write tracked"),
+                icon: "pencil-alt",
+                tooltip: gettext("Write with changes tracked"),
+                right: "write-tracked",
+                action: () => {
+                    onChange("write-tracked")
                 },
-                {
-                    type: "action",
-                    title: gettext("Write tracked"),
-                    icon: "pencil-alt",
-                    tooltip: gettext("Write with changes tracked"),
-                    action: () => {
-                        onChange("write-tracked")
-                    },
-                    selected: currentRight === "write-tracked"
+                selected: currentRight === "write-tracked"
+            },
+            {
+                type: "action",
+                title: gettext("Comment"),
+                icon: "comment",
+                tooltip: gettext("Comment"),
+                right: "comment",
+                action: () => {
+                    onChange("comment")
                 },
-                {
-                    type: "action",
-                    title: gettext("Comment"),
-                    icon: "comment",
-                    tooltip: gettext("Comment"),
-                    action: () => {
-                        onChange("comment")
-                    },
-                    selected: currentRight === "comment"
+                selected: currentRight === "comment"
+            },
+            {
+                type: "action",
+                title: gettext("Read"),
+                icon: "eye",
+                tooltip: gettext("Read"),
+                right: "read",
+                action: () => {
+                    onChange("read")
                 },
-                {
-                    type: "action",
-                    title: gettext("Read"),
-                    icon: "eye",
-                    tooltip: gettext("Read"),
-                    action: () => {
-                        onChange("read")
-                    },
-                    selected: currentRight === "read"
+                selected: currentRight === "read"
+            },
+            {
+                type: "header",
+                title: gettext("Review"),
+                tooltip: gettext("Access rights used within document review")
+            },
+            {
+                type: "action",
+                title: gettext("No comments"),
+                icon: "eye",
+                tooltip: gettext(
+                    "Read document but not see comments and chats of others"
+                ),
+                right: "read-without-comments",
+                action: () => {
+                    onChange("read-without-comments")
                 },
-                {
-                    type: "header",
-                    title: gettext("Review"),
-                    tooltip: gettext(
-                        "Access rights used within document review"
-                    )
+                selected: currentRight === "read-without-comments"
+            },
+            {
+                type: "action",
+                title: gettext("Review"),
+                icon: "comment",
+                tooltip: gettext(
+                    "Comment, but not see comments and chats of others"
+                ),
+                right: "review",
+                action: () => {
+                    onChange("review")
                 },
-                {
-                    type: "action",
-                    title: gettext("No comments"),
-                    icon: "eye",
-                    tooltip: gettext(
-                        "Read document but not see comments and chats of others"
-                    ),
-                    action: () => {
-                        onChange("read-without-comments")
-                    },
-                    selected: currentRight === "read-without-comments"
+                selected: currentRight === "review"
+            },
+            {
+                type: "action",
+                title: gettext("Review tracked"),
+                icon: "pencil-alt",
+                tooltip: gettext(
+                    "Write with tracked changes, but not see comments and chats of others"
+                ),
+                right: "review-tracked",
+                action: () => {
+                    onChange("review-tracked")
                 },
-                {
-                    type: "action",
-                    title: gettext("Review"),
-                    icon: "comment",
-                    tooltip: gettext(
-                        "Comment, but not see comments and chats of others"
-                    ),
-                    action: () => {
-                        onChange("review")
-                    },
-                    selected: currentRight === "review"
-                },
-                {
-                    type: "action",
-                    title: gettext("Review tracked"),
-                    icon: "pencil-alt",
-                    tooltip: gettext(
-                        "Write with tracked changes, but not see comments and chats of others"
-                    ),
-                    action: () => {
-                        onChange("review-tracked")
-                    },
-                    selected: currentRight === "review-tracked"
+                selected: currentRight === "review-tracked"
+            }
+        ]
+
+        // Filter items for E2EE documents
+        const content = this.e2ee
+            ? allItems.filter(item => {
+                  // Keep headers
+                  if (item.type === "header") {
+                      return true
+                  }
+                  // Only keep allowed rights
+                  return E2EE_ALLOWED_RIGHTS.includes(item.right)
+              })
+            : allItems
+
+        // Remove trailing headers with no items after them
+        const filteredContent = content.filter((item, index) => {
+            if (item.type === "header") {
+                // Check if there's at least one action item after this header
+                // before the next header or end of list
+                const nextItems = content.slice(index + 1)
+                const nextAction = nextItems.find(i => i.type === "action")
+                const nextHeader = nextItems.findIndex(i => i.type === "header")
+                if (!nextAction) {
+                    return false
                 }
-            ]
-        }
+                if (
+                    nextHeader >= 0 &&
+                    nextHeader < nextItems.indexOf(nextAction)
+                ) {
+                    return false
+                }
+            }
+            return true
+        })
+
+        return {content: filteredContent}
     }
 
     createAccessRightsDialog() {

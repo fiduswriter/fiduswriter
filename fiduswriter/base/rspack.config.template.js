@@ -22,6 +22,7 @@ const predefinedVariables = {
     settings_MEDIA_MAX_SIZE: settings.MEDIA_MAX_SIZE,
     settings_FOOTER_LINKS: JSON.stringify(settings.FOOTER_LINKS),
     settings_LANGUAGES: JSON.stringify(settings.LANGUAGES),
+    settings_E2EE: settings.E2EE,
     transpile_VERSION: transpile.VERSION
 }
 

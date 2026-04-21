@@ -74,12 +74,16 @@ def get_documentlist_extra(request):
             }
             if image.image.thumbnail:
                 images[image.image.id]["thumbnail"] = image.image.thumbnail.url
-        if "type" not in doc.content:
+        # Initialize document content from template if empty.
+        # We only do this when content is a dict — once an
+        # e2ee_snapshot is saved, the content becomes a Base64
+        # string and isinstance skips it.
+        if isinstance(doc.content, dict) and "type" not in doc.content:
             doc.content = deepcopy(doc.template.content)
             if "type" not in doc.content:
                 doc.content["type"] = "doc"
             if "content" not in doc.content:
-                doc.content["content"] = [{type: "title"}]
+                doc.content["content"] = [{"type": "title"}]
             doc.save()
         response["documents"].append(
             {
@@ -88,6 +92,7 @@ def get_documentlist_extra(request):
                 "comments": doc.comments,
                 "bibliography": doc.bibliography,
                 "id": doc.id,
+                "e2ee": doc.e2ee,
             }
         )
     return JsonResponse(response, status=status)
@@ -145,12 +150,22 @@ def documents_list(request):
         is_owner = False
         if document.owner == request.user:
             is_owner = True
+        # For E2EE documents, the title is stored encrypted within the
+        # content field and cannot be read server-side. Show a placeholder
+        # instead. The client will replace this with the decrypted title
+        # after the user enters the password.
+        display_title = (
+            f"Encrypted Document #{document.id}"
+            if document.e2ee
+            else document.title
+        )
         output_list.append(
             {
                 "id": document.id,
-                "title": document.title,
+                "title": display_title,
                 "path": path,
                 "is_owner": is_owner,
+                "e2ee": document.e2ee,
                 "owner": {
                     "id": document.owner.id,
                     "name": document.owner.readable_name,
@@ -211,10 +226,18 @@ def save_access_rights(request):
         doc = Document.objects.filter(pk=doc_id, owner=request.user).first()
         if not doc:
             continue
+        from document.models import E2EE_ALLOWED_RIGHTS
+
         for right in rights:
             holder_type = ContentType.objects.get(
                 app_label="user", model=right["holder"]["type"]
             )
+            if (
+                doc.e2ee
+                and right["rights"] not in E2EE_ALLOWED_RIGHTS
+                and right["rights"] != "delete"
+            ):
+                continue
             if right["rights"] == "delete":
                 # Status 'delete' means the access right is marked for
                 # deletion.
@@ -404,13 +427,46 @@ def create_doc(request):
     response = {}
     template_id = request.POST["template_id"]
     path = request.POST["path"]
+    e2ee = request.POST.get("e2ee", "") == "true"
+
+    # Check E2EE mode
+    e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
+    if e2ee and e2ee_mode == "disabled":
+        return JsonResponse(
+            {"error": "E2EE is not enabled on this server"}, status=403
+        )
+    if not e2ee and e2ee_mode == "required":
+        return JsonResponse(
+            {"error": "Only E2EE documents are allowed on this server"},
+            status=403,
+        )
+
     document_template = DocumentTemplate.objects.filter(
         Q(user=request.user) | Q(user=None), id=template_id
     ).first()
     if not document_template:
         return JsonResponse(response, status=405)
+
+    # For E2EE documents, the client generates a random salt and sends it
+    # to the server. The salt is not a secret — it is stored in plaintext
+    # alongside the encrypted content.
+    e2ee_salt = None
+    e2ee_iterations = 600000
+    if e2ee:
+        import base64
+
+        salt_b64 = request.POST.get("e2ee_salt")
+        if salt_b64:
+            e2ee_salt = base64.b64decode(salt_b64)
+        e2ee_iterations = int(request.POST.get("e2ee_iterations", 600000))
+
     document = Document.objects.create(
-        owner_id=request.user.pk, template_id=template_id, path=path
+        owner_id=request.user.pk,
+        template_id=template_id,
+        path=path,
+        e2ee=e2ee,
+        e2ee_salt=e2ee_salt,
+        e2ee_iterations=e2ee_iterations,
     )
     response["id"] = document.id
     return JsonResponse(response, status=201)
@@ -540,11 +596,21 @@ def import_image(request):
     else:
         image = None
     if image is None:
-        image = Image(
-            uploader=request.user,
-            image=request.FILES["image"],
-            checksum=checksum,
-        )
+        if document.e2ee:
+            # For E2EE documents, the image is already encrypted client-side.
+            # Store as-is and skip thumbnail generation.
+            image = Image(
+                uploader=request.user,
+                image=request.FILES["image"],
+                checksum=checksum,
+                file_type="application/octet-stream",
+            )
+        else:
+            image = Image(
+                uploader=request.user,
+                image=request.FILES["image"],
+                checksum=checksum,
+            )
         image.save()
     doc_image = DocumentImage.objects.create(
         image=image,
@@ -958,9 +1024,24 @@ def get_doc_data(request):
         "accessed_via_token": bool(token_str),
     }
 
+    if doc.e2ee:
+        import base64
+
+        doc_info["e2ee"] = True
+        doc_info["e2ee_salt"] = (
+            base64.b64encode(doc.e2ee_salt).decode("ascii")
+            if doc.e2ee_salt
+            else None
+        )
+        doc_info["e2ee_iterations"] = doc.e2ee_iterations
+    else:
+        doc_info["e2ee"] = False
+
     # Initialize document content from template if empty (same logic as
-    # WebSocket consumer's subscribe handler)
-    if "type" not in doc.content:
+    # WebSocket consumer's subscribe handler). We only do this when
+    # content is a dict — once an e2ee_snapshot is saved, the content
+    # becomes a Base64 string and isinstance skips it.
+    if isinstance(doc.content, dict) and "type" not in doc.content:
         doc.content = deepcopy(doc.template.content)
         if "type" not in doc.content:
             doc.content["type"] = "doc"
@@ -969,14 +1050,31 @@ def get_doc_data(request):
         doc.save()
 
     # Build doc data
-    doc_data = {
-        "v": doc.version,
-        "content": prosemirror.to_mini_json(
-            prosemirror.from_json(doc.content)
-        ),
-        "bibliography": doc.bibliography,
-        "images": {},
-    }
+    if doc.e2ee:
+        # For E2EE documents, the client should reconstruct from the last
+        # encrypted snapshot, then catch up via WebSocket diffs. Return
+        # e2ee_snapshot_version as "v" so the client subscribes at the right
+        # version and the server sends the covering diffs automatically.
+        doc_v = (
+            doc.e2ee_snapshot_version
+            if doc.e2ee_snapshot_version is not None
+            else 0
+        )
+        doc_data = {
+            "v": doc_v,
+            "content": doc.content,
+            "bibliography": doc.bibliography,
+            "images": {},
+        }
+    else:
+        doc_data = {
+            "v": doc.version,
+            "content": prosemirror.to_mini_json(
+                prosemirror.from_json(doc.content)
+            ),
+            "bibliography": doc.bibliography,
+            "images": {},
+        }
 
     # Include template for write-access users.
     #
@@ -993,6 +1091,8 @@ def get_doc_data(request):
     #   adjustment is a no-op.
     # - The template content is static (set by admins) and does not change
     #   during editing, so the DB value is always current.
+    # For E2EE documents, the template is still needed — the client
+    # decrypts the content first, then template adjustment works normally.
     if access_rights == "write":
         doc_data["template"] = {
             "id": doc.template.id,
@@ -1035,7 +1135,10 @@ def get_doc_data(request):
         doc_data["images"][image.id] = field_obj
 
     # Filter comments based on access rights
-    if access_rights == "read-without-comments":
+    if doc.e2ee:
+        # For E2EE documents, comments are encrypted - send as-is
+        doc_data["comments"] = doc.comments
+    elif access_rights == "read-without-comments":
         doc_data["comments"] = []
     elif access_rights in ["review", "review-tracked"]:
         filtered_comments = {}

@@ -497,3 +497,9 @@ FOOTER_LINKS = []
 BRANDING_LOGO = False
 
 ASGI_APPLICATION = "base.routing.application"
+
+# E2EE_MODE controls whether end-to-end encrypted documents are allowed.
+# 'disabled'  - No E2EE support. All documents are unencrypted.
+# 'enabled'   - Both E2EE and non-encrypted documents are supported.
+# 'required'  - Only E2EE documents are allowed.
+E2EE_MODE = "disabled"  # Default: disabled for backward compatibility

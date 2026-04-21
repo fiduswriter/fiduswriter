@@ -1,4 +1,5 @@
 import {localizeDate, whenReady} from "../../common"
+import {E2EEEncryptor} from "../e2ee/encryptor"
 import {messageTemplate} from "./templates"
 
 /*
@@ -41,10 +42,36 @@ export class ModCollabChat {
         }, 500)
     }
 
-    newMessage(message) {
+    async newMessage(message) {
         if (document.getElementById(`m${message.id}`)) {
             return
         }
+
+        // For E2EE documents, decrypt the chat message body.
+        if (message.e2ee) {
+            const isE2EE =
+                this.mod.editor.e2ee &&
+                this.mod.editor.e2ee.e2ee &&
+                this.mod.editor.e2ee.key
+            if (isE2EE) {
+                try {
+                    message.body = await E2EEEncryptor.decrypt(
+                        message.body,
+                        this.mod.editor.e2ee.key
+                    )
+                } catch (error) {
+                    console.error("E2EE: Failed to decrypt chat message", error)
+                    message.body = gettext(
+                        "[Encrypted message - decryption failed]"
+                    )
+                }
+            } else {
+                message.body = gettext(
+                    "[Encrypted message - enter password to read]"
+                )
+            }
+        }
+
         const theChatter = this.mod.participants.find(
             participant => participant.id === message.from
         )
@@ -75,11 +102,40 @@ export class ModCollabChat {
         }
     }
 
-    sendMessage(messageText) {
-        this.mod.editor.ws.send(() => ({
-            type: "chat",
-            body: messageText
-        }))
+    async sendMessage(messageText) {
+        // For E2EE documents, encrypt the chat message body.
+        // The server relays encrypted messages without reading them.
+        const isE2EE =
+            this.mod.editor.e2ee &&
+            this.mod.editor.e2ee.e2ee &&
+            this.mod.editor.e2ee.key
+
+        if (isE2EE) {
+            try {
+                const encryptedBody = await E2EEEncryptor.encrypt(
+                    messageText,
+                    this.mod.editor.e2ee.key
+                )
+                this.mod.editor.ws.send(() => ({
+                    type: "chat",
+                    body: encryptedBody,
+                    e2ee: true
+                }))
+            } catch (error) {
+                console.error("E2EE: Failed to encrypt chat message", error)
+                // Fall back to sending unencrypted (should not happen
+                // in normal operation)
+                this.mod.editor.ws.send(() => ({
+                    type: "chat",
+                    body: messageText
+                }))
+            }
+        } else {
+            this.mod.editor.ws.send(() => ({
+                type: "chat",
+                body: messageText
+            }))
+        }
     }
 
     init() {

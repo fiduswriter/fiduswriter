@@ -625,8 +625,8 @@ export class DocumentOverview {
             "file",
             false,
             `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}">
-                <i class="far fa-file-alt"></i>
-                <span class="fw-searchable">
+                ${doc.e2ee ? '<i class="fas fa-lock e2ee-doc-indicator" title="' + gettext("End-to-end encrypted document") + '"></i>' : '<i class="far fa-file-alt"></i>'}
+                <span class="fw-searchable${doc.e2ee ? " e2ee-encrypted-title" : ""}">
                     ${shortFileTitle(doc.title, doc.path)}
                 </span>
             </a>`,
@@ -718,7 +718,50 @@ export class DocumentOverview {
     }
 
     goToNewDocument(id) {
-        this.app.goTo(`/document${this.path}${id}`)
+        let url = `/document${this.path}${id}`
+        if (settings_E2EE === "required") {
+            url += "?e2ee=true"
+            this.app.goTo(url)
+        } else if (settings_E2EE === "disabled") {
+            this.app.goTo(url)
+        } else {
+            // E2EE is "enabled" - so the document can either be encrypted or non-encrypted
+            // Let user choose.
+            const dialog = new Dialog({
+                title: gettext("Choose encryption type of new document."),
+                body: `<div>
+                <input type="radio" id="nonencrypted" name="encryption" value="nonencrypted" checked>
+                <label for="nonencrypted">${gettext("Non-encrypted")}</label>
+                </div>
+                <div>&nbsp;</div>
+                <div>
+                <input type="radio" id="e2ee" name="encryption" value="e2ee">
+                <label for="e2ee">${gettext("Encrypted")}</label>
+                </div>`,
+                buttons: [
+                    {
+                        text: gettext("Cancel"),
+                        type: "cancel"
+                    },
+                    {
+                        text: gettext("Create"),
+                        type: "ok",
+                        click: _event => {
+                            const e2ee =
+                                document.querySelector(
+                                    'input[name="encryption"]:checked'
+                                )?.value === "e2ee"
+                            dialog.close()
+                            if (e2ee) {
+                                url += "?e2ee=true"
+                            }
+                            this.app.goTo(url)
+                        }
+                    }
+                ]
+            })
+            dialog.open()
+        }
     }
 
     close() {

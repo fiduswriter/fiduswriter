@@ -1,0 +1,271 @@
+/* E2EE Password Dialog Styles */
+:root {
+    /* E2EE strength meter colors */
+    --e2ee-strength-very-weak-color: var(--error-border-color, #af3515);
+    --e2ee-strength-weak-color: var(--cs-3-background-from, #d3421c);
+    --e2ee-strength-fair-color: var(
+        --warning-background-color,
+        rgb(221 208 63 / 80%)
+    );
+    --e2ee-strength-strong-color: var(--cs-6-background, #5a7e73);
+    --e2ee-strength-very-strong-color: var(--cs-5-background, #4c6860);
+
+    /* E2EE badge/indicator colors */
+    --e2ee-badge-text-color: var(--cs-4-text, #4c6860);
+    --e2ee-badge-icon-color: var(--cs-6-background, #5a7e73);
+    --e2ee-badge-encrypted-background-color: var(
+        --cs-6-background-hover,
+        #96c6b8
+    );
+    --e2ee-badge-encrypted-text-color: var(--cs-6-background, #5a7e73);
+
+    /* E2EE warning colors (share link) */
+    --e2ee-warning-background-color: var(--cs-light-background, #f9f9f9);
+    --e2ee-warning-border-color: var(--cs-3-background-from, #d3421c);
+    --e2ee-warning-text-color: var(--cs-3-background-to, #b13615);
+
+    /* E2EE info colors (password reminder) */
+    --e2ee-info-background-color: var(--cs-light-background, #f9f9f9);
+    --e2ee-info-border-color: var(--cs-2-box-shadow, #3c9fdf);
+    --e2ee-info-text-color: var(--cs-2-background, #0d78be);
+
+    /* E2EE mode banner */
+    --e2ee-banner-background-color: var(--cs-6-background-hover, #96c6b8);
+    --e2ee-banner-border-color: var(--cs-6-border, #7d948e);
+    --e2ee-banner-text-color: var(--cs-6-background, #5a7e73);
+    --e2ee-banner-link-color: var(--cs-2-background, #0d78be);
+
+    /* E2EE encrypted placeholder */
+    --e2ee-encrypted-title-color: var(--cs-light-text-secondary, #6e6e6e);
+
+    /* E2EE input focus */
+    --e2ee-input-focus-border-color: var(--cs-2-background, #0d78be);
+    --e2ee-input-focus-shadow-color: var(--cs-2-box-shadow, #3c9fdf);
+}
+
+.e2ee-password-dialog p {
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.e2ee-password-hint {
+    font-size: 0.9em;
+    color: var(--cs-light-text-secondary, #6e6e6e);
+    font-style: italic;
+    margin-bottom: 16px !important;
+}
+
+.e2ee-password-field {
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.e2ee-password-field label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+    font-size: 0.95em;
+    color: var(--main-text-color, #2c2723);
+}
+
+.e2ee-password-input {
+    width: 100%;
+    padding: 8px 36px 8px 10px;
+    border: 1px solid var(--input-dialog-border-color, #e0e0e0);
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: var(--input-background-color, #f3f3f3);
+    color: var(--main-text-color, #2c2723);
+    transition: border-color 0.2s;
+}
+
+.e2ee-password-input:focus {
+    outline: none;
+    border-color: var(--e2ee-input-focus-border-color);
+    box-shadow: 0 0 0 2px rgb(var(--cs-2-box-shadow, 60, 159, 223), 0.15);
+    background-color: var(--input-focus-background-color, #fbf9d2);
+}
+
+.e2ee-toggle-visibility {
+    position: absolute;
+    right: 6px;
+    top: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    color: var(--cs-light-text-secondary, #6e6e6e);
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.e2ee-toggle-visibility:hover {
+    color: var(--main-text-color, #2c2723);
+}
+
+/* Password Strength Meter */
+
+.e2ee-strength-meter {
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.e2ee-strength-bar {
+    height: 6px;
+    width: 0;
+    border-radius: 3px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    background-color: var(--cs-light-border, #e0e0e0);
+}
+
+.e2ee-strength-bar.very-weak {
+    background-color: var(--e2ee-strength-very-weak-color);
+}
+
+.e2ee-strength-bar.weak {
+    background-color: var(--e2ee-strength-weak-color);
+}
+
+.e2ee-strength-bar.fair {
+    background-color: var(--e2ee-strength-fair-color);
+}
+
+.e2ee-strength-bar.strong {
+    background-color: var(--e2ee-strength-strong-color);
+}
+
+.e2ee-strength-bar.very-strong {
+    background-color: var(--e2ee-strength-very-strong-color);
+}
+
+.e2ee-strength-label {
+    font-size: 0.8em;
+    white-space: nowrap;
+    min-width: 70px;
+}
+
+.e2ee-strength-label.very-weak {
+    color: var(--e2ee-strength-very-weak-color);
+}
+
+.e2ee-strength-label.weak {
+    color: var(--e2ee-strength-weak-color);
+}
+
+.e2ee-strength-label.fair {
+    color: var(--cs-3-background-from, #d3421c);
+}
+
+.e2ee-strength-label.strong {
+    color: var(--e2ee-strength-strong-color);
+}
+
+.e2ee-strength-label.very-strong {
+    color: var(--e2ee-strength-very-strong-color);
+}
+
+/* Password Error Message */
+
+.e2ee-password-error {
+    color: var(--error-border-color, #af3515);
+    font-size: 0.85em;
+    min-height: 1.2em;
+    margin-top: 4px;
+}
+
+/* E2EE Badge / Indicator */
+
+.e2ee-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85em;
+    color: var(--e2ee-badge-text-color);
+}
+
+.e2ee-badge .fa-lock {
+    color: var(--e2ee-badge-icon-color);
+}
+
+.e2ee-badge-encrypted {
+    background-color: var(--e2ee-badge-encrypted-background-color);
+    color: var(--e2ee-badge-encrypted-text-color);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+/* E2EE Share Link Warning */
+
+.e2ee-share-warning {
+    background-color: var(--e2ee-warning-background-color);
+    border: 1px solid var(--e2ee-warning-border-color);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-size: 0.9em;
+    color: var(--e2ee-warning-text-color);
+}
+
+.e2ee-share-warning i {
+    margin-right: 6px;
+}
+
+/* E2EE Password Reminder in Access Rights Dialog */
+
+.e2ee-password-reminder {
+    background-color: var(--e2ee-info-background-color);
+    border: 1px solid var(--e2ee-info-border-color);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-size: 0.9em;
+    color: var(--e2ee-info-text-color);
+}
+
+.e2ee-password-reminder i {
+    margin-right: 6px;
+}
+
+/* E2EE Document Overview Row Indicator */
+
+.e2ee-doc-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: var(--e2ee-badge-icon-color);
+    font-size: 12px;
+}
+
+.e2ee-doc-indicator:hover {
+    cursor: help;
+}
+
+/* E2EE Placeholder Title */
+
+.e2ee-encrypted-title {
+    color: var(--e2ee-encrypted-title-color);
+    font-style: italic;
+}
+
+/* E2EE Mode Banner (for E2EE_MODE=required) */
+
+.e2ee-mode-banner {
+    background-color: var(--e2ee-banner-background-color);
+    border-bottom: 1px solid var(--e2ee-banner-border-color);
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--e2ee-banner-text-color);
+}
+
+.e2ee-mode-banner a {
+    color: var(--e2ee-banner-link-color);
+    text-decoration: underline;
+}

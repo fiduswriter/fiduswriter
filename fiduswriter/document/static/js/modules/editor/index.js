@@ -20,6 +20,13 @@ import {
     whenReady
 } from "../common"
 import {FeedbackTab} from "../feedback"
+import {E2EEEncryptor} from "./e2ee/encryptor"
+import {E2EEKeyManager} from "./e2ee/key-manager"
+import {
+    changePasswordDialog,
+    createPasswordDialog
+} from "./e2ee/password-dialog"
+import {E2EESnapshotManager} from "./e2ee/snapshot-manager"
 
 import * as plugins from "../../plugins/editor"
 import {getSettings} from "../schema/convert"
@@ -145,6 +152,12 @@ export class Editor {
         this.client_id = Math.floor(Math.random() * 0xffffffff)
         this.clientTimeAdjustment = 0
 
+        // E2EE state: holds the encryption key and snapshot manager
+        // for end-to-end encrypted documents. Set to an object with
+        // { key, snapshotManager, encrypted, encryptionSalt, encryptionIterations }
+        // when the document is encrypted and the user has entered the password.
+        this.e2ee = null
+
         this.pathEditable = true // Set to false through plugin to disable path editing.
 
         this.statePlugins = [
@@ -203,7 +216,8 @@ export class Editor {
             staticUrl("css/bibliography.css"),
             staticUrl("css/dot_menu.css"),
             staticUrl("css/cropper.min.css"),
-            staticUrl("css/inline_tools.css")
+            staticUrl("css/inline_tools.css"),
+            staticUrl("css/e2ee.css")
         ])
         new ModDocumentTemplate(this)
         const initPromises = [
@@ -211,21 +225,36 @@ export class Editor {
             this.mod.documentTemplate.getCitationStyles()
         ]
         if (this.docInfo.hasOwnProperty("templateId")) {
-            initPromises.push(
-                postJson("/api/document/create_doc/", {
-                    template_id: this.docInfo.templateId,
-                    path: this.docInfo.path
-                }).then(({json}) => {
-                    this.docInfo.id = json.id
-                    window.history.replaceState(
-                        "",
-                        "",
-                        `/document/${this.docInfo.id}/`
-                    )
-                    delete this.docInfo.templateId
-                    return Promise.resolve()
-                })
+            // Check if this should be an E2EE document.
+            // The E2EE mode can be indicated via:
+            // 1. URL query parameter ?e2ee=true (from overview page)
+            // 2. Global E2EE_MODE variable set by the settings
+            const e2eeParam = new URLSearchParams(window.location.search).get(
+                "e2ee"
             )
+            const isE2EERequired = settings_E2EE === "required"
+            const isE2EERequested = e2eeParam === "true" || e2eeParam === "1"
+            const shouldEncrypt = isE2EERequired || isE2EERequested
+
+            if (shouldEncrypt) {
+                initPromises.push(this._createE2EEDocument())
+            } else {
+                initPromises.push(
+                    postJson("/api/document/create_doc/", {
+                        template_id: this.docInfo.templateId,
+                        path: this.docInfo.path
+                    }).then(({json}) => {
+                        this.docInfo.id = json.id
+                        window.history.replaceState(
+                            "",
+                            "",
+                            `/document/${this.docInfo.id}/`
+                        )
+                        delete this.docInfo.templateId
+                        return Promise.resolve()
+                    })
+                )
+            }
         }
         // Handle token-based access (share links)
         if (uuid4Pattern.test(this.docInfo.id)) {
@@ -401,6 +430,26 @@ export class Editor {
                                         is_authenticated: false
                                     }
                                 }
+                                // Handle E2EE encryption parameters from server
+                                if (data.e2ee) {
+                                    if (!this.e2ee) {
+                                        this.e2ee = {
+                                            e2ee: true,
+                                            encryptionSalt: data.e2ee_salt,
+                                            encryptionIterations:
+                                                data.e2ee_iterations,
+                                            key: null,
+                                            snapshotManager:
+                                                new E2EESnapshotManager(this)
+                                        }
+                                    } else {
+                                        this.e2ee.e2ee = true
+                                        this.e2ee.encryptionSalt =
+                                            data.e2ee_salt
+                                        this.e2ee.encryptionIterations =
+                                            data.e2ee_iterations
+                                    }
+                                }
                                 break
                             case "refetch_doc":
                                 // The server has forced a DB save before
@@ -494,6 +543,24 @@ export class Editor {
                                     }
                                 }
                                 break
+                            case "request_snapshot":
+                                // Server is asking a write-capable client to
+                                // send an encrypted snapshot for persistence.
+                                if (this.e2ee && this.e2ee.snapshotManager) {
+                                    this.e2ee.snapshotManager.handleRequestSnapshot(
+                                        data
+                                    )
+                                }
+                                break
+                            case "e2ee_snapshot_received":
+                                // Server confirmed that an encrypted snapshot
+                                // was saved. Informational — no action needed.
+                                if (this.e2ee && this.e2ee.snapshotManager) {
+                                    this.e2ee.snapshotManager.handleSnapshotReceived(
+                                        data
+                                    )
+                                }
+                                break
                             default:
                                 break
                         }
@@ -565,20 +632,33 @@ export class Editor {
                     }
                 })
                 this.mod.documentTemplate.setStyles(stylesResult.json)
+                const docIsE2EE = docResult.json.doc_info?.e2ee === true
                 this.mod.collab.doc.receiveDocument(docResult.json)
-                // Initialize the WebSocket connection
-                this.ws.init()
-                // Add the close listener
-                this.ws.ws.addEventListener("close", () => {
-                    // Listen to close event and update the headerbar and toolbar view.
-                    if (this.menu.toolbarViews) {
-                        this.menu.toolbarViews.forEach(view => view.update())
-                    }
-                    if (this.menu.headerView) {
-                        this.menu.headerView.update()
-                    }
-                })
+                // For E2EE documents, delay the WebSocket connection until
+                // after the password dialog and decryption are complete (see
+                // _decryptAndLoadDoc). This ensures the key is available when
+                // catch-up diffs arrive from the server.
+                if (!docIsE2EE) {
+                    this.startWebSocket()
+                }
             })
+    }
+
+    /**
+     * Open the WebSocket connection and attach the close listener.
+     * Called immediately for non-E2EE documents and deferred until after
+     * password entry + decryption for E2EE documents.
+     */
+    startWebSocket() {
+        this.ws.init()
+        this.ws.ws.addEventListener("close", () => {
+            if (this.menu.toolbarViews) {
+                this.menu.toolbarViews.forEach(view => view.update())
+            }
+            if (this.menu.headerView) {
+                this.menu.headerView.update()
+            }
+        })
     }
 
     handleAccessRightModification() {
@@ -607,6 +687,65 @@ export class Editor {
         })
         accessRightModifiedDialog.open()
         this.close() // Close the editor operations.
+    }
+
+    /**
+     * Create a new E2EE document.
+     *
+     * Prompts the user for a password, generates a salt, derives the
+     * encryption key, and creates the document on the server with E2EE
+     * parameters. The initial content will be encrypted when the document
+     * is first loaded and a snapshot is sent.
+     *
+     * @returns {Promise<void>}
+     * @private
+     */
+    async _createE2EEDocument() {
+        // Prompt for password
+        const password = await new Promise(resolve => {
+            createPasswordDialog(pwd => resolve(pwd))
+        })
+
+        // Generate a random 16-byte salt
+        const salt = E2EEKeyManager.generateSalt()
+        const saltBase64 = btoa(String.fromCharCode(...salt))
+
+        // Derive the encryption key from password + salt
+        const iterations = 600000
+        const key = await E2EEKeyManager.deriveKey(password, salt, iterations)
+
+        // Create the document on the server with E2EE parameters
+        const {json, status} = await postJson("/api/document/create_doc/", {
+            template_id: this.docInfo.templateId,
+            path: this.docInfo.path,
+            e2ee: "true",
+            e2ee_salt: saltBase64,
+            e2ee_iterations: String(iterations)
+        })
+
+        if (status === 403) {
+            // E2EE not allowed on this server
+            addAlert(
+                "error",
+                json.error || gettext("E2EE is not enabled on this server.")
+            )
+            window.location.href = "/"
+            return
+        }
+
+        this.docInfo.id = json.id
+        window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
+        delete this.docInfo.templateId
+
+        // Set up E2EE state on the editor
+        this.e2ee = {
+            e2ee: true,
+            encryptionSalt: saltBase64,
+            encryptionIterations: iterations,
+            key: key,
+            snapshotManager: new E2EESnapshotManager(this)
+        }
+        this.e2ee.snapshotManager.setKey(key)
     }
 
     close() {

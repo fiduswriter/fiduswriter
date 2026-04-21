@@ -111,6 +111,13 @@ class Document(models.Model):
     template = models.ForeignKey(
         DocumentTemplate, on_delete=models.deletion.CASCADE
     )
+    e2ee = models.BooleanField(default=False)
+    e2ee_salt = models.BinaryField(max_length=16, null=True, blank=True)
+    e2ee_iterations = models.PositiveIntegerField(default=600000)
+    # For E2EE documents: the document version at which the last encrypted
+    # snapshot was saved. Diffs stored in `diffs` cover snapshot_version →
+    # version. Null for non-E2EE documents.
+    e2ee_snapshot_version = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         if len(self.title) > 0:
@@ -219,6 +226,8 @@ RIGHTS_CHOICES = (
     # Cannot chat with collaborators.
     # Has no access to revisions.
 )
+
+E2EE_ALLOWED_RIGHTS = ["write", "read-without-comments", "read"]
 
 # Editor and Reviewer can only comment and not edit document
 COMMENT_ONLY = ("review", "comment")

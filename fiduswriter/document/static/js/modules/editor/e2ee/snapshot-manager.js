@@ -84,12 +84,15 @@ export class E2EESnapshotManager {
         const {E2EEEncryptor} = await import("./encryptor")
 
         // Encrypt all document data
-        const encryptedContent = E2EEEncryptor.encryptObject(content, this.key)
-        const encryptedComments = E2EEEncryptor.encryptObject(
+        const encryptedContent = await E2EEEncryptor.encryptObject(
+            content,
+            this.key
+        )
+        const encryptedComments = await E2EEEncryptor.encryptObject(
             comments,
             this.key
         )
-        const encryptedBibliography = E2EEEncryptor.encryptObject(
+        const encryptedBibliography = await E2EEEncryptor.encryptObject(
             bibliography,
             this.key
         )
@@ -143,12 +146,15 @@ export class E2EESnapshotManager {
 
         const {E2EEEncryptor} = await import("./encryptor")
 
-        const encryptedContent = E2EEEncryptor.encryptObject(content, this.key)
-        const encryptedComments = E2EEEncryptor.encryptObject(
+        const encryptedContent = await E2EEEncryptor.encryptObject(
+            content,
+            this.key
+        )
+        const encryptedComments = await E2EEEncryptor.encryptObject(
             comments,
             this.key
         )
-        const encryptedBibliography = E2EEEncryptor.encryptObject(
+        const encryptedBibliography = await E2EEEncryptor.encryptObject(
             bibliography,
             this.key
         )
@@ -188,9 +194,15 @@ export class E2EESnapshotManager {
         const {E2EEEncryptor} = await import("./encryptor")
 
         // Encrypt with the new key
-        const encryptedContent = E2EEEncryptor.encryptObject(content, newKey)
-        const encryptedComments = E2EEEncryptor.encryptObject(comments, newKey)
-        const encryptedBibliography = E2EEEncryptor.encryptObject(
+        const encryptedContent = await E2EEEncryptor.encryptObject(
+            content,
+            newKey
+        )
+        const encryptedComments = await E2EEEncryptor.encryptObject(
+            comments,
+            newKey
+        )
+        const encryptedBibliography = await E2EEEncryptor.encryptObject(
             bibliography,
             newKey
         )

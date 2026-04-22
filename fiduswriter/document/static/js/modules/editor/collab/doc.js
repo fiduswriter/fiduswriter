@@ -807,7 +807,7 @@ export class ModCollabDoc {
         try {
             // Encrypt the payload fields as a single blob
             const key = this.mod.editor.e2ee.key
-            const ep = E2EEEncryptor.encryptObject(encryptedPayload, key)
+            const ep = await E2EEEncryptor.encryptObject(encryptedPayload, key)
 
             // Build the wire-format diff: metadata in plaintext,
             // payload encrypted

@@ -51,7 +51,7 @@ export class ModCollabChat {
         if (message.e2ee) {
             const isE2EE =
                 this.mod.editor.e2ee &&
-                this.mod.editor.e2ee.e2ee &&
+                this.mod.editor.e2ee.encrypted &&
                 this.mod.editor.e2ee.key
             if (isE2EE) {
                 try {
@@ -107,7 +107,7 @@ export class ModCollabChat {
         // The server relays encrypted messages without reading them.
         const isE2EE =
             this.mod.editor.e2ee &&
-            this.mod.editor.e2ee.e2ee &&
+            this.mod.editor.e2ee.encrypted &&
             this.mod.editor.e2ee.key
 
         if (isE2EE) {

@@ -174,6 +174,31 @@ export class E2EEEncryptor {
         return btoa(binary)
     }
 
+    /**
+     * Decrypt an encrypted image and return a blob URL for display.
+     *
+     * Fetches the encrypted image file from the given URL, decrypts it,
+     * and creates a temporary object URL that can be used as an img src.
+     *
+     * @param {string} imageUrl - The URL of the encrypted image file
+     * @param {CryptoKey} key - An AES-GCM key
+     * @param {string} mimeType - The MIME type of the decrypted image
+     * @returns {Promise<string>} A blob URL for the decrypted image
+     */
+    static async decryptImageToUrl(imageUrl, key, mimeType = "image/png") {
+        const response = await fetch(imageUrl)
+        const arrayBuffer = await response.arrayBuffer()
+        const bytes = new Uint8Array(arrayBuffer)
+        let binary = ""
+        for (let i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i])
+        }
+        const base64 = btoa(binary)
+        const decrypted = await E2EEEncryptor.decryptBuffer(base64, key)
+        const blob = new Blob([decrypted], {type: mimeType})
+        return URL.createObjectURL(blob)
+    }
+
     // --- Private helper methods ---
 
     /**

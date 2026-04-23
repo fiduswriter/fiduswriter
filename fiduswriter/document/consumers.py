@@ -409,6 +409,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 del self.session["doc"].bibliography[id]
 
     async def update_images(self, image_updates):
+        if self.session["doc"].e2ee:
+            # For E2EE documents, image metadata is inside encrypted diffs.
+            # The server cannot process it; clients handle it locally.
+            # EncryptedDocumentImage records are created via the dedicated
+            # e2ee_image endpoint, not through diff processing.
+            return
         for iu in image_updates:
             if "id" not in iu:
                 continue

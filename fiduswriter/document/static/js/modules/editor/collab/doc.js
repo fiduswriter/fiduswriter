@@ -84,7 +84,10 @@ export class ModCollabDoc {
 
     receiveDocument(data) {
         this.cancelCurrentlyCheckingVersion()
-        if (this.mod.editor.docInfo.confirmedDoc) {
+        if (
+            this.mod.editor.docInfo.confirmedDoc &&
+            !this.mod.editor.e2ee?.encrypted
+        ) {
             this.merge.adjustDocument(data)
         } else {
             this.loadDocument(data)
@@ -153,6 +156,7 @@ export class ModCollabDoc {
         if (isE2EE) {
             this._loadE2EEDocument(doc, doc_info, isInitialLoad)
         } else {
+            this.mod.editor.e2ee = {encrypted: false}
             this._loadUnencryptedDocument(doc, isInitialLoad)
         }
     }
@@ -350,7 +354,7 @@ export class ModCollabDoc {
 
         // Store the E2EE state on the editor
         this.mod.editor.e2ee = {
-            e2ee: true,
+            encrypted: true,
             encryptionSalt: salt,
             encryptionIterations: iterations || 600000,
             key: key,
@@ -384,12 +388,36 @@ export class ModCollabDoc {
             window.history.replaceState(null, "", newHash)
         }
 
+        // Decrypt image copyright metadata for E2EE documents.
+        // The server stores it as an opaque encrypted string; we decrypt
+        // it here so the image DB receives plaintext objects.
+        let decryptedImages = doc.images
+        if (doc.images) {
+            decryptedImages = {}
+            const {E2EEEncryptor} = await import("../e2ee/encryptor")
+            for (const [id, image] of Object.entries(doc.images)) {
+                decryptedImages[id] = image
+                if (typeof image.copyright === "string") {
+                    try {
+                        decryptedImages[id].copyright =
+                            await E2EEEncryptor.decryptObject(
+                                image.copyright,
+                                key
+                            )
+                    } catch (_e) {
+                        // If decryption fails, leave as-is (legacy plaintext)
+                    }
+                }
+            }
+        }
+
         // Now load the decrypted document using the standard path
         const decryptedDoc = {
             ...doc,
             content: decryptedContent,
             comments: decryptedComments,
-            bibliography: decryptedBibliography
+            bibliography: decryptedBibliography,
+            images: decryptedImages
         }
         this._loadUnencryptedDocument(decryptedDoc, isInitialLoad)
 
@@ -532,7 +560,7 @@ export class ModCollabDoc {
         // Since encryption is async, we use a separate code path.
         const isE2EE =
             this.mod.editor.e2ee &&
-            this.mod.editor.e2ee.e2ee &&
+            this.mod.editor.e2ee.encrypted &&
             this.mod.editor.e2ee.key
 
         if (isE2EE) {

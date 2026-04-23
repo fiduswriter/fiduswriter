@@ -434,7 +434,7 @@ export class Editor {
                                 if (data.e2ee) {
                                     if (!this.e2ee) {
                                         this.e2ee = {
-                                            e2ee: true,
+                                            encrypted: true,
                                             encryptionSalt: data.e2ee_salt,
                                             encryptionIterations:
                                                 data.e2ee_iterations,
@@ -443,7 +443,7 @@ export class Editor {
                                                 new E2EESnapshotManager(this)
                                         }
                                     } else {
-                                        this.e2ee.e2ee = true
+                                        this.e2ee.encrypted = true
                                         this.e2ee.encryptionSalt =
                                             data.e2ee_salt
                                         this.e2ee.encryptionIterations =
@@ -739,7 +739,7 @@ export class Editor {
 
         // Set up E2EE state on the editor
         this.e2ee = {
-            e2ee: true,
+            encrypted: true,
             encryptionSalt: saltBase64,
             encryptionIterations: iterations,
             key: key,

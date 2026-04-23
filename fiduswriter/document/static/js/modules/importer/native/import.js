@@ -78,7 +78,15 @@ export class NativeImporter {
         }
         const {E2EEEncryptor} = await import("../../editor/e2ee/encryptor")
         const fileBuffer = await imageEntry.file.arrayBuffer()
-        const base64 = btoa(String.fromCharCode(...new Uint8Array(fileBuffer)))
+        const bytes = new Uint8Array(fileBuffer)
+        // Build binary string in chunks to avoid "Maximum call stack size exceeded"
+        let binary = ""
+        const chunkSize = 65536
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, i + chunkSize)
+            binary += String.fromCharCode.apply(null, chunk)
+        }
+        const base64 = btoa(binary)
         const decrypted = await E2EEEncryptor.decryptBufferToBase64(
             base64,
             this.e2eeOptions.sourceKey
@@ -107,20 +115,28 @@ export class NativeImporter {
     }
 
     saveImages(images, ImageTranslationTable) {
+        const isE2EE = this.e2eeOptions && this.e2eeOptions.enabled
+        const endpoint = isE2EE
+            ? "/api/document/e2ee_image/"
+            : "/api/document/import/image/"
+
         const sendPromises = Object.values(images).map(imageEntry => {
             return this._maybeDecryptImage(imageEntry)
                 .then(() => this._maybeEncryptImage(imageEntry))
                 .then(encryptedFile => {
-                    return postJson("/api/document/import/image/", {
+                    const postData = {
                         doc_id: this.docId,
                         title: imageEntry.title,
-                        copyright: imageEntry.copyright,
+                        copyright: isE2EE
+                            ? JSON.stringify(imageEntry.copyright)
+                            : imageEntry.copyright,
                         checksum: imageEntry.checksum,
                         image: {
                             file: encryptedFile,
                             filename: imageEntry.image.split("/").pop()
                         }
-                    })
+                    }
+                    return postJson(endpoint, postData)
                 })
                 .then(
                     ({json}) => (ImageTranslationTable[imageEntry.id] = json.id)

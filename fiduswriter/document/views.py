@@ -31,7 +31,7 @@ from document.models import (
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
 )
-from usermedia.models import DocumentImage, Image
+from usermedia.models import DocumentImage, EncryptedDocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
@@ -614,7 +614,7 @@ def import_create(request):
 @ajax_required
 @require_POST
 def import_image(request):
-    # create an image for a document
+    # create an image for a document (unencrypted only)
     response = {}
     document = Document.objects.filter(
         owner_id=request.user.pk, id=int(request.POST["doc_id"])
@@ -630,21 +630,11 @@ def import_image(request):
     else:
         image = None
     if image is None:
-        if document.e2ee:
-            # For E2EE documents, the image is already encrypted client-side.
-            # Store as-is and skip thumbnail generation.
-            image = Image(
-                uploader=request.user,
-                image=request.FILES["image"],
-                checksum=checksum,
-                file_type="application/octet-stream",
-            )
-        else:
-            image = Image(
-                uploader=request.user,
-                image=request.FILES["image"],
-                checksum=checksum,
-            )
+        image = Image(
+            uploader=request.user,
+            image=request.FILES["image"],
+            checksum=checksum,
+        )
         image.save()
     doc_image = DocumentImage.objects.create(
         image=image,
@@ -654,6 +644,64 @@ def import_image(request):
     )
     response["id"] = doc_image.image.id
     return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def e2ee_image(request):
+    # Store an encrypted image for an E2EE document.
+    # The file is encrypted client-side; the server stores it as-is.
+    response = {}
+    document = Document.objects.filter(
+        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+    ).first()
+    if not document or not document.e2ee:
+        return JsonResponse(response, status=401)
+
+    from usermedia.models import EncryptedDocumentImage
+
+    # Copyright may be an encrypted Base64 string or a plaintext JSON dict.
+    # Both are valid values for a JSONField (string and dict are valid JSON).
+    try:
+        copyright_value = json.loads(request.POST["copyright"])
+    except (json.JSONDecodeError, KeyError):
+        copyright_value = {}
+    enc_image = EncryptedDocumentImage(
+        document=document,
+        title=request.POST["title"],
+        copyright=copyright_value,
+    )
+    if "image" in request.FILES:
+        enc_image.image = request.FILES["image"]
+    if "checksum" in request.POST:
+        enc_image.checksum = int(request.POST["checksum"])
+    enc_image.save()
+
+    response["id"] = enc_image.id
+    response["image"] = enc_image.image.url
+    response["original_file_type"] = request.POST.get(
+        "original_file_type", "image/png"
+    )
+    return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
+def delete_e2ee_image(request):
+    response = {}
+    document = Document.objects.filter(
+        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+    ).first()
+    if not document or not document.e2ee:
+        return JsonResponse(response, status=401)
+
+    image_id = int(request.POST.get("image_id", 0))
+    EncryptedDocumentImage.objects.filter(
+        document=document, id=image_id
+    ).delete()
+    return JsonResponse(response, status=201)
 
 
 @login_required
@@ -1141,39 +1189,56 @@ def get_doc_data(request):
         }
 
     # Get document images
-    for dimage in (
-        DocumentImage.objects.filter(document_id=doc.id)
-        .select_related("image")
-        .only(
-            "id",
-            "title",
-            "copyright",
-            "image__id",
-            "image__image",
-            "image__file_type",
-            "image__added",
-            "image__checksum",
-            "image__thumbnail",
-            "image__height",
-            "image__width",
-        )
-    ):
-        image = dimage.image
-        field_obj = {
-            "id": image.id,
-            "title": dimage.title,
-            "copyright": dimage.copyright,
-            "image": image.image.url,
-            "file_type": image.file_type,
-            "added": int(image.added.timestamp()) * 1000,
-            "checksum": image.checksum,
-            "cats": [],
-        }
-        if image.thumbnail:
-            field_obj["thumbnail"] = image.thumbnail.url
-            field_obj["height"] = image.height
-            field_obj["width"] = image.width
-        doc_data["images"][image.id] = field_obj
+    if doc.e2ee:
+        # For E2EE documents, use EncryptedDocumentImage (per-document image storage)
+        for eimage in EncryptedDocumentImage.objects.filter(
+            document_id=doc.id
+        ):
+            field_obj = {
+                "id": eimage.id,
+                "title": eimage.title,
+                "copyright": eimage.copyright,
+                "image": eimage.image.url if eimage.image else "",
+                "file_type": "application/octet-stream",
+                "added": int(eimage.added.timestamp()) * 1000,
+                "checksum": eimage.checksum,
+                "cats": [],
+            }
+            doc_data["images"][eimage.id] = field_obj
+    else:
+        for dimage in (
+            DocumentImage.objects.filter(document_id=doc.id)
+            .select_related("image")
+            .only(
+                "id",
+                "title",
+                "copyright",
+                "image__id",
+                "image__image",
+                "image__file_type",
+                "image__added",
+                "image__checksum",
+                "image__thumbnail",
+                "image__height",
+                "image__width",
+            )
+        ):
+            image = dimage.image
+            field_obj = {
+                "id": image.id,
+                "title": dimage.title,
+                "copyright": dimage.copyright,
+                "image": image.image.url,
+                "file_type": image.file_type,
+                "added": int(image.added.timestamp()) * 1000,
+                "checksum": image.checksum,
+                "cats": [],
+            }
+            if image.thumbnail:
+                field_obj["thumbnail"] = image.thumbnail.url
+                field_obj["height"] = image.height
+                field_obj["width"] = image.width
+            doc_data["images"][image.id] = field_obj
 
     # Filter comments based on access rights
     if doc.e2ee:

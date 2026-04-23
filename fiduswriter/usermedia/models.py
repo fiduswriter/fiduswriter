@@ -225,6 +225,42 @@ class DocumentImage(models.Model):
             return str(self.pk)
 
 
+def get_encrypted_file_path(instance, filename):
+    ext = filename.split(".")[-1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        raise IntegrityError
+    filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join("encrypted_images", filename)
+
+
+# Encrypted image owned by a single E2EE document.
+# The file is encrypted client-side before upload, so the server cannot
+# inspect or thumbnail it. Each E2EE document has its own set of images.
+class EncryptedDocumentImage(models.Model):
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.deletion.CASCADE,
+        related_name="encrypted_images",
+    )
+    title = models.CharField(max_length=128, default="")
+    copyright = models.JSONField(default=default_copyright)
+    image = models.FileField(upload_to=get_encrypted_file_path)
+    added = models.DateTimeField(auto_now_add=True)
+    checksum = models.BigIntegerField(default=0)
+
+    def __str__(self):
+        if len(self.title) > 0:
+            return self.title
+        else:
+            return str(self.pk)
+
+    def is_deletable(self):
+        # An encrypted image is only deletable if it is not referenced
+        # in the document content. This is checked client-side; server-side
+        # we allow deletion because the client drives image lifecycle.
+        return True
+
+
 # category
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)

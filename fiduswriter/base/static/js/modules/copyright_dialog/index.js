@@ -62,10 +62,11 @@ export class CopyrightDialog {
                         startDate = edtfParse(licenseStartDates[index])
                     if (
                         startDate.valid &&
-                        startDate.type === "Date" &&
+                        (startDate.type === "Date" ||
+                            startDate.type === "YearMonth" ||
+                            startDate.type === "Year") &&
                         !startDate.uncertain &&
-                        !startDate.approximate &&
-                        startDate.values.length === 3
+                        !startDate.approximate
                     ) {
                         returnValue.start = startDate.cleanedString
                     }

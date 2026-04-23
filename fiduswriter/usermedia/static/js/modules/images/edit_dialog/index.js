@@ -1,4 +1,5 @@
 import {ContentMenu, Dialog, addAlert, setCheckableLabel} from "../../common"
+import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
 import {imageEditModel} from "./model"
 import {imageEditTemplate} from "./templates"
 export class ImageEditDialog {
@@ -128,7 +129,7 @@ export class ImageEditDialog {
         })
     }
 
-    saveImage() {
+    async saveImage() {
         const imageData = {
             title: document.querySelector("#editimage .fw-media-title").value,
             copyright: this.copyright,
@@ -157,6 +158,22 @@ export class ImageEditDialog {
                 type: this.mediaInput.type
             })
         }
+
+        // For E2EE documents, encrypt the image and copyright before uploading
+        const isE2EE = this.page.e2ee?.encrypted === true
+        if (isE2EE && imageData.image) {
+            imageData.image = await E2EEEncryptor.encryptImage(
+                imageData.image,
+                this.page.e2ee.key
+            )
+            imageData.original_file_type = this.mediaInput?.type || "image/png"
+            // Encrypt copyright metadata so the server cannot read it
+            imageData.copyright = await E2EEEncryptor.encryptObject(
+                imageData.copyright,
+                this.page.e2ee.key
+            )
+        }
+
         // Remove old warning messages
         document
             .querySelectorAll("#editimage .warning")

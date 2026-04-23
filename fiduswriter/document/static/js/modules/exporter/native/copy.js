@@ -48,7 +48,10 @@ export class SaveCopy {
             .then(({doc, shrunkImageDB, shrunkBibDB, httpIncludes}) => {
                 let targetE2EEPromise
                 if (this.e2eeOptions && this.e2eeOptions.targetE2EE) {
-                    targetE2EEPromise = this._setupTargetE2EE(doc)
+                    targetE2EEPromise = this._setupTargetE2EE(
+                        doc,
+                        shrunkImageDB
+                    )
                 } else {
                     targetE2EEPromise = Promise.resolve({
                         doc,
@@ -118,48 +121,24 @@ export class SaveCopy {
         if (this.bibDB && typeof this.bibDB.db === "string") {
             this.bibDB.db = decryptedDoc.bibliography
         }
-        // Decrypt images if needed
+        // Decrypt image copyright if it was encrypted.
+        // Image file decryption is handled by NativeImporter
+        // after GetImages fetches the encrypted file from the URL.
         if (this.imageDB && this.imageDB.db) {
             await Promise.all(
                 Object.values(this.imageDB.db).map(async imageEntry => {
                     if (
-                        imageEntry.image &&
-                        typeof imageEntry.image === "string" &&
-                        imageEntry.image.startsWith("data:")
-                    ) {
-                        return
-                    }
-                    if (
-                        imageEntry.file &&
-                        imageEntry.file_type === "application/octet-stream"
+                        typeof imageEntry.copyright === "string" &&
+                        imageEntry.copyright.length > 0
                     ) {
                         try {
-                            const fileBuffer =
-                                await imageEntry.file.arrayBuffer()
-                            const base64 = btoa(
-                                String.fromCharCode(
-                                    ...new Uint8Array(fileBuffer)
-                                )
-                            )
-                            const decrypted =
-                                await E2EEEncryptor.decryptBufferToBase64(
-                                    base64,
+                            imageEntry.copyright =
+                                await E2EEEncryptor.decryptObject(
+                                    imageEntry.copyright,
                                     key
                                 )
-                            const mime =
-                                imageEntry.original_file_type || "image/png"
-                            const byteCharacters = atob(decrypted)
-                            const byteNumbers = new Array(byteCharacters.length)
-                            for (let i = 0; i < byteCharacters.length; i++) {
-                                byteNumbers[i] = byteCharacters.charCodeAt(i)
-                            }
-                            const byteArray = new Uint8Array(byteNumbers)
-                            imageEntry.file = new Blob([byteArray], {
-                                type: mime
-                            })
-                            imageEntry.file_type = mime
                         } catch (_e) {
-                            // If decryption fails, keep original file
+                            // If decryption fails, leave as-is
                         }
                     }
                 })
@@ -168,7 +147,7 @@ export class SaveCopy {
         return decryptedDoc
     }
 
-    async _setupTargetE2EE(doc) {
+    async _setupTargetE2EE(doc, shrunkImageDB) {
         const password = this.e2eeOptions.targetPassword
         if (!password) {
             throw new Error("Missing target E2EE password")
@@ -183,11 +162,11 @@ export class SaveCopy {
         // reference ID translation. Encryption happens in saveDocument().
         const plainDoc = Object.assign({}, doc)
 
-        // Encrypt images now so they are stored as encrypted blobs
-        // before NativeImporter.uploadImages reads them.
-        if (this.imageDB && this.imageDB.db) {
+        // Encrypt images directly on shrunkImageDB so there is no need
+        // for a separate sync step afterwards.
+        if (shrunkImageDB) {
             await Promise.all(
-                Object.values(this.imageDB.db).map(async imageEntry => {
+                Object.values(shrunkImageDB).map(async imageEntry => {
                     if (imageEntry.file) {
                         try {
                             const encryptedFile =
@@ -200,6 +179,18 @@ export class SaveCopy {
                             imageEntry.file_type = "application/octet-stream"
                         } catch (_e) {
                             // If encryption fails, keep original file
+                        }
+                    }
+                    // Encrypt copyright metadata
+                    if (imageEntry.copyright) {
+                        try {
+                            imageEntry.copyright =
+                                await E2EEEncryptor.encryptObject(
+                                    imageEntry.copyright,
+                                    key
+                                )
+                        } catch (_e) {
+                            // If encryption fails, keep original
                         }
                     }
                 })

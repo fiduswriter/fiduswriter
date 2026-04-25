@@ -269,3 +269,38 @@
     color: var(--e2ee-banner-link-color);
     text-decoration: underline;
 }
+
+/* E2EE Access Rights Dialog Warning */
+
+.e2ee-access-rights-warning {
+    background-color: var(--e2ee-info-background-color);
+    border: 1px solid var(--e2ee-info-border-color);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 0.9em;
+    color: var(--e2ee-info-text-color);
+}
+
+.e2ee-access-rights-warning i {
+    margin-right: 8px;
+    color: var(--e2ee-info-border-color);
+}
+
+.e2ee-access-rights-warning strong {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.e2ee-access-rights-warning p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* E2EE Share Dialog Password Warning */
+
+#share-token-password + .e2ee-share-warning {
+    margin-top: 8px;
+    font-size: 0.85em;
+}

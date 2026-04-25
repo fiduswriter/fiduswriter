@@ -30,7 +30,8 @@ import {SetupPage} from "../setup"
 import {Signup} from "../signup"
 
 export class App {
-    constructor() {
+    constructor(settings = {}) {
+        this.settings = settings
         this.config = {}
         this.name = "Fidus Writer"
         this.config.app = this

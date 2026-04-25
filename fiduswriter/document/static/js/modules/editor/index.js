@@ -232,7 +232,7 @@ export class Editor {
             const e2eeParam = new URLSearchParams(window.location.search).get(
                 "e2ee"
             )
-            const isE2EERequired = settings_E2EE_MODE === "required"
+            const isE2EERequired = this.app.settings.E2EE_MODE === "required"
             const isE2EERequested = e2eeParam === "true" || e2eeParam === "1"
             const shouldEncrypt = isE2EERequired || isE2EERequested
 

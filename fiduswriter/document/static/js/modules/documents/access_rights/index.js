@@ -212,6 +212,15 @@ export class DocumentAccessRightsDialog {
             col => col.count === this.documentIds.length
         )
 
+        // E2EE warning banner body (shown only for E2EE documents)
+        const e2eeWarningBanner = this.e2ee
+            ? `<div class="e2ee-access-rights-warning">
+                <i class="fas fa-lock"></i>
+                <strong>${gettext("End-to-end encrypted document")}</strong>
+                <p>${gettext("This document is end-to-end encrypted. You must share the document password with each collaborator through a secure channel outside of Fidus Writer. Do not send the password through the document chat.")}</p>
+            </div>`
+            : ""
+
         const buttons = [
             {
                 text:
@@ -297,10 +306,12 @@ export class DocumentAccessRightsDialog {
             id: "access-rights-dialog",
             width: 820,
             height: 440,
-            body: accessRightOverviewTemplate({
-                contacts: this.contacts,
-                collaborators
-            }),
+            body:
+                e2eeWarningBanner +
+                accessRightOverviewTemplate({
+                    contacts: this.contacts,
+                    collaborators
+                }),
             buttons
         })
         this.dialog.open()
@@ -335,7 +346,7 @@ export class DocumentAccessRightsDialog {
             title: gettext("Create share link"),
             id: "create-share-token-dialog",
             width: 860,
-            body: createShareTokenDialogTemplate(),
+            body: createShareTokenDialogTemplate(this.e2ee),
             buttons: [
                 {
                     text: gettext("Create"),
@@ -357,6 +368,21 @@ export class DocumentAccessRightsDialog {
                             note
                         })
                             .then(({json}) => {
+                                // For E2EE documents, optionally append the password to the URL fragment
+                                let shareUrl = json.share_url
+                                if (this.e2ee) {
+                                    const passwordInput =
+                                        createDialog.dialogEl.querySelector(
+                                            "#share-token-password"
+                                        )
+                                    const password = passwordInput
+                                        ? passwordInput.value.trim()
+                                        : ""
+                                    if (password) {
+                                        shareUrl = `${shareUrl}#?password=${encodeURIComponent(password)}`
+                                    }
+                                }
+                                json.share_url = shareUrl
                                 const listEl =
                                     this.dialog.dialogEl.querySelector(
                                         "#share-token-list"

@@ -122,7 +122,11 @@ export function strengthInfo(score) {
  * @param {string} [urlFragment] - Password from URL fragment (share link), if available
  * @returns {Promise<void>}
  */
-export function enterPasswordDialog(onPassword, urlFragment = "") {
+export function enterPasswordDialog(
+    onPassword,
+    urlFragment = "",
+    onCancel = null
+) {
     return new Promise(resolve => {
         const dialogId = "e2ee-enter-password"
 
@@ -172,6 +176,17 @@ export function enterPasswordDialog(onPassword, urlFragment = "") {
                     }
                     dialogInstance.close()
                     onPassword(password)
+                    resolve()
+                }
+            },
+            {
+                text: gettext("Cancel"),
+                classes: "fw-button fw-light",
+                click: () => {
+                    dialogInstance.close()
+                    if (typeof onCancel === "function") {
+                        onCancel()
+                    }
                     resolve()
                 }
             }

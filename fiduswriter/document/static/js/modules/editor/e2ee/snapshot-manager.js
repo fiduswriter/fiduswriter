@@ -187,7 +187,7 @@ export class E2EESnapshotManager {
         this.pendingSave = true
 
         const docInfo = this.editor.docInfo
-        const content = this.editor.getDoc()
+        const content = this.editor.view.docView.node.toJSON()
         const comments = docInfo.comments || {}
         const bibliography = docInfo.bibliography || {}
 

@@ -1,4 +1,5 @@
 import autobahn
+import base64
 import uuid
 import atexit
 import logging
@@ -269,7 +270,6 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "access_right": self.user_info.access_rights,
             }
             if doc_db.e2ee:
-                import base64
 
                 session_info_msg["e2ee"] = True
                 session_info_msg["e2ee_salt"] = (
@@ -728,15 +728,17 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         # parameters (new salt and iterations) when re-encrypting the
         # document with a new password.
         if "e2ee_salt" in message:
-            import base64
 
             doc.e2ee_salt = base64.b64decode(message["e2ee_salt"])
         if "e2ee_iterations" in message:
             doc.e2ee_iterations = int(message["e2ee_iterations"])
 
-        # Save to database
-        await WebsocketConsumer.save_document_async(self.user_info.document_id)
-
+        # Save to database. Force save because the encrypted content may
+        # have changed even if the version number hasn't (e.g. initial
+        # snapshot for a newly created E2EE document).
+        await WebsocketConsumer.save_document_async(
+            self.user_info.document_id, force=True
+        )
         # Notify other clients of the new snapshot version
         await WebsocketConsumer.send_updates(
             {
@@ -992,11 +994,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             session["node_updates"] = False
 
     @classmethod
-    async def save_document_async(cls, document_id):
+    async def save_document_async(cls, document_id, force=False):
         session = cls.get_session(document_id)
         if not session:
             return
-        if session["doc"].version == session["last_saved_version"]:
+        if (
+            not force
+            and session["doc"].version == session["last_saved_version"]
+        ):
             return
         logger.debug(
             f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
@@ -1042,11 +1047,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         session["last_saved_version"] = session["doc"].version
 
     @classmethod
-    def save_document(cls, document_id):
+    def save_document(cls, document_id, force=False):
         session = cls.get_session(document_id)
         if not session:
             return
-        if session["doc"].version == session["last_saved_version"]:
+        if (
+            not force
+            and session["doc"].version == session["last_saved_version"]
+        ):
             return
         logger.debug(
             f"Action:Saving document to DB. DocumentID:{session['doc'].id} "

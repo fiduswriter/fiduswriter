@@ -425,7 +425,7 @@ export class DocumentOverviewActions {
             )
             const allE2EE = docs.every(doc => doc.e2ee)
             const anyE2EE = docs.some(doc => doc.e2ee)
-            const e2eeMode = settings_E2EE_MODE
+            const e2eeMode = this.documentOverview.app.settings.E2EE_MODE
 
             const canToggleE2EE =
                 e2eeMode === "enabled" ||

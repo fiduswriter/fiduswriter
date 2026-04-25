@@ -263,49 +263,82 @@ export class ModCollabDoc {
             }
         }
 
-        await enterPasswordDialog(async password => {
-            try {
-                const key = await E2EEKeyManager.deriveKey(
-                    password,
-                    saltBytes,
-                    iterations || 600000
-                )
-                await this._decryptAndLoadDoc(
-                    doc,
-                    key,
-                    salt,
-                    iterations,
-                    isInitialLoad,
-                    urlFragmentPassword
-                )
-            } catch (_error) {
-                const errorDialog = new Dialog({
-                    title: gettext("Decryption Failed"),
-                    id: "e2ee-decryption-failed",
-                    body: gettext(
-                        "The password you entered is incorrect, or the document data is corrupted. Please try again."
-                    ),
-                    buttons: [
-                        {
-                            text: gettext("Retry"),
-                            classes: "fw-dark",
-                            click: () => {
-                                this._promptPasswordAndDecrypt(
-                                    doc,
-                                    doc_info,
-                                    salt,
-                                    iterations,
-                                    isInitialLoad,
-                                    ""
-                                )
-                            }
-                        }
-                    ],
-                    canClose: false
-                })
-                errorDialog.open()
+        const goBack = () => {
+            const folderPath = this.mod.editor.docInfo.path.slice(
+                0,
+                this.mod.editor.docInfo.path.lastIndexOf("/")
+            )
+            if (this.mod.editor.app && this.mod.editor.app.goTo) {
+                if (!folderPath.length) {
+                    this.mod.editor.app.goTo("/")
+                } else {
+                    this.mod.editor.app.goTo(`/documents${folderPath}/`)
+                }
+            } else {
+                window.location.href = "/"
             }
-        }, urlFragmentPassword)
+        }
+
+        await enterPasswordDialog(
+            async password => {
+                try {
+                    const key = await E2EEKeyManager.deriveKey(
+                        password,
+                        saltBytes,
+                        iterations || 600000
+                    )
+                    await this._decryptAndLoadDoc(
+                        doc,
+                        key,
+                        salt,
+                        iterations,
+                        isInitialLoad,
+                        urlFragmentPassword
+                    )
+                } catch (_error) {
+                    console.error("E2EE DECRYPT ERROR:", _error)
+                    if (typeof window !== "undefined") {
+                        window.lastE2EEDecryptError =
+                            _error?.message || String(_error)
+                    }
+                    const errorDialog = new Dialog({
+                        title: gettext("Decryption Failed"),
+                        id: "e2ee-decryption-failed",
+                        body: gettext(
+                            "The password you entered is incorrect, or the document data is corrupted. Please try again."
+                        ),
+                        buttons: [
+                            {
+                                text: gettext("Retry"),
+                                classes: "fw-dark",
+                                click: () => {
+                                    this._promptPasswordAndDecrypt(
+                                        doc,
+                                        doc_info,
+                                        salt,
+                                        iterations,
+                                        isInitialLoad,
+                                        ""
+                                    )
+                                }
+                            },
+                            {
+                                text: gettext("Cancel"),
+                                classes: "fw-light",
+                                click: () => {
+                                    errorDialog.close()
+                                    goBack()
+                                }
+                            }
+                        ],
+                        canClose: false
+                    })
+                    errorDialog.open()
+                }
+            },
+            urlFragmentPassword,
+            goBack
+        )
     }
 
     /**
@@ -420,6 +453,22 @@ export class ModCollabDoc {
             images: decryptedImages
         }
         this._loadUnencryptedDocument(decryptedDoc, isInitialLoad)
+
+        // For newly created E2EE documents, the initial content is still
+        // plaintext (it came from the template). We need to send an initial
+        // encrypted snapshot so the server stores encrypted content.
+        // We detect a new document by checking if the content was plaintext
+        // (not a Base64 string) and this is the initial load.
+        const isNewE2EEDocument =
+            isInitialLoad && typeof doc.content !== "string"
+        if (isNewE2EEDocument && this.mod.editor.e2ee.snapshotManager) {
+            this.mod.editor.e2ee.snapshotManager.sendInitialSnapshot(
+                decryptedContent,
+                decryptedComments,
+                decryptedBibliography,
+                this.mod.editor.docInfo.version
+            )
+        }
 
         // Now that the key is available and the document is loaded, open the
         // WebSocket connection. This ensures encrypted catch-up diffs (ep)

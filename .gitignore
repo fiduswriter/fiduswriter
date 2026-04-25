@@ -4,6 +4,7 @@ __pycache__/
 *.py[cod]
 *~
 *-venv
+*.sqlite3
 .coverage.*
 .coverage
 .DS_Store
@@ -89,3 +90,4 @@ debian/*-stamp
 .history
 .vscode/
 *cache.json
+screenshots/

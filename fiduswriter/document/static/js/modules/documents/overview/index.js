@@ -719,10 +719,10 @@ export class DocumentOverview {
 
     goToNewDocument(id) {
         let url = `/document${this.path}${id}`
-        if (settings_E2EE_MODE === "required") {
+        if (this.app.settings.E2EE_MODE === "required") {
             url += "?e2ee=true"
             this.app.goTo(url)
-        } else if (settings_E2EE_MODE === "disabled") {
+        } else if (this.app.settings.E2EE_MODE === "disabled") {
             this.app.goTo(url)
         } else {
             // E2EE is "enabled" - so the document can either be encrypted or non-encrypted

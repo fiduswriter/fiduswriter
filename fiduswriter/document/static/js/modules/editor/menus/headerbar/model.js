@@ -4,6 +4,8 @@ import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
 import {LanguageDialog, RevisionDialog} from "../../dialogs"
+import {E2EEKeyManager} from "../../e2ee/key-manager"
+import {changePasswordDialog} from "../../e2ee/password-dialog"
 import {
     KeyBindingsDialog,
     SearchReplaceDialog,
@@ -100,7 +102,8 @@ export const headerbarModel = () => ({
                             editor.docInfo.owner.contacts,
                             contactData => {
                                 editor.docInfo.owner.contacts.push(contactData)
-                            }
+                            },
+                            editor.e2ee?.encrypted
                         )
                         dialog.init()
                     },
@@ -248,6 +251,101 @@ export const headerbarModel = () => ({
                             }
                         )
                     }
+                },
+                {
+                    title: gettext("Change password"),
+                    type: "action",
+                    tooltip: gettext(
+                        "Change the password of this encrypted document."
+                    ),
+                    order: 6,
+                    action: editor => {
+                        if (!editor.e2ee?.key) {
+                            addAlert(
+                                "error",
+                                gettext(
+                                    "Document key is not available. Please reload the document."
+                                )
+                            )
+                            return
+                        }
+                        changePasswordDialog(
+                            async ({currentPassword, newPassword}) => {
+                                try {
+                                    // Verify current password by deriving key
+                                    const currentSaltBytes = new Uint8Array(
+                                        atob(editor.e2ee.encryptionSalt)
+                                            .split("")
+                                            .map(c => c.charCodeAt(0))
+                                    )
+                                    const currentKey =
+                                        await E2EEKeyManager.deriveKey(
+                                            currentPassword,
+                                            currentSaltBytes,
+                                            editor.e2ee.encryptionIterations
+                                        )
+                                    // Test the key by encrypting and decrypting a test value
+                                    const {E2EEEncryptor} = await import(
+                                        "../../e2ee/encryptor"
+                                    )
+                                    const testValue = "test"
+                                    const encryptedTest =
+                                        await E2EEEncryptor.encrypt(
+                                            testValue,
+                                            currentKey
+                                        )
+                                    await E2EEEncryptor.decrypt(
+                                        encryptedTest,
+                                        editor.e2ee.key
+                                    )
+
+                                    // Current password verified — generate new salt and key
+                                    const newSalt =
+                                        E2EEKeyManager.generateSalt()
+                                    const newSaltBase64 = btoa(
+                                        String.fromCharCode(...newSalt)
+                                    )
+                                    const newIterations = 600000
+                                    const newKey =
+                                        await E2EEKeyManager.deriveKey(
+                                            newPassword,
+                                            newSalt,
+                                            newIterations
+                                        )
+
+                                    // Re-encrypt the document with the new key
+                                    await editor.e2ee.snapshotManager.reEncryptWithNewKey(
+                                        newKey,
+                                        newSaltBase64,
+                                        newIterations
+                                    )
+
+                                    // Update local E2EE state
+                                    editor.e2ee.encryptionSalt = newSaltBase64
+                                    editor.e2ee.encryptionIterations =
+                                        newIterations
+                                    editor.e2ee.key = newKey
+
+                                    addAlert(
+                                        "success",
+                                        gettext(
+                                            "Document password changed. Remember to share the new password with your collaborators."
+                                        )
+                                    )
+                                } catch (_error) {
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "The current password is incorrect."
+                                        )
+                                    )
+                                }
+                            }
+                        )
+                    },
+                    disabled: editor =>
+                        !editor.e2ee?.encrypted ||
+                        editor.docInfo.access_rights !== "write"
                 }
             ]
         },

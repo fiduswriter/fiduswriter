@@ -114,7 +114,7 @@ export class ModDocumentTemplate {
             order: 3.5,
             action: editor => {
                 const isE2EE = editor.docInfo.e2ee
-                const e2eeMode = settings_E2EE_MODE
+                const e2eeMode = editor.app.settings.E2EE_MODE
                 const canToggleE2EE =
                     e2eeMode === "enabled" ||
                     (e2eeMode === "required" && !isE2EE) ||

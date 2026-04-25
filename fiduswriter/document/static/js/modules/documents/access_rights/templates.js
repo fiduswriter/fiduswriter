@@ -75,20 +75,26 @@ export const shareTokenRowTemplate = ({token}) => {
 }
 
 /** Sub-dialog for creating a new share link */
-export const createShareTokenDialogTemplate = () =>
+export const createShareTokenDialogTemplate = (e2ee = false) =>
     `<table class="fw-dialog-table">
         <tbody>
             <tr>
                 <th><label for="share-token-rights">${gettext("Rights")}</label></th>
                 <td class="entry-field">
                     <select id="share-token-rights" class="fw-button fw-light fw-large">
-                        <option value="read">${gettext("Read")}</option>
-                        <option value="read-without-comments">${gettext("Read without comments")}</option>
-                        <option value="review">${gettext("Review")}</option>
-                        <option value="review-tracked">${gettext("Review tracked")}</option>
-                        <option value="comment">${gettext("Comment")}</option>
-                        <option value="write">${gettext("Write")}</option>
-                        <option value="write-tracked">${gettext("Write tracked")}</option>
+                        ${
+                            e2ee
+                                ? `<option value="read">${gettext("Read")}</option>
+                               <option value="read-without-comments">${gettext("Read without comments")}</option>
+                               <option value="write">${gettext("Write")}</option>`
+                                : `<option value="read">${gettext("Read")}</option>
+                               <option value="read-without-comments">${gettext("Read without comments")}</option>
+                               <option value="review">${gettext("Review")}</option>
+                               <option value="review-tracked">${gettext("Review tracked")}</option>
+                               <option value="comment">${gettext("Comment")}</option>
+                               <option value="write">${gettext("Write")}</option>
+                               <option value="write-tracked">${gettext("Write tracked")}</option>`
+                        }
                     </select>
                     <div class="fw-select-arrow fa fa-caret-down"></div>
                 </td>
@@ -105,6 +111,20 @@ export const createShareTokenDialogTemplate = () =>
                     <input id="share-token-note" type="text" class="fw-light" placeholder="${gettext('optional label, e.g. "for reviewers"')}"/>
                 </td>
             </tr>
+            ${
+                e2ee
+                    ? `<tr>
+                    <th><label for="share-token-password">${gettext("Document password")}</label></th>
+                    <td class="entry-field">
+                        <input id="share-token-password" type="text" class="fw-light" placeholder="${gettext("Enter the document password to include it in the link")}" autocomplete="off" />
+                        <p class="e2ee-share-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            ${gettext("If you enter the password above, it will be embedded in the link (after #). Anyone with the link can open the document. Only share such links through secure channels.")}
+                        </p>
+                    </td>
+                </tr>`
+                    : ""
+            }
         </tbody>
     </table>`
 

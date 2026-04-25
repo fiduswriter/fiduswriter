@@ -232,9 +232,9 @@ export class WebSocketConnector {
     subscribed() {
         if (this.connectionCount > 1) {
             this.resubScribed()
-            while (this.oldMessages.length > 0) {
-                this.send(this.oldMessages.shift())
-            }
+        }
+        while (this.oldMessages.length > 0) {
+            this.send(this.oldMessages.shift())
         }
     }
 

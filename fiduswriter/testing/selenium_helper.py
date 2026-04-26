@@ -1,10 +1,11 @@
 import re
 import os
 import time
-from urllib3.exceptions import MaxRetryError
+from urllib3.exceptions import MaxRetryError, ReadTimeoutError
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
     TimeoutException,
+    WebDriverException,
 )
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -218,7 +219,10 @@ class SeleniumHelper:
         try:
             driver.execute_script(
                 "if (window.theApp) {window.theApp.page = null;}"
+                # Suppress any 'Leave site?' beforeunload dialog so that
+                # driver.get() below cannot be blocked by it.
+                "window.onbeforeunload = null;"
             )
             driver.get("data:,")
-        except MaxRetryError:
+        except (MaxRetryError, ReadTimeoutError, WebDriverException):
             pass

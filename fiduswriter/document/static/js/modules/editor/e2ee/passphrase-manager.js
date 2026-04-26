@@ -157,6 +157,81 @@ export class PassphraseManager {
     }
 
     /**
+     * Change the passphrase without rotating keys.
+     *
+     * @param {string} oldPassphrase - Current passphrase
+     * @param {string} newPassphrase - New passphrase
+     * @returns {Promise<boolean>} true if successful
+     */
+    static async changePassphrase(oldPassphrase, newPassphrase) {
+        // 1. Fetch encrypted keys from server
+        const data = await getJson("/api/user/encryption_key/")
+        if (!data.has_key) {
+            throw new Error("No encryption keys found")
+        }
+
+        // 2. Derive old KWK and decrypt keys
+        const oldSalt = PassphraseCrypto._base64ToBytes(data.user_salt)
+        const oldKwk = await PassphraseCrypto.deriveKWK(
+            oldPassphrase,
+            oldSalt,
+            data.user_iterations
+        )
+        const masterKey = await PassphraseCrypto.decryptKey(
+            data.encrypted_master_key,
+            oldKwk
+        )
+        const privateKey = await PassphraseCrypto.decryptPrivateKey(
+            data.encrypted_private_key,
+            oldKwk
+        )
+
+        // 3. Generate new salt and derive new KWK
+        const newSalt = PassphraseCrypto.generateSalt()
+        const newKwk = await PassphraseCrypto.deriveKWK(newPassphrase, newSalt)
+
+        // 4. Re-encrypt master key and private key with new KWK
+        const encryptedMasterKey = await PassphraseCrypto.encryptKey(
+            masterKey,
+            newKwk
+        )
+        const encryptedPrivateKey = await PassphraseCrypto.encryptPrivateKey(
+            privateKey,
+            newKwk
+        )
+
+        // 5. Re-encrypt master key backup with existing recovery key
+        // (We keep the same recovery key so the user doesn't need to update
+        // their stored backup. The backup is encrypted with the recovery key,
+        // not the passphrase, so it remains valid.)
+        const encryptedMasterKeyBackup = data.encrypted_master_key_backup
+
+        // 6. Send updated keys to server
+        const saveData = {
+            data: JSON.stringify({
+                public_key: data.public_key,
+                encrypted_master_key: encryptedMasterKey,
+                encrypted_private_key: encryptedPrivateKey,
+                user_salt: PassphraseCrypto._bytesToBase64(newSalt),
+                user_iterations: 600000,
+                encrypted_master_key_backup: encryptedMasterKeyBackup
+            })
+        }
+        const {status} = await postJson(
+            "/api/user/encryption_key/save/",
+            saveData
+        )
+        if (status >= 400) {
+            throw new Error("Failed to save updated encryption keys")
+        }
+
+        // 7. Update sessionStorage
+        await PassphraseCrypto.storeKeysInSession(masterKey, privateKey)
+
+        return true
+    }
+
+    /**
      * Recover encryption keys using the recovery key.
      *
      * @param {string} recoveryKey - The recovery key (hex string)

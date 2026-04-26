@@ -718,17 +718,47 @@ export class Editor {
             // Check if keys are unlocked in sessionStorage
             if (!PassphraseManager.hasKeysInSession()) {
                 // Prompt for passphrase to unlock
-                const passphrase = await new Promise(resolve => {
+                const result = await new Promise(resolve => {
                     enterPassphraseDialog(
-                        pwd => resolve(pwd),
-                        () => resolve(null)
+                        pwd => resolve({action: "unlock", passphrase: pwd}),
+                        () => resolve({action: "recover"})
                     )
                 })
-                if (passphrase) {
+                if (result.action === "unlock" && result.passphrase) {
                     try {
-                        await PassphraseManager.unlockWithPassphrase(passphrase)
+                        await PassphraseManager.unlockWithPassphrase(
+                            result.passphrase
+                        )
                     } catch (_e) {
                         addAlert("error", gettext("Incorrect passphrase."))
+                    }
+                } else if (result.action === "recover") {
+                    // Recovery flow
+                    const {recoverWithKeyDialog} = await import(
+                        "./e2ee/passphrase-dialog.js"
+                    )
+                    const recoverResult = await new Promise(resolve => {
+                        recoverWithKeyDialog(resolve)
+                    })
+                    if (recoverResult) {
+                        try {
+                            const {newRecoveryKey} =
+                                await PassphraseManager.recoverWithRecoveryKey(
+                                    recoverResult.recoveryKey,
+                                    recoverResult.newPassphrase
+                                )
+                            const {showRecoveryKeyDialog} = await import(
+                                "./e2ee/passphrase-dialog.js"
+                            )
+                            await new Promise(resolve => {
+                                showRecoveryKeyDialog(newRecoveryKey, resolve)
+                            })
+                        } catch (e) {
+                            addAlert(
+                                "error",
+                                gettext("Recovery failed: ") + e.message
+                            )
+                        }
                     }
                 }
             }

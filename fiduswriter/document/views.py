@@ -1672,9 +1672,6 @@ def save_document_encryption_key(request):
     document = Document.objects.filter(pk=doc_id).first()
     if not document:
         return JsonResponse({"error": "Document not found"}, status=404)
-    # Only the owner can create encryption keys for the document
-    if document.owner != request.user:
-        return JsonResponse({"error": "Not owner"}, status=403)
 
     # Now only support User holders (no more UserInvite)
     User = get_user_model()
@@ -1682,6 +1679,18 @@ def save_document_encryption_key(request):
     holder = User.objects.filter(pk=holder_id).first()
     if not holder:
         return JsonResponse({"error": "Holder user not found"}, status=404)
+
+    # Permission check:
+    # - Owner can create keys for anyone
+    # - Non-owners can only create keys for themselves
+    # - Non-owners must have access rights to the document
+    if document.owner != request.user:
+        if holder_id != request.user.pk:
+            return JsonResponse({"error": "Not allowed"}, status=403)
+        if not AccessRight.objects.filter(
+            document=document, user=request.user
+        ).first():
+            return JsonResponse({"error": "No access"}, status=403)
 
     dek_record, created = DocumentEncryptionKey.objects.get_or_create(
         document=document,

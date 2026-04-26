@@ -124,6 +124,31 @@ export const profileContents = (user, socialaccount_providers) =>
                 </span>
             </div>
             <div class="profile-data-row">
+                <label class="form-label">${gettext("End-to-End Encryption")}</label>
+                <div id="e2ee-passphrase-status">
+                    <span id="e2ee-passphrase-enabled-status" style="display: none;">
+                        <i class="fa fa-check"></i>
+                        ${gettext("Personal passphrase set up")}
+                    </span>
+                    <span id="e2ee-passphrase-disabled-status" style="display: none;">
+                        <i class="fa fa-times"></i>
+                        ${gettext("Not set up")}
+                    </span>
+                </div>
+                <span id="setup-e2ee-passphrase" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-lock"></i>
+                    ${gettext("Set up encryption passphrase")}
+                </span>
+                <span id="change-e2ee-passphrase" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-pencil-alt"></i>
+                    ${gettext("Change passphrase")}
+                </span>
+                <span id="recover-e2ee-passphrase" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-key"></i>
+                    ${gettext("Recover with recovery key")}
+                </span>
+            </div>
+            <div class="profile-data-row">
                 <table class="fw-data-table profile-email-table">
                     <thead class="fw-data-table-header">
                         <tr>

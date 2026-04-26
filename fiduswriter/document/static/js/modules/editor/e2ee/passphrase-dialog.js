@@ -485,3 +485,150 @@ export function recoverWithKeyDialog(onRecover) {
         }, 100)
     })
 }
+
+/**
+ * Show a dialog to change the encryption passphrase.
+ *
+ * @param {Function} onChange - Callback called with {oldPassphrase: string, newPassphrase: string}
+ * @returns {Promise<void>}
+ */
+export function changePassphraseDialog(onChange) {
+    return new Promise(resolve => {
+        const dialogId = "e2ee-change-passphrase"
+
+        const body = `
+            <div class="e2ee-password-dialog">
+                <p>${gettext("Enter your current passphrase and a new passphrase to change your encryption password.")}</p>
+                <div class="e2ee-password-field">
+                    <label for="e2ee-old-passphrase-input">${gettext("Current passphrase")}</label>
+                    <input type="password" id="e2ee-old-passphrase-input" class="e2ee-password-input"
+                           autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
+                    <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="e2ee-password-field">
+                    <label for="e2ee-new-passphrase-input">${gettext("New passphrase")}</label>
+                    <input type="password" id="e2ee-new-passphrase-input" class="e2ee-password-input"
+                           autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
+                    <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="e2ee-password-field">
+                    <label for="e2ee-confirm-new-passphrase-input">${gettext("Confirm new passphrase")}</label>
+                    <input type="password" id="e2ee-confirm-new-passphrase-input" class="e2ee-password-input"
+                           autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
+                </div>
+                <div class="e2ee-password-error" id="e2ee-change-error"></div>
+            </div>
+        `
+
+        const buttons = [
+            {
+                text: gettext("Change Passphrase"),
+                classes: "fw-button fw-dark",
+                click: () => {
+                    const oldInput = document.getElementById(
+                        "e2ee-old-passphrase-input"
+                    )
+                    const newInput = document.getElementById(
+                        "e2ee-new-passphrase-input"
+                    )
+                    const confirmInput = document.getElementById(
+                        "e2ee-confirm-new-passphrase-input"
+                    )
+                    const errorEl = document.getElementById("e2ee-change-error")
+
+                    const oldPassphrase = oldInput ? oldInput.value : ""
+                    const newPassphrase = newInput ? newInput.value : ""
+                    const confirmPassphrase = confirmInput
+                        ? confirmInput.value
+                        : ""
+
+                    if (oldPassphrase.length === 0) {
+                        if (errorEl) {
+                            errorEl.textContent = gettext(
+                                "Please enter your current passphrase."
+                            )
+                        }
+                        return
+                    }
+
+                    if (newPassphrase.length < 8) {
+                        if (errorEl) {
+                            errorEl.textContent = gettext(
+                                "Passphrase must be at least 8 characters long."
+                            )
+                        }
+                        return
+                    }
+
+                    if (newPassphrase !== confirmPassphrase) {
+                        if (errorEl) {
+                            errorEl.textContent = gettext(
+                                "Passphrases do not match."
+                            )
+                        }
+                        return
+                    }
+
+                    dialogInstance.close()
+                    onChange({oldPassphrase, newPassphrase})
+                    resolve()
+                }
+            },
+            {
+                text: gettext("Cancel"),
+                classes: "fw-button fw-light",
+                click: () => {
+                    dialogInstance.close()
+                    resolve()
+                }
+            }
+        ]
+
+        const dialog = {
+            title: gettext("Change Encryption Passphrase"),
+            id: dialogId,
+            body: body,
+            buttons: buttons,
+            canClose: true
+        }
+
+        const dialogInstance = new Dialog(dialog)
+        dialogInstance.open()
+
+        setTimeout(() => {
+            const toggleBtns = document.querySelectorAll(
+                `#${dialogId} .e2ee-toggle-visibility`
+            )
+            toggleBtns.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const input = btn.parentElement.querySelector("input")
+                    if (input) {
+                        if (input.type === "password") {
+                            input.type = "text"
+                            btn.innerHTML = '<i class="fas fa-eye-slash"></i>'
+                        } else {
+                            input.type = "password"
+                            btn.innerHTML = '<i class="fas fa-eye"></i>'
+                        }
+                    }
+                })
+            })
+
+            const confirmInput = document.getElementById(
+                "e2ee-confirm-new-passphrase-input"
+            )
+            if (confirmInput) {
+                confirmInput.addEventListener("keypress", event => {
+                    if (event.key === "Enter") {
+                        event.preventDefault()
+                        buttons[0].click()
+                    }
+                })
+            }
+        }, 100)
+    })
+}

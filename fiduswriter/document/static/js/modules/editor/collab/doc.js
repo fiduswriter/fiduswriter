@@ -199,6 +199,32 @@ export class ModCollabDoc {
 
         const docId = this.mod.editor.docInfo.id
 
+        // Helper to save password for passphrase users after successful decryption
+        // (migrates per-document-password docs into the passphrase system)
+        const maybeSavePasswordForPassphrase = async password => {
+            if (!PassphraseManager.hasKeysInSession()) {
+                return
+            }
+            try {
+                const existing =
+                    await PassphraseManager.getDocumentPassword(docId)
+                if (!existing) {
+                    await PassphraseManager.saveDocumentPassword(
+                        docId,
+                        password,
+                        null,
+                        "user",
+                        true
+                    )
+                }
+            } catch (_e) {
+                console.error(
+                    "E2EE: Failed to save document password for passphrase:",
+                    _e
+                )
+            }
+        }
+
         // Helper to resolve a password to a key and attempt decryption
         const tryPassword = async password => {
             const key = await E2EEKeyManager.resolvePasswordToKey(
@@ -227,6 +253,8 @@ export class ModCollabDoc {
                 this.mod.editor.e2ee.key = key
                 this.mod.editor.e2ee.password = password
             }
+            // Migrate per-document-password docs to passphrase system
+            await maybeSavePasswordForPassphrase(password)
         }
 
         // --- Try passphrase path first ---
@@ -249,15 +277,17 @@ export class ModCollabDoc {
         if (!PassphraseManager.hasKeysInSession()) {
             const hasKeys = await PassphraseManager.hasEncryptionKeys()
             if (hasKeys) {
-                const passphrase = await new Promise(resolve => {
+                const result = await new Promise(resolve => {
                     enterPassphraseDialog(
-                        pwd => resolve(pwd),
-                        () => resolve(null)
+                        pwd => resolve({action: "unlock", passphrase: pwd}),
+                        () => resolve({action: "recover"})
                     )
                 })
-                if (passphrase) {
+                if (result.action === "unlock" && result.passphrase) {
                     try {
-                        await PassphraseManager.unlockWithPassphrase(passphrase)
+                        await PassphraseManager.unlockWithPassphrase(
+                            result.passphrase
+                        )
                         const password =
                             await PassphraseManager.getDocumentPassword(docId)
                         if (password) {
@@ -269,6 +299,73 @@ export class ModCollabDoc {
                         }
                     } catch (_e) {
                         // Unlock failed or no password — fall through
+                    }
+                } else if (result.action === "recover") {
+                    // Recovery flow
+                    const {recoverWithKeyDialog} = await import(
+                        "../e2ee/passphrase-dialog.js"
+                    )
+                    const recoverResult = await new Promise(resolve => {
+                        recoverWithKeyDialog(resolve)
+                    })
+                    if (recoverResult) {
+                        try {
+                            const {newRecoveryKey} =
+                                await PassphraseManager.recoverWithRecoveryKey(
+                                    recoverResult.recoveryKey,
+                                    recoverResult.newPassphrase
+                                )
+                            const {showRecoveryKeyDialog} = await import(
+                                "../e2ee/passphrase-dialog.js"
+                            )
+                            await new Promise(resolve => {
+                                showRecoveryKeyDialog(newRecoveryKey, resolve)
+                            })
+                            // After recovery, try to get document password again
+                            const password =
+                                await PassphraseManager.getDocumentPassword(
+                                    docId
+                                )
+                            if (password) {
+                                await tryPassword(password)
+                                if (this.mod.editor.e2ee) {
+                                    this.mod.editor.e2ee.usesPassphrase = true
+                                }
+                                return
+                            }
+                        } catch (e) {
+                            console.error("E2EE: Recovery failed:", e)
+                            const errorDialog = new Dialog({
+                                title: gettext("Recovery Failed"),
+                                id: "e2ee-recovery-failed",
+                                body: gettext(
+                                    "The recovery key you entered is incorrect, or the recovery process failed. Please try again."
+                                ),
+                                buttons: [
+                                    {
+                                        text: gettext("Retry"),
+                                        classes: "fw-dark",
+                                        click: () => {
+                                            errorDialog.close()
+                                            this._loadE2EEDocument(
+                                                doc,
+                                                doc_info,
+                                                isInitialLoad,
+                                                urlFragmentPassword
+                                            )
+                                        }
+                                    },
+                                    {
+                                        text: gettext("Cancel"),
+                                        classes: "fw-light",
+                                        click: () => errorDialog.close()
+                                    }
+                                ],
+                                canClose: false
+                            })
+                            errorDialog.open()
+                            return
+                        }
                     }
                 }
             }
@@ -405,6 +502,29 @@ export class ModCollabDoc {
                     if (this.mod.editor.e2ee) {
                         this.mod.editor.e2ee.key = key
                         this.mod.editor.e2ee.password = password
+                    }
+                    // Migrate per-document-password docs to passphrase system
+                    if (PassphraseManager.hasKeysInSession()) {
+                        try {
+                            const existing =
+                                await PassphraseManager.getDocumentPassword(
+                                    this.mod.editor.docInfo.id
+                                )
+                            if (!existing) {
+                                await PassphraseManager.saveDocumentPassword(
+                                    this.mod.editor.docInfo.id,
+                                    password,
+                                    null,
+                                    "user",
+                                    true
+                                )
+                            }
+                        } catch (_e) {
+                            console.error(
+                                "E2EE: Failed to save document password for passphrase:",
+                                _e
+                            )
+                        }
                     }
                 } catch (_error) {
                     console.error("E2EE DECRYPT ERROR:", _error)

@@ -59,7 +59,9 @@ export class DocumentOverview {
             this.dtBulkModel = bulkMenuModel()
             this.activateFidusPlugins()
             this.bind()
-            return this.getDocumentListData().then(() => deactivateWait())
+            return this.getDocumentListData()
+                .then(() => this.bulkDecryptDocumentEncryptionKeys())
+                .then(() => deactivateWait())
         })
     }
 
@@ -230,6 +232,77 @@ export class DocumentOverview {
                     throw error
                 }
             })
+    }
+
+    async bulkDecryptDocumentEncryptionKeys() {
+        /**
+         * Fetch all DocumentEncryptionKey instances for the user
+         * and decrypt as many as possible using keys from sessionStorage.
+         * This allows the overview to show more documents decrypted.
+         */
+        try {
+            const response = await postJson(
+                "/api/document/encryption_key/get_all/",
+                {}
+            )
+
+            if (!response.json?.keys?.length) {
+                return
+            }
+
+            const {PassphraseCrypto} = await import(
+                "../../editor/e2ee/passphrase-crypto.js"
+            )
+
+            for (const keyData of response.json.keys) {
+                const {document_id, encrypted_key, encrypted_with_master_key} =
+                    keyData
+
+                // Skip if key is already in session storage
+                const sessionKey = sessionStorage.getItem(
+                    `e2ee_key_${document_id}`
+                )
+                if (sessionKey) {
+                    continue
+                }
+
+                // Only decrypt keys encrypted with master key (user's passphrase)
+                if (!encrypted_with_master_key) {
+                    continue
+                }
+
+                try {
+                    // Try to decrypt using the master key
+                    const masterKeyBase64 =
+                        sessionStorage.getItem("e2ee_master_key")
+                    if (!masterKeyBase64) {
+                        continue
+                    }
+
+                    const masterKeyBytes = Uint8Array.from(
+                        atob(masterKeyBase64),
+                        c => c.charCodeAt(0)
+                    )
+                    const masterKey = await PassphraseCrypto.importKey(
+                        masterKeyBytes,
+                        "AES-GCM"
+                    )
+
+                    const dek = await PassphraseCrypto.decryptString(
+                        encrypted_key,
+                        masterKey
+                    )
+
+                    // Store the decrypted DEK in session storage
+                    sessionStorage.setItem(`e2ee_key_${document_id}`, dek)
+                } catch (_error) {
+                    // Decryption failed, this is expected if user hasn't entered passphrase yet
+                    continue
+                }
+            }
+        } catch (_error) {
+            // Silently fail - this is a best-effort operation
+        }
     }
 
     showCached() {
@@ -820,8 +893,10 @@ export class DocumentOverview {
                                 )
                                 const hasPassphraseKeys =
                                     await PassphraseManager.hasEncryptionKeys()
+                                const hasDismissed =
+                                    await PassphraseManager.hasUserDismissedPassphraseOffer()
 
-                                if (!hasPassphraseKeys) {
+                                if (!hasPassphraseKeys && !hasDismissed) {
                                     // Offer to set up passphrase
                                     const {setupPassphraseDialog} =
                                         await import(
@@ -841,8 +916,9 @@ export class DocumentOverview {
                                                             "Skip for Now"
                                                         ),
                                                         type: "cancel",
-                                                        click: () => {
+                                                        click: async () => {
                                                             setupDialog.close()
+                                                            await PassphraseManager.markPassphraseDismissed()
                                                             resolve(false)
                                                         }
                                                     },

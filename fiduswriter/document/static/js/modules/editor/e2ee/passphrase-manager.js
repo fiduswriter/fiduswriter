@@ -391,4 +391,29 @@ export class PassphraseManager {
             return false
         }
     }
+
+    /**
+     * Check if user has dismissed the passphrase setup offer.
+     */
+    static async hasUserDismissedPassphraseOffer() {
+        try {
+            const data = await getJson("/api/user/preferences/get/")
+            return data.preferences?.has_dismissed_passphrase_offer === true
+        } catch (_e) {
+            return false
+        }
+    }
+
+    /**
+     * Mark that user has dismissed the passphrase setup offer.
+     */
+    static async markPassphraseDismissed() {
+        try {
+            await postJson("/api/user/preferences/update/", {
+                has_dismissed_passphrase_offer: true
+            })
+        } catch (_e) {
+            // Silently fail - preference saving is best-effort
+        }
+    }
 }

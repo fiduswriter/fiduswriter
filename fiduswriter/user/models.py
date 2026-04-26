@@ -56,6 +56,11 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
+    preferences = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=_("User preferences (e.g., encryption dialog dismissal)"),
+    )
 
     @property
     def readable_name(self):

@@ -1,5 +1,6 @@
 import time
 import sys
+import base64
 
 from testing.channels_patch import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
@@ -10,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 
 from django.test import override_settings
 
-from document.models import Document
+from document.models import Document, DocumentEncryptionKey
 from document.tests.editor_helper import EditorHelper
 
 
@@ -1049,7 +1050,6 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         with master key or public key.
         """
         from document.models import Document, DocumentEncryptionKey
-        from django.contrib.auth.models import ContentType, User
         import base64
 
         # Create an E2EE document
@@ -1063,13 +1063,11 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         encrypted_dek = base64.b64encode(b"encrypted_dek_data").decode()
-        user_ct = ContentType.objects.get_for_model(User)
 
         # Create DEK record encrypted with master key
         DocumentEncryptionKey.objects.create(
             document=doc,
-            holder_type=user_ct,
-            holder_id=self.user.id,
+            holder=self.user,
             encrypted_key=encrypted_dek,
             encrypted_with_master_key=True,
         )
@@ -1084,7 +1082,6 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         (for shared documents).
         """
         from document.models import Document, DocumentEncryptionKey
-        from django.contrib.auth.models import ContentType, User
         import base64
 
         doc = Document.objects.create(
@@ -1097,13 +1094,11 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         encrypted_dek = base64.b64encode(b"public_key_encrypted_dek").decode()
-        user_ct = ContentType.objects.get_for_model(User)
 
         # Create DEK record encrypted with public key
         DocumentEncryptionKey.objects.create(
             document=doc,
-            holder_type=user_ct,
-            holder_id=self.user.id,
+            holder=self.user,
             encrypted_key=encrypted_dek,
             encrypted_with_master_key=False,
         )
@@ -1111,3 +1106,141 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Verify it tracks public key encryption
         retrieved = DocumentEncryptionKey.objects.get(document=doc)
         self.assertFalse(retrieved.encrypted_with_master_key)
+
+    def test_bulk_get_user_document_encryption_keys(self):
+        """Test fetching all DocumentEncryptionKeys for a user."""
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        user2 = User.objects.create_user(
+            username="user2", email="user2@test.com", password="testpass"
+        )
+
+        # Create multiple E2EE documents
+        doc1 = Document.objects.create(
+            title="Doc 1",
+            owner=self.user,
+            template_id=1,
+            e2ee=True,
+            e2ee_salt=b"salt1111111111ab",
+            e2ee_iterations=600000,
+        )
+
+        doc2 = Document.objects.create(
+            title="Doc 2",
+            owner=self.user,
+            template_id=1,
+            e2ee=True,
+            e2ee_salt=b"salt2222222222ab",
+            e2ee_iterations=600000,
+        )
+
+        # Create DEK records for the user
+        DocumentEncryptionKey.objects.create(
+            document=doc1,
+            holder=self.user,
+            encrypted_key=base64.b64encode(b"dek1").decode(),
+            encrypted_with_master_key=True,
+        )
+
+        DocumentEncryptionKey.objects.create(
+            document=doc2,
+            holder=self.user,
+            encrypted_key=base64.b64encode(b"dek2").decode(),
+            encrypted_with_master_key=True,
+        )
+
+        # Create DEK for other user (should not be returned)
+        DocumentEncryptionKey.objects.create(
+            document=doc1,
+            holder=user2,
+            encrypted_key=base64.b64encode(b"dek_other").decode(),
+            encrypted_with_master_key=False,
+        )
+
+        # Call the endpoint
+        response = self.client.get(
+            "/api/document/encryption_key/get_all/",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("keys", data)
+
+        # Should have 2 keys (only for self.user)
+        self.assertEqual(len(data["keys"]), 2)
+
+        # Verify document IDs
+        doc_ids = {key["document_id"] for key in data["keys"]}
+        self.assertEqual(doc_ids, {doc1.id, doc2.id})
+
+        # Verify master key flag
+        for key in data["keys"]:
+            self.assertTrue(key["encrypted_with_master_key"])
+
+    def test_automatic_key_sharing_with_passphrase_user(self):
+        """Test automatic DocumentEncryptionKey creation when sharing with passphrase-enabled user."""
+        from django.contrib.auth import get_user_model
+        from user.models import UserEncryptionKey
+
+        User = get_user_model()
+        recipient = User.objects.create_user(
+            username="recipient",
+            email="recipient@test.com",
+            password="testpass",
+        )
+
+        # Create an E2EE document owned by self.user
+        doc = Document.objects.create(
+            title="E2EE Doc",
+            owner=self.user,
+            template_id=1,
+            e2ee=True,
+            e2ee_salt=b"salt1234567890ab",
+            e2ee_iterations=600000,
+        )
+
+        # Create DEK for owner
+        DocumentEncryptionKey.objects.create(
+            document=doc,
+            holder=self.user,
+            encrypted_key=base64.b64encode(b"owner_dek").decode(),
+            encrypted_with_master_key=True,
+        )
+
+        # Give recipient encryption keys (passphrase setup)
+        UserEncryptionKey.objects.create(
+            user=recipient, public_key='{"kty":"RSA"}'
+        )
+
+        # Now share the document with recipient
+        import json
+
+        response = self.client.post(
+            "/api/document/save_access_rights/",
+            {
+                "document_ids": json.dumps([doc.id]),
+                "access_rights": json.dumps(
+                    [
+                        {
+                            "holder": {"id": recipient.id, "type": "user"},
+                            "rights": "read",
+                        }
+                    ]
+                ),
+            },
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        # Verify DocumentEncryptionKey was created for recipient
+        recipient_deks = DocumentEncryptionKey.objects.filter(
+            document=doc, holder=recipient
+        )
+        self.assertEqual(recipient_deks.count(), 1)
+
+        # Verify it's marked as not encrypted with master key (will be encrypted with public key)
+        recipient_dek = recipient_deks.first()
+        self.assertFalse(recipient_dek.encrypted_with_master_key)

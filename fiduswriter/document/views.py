@@ -212,6 +212,46 @@ def get_access_rights(request):
     return JsonResponse(response, status=status)
 
 
+def _handle_automatic_key_sharing(document, user):
+    """
+    When sharing an E2EE document with a User who has passphrase keys,
+    automatically create a DocumentEncryptionKey if one doesn't exist,
+    encrypted with the recipient's public key.
+    """
+    from user.models import UserEncryptionKey
+
+    if not document.e2ee:
+        return
+
+    # Check if user already has a DEK for this document
+    if DocumentEncryptionKey.objects.filter(
+        document=document, holder=user
+    ).exists():
+        return
+
+    # Check if user has encryption keys (passphrase setup)
+    if not UserEncryptionKey.objects.filter(user=user).exists():
+        return
+
+    # Get the owner's DEK
+    owner_dek = DocumentEncryptionKey.objects.filter(
+        document=document, holder=document.owner
+    ).first()
+
+    if not owner_dek:
+        return
+
+    # Create a new DEK for the recipient
+    # The frontend will encrypt this with the recipient's public key before saving
+    # For now, just create an empty placeholder - the actual encryption happens in frontend
+    DocumentEncryptionKey.objects.create(
+        document=document,
+        holder=user,
+        encrypted_key="",  # Will be filled in by frontend
+        encrypted_with_master_key=False,
+    )
+
+
 @login_required
 @ajax_required
 @require_POST
@@ -310,6 +350,12 @@ def save_access_rights(request):
                             False,
                         )
                 access_right.save()
+
+                # For new access rights on E2EE documents with User holders,
+                # attempt automatic key sharing if user has passphrase keys
+                if right["holder"]["type"] == "user" and doc.e2ee:
+                    _handle_automatic_key_sharing(doc, holder)
+
     status = 201
     return JsonResponse(response, status=status)
 
@@ -1644,16 +1690,16 @@ def save_document_encryption_key(request):
     if document.owner != request.user:
         return JsonResponse({"error": "Not owner"}, status=403)
 
-    holder_type_str = request.POST.get("holder_type", "user")
+    # Now only support User holders (no more UserInvite)
+    User = get_user_model()
     holder_id = int(request.POST.get("holder_id", request.user.pk))
-    holder_type = ContentType.objects.get(
-        app_label="user", model=holder_type_str
-    )
+    holder = User.objects.filter(pk=holder_id).first()
+    if not holder:
+        return JsonResponse({"error": "Holder user not found"}, status=404)
 
     dek_record, created = DocumentEncryptionKey.objects.get_or_create(
         document=document,
-        holder_type=holder_type,
-        holder_id=holder_id,
+        holder=holder,
         defaults={
             "encrypted_key": request.POST["encrypted_key"],
             "encrypted_with_master_key": request.POST.get(
@@ -1693,9 +1739,8 @@ def get_document_encryption_key(request):
     ):
         return JsonResponse({"error": "No access"}, status=403)
 
-    user_ct = ContentType.objects.get_for_model(request.user)
     dek_record = DocumentEncryptionKey.objects.filter(
-        document=document, holder_type=user_ct, holder_id=request.user.pk
+        document=document, holder=request.user
     ).first()
     if dek_record:
         response["has_key"] = True
@@ -1722,13 +1767,8 @@ def update_document_encryption_key(request):
         return JsonResponse({"error": "Key not found"}, status=404)
     document = dek_record.document
     # Only the holder or the owner can update
-    user_ct = ContentType.objects.get_for_model(request.user)
     if not (
-        document.owner == request.user
-        or (
-            dek_record.holder_type == user_ct
-            and dek_record.holder_id == request.user.pk
-        )
+        document.owner == request.user or dek_record.holder == request.user
     ):
         return JsonResponse({"error": "Not allowed"}, status=403)
 
@@ -1738,6 +1778,32 @@ def update_document_encryption_key(request):
     )
     dek_record.save()
     response["id"] = dek_record.id
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+def get_user_document_encryption_keys(request):
+    """Get all DocumentEncryptionKey instances for the current user."""
+    response = {}
+    status = 200
+
+    # Get all DEK records where user is the holder
+    dek_records = DocumentEncryptionKey.objects.filter(
+        holder=request.user
+    ).select_related("document")
+
+    response["keys"] = []
+    for dek in dek_records:
+        response["keys"].append(
+            {
+                "id": dek.id,
+                "document_id": dek.document_id,
+                "encrypted_key": dek.encrypted_key,
+                "encrypted_with_master_key": dek.encrypted_with_master_key,
+            }
+        )
+
     return JsonResponse(response, status=status)
 
 

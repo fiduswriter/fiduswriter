@@ -52,6 +52,21 @@ urlpatterns = [
         views.get_public_key,
         name="get_public_key",
     ),
+    re_path(
+        "^preferences/get/$",
+        views.get_preferences,
+        name="get_preferences",
+    ),
+    re_path(
+        "^preferences/update/$",
+        views.update_preferences,
+        name="update_preferences",
+    ),
+    re_path(
+        "^encryption_key/has_keys/$",
+        views.has_encryption_keys,
+        name="has_encryption_keys",
+    ),
     re_path(r"^signup/$", views.signup, name="account_signup"),
     re_path(r"^login/$", views.login, name="account_login"),
     # Authentication handling

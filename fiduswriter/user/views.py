@@ -887,4 +887,74 @@ def get_public_key(request, user_id):
     return JsonResponse(response, status=status)
 
 
+@login_required
+@ajax_required
+@require_POST
+def update_preferences(request):
+    """Update user preferences (e.g., encryption dialog dismissal)."""
+    user = request.user
+    preferences = user.preferences or {}
+
+    # Update allowed preference keys
+    allowed_keys = {"has_dismissed_passphrase_offer"}
+    for key in allowed_keys:
+        value = request.POST.get(key)
+        if value is not None:
+            # Convert string "true"/"false" to boolean
+            if value.lower() == "true":
+                preferences[key] = True
+            elif value.lower() == "false":
+                preferences[key] = False
+            else:
+                preferences[key] = value
+
+    user.preferences = preferences
+    user.save()
+
+    return JsonResponse({"preferences": user.preferences}, status=200)
+
+
+@login_required
+@ajax_required
+def get_preferences(request):
+    """Get user preferences."""
+    user = request.user
+    return JsonResponse({"preferences": user.preferences or {}}, status=200)
+
+
+@login_required
+@ajax_required
+def has_encryption_keys(request):
+    """Check if a user has encryption keys (passphrase setup)."""
+    user_id = None
+
+    # Check if request has user_id parameter
+    if request.method == "GET":
+        user_id = request.GET.get("user_id")
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body) if request.body else {}
+            user_id = data.get("user_id")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    if not user_id:
+        return JsonResponse({"error": "user_id required"}, status=400)
+
+    try:
+        user_id = int(user_id)
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "Invalid user_id"}, status=400)
+
+    User = get_user_model()
+    user = User.objects.filter(id=user_id).first()
+    if not user:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    # Check if user has UserEncryptionKey
+    has_keys = UserEncryptionKey.objects.filter(user=user).exists()
+
+    return JsonResponse({"has_keys": has_keys}, status=200)
+
+
 login = FidusLoginView.as_view()

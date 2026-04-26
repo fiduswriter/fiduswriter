@@ -297,14 +297,11 @@ class DocumentEncryptionKey(models.Model):
         on_delete=models.CASCADE,
         related_name="encryption_keys",
     )
-    holder_type = models.ForeignKey(
-        ContentType,
+    holder = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        limit_choices_to=models.Q(app_label="user", model="user")
-        | models.Q(app_label="user", model="userinvite"),
+        related_name="document_encryption_keys",
     )
-    holder_id = models.PositiveIntegerField()
-    holder_obj = GenericForeignKey("holder_type", "holder_id")
     # The document encryption key, encrypted. Which key encrypts it
     # depends on `encrypted_with_master_key`:
     # - True:  encrypted with the owner's master key (MK)
@@ -315,12 +312,10 @@ class DocumentEncryptionKey(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = (("document", "holder_type", "holder_id"),)
+        unique_together = (("document", "holder"),)
 
     def __str__(self):
-        holder = self.holder_obj
-        name = holder.readable_name if holder else "unknown"
-        return f"DEK for doc {self.document_id} / {name}"
+        return f"DEK for doc {self.document_id} / {self.holder.readable_name}"
 
 
 class DocumentRevision(models.Model):

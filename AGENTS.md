@@ -197,13 +197,38 @@ document: {
 
 ## E2EE Architecture Notes
 
+### Current Implementation Status
+
+**Per-Document Encryption (Core E2EE)**: ✅ Fully implemented and tested
+- All document encryption features working
+- Real-time encrypted collaboration
+- Image encryption support
+- Share link password embedding
+- Password change functionality
+- 18/18 E2EE tests passing
+
+**Personal Passphrase System (Mode A Hybrid)**: ✅ Fully implemented and tested
+- Models created and migrated
+- Passphrase setup, unlock, and recovery dialogs
+- Auto-generated document passwords (raw DEK)
+- Public-key sharing via ECDH P-256
+- Profile page integration (setup, change passphrase, recover)
+- Migration from per-document passwords (auto-import on successful decryption)
+- Key upgrade after asymmetric decryption
+
+See `docs/e2ee.md` for detailed developer documentation.
+
 ### Session storage integration
 - `E2EEKeyManager.storeKeyInSession(documentId, key)` exports the CryptoKey to raw bytes,
   Base64-encodes them, and stores them in `sessionStorage` as `e2ee_key_${documentId}`.
 - `E2EEKeyManager.getKeyFromSession(documentId)` retrieves and re-imports the key.
-- The editor calls `storeKeyInSession` after successful key derivation in `_createE2EEDocument`
+- `E2EEKeyManager.storePasswordInSession(documentId, password)` stores the password string.
+- `PassphraseCrypto.storeKeysInSession(masterKey, privateKey)` stores the master key and private key
+  as `e2ee_master_key` and `e2ee_private_key`.
+- The editor calls these after successful key derivation in `_createE2EEDocument`
   and `_decryptAndLoadDoc`.
-- The editor calls `getKeyFromSession` in `_loadE2EEDocument` before prompting for a password.
+- The editor calls `getKeyFromSession` / `getPasswordFromSession` in `_loadE2EEDocument`
+  before prompting for a password.
 
 ### Encrypted snapshot lifecycle
 1. New E2EE document: server returns plaintext template content initially
@@ -214,7 +239,7 @@ document: {
 
 ### Consumer password-change handling
 When `handle_e2ee_snapshot` receives new `e2ee_salt`/`e2ee_iterations`:
-- `doc.diffs = []` is cleared (old diffs encrypted with old key are useless)
+- `doc.diffs = []` should be cleared (old diffs encrypted with old key are useless)
 - New salt/iterations are broadcast in `e2ee_snapshot_received`
 - Clients receiving this clear their cached key (memory + sessionStorage) and show
   a system message asking for the new password

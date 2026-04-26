@@ -22,7 +22,14 @@ import {
  */
 
 export class DocumentAccessRightsDialog {
-    constructor(documentIds, contacts, newContactCall, e2ee = false) {
+    constructor(
+        documentIds,
+        contacts,
+        newContactCall,
+        e2ee = false,
+        documentPassword = "",
+        onShareSuccess = null
+    ) {
         this.documentIds = documentIds
         this.contacts = contacts
         this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
@@ -31,6 +38,12 @@ export class DocumentAccessRightsDialog {
         // Whether the document(s) are E2EE encrypted. For E2EE documents,
         // only a subset of access rights are available.
         this.e2ee = e2ee
+        // The document password, if known (e.g. when opened in the editor).
+        // Used to pre-fill the share-link password field.
+        this.documentPassword = documentPassword
+        // Optional callback invoked after access rights are saved successfully.
+        // Receives the array of new access rights.
+        this.onShareSuccess = onShareSuccess
     }
 
     init() {
@@ -346,7 +359,10 @@ export class DocumentAccessRightsDialog {
             title: gettext("Create share link"),
             id: "create-share-token-dialog",
             width: 860,
-            body: createShareTokenDialogTemplate(this.e2ee),
+            body: createShareTokenDialogTemplate(
+                this.e2ee,
+                this.documentPassword
+            ),
             buttons: [
                 {
                     text: gettext("Create"),
@@ -621,6 +637,9 @@ export class DocumentAccessRightsDialog {
         })
             .then(() => {
                 addAlert("success", gettext("Access rights have been saved"))
+                if (this.onShareSuccess) {
+                    this.onShareSuccess(newAccessRights)
+                }
             })
             .catch(() =>
                 addAlert("error", gettext("Access rights could not be saved"))

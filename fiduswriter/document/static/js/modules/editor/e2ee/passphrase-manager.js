@@ -11,6 +11,7 @@
  */
 
 import {getJson, postJson} from "../../common"
+import {E2EEKeyManager} from "./key-manager"
 import {PassphraseCrypto} from "./passphrase-crypto"
 
 export class PassphraseManager {
@@ -104,7 +105,10 @@ export class PassphraseManager {
                 encrypted_master_key_backup: encryptedMasterKeyBackup
             })
         }
-        await postJson("/api/user/encryption_key/save/", saveData)
+        const {status} = await postJson(
+            "/api/user/encryption_key/save/",
+            saveData
+        )
         if (status >= 400) {
             throw new Error("Failed to save encryption keys")
         }
@@ -246,23 +250,22 @@ export class PassphraseManager {
     }
 
     /**
-     * Get the document encryption key (DEK) for a document.
+     * Get the document password for a document.
      *
-     * If the DEK is encrypted with the user's master key, decrypts it directly.
+     * If encrypted with the user's master key, decrypts it directly.
      * If encrypted with the user's public key, decrypts with private key and
      * upgrades to master-key encryption.
      *
      * @param {number} documentId - The document ID
-     * @returns {Promise<CryptoKey|null>} The DEK, or null if not available
+     * @returns {Promise<string|null>} The document password, or null if not available
      */
-    static async getDocumentDEK(documentId) {
+    static async getDocumentPassword(documentId) {
         const {masterKey, privateKey} =
             await PassphraseCrypto.getKeysFromSession()
         if (!masterKey || !privateKey) {
             return null
         }
 
-        // Fetch the DEK record
         const {json} = await postJson("/api/document/encryption_key/get/", {
             document_id: documentId
         })
@@ -270,59 +273,54 @@ export class PassphraseManager {
             return null
         }
 
-        let dek
+        let password
         if (json.encrypted_with_master_key) {
-            // Decrypt with master key
-            dek = await PassphraseCrypto.decryptKey(
+            password = await PassphraseCrypto.decryptString(
                 json.encrypted_key,
                 masterKey
             )
         } else {
-            // Decrypt with private key (asymmetric)
-            // The encrypted_key format is: ephemeralPublicKeyJwk + ":" + encryptedDEK
             const parts = json.encrypted_key.split(":")
             if (parts.length !== 2) {
                 return null
             }
-            dek = await PassphraseCrypto.decryptDEKWithPrivateKey(
+            password = await PassphraseCrypto.decryptStringWithPrivateKey(
                 parts[1],
                 parts[0],
                 privateKey
             )
             // Upgrade to master-key encryption for next time
-            const upgradedEncryptedDEK = await PassphraseCrypto.encryptKey(
-                dek,
-                masterKey
-            )
+            const upgradedEncryptedPassword =
+                await PassphraseCrypto.encryptString(password, masterKey)
             await postJson("/api/document/encryption_key/update/", {
                 id: json.id,
-                encrypted_key: upgradedEncryptedDEK,
+                encrypted_key: upgradedEncryptedPassword,
                 encrypted_with_master_key: "true"
             })
         }
 
-        return dek
+        return password
     }
 
     /**
-     * Create or store a document encryption key (DEK) for a document.
+     * Create or store a document password for a document.
      *
      * Used when:
-     * - Creating a new encrypted document (owner's DEK encrypted with MK)
-     * - Sharing with another user (DEK encrypted with recipient's public key)
+     * - Creating a new encrypted document (owner's password encrypted with MK)
+     * - Sharing with another passphrase user (password encrypted with their public key)
      *
      * @param {number} documentId - The document ID
-     * @param {CryptoKey} dek - The document encryption key
-     * @param {number} holderId - The user ID to store the DEK for (default: current user)
+     * @param {string} password - The document password
+     * @param {number} holderId - The user ID to store the password for (default: current user)
      * @param {string} holderType - "user" or "userinvite"
      * @param {boolean} encryptedWithMasterKey - Whether to encrypt with MK or public key
      * @returns {Promise<Object>} Server response
      */
-    static async saveDocumentDEK(
+    static async saveDocumentPassword(
         documentId,
-        dek,
+        password,
         holderId = null,
-        holderType = "user",
+        _holderType = "user",
         encryptedWithMasterKey = true
     ) {
         let encryptedKey
@@ -331,9 +329,11 @@ export class PassphraseManager {
             if (!masterKey) {
                 throw new Error("Master key not available in session")
             }
-            encryptedKey = await PassphraseCrypto.encryptKey(dek, masterKey)
+            encryptedKey = await PassphraseCrypto.encryptString(
+                password,
+                masterKey
+            )
         } else {
-            // Encrypt with recipient's public key
             const pkJson = await getJson(
                 `/api/user/encryption_public_key/${holderId}/`
             )
@@ -343,39 +343,47 @@ export class PassphraseManager {
             const recipientPublicKey = await PassphraseCrypto.importPublicKey(
                 pkJson.public_key
             )
-            const encryptedDEKData =
-                await PassphraseCrypto.encryptDEKWithPublicKey(
-                    dek,
+            const encryptedData =
+                await PassphraseCrypto.encryptStringWithPublicKey(
+                    password,
                     recipientPublicKey
                 )
-            // Format: ephemeralPublicKeyJwk + ":" + encryptedDEK
-            encryptedKey = `${encryptedDEKData.ephemeralPublicKeyJwk}:${encryptedDEKData.encryptedDEK}`
+            encryptedKey = `${encryptedData.ephemeralPublicKeyJwk}:${encryptedData.encryptedData}`
         }
 
         const saveData = {
             document_id: documentId,
             encrypted_key: encryptedKey,
-            encrypted_with_master_key: encryptedWithMasterKey
-                ? "true"
-                : "false",
-            holder_id: holderId,
-            holder_type: holderType
+            encrypted_with_master_key: encryptedWithMasterKey ? "true" : "false"
+        }
+        if (holderId) {
+            saveData.holder_id = holderId
         }
         const {json, status} = await postJson(
             "/api/document/encryption_key/save/",
             saveData
         )
         if (status >= 400) {
-            throw new Error("Failed to save document encryption key")
+            throw new Error("Failed to save document password")
         }
         return json
     }
 
     /**
-     * Generate a new random document encryption key (DEK).
+     * Generate a new random document password that is itself a valid raw DEK.
+     * Returns a 44-character base64-encoded 32-byte AES key.
      */
-    static generateDEK() {
-        return PassphraseCrypto.generateMasterKey()
+    static generateDocumentPassword() {
+        return PassphraseCrypto.generateDocumentPassword()
+    }
+
+    /**
+     * Resolve a document password to an AES-GCM key.
+     * If the password is a raw DEK (43/44 char base64), use it directly.
+     * Otherwise, derive the key via PBKDF2.
+     */
+    static resolvePasswordToKey(password, salt, iterations) {
+        return E2EEKeyManager.resolvePasswordToKey(password, salt, iterations)
     }
 
     /**

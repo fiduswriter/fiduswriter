@@ -28,6 +28,21 @@ export class PassphraseCrypto {
     }
 
     /**
+     * Generate a random document password that is itself a valid raw DEK.
+     * Returns a 44-character base64-encoded 32-byte AES key.
+     * This password can be used directly as the encryption key without PBKDF2.
+     */
+    static async generateDocumentPassword() {
+        const key = await crypto.subtle.generateKey(
+            {name: "AES-GCM", length: 256},
+            true,
+            ["encrypt", "decrypt"]
+        )
+        const raw = await crypto.subtle.exportKey("raw", key)
+        return btoa(String.fromCharCode(...new Uint8Array(raw)))
+    }
+
+    /**
      * Generate a new ECDH P-256 key pair.
      * Both keys are marked extractable so the private key can be stored encrypted.
      */
@@ -370,6 +385,123 @@ export class PassphraseCrypto {
             true,
             ["encrypt", "decrypt"]
         )
+    }
+
+    /**
+     * Encrypt a string with AES-GCM using a direct key (e.g. master key).
+     */
+    static async encryptString(str, encryptionKey) {
+        const encoder = new TextEncoder()
+        const data = encoder.encode(str)
+        const iv = crypto.getRandomValues(new Uint8Array(12))
+        const ciphertext = await crypto.subtle.encrypt(
+            {name: "AES-GCM", iv},
+            encryptionKey,
+            data
+        )
+        const combined = new Uint8Array(iv.length + ciphertext.byteLength)
+        combined.set(iv, 0)
+        combined.set(new Uint8Array(ciphertext), iv.length)
+        return PassphraseCrypto._bytesToBase64(combined)
+    }
+
+    /**
+     * Decrypt a string with AES-GCM using a direct key.
+     */
+    static async decryptString(encryptedBase64, encryptionKey) {
+        const combined = PassphraseCrypto._base64ToBytes(encryptedBase64)
+        const iv = combined.slice(0, 12)
+        const ciphertext = combined.slice(12)
+        const decrypted = await crypto.subtle.decrypt(
+            {name: "AES-GCM", iv},
+            encryptionKey,
+            ciphertext
+        )
+        const decoder = new TextDecoder()
+        return decoder.decode(decrypted)
+    }
+
+    /**
+     * Encrypt a string with a recipient's public key using ECIES-style encryption.
+     * Same as encryptDEKWithPublicKey but for string data instead of a CryptoKey.
+     */
+    static async encryptStringWithPublicKey(str, recipientPublicKey) {
+        const encoder = new TextEncoder()
+        const data = encoder.encode(str)
+
+        const ephemeralPair = await crypto.subtle.generateKey(
+            {name: "ECDH", namedCurve: "P-256"},
+            true,
+            ["deriveKey"]
+        )
+
+        const sharedKey = await crypto.subtle.deriveKey(
+            {name: "ECDH", public: recipientPublicKey},
+            ephemeralPair.privateKey,
+            {name: "AES-GCM", length: 256},
+            false,
+            ["encrypt", "decrypt"]
+        )
+
+        const iv = crypto.getRandomValues(new Uint8Array(12))
+        const ciphertext = await crypto.subtle.encrypt(
+            {name: "AES-GCM", iv},
+            sharedKey,
+            data
+        )
+
+        const ephemeralPublicJwk = await crypto.subtle.exportKey(
+            "jwk",
+            ephemeralPair.publicKey
+        )
+
+        const combined = new Uint8Array(iv.length + ciphertext.byteLength)
+        combined.set(iv, 0)
+        combined.set(new Uint8Array(ciphertext), iv.length)
+
+        return {
+            ephemeralPublicKeyJwk: JSON.stringify(ephemeralPublicJwk),
+            encryptedData: PassphraseCrypto._bytesToBase64(combined)
+        }
+    }
+
+    /**
+     * Decrypt a string that was encrypted with the user's public key.
+     * Returns the plaintext string.
+     */
+    static async decryptStringWithPrivateKey(
+        encryptedDataBase64,
+        ephemeralPublicKeyJwk,
+        privateKey
+    ) {
+        const ephemeralPublicJwk = JSON.parse(ephemeralPublicKeyJwk)
+        const ephemeralPublicKey = await crypto.subtle.importKey(
+            "jwk",
+            ephemeralPublicJwk,
+            {name: "ECDH", namedCurve: "P-256"},
+            true,
+            []
+        )
+
+        const sharedKey = await crypto.subtle.deriveKey(
+            {name: "ECDH", public: ephemeralPublicKey},
+            privateKey,
+            {name: "AES-GCM", length: 256},
+            false,
+            ["encrypt", "decrypt"]
+        )
+
+        const combined = PassphraseCrypto._base64ToBytes(encryptedDataBase64)
+        const iv = combined.slice(0, 12)
+        const ciphertext = combined.slice(12)
+        const decrypted = await crypto.subtle.decrypt(
+            {name: "AES-GCM", iv},
+            sharedKey,
+            ciphertext
+        )
+
+        const decoder = new TextDecoder()
+        return decoder.decode(decrypted)
     }
 
     // --- Session Storage ---

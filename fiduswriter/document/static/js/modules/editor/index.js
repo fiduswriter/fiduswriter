@@ -709,7 +709,7 @@ export class Editor {
      * @private
      */
     async _createE2EEDocument() {
-        let key, saltBase64, iterations
+        let password, key, saltBase64, iterations
 
         // Check if the user has a personal passphrase set up
         const hasPassphraseKeys = await PassphraseManager.hasEncryptionKeys()
@@ -734,84 +734,30 @@ export class Editor {
             }
 
             if (PassphraseManager.hasKeysInSession()) {
-                // Use DEK-based encryption
-                const dek = await PassphraseManager.generateDEK()
-                // Generate a salt for backward compatibility (password users need it)
-                const salt = E2EEKeyManager.generateSalt()
-                saltBase64 = btoa(String.fromCharCode(...salt))
-                iterations = 600000
-                key = dek
-
-                // Create the document on the server
-                const {json, status} = await postJson(
-                    "/api/document/create_doc/",
-                    {
-                        template_id: this.docInfo.templateId,
-                        path: this.docInfo.path,
-                        e2ee: "true",
-                        e2ee_salt: saltBase64,
-                        e2ee_iterations: String(iterations)
-                    }
-                )
-
-                if (status === 403) {
-                    addAlert(
-                        "error",
-                        json.error ||
-                            gettext("E2EE is not enabled on this server.")
-                    )
-                    window.location.href = "/"
-                    return
-                }
-
-                this.docInfo.id = json.id
-                window.history.replaceState(
-                    "",
-                    "",
-                    `/document/${this.docInfo.id}/`
-                )
-                delete this.docInfo.templateId
-
-                // Save the DEK record for the owner
-                try {
-                    await PassphraseManager.saveDocumentDEK(
-                        this.docInfo.id,
-                        dek,
-                        null,
-                        "user",
-                        true
-                    )
-                } catch (_e) {
-                    console.error("Failed to save DEK record:", _e)
-                }
-
-                // Set up E2EE state
-                this.e2ee = {
-                    encrypted: true,
-                    encryptionSalt: saltBase64,
-                    encryptionIterations: iterations,
-                    key: key,
-                    snapshotManager: new E2EESnapshotManager(this),
-                    usesPassphrase: true
-                }
-                this.e2ee.snapshotManager.setKey(key)
-                return
+                // Generate a random document password that is itself a raw DEK
+                password = await PassphraseManager.generateDocumentPassword()
             }
             // Fall through to per-document password if passphrase unlock failed
         }
 
-        // Prompt for per-document password
-        const password = await new Promise(resolve => {
-            createPasswordDialog(pwd => resolve(pwd))
-        })
+        if (!password) {
+            // Prompt for per-document password
+            password = await new Promise(resolve => {
+                createPasswordDialog(pwd => resolve(pwd))
+            })
+        }
 
         // Generate a random 16-byte salt
         const salt = E2EEKeyManager.generateSalt()
         saltBase64 = btoa(String.fromCharCode(...salt))
-
-        // Derive the encryption key from password + salt
         iterations = 600000
-        key = await E2EEKeyManager.deriveKey(password, salt, iterations)
+
+        // Resolve password to encryption key
+        key = await PassphraseManager.resolvePasswordToKey(
+            password,
+            salt,
+            iterations
+        )
 
         // Create the document on the server with E2EE parameters
         const {json, status} = await postJson("/api/document/create_doc/", {
@@ -835,8 +781,26 @@ export class Editor {
         window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         delete this.docInfo.templateId
 
-        // Cache the key in sessionStorage
-        await E2EEKeyManager.storeKeyInSession(this.docInfo.id, key)
+        // Store password in sessionStorage
+        E2EEKeyManager.storePasswordInSession(this.docInfo.id, password)
+
+        // If passphrase user, also save encrypted password on server
+        if (hasPassphraseKeys && PassphraseManager.hasKeysInSession()) {
+            try {
+                await PassphraseManager.saveDocumentPassword(
+                    this.docInfo.id,
+                    password,
+                    null,
+                    "user",
+                    true
+                )
+            } catch (_e) {
+                console.error("Failed to save document password:", _e)
+            }
+        } else {
+            // Non-passphrase user: cache the key in sessionStorage
+            await E2EEKeyManager.storeKeyInSession(this.docInfo.id, key)
+        }
 
         // Set up E2EE state on the editor
         this.e2ee = {
@@ -844,7 +808,10 @@ export class Editor {
             encryptionSalt: saltBase64,
             encryptionIterations: iterations,
             key: key,
-            snapshotManager: new E2EESnapshotManager(this)
+            password: password,
+            snapshotManager: new E2EESnapshotManager(this),
+            usesPassphrase:
+                hasPassphraseKeys && PassphraseManager.hasKeysInSession()
         }
         this.e2ee.snapshotManager.setKey(key)
     }

@@ -197,28 +197,50 @@ export class ModCollabDoc {
             iterations = doc_info.e2ee_iterations
         }
 
-        // --- Try passphrase/DEK path first ---
-        if (PassphraseManager.hasKeysInSession()) {
-            const dek = await PassphraseManager.getDocumentDEK(
-                this.mod.editor.docInfo.id
+        const docId = this.mod.editor.docInfo.id
+
+        // Helper to resolve a password to a key and attempt decryption
+        const tryPassword = async password => {
+            const key = await E2EEKeyManager.resolvePasswordToKey(
+                password,
+                salt
+                    ? new Uint8Array(
+                          atob(salt)
+                              .split("")
+                              .map(c => c.charCodeAt(0))
+                      )
+                    : null,
+                iterations || 600000
             )
-            if (dek) {
+            await this._decryptAndLoadDoc(
+                doc,
+                key,
+                salt,
+                iterations,
+                isInitialLoad,
+                urlFragmentPassword
+            )
+            // Cache password and key for this session
+            E2EEKeyManager.storePasswordInSession(docId, password)
+            await E2EEKeyManager.storeKeyInSession(docId, key)
+            if (this.mod.editor.e2ee) {
+                this.mod.editor.e2ee.key = key
+                this.mod.editor.e2ee.password = password
+            }
+        }
+
+        // --- Try passphrase path first ---
+        if (PassphraseManager.hasKeysInSession()) {
+            const password = await PassphraseManager.getDocumentPassword(docId)
+            if (password) {
                 try {
-                    await this._decryptAndLoadDoc(
-                        doc,
-                        dek,
-                        salt,
-                        iterations,
-                        isInitialLoad,
-                        urlFragmentPassword
-                    )
-                    // Mark that this document uses the passphrase system
+                    await tryPassword(password)
                     if (this.mod.editor.e2ee) {
                         this.mod.editor.e2ee.usesPassphrase = true
                     }
                     return
                 } catch (_error) {
-                    // DEK didn't work — fall through to password
+                    // Password didn't work — fall through
                 }
             }
         }
@@ -236,54 +258,45 @@ export class ModCollabDoc {
                 if (passphrase) {
                     try {
                         await PassphraseManager.unlockWithPassphrase(passphrase)
-                        const dek = await PassphraseManager.getDocumentDEK(
-                            this.mod.editor.docInfo.id
-                        )
-                        if (dek) {
-                            await this._decryptAndLoadDoc(
-                                doc,
-                                dek,
-                                salt,
-                                iterations,
-                                isInitialLoad,
-                                urlFragmentPassword
-                            )
+                        const password =
+                            await PassphraseManager.getDocumentPassword(docId)
+                        if (password) {
+                            await tryPassword(password)
                             if (this.mod.editor.e2ee) {
                                 this.mod.editor.e2ee.usesPassphrase = true
                             }
                             return
                         }
                     } catch (_e) {
-                        // Unlock failed or no DEK — fall through to password
+                        // Unlock failed or no password — fall through
                     }
                 }
             }
         }
 
-        // --- Fall back to per-document password path ---
-
-        // Try to get the key from sessionStorage first
-        const sessionKey = await E2EEKeyManager.getKeyFromSession(
-            this.mod.editor.docInfo.id
-        )
-        if (sessionKey) {
+        // --- Try sessionStorage password ---
+        const sessionPassword = E2EEKeyManager.getPasswordFromSession(docId)
+        if (sessionPassword) {
             try {
-                await this._decryptAndLoadDoc(
-                    doc,
-                    sessionKey,
-                    salt,
-                    iterations,
-                    isInitialLoad,
-                    urlFragmentPassword
-                )
+                await tryPassword(sessionPassword)
                 return
             } catch (_error) {
-                E2EEKeyManager.clearKeyFromSession(this.mod.editor.docInfo.id)
+                E2EEKeyManager.clearPasswordFromSession(docId)
+                E2EEKeyManager.clearKeyFromSession(docId)
             }
         }
 
-        // If the key is already available (e.g. from _createE2EEDocument),
-        // skip the password dialog and decrypt directly.
+        // --- Try URL fragment password ---
+        if (urlFragmentPassword) {
+            try {
+                await tryPassword(urlFragmentPassword)
+                return
+            } catch (_error) {
+                // URL password didn't work — fall through to prompt
+            }
+        }
+
+        // --- Try existing key (e.g. from _createE2EEDocument) ---
         const existingKey = this.mod.editor.e2ee?.key
         if (existingKey) {
             try {
@@ -367,7 +380,7 @@ export class ModCollabDoc {
         await enterPasswordDialog(
             async password => {
                 try {
-                    const key = await E2EEKeyManager.deriveKey(
+                    const key = await E2EEKeyManager.resolvePasswordToKey(
                         password,
                         saltBytes,
                         iterations || 600000
@@ -380,6 +393,19 @@ export class ModCollabDoc {
                         isInitialLoad,
                         urlFragmentPassword
                     )
+                    // Cache password and key for this session
+                    E2EEKeyManager.storePasswordInSession(
+                        this.mod.editor.docInfo.id,
+                        password
+                    )
+                    await E2EEKeyManager.storeKeyInSession(
+                        this.mod.editor.docInfo.id,
+                        key
+                    )
+                    if (this.mod.editor.e2ee) {
+                        this.mod.editor.e2ee.key = key
+                        this.mod.editor.e2ee.password = password
+                    }
                 } catch (_error) {
                     console.error("E2EE DECRYPT ERROR:", _error)
                     if (typeof window !== "undefined") {

@@ -75,7 +75,10 @@ export const shareTokenRowTemplate = ({token}) => {
 }
 
 /** Sub-dialog for creating a new share link */
-export const createShareTokenDialogTemplate = (e2ee = false) =>
+export const createShareTokenDialogTemplate = (
+    e2ee = false,
+    documentPassword = ""
+) =>
     `<table class="fw-dialog-table">
         <tbody>
             <tr>
@@ -116,7 +119,7 @@ export const createShareTokenDialogTemplate = (e2ee = false) =>
                     ? `<tr>
                     <th><label for="share-token-password">${gettext("Document password")}</label></th>
                     <td class="entry-field">
-                        <input id="share-token-password" type="text" class="fw-light" placeholder="${gettext("Enter the document password to include it in the link")}" autocomplete="off" />
+                        <input id="share-token-password" type="text" class="fw-light" value="${escapeText(documentPassword)}" placeholder="${gettext("Enter the document password to include it in the link")}" autocomplete="off" />
                         <p class="e2ee-share-warning">
                             <i class="fas fa-exclamation-triangle"></i>
                             ${gettext("If you enter the password above, it will be embedded in the link (after #). Anyone with the link can open the document. Only share such links through secure channels.")}

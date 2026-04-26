@@ -13,7 +13,7 @@
  * the user is shown a degree of weakness and is therefore encouraged to use a stronger password.
  */
 
-import {Dialog} from "../../common"
+import {Dialog, escapeText} from "../../common"
 
 /**
  * Validate a password against the minimum requirements.
@@ -278,10 +278,6 @@ export function createPasswordDialog(onPassword) {
             </div>
         `
 
-        // Declare dialogInstance before buttons so the click handler
-        // can call dialogInstance.close().
-        let dialogInstance
-
         const buttons = [
             {
                 text: gettext("Create Encrypted Document"),
@@ -335,7 +331,7 @@ export function createPasswordDialog(onPassword) {
             canClose: true
         }
 
-        dialogInstance = new Dialog(dialog)
+        const dialogInstance = new Dialog(dialog)
         dialogInstance.open()
 
         setTimeout(() => {
@@ -406,11 +402,17 @@ export function createPasswordDialog(onPassword) {
  *
  * @param {Function} onPasswordChange - Callback called with
  *   {currentPassword: string, newPassword: string}
+ * @param {Object} [options] - Optional settings
+ * @param {string} [options.currentPassword] - Prefill current password field
+ * @param {string} [options.suggestedNewPassword] - Prefill new password field
  * @returns {Promise<void>}
  */
-export function changePasswordDialog(onPasswordChange) {
+export function changePasswordDialog(onPasswordChange, options = {}) {
     return new Promise(resolve => {
         const dialogId = "e2ee-change-password"
+        const currentPassword = options.currentPassword || ""
+        const suggestedNewPassword = options.suggestedNewPassword || ""
+        const hasPrefilledNew = suggestedNewPassword.length > 0
 
         const body = `
             <div class="e2ee-password-dialog">
@@ -418,12 +420,14 @@ export function changePasswordDialog(onPasswordChange) {
                 <div class="e2ee-password-field">
                     <label for="e2ee-current-password-input">${gettext("Current password")}</label>
                     <input type="password" id="e2ee-current-password-input" class="e2ee-password-input"
+                           value="${escapeText(currentPassword)}"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
                 </div>
                 <hr />
                 <div class="e2ee-password-field">
                     <label for="e2ee-new-password-input">${gettext("New password")}</label>
                     <input type="password" id="e2ee-new-password-input" class="e2ee-password-input"
+                           value="${escapeText(suggestedNewPassword)}"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show password")}">
                         <i class="fas fa-eye"></i>
@@ -433,7 +437,7 @@ export function changePasswordDialog(onPasswordChange) {
                     <div class="e2ee-strength-bar" id="e2ee-strength-bar"></div>
                     <span class="e2ee-strength-label" id="e2ee-strength-label"></span>
                 </div>
-                <div class="e2ee-password-field">
+                <div class="e2ee-password-field" id="e2ee-confirm-field" style="display: ${hasPrefilledNew ? "none" : ""}">
                     <label for="e2ee-confirm-password-input">${gettext("Confirm new password")}</label>
                     <input type="password" id="e2ee-confirm-password-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
@@ -441,6 +445,8 @@ export function changePasswordDialog(onPasswordChange) {
                 <div class="e2ee-password-error" id="e2ee-password-error"></div>
             </div>
         `
+
+        let newPasswordChanged = !hasPrefilledNew
 
         const buttons = [
             {
@@ -460,7 +466,7 @@ export function changePasswordDialog(onPasswordChange) {
                         "e2ee-password-error"
                     )
 
-                    const currentPassword = currentInput
+                    const currentPasswordValue = currentInput
                         ? currentInput.value
                         : ""
                     const newPassword = newInput ? newInput.value : ""
@@ -469,7 +475,7 @@ export function changePasswordDialog(onPasswordChange) {
                         : ""
 
                     // Validate current password
-                    if (currentPassword.length === 0) {
+                    if (currentPasswordValue.length === 0) {
                         if (errorEl) {
                             errorEl.textContent = gettext(
                                 "Please enter the current password."
@@ -487,8 +493,8 @@ export function changePasswordDialog(onPasswordChange) {
                         return
                     }
 
-                    // Check confirmation
-                    if (newPassword !== confirmPassword) {
+                    // Check confirmation only if user changed the prefilled value
+                    if (newPasswordChanged && newPassword !== confirmPassword) {
                         if (errorEl) {
                             errorEl.textContent = gettext(
                                 "Passwords do not match."
@@ -498,7 +504,7 @@ export function changePasswordDialog(onPasswordChange) {
                     }
 
                     // Check that new password is different
-                    if (currentPassword === newPassword) {
+                    if (currentPasswordValue === newPassword) {
                         if (errorEl) {
                             errorEl.textContent = gettext(
                                 "New password must be different from the current password."
@@ -508,7 +514,10 @@ export function changePasswordDialog(onPasswordChange) {
                     }
 
                     dialogInstance.close()
-                    onPasswordChange({currentPassword, newPassword})
+                    onPasswordChange({
+                        currentPassword: currentPasswordValue,
+                        newPassword
+                    })
                     resolve()
                 }
             }
@@ -565,6 +574,20 @@ export function changePasswordDialog(onPasswordChange) {
                     }
                 })
                 passwordInput.dispatchEvent(new Event("input"))
+            }
+
+            // Track changes to new password field
+            if (passwordInput && hasPrefilledNew) {
+                passwordInput.addEventListener("input", () => {
+                    if (passwordInput.value !== suggestedNewPassword) {
+                        newPasswordChanged = true
+                        const confirmField =
+                            document.getElementById("e2ee-confirm-field")
+                        if (confirmField) {
+                            confirmField.style.display = ""
+                        }
+                    }
+                })
             }
 
             // Submit on Enter key

@@ -214,42 +214,28 @@ def get_access_rights(request):
 
 def _handle_automatic_key_sharing(document, user):
     """
-    When sharing an E2EE document with a User who has passphrase keys,
-    automatically create a DocumentEncryptionKey if one doesn't exist,
-    encrypted with the recipient's public key.
+    Check whether a user is eligible for automatic DEK sharing.
+
+    Returns True if the user has passphrase keys and no DEK exists yet.
+    The frontend is responsible for encrypting the DEK with the
+    recipient's public key and saving it via the document encryption key API.
     """
     from user.models import UserEncryptionKey
 
     if not document.e2ee:
-        return
+        return False
 
     # Check if user already has a DEK for this document
     if DocumentEncryptionKey.objects.filter(
         document=document, holder=user
     ).exists():
-        return
+        return False
 
     # Check if user has encryption keys (passphrase setup)
     if not UserEncryptionKey.objects.filter(user=user).exists():
-        return
+        return False
 
-    # Get the owner's DEK
-    owner_dek = DocumentEncryptionKey.objects.filter(
-        document=document, holder=document.owner
-    ).first()
-
-    if not owner_dek:
-        return
-
-    # Create a new DEK for the recipient
-    # The frontend will encrypt this with the recipient's public key before saving
-    # For now, just create an empty placeholder - the actual encryption happens in frontend
-    DocumentEncryptionKey.objects.create(
-        document=document,
-        holder=user,
-        encrypted_key="",  # Will be filled in by frontend
-        encrypted_with_master_key=False,
-    )
+    return True
 
 
 @login_required

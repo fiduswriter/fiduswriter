@@ -1,10 +1,11 @@
-import {addAlert, postJson} from "../../../common"
+import {Dialog, addAlert, postJson} from "../../../common"
 import {CopyrightDialog} from "../../../copyright_dialog"
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
 import {LanguageDialog, RevisionDialog} from "../../dialogs"
 import {E2EEKeyManager} from "../../e2ee/key-manager"
+import {PassphraseManager} from "../../e2ee/passphrase-manager"
 import {changePasswordDialog} from "../../e2ee/password-dialog"
 import {
     KeyBindingsDialog,
@@ -97,13 +98,82 @@ export const headerbarModel = () => ({
                                 })
                             return
                         }
+                        const onShareSuccess = async newAccessRights => {
+                            // Share the document password with newly-added user recipients.
+                            if (
+                                editor.e2ee?.password &&
+                                PassphraseManager.hasKeysInSession()
+                            ) {
+                                const userRecipients = newAccessRights.filter(
+                                    ar =>
+                                        ar.holder?.type === "user" &&
+                                        ar.rights !== "delete"
+                                )
+                                const noPassphraseUsers = []
+                                for (const ar of userRecipients) {
+                                    try {
+                                        const hasKeys =
+                                            await PassphraseManager.userHasEncryptionKeys(
+                                                ar.holder.id
+                                            )
+                                        if (hasKeys) {
+                                            // Recipient has passphrase keys —
+                                            // encrypt document password with their public key.
+                                            await PassphraseManager.saveDocumentPassword(
+                                                editor.docInfo.id,
+                                                editor.e2ee.password,
+                                                ar.holder.id,
+                                                "user",
+                                                false
+                                            )
+                                        } else {
+                                            noPassphraseUsers.push(
+                                                ar.holder?.name || "user"
+                                            )
+                                        }
+                                    } catch (_e) {
+                                        noPassphraseUsers.push(
+                                            ar.holder?.name || "user"
+                                        )
+                                    }
+                                }
+
+                                if (noPassphraseUsers.length > 0) {
+                                    const dialog = new Dialog({
+                                        title: gettext(
+                                            "Share Document Password"
+                                        ),
+                                        id: "share-password-dialog",
+                                        width: 500,
+                                        body: `<p>${gettext(
+                                            "The following users don't have passphrase encryption. Please share the document password with them directly."
+                                        )}</p><ul>${noPassphraseUsers
+                                            .map(
+                                                name =>
+                                                    `<li><strong>${name}</strong>: <code>${editor.e2ee.password}</code></li>`
+                                            )
+                                            .join("")}</ul>`,
+                                        buttons: [
+                                            {
+                                                text: gettext("Close"),
+                                                classes: "fw-dark",
+                                                click: () => dialog.close()
+                                            }
+                                        ]
+                                    })
+                                    dialog.open()
+                                }
+                            }
+                        }
                         const dialog = new DocumentAccessRightsDialog(
                             [editor.docInfo.id],
                             editor.docInfo.owner.contacts,
                             contactData => {
                                 editor.docInfo.owner.contacts.push(contactData)
                             },
-                            editor.e2ee?.encrypted
+                            editor.e2ee?.encrypted,
+                            editor.e2ee?.password || "",
+                            onShareSuccess
                         )
                         dialog.init()
                     },
@@ -259,7 +329,7 @@ export const headerbarModel = () => ({
                         "Change the password of this encrypted document."
                     ),
                     order: 6,
-                    action: editor => {
+                    action: async editor => {
                         if (!editor.e2ee?.key) {
                             addAlert(
                                 "error",
@@ -269,17 +339,23 @@ export const headerbarModel = () => ({
                             )
                             return
                         }
+                        const isPassphraseUser =
+                            editor.e2ee?.usesPassphrase &&
+                            PassphraseManager.hasKeysInSession()
+                        const suggestedNewPassword = isPassphraseUser
+                            ? await PassphraseManager.generateDocumentPassword()
+                            : ""
                         changePasswordDialog(
                             async ({currentPassword, newPassword}) => {
                                 try {
-                                    // Verify current password by deriving key
+                                    // Verify current password by resolving to key
                                     const currentSaltBytes = new Uint8Array(
                                         atob(editor.e2ee.encryptionSalt)
                                             .split("")
                                             .map(c => c.charCodeAt(0))
                                     )
                                     const currentKey =
-                                        await E2EEKeyManager.deriveKey(
+                                        await E2EEKeyManager.resolvePasswordToKey(
                                             currentPassword,
                                             currentSaltBytes,
                                             editor.e2ee.encryptionIterations
@@ -307,7 +383,7 @@ export const headerbarModel = () => ({
                                     )
                                     const newIterations = 600000
                                     const newKey =
-                                        await E2EEKeyManager.deriveKey(
+                                        await E2EEKeyManager.resolvePasswordToKey(
                                             newPassword,
                                             newSalt,
                                             newIterations
@@ -325,12 +401,35 @@ export const headerbarModel = () => ({
                                     editor.e2ee.encryptionIterations =
                                         newIterations
                                     editor.e2ee.key = newKey
+                                    editor.e2ee.password = newPassword
 
-                                    // Cache the new key in sessionStorage
+                                    // Cache password and key in sessionStorage
+                                    E2EEKeyManager.storePasswordInSession(
+                                        editor.docInfo.id,
+                                        newPassword
+                                    )
                                     await E2EEKeyManager.storeKeyInSession(
                                         editor.docInfo.id,
                                         newKey
                                     )
+
+                                    // If passphrase user, update encrypted password on server
+                                    if (isPassphraseUser) {
+                                        try {
+                                            await PassphraseManager.saveDocumentPassword(
+                                                editor.docInfo.id,
+                                                newPassword,
+                                                null,
+                                                "user",
+                                                true
+                                            )
+                                        } catch (_e) {
+                                            console.error(
+                                                "Failed to update document password on server:",
+                                                _e
+                                            )
+                                        }
+                                    }
 
                                     addAlert(
                                         "success",
@@ -346,6 +445,16 @@ export const headerbarModel = () => ({
                                         )
                                     )
                                 }
+                            },
+                            {
+                                currentPassword: isPassphraseUser
+                                    ? editor.e2ee.password ||
+                                      E2EEKeyManager.getPasswordFromSession(
+                                          editor.docInfo.id
+                                      ) ||
+                                      ""
+                                    : "",
+                                suggestedNewPassword
                             }
                         )
                     },

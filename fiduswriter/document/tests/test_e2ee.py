@@ -156,6 +156,9 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         )
 
+        # Clear sessionStorage so we can test the password entry flow
+        self.driver.execute_script("window.sessionStorage.clear()")
+
         # Click on the document to reopen it
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
@@ -205,6 +208,10 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".fw-contents tbody tr")
             )
         )
+
+        # Clear sessionStorage so the password dialog appears
+        self.driver.execute_script("window.sessionStorage.clear()")
+
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         ).click()
@@ -267,6 +274,10 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".fw-contents tbody tr")
             )
         )
+
+        # Clear sessionStorage so the password dialog appears
+        self.driver.execute_script("window.sessionStorage.clear()")
+
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         ).click()
@@ -293,8 +304,9 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
     def test_document_list_shows_encrypted_indicator(self):
         """
-        Test that E2EE documents show a lock icon and encrypted title
-        styling in the document overview.
+        Test that E2EE documents show a lock icon in the document overview.
+        When the key is available in sessionStorage, the real title is shown
+        and the e2ee-encrypted-title class is not present.
         """
         self.create_e2ee_document_via_ui()
 
@@ -311,12 +323,32 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.assertEqual(len(lock_icons), 1, "Should show one lock icon")
 
-        # Check for encrypted title class
+        # When the key is in sessionStorage, the real title is shown
+        # without the e2ee-encrypted-title styling.
         encrypted_titles = self.driver.find_elements(
             By.CSS_SELECTOR, ".e2ee-encrypted-title"
         )
         self.assertEqual(
-            len(encrypted_titles), 1, "Should show one encrypted title"
+            len(encrypted_titles),
+            0,
+            "Should not show encrypted-title class when key is available",
+        )
+
+        # Clear sessionStorage and refresh — now the placeholder should appear
+        self.driver.execute_script("window.sessionStorage.clear()")
+        self.driver.get(self.base_url)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-contents tbody tr")
+            )
+        )
+        encrypted_titles = self.driver.find_elements(
+            By.CSS_SELECTOR, ".e2ee-encrypted-title"
+        )
+        self.assertEqual(
+            len(encrypted_titles),
+            1,
+            "Should show encrypted-title class when key is not available",
         )
 
     def test_password_change(self):
@@ -382,6 +414,10 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, ".fw-contents tbody tr")
             )
         )
+
+        # Clear sessionStorage so we test the new password entry flow
+        self.driver.execute_script("window.sessionStorage.clear()")
+
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         ).click()
@@ -414,6 +450,44 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "return window.theApp.page.view.state.doc.firstChild.textContent;"
         )
         self.assertIn("Change Pass", title_text)
+
+    def test_session_storage_skips_password_dialog(self):
+        """
+        Test that reopening an E2EE document in the same browser session
+        does not prompt for the password again when the key is cached in
+        sessionStorage.
+        """
+        password = "SessionPass1"
+        self.create_e2ee_document_via_ui(password=password)
+        self.add_title_and_body(title="Session Test", body="session content")
+
+        # Navigate away to overview
+        self.driver.get(self.base_url)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-contents tbody tr")
+            )
+        )
+
+        # Click on the document to reopen it
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
+        ).click()
+
+        # The editor should load directly without a password dialog
+        # because the key is cached in sessionStorage.
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
+        )
+
+        # Give the decrypted document content a moment to render
+        time.sleep(1)
+
+        # Verify the content is visible
+        title_text = self.driver.execute_script(
+            "return window.theApp.page.view.state.doc.firstChild.textContent;"
+        )
+        self.assertIn("Session Test", title_text)
 
 
 @override_settings(E2EE_MODE="enabled")
@@ -751,6 +825,9 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
 
         # Reload driver2
         self.driver2.get(f"{self.live_server_url}/document/{doc.id}/")
+
+        # Clear sessionStorage on driver2 so we test password re-entry
+        self.driver2.execute_script("window.sessionStorage.clear()")
 
         # Re-enter password
         WebDriverWait(self.driver2, self.wait_time).until(

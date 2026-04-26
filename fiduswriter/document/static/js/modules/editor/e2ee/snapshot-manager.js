@@ -80,6 +80,9 @@ export class E2EESnapshotManager {
         const comments = docInfo.comments || {}
         const bibliography = docInfo.bibliography || {}
 
+        // Extract the current title from the editor
+        const {title} = this.editor.getDoc()
+
         // Dynamically import to avoid circular dependencies
         const {E2EEEncryptor} = await import("./encryptor")
 
@@ -96,6 +99,7 @@ export class E2EESnapshotManager {
             bibliography,
             this.key
         )
+        const encryptedTitle = await E2EEEncryptor.encrypt(title, this.key)
 
         // Send snapshot to server
         this.editor.ws.send(() => ({
@@ -103,7 +107,9 @@ export class E2EESnapshotManager {
             v: docInfo.version,
             content: encryptedContent,
             comments: encryptedComments,
-            bibliography: encryptedBibliography
+            bibliography: encryptedBibliography,
+            e2ee_salt: this.editor.e2ee.encryptionSalt,
+            title: encryptedTitle
         }))
         this.pendingSave = false
     }
@@ -120,11 +126,17 @@ export class E2EESnapshotManager {
      * @param {Object} message - The e2ee_snapshot_received message
      * @param {number} message.v - The version of the saved snapshot
      */
-    handleSnapshotReceived(_message) {
-        // Informational — no action needed. The client already has
-        // the latest state from the diffs it has been receiving.
-        // This could be used for UI feedback (e.g., "Document saved"
-        // indicator) in the future.
+    handleSnapshotReceived(message) {
+        // Informational — no action needed for regular snapshots.
+        // If the server included new KDF params, the password was changed
+        // by another client. Update local state so that if we re-fetch
+        // we use the new salt.
+        if (message.e2ee_salt) {
+            this.editor.e2ee.encryptionSalt = message.e2ee_salt
+            this.editor.e2ee.encryptionIterations = message.e2ee_iterations
+            this.editor.e2ee.key = null
+            this.clearKey()
+        }
     }
 
     /**
@@ -159,12 +171,18 @@ export class E2EESnapshotManager {
             this.key
         )
 
+        // Extract the current title from the editor
+        const {title} = this.editor.getDoc()
+        const encryptedTitle = await E2EEEncryptor.encrypt(title, this.key)
+
         this.editor.ws.send(() => ({
             type: "e2ee_snapshot",
             v: version,
             content: encryptedContent,
             comments: encryptedComments,
-            bibliography: encryptedBibliography
+            bibliography: encryptedBibliography,
+            e2ee_salt: this.editor.e2ee.encryptionSalt,
+            title: encryptedTitle
         }))
     }
 
@@ -191,6 +209,9 @@ export class E2EESnapshotManager {
         const comments = docInfo.comments || {}
         const bibliography = docInfo.bibliography || {}
 
+        // Extract the current title from the editor
+        const {title} = this.editor.getDoc()
+
         const {E2EEEncryptor} = await import("./encryptor")
 
         // Encrypt with the new key
@@ -206,6 +227,7 @@ export class E2EESnapshotManager {
             bibliography,
             newKey
         )
+        const encryptedTitle = await E2EEEncryptor.encrypt(title, newKey)
 
         // Update the key
         this.key = newKey
@@ -218,7 +240,8 @@ export class E2EESnapshotManager {
             comments: encryptedComments,
             bibliography: encryptedBibliography,
             e2ee_salt: newSaltBase64,
-            e2ee_iterations: newIterations
+            e2ee_iterations: newIterations,
+            title: encryptedTitle
         }))
         this.pendingSave = false
     }

@@ -326,6 +326,12 @@ export const headerbarModel = () => ({
                                         newIterations
                                     editor.e2ee.key = newKey
 
+                                    // Cache the new key in sessionStorage
+                                    await E2EEKeyManager.storeKeyInSession(
+                                        editor.docInfo.id,
+                                        newKey
+                                    )
+
                                     addAlert(
                                         "success",
                                         gettext(

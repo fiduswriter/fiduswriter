@@ -157,19 +157,10 @@ def documents_list(request):
         is_owner = False
         if document.owner == request.user:
             is_owner = True
-        # For E2EE documents, the title is stored encrypted within the
-        # content field and cannot be read server-side. Show a placeholder
-        # instead. The client will replace this with the decrypted title
-        # after the user enters the password.
-        display_title = (
-            f"Encrypted Document #{document.id}"
-            if document.e2ee
-            else document.title
-        )
         output_list.append(
             {
                 "id": document.id,
-                "title": display_title,
+                "title": document.title,
                 "path": path,
                 "is_owner": is_owner,
                 "e2ee": document.e2ee,

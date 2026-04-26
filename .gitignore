@@ -5,6 +5,7 @@ __pycache__/
 *~
 *-venv
 *.sqlite3
+*.sqlite3-journal
 .coverage.*
 .coverage
 .DS_Store

@@ -281,6 +281,9 @@ export class DocumentOverview {
         this.documentStyles = json.document_styles
         this.documentTemplates = json.document_templates
         this.initTable()
+        // Attempt to decrypt E2EE titles for documents where the key is
+        // available in sessionStorage but the title hasn't been cached yet.
+        this.decryptE2EETitles()
         // Reset scroll position to top to prevent Safari from auto-scrolling
         // to the focused table element, which would hide the header/menu
         window.scrollTo(0, 0)
@@ -290,6 +293,47 @@ export class DocumentOverview {
             this.singleNewDocumentMenuItem()
         }
         return json
+    }
+
+    /**
+     * For E2EE documents with an encrypted title (e2ee_title) and a key
+     * available in sessionStorage, decrypt the title and update the DOM.
+     */
+    async decryptE2EETitles() {
+        const e2eeDocs = this.documentList.filter(
+            doc =>
+                doc.e2ee &&
+                doc.title &&
+                sessionStorage.getItem(`e2ee_title_${doc.id}`) === null
+        )
+        if (!e2eeDocs.length) {
+            return
+        }
+        const {E2EEKeyManager} = await import("../../editor/e2ee/key-manager")
+        const {E2EEEncryptor} = await import("../../editor/e2ee/encryptor")
+        for (const doc of e2eeDocs) {
+            const key = await E2EEKeyManager.getKeyFromSession(doc.id)
+            if (!key) {
+                continue
+            }
+            try {
+                const title = await E2EEEncryptor.decrypt(doc.title, key)
+                sessionStorage.setItem(`e2ee_title_${doc.id}`, title)
+                // Update the DOM element for this document's title
+                const linkEl = document.querySelector(
+                    `a.fw-data-table-title[href="/document/${doc.id}"]`
+                )
+                if (linkEl) {
+                    const span = linkEl.querySelector("span.fw-searchable")
+                    if (span) {
+                        span.textContent = shortFileTitle(title, doc.path)
+                        span.classList.remove("e2ee-encrypted-title")
+                    }
+                }
+            } catch (_e) {
+                // Decryption failed — key may be stale. Ignore.
+            }
+        }
     }
 
     onResize() {
@@ -619,15 +663,31 @@ export class DocumentOverview {
             return row
         }
 
+        // For E2EE documents, check if the decrypted title is cached in
+        // sessionStorage (set when the user opened the document this session).
+        // The server stores the encrypted title in doc.title; we decrypt it
+        // client-side when the key is available.
+        let displayTitle = doc.title
+        let hasDecryptedTitle = false
+        if (doc.e2ee) {
+            const cachedTitle = sessionStorage.getItem(`e2ee_title_${doc.id}`)
+            if (cachedTitle !== null) {
+                displayTitle = cachedTitle
+                hasDecryptedTitle = true
+            } else if (doc.title) {
+                displayTitle = gettext("Encrypted Document")
+            }
+        }
+
         // This is the folder of the file. Return the file.
         return [
             String(doc.id),
             "file",
             false,
-            `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}">
+            `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}" data-id="${doc.id}">
                 ${doc.e2ee ? '<i class="fas fa-lock e2ee-doc-indicator" title="' + gettext("End-to-end encrypted document") + '"></i>' : '<i class="far fa-file-alt"></i>'}
-                <span class="fw-searchable${doc.e2ee ? " e2ee-encrypted-title" : ""}">
-                    ${shortFileTitle(doc.title, doc.path)}
+                <span class="fw-searchable${doc.e2ee && !hasDecryptedTitle ? " e2ee-encrypted-title" : ""}">
+                    ${shortFileTitle(displayTitle, doc.path)}
                 </span>
             </a>`,
             doc.revisions.length

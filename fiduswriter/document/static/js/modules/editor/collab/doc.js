@@ -194,6 +194,29 @@ export class ModCollabDoc {
             iterations = doc_info.e2ee_iterations
         }
 
+        // Try to get the key from sessionStorage first so the user
+        // doesn't have to re-enter the password within the same session.
+        const sessionKey = await E2EEKeyManager.getKeyFromSession(
+            this.mod.editor.docInfo.id
+        )
+        if (sessionKey) {
+            try {
+                await this._decryptAndLoadDoc(
+                    doc,
+                    sessionKey,
+                    salt,
+                    iterations,
+                    isInitialLoad,
+                    urlFragmentPassword
+                )
+                return
+            } catch (_error) {
+                // Session key is stale (e.g. password changed). Clear it
+                // and fall through to password prompt.
+                E2EEKeyManager.clearKeyFromSession(this.mod.editor.docInfo.id)
+            }
+        }
+
         // If the key is already available (e.g. from _createE2EEDocument),
         // skip the password dialog and decrypt directly. This avoids
         // double-prompting when creating a new E2EE document.
@@ -404,6 +427,17 @@ export class ModCollabDoc {
         }
         this.mod.editor.e2ee.snapshotManager.setKey(key)
 
+        // Cache the key in sessionStorage so the user doesn't have to
+        // re-enter the password when reopening the document this session.
+        try {
+            await E2EEKeyManager.storeKeyInSession(
+                this.mod.editor.docInfo.id,
+                key
+            )
+        } catch (_e) {
+            // If the key is non-extractable, we can't store it.
+        }
+
         // Remove the password from the URL fragment to avoid
         // leaving it in the address bar or browser history.
         if (urlFragmentPassword && window.history.replaceState) {
@@ -453,6 +487,19 @@ export class ModCollabDoc {
             images: decryptedImages
         }
         this._loadUnencryptedDocument(decryptedDoc, isInitialLoad)
+
+        // Cache the decrypted title in sessionStorage so the document overview
+        // can display the real title without prompting for the password again.
+        let title = ""
+        this.mod.editor.view.state.doc.firstChild.forEach(child => {
+            if (!child.marks.find(mark => mark.type.name === "deletion")) {
+                title += child.textContent
+            }
+        })
+        sessionStorage.setItem(
+            `e2ee_title_${this.mod.editor.docInfo.id}`,
+            title
+        )
 
         // For newly created E2EE documents, the initial content is still
         // plaintext (it came from the template). We need to send an initial
@@ -893,7 +940,8 @@ export class ModCollabDoc {
                 v: unconfirmedDiff.v,
                 rid: unconfirmedDiff.rid,
                 cid: unconfirmedDiff.cid,
-                ep // encrypted payload
+                ep, // encrypted payload
+                e2ee_salt: this.mod.editor.e2ee.encryptionSalt
             }
             if (unconfirmedDiff.footnoterender) {
                 wireDiff.footnoterender = true

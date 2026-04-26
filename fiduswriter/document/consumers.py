@@ -604,6 +604,17 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 # Instead, we relay the encrypted diff to other clients
                 # and store it for catch-up. The diff content is opaque
                 # to the server.
+                # Validate that the diff was encrypted with the current salt.
+                msg_salt = message.get("e2ee_salt")
+                if msg_salt is not None:
+                    try:
+                        decoded_salt = base64.b64decode(msg_salt)
+                    except Exception:
+                        await self.reject_message(message)
+                        return
+                    if decoded_salt != self.session["doc"].e2ee_salt:
+                        await self.reject_message(message)
+                        return
                 self.session["doc"].diffs.append(message)
                 self.session["doc"].diffs = self.session["doc"].diffs[
                     -self.history_length :
@@ -715,23 +726,46 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if self.user_info.access_rights not in ["write"]:
             return
 
+        # Validate salt for E2EE documents.
+        # All E2EE snapshots must include e2ee_salt so the server can
+        # verify they match the current key or detect a password change.
+        salt_changed = False
+        if doc.e2ee:
+            msg_salt = message.get("e2ee_salt")
+            if not msg_salt:
+                return
+            try:
+                decoded_salt = base64.b64decode(msg_salt)
+            except Exception:
+                return
+            if decoded_salt != doc.e2ee_salt:
+                salt_changed = True
+                doc.e2ee_salt = decoded_salt
+            if "e2ee_iterations" in message:
+                new_iterations = int(message["e2ee_iterations"])
+                if new_iterations != doc.e2ee_iterations:
+                    salt_changed = True
+                doc.e2ee_iterations = new_iterations
+
         # Store the encrypted snapshot
         doc.content = message["content"]  # Encrypted, opaque to server
         doc.comments = message.get("comments", {})  # Encrypted
         doc.bibliography = message.get("bibliography", {})  # Encrypted
 
+        # Store the encrypted title if provided (for display in overview).
+        # For E2EE documents the title field holds the encrypted ciphertext;
+        # the client decrypts it when the key is available.
+        if "title" in message:
+            doc.title = message["title"]
+
         # Record the version this snapshot covers.
         snapshot_v = message["v"]
         doc.e2ee_snapshot_version = snapshot_v
 
-        # Handle password change: the client may send updated KDF
-        # parameters (new salt and iterations) when re-encrypting the
-        # document with a new password.
-        if "e2ee_salt" in message:
-
-            doc.e2ee_salt = base64.b64decode(message["e2ee_salt"])
-        if "e2ee_iterations" in message:
-            doc.e2ee_iterations = int(message["e2ee_iterations"])
+        if salt_changed:
+            # Old diffs are encrypted with the old key and useless.
+            # The snapshot becomes the new baseline.
+            doc.diffs = []
 
         # Save to database. Force save because the encrypted content may
         # have changed even if the version number hasn't (e.g. initial
@@ -739,16 +773,25 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         await WebsocketConsumer.save_document_async(
             self.user_info.document_id, force=True
         )
-        # Notify other clients of the new snapshot version
-        await WebsocketConsumer.send_updates(
-            {
-                "type": "e2ee_snapshot_received",
-                "v": snapshot_v,
-            },
-            self.user_info.document_id,
-            self.id,
-            self.user_info.user.id,
-        )
+
+        if salt_changed:
+            # Force other clients to refetch so they prompt for the new
+            # password. This prevents outdated clients from sending
+            # diffs encrypted with the old key.
+            for participant in self.session["participants"].values():
+                if participant.id != self.id:
+                    await participant.send_message({"type": "refetch_doc"})
+        else:
+            # Notify other clients of the new snapshot version
+            await WebsocketConsumer.send_updates(
+                {
+                    "type": "e2ee_snapshot_received",
+                    "v": snapshot_v,
+                },
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id,
+            )
 
     async def request_snapshot(self):
         """Request a snapshot from a write-capable client.

@@ -566,6 +566,8 @@ export class Editor {
                         }
                     },
                     failedAuth: () => {
+                        // Clear all E2EE keys on session expiration
+                        E2EEKeyManager.clearAllKeysFromSession()
                         if (this.docInfo.token) {
                             // Token-based access failed
                             const tokenDialog = new Dialog({
@@ -737,6 +739,10 @@ export class Editor {
         window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
         delete this.docInfo.templateId
 
+        // Cache the key in sessionStorage so the user doesn't have to
+        // re-enter the password when reopening the document this session.
+        await E2EEKeyManager.storeKeyInSession(this.docInfo.id, key)
+
         // Set up E2EE state on the editor
         this.e2ee = {
             encrypted: true,
@@ -758,8 +764,21 @@ export class Editor {
         if (this.menu.headerView) {
             this.menu.headerView.destroy()
         }
+        // For E2EE documents, try to send one last encrypted snapshot before
+        // closing so the title (and any last-minute edits) are persisted.
+        if (
+            this.e2ee &&
+            this.e2ee.key &&
+            this.e2ee.snapshotManager &&
+            this.docInfo.access_rights === "write"
+        ) {
+            this.e2ee.snapshotManager.handleRequestSnapshot({})
+        }
         if (this.ws) {
-            this.ws.close()
+            // Give the snapshot a moment to be queued before tearing down
+            // the WebSocket. For SPA navigation this is usually enough;
+            // for tab-close the browser may still kill us early.
+            window.setTimeout(() => this.ws.close(), 300)
         }
     }
 

@@ -14,7 +14,7 @@ FW_DOCUMENT_VERSION = 3.5
 
 
 class DocumentTemplate(models.Model):
-    title = models.CharField(max_length=255, default="", blank=True)
+    title = models.TextField(default="", blank=True)
     import_id = models.CharField(max_length=255, default="", blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
@@ -79,7 +79,7 @@ class DocumentTemplate(models.Model):
 
 
 class Document(models.Model):
-    title = models.CharField(max_length=255, default="", blank=True)
+    title = models.TextField(default="", blank=True)
     path = models.TextField(default="", blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(

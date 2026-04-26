@@ -1,5 +1,6 @@
 import {addAlert, deactivateWait, postJson, shortFileTitle} from "../../common"
 import {extractTemplate} from "../../document_template"
+import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {GetImages} from "./get_images"
 
 export class NativeImporter {
@@ -244,9 +245,14 @@ export class NativeImporter {
                 this.bibliography,
                 this.e2eeOptions.key
             )
+            // Encrypt the title as well so it doesn't leak server-side.
+            const encryptedTitle = await E2EEEncryptor.encrypt(
+                this.doc.title,
+                this.e2eeOptions.key
+            )
             saveData = {
                 id: this.docId,
-                title: this.doc.title,
+                title: encryptedTitle,
                 content: encryptedContent,
                 comments: encryptedComments,
                 bibliography: encryptedBibliography
@@ -282,6 +288,19 @@ export class NativeImporter {
                 this.doc.rights = "write"
                 this.doc.path = this.path
                 this.doc.e2ee = this.e2ee || false
+                // Cache the E2EE key in sessionStorage so the user doesn't have
+                // to re-enter the password when opening the document again.
+                if (
+                    this.e2eeOptions &&
+                    this.e2eeOptions.enabled &&
+                    this.e2eeOptions.key &&
+                    this.docId
+                ) {
+                    E2EEKeyManager.storeKeyInSession(
+                        this.docId,
+                        this.e2eeOptions.key
+                    )
+                }
                 return {doc: this.doc, docInfo}
             })
             .catch(error => {

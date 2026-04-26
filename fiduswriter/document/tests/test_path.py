@@ -118,6 +118,7 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
             urlparse(self.driver.current_url).path,
             "/documents/Reports/2019/February/",
         )
+        time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
             lambda driver: len(
                 driver.find_elements(

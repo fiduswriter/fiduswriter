@@ -93,8 +93,8 @@ export class PassphraseCrypto {
             {name: "PBKDF2", salt, iterations, hash: "SHA-256"},
             keyMaterial,
             {name: "AES-GCM", length: 256},
-            true, // extractable so it can be used to wrap keys
-            ["wrapKey", "unwrapKey"]
+            true, // extractable so it can be used to encrypt keys
+            ["encrypt", "decrypt"]
         )
     }
 

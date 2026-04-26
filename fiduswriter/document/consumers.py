@@ -662,6 +662,10 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 self.session["doc"].version += 1
                 if "ti" in message:  # ti = title
                     self.session["doc"].title = message["ti"][-255:]
+                    # Immediately persist the new title so the overview page
+                    # always sees the correct value, even before the full
+                    # periodic save or the disconnect-triggered save completes.
+                    await self.session["doc"].asave(update_fields=["title"])
                 if "cu" in message:  # cu = comment updates
                     await self.update_comments(message["cu"])
                 if "bu" in message:  # bu = bibliography updates

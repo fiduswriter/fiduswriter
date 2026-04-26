@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 
 from django.test import override_settings
 
-from document.models import Document, DocumentEncryptionKey
+from document.models import Document, DocumentEncryptionKey, AccessRight
 from document.tests.editor_helper import EditorHelper
 
 
@@ -1180,7 +1180,9 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
             self.assertTrue(key["encrypted_with_master_key"])
 
     def test_automatic_key_sharing_with_passphrase_user(self):
-        """Test automatic DocumentEncryptionKey creation when sharing with passphrase-enabled user."""
+        """Test that sharing with a passphrase-enabled user does not create
+        an empty placeholder DEK. The frontend is responsible for encrypting
+        and saving the DEK with the recipient's public key."""
         from django.contrib.auth import get_user_model
         from user.models import UserEncryptionKey
 
@@ -1235,12 +1237,365 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         self.assertEqual(response.status_code, 201)
 
-        # Verify DocumentEncryptionKey was created for recipient
+        # Verify no placeholder DocumentEncryptionKey was created for recipient.
+        # The frontend must explicitly encrypt the DEK with the recipient's
+        # public key and call the document encryption key API.
         recipient_deks = DocumentEncryptionKey.objects.filter(
             document=doc, holder=recipient
         )
-        self.assertEqual(recipient_deks.count(), 1)
+        self.assertEqual(recipient_deks.count(), 0)
 
-        # Verify it's marked as not encrypted with master key (will be encrypted with public key)
-        recipient_dek = recipient_deks.first()
-        self.assertFalse(recipient_dek.encrypted_with_master_key)
+        # Verify the access right was created
+        from django.contrib.contenttypes.models import ContentType
+
+        user_ct = ContentType.objects.get(app_label="user", model="user")
+        ar = AccessRight.objects.filter(
+            document=doc, holder_id=recipient.id, holder_type=user_ct
+        )
+        self.assertEqual(ar.count(), 1)
+
+    def test_passphrase_sharing_scenario(self):
+        """Test the complete sharing scenario:
+        - User A (passphrase) creates E2EE document
+        - A shares with C (passphrase) via public key encryption
+        - A shares with D (no passphrase) and sees password dialog
+        - A creates share link with password in URL
+        - D opens document with password
+        - Guest opens share link automatically
+        """
+        from django.contrib.auth import get_user_model
+        from user.models import UserEncryptionKey
+
+        User = get_user_model()
+
+        # Create users
+        user_a = self.user  # Already created in setUp
+        user_c = User.objects.create_user(
+            username="user_c",
+            email="c@test.com",
+            password="testpass",
+        )
+        user_d = User.objects.create_user(
+            username="user_d",
+            email="d@test.com",
+            password="testpass",
+        )
+
+        # Add C and D as A's contacts
+        user_a.contacts.add(user_c, user_d)
+
+        # Generate real crypto keys in the browser
+        keys = self.driver.execute_script(
+            """
+            return (async function() {
+                const aKeyPair = await crypto.subtle.generateKey(
+                    {name: "ECDH", namedCurve: "P-256"},
+                    true,
+                    ["deriveKey"]
+                );
+                const cKeyPair = await crypto.subtle.generateKey(
+                    {name: "ECDH", namedCurve: "P-256"},
+                    true,
+                    ["deriveKey"]
+                );
+                const masterKey = await crypto.subtle.generateKey(
+                    {name: "AES-GCM", length: 256},
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+                const aPublicJwk = await crypto.subtle.exportKey("jwk", aKeyPair.publicKey);
+                const aPrivateJwk = await crypto.subtle.exportKey("jwk", aKeyPair.privateKey);
+                const cPublicJwk = await crypto.subtle.exportKey("jwk", cKeyPair.publicKey);
+                const masterRaw = await crypto.subtle.exportKey("raw", masterKey);
+                const masterBase64 = btoa(String.fromCharCode(...new Uint8Array(masterRaw)));
+                return {
+                    aPublicJwk: JSON.stringify(aPublicJwk),
+                    aPrivateJwk: JSON.stringify(aPrivateJwk),
+                    cPublicJwk: JSON.stringify(cPublicJwk),
+                    masterKeyBase64: masterBase64
+                };
+            })();
+        """
+        )
+
+        # Create UserEncryptionKey records for A and C
+        UserEncryptionKey.objects.create(
+            user=user_a,
+            public_key=keys["aPublicJwk"],
+            encrypted_master_key="dummy_encrypted_mk",
+            encrypted_private_key="dummy_encrypted_sk",
+            user_salt=b"1234567890123456",
+            user_iterations=600000,
+            encrypted_master_key_backup="dummy_backup",
+        )
+        UserEncryptionKey.objects.create(
+            user=user_c,
+            public_key=keys["cPublicJwk"],
+            encrypted_master_key="dummy_encrypted_mk_c",
+            encrypted_private_key="dummy_encrypted_sk_c",
+            user_salt=b"1234567890123456",
+            user_iterations=600000,
+            encrypted_master_key_backup="dummy_backup_c",
+        )
+
+        # Navigate to base URL and inject A's master key into sessionStorage
+        self.driver.get(self.base_url)
+        self.driver.execute_script(
+            "sessionStorage.setItem('e2ee_master_key', arguments[0]);"
+            + "sessionStorage.setItem('e2ee_private_key', arguments[1]);",
+            keys["masterKeyBase64"],
+            keys["aPrivateJwk"],
+        )
+
+        # --- Step 1: A creates E2EE document with passphrase ---
+        self.driver.get(self.base_url)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".new_document button")
+            )
+        ).click()
+
+        # Encryption choice dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
+        self.driver.find_element(By.ID, "e2ee").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+        ).click()
+
+        # Wait for editor to load (passphrase mode creates doc immediately)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
+        )
+
+        # Add title and body so we can verify content later
+        title_el = self.driver.find_element(By.CSS_SELECTOR, ".doc-title")
+        title_el.click()
+        title_el.send_keys("Passphrase Share Test")
+        body_el = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
+        body_el.click()
+        body_el.send_keys("Shared content")
+        time.sleep(3)
+
+        # Extract document ID from URL
+        url = self.driver.current_url
+        doc_id = int(url.split("/document/")[1].split("/")[0])
+
+        # --- Step 2: A shares with C (passphrase) and D (no passphrase) ---
+        # Open File menu
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
+        ).click()
+        time.sleep(0.5)
+        self.driver.find_element(
+            By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
+        ).click()
+
+        # Wait for share dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "access-rights-dialog"))
+        )
+
+        # Click on C in contacts list
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, f".fw-checkable-td[data-id='{user_c.id}']")
+            )
+        ).click()
+
+        # Click on D in contacts list
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, f".fw-checkable-td[data-id='{user_d.id}']")
+            )
+        ).click()
+
+        # Click Add button to add selected contacts to collaborators
+        self.driver.find_element(By.ID, "add-share-contact").click()
+        time.sleep(0.5)
+
+        # Click Submit
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#access-rights-dialog ~ .ui-dialog-buttonpane .fw-dark",
+        ).click()
+
+        # Wait for "Share Document Password" dialog to appear (for D)
+        password_dialog = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#share-password-dialog")
+            )
+        )
+        # The dialog content element IS #share-password-dialog itself
+        self.assertIn(
+            "don't have passphrase encryption",
+            password_dialog.text,
+            "Should show non-passphrase users in password share dialog",
+        )
+
+        # Close the password dialog
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#share-password-dialog ~ .ui-dialog-buttonpane .fw-dark",
+        ).click()
+        time.sleep(1)
+
+        # --- Step 3: Verify backend state for C ---
+        # C should have a DocumentEncryptionKey (encrypted with public key)
+        c_keys = DocumentEncryptionKey.objects.filter(
+            document_id=doc_id, holder=user_c
+        )
+        self.assertEqual(
+            c_keys.count(), 1, "C should have an encrypted document password"
+        )
+        self.assertFalse(c_keys.first().encrypted_with_master_key)
+
+        # D should NOT have a DocumentEncryptionKey (password shared directly)
+        d_keys = DocumentEncryptionKey.objects.filter(
+            document_id=doc_id, holder=user_d
+        )
+        self.assertEqual(
+            d_keys.count(), 0, "D should not have a DocumentEncryptionKey"
+        )
+
+        # --- Step 4: Create share link ---
+        # Open File menu again
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
+        ).click()
+        time.sleep(0.5)
+        self.driver.find_element(
+            By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
+        ).click()
+
+        # Wait for share dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "access-rights-dialog"))
+        )
+
+        # Switch to Share link tab
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".ui-tabs-nav .tab-link:nth-child(2) a"
+        ).click()
+        time.sleep(0.5)
+
+        # Click Create new share link
+        self.driver.find_element(By.ID, "create-share-token-btn").click()
+
+        # Wait for create dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.ID, "create-share-token-dialog")
+            )
+        )
+
+        # Verify password field is prefilled (auto-generated document password)
+        pass_input = self.driver.find_element(By.ID, "share-token-password")
+        prefilled_password = pass_input.get_attribute("value")
+        self.assertTrue(
+            len(prefilled_password) >= 43,
+            "Password field should be prefilled with document password",
+        )
+
+        # Create the link
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#create-share-token-dialog ~ .ui-dialog-buttonpane .fw-dark",
+        ).click()
+
+        # Wait for link to appear
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".share-token-row")
+            )
+        )
+
+        # Verify URL contains password fragment
+        url_input = self.driver.find_element(
+            By.CSS_SELECTOR, ".share-token-url-input"
+        )
+        share_url = url_input.get_attribute("value")
+        self.assertIn("#?password=", share_url)
+        from urllib.parse import unquote
+
+        self.assertIn(prefilled_password, unquote(share_url))
+
+        # Store share URL for later
+        share_link = share_url
+
+        # Close share dialog
+        self.driver.find_element(
+            By.CSS_SELECTOR,
+            "#access-rights-dialog ~ .ui-dialog-buttonpane .fw-light",
+        ).click()
+        time.sleep(0.5)
+
+        # --- Step 5: D opens document with password ---
+        # Log out A
+        self.logout_user(self.driver, self.client)
+
+        # Log in as D
+        self.login_user(user_d, self.driver, self.client)
+
+        # Clear sessionStorage so D has to enter password manually
+        self.driver.execute_script("window.sessionStorage.clear()")
+
+        # Navigate to overview
+        self.driver.get(self.base_url)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-contents tbody tr")
+            )
+        )
+
+        # Click on the document
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
+        ).click()
+
+        # Wait for password dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "e2ee-password-input"))
+        )
+
+        # Enter the document password
+        self.driver.find_element(By.ID, "e2ee-password-input").send_keys(
+            prefilled_password
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+        ).click()
+
+        # Wait for editor to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
+        )
+
+        # Verify content is accessible
+        title_text = self.driver.execute_script(
+            "return window.theApp.page.view.state.doc.firstChild.textContent;"
+        )
+        self.assertIn("Passphrase Share Test", title_text)
+
+        # --- Step 6: Guest opens share link ---
+        # Log out D
+        self.logout_user(self.driver, self.client)
+
+        # Clear all storage
+        self.driver.execute_script("window.localStorage.clear()")
+        self.driver.execute_script("window.sessionStorage.clear()")
+
+        # Navigate to share link
+        self.driver.get(share_link)
+
+        # Wait for editor to load (password is in URL fragment, should auto-decrypt)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
+        )
+
+        # Verify content is accessible
+        title_text = self.driver.execute_script(
+            "return window.theApp.page.view.state.doc.firstChild.textContent;"
+        )
+        self.assertIn("Passphrase Share Test", title_text)

@@ -304,3 +304,30 @@
     margin-top: 8px;
     font-size: 0.85em;
 }
+
+/* Recovery Key Dialog */
+
+.e2ee-recovery-key-box {
+    background-color: var(--cs-light-background, #f9f9f9);
+    border: 1px solid var(--cs-light-border, #e0e0e0);
+    border-radius: 4px;
+    padding: 14px;
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    word-break: break-all;
+}
+
+.e2ee-recovery-key-box code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1.1em;
+    color: var(--main-text-color, #2c2723);
+    letter-spacing: 0.5px;
+}
+
+.e2ee-recovery-key-box .fw-button {
+    flex-shrink: 0;
+    white-space: nowrap;
+}

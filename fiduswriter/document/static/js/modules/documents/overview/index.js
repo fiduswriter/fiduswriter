@@ -806,13 +806,93 @@ export class DocumentOverview {
                     {
                         text: gettext("Create"),
                         type: "ok",
-                        click: _event => {
+                        click: async _event => {
                             const e2ee =
                                 document.querySelector(
                                     'input[name="encryption"]:checked'
                                 )?.value === "e2ee"
                             dialog.close()
+
                             if (e2ee) {
+                                // Check if user has passphrase keys already
+                                const {PassphraseManager} = await import(
+                                    "../../editor/e2ee/passphrase-manager.js"
+                                )
+                                const hasPassphraseKeys =
+                                    await PassphraseManager.hasEncryptionKeys()
+
+                                if (!hasPassphraseKeys) {
+                                    // Offer to set up passphrase
+                                    const {setupPassphraseDialog} =
+                                        await import(
+                                            "../../editor/e2ee/passphrase-dialog.js"
+                                        )
+                                    const setupConfirmed = await new Promise(
+                                        resolve => {
+                                            const setupDialog = new Dialog({
+                                                title: gettext(
+                                                    "Set Up Personal Encryption (Optional)"
+                                                ),
+                                                body: `<p>${gettext("Would you like to set up a personal passphrase now? This will allow you to unlock all your encrypted documents with a single passphrase.")}</p>
+                                            <p><strong>${gettext("Note:")}</strong> ${gettext("This is optional. You can also use a per-document password instead.")}</p>`,
+                                                buttons: [
+                                                    {
+                                                        text: gettext(
+                                                            "Skip for Now"
+                                                        ),
+                                                        type: "cancel",
+                                                        click: () => {
+                                                            setupDialog.close()
+                                                            resolve(false)
+                                                        }
+                                                    },
+                                                    {
+                                                        text: gettext(
+                                                            "Set Up Passphrase"
+                                                        ),
+                                                        type: "ok",
+                                                        click: () => {
+                                                            setupDialog.close()
+                                                            resolve(true)
+                                                        }
+                                                    }
+                                                ]
+                                            })
+                                            setupDialog.open()
+                                        }
+                                    )
+
+                                    if (setupConfirmed) {
+                                        // Show passphrase setup dialog
+                                        await setupPassphraseDialog(
+                                            async passphrase => {
+                                                try {
+                                                    const {recoveryKey} =
+                                                        await PassphraseManager.setupEncryption(
+                                                            passphrase
+                                                        )
+                                                    const {
+                                                        showRecoveryKeyDialog
+                                                    } = await import(
+                                                        "../../editor/e2ee/passphrase-dialog.js"
+                                                    )
+                                                    await showRecoveryKeyDialog(
+                                                        recoveryKey
+                                                    )
+                                                } catch (e) {
+                                                    addAlert(
+                                                        "error",
+                                                        gettext(
+                                                            "Failed to set up passphrase: " +
+                                                                e.message
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+
                                 url += "?e2ee=true"
                             }
                             this.app.goTo(url)

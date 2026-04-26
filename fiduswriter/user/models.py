@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from avatar.utils import get_default_avatar_url
 
 from document.models import AccessRight
@@ -65,6 +66,27 @@ class User(AbstractUser):
 
     class Meta:
         permissions = (("can_login_as", _("Can login as another user")),)
+
+
+class UserEncryptionKey(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="encryption_key",
+    )
+    public_key = models.TextField()  # JWK, unencrypted
+    encrypted_private_key = models.TextField()  # Base64, encrypted with KWK
+    encrypted_master_key = models.TextField()  # Base64, encrypted with KWK
+    user_salt = models.BinaryField(max_length=16)  # PBKDF2 salt for KWK
+    user_iterations = models.PositiveIntegerField(default=600000)
+    encrypted_master_key_backup = (
+        models.TextField()
+    )  # Base64, encrypted with RK
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"EncryptionKey for {self.user.username}"
 
 
 class UserInvite(models.Model):

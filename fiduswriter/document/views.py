@@ -27,6 +27,7 @@ from document.models import (
     DocumentRevision,
     DocumentTemplate,
     ShareToken,
+    DocumentEncryptionKey,
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
@@ -1626,6 +1627,118 @@ def create_template_admin(request):
                 file_type=e_template["file_type"],
             )
     return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
+def save_document_encryption_key(request):
+    """Create or update a DocumentEncryptionKey record."""
+    response = {}
+    status = 200
+    doc_id = int(request.POST["document_id"])
+    document = Document.objects.filter(pk=doc_id).first()
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+    # Only the owner can create encryption keys for the document
+    if document.owner != request.user:
+        return JsonResponse({"error": "Not owner"}, status=403)
+
+    holder_type_str = request.POST.get("holder_type", "user")
+    holder_id = int(request.POST.get("holder_id", request.user.pk))
+    holder_type = ContentType.objects.get(
+        app_label="user", model=holder_type_str
+    )
+
+    dek_record, created = DocumentEncryptionKey.objects.get_or_create(
+        document=document,
+        holder_type=holder_type,
+        holder_id=holder_id,
+        defaults={
+            "encrypted_key": request.POST["encrypted_key"],
+            "encrypted_with_master_key": request.POST.get(
+                "encrypted_with_master_key", "true"
+            )
+            == "true",
+        },
+    )
+    if not created:
+        dek_record.encrypted_key = request.POST["encrypted_key"]
+        dek_record.encrypted_with_master_key = (
+            request.POST.get("encrypted_with_master_key", "true") == "true"
+        )
+        dek_record.save()
+    response["id"] = dek_record.id
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def get_document_encryption_key(request):
+    """Get the DocumentEncryptionKey for the current user and a document."""
+    response = {}
+    status = 200
+    doc_id = int(request.POST["document_id"])
+    document = Document.objects.filter(pk=doc_id).first()
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+
+    # Check access
+    if (
+        document.owner != request.user
+        and not AccessRight.objects.filter(
+            document=document, user=request.user
+        ).first()
+    ):
+        return JsonResponse({"error": "No access"}, status=403)
+
+    user_ct = ContentType.objects.get_for_model(request.user)
+    dek_record = DocumentEncryptionKey.objects.filter(
+        document=document, holder_type=user_ct, holder_id=request.user.pk
+    ).first()
+    if dek_record:
+        response["has_key"] = True
+        response["id"] = dek_record.id
+        response["encrypted_key"] = dek_record.encrypted_key
+        response["encrypted_with_master_key"] = (
+            dek_record.encrypted_with_master_key
+        )
+    else:
+        response["has_key"] = False
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def update_document_encryption_key(request):
+    """Update a DocumentEncryptionKey (key upgrade after asymmetric decryption)."""
+    response = {}
+    status = 200
+    dek_id = int(request.POST["id"])
+    dek_record = DocumentEncryptionKey.objects.filter(pk=dek_id).first()
+    if not dek_record:
+        return JsonResponse({"error": "Key not found"}, status=404)
+    document = dek_record.document
+    # Only the holder or the owner can update
+    user_ct = ContentType.objects.get_for_model(request.user)
+    if not (
+        document.owner == request.user
+        or (
+            dek_record.holder_type == user_ct
+            and dek_record.holder_id == request.user.pk
+        )
+    ):
+        return JsonResponse({"error": "Not allowed"}, status=403)
+
+    dek_record.encrypted_key = request.POST["encrypted_key"]
+    dek_record.encrypted_with_master_key = (
+        request.POST.get("encrypted_with_master_key", "true") == "true"
+    )
+    dek_record.save()
+    response["id"] = dek_record.id
+    return JsonResponse(response, status=status)
 
 
 @staff_member_required

@@ -6,6 +6,7 @@ from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 from django.test import override_settings
 
@@ -80,9 +81,28 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
-        # Wait for the password creation dialog
+        # After clicking Create, we may get a passphrase setup offer dialog
+        # or directly the password dialog. Try to handle the passphrase offer first.
+        time.sleep(1)
+        try:
+            # Look for "Skip for Now" button which would indicate passphrase offer dialog
+            skip_buttons = self.driver.find_elements(
+                By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
+            )
+            for btn in skip_buttons:
+                if "Skip" in btn.text:
+                    # This is the passphrase offer dialog, skip it
+                    btn.click()
+                    time.sleep(0.5)
+                    break
+        except Exception:
+            # No passphrase offer dialog, that's fine
+            pass
+
+        # Now wait for the password creation dialog
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
+            EC.presence_of_element_located((By.ID, "e2ee-new-password-input")),
+            message="Should show E2EE password dialog",
         )
 
         # Enter password and confirmation
@@ -551,6 +571,23 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
+        # After clicking Create, we may get a passphrase setup offer dialog
+        time.sleep(1)
+        try:
+            # Look for "Skip for Now" button which would indicate passphrase offer dialog
+            skip_buttons = self.driver.find_elements(
+                By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
+            )
+            for btn in skip_buttons:
+                if "Skip" in btn.text:
+                    # This is the passphrase offer dialog, skip it
+                    btn.click()
+                    time.sleep(0.5)
+                    break
+        except Exception:
+            # No passphrase offer dialog, that's fine
+            pass
+
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
         )
@@ -730,6 +767,20 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
+        time.sleep(1)  # Allow async operations to complete
+
+        # Check if passphrase setup offer dialog appears and skip it
+        try:
+            skip_button = WebDriverWait(self.driver, 2).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[contains(text(), 'Skip for Now')]")
+                )
+            )
+            skip_button.click()
+        except TimeoutException:
+            # Dialog didn't appear, proceed normally
+            pass
+
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
         )
@@ -849,3 +900,214 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
             "return window.theApp.page.view.state.doc.child(5).textContent;"
         )
         self.assertIn("Persistent encrypted text", body_text)
+
+
+@override_settings(E2EE_MODE="enabled")
+@override_settings(E2EE_MODE="enabled")
+class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
+    """
+    Tests for Personal Passphrase & User-Level Key Management feature.
+    Tests the UI flow for setting up personal passphrases and creating E2EE documents.
+    """
+
+    fixtures = [
+        "initial_documenttemplates.json",
+        "initial_styles.json",
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        driver_data = cls.get_drivers(1)
+        cls.driver = driver_data["drivers"][0]
+        cls.client = driver_data["clients"][0]
+        cls.driver.implicitly_wait(driver_data["wait_time"])
+        cls.wait_time = driver_data["wait_time"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        super().tearDownClass()
+
+    def setUp(self):
+        self.base_url = self.live_server_url
+        self.user = self.create_user(
+            username="PassphraseUser",
+            email="passphrase@test.com",
+            passtext="testpass",
+        )
+        self.login_user(self.user, self.driver, self.client)
+        return super().setUp()
+
+    def tearDown(self):
+        self.driver.execute_script("window.localStorage.clear()")
+        self.driver.execute_script("window.sessionStorage.clear()")
+        super().tearDown()
+        if "coverage" in sys.modules.keys():
+            time.sleep(self.wait_time / 3)
+
+    def test_passphrase_setup_offer_appears_on_e2ee_creation(self):
+        """
+        Test that when creating a new E2EE document, users are offered
+        to set up a personal passphrase if they don't have one yet.
+        """
+        self.driver.get(self.base_url)
+
+        # Click "Create new document"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".new_document button")
+            )
+        ).click()
+
+        # Encryption choice dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
+        self.driver.find_element(By.ID, "e2ee").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+        ).click()
+
+        # Wait for passphrase setup offer dialog
+        time.sleep(1)
+        dialog_body = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".ui-dialog-content")
+            )
+        )
+
+        # Check that the passphrase setup offer is shown
+        self.assertIn(
+            "personal passphrase",
+            dialog_body.text,
+            "Should offer to set up personal passphrase",
+        )
+
+        # Verify there's a "Set Up Passphrase" button
+        buttons = self.driver.find_elements(
+            By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
+        )
+        button_texts = [b.text for b in buttons]
+        self.assertTrue(
+            any("Set Up Passphrase" in t for t in button_texts),
+            "Should have 'Set Up Passphrase' button",
+        )
+        self.assertTrue(
+            any("Skip" in t for t in button_texts), "Should have 'Skip' button"
+        )
+
+        # Click "Skip for Now"
+        for btn in buttons:
+            if "Skip" in btn.text:
+                btn.click()
+                break
+
+        time.sleep(1)
+
+        # Should then proceed to password dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
+        )
+
+    def test_user_encryption_key_model_persists(self):
+        """
+        Test that the UserEncryptionKey model correctly stores and retrieves
+        user encryption data.
+        """
+        from user.models import UserEncryptionKey
+        import json
+        import base64
+
+        # Create a UserEncryptionKey record
+        public_key = json.dumps(
+            {"kty": "RSA", "n": "test_n_value", "e": "AQAB"}
+        )
+        user_salt = b"1234567890123456"
+        encrypted_data = base64.b64encode(b"encrypted_test_data").decode()
+
+        key_record = UserEncryptionKey.objects.create(
+            user=self.user,
+            public_key=public_key,
+            encrypted_master_key=encrypted_data,
+            encrypted_private_key=encrypted_data,
+            user_salt=user_salt,
+            user_iterations=600000,
+            encrypted_master_key_backup=encrypted_data,
+        )
+
+        # Verify it was created and can be retrieved
+        self.assertIsNotNone(key_record.id)
+        retrieved = UserEncryptionKey.objects.get(user=self.user)
+        self.assertEqual(retrieved.user_iterations, 600000)
+        self.assertEqual(len(retrieved.user_salt), 16)
+        self.assertEqual(retrieved.public_key, public_key)
+
+    def test_document_encryption_key_model_persists(self):
+        """
+        Test that DocumentEncryptionKey can track whether DEK is encrypted
+        with master key or public key.
+        """
+        from document.models import Document, DocumentEncryptionKey
+        from django.contrib.auth.models import ContentType, User
+        import base64
+
+        # Create an E2EE document
+        doc = Document.objects.create(
+            title="DEK Test Doc",
+            owner=self.user,
+            template_id=1,
+            e2ee=True,
+            e2ee_salt=b"salt1234567890ab",
+            e2ee_iterations=600000,
+        )
+
+        encrypted_dek = base64.b64encode(b"encrypted_dek_data").decode()
+        user_ct = ContentType.objects.get_for_model(User)
+
+        # Create DEK record encrypted with master key
+        DocumentEncryptionKey.objects.create(
+            document=doc,
+            holder_type=user_ct,
+            holder_id=self.user.id,
+            encrypted_key=encrypted_dek,
+            encrypted_with_master_key=True,
+        )
+
+        # Verify it was saved
+        retrieved = DocumentEncryptionKey.objects.get(document=doc)
+        self.assertTrue(retrieved.encrypted_with_master_key)
+
+    def test_document_encryption_key_public_key_mode(self):
+        """
+        Test that DocumentEncryptionKey can be encrypted with public key
+        (for shared documents).
+        """
+        from document.models import Document, DocumentEncryptionKey
+        from django.contrib.auth.models import ContentType, User
+        import base64
+
+        doc = Document.objects.create(
+            title="Shared DEK Test Doc",
+            owner=self.user,
+            template_id=1,
+            e2ee=True,
+            e2ee_salt=b"salt1234567890ab",
+            e2ee_iterations=600000,
+        )
+
+        encrypted_dek = base64.b64encode(b"public_key_encrypted_dek").decode()
+        user_ct = ContentType.objects.get_for_model(User)
+
+        # Create DEK record encrypted with public key
+        DocumentEncryptionKey.objects.create(
+            document=doc,
+            holder_type=user_ct,
+            holder_id=self.user.id,
+            encrypted_key=encrypted_dek,
+            encrypted_with_master_key=False,
+        )
+
+        # Verify it tracks public key encryption
+        retrieved = DocumentEncryptionKey.objects.get(document=doc)
+        self.assertFalse(retrieved.encrypted_with_master_key)

@@ -5,6 +5,8 @@ import {Dialog, activateWait, deactivateWait, makeWorker} from "../../common"
 import {SchemaExport} from "../../schema/export"
 import {E2EEEncryptor} from "../e2ee/encryptor"
 import {E2EEKeyManager} from "../e2ee/key-manager"
+import {enterPassphraseDialog} from "../e2ee/passphrase-dialog"
+import {PassphraseManager} from "../e2ee/passphrase-manager"
 import {enterPasswordDialog} from "../e2ee/password-dialog"
 import {
     getSelectionUpdate,
@@ -162,7 +164,8 @@ export class ModCollabDoc {
     }
 
     /**
-     * Load an E2EE document: prompt for password, decrypt, then load.
+     * Load an E2EE document: try passphrase/DEK first, then fall back to
+     * per-document password prompt, decrypt, then load.
      * @private
      */
     async _loadE2EEDocument(doc, doc_info, isInitialLoad) {
@@ -194,8 +197,72 @@ export class ModCollabDoc {
             iterations = doc_info.e2ee_iterations
         }
 
-        // Try to get the key from sessionStorage first so the user
-        // doesn't have to re-enter the password within the same session.
+        // --- Try passphrase/DEK path first ---
+        if (PassphraseManager.hasKeysInSession()) {
+            const dek = await PassphraseManager.getDocumentDEK(
+                this.mod.editor.docInfo.id
+            )
+            if (dek) {
+                try {
+                    await this._decryptAndLoadDoc(
+                        doc,
+                        dek,
+                        salt,
+                        iterations,
+                        isInitialLoad,
+                        urlFragmentPassword
+                    )
+                    // Mark that this document uses the passphrase system
+                    if (this.mod.editor.e2ee) {
+                        this.mod.editor.e2ee.usesPassphrase = true
+                    }
+                    return
+                } catch (_error) {
+                    // DEK didn't work — fall through to password
+                }
+            }
+        }
+
+        // If passphrase keys exist but are not in session, try to unlock
+        if (!PassphraseManager.hasKeysInSession()) {
+            const hasKeys = await PassphraseManager.hasEncryptionKeys()
+            if (hasKeys) {
+                const passphrase = await new Promise(resolve => {
+                    enterPassphraseDialog(
+                        pwd => resolve(pwd),
+                        () => resolve(null)
+                    )
+                })
+                if (passphrase) {
+                    try {
+                        await PassphraseManager.unlockWithPassphrase(passphrase)
+                        const dek = await PassphraseManager.getDocumentDEK(
+                            this.mod.editor.docInfo.id
+                        )
+                        if (dek) {
+                            await this._decryptAndLoadDoc(
+                                doc,
+                                dek,
+                                salt,
+                                iterations,
+                                isInitialLoad,
+                                urlFragmentPassword
+                            )
+                            if (this.mod.editor.e2ee) {
+                                this.mod.editor.e2ee.usesPassphrase = true
+                            }
+                            return
+                        }
+                    } catch (_e) {
+                        // Unlock failed or no DEK — fall through to password
+                    }
+                }
+            }
+        }
+
+        // --- Fall back to per-document password path ---
+
+        // Try to get the key from sessionStorage first
         const sessionKey = await E2EEKeyManager.getKeyFromSession(
             this.mod.editor.docInfo.id
         )
@@ -211,15 +278,12 @@ export class ModCollabDoc {
                 )
                 return
             } catch (_error) {
-                // Session key is stale (e.g. password changed). Clear it
-                // and fall through to password prompt.
                 E2EEKeyManager.clearKeyFromSession(this.mod.editor.docInfo.id)
             }
         }
 
         // If the key is already available (e.g. from _createE2EEDocument),
-        // skip the password dialog and decrypt directly. This avoids
-        // double-prompting when creating a new E2EE document.
+        // skip the password dialog and decrypt directly.
         const existingKey = this.mod.editor.e2ee?.key
         if (existingKey) {
             try {
@@ -236,8 +300,6 @@ export class ModCollabDoc {
                     "E2EE: Decryption failed with existing key",
                     error
                 )
-                // The existing key didn't work — fall through to password
-                // prompt. Clear the stale key first.
                 if (this.mod.editor.e2ee) {
                     this.mod.editor.e2ee.key = null
                 }

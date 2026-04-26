@@ -291,6 +291,38 @@ def revision_filename(instance, filename):
     return f"document-revisions/{instance.pk}.fidus"
 
 
+class DocumentEncryptionKey(models.Model):
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.CASCADE,
+        related_name="encryption_keys",
+    )
+    holder_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        limit_choices_to=models.Q(app_label="user", model="user")
+        | models.Q(app_label="user", model="userinvite"),
+    )
+    holder_id = models.PositiveIntegerField()
+    holder_obj = GenericForeignKey("holder_type", "holder_id")
+    # The document encryption key, encrypted. Which key encrypts it
+    # depends on `encrypted_with_master_key`:
+    # - True:  encrypted with the owner's master key (MK)
+    # - False: encrypted with the recipient's public key (PK) via ECDH
+    encrypted_key = models.TextField()  # Base64
+    encrypted_with_master_key = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("document", "holder_type", "holder_id"),)
+
+    def __str__(self):
+        holder = self.holder_obj
+        name = holder.readable_name if holder else "unknown"
+        return f"DEK for doc {self.document_id} / {name}"
+
+
 class DocumentRevision(models.Model):
     document = models.ForeignKey(Document, on_delete=models.deletion.CASCADE)
     doc_version = models.DecimalField(

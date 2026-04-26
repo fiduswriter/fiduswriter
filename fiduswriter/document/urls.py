@@ -21,6 +21,21 @@ urlpatterns = [
     re_path("^import/image/$", views.import_image, name="import_image"),
     re_path("^e2ee_image/$", views.e2ee_image, name="e2ee_image"),
     re_path(
+        "^encryption_key/save/$",
+        views.save_document_encryption_key,
+        name="save_document_encryption_key",
+    ),
+    re_path(
+        "^encryption_key/get/$",
+        views.get_document_encryption_key,
+        name="get_document_encryption_key",
+    ),
+    re_path(
+        "^encryption_key/update/$",
+        views.update_document_encryption_key,
+        name="update_document_encryption_key",
+    ),
+    re_path(
         "^delete_e2ee_image/$",
         views.delete_e2ee_image,
         name="delete_e2ee_image",

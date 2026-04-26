@@ -1322,10 +1322,11 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Test Article"
         )
-        self.wait_for_doc_sync(self.driver, self.driver2)
-        self.assertEqual(
-            self.driver2.find_element(By.CSS_SELECTOR, "#document-title").text,
-            "Test Article",
+        WebDriverWait(self.driver2, self.wait_time).until(
+            lambda driver: driver.find_element(
+                By.CSS_SELECTOR, "#document-title"
+            ).text
+            == "Test Article"
         )
         # Delete existing path and insert just path
         self.driver2.find_element(By.CSS_SELECTOR, "#document-title").click()
@@ -1336,10 +1337,11 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "#document-title"
         ).send_keys("/Reports/2019/")
         self.driver2.find_element(By.CSS_SELECTOR, ".doc-title").click()
-        self.wait_for_doc_sync(self.driver, self.driver2)
-        self.assertEqual(
-            self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
-            "/Reports/2019/Test Article",
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: driver.find_element(
+                By.CSS_SELECTOR, "#document-title"
+            ).text
+            == "/Reports/2019/Test Article"
         )
         # Delete existing path and insert path including filename
         self.driver.find_element(By.CSS_SELECTOR, "#document-title").click()
@@ -1350,10 +1352,11 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             "/Reports/2019/Report 23"
         )
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").click()
-        self.wait_for_doc_sync(self.driver, self.driver2)
-        self.assertEqual(
-            self.driver2.find_element(By.CSS_SELECTOR, "#document-title").text,
-            "/Reports/2019/Report 23",
+        WebDriverWait(self.driver2, self.wait_time).until(
+            lambda driver: driver.find_element(
+                By.CSS_SELECTOR, "#document-title"
+            ).text
+            == "/Reports/2019/Report 23"
         )
         # Reload page and check if path is still the same.
         self.driver.refresh()
@@ -1375,8 +1378,9 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "#document-title"
         ).send_keys(Keys.DELETE)
         self.driver2.find_element(By.CSS_SELECTOR, ".doc-title").click()
-        self.wait_for_doc_sync(self.driver, self.driver2)
-        self.assertEqual(
-            self.driver.find_element(By.CSS_SELECTOR, "#document-title").text,
-            "Test Article",
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: driver.find_element(
+                By.CSS_SELECTOR, "#document-title"
+            ).text
+            == "Test Article"
         )

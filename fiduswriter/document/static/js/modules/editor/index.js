@@ -856,21 +856,46 @@ export class Editor {
         if (this.menu.headerView) {
             this.menu.headerView.destroy()
         }
-        // For E2EE documents, try to send one last encrypted snapshot before
-        // closing so the title (and any last-minute edits) are persisted.
-        if (
-            this.e2ee &&
-            this.e2ee.key &&
-            this.e2ee.snapshotManager &&
-            this.docInfo.access_rights === "write"
-        ) {
-            this.e2ee.snapshotManager.handleRequestSnapshot({})
+        // For E2EE documents, update the sessionStorage title cache with the
+        // current ProseMirror title so the overview shows the correct title
+        // immediately, even before the encrypted snapshot has been saved to
+        // the DB.
+        if (this.e2ee && this.view) {
+            const titleNode = this.view.state.doc.firstChild
+            if (titleNode) {
+                let title = ""
+                titleNode.forEach(child => {
+                    if (
+                        !child.marks.find(mark => mark.type.name === "deletion")
+                    ) {
+                        title += child.textContent
+                    }
+                })
+                sessionStorage.setItem(`e2ee_title_${this.docInfo.id}`, title)
+            }
         }
         if (this.ws) {
-            // Give the snapshot a moment to be queued before tearing down
-            // the WebSocket. For SPA navigation this is usually enough;
-            // for tab-close the browser may still kill us early.
-            window.setTimeout(() => this.ws.close(), 300)
+            // For E2EE documents, try to send one last encrypted snapshot before
+            // closing so the title (and any last-minute edits) are persisted.
+            // The WebSocket connector has an 80ms throttle between messages, so
+            // we delay ws.close() to give the snapshot time to be queued and
+            // sent. For SPA navigation 300ms is usually enough; for tab-close
+            // the browser may still kill us early.
+            // For non-E2EE documents we close immediately so the server's
+            // disconnect handler saves the document to the DB before the
+            // overview page loads its data (avoiding a race where the overview
+            // would still see the old/empty title).
+            if (
+                this.e2ee &&
+                this.e2ee.key &&
+                this.e2ee.snapshotManager &&
+                this.docInfo.access_rights === "write"
+            ) {
+                this.e2ee.snapshotManager.handleRequestSnapshot({})
+                window.setTimeout(() => this.ws.close(), 300)
+            } else {
+                this.ws.close()
+            }
         }
     }
 

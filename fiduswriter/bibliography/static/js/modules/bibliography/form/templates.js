@@ -1,6 +1,9 @@
 /** A template for the bibliography item edit dialog. */
-export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
-    `<div id="bib-dialog-tabs">
+import {getAllTypeTitles} from "./strings"
+
+export const bibDialog = ({bib_type, BibTypes}) => {
+    const typeTitles = getAllTypeTitles()
+    return `<div id="bib-dialog-tabs">
         <div class="bib-dialog-header">
             <div class="fw-select-container">
                 <select id="select-bibtype" class="fw-button fw-light fw-large" required>
@@ -14,7 +17,7 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
                             key =>
                                 `<option value="${key}"
                                     ${key === bib_type ? "selected" : ""}>
-                                ${BibTypeTitles[key]}
+                                ${typeTitles[key]}
                             </option>`
                         )
                         .join("")}
@@ -51,3 +54,4 @@ export const bibDialog = ({bib_type, BibTypes, BibTypeTitles}) =>
             </table>
         </div>
     </div>`
+}

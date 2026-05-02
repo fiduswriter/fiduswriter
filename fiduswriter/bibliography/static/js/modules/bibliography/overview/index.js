@@ -18,7 +18,7 @@ import {
 } from "../../common"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"
-import {BibTypeTitles} from "../form/strings"
+import {getBibTypeTitle} from "../form/strings"
 import {litToText, nameToText} from "../tools"
 import {bulkMenuModel, menuModel} from "./menu"
 import {editCategoriesTemplate} from "./templates"
@@ -278,7 +278,7 @@ export class BibliographyOverview {
                     ${bibInfo.fields.title?.length ? escapeText(litToText(bibInfo.fields.title)) : gettext("Untitled")}
                 </span>
             </span>`, // title
-            BibTypeTitles[bibInfo.bib_type], // sourcetype
+            getBibTypeTitle(bibInfo.bib_type), // sourcetype
             bibauthors ? nameToText(bibauthors) : "", // author
             `<span class="date">${bibInfo.fields.date ? bibInfo.fields.date.replace("/", " ") : ""}</span>`, // published,
             `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-alt">  </i></span>` // delete icon

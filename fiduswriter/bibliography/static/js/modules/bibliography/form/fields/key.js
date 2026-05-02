@@ -1,5 +1,5 @@
 import {getFocusIndex, noSpaceTmp, setFocusIndex} from "../../../common"
-import {BibOptionTitles} from "../strings"
+import {getBibOptionTitle} from "../strings"
 import {LiteralFieldForm} from "./literal"
 
 export class KeyFieldForm {
@@ -81,14 +81,14 @@ export class KeyFieldForm {
             this.fieldType.options.forEach(option => {
                 selectEl.insertAdjacentHTML(
                     "beforeend",
-                    `<option value="${option}">${BibOptionTitles[option]}</option>`
+                    `<option value="${option}">${getBibOptionTitle(option)}</option>`
                 )
             })
         } else {
             Object.keys(this.fieldType.options).forEach(option => {
                 selectEl.insertAdjacentHTML(
                     "beforeend",
-                    `<option value="${option}">${BibOptionTitles[option]}</option>`
+                    `<option value="${option}">${getBibOptionTitle(option)}</option>`
                 )
             })
         }

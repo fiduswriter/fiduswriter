@@ -14,7 +14,12 @@ import {TagListForm} from "./fields/tag_list"
 import {TitleFieldForm} from "./fields/title"
 import {URIFieldForm} from "./fields/uri"
 import {VerbatimFieldForm} from "./fields/verbatim"
-import {BibFieldHelp, BibFieldTitles, BibTypeTitles} from "./strings"
+import {
+    BibFieldHelp,
+    BibFieldTitles,
+    BibTypeTitles,
+    getBibFieldTitle
+} from "./strings"
 import {bibDialog} from "./templates"
 
 const FIELD_FORMS = {
@@ -96,8 +101,7 @@ export class BibEntryForm {
                 width: 940,
                 body: bibDialog({
                     bib_type: this.currentValues.bib_type,
-                    BibTypes,
-                    BibTypeTitles
+                    BibTypes
                 }),
                 buttons
             })
@@ -153,17 +157,21 @@ export class BibEntryForm {
     addField(fieldName, dom) {
         const fieldType = BibFieldTypes[fieldName]
         let fieldTitle
+        const fieldTitleText = getBibFieldTitle(
+            fieldName,
+            this.currentValues.bib_type
+        )
         if (BibFieldHelp[fieldName]) {
             fieldTitle = noSpaceTmp`
                 <h4 class="fw-tablerow-title wtooltip">
-                    ${BibFieldTitles[fieldName]}
+                    ${fieldTitleText}
                     <span class="tooltip">${BibFieldHelp[fieldName]}</span>
                 </h4>
             `
         } else {
             fieldTitle = noSpaceTmp`
                 <h4 class="fw-tablerow-title">
-                    ${BibFieldTitles[fieldName]}
+                    ${fieldTitleText}
                 </h4>
             `
         }

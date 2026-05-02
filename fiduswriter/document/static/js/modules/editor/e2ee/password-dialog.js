@@ -405,6 +405,9 @@ export function createPasswordDialog(onPassword) {
  * @param {Object} [options] - Optional settings
  * @param {string} [options.currentPassword] - Prefill current password field
  * @param {string} [options.suggestedNewPassword] - Prefill new password field
+ * @param {boolean} [options.hideCurrentPassword] - Hide the current password field
+ * @param {boolean} [options.showNewPasswordPlaintext] - Show new password as plain text
+ * @param {string} [options.infoText] - Additional explanatory HTML paragraph
  * @returns {Promise<void>}
  */
 export function changePasswordDialog(onPasswordChange, options = {}) {
@@ -413,27 +416,44 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
         const currentPassword = options.currentPassword || ""
         const suggestedNewPassword = options.suggestedNewPassword || ""
         const hasPrefilledNew = suggestedNewPassword.length > 0
+        const hideCurrentPassword = options.hideCurrentPassword || false
+        const showNewPasswordPlaintext =
+            options.showNewPasswordPlaintext || false
+        const infoText = options.infoText || ""
 
-        const body = `
-            <div class="e2ee-password-dialog">
-                <p>${gettext("Change the document password. After changing, you must share the new password with all collaborators.")}</p>
-                <div class="e2ee-password-field">
+        const currentPasswordField = hideCurrentPassword
+            ? `<input type="hidden" id="e2ee-current-password-input" value="${escapeText(currentPassword)}" />`
+            : `<div class="e2ee-password-field">
                     <label for="e2ee-current-password-input">${gettext("Current password")}</label>
                     <input type="password" id="e2ee-current-password-input" class="e2ee-password-input"
                            value="${escapeText(currentPassword)}"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
                 </div>
-                <hr />
+                <hr />`
+
+        const newPasswordInputType = showNewPasswordPlaintext
+            ? "text"
+            : "password"
+
+        const body = `
+            <div class="e2ee-password-dialog">
+                <p>${gettext("Change the document password. After changing, you must share the new password with all collaborators.")}</p>
+                ${infoText ? `<p class="e2ee-password-hint">${infoText}</p>` : ""}
+                ${currentPasswordField}
                 <div class="e2ee-password-field">
                     <label for="e2ee-new-password-input">${gettext("New password")}</label>
-                    <input type="password" id="e2ee-new-password-input" class="e2ee-password-input"
+                    <input type="${newPasswordInputType}" id="e2ee-new-password-input" class="e2ee-password-input"
                            value="${escapeText(suggestedNewPassword)}"
-                           autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
-                    <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show password")}">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                           autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" ${hideCurrentPassword ? "autofocus" : ""} />
+                    ${
+                        showNewPasswordPlaintext
+                            ? ""
+                            : `<button type="button" class="e2ee-toggle-visibility" title="${gettext("Show password")}">
+                               <i class="fas fa-eye"></i>
+                           </button>`
+                    }
                 </div>
-                <div class="e2ee-strength-meter">
+                <div class="e2ee-strength-meter" style="display: ${showNewPasswordPlaintext && hasPrefilledNew ? "none" : ""}">
                     <div class="e2ee-strength-bar" id="e2ee-strength-bar"></div>
                     <span class="e2ee-strength-label" id="e2ee-strength-label"></span>
                 </div>
@@ -535,30 +555,36 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
         dialogInstance.open()
 
         setTimeout(() => {
-            // Set up toggle visibility buttons
-            const toggleBtns = document.querySelectorAll(
-                `#${dialogId} .e2ee-toggle-visibility`
-            )
-            toggleBtns.forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const input = btn.parentElement.querySelector("input")
-                    if (input) {
-                        if (input.type === "password") {
-                            input.type = "text"
-                            btn.innerHTML = '<i class="fas fa-eye-slash"></i>'
-                        } else {
-                            input.type = "password"
-                            btn.innerHTML = '<i class="fas fa-eye"></i>'
+            // Set up toggle visibility buttons (only if new password is not plaintext)
+            if (!showNewPasswordPlaintext) {
+                const toggleBtns = document.querySelectorAll(
+                    `#${dialogId} .e2ee-toggle-visibility`
+                )
+                toggleBtns.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const input = btn.parentElement.querySelector("input")
+                        if (input) {
+                            if (input.type === "password") {
+                                input.type = "text"
+                                btn.innerHTML =
+                                    '<i class="fas fa-eye-slash"></i>'
+                            } else {
+                                input.type = "password"
+                                btn.innerHTML = '<i class="fas fa-eye"></i>'
+                            }
                         }
-                    }
+                    })
                 })
-            })
+            }
 
             // Set up strength meter
             const passwordInput = document.getElementById(
                 "e2ee-new-password-input"
             )
-            if (passwordInput) {
+            if (
+                passwordInput &&
+                !(showNewPasswordPlaintext && hasPrefilledNew)
+            ) {
                 passwordInput.addEventListener("input", () => {
                     const score = passwordStrength(passwordInput.value)
                     const info = strengthInfo(score)
@@ -586,6 +612,13 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
                         if (confirmField) {
                             confirmField.style.display = ""
                         }
+                        // Show strength meter again if user edits the prefilled value
+                        const strengthMeter = document.querySelector(
+                            `#${dialogId} .e2ee-strength-meter`
+                        )
+                        if (strengthMeter) {
+                            strengthMeter.style.display = ""
+                        }
                     }
                 })
             }
@@ -606,8 +639,10 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
             const currentInput = document.getElementById(
                 "e2ee-current-password-input"
             )
-            if (currentInput) {
+            if (currentInput && !hideCurrentPassword) {
                 currentInput.focus()
+            } else if (passwordInput) {
+                passwordInput.focus()
             }
         }, 100)
     })

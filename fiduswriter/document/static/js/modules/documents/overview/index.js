@@ -14,6 +14,7 @@ import {
     ensureCSS,
     escapeText,
     findTarget,
+    infoTooltip,
     postJson,
     setDocTitle,
     shortFileTitle,
@@ -76,7 +77,8 @@ export class DocumentOverview {
         ensureCSS([
             staticUrl("css/document_overview.css"),
             staticUrl("css/add_remove_dialog.css"),
-            staticUrl("css/access_rights_dialog.css")
+            staticUrl("css/access_rights_dialog.css"),
+            staticUrl("css/e2ee.css")
         ])
         document.body = this.dom
         setDocTitle(gettext("Document Overview"), this.app)
@@ -860,16 +862,53 @@ export class DocumentOverview {
         } else {
             // E2EE is "enabled" - so the document can either be encrypted or non-encrypted
             // Let user choose.
+            const encryptedInfoBody = `
+                <p class="e2ee-choice-intro">${gettext("Encrypted documents protect your content so that only people with the password can read it.")}</p>
+                <strong>${gettext("Advantages")}</strong>
+                <ul>
+                    <li>${gettext("Only people with the password can read the document.")}</li>
+                    <li>${gettext("The server cannot access the document contents.")}</li>
+                </ul>
+                <strong>${gettext("Disadvantages")}</strong>
+                <ul>
+                    <li>${gettext("Limited access rights options (no tracked changes or review modes).")}</li>
+                    <li>${gettext("If you lose the password or passphrase, there is no way to recover the document.")}</li>
+                    <li>${gettext("You must share the password with collaborators manually (unless they use a personal passphrase).")}</li>
+                </ul>
+            `
+            const regularInfoBody = `
+                <p class="e2ee-choice-intro">${gettext("Regular documents are the default and work well for most users.")}</p>
+                <strong>${gettext("Advantages")}</strong>
+                <ul>
+                    <li>${gettext("Full access rights options including tracked changes and review modes.")}</li>
+                    <li>${gettext("No risk of losing access if you forget a password.")}</li>
+                    <li>${gettext("Easier collaboration — no need to share passwords with collaborators.")}</li>
+                </ul>
+                <strong>${gettext("Disadvantages")}</strong>
+                <ul>
+                    <li>${gettext("The server can technically access the document contents.")}</li>
+                    <li>${gettext("No additional protection beyond your account password.")}</li>
+                </ul>
+            `
             const dialog = new Dialog({
                 title: gettext("Choose encryption type of new document."),
+                width: 460,
                 body: `<div>
-                <input type="radio" id="nonencrypted" name="encryption" value="nonencrypted" checked>
-                <label for="nonencrypted">${gettext("Non-encrypted")}</label>
-                </div>
-                <div>&nbsp;</div>
-                <div>
-                <input type="radio" id="e2ee" name="encryption" value="e2ee">
-                <label for="e2ee">${gettext("Encrypted")}</label>
+                    <div>
+                        <input type="radio" id="nonencrypted" name="encryption" value="nonencrypted" checked>
+                        <label for="nonencrypted">${gettext("Non-encrypted")}</label>
+                    </div>
+                    <div>&nbsp;</div>
+                    <div>
+                        <input type="radio" id="e2ee" name="encryption" value="e2ee">
+                        <label for="e2ee">${gettext("Encrypted")}</label>
+                    </div>
+                    <div id="e2ee-info-regular" class="e2ee-choice-info">
+                        ${regularInfoBody}
+                    </div>
+                    <div id="e2ee-info-encrypted" class="e2ee-choice-info" style="display: none;">
+                        ${encryptedInfoBody}
+                    </div>
                 </div>`,
                 buttons: [
                     {
@@ -977,6 +1016,34 @@ export class DocumentOverview {
                 ]
             })
             dialog.open()
+            // Bind radio buttons to show/hide the relevant info block
+            setTimeout(() => {
+                const nonencryptedRadio =
+                    document.getElementById("nonencrypted")
+                const e2eeRadio = document.getElementById("e2ee")
+                const regularInfo = document.getElementById("e2ee-info-regular")
+                const encryptedInfo = document.getElementById(
+                    "e2ee-info-encrypted"
+                )
+                if (
+                    nonencryptedRadio &&
+                    e2eeRadio &&
+                    regularInfo &&
+                    encryptedInfo
+                ) {
+                    const toggleInfo = () => {
+                        if (e2eeRadio.checked) {
+                            regularInfo.style.display = "none"
+                            encryptedInfo.style.display = "block"
+                        } else {
+                            regularInfo.style.display = "block"
+                            encryptedInfo.style.display = "none"
+                        }
+                    }
+                    nonencryptedRadio.addEventListener("change", toggleInfo)
+                    e2eeRadio.addEventListener("change", toggleInfo)
+                }
+            }, 100)
         }
     }
 

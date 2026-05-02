@@ -11,6 +11,7 @@ export {
     noSpaceTmp,
     escapeText,
     unescapeText,
+    infoTooltip,
     cancelPromise,
     findTarget,
     whenReady,

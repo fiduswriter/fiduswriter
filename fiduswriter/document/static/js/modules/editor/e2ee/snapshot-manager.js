@@ -126,7 +126,7 @@ export class E2EESnapshotManager {
      * @param {Object} message - The e2ee_snapshot_received message
      * @param {number} message.v - The version of the saved snapshot
      */
-    handleSnapshotReceived(message) {
+    async handleSnapshotReceived(message) {
         // Informational — no action needed for regular snapshots.
         // If the server included new KDF params, the password was changed
         // by another client. Update local state so that if we re-fetch
@@ -136,6 +136,18 @@ export class E2EESnapshotManager {
             this.editor.e2ee.encryptionIterations = message.e2ee_iterations
             this.editor.e2ee.key = null
             this.clearKey()
+            // Clear cached password and key from sessionStorage so the user
+            // is prompted for the new password on next access.
+            const {E2EEKeyManager} = await import("./key-manager")
+            E2EEKeyManager.clearKeyFromSession(this.editor.docInfo.id)
+            E2EEKeyManager.clearPasswordFromSession(this.editor.docInfo.id)
+            // Notify the user that the password has changed.
+            const {showSystemMessage} = await import("../../common")
+            showSystemMessage(
+                gettext(
+                    "The document password was changed by another user. You will need to enter the new password to continue editing."
+                )
+            )
         }
     }
 

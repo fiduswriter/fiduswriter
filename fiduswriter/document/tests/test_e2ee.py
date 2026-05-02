@@ -409,9 +409,13 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter current and new passwords
-        self.driver.find_element(
+        # The current password field may be prefilled from sessionStorage,
+        # so clear it first before entering the test password.
+        current_pass_input = self.driver.find_element(
             By.ID, "e2ee-current-password-input"
-        ).send_keys(old_password)
+        )
+        current_pass_input.clear()
+        current_pass_input.send_keys(old_password)
         self.driver.find_element(By.ID, "e2ee-new-password-input").send_keys(
             new_password
         )

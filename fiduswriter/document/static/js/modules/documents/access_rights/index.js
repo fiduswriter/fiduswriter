@@ -230,7 +230,7 @@ export class DocumentAccessRightsDialog {
             ? `<div class="e2ee-access-rights-warning">
                 <i class="fas fa-lock"></i>
                 <strong>${gettext("End-to-end encrypted document")}</strong>
-                <p>${gettext("This document is end-to-end encrypted. You must share the document password with each collaborator through a secure channel outside of Fidus Writer. Do not send the password through the document chat.")}</p>
+                <p>${gettext("This document is end-to-end encrypted. Collaborators without a personal passphrase will need the document password shared with them through a secure channel outside of Fidus Writer. Do not send the password through the document chat.")}</p>
             </div>`
             : ""
 

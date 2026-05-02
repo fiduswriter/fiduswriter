@@ -277,51 +277,21 @@ export class ModCollabDoc {
         if (!PassphraseManager.hasKeysInSession()) {
             const hasKeys = await PassphraseManager.hasEncryptionKeys()
             if (hasKeys) {
-                const result = await new Promise(resolve => {
-                    enterPassphraseDialog(
-                        pwd => resolve({action: "unlock", passphrase: pwd}),
-                        () => resolve({action: "recover"})
-                    )
-                })
-                if (result.action === "unlock" && result.passphrase) {
-                    try {
-                        await PassphraseManager.unlockWithPassphrase(
-                            result.passphrase
+                let errorMessage = ""
+                let unlocked = false
+                while (!unlocked) {
+                    const result = await new Promise(resolve => {
+                        enterPassphraseDialog(
+                            pwd => resolve({action: "unlock", passphrase: pwd}),
+                            () => resolve({action: "recover"}),
+                            {errorMessage}
                         )
-                        const password =
-                            await PassphraseManager.getDocumentPassword(docId)
-                        if (password) {
-                            await tryPassword(password)
-                            if (this.mod.editor.e2ee) {
-                                this.mod.editor.e2ee.usesPassphrase = true
-                            }
-                            return
-                        }
-                    } catch (_e) {
-                        // Unlock failed or no password — fall through
-                    }
-                } else if (result.action === "recover") {
-                    // Recovery flow
-                    const {recoverWithKeyDialog} = await import(
-                        "../e2ee/passphrase-dialog.js"
-                    )
-                    const recoverResult = await new Promise(resolve => {
-                        recoverWithKeyDialog(resolve)
                     })
-                    if (recoverResult) {
+                    if (result.action === "unlock" && result.passphrase) {
                         try {
-                            const {newRecoveryKey} =
-                                await PassphraseManager.recoverWithRecoveryKey(
-                                    recoverResult.recoveryKey,
-                                    recoverResult.newPassphrase
-                                )
-                            const {showRecoveryKeyDialog} = await import(
-                                "../e2ee/passphrase-dialog.js"
+                            await PassphraseManager.unlockWithPassphrase(
+                                result.passphrase
                             )
-                            await new Promise(resolve => {
-                                showRecoveryKeyDialog(newRecoveryKey, resolve)
-                            })
-                            // After recovery, try to get document password again
                             const password =
                                 await PassphraseManager.getDocumentPassword(
                                     docId
@@ -331,41 +301,91 @@ export class ModCollabDoc {
                                 if (this.mod.editor.e2ee) {
                                     this.mod.editor.e2ee.usesPassphrase = true
                                 }
+                                unlocked = true
                                 return
                             }
-                        } catch (e) {
-                            console.error("E2EE: Recovery failed:", e)
-                            const errorDialog = new Dialog({
-                                title: gettext("Recovery Failed"),
-                                id: "e2ee-recovery-failed",
-                                body: gettext(
-                                    "The recovery key you entered is incorrect, or the recovery process failed. Please try again."
-                                ),
-                                buttons: [
-                                    {
-                                        text: gettext("Retry"),
-                                        classes: "fw-dark",
-                                        click: () => {
-                                            errorDialog.close()
-                                            this._loadE2EEDocument(
-                                                doc,
-                                                doc_info,
-                                                isInitialLoad,
-                                                urlFragmentPassword
-                                            )
-                                        }
-                                    },
-                                    {
-                                        text: gettext("Cancel"),
-                                        classes: "fw-light",
-                                        click: () => errorDialog.close()
-                                    }
-                                ],
-                                canClose: false
-                            })
-                            errorDialog.open()
-                            return
+                        } catch (_e) {
+                            errorMessage = gettext(
+                                "Incorrect passphrase. Please try again."
+                            )
                         }
+                    } else if (result?.action === "recover") {
+                        // Recovery flow
+                        const {recoverWithKeyDialog} = await import(
+                            "../e2ee/passphrase-dialog.js"
+                        )
+                        const recoverResult = await new Promise(resolve => {
+                            recoverWithKeyDialog(resolve)
+                        })
+                        if (recoverResult) {
+                            try {
+                                const {newRecoveryKey} =
+                                    await PassphraseManager.recoverWithRecoveryKey(
+                                        recoverResult.recoveryKey,
+                                        recoverResult.newPassphrase
+                                    )
+                                const {showRecoveryKeyDialog} = await import(
+                                    "../e2ee/passphrase-dialog.js"
+                                )
+                                await new Promise(resolve => {
+                                    showRecoveryKeyDialog(
+                                        newRecoveryKey,
+                                        resolve
+                                    )
+                                })
+                                // After recovery, try to get document password again
+                                const password =
+                                    await PassphraseManager.getDocumentPassword(
+                                        docId
+                                    )
+                                if (password) {
+                                    await tryPassword(password)
+                                    if (this.mod.editor.e2ee) {
+                                        this.mod.editor.e2ee.usesPassphrase = true
+                                    }
+                                    return
+                                }
+                            } catch (e) {
+                                console.error("E2EE: Recovery failed:", e)
+                                const errorDialog = new Dialog({
+                                    title: gettext("Recovery Failed"),
+                                    id: "e2ee-recovery-failed",
+                                    body: gettext(
+                                        "The recovery key you entered is incorrect, or the recovery process failed. Please try again."
+                                    ),
+                                    buttons: [
+                                        {
+                                            text: gettext("Retry"),
+                                            classes: "fw-dark",
+                                            click: () => {
+                                                errorDialog.close()
+                                                this._loadE2EEDocument(
+                                                    doc,
+                                                    doc_info,
+                                                    isInitialLoad,
+                                                    urlFragmentPassword
+                                                )
+                                            }
+                                        },
+                                        {
+                                            text: gettext("Cancel"),
+                                            classes: "fw-light",
+                                            click: () => errorDialog.close()
+                                        }
+                                    ],
+                                    canClose: false
+                                })
+                                errorDialog.open()
+                                return
+                            }
+                        }
+                        // If recovery was cancelled, continue the loop to show
+                        // the passphrase dialog again.
+                        continue
+                    } else {
+                        // User cancelled the passphrase dialog — break out of
+                        // the loop and fall through to other password sources.
+                        break
                     }
                 }
             }
@@ -536,7 +556,7 @@ export class ModCollabDoc {
                         title: gettext("Decryption Failed"),
                         id: "e2ee-decryption-failed",
                         body: gettext(
-                            "The password you entered is incorrect, or the document data is corrupted. Please try again."
+                            "That password didn't work. Please try again."
                         ),
                         buttons: [
                             {

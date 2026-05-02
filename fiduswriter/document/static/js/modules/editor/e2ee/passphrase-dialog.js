@@ -8,7 +8,7 @@
  * 4. Recover with key - use recovery key to reset passphrase
  */
 
-import {Dialog} from "../../common"
+import {Dialog, escapeText} from "../../common"
 import {passwordStrength, strengthInfo} from "./password-dialog"
 
 /**
@@ -162,11 +162,18 @@ export function setupPassphraseDialog(onSetup) {
  *
  * @param {Function} onUnlock - Callback called with the passphrase string
  * @param {Function} onRecover - Callback when user clicks "Recover with key"
+ * @param {Object} [options] - Optional settings
+ * @param {string} [options.errorMessage] - Inline error to display
  * @returns {Promise<void>}
  */
-export function enterPassphraseDialog(onUnlock, onRecover = null) {
+export function enterPassphraseDialog(
+    onUnlock,
+    onRecover = null,
+    options = {}
+) {
     return new Promise(resolve => {
         const dialogId = "e2ee-enter-passphrase"
+        const errorMessage = options.errorMessage || ""
 
         const body = `
             <div class="e2ee-password-dialog">
@@ -179,7 +186,7 @@ export function enterPassphraseDialog(onUnlock, onRecover = null) {
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
-                <div class="e2ee-password-error" id="e2ee-passphrase-error"></div>
+                <div class="e2ee-password-error" id="e2ee-passphrase-error">${escapeText(errorMessage)}</div>
             </div>
         `
 

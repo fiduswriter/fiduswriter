@@ -345,6 +345,39 @@ export const headerbarModel = () => ({
                         const suggestedNewPassword = isPassphraseUser
                             ? await PassphraseManager.generateDocumentPassword()
                             : ""
+
+                        let changeOptions
+                        if (isPassphraseUser) {
+                            // Passphrase users: current password is known, new password
+                            // is auto-generated and shown in plaintext for sharing.
+                            changeOptions = {
+                                currentPassword:
+                                    editor.e2ee.password ||
+                                    E2EEKeyManager.getPasswordFromSession(
+                                        editor.docInfo.id
+                                    ) ||
+                                    "",
+                                suggestedNewPassword,
+                                hideCurrentPassword: true,
+                                showNewPasswordPlaintext: true,
+                                infoText: gettext(
+                                    "Your personal passphrase will still unlock this document. A new random password is generated automatically. Other passphrase users will receive it automatically; non-passphrase collaborators need it shared with them manually."
+                                )
+                            }
+                        } else {
+                            // Non-passphrase users: prefill current password from
+                            // sessionStorage if available, but keep it visible for
+                            // verification.
+                            const sessionPassword =
+                                E2EEKeyManager.getPasswordFromSession(
+                                    editor.docInfo.id
+                                )
+                            changeOptions = {
+                                currentPassword: sessionPassword || "",
+                                suggestedNewPassword: ""
+                            }
+                        }
+
                         changePasswordDialog(
                             async ({currentPassword, newPassword}) => {
                                 try {
@@ -431,12 +464,21 @@ export const headerbarModel = () => ({
                                         }
                                     }
 
-                                    addAlert(
-                                        "success",
-                                        gettext(
-                                            "Document password changed. Remember to share the new password with your collaborators."
+                                    if (isPassphraseUser) {
+                                        addAlert(
+                                            "success",
+                                            gettext(
+                                                "Document encryption key rotated. Other passphrase users will receive the new key automatically."
+                                            )
                                         )
-                                    )
+                                    } else {
+                                        addAlert(
+                                            "success",
+                                            gettext(
+                                                "Document password changed. Remember to share the new password with your collaborators."
+                                            )
+                                        )
+                                    }
                                 } catch (_error) {
                                     addAlert(
                                         "error",
@@ -446,16 +488,7 @@ export const headerbarModel = () => ({
                                     )
                                 }
                             },
-                            {
-                                currentPassword: isPassphraseUser
-                                    ? editor.e2ee.password ||
-                                      E2EEKeyManager.getPasswordFromSession(
-                                          editor.docInfo.id
-                                      ) ||
-                                      ""
-                                    : "",
-                                suggestedNewPassword
-                            }
+                            changeOptions
                         )
                     },
                     disabled: editor =>

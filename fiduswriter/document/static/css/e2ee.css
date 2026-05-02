@@ -282,15 +282,15 @@
     color: var(--e2ee-info-text-color);
 }
 
-.e2ee-access-rights-warning i {
-    margin-right: 8px;
-    color: var(--e2ee-info-border-color);
-}
-
 .e2ee-access-rights-warning strong {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     font-weight: 600;
+}
+
+.e2ee-access-rights-warning strong i {
+    margin-right: 10px;
+    color: var(--e2ee-info-border-color);
 }
 
 .e2ee-access-rights-warning p {

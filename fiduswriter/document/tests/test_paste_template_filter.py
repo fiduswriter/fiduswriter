@@ -103,14 +103,7 @@ class PasteTemplateFilterTest(SeleniumHelper, ChannelsLiveServerTestCase):
             # Navigate to create document with specific template
             self.driver.get(f"{self.base_url}/document/t{template_id}/")
         else:
-            WebDriverWait(self.driver, self.wait_time).until(
-                EC.element_to_be_clickable(
-                    (By.CSS_SELECTOR, ".new_document button")
-                )
-            )
-            self.driver.find_element(
-                By.CSS_SELECTOR, ".new_document button"
-            ).click()
+            self.click_new_document_button(self.driver)
 
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))

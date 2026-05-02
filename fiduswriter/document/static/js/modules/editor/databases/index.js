@@ -51,15 +51,19 @@ export class ModDB {
         unusedBibs.forEach(id => this.bibDB.deleteReference(id))
 
         const imageDbKeys = Object.keys(this.imageDB.db)
-        const missingImages = usedImages.filter(id => !imageDbKeys.includes(id))
-        missingImages.forEach(id => {
-            const userImage = this.editor.app.imageDB.db[id]
-            if (!userImage) {
-                // Image is not present. Give up.
-                return
-            }
-            const imageEntry = JSON.parse(JSON.stringify(userImage))
-            this.imageDB.setImage(id, imageEntry)
-        })
+        const missingImages = usedImages.filter(
+            id => !imageDbKeys.includes(String(id))
+        )
+        if (!this.editor.e2ee?.encrypted) {
+            missingImages.forEach(id => {
+                const userImage = this.editor.app.imageDB.db[id]
+                if (!userImage) {
+                    // Image is not present. Give up.
+                    return
+                }
+                const imageEntry = JSON.parse(JSON.stringify(userImage))
+                this.imageDB.setImage(id, imageEntry)
+            })
+        }
     }
 }

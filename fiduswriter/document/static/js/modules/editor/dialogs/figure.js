@@ -1,8 +1,9 @@
 import deepEqual from "fast-deep-equal"
 
-import {ContentMenu, Dialog, dropdownSelect} from "../../common"
+import {ContentMenu, Dialog, addAlert, dropdownSelect} from "../../common"
 import {ImageSelectionDialog} from "../../images/selection_dialog"
 import {randomFigureId} from "../../schema/common"
+import {E2EEEncryptor} from "../e2ee/encryptor"
 import {configureFigureTemplate} from "./templates"
 
 export class FigureDialog {
@@ -143,7 +144,7 @@ export class FigureDialog {
         })
     }
 
-    layoutImagePreview() {
+    async layoutImagePreview() {
         if (this.imgId) {
             if (this.mathField) {
                 this.mathField = false
@@ -153,9 +154,29 @@ export class FigureDialog {
                     ? this.imageDB.db
                     : this.userImageDB.db
 
+            const imageEntry = db[this.imgId]
+            let imgSrc = imageEntry?.image || ""
+
+            if (imageEntry?.file_type === "application/octet-stream") {
+                const key = this.editor.e2ee?.key
+                if (key) {
+                    try {
+                        imgSrc = await E2EEEncryptor.decryptImageToUrl(
+                            imageEntry.image,
+                            key,
+                            imageEntry.original_file_type || "image/png"
+                        )
+                    } catch (_e) {
+                        imgSrc = staticUrl("img/error.avif")
+                    }
+                } else {
+                    imgSrc = staticUrl("img/error.avif")
+                }
+            }
+
             this.dialog.dialogEl.querySelector(
                 ".inner-figure-preview"
-            ).innerHTML = `<img src="${db[this.imgId].image}" style="max-width: 400px;max-height:220px">
+            ).innerHTML = `<img src="${imgSrc}" style="max-width: 400px;max-height:220px">
                 <span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>`
 
             this.dialog.dialogEl
@@ -171,7 +192,7 @@ export class FigureDialog {
         }
     }
 
-    submitForm() {
+    async submitForm() {
         if (new RegExp(/^\s*$/).test(this.equation) && !this.imgId) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
@@ -183,13 +204,50 @@ export class FigureDialog {
         }
 
         if (this.imgDb === "user") {
-            // Add image to document db.
-            const imageEntry = JSON.parse(
-                JSON.stringify(this.userImageDB.db[this.imgId])
-            )
-            imageEntry.copyright = this.copyright
-            this.imageDB.setImage(this.imgId, imageEntry)
-            this.imgDb = "document"
+            if (this.editor.e2ee?.encrypted) {
+                // For E2EE: encrypt the user image and upload it to the document
+                const userImage = this.userImageDB.db[this.imgId]
+                try {
+                    const response = await fetch(userImage.image)
+                    const blob = await response.blob()
+                    const file = new File(
+                        [blob],
+                        userImage.image.split("/").pop(),
+                        {type: blob.type}
+                    )
+                    const encryptedFile = await E2EEEncryptor.encryptImage(
+                        file,
+                        this.editor.e2ee.key
+                    )
+                    const encryptedCopyright =
+                        await E2EEEncryptor.encryptObject(
+                            this.copyright,
+                            this.editor.e2ee.key
+                        )
+                    const newId = await this.imageDB.saveImage({
+                        image: encryptedFile,
+                        title: userImage.title,
+                        copyright: encryptedCopyright,
+                        checksum: userImage.checksum,
+                        original_file_type: blob.type,
+                        cats: []
+                    })
+                    this.imgId = newId
+                    this.imgDb = "document"
+                } catch (error) {
+                    console.error("E2EE: Failed to encrypt user image", error)
+                    addAlert("error", gettext("Could not encrypt image"))
+                    return false
+                }
+            } else {
+                // Add image to document db.
+                const imageEntry = JSON.parse(
+                    JSON.stringify(this.userImageDB.db[this.imgId])
+                )
+                imageEntry.copyright = this.copyright
+                this.imageDB.setImage(this.imgId, imageEntry)
+                this.imgDb = "document"
+            }
         } else if (
             this.imgId &&
             this.imageDB.db[this.imgId] &&

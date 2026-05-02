@@ -335,6 +335,16 @@ export const escapeText = text => {
         .replace(/[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]/g, "") // invalid in XML chars
 }
 
+/**
+ * Return an inline info-icon with a hover tooltip containing the given HTML.
+ * Use only with trusted HTML content.
+ *
+ * @param {string} html - The tooltip content (HTML string)
+ * @returns {string} HTML for the info tooltip
+ */
+export const infoTooltip = html =>
+    `<span class="fw-info-tooltip"><i class="fas fa-info-circle"></i><span class="fw-info-tooltip-text">${html}</span></span>`
+
 export const unescapeText = text =>
     text
         .replace(/&lt;/g, "<")

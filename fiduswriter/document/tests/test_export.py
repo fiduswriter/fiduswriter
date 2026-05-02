@@ -50,11 +50,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        self.click_new_document_button(self.driver)
         # Set copyright
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(

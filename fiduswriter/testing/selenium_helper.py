@@ -1,8 +1,12 @@
 import re
 import os
 import time
-from urllib3.exceptions import MaxRetryError
-from selenium.common.exceptions import ElementClickInterceptedException
+from urllib3.exceptions import MaxRetryError, ReadTimeoutError
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    TimeoutException,
+    WebDriverException,
+)
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -116,6 +120,21 @@ class SeleniumHelper:
                 count += 1
                 time.sleep(1)
 
+    def click_new_document_button(self, driver):
+        """Click the new document button and handle the encryption choice dialog if present."""
+        WebDriverWait(driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".new_document button")
+            )
+        ).click()
+        try:
+            WebDriverWait(driver, 2).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            )
+            driver.find_element(By.CSS_SELECTOR, ".ui-dialog .fw-dark").click()
+        except TimeoutException:
+            pass
+
     @classmethod
     def get_drivers(cls, number, download_dir=False, user_agent=False):
         # django native clients, to be used for faster login.
@@ -200,7 +219,10 @@ class SeleniumHelper:
         try:
             driver.execute_script(
                 "if (window.theApp) {window.theApp.page = null;}"
+                # Suppress any 'Leave site?' beforeunload dialog so that
+                # driver.get() below cannot be blocked by it.
+                "window.onbeforeunload = null;"
             )
             driver.get("data:,")
-        except MaxRetryError:
+        except (MaxRetryError, ReadTimeoutError, WebDriverException):
             pass

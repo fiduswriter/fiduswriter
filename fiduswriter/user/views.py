@@ -1,5 +1,5 @@
 import json
-from base64 import b32encode
+import base64
 
 from django.http import JsonResponse, HttpRequest
 from django.db.models import Q
@@ -20,7 +20,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from base.decorators import ajax_required
 from .forms import UserForm, FidusLoginForm
 from document.models import AccessRight
-from .models import UserInvite
+from .models import UserInvite, UserEncryptionKey
 from .helpers import Avatars
 from . import emails
 
@@ -692,7 +692,7 @@ def two_factor_setup(request):
             digits=6,
         )
 
-    secret_key = b32encode(device.bin_key).decode("utf-8")
+    secret_key = base64.b32encode(device.bin_key).decode("utf-8")
     provisioning_uri = device.config_url
 
     return JsonResponse(
@@ -800,6 +800,161 @@ def two_factor_status(request):
     ).exists()
 
     return JsonResponse({"status": "success", "enabled": has_device})
+
+
+@login_required
+@ajax_required
+def get_encryption_key(request):
+    """Get the current user's encryption key data (encrypted blobs + salt)."""
+    response = {}
+    status = 200
+    key_record = UserEncryptionKey.objects.filter(user=request.user).first()
+    if key_record:
+        response["has_key"] = True
+        response["public_key"] = key_record.public_key
+        response["encrypted_master_key"] = key_record.encrypted_master_key
+        response["encrypted_private_key"] = key_record.encrypted_private_key
+        response["user_salt"] = base64.b64encode(key_record.user_salt).decode(
+            "ascii"
+        )
+        response["user_iterations"] = key_record.user_iterations
+        response["encrypted_master_key_backup"] = (
+            key_record.encrypted_master_key_backup
+        )
+    else:
+        response["has_key"] = False
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def save_encryption_key(request):
+    """Create or update the user's encryption keys."""
+    response = {}
+    status = 200
+    data = json.loads(request.POST.get("data", "{}"))
+    key_record, created = UserEncryptionKey.objects.get_or_create(
+        user=request.user,
+        defaults={
+            "public_key": data.get("public_key", ""),
+            "encrypted_private_key": data.get("encrypted_private_key", ""),
+            "encrypted_master_key": data.get("encrypted_master_key", ""),
+            "user_salt": base64.b64decode(data.get("user_salt", "")),
+            "user_iterations": data.get("user_iterations", 600000),
+            "encrypted_master_key_backup": data.get(
+                "encrypted_master_key_backup", ""
+            ),
+        },
+    )
+    if not created:
+        key_record.public_key = data.get("public_key", key_record.public_key)
+        key_record.encrypted_private_key = data.get(
+            "encrypted_private_key", key_record.encrypted_private_key
+        )
+        key_record.encrypted_master_key = data.get(
+            "encrypted_master_key", key_record.encrypted_master_key
+        )
+        if "user_salt" in data:
+            key_record.user_salt = base64.b64decode(data["user_salt"])
+        if "user_iterations" in data:
+            key_record.user_iterations = data["user_iterations"]
+        key_record.encrypted_master_key_backup = data.get(
+            "encrypted_master_key_backup",
+            key_record.encrypted_master_key_backup,
+        )
+        key_record.save()
+    response["id"] = key_record.id
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+def get_public_key(request, user_id):
+    """Get another user's public key (for sharing encrypted documents)."""
+    response = {}
+    status = 200
+    User = get_user_model()
+    target_user = User.objects.filter(pk=user_id).first()
+    if not target_user:
+        return JsonResponse({"error": "User not found"}, status=404)
+    key_record = UserEncryptionKey.objects.filter(user=target_user).first()
+    if key_record:
+        response["has_key"] = True
+        response["public_key"] = key_record.public_key
+    else:
+        response["has_key"] = False
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def update_preferences(request):
+    """Update user preferences (e.g., encryption dialog dismissal)."""
+    user = request.user
+    preferences = user.preferences or {}
+
+    # Update allowed preference keys
+    allowed_keys = {"has_dismissed_passphrase_offer"}
+    for key in allowed_keys:
+        value = request.POST.get(key)
+        if value is not None:
+            # Convert string "true"/"false" to boolean
+            if value.lower() == "true":
+                preferences[key] = True
+            elif value.lower() == "false":
+                preferences[key] = False
+            else:
+                preferences[key] = value
+
+    user.preferences = preferences
+    user.save()
+
+    return JsonResponse({"preferences": user.preferences}, status=200)
+
+
+@login_required
+@ajax_required
+def get_preferences(request):
+    """Get user preferences."""
+    user = request.user
+    return JsonResponse({"preferences": user.preferences or {}}, status=200)
+
+
+@login_required
+@ajax_required
+def has_encryption_keys(request):
+    """Check if a user has encryption keys (passphrase setup)."""
+    user_id = None
+
+    # Check if request has user_id parameter
+    if request.method == "GET":
+        user_id = request.GET.get("user_id")
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body) if request.body else {}
+            user_id = data.get("user_id")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    if not user_id:
+        return JsonResponse({"error": "user_id required"}, status=400)
+
+    try:
+        user_id = int(user_id)
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "Invalid user_id"}, status=400)
+
+    User = get_user_model()
+    user = User.objects.filter(id=user_id).first()
+    if not user:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    # Check if user has UserEncryptionKey
+    has_keys = UserEncryptionKey.objects.filter(user=user).exists()
+
+    return JsonResponse({"has_keys": has_keys}, status=200)
 
 
 login = FidusLoginView.as_view()

@@ -64,3 +64,62 @@
 .tooltip em {
     font-style: italic;
 }
+
+/* Inline info tooltip (e.g. for dialog options) */
+.fw-info-tooltip {
+    position: relative;
+    display: inline-block;
+    margin-left: 4px;
+    color: var(--cs-2-background);
+    cursor: help;
+}
+
+.fw-info-tooltip .fw-info-tooltip-text {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 280px;
+    max-width: 360px;
+    background-color: var(--cs-dark-background);
+    color: var(--cs-dark-text);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+    line-height: 1.5;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 100;
+    pointer-events: none;
+    text-align: left;
+    font-weight: normal;
+    font-style: normal;
+    white-space: normal;
+}
+
+.fw-info-tooltip:hover .fw-info-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.fw-info-tooltip .fw-info-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--cs-dark-background) transparent transparent transparent;
+}
+
+.fw-info-tooltip .fw-info-tooltip-text ul {
+    margin: 6px 0 0 16px;
+    padding: 0;
+    list-style-type: disc;
+}
+
+.fw-info-tooltip .fw-info-tooltip-text li {
+    margin-bottom: 4px;
+}

@@ -26,7 +26,16 @@ def app(request):
     Load a page controlled by the JavaScript app.
     Used all user facing pages after login.
     """
-    return render(request, "app.html", {"version": get_version()})
+    return render(
+        request,
+        "app.html",
+        {
+            "version": get_version(),
+            "settings": {
+                "E2EE_MODE": settings.E2EE_MODE,
+            },
+        },
+    )
 
 
 def api_404(request):

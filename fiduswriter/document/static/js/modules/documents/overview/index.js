@@ -14,6 +14,7 @@ import {
     ensureCSS,
     escapeText,
     findTarget,
+    infoTooltip,
     postJson,
     setDocTitle,
     shortFileTitle,
@@ -59,7 +60,9 @@ export class DocumentOverview {
             this.dtBulkModel = bulkMenuModel()
             this.activateFidusPlugins()
             this.bind()
-            return this.getDocumentListData().then(() => deactivateWait())
+            return this.getDocumentListData()
+                .then(() => this.bulkDecryptDocumentEncryptionKeys())
+                .then(() => deactivateWait())
         })
     }
 
@@ -74,7 +77,8 @@ export class DocumentOverview {
         ensureCSS([
             staticUrl("css/document_overview.css"),
             staticUrl("css/add_remove_dialog.css"),
-            staticUrl("css/access_rights_dialog.css")
+            staticUrl("css/access_rights_dialog.css"),
+            staticUrl("css/e2ee.css")
         ])
         document.body = this.dom
         setDocTitle(gettext("Document Overview"), this.app)
@@ -232,6 +236,77 @@ export class DocumentOverview {
             })
     }
 
+    async bulkDecryptDocumentEncryptionKeys() {
+        /**
+         * Fetch all DocumentEncryptionKey instances for the user
+         * and decrypt as many as possible using keys from sessionStorage.
+         * This allows the overview to show more documents decrypted.
+         */
+        try {
+            const response = await postJson(
+                "/api/document/encryption_key/get_all/",
+                {}
+            )
+
+            if (!response.json?.keys?.length) {
+                return
+            }
+
+            const {PassphraseCrypto} = await import(
+                "../../editor/e2ee/passphrase-crypto.js"
+            )
+
+            for (const keyData of response.json.keys) {
+                const {document_id, encrypted_key, encrypted_with_master_key} =
+                    keyData
+
+                // Skip if key is already in session storage
+                const sessionKey = sessionStorage.getItem(
+                    `e2ee_key_${document_id}`
+                )
+                if (sessionKey) {
+                    continue
+                }
+
+                // Only decrypt keys encrypted with master key (user's passphrase)
+                if (!encrypted_with_master_key) {
+                    continue
+                }
+
+                try {
+                    // Try to decrypt using the master key
+                    const masterKeyBase64 =
+                        sessionStorage.getItem("e2ee_master_key")
+                    if (!masterKeyBase64) {
+                        continue
+                    }
+
+                    const masterKeyBytes = Uint8Array.from(
+                        atob(masterKeyBase64),
+                        c => c.charCodeAt(0)
+                    )
+                    const masterKey = await PassphraseCrypto.importKey(
+                        masterKeyBytes,
+                        "AES-GCM"
+                    )
+
+                    const dek = await PassphraseCrypto.decryptString(
+                        encrypted_key,
+                        masterKey
+                    )
+
+                    // Store the decrypted DEK in session storage
+                    sessionStorage.setItem(`e2ee_key_${document_id}`, dek)
+                } catch (_error) {
+                    // Decryption failed, this is expected if user hasn't entered passphrase yet
+                    continue
+                }
+            }
+        } catch (_error) {
+            // Silently fail - this is a best-effort operation
+        }
+    }
+
     showCached() {
         return this.loaddatafromIndexedDB().then(json => {
             if (!json) {
@@ -281,6 +356,9 @@ export class DocumentOverview {
         this.documentStyles = json.document_styles
         this.documentTemplates = json.document_templates
         this.initTable()
+        // Attempt to decrypt E2EE titles for documents where the key is
+        // available in sessionStorage but the title hasn't been cached yet.
+        this.decryptE2EETitles()
         // Reset scroll position to top to prevent Safari from auto-scrolling
         // to the focused table element, which would hide the header/menu
         window.scrollTo(0, 0)
@@ -290,6 +368,47 @@ export class DocumentOverview {
             this.singleNewDocumentMenuItem()
         }
         return json
+    }
+
+    /**
+     * For E2EE documents with an encrypted title (e2ee_title) and a key
+     * available in sessionStorage, decrypt the title and update the DOM.
+     */
+    async decryptE2EETitles() {
+        const e2eeDocs = this.documentList.filter(
+            doc =>
+                doc.e2ee &&
+                doc.title &&
+                sessionStorage.getItem(`e2ee_title_${doc.id}`) === null
+        )
+        if (!e2eeDocs.length) {
+            return
+        }
+        const {E2EEKeyManager} = await import("../../editor/e2ee/key-manager")
+        const {E2EEEncryptor} = await import("../../editor/e2ee/encryptor")
+        for (const doc of e2eeDocs) {
+            const key = await E2EEKeyManager.getKeyFromSession(doc.id)
+            if (!key) {
+                continue
+            }
+            try {
+                const title = await E2EEEncryptor.decrypt(doc.title, key)
+                sessionStorage.setItem(`e2ee_title_${doc.id}`, title)
+                // Update the DOM element for this document's title
+                const linkEl = document.querySelector(
+                    `a.fw-data-table-title[href="/document/${doc.id}"]`
+                )
+                if (linkEl) {
+                    const span = linkEl.querySelector("span.fw-searchable")
+                    if (span) {
+                        span.textContent = shortFileTitle(title, doc.path)
+                        span.classList.remove("e2ee-encrypted-title")
+                    }
+                }
+            } catch (_e) {
+                // Decryption failed — key may be stale. Ignore.
+            }
+        }
     }
 
     onResize() {
@@ -619,15 +738,31 @@ export class DocumentOverview {
             return row
         }
 
+        // For E2EE documents, check if the decrypted title is cached in
+        // sessionStorage (set when the user opened the document this session).
+        // The server stores the encrypted title in doc.title; we decrypt it
+        // client-side when the key is available.
+        let displayTitle = doc.title
+        let hasDecryptedTitle = false
+        if (doc.e2ee) {
+            const cachedTitle = sessionStorage.getItem(`e2ee_title_${doc.id}`)
+            if (cachedTitle !== null) {
+                displayTitle = cachedTitle
+                hasDecryptedTitle = true
+            } else if (doc.title) {
+                displayTitle = gettext("Encrypted Document")
+            }
+        }
+
         // This is the folder of the file. Return the file.
         return [
             String(doc.id),
             "file",
             false,
-            `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}">
-                <i class="far fa-file-alt"></i>
-                <span class="fw-searchable">
-                    ${shortFileTitle(doc.title, doc.path)}
+            `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}" data-id="${doc.id}">
+                ${doc.e2ee ? '<i class="fas fa-lock e2ee-doc-indicator" title="' + gettext("End-to-end encrypted document") + '"></i>' : '<i class="far fa-file-alt"></i>'}
+                <span class="fw-searchable${doc.e2ee && !hasDecryptedTitle ? " e2ee-encrypted-title" : ""}">
+                    ${shortFileTitle(displayTitle, doc.path)}
                 </span>
             </a>`,
             doc.revisions.length
@@ -718,7 +853,198 @@ export class DocumentOverview {
     }
 
     goToNewDocument(id) {
-        this.app.goTo(`/document${this.path}${id}`)
+        let url = `/document${this.path}${id}`
+        if (this.app.settings.E2EE_MODE === "required") {
+            url += "?e2ee=true"
+            this.app.goTo(url)
+        } else if (this.app.settings.E2EE_MODE === "disabled") {
+            this.app.goTo(url)
+        } else {
+            // E2EE is "enabled" - so the document can either be encrypted or non-encrypted
+            // Let user choose.
+            const encryptedInfoBody = `
+                <p class="e2ee-choice-intro">${gettext("Encrypted documents protect your content so that only people with the password can read it.")}</p>
+                <strong>${gettext("Advantages")}</strong>
+                <ul>
+                    <li>${gettext("Only people with the password can read the document.")}</li>
+                    <li>${gettext("The server cannot access the document contents.")}</li>
+                </ul>
+                <strong>${gettext("Disadvantages")}</strong>
+                <ul>
+                    <li>${gettext("Limited access rights options (no tracked changes or review modes).")}</li>
+                    <li>${gettext("If you lose the password or passphrase, there is no way to recover the document.")}</li>
+                    <li>${gettext("You must share the password with collaborators manually (unless they use a personal passphrase).")}</li>
+                </ul>
+            `
+            const regularInfoBody = `
+                <p class="e2ee-choice-intro">${gettext("Regular documents are the default and work well for most users.")}</p>
+                <strong>${gettext("Advantages")}</strong>
+                <ul>
+                    <li>${gettext("Full access rights options including tracked changes and review modes.")}</li>
+                    <li>${gettext("No risk of losing access if you forget a password.")}</li>
+                    <li>${gettext("Easier collaboration — no need to share passwords with collaborators.")}</li>
+                </ul>
+                <strong>${gettext("Disadvantages")}</strong>
+                <ul>
+                    <li>${gettext("The server can technically access the document contents.")}</li>
+                    <li>${gettext("No additional protection beyond your account password.")}</li>
+                </ul>
+            `
+            const dialog = new Dialog({
+                title: gettext("Choose encryption type of new document."),
+                width: 460,
+                body: `<div>
+                    <div>
+                        <input type="radio" id="nonencrypted" name="encryption" value="nonencrypted" checked>
+                        <label for="nonencrypted">${gettext("Non-encrypted")}</label>
+                    </div>
+                    <div>&nbsp;</div>
+                    <div>
+                        <input type="radio" id="e2ee" name="encryption" value="e2ee">
+                        <label for="e2ee">${gettext("Encrypted")}</label>
+                    </div>
+                    <div id="e2ee-info-regular" class="e2ee-choice-info">
+                        ${regularInfoBody}
+                    </div>
+                    <div id="e2ee-info-encrypted" class="e2ee-choice-info" style="display: none;">
+                        ${encryptedInfoBody}
+                    </div>
+                </div>`,
+                buttons: [
+                    {
+                        text: gettext("Cancel"),
+                        type: "cancel"
+                    },
+                    {
+                        text: gettext("Create"),
+                        type: "ok",
+                        click: async _event => {
+                            const e2ee =
+                                document.querySelector(
+                                    'input[name="encryption"]:checked'
+                                )?.value === "e2ee"
+                            dialog.close()
+
+                            if (e2ee) {
+                                // Check if user has passphrase keys already
+                                const {PassphraseManager} = await import(
+                                    "../../editor/e2ee/passphrase-manager.js"
+                                )
+                                const hasPassphraseKeys =
+                                    await PassphraseManager.hasEncryptionKeys()
+                                const hasDismissed =
+                                    await PassphraseManager.hasUserDismissedPassphraseOffer()
+
+                                if (!hasPassphraseKeys && !hasDismissed) {
+                                    // Offer to set up passphrase
+                                    const {setupPassphraseDialog} =
+                                        await import(
+                                            "../../editor/e2ee/passphrase-dialog.js"
+                                        )
+                                    const setupConfirmed = await new Promise(
+                                        resolve => {
+                                            const setupDialog = new Dialog({
+                                                title: gettext(
+                                                    "Set Up Personal Encryption (Optional)"
+                                                ),
+                                                body: `<p>${gettext("Would you like to set up a personal passphrase now? This will allow you to unlock all your encrypted documents with a single passphrase.")}</p>
+                                            <p><strong>${gettext("Note:")}</strong> ${gettext("This is optional. You can also use a per-document password instead.")}</p>`,
+                                                buttons: [
+                                                    {
+                                                        text: gettext(
+                                                            "Skip for Now"
+                                                        ),
+                                                        type: "cancel",
+                                                        click: async () => {
+                                                            setupDialog.close()
+                                                            await PassphraseManager.markPassphraseDismissed()
+                                                            resolve(false)
+                                                        }
+                                                    },
+                                                    {
+                                                        text: gettext(
+                                                            "Set Up Passphrase"
+                                                        ),
+                                                        type: "ok",
+                                                        click: () => {
+                                                            setupDialog.close()
+                                                            resolve(true)
+                                                        }
+                                                    }
+                                                ]
+                                            })
+                                            setupDialog.open()
+                                        }
+                                    )
+
+                                    if (setupConfirmed) {
+                                        // Show passphrase setup dialog
+                                        await setupPassphraseDialog(
+                                            async passphrase => {
+                                                try {
+                                                    const {recoveryKey} =
+                                                        await PassphraseManager.setupEncryption(
+                                                            passphrase
+                                                        )
+                                                    const {
+                                                        showRecoveryKeyDialog
+                                                    } = await import(
+                                                        "../../editor/e2ee/passphrase-dialog.js"
+                                                    )
+                                                    await showRecoveryKeyDialog(
+                                                        recoveryKey
+                                                    )
+                                                } catch (e) {
+                                                    addAlert(
+                                                        "error",
+                                                        gettext(
+                                                            "Failed to set up passphrase: " +
+                                                                e.message
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+
+                                url += "?e2ee=true"
+                            }
+                            this.app.goTo(url)
+                        }
+                    }
+                ]
+            })
+            dialog.open()
+            // Bind radio buttons to show/hide the relevant info block
+            setTimeout(() => {
+                const nonencryptedRadio =
+                    document.getElementById("nonencrypted")
+                const e2eeRadio = document.getElementById("e2ee")
+                const regularInfo = document.getElementById("e2ee-info-regular")
+                const encryptedInfo = document.getElementById(
+                    "e2ee-info-encrypted"
+                )
+                if (
+                    nonencryptedRadio &&
+                    e2eeRadio &&
+                    regularInfo &&
+                    encryptedInfo
+                ) {
+                    const toggleInfo = () => {
+                        if (e2eeRadio.checked) {
+                            regularInfo.style.display = "none"
+                            encryptedInfo.style.display = "block"
+                        } else {
+                            regularInfo.style.display = "block"
+                            encryptedInfo.style.display = "none"
+                        }
+                    }
+                    nonencryptedRadio.addEventListener("change", toggleInfo)
+                    e2eeRadio.addEventListener("change", toggleInfo)
+                }
+            }, 100)
+        }
     }
 
     close() {

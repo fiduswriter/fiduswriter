@@ -20,6 +20,19 @@ import {
     whenReady
 } from "../common"
 import {FeedbackTab} from "../feedback"
+import {E2EEEncryptor} from "./e2ee/encryptor"
+import {E2EEKeyManager} from "./e2ee/key-manager"
+import {
+    enterPassphraseDialog,
+    setupPassphraseDialog,
+    showRecoveryKeyDialog
+} from "./e2ee/passphrase-dialog"
+import {PassphraseManager} from "./e2ee/passphrase-manager"
+import {
+    changePasswordDialog,
+    createPasswordDialog
+} from "./e2ee/password-dialog"
+import {E2EESnapshotManager} from "./e2ee/snapshot-manager"
 
 import * as plugins from "../../plugins/editor"
 import {getSettings} from "../schema/convert"
@@ -145,6 +158,12 @@ export class Editor {
         this.client_id = Math.floor(Math.random() * 0xffffffff)
         this.clientTimeAdjustment = 0
 
+        // E2EE state: holds the encryption key and snapshot manager
+        // for end-to-end encrypted documents. Set to an object with
+        // { key, snapshotManager, encrypted, encryptionSalt, encryptionIterations }
+        // when the document is encrypted and the user has entered the password.
+        this.e2ee = null
+
         this.pathEditable = true // Set to false through plugin to disable path editing.
 
         this.statePlugins = [
@@ -203,7 +222,8 @@ export class Editor {
             staticUrl("css/bibliography.css"),
             staticUrl("css/dot_menu.css"),
             staticUrl("css/cropper.min.css"),
-            staticUrl("css/inline_tools.css")
+            staticUrl("css/inline_tools.css"),
+            staticUrl("css/e2ee.css")
         ])
         new ModDocumentTemplate(this)
         const initPromises = [
@@ -211,21 +231,36 @@ export class Editor {
             this.mod.documentTemplate.getCitationStyles()
         ]
         if (this.docInfo.hasOwnProperty("templateId")) {
-            initPromises.push(
-                postJson("/api/document/create_doc/", {
-                    template_id: this.docInfo.templateId,
-                    path: this.docInfo.path
-                }).then(({json}) => {
-                    this.docInfo.id = json.id
-                    window.history.replaceState(
-                        "",
-                        "",
-                        `/document/${this.docInfo.id}/`
-                    )
-                    delete this.docInfo.templateId
-                    return Promise.resolve()
-                })
+            // Check if this should be an E2EE document.
+            // The E2EE mode can be indicated via:
+            // 1. URL query parameter ?e2ee=true (from overview page)
+            // 2. Global E2EE_MODE variable set by the settings
+            const e2eeParam = new URLSearchParams(window.location.search).get(
+                "e2ee"
             )
+            const isE2EERequired = this.app.settings.E2EE_MODE === "required"
+            const isE2EERequested = e2eeParam === "true" || e2eeParam === "1"
+            const shouldEncrypt = isE2EERequired || isE2EERequested
+
+            if (shouldEncrypt) {
+                initPromises.push(this._createE2EEDocument())
+            } else {
+                initPromises.push(
+                    postJson("/api/document/create_doc/", {
+                        template_id: this.docInfo.templateId,
+                        path: this.docInfo.path
+                    }).then(({json}) => {
+                        this.docInfo.id = json.id
+                        window.history.replaceState(
+                            "",
+                            "",
+                            `/document/${this.docInfo.id}/`
+                        )
+                        delete this.docInfo.templateId
+                        return Promise.resolve()
+                    })
+                )
+            }
         }
         // Handle token-based access (share links)
         if (uuid4Pattern.test(this.docInfo.id)) {
@@ -401,6 +436,26 @@ export class Editor {
                                         is_authenticated: false
                                     }
                                 }
+                                // Handle E2EE encryption parameters from server
+                                if (data.e2ee) {
+                                    if (!this.e2ee) {
+                                        this.e2ee = {
+                                            encrypted: true,
+                                            encryptionSalt: data.e2ee_salt,
+                                            encryptionIterations:
+                                                data.e2ee_iterations,
+                                            key: null,
+                                            snapshotManager:
+                                                new E2EESnapshotManager(this)
+                                        }
+                                    } else {
+                                        this.e2ee.encrypted = true
+                                        this.e2ee.encryptionSalt =
+                                            data.e2ee_salt
+                                        this.e2ee.encryptionIterations =
+                                            data.e2ee_iterations
+                                    }
+                                }
                                 break
                             case "refetch_doc":
                                 // The server has forced a DB save before
@@ -494,11 +549,32 @@ export class Editor {
                                     }
                                 }
                                 break
+                            case "request_snapshot":
+                                // Server is asking a write-capable client to
+                                // send an encrypted snapshot for persistence.
+                                if (this.e2ee && this.e2ee.snapshotManager) {
+                                    this.e2ee.snapshotManager.handleRequestSnapshot(
+                                        data
+                                    )
+                                }
+                                break
+                            case "e2ee_snapshot_received":
+                                // Server confirmed that an encrypted snapshot
+                                // was saved. Informational — no action needed.
+                                if (this.e2ee && this.e2ee.snapshotManager) {
+                                    this.e2ee.snapshotManager.handleSnapshotReceived(
+                                        data
+                                    )
+                                }
+                                break
                             default:
                                 break
                         }
                     },
                     failedAuth: () => {
+                        // Clear all E2EE keys on session expiration
+                        E2EEKeyManager.clearAllKeysFromSession()
+                        PassphraseManager.clearKeysFromSession()
                         if (this.docInfo.token) {
                             // Token-based access failed
                             const tokenDialog = new Dialog({
@@ -565,20 +641,33 @@ export class Editor {
                     }
                 })
                 this.mod.documentTemplate.setStyles(stylesResult.json)
+                const docIsE2EE = docResult.json.doc_info?.e2ee === true
                 this.mod.collab.doc.receiveDocument(docResult.json)
-                // Initialize the WebSocket connection
-                this.ws.init()
-                // Add the close listener
-                this.ws.ws.addEventListener("close", () => {
-                    // Listen to close event and update the headerbar and toolbar view.
-                    if (this.menu.toolbarViews) {
-                        this.menu.toolbarViews.forEach(view => view.update())
-                    }
-                    if (this.menu.headerView) {
-                        this.menu.headerView.update()
-                    }
-                })
+                // For E2EE documents, delay the WebSocket connection until
+                // after the password dialog and decryption are complete (see
+                // _decryptAndLoadDoc). This ensures the key is available when
+                // catch-up diffs arrive from the server.
+                if (!docIsE2EE) {
+                    this.startWebSocket()
+                }
             })
+    }
+
+    /**
+     * Open the WebSocket connection and attach the close listener.
+     * Called immediately for non-E2EE documents and deferred until after
+     * password entry + decryption for E2EE documents.
+     */
+    startWebSocket() {
+        this.ws.init()
+        this.ws.ws.addEventListener("close", () => {
+            if (this.menu.toolbarViews) {
+                this.menu.toolbarViews.forEach(view => view.update())
+            }
+            if (this.menu.headerView) {
+                this.menu.headerView.update()
+            }
+        })
     }
 
     handleAccessRightModification() {
@@ -609,6 +698,154 @@ export class Editor {
         this.close() // Close the editor operations.
     }
 
+    /**
+     * Create a new E2EE document.
+     *
+     * If the user has set up a personal passphrase, generates a random
+     * document encryption key (DEK) and encrypts it with the master key.
+     * Otherwise, prompts for a per-document password.
+     *
+     * @returns {Promise<void>}
+     * @private
+     */
+    async _createE2EEDocument() {
+        let password, key, saltBase64, iterations
+
+        // Check if the user has a personal passphrase set up
+        const hasPassphraseKeys = await PassphraseManager.hasEncryptionKeys()
+
+        if (hasPassphraseKeys) {
+            // Check if keys are unlocked in sessionStorage
+            if (!PassphraseManager.hasKeysInSession()) {
+                // Prompt for passphrase to unlock
+                const result = await new Promise(resolve => {
+                    enterPassphraseDialog(
+                        pwd => resolve({action: "unlock", passphrase: pwd}),
+                        () => resolve({action: "recover"})
+                    )
+                })
+                if (result.action === "unlock" && result.passphrase) {
+                    try {
+                        await PassphraseManager.unlockWithPassphrase(
+                            result.passphrase
+                        )
+                    } catch (_e) {
+                        addAlert("error", gettext("Incorrect passphrase."))
+                    }
+                } else if (result.action === "recover") {
+                    // Recovery flow
+                    const {recoverWithKeyDialog} = await import(
+                        "./e2ee/passphrase-dialog.js"
+                    )
+                    const recoverResult = await new Promise(resolve => {
+                        recoverWithKeyDialog(resolve)
+                    })
+                    if (recoverResult) {
+                        try {
+                            const {newRecoveryKey} =
+                                await PassphraseManager.recoverWithRecoveryKey(
+                                    recoverResult.recoveryKey,
+                                    recoverResult.newPassphrase
+                                )
+                            const {showRecoveryKeyDialog} = await import(
+                                "./e2ee/passphrase-dialog.js"
+                            )
+                            await new Promise(resolve => {
+                                showRecoveryKeyDialog(newRecoveryKey, resolve)
+                            })
+                        } catch (e) {
+                            addAlert(
+                                "error",
+                                gettext("Recovery failed: ") + e.message
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (PassphraseManager.hasKeysInSession()) {
+                // Generate a random document password that is itself a raw DEK
+                password = await PassphraseManager.generateDocumentPassword()
+            }
+            // Fall through to per-document password if passphrase unlock failed
+        }
+
+        if (!password) {
+            // Prompt for per-document password
+            password = await new Promise(resolve => {
+                createPasswordDialog(pwd => resolve(pwd))
+            })
+        }
+
+        // Generate a random 16-byte salt
+        const salt = E2EEKeyManager.generateSalt()
+        saltBase64 = btoa(String.fromCharCode(...salt))
+        iterations = 600000
+
+        // Resolve password to encryption key
+        key = await PassphraseManager.resolvePasswordToKey(
+            password,
+            salt,
+            iterations
+        )
+
+        // Create the document on the server with E2EE parameters
+        const {json, status} = await postJson("/api/document/create_doc/", {
+            template_id: this.docInfo.templateId,
+            path: this.docInfo.path,
+            e2ee: "true",
+            e2ee_salt: saltBase64,
+            e2ee_iterations: String(iterations)
+        })
+
+        if (status === 403) {
+            addAlert(
+                "error",
+                json.error || gettext("E2EE is not enabled on this server.")
+            )
+            window.location.href = "/"
+            return
+        }
+
+        this.docInfo.id = json.id
+        window.history.replaceState("", "", `/document/${this.docInfo.id}/`)
+        delete this.docInfo.templateId
+
+        // Store password in sessionStorage
+        E2EEKeyManager.storePasswordInSession(this.docInfo.id, password)
+
+        // If passphrase user, also save encrypted password on server
+        if (hasPassphraseKeys && PassphraseManager.hasKeysInSession()) {
+            try {
+                await PassphraseManager.saveDocumentPassword(
+                    this.docInfo.id,
+                    password,
+                    null,
+                    "user",
+                    true
+                )
+            } catch (_e) {
+                console.error("Failed to save document password:", _e)
+            }
+        } else {
+            // Non-passphrase user: cache the key in sessionStorage
+            await E2EEKeyManager.storeKeyInSession(this.docInfo.id, key)
+        }
+
+        // Set up E2EE state on the editor
+        this.e2ee = {
+            encrypted: true,
+            encryptionSalt: saltBase64,
+            encryptionIterations: iterations,
+            key: key,
+            password: password,
+            snapshotManager: new E2EESnapshotManager(this),
+            usesPassphrase:
+                hasPassphraseKeys && PassphraseManager.hasKeysInSession()
+        }
+        this.e2ee.snapshotManager.setKey(key)
+    }
+
     close() {
         if (this.menu.toolbarViews) {
             this.menu.toolbarViews.forEach(view => view.destroy())
@@ -619,8 +856,46 @@ export class Editor {
         if (this.menu.headerView) {
             this.menu.headerView.destroy()
         }
+        // For E2EE documents, update the sessionStorage title cache with the
+        // current ProseMirror title so the overview shows the correct title
+        // immediately, even before the encrypted snapshot has been saved to
+        // the DB.
+        if (this.e2ee && this.view) {
+            const titleNode = this.view.state.doc.firstChild
+            if (titleNode) {
+                let title = ""
+                titleNode.forEach(child => {
+                    if (
+                        !child.marks.find(mark => mark.type.name === "deletion")
+                    ) {
+                        title += child.textContent
+                    }
+                })
+                sessionStorage.setItem(`e2ee_title_${this.docInfo.id}`, title)
+            }
+        }
         if (this.ws) {
-            this.ws.close()
+            // For E2EE documents, try to send one last encrypted snapshot before
+            // closing so the title (and any last-minute edits) are persisted.
+            // The WebSocket connector has an 80ms throttle between messages, so
+            // we delay ws.close() to give the snapshot time to be queued and
+            // sent. For SPA navigation 300ms is usually enough; for tab-close
+            // the browser may still kill us early.
+            // For non-E2EE documents we close immediately so the server's
+            // disconnect handler saves the document to the DB before the
+            // overview page loads its data (avoiding a race where the overview
+            // would still see the old/empty title).
+            if (
+                this.e2ee &&
+                this.e2ee.key &&
+                this.e2ee.snapshotManager &&
+                this.docInfo.access_rights === "write"
+            ) {
+                this.e2ee.snapshotManager.handleRequestSnapshot({})
+                window.setTimeout(() => this.ws.close(), 300)
+            } else {
+                this.ws.close()
+            }
         }
     }
 

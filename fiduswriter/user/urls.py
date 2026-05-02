@@ -37,6 +37,36 @@ urlpatterns = [
         views.get_confirmkey_data,
         name="get_confirmkey_data",
     ),
+    re_path(
+        "^encryption_key/$",
+        views.get_encryption_key,
+        name="get_encryption_key",
+    ),
+    re_path(
+        "^encryption_key/save/$",
+        views.save_encryption_key,
+        name="save_encryption_key",
+    ),
+    re_path(
+        r"^encryption_public_key/(?P<user_id>[0-9]+)/$",
+        views.get_public_key,
+        name="get_public_key",
+    ),
+    re_path(
+        "^preferences/get/$",
+        views.get_preferences,
+        name="get_preferences",
+    ),
+    re_path(
+        "^preferences/update/$",
+        views.update_preferences,
+        name="update_preferences",
+    ),
+    re_path(
+        "^encryption_key/has_keys/$",
+        views.has_encryption_keys,
+        name="has_encryption_keys",
+    ),
     re_path(r"^signup/$", views.signup, name="account_signup"),
     re_path(r"^login/$", views.login, name="account_login"),
     # Authentication handling

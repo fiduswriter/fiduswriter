@@ -33,6 +33,7 @@
         <!-- layout styles -->
         <link type="text/css" rel="stylesheet" href="{% static "css/common.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/header_menu.css" %}" />
+        <script>window.settings = {{ settings|safe }}</script>
         <!-- Check browser -->
         <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous" defer async></script>
         <script type="text/javascript" src="/api/jsi18n/" id="i18n"></script>

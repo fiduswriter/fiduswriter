@@ -2,6 +2,7 @@ import time
 import os
 import bleach
 import json
+import base64
 from copy import deepcopy
 
 from django.contrib.contenttypes.models import ContentType
@@ -26,11 +27,12 @@ from document.models import (
     DocumentRevision,
     DocumentTemplate,
     ShareToken,
+    DocumentEncryptionKey,
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
 )
-from usermedia.models import DocumentImage, Image
+from usermedia.models import DocumentImage, EncryptedDocumentImage, Image
 from bibliography.models import Entry
 from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
@@ -74,12 +76,16 @@ def get_documentlist_extra(request):
             }
             if image.image.thumbnail:
                 images[image.image.id]["thumbnail"] = image.image.thumbnail.url
-        if "type" not in doc.content:
+        # Initialize document content from template if empty.
+        # We only do this when content is a dict — once an
+        # e2ee_snapshot is saved, the content becomes a Base64
+        # string and isinstance skips it.
+        if isinstance(doc.content, dict) and "type" not in doc.content:
             doc.content = deepcopy(doc.template.content)
             if "type" not in doc.content:
                 doc.content["type"] = "doc"
             if "content" not in doc.content:
-                doc.content["content"] = [{type: "title"}]
+                doc.content["content"] = [{"type": "title"}]
             doc.save()
         response["documents"].append(
             {
@@ -88,6 +94,13 @@ def get_documentlist_extra(request):
                 "comments": doc.comments,
                 "bibliography": doc.bibliography,
                 "id": doc.id,
+                "e2ee": doc.e2ee,
+                "e2ee_salt": (
+                    base64.b64encode(doc.e2ee_salt).decode("ascii")
+                    if doc.e2ee_salt
+                    else None
+                ),
+                "e2ee_iterations": doc.e2ee_iterations,
             }
         )
     return JsonResponse(response, status=status)
@@ -151,6 +164,7 @@ def documents_list(request):
                 "title": document.title,
                 "path": path,
                 "is_owner": is_owner,
+                "e2ee": document.e2ee,
                 "owner": {
                     "id": document.owner.id,
                     "name": document.owner.readable_name,
@@ -198,6 +212,32 @@ def get_access_rights(request):
     return JsonResponse(response, status=status)
 
 
+def _handle_automatic_key_sharing(document, user):
+    """
+    Check whether a user is eligible for automatic DEK sharing.
+
+    Returns True if the user has passphrase keys and no DEK exists yet.
+    The frontend is responsible for encrypting the DEK with the
+    recipient's public key and saving it via the document encryption key API.
+    """
+    from user.models import UserEncryptionKey
+
+    if not document.e2ee:
+        return False
+
+    # Check if user already has a DEK for this document
+    if DocumentEncryptionKey.objects.filter(
+        document=document, holder=user
+    ).exists():
+        return False
+
+    # Check if user has encryption keys (passphrase setup)
+    if not UserEncryptionKey.objects.filter(user=user).exists():
+        return False
+
+    return True
+
+
 @login_required
 @ajax_required
 @require_POST
@@ -211,10 +251,18 @@ def save_access_rights(request):
         doc = Document.objects.filter(pk=doc_id, owner=request.user).first()
         if not doc:
             continue
+        from document.models import E2EE_ALLOWED_RIGHTS
+
         for right in rights:
             holder_type = ContentType.objects.get(
                 app_label="user", model=right["holder"]["type"]
             )
+            if (
+                doc.e2ee
+                and right["rights"] not in E2EE_ALLOWED_RIGHTS
+                and right["rights"] != "delete"
+            ):
+                continue
             if right["rights"] == "delete":
                 # Status 'delete' means the access right is marked for
                 # deletion.
@@ -288,6 +336,12 @@ def save_access_rights(request):
                             False,
                         )
                 access_right.save()
+
+                # For new access rights on E2EE documents with User holders,
+                # attempt automatic key sharing if user has passphrase keys
+                if right["holder"]["type"] == "user" and doc.e2ee:
+                    _handle_automatic_key_sharing(doc, holder)
+
     status = 201
     return JsonResponse(response, status=status)
 
@@ -404,13 +458,44 @@ def create_doc(request):
     response = {}
     template_id = request.POST["template_id"]
     path = request.POST["path"]
+    e2ee = request.POST.get("e2ee", "") == "true"
+
+    # Check E2EE mode
+    e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
+    if e2ee and e2ee_mode == "disabled":
+        return JsonResponse(
+            {"error": "E2EE is not enabled on this server"}, status=403
+        )
+    if not e2ee and e2ee_mode == "required":
+        return JsonResponse(
+            {"error": "Only E2EE documents are allowed on this server"},
+            status=403,
+        )
+
     document_template = DocumentTemplate.objects.filter(
         Q(user=request.user) | Q(user=None), id=template_id
     ).first()
     if not document_template:
         return JsonResponse(response, status=405)
+
+    # For E2EE documents, the client generates a random salt and sends it
+    # to the server. The salt is not a secret — it is stored in plaintext
+    # alongside the encrypted content.
+    e2ee_salt = None
+    e2ee_iterations = 600000
+    if e2ee:
+        salt_b64 = request.POST.get("e2ee_salt")
+        if salt_b64:
+            e2ee_salt = base64.b64decode(salt_b64)
+        e2ee_iterations = int(request.POST.get("e2ee_iterations", 600000))
+
     document = Document.objects.create(
-        owner_id=request.user.pk, template_id=template_id, path=path
+        owner_id=request.user.pk,
+        template_id=template_id,
+        path=path,
+        e2ee=e2ee,
+        e2ee_salt=e2ee_salt,
+        e2ee_iterations=e2ee_iterations,
     )
     response["id"] = document.id
     return JsonResponse(response, status=201)
@@ -423,6 +508,20 @@ def import_create(request):
     # First step of import: Create a document and return the id of it
     response = {}
     status = 201
+
+    # Check E2EE mode
+    e2ee = request.POST.get("e2ee", "") == "true"
+    e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
+    if e2ee and e2ee_mode == "disabled":
+        return JsonResponse(
+            {"error": "E2EE is not enabled on this server"}, status=403
+        )
+    if not e2ee and e2ee_mode == "required":
+        return JsonResponse(
+            {"error": "Only E2EE documents are allowed on this server"},
+            status=403,
+        )
+
     import_id = request.POST["import_id"]
     document_template = (
         DocumentTemplate.objects.filter(
@@ -512,11 +611,26 @@ def import_create(request):
         ):
             counter += 1
             path = f"{base_path} {counter}"
+
+    e2ee_salt = None
+    e2ee_iterations = 600000
+    if e2ee:
+        salt_b64 = request.POST.get("e2ee_salt")
+        if salt_b64:
+            e2ee_salt = base64.b64decode(salt_b64)
+        e2ee_iterations = int(request.POST.get("e2ee_iterations", 600000))
+
     document = Document.objects.create(
-        owner=request.user, template=document_template, path=path
+        owner=request.user,
+        template=document_template,
+        path=path,
+        e2ee=e2ee,
+        e2ee_salt=e2ee_salt,
+        e2ee_iterations=e2ee_iterations,
     )
     response["id"] = document.id
     response["path"] = document.path
+    response["e2ee"] = document.e2ee
     return JsonResponse(response, status=status)
 
 
@@ -524,7 +638,7 @@ def import_create(request):
 @ajax_required
 @require_POST
 def import_image(request):
-    # create an image for a document
+    # create an image for a document (unencrypted only)
     response = {}
     document = Document.objects.filter(
         owner_id=request.user.pk, id=int(request.POST["doc_id"])
@@ -559,6 +673,64 @@ def import_image(request):
 @login_required
 @ajax_required
 @require_POST
+def e2ee_image(request):
+    # Store an encrypted image for an E2EE document.
+    # The file is encrypted client-side; the server stores it as-is.
+    response = {}
+    document = Document.objects.filter(
+        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+    ).first()
+    if not document or not document.e2ee:
+        return JsonResponse(response, status=401)
+
+    from usermedia.models import EncryptedDocumentImage
+
+    # Copyright may be an encrypted Base64 string or a plaintext JSON dict.
+    # Both are valid values for a JSONField (string and dict are valid JSON).
+    try:
+        copyright_value = json.loads(request.POST["copyright"])
+    except (json.JSONDecodeError, KeyError):
+        copyright_value = {}
+    enc_image = EncryptedDocumentImage(
+        document=document,
+        title=request.POST["title"],
+        copyright=copyright_value,
+    )
+    if "image" in request.FILES:
+        enc_image.image = request.FILES["image"]
+    if "checksum" in request.POST:
+        enc_image.checksum = int(request.POST["checksum"])
+    enc_image.save()
+
+    response["id"] = enc_image.id
+    response["image"] = enc_image.image.url
+    response["original_file_type"] = request.POST.get(
+        "original_file_type", "image/png"
+    )
+    return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
+def delete_e2ee_image(request):
+    response = {}
+    document = Document.objects.filter(
+        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+    ).first()
+    if not document or not document.e2ee:
+        return JsonResponse(response, status=401)
+
+    image_id = int(request.POST.get("image_id", 0))
+    EncryptedDocumentImage.objects.filter(
+        document=document, id=image_id
+    ).delete()
+    return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
 def import_doc(request):
     response = {}
     doc_id = request.POST["id"]
@@ -577,9 +749,18 @@ def import_doc(request):
         status = 403
         return JsonResponse(response, status=status)
     document.title = request.POST["title"]
-    document.content = json.loads(request.POST["content"])
-    document.comments = json.loads(request.POST["comments"])
-    document.bibliography = json.loads(request.POST["bibliography"])
+    if document.e2ee:
+        # For E2EE documents, content/comments/bibliography are
+        # encrypted strings (opaque Base64 ciphertext). Store as-is
+        # and record that a snapshot exists at version 0.
+        document.content = request.POST["content"]
+        document.comments = request.POST["comments"]
+        document.bibliography = request.POST["bibliography"]
+        document.e2ee_snapshot_version = 0
+    else:
+        document.content = json.loads(request.POST["content"])
+        document.comments = json.loads(request.POST["comments"])
+        document.bibliography = json.loads(request.POST["bibliography"])
     # document.doc_version should always be the current version, so don't
     # bother about it.
     document.save()
@@ -958,9 +1139,22 @@ def get_doc_data(request):
         "accessed_via_token": bool(token_str),
     }
 
+    if doc.e2ee:
+        doc_info["e2ee"] = True
+        doc_info["e2ee_salt"] = (
+            base64.b64encode(doc.e2ee_salt).decode("ascii")
+            if doc.e2ee_salt
+            else None
+        )
+        doc_info["e2ee_iterations"] = doc.e2ee_iterations
+    else:
+        doc_info["e2ee"] = False
+
     # Initialize document content from template if empty (same logic as
-    # WebSocket consumer's subscribe handler)
-    if "type" not in doc.content:
+    # WebSocket consumer's subscribe handler). We only do this when
+    # content is a dict — once an e2ee_snapshot is saved, the content
+    # becomes a Base64 string and isinstance skips it.
+    if isinstance(doc.content, dict) and "type" not in doc.content:
         doc.content = deepcopy(doc.template.content)
         if "type" not in doc.content:
             doc.content["type"] = "doc"
@@ -969,14 +1163,31 @@ def get_doc_data(request):
         doc.save()
 
     # Build doc data
-    doc_data = {
-        "v": doc.version,
-        "content": prosemirror.to_mini_json(
-            prosemirror.from_json(doc.content)
-        ),
-        "bibliography": doc.bibliography,
-        "images": {},
-    }
+    if doc.e2ee:
+        # For E2EE documents, the client should reconstruct from the last
+        # encrypted snapshot, then catch up via WebSocket diffs. Return
+        # e2ee_snapshot_version as "v" so the client subscribes at the right
+        # version and the server sends the covering diffs automatically.
+        doc_v = (
+            doc.e2ee_snapshot_version
+            if doc.e2ee_snapshot_version is not None
+            else 0
+        )
+        doc_data = {
+            "v": doc_v,
+            "content": doc.content,
+            "bibliography": doc.bibliography,
+            "images": {},
+        }
+    else:
+        doc_data = {
+            "v": doc.version,
+            "content": prosemirror.to_mini_json(
+                prosemirror.from_json(doc.content)
+            ),
+            "bibliography": doc.bibliography,
+            "images": {},
+        }
 
     # Include template for write-access users.
     #
@@ -993,6 +1204,8 @@ def get_doc_data(request):
     #   adjustment is a no-op.
     # - The template content is static (set by admins) and does not change
     #   during editing, so the DB value is always current.
+    # For E2EE documents, the template is still needed — the client
+    # decrypts the content first, then template adjustment works normally.
     if access_rights == "write":
         doc_data["template"] = {
             "id": doc.template.id,
@@ -1000,42 +1213,62 @@ def get_doc_data(request):
         }
 
     # Get document images
-    for dimage in (
-        DocumentImage.objects.filter(document_id=doc.id)
-        .select_related("image")
-        .only(
-            "id",
-            "title",
-            "copyright",
-            "image__id",
-            "image__image",
-            "image__file_type",
-            "image__added",
-            "image__checksum",
-            "image__thumbnail",
-            "image__height",
-            "image__width",
-        )
-    ):
-        image = dimage.image
-        field_obj = {
-            "id": image.id,
-            "title": dimage.title,
-            "copyright": dimage.copyright,
-            "image": image.image.url,
-            "file_type": image.file_type,
-            "added": int(image.added.timestamp()) * 1000,
-            "checksum": image.checksum,
-            "cats": [],
-        }
-        if image.thumbnail:
-            field_obj["thumbnail"] = image.thumbnail.url
-            field_obj["height"] = image.height
-            field_obj["width"] = image.width
-        doc_data["images"][image.id] = field_obj
+    if doc.e2ee:
+        # For E2EE documents, use EncryptedDocumentImage (per-document image storage)
+        for eimage in EncryptedDocumentImage.objects.filter(
+            document_id=doc.id
+        ):
+            field_obj = {
+                "id": eimage.id,
+                "title": eimage.title,
+                "copyright": eimage.copyright,
+                "image": eimage.image.url if eimage.image else "",
+                "file_type": "application/octet-stream",
+                "added": int(eimage.added.timestamp()) * 1000,
+                "checksum": eimage.checksum,
+                "cats": [],
+            }
+            doc_data["images"][eimage.id] = field_obj
+    else:
+        for dimage in (
+            DocumentImage.objects.filter(document_id=doc.id)
+            .select_related("image")
+            .only(
+                "id",
+                "title",
+                "copyright",
+                "image__id",
+                "image__image",
+                "image__file_type",
+                "image__added",
+                "image__checksum",
+                "image__thumbnail",
+                "image__height",
+                "image__width",
+            )
+        ):
+            image = dimage.image
+            field_obj = {
+                "id": image.id,
+                "title": dimage.title,
+                "copyright": dimage.copyright,
+                "image": image.image.url,
+                "file_type": image.file_type,
+                "added": int(image.added.timestamp()) * 1000,
+                "checksum": image.checksum,
+                "cats": [],
+            }
+            if image.thumbnail:
+                field_obj["thumbnail"] = image.thumbnail.url
+                field_obj["height"] = image.height
+                field_obj["width"] = image.width
+            doc_data["images"][image.id] = field_obj
 
     # Filter comments based on access rights
-    if access_rights == "read-without-comments":
+    if doc.e2ee:
+        # For E2EE documents, comments are encrypted - send as-is
+        doc_data["comments"] = doc.comments
+    elif access_rights == "read-without-comments":
         doc_data["comments"] = []
     elif access_rights in ["review", "review-tracked"]:
         filtered_comments = {}
@@ -1426,6 +1659,147 @@ def create_template_admin(request):
                 file_type=e_template["file_type"],
             )
     return JsonResponse(response, status=201)
+
+
+@login_required
+@ajax_required
+@require_POST
+def save_document_encryption_key(request):
+    """Create or update a DocumentEncryptionKey record."""
+    response = {}
+    status = 200
+    doc_id = int(request.POST["document_id"])
+    document = Document.objects.filter(pk=doc_id).first()
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+
+    # Now only support User holders (no more UserInvite)
+    User = get_user_model()
+    holder_id = int(request.POST.get("holder_id", request.user.pk))
+    holder = User.objects.filter(pk=holder_id).first()
+    if not holder:
+        return JsonResponse({"error": "Holder user not found"}, status=404)
+
+    # Permission check:
+    # - Owner can create keys for anyone
+    # - Non-owners can only create keys for themselves
+    # - Non-owners must have access rights to the document
+    if document.owner != request.user:
+        if holder_id != request.user.pk:
+            return JsonResponse({"error": "Not allowed"}, status=403)
+        if not AccessRight.objects.filter(
+            document=document, user=request.user
+        ).first():
+            return JsonResponse({"error": "No access"}, status=403)
+
+    dek_record, created = DocumentEncryptionKey.objects.get_or_create(
+        document=document,
+        holder=holder,
+        defaults={
+            "encrypted_key": request.POST["encrypted_key"],
+            "encrypted_with_master_key": request.POST.get(
+                "encrypted_with_master_key", "true"
+            )
+            == "true",
+        },
+    )
+    if not created:
+        dek_record.encrypted_key = request.POST["encrypted_key"]
+        dek_record.encrypted_with_master_key = (
+            request.POST.get("encrypted_with_master_key", "true") == "true"
+        )
+        dek_record.save()
+    response["id"] = dek_record.id
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def get_document_encryption_key(request):
+    """Get the DocumentEncryptionKey for the current user and a document."""
+    response = {}
+    status = 200
+    doc_id = int(request.POST["document_id"])
+    document = Document.objects.filter(pk=doc_id).first()
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+
+    # Check access
+    if (
+        document.owner != request.user
+        and not AccessRight.objects.filter(
+            document=document, user=request.user
+        ).first()
+    ):
+        return JsonResponse({"error": "No access"}, status=403)
+
+    dek_record = DocumentEncryptionKey.objects.filter(
+        document=document, holder=request.user
+    ).first()
+    if dek_record:
+        response["has_key"] = True
+        response["id"] = dek_record.id
+        response["encrypted_key"] = dek_record.encrypted_key
+        response["encrypted_with_master_key"] = (
+            dek_record.encrypted_with_master_key
+        )
+    else:
+        response["has_key"] = False
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def update_document_encryption_key(request):
+    """Update a DocumentEncryptionKey (key upgrade after asymmetric decryption)."""
+    response = {}
+    status = 200
+    dek_id = int(request.POST["id"])
+    dek_record = DocumentEncryptionKey.objects.filter(pk=dek_id).first()
+    if not dek_record:
+        return JsonResponse({"error": "Key not found"}, status=404)
+    document = dek_record.document
+    # Only the holder or the owner can update
+    if not (
+        document.owner == request.user or dek_record.holder == request.user
+    ):
+        return JsonResponse({"error": "Not allowed"}, status=403)
+
+    dek_record.encrypted_key = request.POST["encrypted_key"]
+    dek_record.encrypted_with_master_key = (
+        request.POST.get("encrypted_with_master_key", "true") == "true"
+    )
+    dek_record.save()
+    response["id"] = dek_record.id
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+def get_user_document_encryption_keys(request):
+    """Get all DocumentEncryptionKey instances for the current user."""
+    response = {}
+    status = 200
+
+    # Get all DEK records where user is the holder
+    dek_records = DocumentEncryptionKey.objects.filter(
+        holder=request.user
+    ).select_related("document")
+
+    response["keys"] = []
+    for dek in dek_records:
+        response["keys"].append(
+            {
+                "id": dek.id,
+                "document_id": dek.document_id,
+                "encrypted_key": dek.encrypted_key,
+                "encrypted_with_master_key": dek.encrypted_with_master_key,
+            }
+        )
+
+    return JsonResponse(response, status=status)
 
 
 @staff_member_required

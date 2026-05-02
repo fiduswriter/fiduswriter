@@ -43,11 +43,7 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
         # Enter editor
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        self.click_new_document_button(self.driver)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
@@ -94,11 +90,7 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
         time.sleep(1)
         # Enter editor
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        self.click_new_document_button(self.driver)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
@@ -126,6 +118,7 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
             urlparse(self.driver.current_url).path,
             "/documents/Reports/2019/February/",
         )
+        time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
             lambda driver: len(
                 driver.find_elements(

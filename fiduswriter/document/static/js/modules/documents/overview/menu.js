@@ -51,10 +51,17 @@ export const bulkMenuModel = () => ({
                     )
                 }
                 if (ownIds.length) {
+                    // Check if any of the selected documents are E2EE encrypted
+                    const e2ee = ownIds.some(
+                        id =>
+                            overview.documentList.find(doc => doc.id === id)
+                                ?.e2ee
+                    )
                     const dialog = new DocumentAccessRightsDialog(
                         ids,
                         overview.contacts,
-                        memberDetails => overview.contacts.push(memberDetails)
+                        memberDetails => overview.contacts.push(memberDetails),
+                        e2ee
                     )
                     dialog.init()
                 }

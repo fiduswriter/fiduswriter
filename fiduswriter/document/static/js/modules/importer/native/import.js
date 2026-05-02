@@ -1,5 +1,6 @@
 import {addAlert, deactivateWait, postJson, shortFileTitle} from "../../common"
 import {extractTemplate} from "../../document_template"
+import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {GetImages} from "./get_images"
 
 export class NativeImporter {
@@ -12,7 +13,8 @@ export class NativeImporter {
         user,
         importId = null,
         requestedPath = "",
-        template = null
+        template = null,
+        e2eeOptions = null
     ) {
         this.doc = doc
         this.docId = false
@@ -24,6 +26,7 @@ export class NativeImporter {
         this.importId = importId
         this.requestedPath = requestedPath
         this.template = template
+        this.e2eeOptions = e2eeOptions // {enabled: boolean, key?: CryptoKey}
     }
 
     init() {
@@ -63,18 +66,79 @@ export class NativeImporter {
             })
     }
 
+    async _maybeDecryptImage(imageEntry) {
+        if (
+            !this.e2eeOptions ||
+            !this.e2eeOptions.sourceKey ||
+            !imageEntry.file
+        ) {
+            return
+        }
+        if (imageEntry.file_type !== "application/octet-stream") {
+            return
+        }
+        const {E2EEEncryptor} = await import("../../editor/e2ee/encryptor")
+        const fileBuffer = await imageEntry.file.arrayBuffer()
+        const bytes = new Uint8Array(fileBuffer)
+        // Build binary string in chunks to avoid "Maximum call stack size exceeded"
+        let binary = ""
+        const chunkSize = 65536
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, i + chunkSize)
+            binary += String.fromCharCode.apply(null, chunk)
+        }
+        const base64 = btoa(binary)
+        const decrypted = await E2EEEncryptor.decryptBufferToBase64(
+            base64,
+            this.e2eeOptions.sourceKey
+        )
+        const mime = imageEntry.original_file_type || "image/png"
+        const byteCharacters = atob(decrypted)
+        const byteNumbers = new Array(byteCharacters.length)
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i)
+        }
+        const byteArray = new Uint8Array(byteNumbers)
+        imageEntry.file = new Blob([byteArray], {type: mime})
+        imageEntry.file_type = mime
+    }
+
+    async _maybeEncryptImage(imageEntry) {
+        if (
+            !this.e2eeOptions ||
+            !this.e2eeOptions.enabled ||
+            !this.e2eeOptions.key
+        ) {
+            return imageEntry.file
+        }
+        const {E2EEEncryptor} = await import("../../editor/e2ee/encryptor")
+        return E2EEEncryptor.encryptImage(imageEntry.file, this.e2eeOptions.key)
+    }
+
     saveImages(images, ImageTranslationTable) {
+        const isE2EE = this.e2eeOptions && this.e2eeOptions.enabled
+        const endpoint = isE2EE
+            ? "/api/document/e2ee_image/"
+            : "/api/document/import/image/"
+
         const sendPromises = Object.values(images).map(imageEntry => {
-            return postJson("/api/document/import/image/", {
-                doc_id: this.docId,
-                title: imageEntry.title,
-                copyright: imageEntry.copyright,
-                checksum: imageEntry.checksum,
-                image: {
-                    file: imageEntry.file,
-                    filename: imageEntry.image.split("/").pop()
-                }
-            })
+            return this._maybeDecryptImage(imageEntry)
+                .then(() => this._maybeEncryptImage(imageEntry))
+                .then(encryptedFile => {
+                    const postData = {
+                        doc_id: this.docId,
+                        title: imageEntry.title,
+                        copyright: isE2EE
+                            ? JSON.stringify(imageEntry.copyright)
+                            : imageEntry.copyright,
+                        checksum: imageEntry.checksum,
+                        image: {
+                            file: encryptedFile,
+                            filename: imageEntry.image.split("/").pop()
+                        }
+                    }
+                    return postJson(endpoint, postData)
+                })
                 .then(
                     ({json}) => (ImageTranslationTable[imageEntry.id] = json.id)
                 )
@@ -120,9 +184,7 @@ export class NativeImporter {
             ? this.template
             : extractTemplate(this.doc.content)
 
-        // We create the document on the server so that we have an ID for it and
-        // can link the images to it.
-        return postJson("/api/document/import/create/", {
+        const postData = {
             template: JSON.stringify(template.content),
             export_templates: JSON.stringify(template.exportTemplates),
             document_styles: JSON.stringify(template.documentStyles),
@@ -135,10 +197,25 @@ export class NativeImporter {
                 : template.content.attrs.import_id,
             template_title: template.content.attrs.template,
             path: this.requestedPath
-        })
+        }
+
+        if (this.e2eeOptions && this.e2eeOptions.enabled) {
+            postData.e2ee = "true"
+            if (this.e2eeOptions.salt) {
+                postData.e2ee_salt = this.e2eeOptions.salt
+            }
+            if (this.e2eeOptions.iterations) {
+                postData.e2ee_iterations = String(this.e2eeOptions.iterations)
+            }
+        }
+
+        // We create the document on the server so that we have an ID for it and
+        // can link the images to it.
+        return postJson("/api/document/import/create/", postData)
             .then(({json}) => {
                 this.docId = json.id
                 this.path = json.path
+                this.e2ee = json.e2ee || false
             })
             .catch(error => {
                 addAlert("error", gettext("Could not create document"))
@@ -146,14 +223,50 @@ export class NativeImporter {
             })
     }
 
-    saveDocument() {
-        return postJson("/api/document/import/", {
-            id: this.docId,
-            title: this.doc.title,
-            content: this.doc.content,
-            comments: this.doc.comments,
-            bibliography: this.bibliography
-        })
+    async saveDocument() {
+        let saveData
+        if (
+            this.e2eeOptions &&
+            this.e2eeOptions.enabled &&
+            this.e2eeOptions.key
+        ) {
+            // For E2EE documents, encrypt content/comments/bibliography
+            // before sending to the server.
+            const {E2EEEncryptor} = await import("../../editor/e2ee/encryptor")
+            const encryptedContent = await E2EEEncryptor.encryptObject(
+                this.doc.content,
+                this.e2eeOptions.key
+            )
+            const encryptedComments = await E2EEEncryptor.encryptObject(
+                this.doc.comments || {},
+                this.e2eeOptions.key
+            )
+            const encryptedBibliography = await E2EEEncryptor.encryptObject(
+                this.bibliography,
+                this.e2eeOptions.key
+            )
+            // Encrypt the title as well so it doesn't leak server-side.
+            const encryptedTitle = await E2EEEncryptor.encrypt(
+                this.doc.title,
+                this.e2eeOptions.key
+            )
+            saveData = {
+                id: this.docId,
+                title: encryptedTitle,
+                content: encryptedContent,
+                comments: encryptedComments,
+                bibliography: encryptedBibliography
+            }
+        } else {
+            saveData = {
+                id: this.docId,
+                title: this.doc.title,
+                content: this.doc.content,
+                comments: this.doc.comments,
+                bibliography: this.bibliography
+            }
+        }
+        return postJson("/api/document/import/", saveData)
             .then(({json}) => {
                 const docInfo = {
                     is_owner: true,
@@ -174,6 +287,20 @@ export class NativeImporter {
                 this.doc.revisions = []
                 this.doc.rights = "write"
                 this.doc.path = this.path
+                this.doc.e2ee = this.e2ee || false
+                // Cache the E2EE key in sessionStorage so the user doesn't have
+                // to re-enter the password when opening the document again.
+                if (
+                    this.e2eeOptions &&
+                    this.e2eeOptions.enabled &&
+                    this.e2eeOptions.key &&
+                    this.docId
+                ) {
+                    E2EEKeyManager.storeKeyInSession(
+                        this.docId,
+                        this.e2eeOptions.key
+                    )
+                }
                 return {doc: this.doc, docInfo}
             })
             .catch(error => {

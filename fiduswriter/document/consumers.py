@@ -1,4 +1,5 @@
 import autobahn
+import base64
 import uuid
 import atexit
 import logging
@@ -219,21 +220,40 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f" ParticipantID:{self.id}"
             )
             self.id = 0
-            if "type" not in doc_db.content:
+            # Initialize document content from template if empty.
+            # We only do this when content is a dict — once an
+            # e2ee snapshot is saved, the content becomes a Base64
+            # string and isinstance skips it.
+            if (
+                isinstance(doc_db.content, dict)
+                and "type" not in doc_db.content
+            ):
                 doc_db.content = deepcopy(doc_db.template.content)
                 if "type" not in doc_db.content:
                     doc_db.content["type"] = "doc"
                 if "content" not in doc_db.content:
-                    doc_db.content["content"] = [{type: "title"}]
+                    doc_db.content["content"] = [{"type": "title"}]
                 await doc_db.asave()
-            node = prosemirror.from_json(doc_db.content)
-            self.session = {
-                "doc": doc_db,
-                "node": node,
-                "node_updates": False,
-                "participants": {0: self},
-                "last_saved_version": doc_db.version,
-            }
+            if doc_db.e2ee:
+                # For E2EE documents, we cannot create a prosemirror
+                # node from the content. The client will decrypt and
+                # handle the content locally.
+                self.session = {
+                    "doc": doc_db,
+                    "node": None,
+                    "node_updates": False,
+                    "participants": {0: self},
+                    "last_saved_version": doc_db.version,
+                }
+            else:
+                node = prosemirror.from_json(doc_db.content)
+                self.session = {
+                    "doc": doc_db,
+                    "node": node,
+                    "node_updates": False,
+                    "participants": {0: self},
+                    "last_saved_version": doc_db.version,
+                }
             WebsocketConsumer.set_session(doc_db.id, self.session)
             if isinstance(self.user, GuestUser):
                 self.user.readable_name = f"Guest {self.id}"
@@ -244,13 +264,21 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         await self.send_message({"type": "subscribed"})
         if connection_count < 1:
             # Send session_id so the client knows its participant ID
-            await self.send_message(
-                {
-                    "type": "session_info",
-                    "session_id": self.id,
-                    "access_right": self.user_info.access_rights,
-                }
-            )
+            session_info_msg = {
+                "type": "session_info",
+                "session_id": self.id,
+                "access_right": self.user_info.access_rights,
+            }
+            if doc_db.e2ee:
+
+                session_info_msg["e2ee"] = True
+                session_info_msg["e2ee_salt"] = (
+                    base64.b64encode(doc_db.e2ee_salt).decode("ascii")
+                    if doc_db.e2ee_salt
+                    else None
+                )
+                session_info_msg["e2ee_iterations"] = doc_db.e2ee_iterations
+            await self.send_message(session_info_msg)
             # Reconcile version: send missing diffs if client is behind
             await self.check_version(client_version)
         else:
@@ -367,6 +395,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.handle_diff(message)
         elif message["type"] == "path_change":
             await self.handle_path_change(message)
+        elif message["type"] == "e2ee_snapshot":
+            await self.handle_e2ee_snapshot(message)
 
     async def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
@@ -379,6 +409,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 del self.session["doc"].bibliography[id]
 
     async def update_images(self, image_updates):
+        if self.session["doc"].e2ee:
+            # For E2EE documents, image metadata is inside encrypted diffs.
+            # The server cannot process it; clients handle it locally.
+            # EncryptedDocumentImage records are created via the dedicated
+            # e2ee_image endpoint, not through diff processing.
+            return
         for iu in image_updates:
             if "id" not in iu:
                 continue
@@ -489,6 +525,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             "from": self.user_info.user.id,
             "type": "chat",
         }
+        # Pass through the e2ee flag for encrypted chat messages.
+        # The server does not read the message body — it just relays
+        # the encrypted blob to other clients.
+        if message.get("e2ee"):
+            chat["e2ee"] = True
         await WebsocketConsumer.send_updates(chat, self.user_info.document_id)
 
     async def handle_selection_change(self, message):
@@ -546,6 +587,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             self.user_info.access_rights in COMMENT_ONLY
             and not self.only_comments(message)
         ):
+            # Note: For E2EE documents, the diff content is encrypted
+            # (has "ep" field instead of "ds"), so only_comments() will
+            # return True (no plaintext steps to check). Access rights
+            # enforcement for E2EE documents is handled client-side,
+            # since the server cannot read the encrypted diff content.
             logger.error(
                 f"Action:Received non-comment diff from comment-only "
                 f"collaborator.Discarding URL:{self.endpoint} "
@@ -553,49 +599,93 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
             return
         if pv == dv:
-            if "ds" in message:  # ds = document steps
-                updated_node = prosemirror.apply(
-                    message["ds"], self.session["node"]
+            if self.session["doc"].e2ee:
+                # For E2EE documents, we cannot apply diffs server-side.
+                # Instead, we relay the encrypted diff to other clients
+                # and store it for catch-up. The diff content is opaque
+                # to the server.
+                # Validate that the diff was encrypted with the current salt.
+                msg_salt = message.get("e2ee_salt")
+                if msg_salt is not None:
+                    try:
+                        decoded_salt = base64.b64decode(msg_salt)
+                    except Exception:
+                        await self.reject_message(message)
+                        return
+                    if decoded_salt != self.session["doc"].e2ee_salt:
+                        await self.reject_message(message)
+                        return
+                self.session["doc"].diffs.append(message)
+                self.session["doc"].diffs = self.session["doc"].diffs[
+                    -self.history_length :
+                ]
+                self.session["doc"].version += 1
+                # Check if we should request a snapshot from a client
+                if (
+                    self.session["doc"].version % settings.DOC_SAVE_INTERVAL
+                    == 0
+                ):
+                    await self.request_snapshot()
+                if "rid" in message:
+                    await self.confirm_diff(message["rid"])
+                await WebsocketConsumer.send_updates(
+                    message,
+                    self.user_info.document_id,
+                    self.id,
+                    self.user_info.user.id,
                 )
-                if updated_node:
-                    self.session["node"] = updated_node
-                    self.session["node_updates"] = True
-                else:
-                    await self.unfixable()
-                    patch_msg = {
-                        "type": "patch_error",
-                        "user_id": self.user.id,
-                    }
-                    await self.send_message(patch_msg)
-                    # Reset collaboration to avoid any data loss issues.
-                    await self.reset_collaboration(
-                        patch_msg, self.user_info.document_id, self.id
+            else:
+                # Original unencrypted diff handling
+                if "ds" in message:  # ds = document steps
+                    updated_node = prosemirror.apply(
+                        message["ds"], self.session["node"]
                     )
-                    return
-            self.session["doc"].diffs.append(message)
-            self.session["doc"].diffs = self.session["doc"].diffs[
-                -self.history_length :
-            ]
-            self.session["doc"].version += 1
-            if "ti" in message:  # ti = title
-                self.session["doc"].title = message["ti"][-255:]
-            if "cu" in message:  # cu = comment updates
-                await self.update_comments(message["cu"])
-            if "bu" in message:  # bu = bibliography updates
-                await self.update_bibliography(message["bu"])
-            if "iu" in message:  # iu = image updates
-                await self.update_images(message["iu"])
-            if self.session["doc"].version % settings.DOC_SAVE_INTERVAL == 0:
-                await WebsocketConsumer.save_document_async(
-                    self.user_info.document_id
+                    if updated_node:
+                        self.session["node"] = updated_node
+                        self.session["node_updates"] = True
+                    else:
+                        await self.unfixable()
+                        patch_msg = {
+                            "type": "patch_error",
+                            "user_id": self.user.id,
+                        }
+                        await self.send_message(patch_msg)
+                        # Reset collaboration to avoid any data loss issues.
+                        await self.reset_collaboration(
+                            patch_msg, self.user_info.document_id, self.id
+                        )
+                        return
+                self.session["doc"].diffs.append(message)
+                self.session["doc"].diffs = self.session["doc"].diffs[
+                    -self.history_length :
+                ]
+                self.session["doc"].version += 1
+                if "ti" in message:  # ti = title
+                    self.session["doc"].title = message["ti"][-255:]
+                    # Immediately persist the new title so the overview page
+                    # always sees the correct value, even before the full
+                    # periodic save or the disconnect-triggered save completes.
+                    await self.session["doc"].asave(update_fields=["title"])
+                if "cu" in message:  # cu = comment updates
+                    await self.update_comments(message["cu"])
+                if "bu" in message:  # bu = bibliography updates
+                    await self.update_bibliography(message["bu"])
+                if "iu" in message:  # iu = image updates
+                    await self.update_images(message["iu"])
+                if (
+                    self.session["doc"].version % settings.DOC_SAVE_INTERVAL
+                    == 0
+                ):
+                    await WebsocketConsumer.save_document_async(
+                        self.user_info.document_id
+                    )
+                await self.confirm_diff(message["rid"])
+                await WebsocketConsumer.send_updates(
+                    message,
+                    self.user_info.document_id,
+                    self.id,
+                    self.user_info.user.id,
                 )
-            await self.confirm_diff(message["rid"])
-            await WebsocketConsumer.send_updates(
-                message,
-                self.user_info.document_id,
-                self.id,
-                self.user_info.user.id,
-            )
         elif pv < dv:
             if pv + len(self.session["doc"].diffs) >= dv:
                 # We have enough diffs stored to fix it.
@@ -626,6 +716,104 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
             )
+
+    async def handle_e2ee_snapshot(self, message):
+        """Handle a full encrypted snapshot from a client.
+
+        For E2EE documents, the server cannot process content, so clients
+        are responsible for saving encrypted snapshots periodically.
+        The server stores the encrypted content as opaque data.
+        """
+        doc = self.session["doc"]
+
+        # Verify sender has write access
+        if self.user_info.access_rights not in ["write"]:
+            return
+
+        # Validate salt for E2EE documents.
+        # All E2EE snapshots must include e2ee_salt so the server can
+        # verify they match the current key or detect a password change.
+        salt_changed = False
+        if doc.e2ee:
+            msg_salt = message.get("e2ee_salt")
+            if not msg_salt:
+                return
+            try:
+                decoded_salt = base64.b64decode(msg_salt)
+            except Exception:
+                return
+            if decoded_salt != doc.e2ee_salt:
+                salt_changed = True
+                doc.e2ee_salt = decoded_salt
+            if "e2ee_iterations" in message:
+                new_iterations = int(message["e2ee_iterations"])
+                if new_iterations != doc.e2ee_iterations:
+                    salt_changed = True
+                doc.e2ee_iterations = new_iterations
+
+        # Store the encrypted snapshot
+        doc.content = message["content"]  # Encrypted, opaque to server
+        doc.comments = message.get("comments", {})  # Encrypted
+        doc.bibliography = message.get("bibliography", {})  # Encrypted
+
+        # Store the encrypted title if provided (for display in overview).
+        # For E2EE documents the title field holds the encrypted ciphertext;
+        # the client decrypts it when the key is available.
+        if "title" in message:
+            doc.title = message["title"]
+
+        # Record the version this snapshot covers.
+        snapshot_v = message["v"]
+        doc.e2ee_snapshot_version = snapshot_v
+
+        if salt_changed:
+            # Old diffs are encrypted with the old key and useless.
+            # The snapshot becomes the new baseline.
+            doc.diffs = []
+
+        # Save to database. Force save because the encrypted content may
+        # have changed even if the version number hasn't (e.g. initial
+        # snapshot for a newly created E2EE document).
+        await WebsocketConsumer.save_document_async(
+            self.user_info.document_id, force=True
+        )
+
+        if salt_changed:
+            # Force other clients to refetch so they prompt for the new
+            # password. This prevents outdated clients from sending
+            # diffs encrypted with the old key.
+            for participant in self.session["participants"].values():
+                if participant.id != self.id:
+                    await participant.send_message({"type": "refetch_doc"})
+        else:
+            # Notify other clients of the new snapshot version
+            await WebsocketConsumer.send_updates(
+                {
+                    "type": "e2ee_snapshot_received",
+                    "v": snapshot_v,
+                },
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id,
+            )
+
+    async def request_snapshot(self):
+        """Request a snapshot from a write-capable client.
+
+        For E2EE documents, the server cannot save document content
+        because it's encrypted. Instead, the server asks one of the
+        write-capable clients to send an encrypted snapshot.
+        """
+        participants = self.session["participants"]
+        for participant_id, participant in participants.items():
+            if participant.user_info.access_rights in ["write"]:
+                await participant.send_message(
+                    {
+                        "type": "request_snapshot",
+                        "v": self.session["doc"].version,
+                    }
+                )
+                return  # Only ask one client
 
     async def can_update_document(self):
         return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
@@ -797,7 +985,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 # Check if we need to modify the message based on access rights
                 need_copy = False
 
-                if "comments" in message and len(message["comments"]) > 0:
+                # For E2EE documents, we cannot filter content (it's all
+                # encrypted), so skip comment filtering entirely.
+                if (
+                    not session["doc"].e2ee
+                    and "comments" in message
+                    and len(message["comments"]) > 0
+                ):
                     # Filter comments if needed
                     if access_rights == "read-without-comments":
                         need_copy = True
@@ -837,38 +1031,56 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     @classmethod
     def serialize_content(cls, session):
+        if session["doc"].e2ee:
+            # For E2EE documents, content is already encrypted
+            # and stored via e2ee_snapshot messages. No server-side
+            # serialization is needed.
+            return
         if "node_updates" in session and session["node_updates"]:
             session["doc"].content = prosemirror.to_mini_json(session["node"])
             session["node_updates"] = False
 
     @classmethod
-    async def save_document_async(cls, document_id):
+    async def save_document_async(cls, document_id, force=False):
         session = cls.get_session(document_id)
         if not session:
             return
-        if session["doc"].version == session["last_saved_version"]:
+        if (
+            not force
+            and session["doc"].version == session["last_saved_version"]
+        ):
             return
         logger.debug(
             f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
             f"Doc version:{session['doc'].version}"
         )
         cls.serialize_content(session)
+        update_fields = [
+            "title",
+            "version",
+            "content",
+            "diffs",
+            "comments",
+            "bibliography",
+            "updated",
+        ]
+        # Include E2EE fields when saving an encrypted document
+        # (e.g., after a password change updates the salt/iterations)
+        if session["doc"].e2ee:
+            update_fields.extend(
+                [
+                    "e2ee",
+                    "e2ee_salt",
+                    "e2ee_iterations",
+                    "e2ee_snapshot_version",
+                ]
+            )
         try:
             # this try block is to avoid a db exception
             # in case the doc has been deleted from the db
             # in fiduswriter the owner of a doc could delete a doc
             # while an invited writer is editing the same doc
-            await session["doc"].asave(
-                update_fields=[
-                    "title",
-                    "version",
-                    "content",
-                    "diffs",
-                    "comments",
-                    "bibliography",
-                    "updated",
-                ]
-            )
+            await session["doc"].asave(update_fields=update_fields)
 
         except DatabaseError as e:
             expected_msg = "Save with update_fields did not affect any rows."
@@ -882,33 +1094,45 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         session["last_saved_version"] = session["doc"].version
 
     @classmethod
-    def save_document(cls, document_id):
+    def save_document(cls, document_id, force=False):
         session = cls.get_session(document_id)
         if not session:
             return
-        if session["doc"].version == session["last_saved_version"]:
+        if (
+            not force
+            and session["doc"].version == session["last_saved_version"]
+        ):
             return
         logger.debug(
             f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
             f"Doc version:{session['doc'].version}"
         )
         cls.serialize_content(session)
+        update_fields = [
+            "title",
+            "version",
+            "content",
+            "diffs",
+            "comments",
+            "bibliography",
+            "updated",
+        ]
+        # Include E2EE fields when saving an encrypted document
+        if session["doc"].e2ee:
+            update_fields.extend(
+                [
+                    "e2ee",
+                    "e2ee_salt",
+                    "e2ee_iterations",
+                    "e2ee_snapshot_version",
+                ]
+            )
         try:
             # this try block is to avoid a db exception
             # in case the doc has been deleted from the db
             # in fiduswriter the owner of a doc could delete a doc
             # while an invited writer is editing the same doc
-            session["doc"].save(
-                update_fields=[
-                    "title",
-                    "version",
-                    "content",
-                    "diffs",
-                    "comments",
-                    "bibliography",
-                    "updated",
-                ]
-            )
+            session["doc"].save(update_fields=update_fields)
 
         except DatabaseError as e:
             expected_msg = "Save with update_fields did not affect any rows."

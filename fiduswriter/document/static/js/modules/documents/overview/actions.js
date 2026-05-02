@@ -7,6 +7,11 @@ import {
     longFilePath,
     postJson
 } from "../../common"
+import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
+import {
+    createPasswordDialog,
+    enterPasswordDialog
+} from "../../editor/e2ee/password-dialog"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
 import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
@@ -413,6 +418,34 @@ export class DocumentOverviewActions {
             this.documentOverview.documentList,
             this.documentOverview.schema
         ).then(() => {
+            const docs = ids.map(id =>
+                this.documentOverview.documentList.find(
+                    entry => entry.id === id
+                )
+            )
+            const allE2EE = docs.every(doc => doc.e2ee)
+            const anyE2EE = docs.some(doc => doc.e2ee)
+            const e2eeMode = this.documentOverview.app.settings.E2EE_MODE
+
+            const canToggleE2EE =
+                e2eeMode === "enabled" ||
+                (e2eeMode === "required" && !allE2EE) ||
+                (e2eeMode === "disabled" && anyE2EE)
+
+            let e2eeHtml = ""
+            if (canToggleE2EE) {
+                const checked =
+                    e2eeMode === "required" || allE2EE ? "checked" : ""
+                e2eeHtml = `
+                        <div class="e2ee-copy-toggle" style="margin-top: 15px;">
+                            <label>
+                                <input type="checkbox" id="e2ee-copy-toggle" ${checked}>
+                                ${gettext("Encrypt the copy")}
+                            </label>
+                        </div>
+                    `
+            }
+
             const selectTemplateDialog = new Dialog({
                 title: gettext("Choose document template"),
                 body: `<p>
@@ -425,38 +458,128 @@ export class DocumentOverviewActions {
                                 ([importId, dt]) =>
                                     `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
                             )
-                            .join("")}</select>`,
+                            .join("")}</select>
+                        ${e2eeHtml}`,
                 buttons: [
                     {
                         text: gettext("Copy"),
                         classes: "fw-dark",
                         click: () => {
-                            ids.forEach(id => {
-                                const doc =
-                                    this.documentOverview.documentList.find(
-                                        entry => entry.id === id
-                                    )
-                                const copier = new SaveCopy(
-                                    doc,
-                                    {db: doc.bibliography},
-                                    {db: doc.images},
-                                    this.documentOverview.user,
-                                    selectTemplateDialog.dialogEl.querySelector(
-                                        "select"
-                                    ).value
-                                )
+                            const targetE2EE =
+                                canToggleE2EE &&
+                                selectTemplateDialog.dialogEl.querySelector(
+                                    "#e2ee-copy-toggle"
+                                )?.checked
 
-                                copier
-                                    .init()
-                                    .then(({doc}) => {
-                                        this.documentOverview.documentList.push(
-                                            doc
+                            const doCopy = (sourceKey, targetPassword) => {
+                                ids.forEach(id => {
+                                    const doc =
+                                        this.documentOverview.documentList.find(
+                                            entry => entry.id === id
                                         )
-                                        this.documentOverview.initTable()
-                                    })
-                                    .catch(() => false)
-                            })
-                            selectTemplateDialog.close()
+                                    const e2eeOptions = {}
+                                    if (doc.e2ee && sourceKey) {
+                                        e2eeOptions.sourceKey = sourceKey
+                                    }
+                                    if (targetE2EE && targetPassword) {
+                                        e2eeOptions.targetE2EE = true
+                                        e2eeOptions.targetPassword =
+                                            targetPassword
+                                    }
+
+                                    const copier = new SaveCopy(
+                                        doc,
+                                        {db: doc.bibliography},
+                                        {db: doc.images},
+                                        this.documentOverview.user,
+                                        selectTemplateDialog.dialogEl.querySelector(
+                                            "select"
+                                        ).value,
+                                        e2eeOptions
+                                    )
+
+                                    copier
+                                        .init()
+                                        .then(({doc}) => {
+                                            this.documentOverview.documentList.push(
+                                                doc
+                                            )
+                                            this.documentOverview.initTable()
+                                        })
+                                        .catch(error => {
+                                            console.error(error)
+                                            addAlert(
+                                                "error",
+                                                gettext(
+                                                    "Could not copy document."
+                                                )
+                                            )
+                                        })
+                                })
+                                selectTemplateDialog.close()
+                            }
+
+                            if (anyE2EE && !targetE2EE) {
+                                enterPasswordDialog(async password => {
+                                    try {
+                                        const sampleDoc = docs.find(
+                                            doc => doc.e2ee
+                                        )
+                                        const salt = new Uint8Array(
+                                            atob(sampleDoc.e2ee_salt)
+                                                .split("")
+                                                .map(c => c.charCodeAt(0))
+                                        )
+                                        const key =
+                                            await E2EEKeyManager.deriveKey(
+                                                password,
+                                                salt,
+                                                sampleDoc.e2ee_iterations ||
+                                                    600000
+                                            )
+                                        doCopy(key, null)
+                                    } catch (_err) {
+                                        addAlert(
+                                            "error",
+                                            gettext("Incorrect password.")
+                                        )
+                                    }
+                                })
+                            } else if (!anyE2EE && targetE2EE) {
+                                createPasswordDialog(password => {
+                                    doCopy(null, password)
+                                })
+                            } else if (anyE2EE && targetE2EE) {
+                                enterPasswordDialog(async password => {
+                                    try {
+                                        const sampleDoc = docs.find(
+                                            doc => doc.e2ee
+                                        )
+                                        const salt = new Uint8Array(
+                                            atob(sampleDoc.e2ee_salt)
+                                                .split("")
+                                                .map(c => c.charCodeAt(0))
+                                        )
+                                        const key =
+                                            await E2EEKeyManager.deriveKey(
+                                                password,
+                                                salt,
+                                                sampleDoc.e2ee_iterations ||
+                                                    600000
+                                            )
+                                        createPasswordDialog(targetPassword => {
+                                            doCopy(key, targetPassword)
+                                        })
+                                    } catch (_err) {
+                                        addAlert(
+                                            "error",
+                                            gettext("Incorrect password.")
+                                        )
+                                    }
+                                })
+                            } else {
+                                doCopy(null, null)
+                            }
                         }
                     },
                     {

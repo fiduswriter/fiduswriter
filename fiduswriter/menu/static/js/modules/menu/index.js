@@ -187,10 +187,11 @@ export class SiteMenu {
                         this.app.goTo("/user/contacts/")
                         break
                     case "logout":
-                        // Clear all cached E2EE document keys from sessionStorage
+                        // Clear all E2EE data from sessionStorage (document keys,
+                        // passwords, decrypted titles, and passphrase keys).
                         for (let i = sessionStorage.length - 1; i >= 0; i--) {
                             const key = sessionStorage.key(i)
-                            if (key && key.startsWith("e2ee_key_")) {
+                            if (key && key.startsWith("e2ee_")) {
                                 sessionStorage.removeItem(key)
                             }
                         }

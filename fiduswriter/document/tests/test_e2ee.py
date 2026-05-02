@@ -514,6 +514,53 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.assertIn("Session Test", title_text)
 
+    def test_logout_clears_e2ee_session_storage(self):
+        """
+        Test that logging out via the UI clears all E2EE-related data
+        from sessionStorage.
+        """
+        password = "LogoutPass1"
+        self.create_e2ee_document_via_ui(password=password)
+        self.add_title_and_body(title="Logout Test", body="content here")
+
+        # Verify that E2EE data was stored in sessionStorage
+        e2ee_keys_before = self.driver.execute_script(
+            "return Object.keys(sessionStorage).filter(k => k.startsWith('e2ee_'));"
+        )
+        self.assertTrue(
+            len(e2ee_keys_before) > 0,
+            "E2EE items should be in sessionStorage after creating/opening document",
+        )
+
+        # Close the editor and return to overview so the preferences menu is available
+        self.driver.find_element(By.ID, "close-document-top").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, "preferences-btn"))
+        )
+
+        # Open the user preferences pulldown and click logout
+        self.driver.find_element(By.ID, "preferences-btn").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//*[normalize-space()="Log out"]')
+            )
+        ).click()
+
+        # Wait for redirect to login page
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "id-login"))
+        )
+
+        # Verify that no E2EE items remain in sessionStorage
+        e2ee_keys_after = self.driver.execute_script(
+            "return Object.keys(sessionStorage).filter(k => k.startsWith('e2ee_'));"
+        )
+        self.assertEqual(
+            len(e2ee_keys_after),
+            0,
+            f"E2EE sessionStorage items should be cleared after logout, found: {e2ee_keys_after}",
+        )
+
 
 @override_settings(E2EE_MODE="enabled")
 class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):

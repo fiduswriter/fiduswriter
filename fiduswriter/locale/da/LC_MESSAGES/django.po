@@ -1,101 +1,107 @@
-# English translations for Fidus Writer.
-# Copyright (C) 2024
-# This file is distributed under the same license as the Fidus Writer package.
+#
+# Danish translation for Fidus Writer
+# Johannes Wilm <johannes@fiduswriter.org>, 2025.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Fidus Writer\n"
+"Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 09:06+0000\n"
-"PO-Revision-Date: 2024-01-04 00:00+0000\n"
-"Last-Translator: \n"
-"Language-Team: English\n"
-"Language: en\n"
+"POT-Creation-Date: 2026-05-03 10:20+0000\n"
+"PO-Revision-Date: 2025-05-03 10:00+0200\n"
+"Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
+"Language-Team:  <johannes@fiduswriter.org>\n"
+"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Manual\n"
 
 #: base/settings.py:273
 msgid "English"
-msgstr ""
+msgstr "Engelsk"
 
 #: base/settings.py:274
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgarsk"
 
 #: base/settings.py:275
 msgid "German"
-msgstr ""
+msgstr "Tysk"
 
 #: base/settings.py:276
 msgid "French"
-msgstr ""
+msgstr "Fransk"
 
 #: base/settings.py:277
 msgid "Italian"
-msgstr ""
+msgstr "Italiensk"
 
 #: base/settings.py:278
 msgid "Spanish"
-msgstr ""
+msgstr "Spansk"
 
 #: base/settings.py:279
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portugisisk (Brasilien)"
 
 #: base/settings.py:396
 msgid "Fidus Writer Admin"
-msgstr ""
+msgstr "Fidus Writer Admin"
 
 #: base/settings.py:397
 msgid "Fidus Writer Administration Site"
-msgstr ""
+msgstr "Fidus Writer Administrationsside"
 
 #: base/settings.py:398
 msgid "Welcome to the Fidus Writer Administration Site"
-msgstr ""
+msgstr "Velkommen til Fidus Writer Administrationsside"
 
 #: base/templates/500.html:5 base/templates/500.html:8
 msgid "Error 500"
-msgstr ""
+msgstr "Fejl 500"
 
 #: base/templates/500.html:9
 msgid ""
 "We are sorry, but a server error occured. Our team will be looking into the "
 "issue shortly."
 msgstr ""
+"Vi beklager, men der opstod en serverfejl. Vores team vil se på problemet "
+"snarest."
 
 #: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
-msgstr ""
+msgstr "Admin-konsol"
 
 #: base/templates/admin/console.html:18
 msgid "Current number of users:"
-msgstr ""
+msgstr "Nuværende antal brugere:"
 
 #: base/templates/admin/console.html:21
 msgid "Current number of user sessions:"
-msgstr ""
+msgstr "Nuværende antal brugersessioner:"
 
 #: base/templates/admin/console.html:23
 msgid "Send a system message to all connected users:"
-msgstr ""
+msgstr "Send en systembesked til alle forbundne brugere:"
 
 #: base/templates/admin/console.html:27
 msgid "Message"
-msgstr ""
+msgstr "Besked"
 
 #: base/templates/admin/console.html:29
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
 msgstr ""
+"Dette system går offline til planlagt vedligeholdelse om 30 minutter. Alt "
+"dit arbejde gemmes automatisk, og vi er tilbage snart."
 
 #: base/templates/admin/console.html:36
+#, fuzzy
+#| msgid "Send a system message to all connected users:"
 msgid "Send to connected users"
-msgstr ""
+msgstr "Send en systembesked til alle forbundne brugere:"
 
 #: base/templates/admin/overview.html:10
 msgid "Extras"
@@ -107,8 +113,10 @@ msgid "Document Maintenance"
 msgstr ""
 
 #: base/templates/api_404.html:5 base/templates/api_404.html:8
+#, fuzzy
+#| msgid "Error 500"
 msgid "Error 404"
-msgstr ""
+msgstr "Fejl 500"
 
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
@@ -355,16 +363,20 @@ msgid ""
 msgstr ""
 
 #: user/emails.py:34
+#, fuzzy
+#| msgid "Log in to Fidus Writer"
 msgid "Invite for Fidus Writer"
-msgstr ""
+msgstr "Log ind på Fidus Writer"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
 msgstr ""
 
 #: user/emails.py:40
+#, fuzzy
+#| msgid "Fidus Writer Administration Site"
 msgid "Fidus Writer contact invite"
-msgstr ""
+msgstr "Fidus Writer Administrationsside"
 
 #: user/emails.py:53
 #, python-format
@@ -382,16 +394,20 @@ msgid ""
 msgstr ""
 
 #: user/emails.py:76
+#, fuzzy
+#| msgid "Fidus Writer Admin"
 msgid "Invite for Fidus Writer declined"
-msgstr ""
+msgstr "Fidus Writer Admin"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
 msgstr ""
 
 #: user/emails.py:82
+#, fuzzy
+#| msgid "Fidus Writer Admin"
 msgid "Fidus Writer invite declined"
-msgstr ""
+msgstr "Fidus Writer Admin"
 
 #: user/emails.py:95
 #, python-format
@@ -413,8 +429,10 @@ msgid "Invite for Fidus Writer accepted"
 msgstr ""
 
 #: user/emails.py:124
+#, fuzzy
+#| msgid "Fidus Writer Administration Site"
 msgid "Fidus Writer invite accepted"
-msgstr ""
+msgstr "Fidus Writer Administrationsside"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
@@ -433,8 +451,10 @@ msgid "Can login as another user"
 msgstr ""
 
 #: user/models.py:102
+#, fuzzy
+#| msgid "Email address:"
 msgid "email address"
-msgstr ""
+msgstr "E-mailadresse:"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
@@ -492,3 +512,88 @@ msgstr ""
 #: usermedia/views.py:71
 msgid "No file uploaded"
 msgstr ""
+
+#~ msgid "System Overview"
+#~ msgstr "Systemoversigt"
+
+#~ msgid "Number of users:"
+#~ msgstr "Antal brugere:"
+
+#~ msgid "Number of documents:"
+#~ msgstr "Antal dokumenter:"
+
+#~ msgid "Number of active sessions:"
+#~ msgstr "Antal aktive sessioner:"
+
+#~ msgid "Log in"
+#~ msgstr "Log ind"
+
+#~ msgid "Username:"
+#~ msgstr "Brugernavn:"
+
+#~ msgid "Password:"
+#~ msgstr "Adgangskode:"
+
+#~ msgid "Forgot password?"
+#~ msgstr "Glemt adgangskode?"
+
+#~ msgid "Don't have an account? Register here."
+#~ msgstr "Har du ikke en konto? Registrer dig her."
+
+#~ msgid "Reset password"
+#~ msgstr "Nulstil adgangskode"
+
+#~ msgid ""
+#~ "Forgotten your password? Enter your email address below, and we'll email "
+#~ "instructions for setting a new one."
+#~ msgstr ""
+#~ "Glemt din adgangskode? Indtast din e-mailadresse nedenfor, og vi sender "
+#~ "instruktioner til at oprette en ny."
+
+#~ msgid "Reset my password"
+#~ msgstr "Nulstil min adgangskode"
+
+#~ msgid "Password reset sent"
+#~ msgstr "Adgangskode nulstillet"
+
+#~ msgid ""
+#~ "We've emailed you instructions for setting your password, if an account "
+#~ "exists with the email you entered. You should receive them shortly."
+#~ msgstr ""
+#~ "Vi har sendt instruktioner til at oprette din adgangskode via e-mail, "
+#~ "hvis der findes en konto med den e-mail, du indtastede. Du bør modtage "
+#~ "dem snarest."
+
+#~ msgid "Enter new password"
+#~ msgstr "Indtast ny adgangskode"
+
+#~ msgid ""
+#~ "Please enter your new password twice so we can verify you typed it in "
+#~ "correctly."
+#~ msgstr ""
+#~ "Indtast din nye adgangskode to gange, så vi kan bekræfte, at du har "
+#~ "indtastet den korrekt."
+
+#~ msgid "New password:"
+#~ msgstr "Ny adgangskode:"
+
+#~ msgid "Confirm password:"
+#~ msgstr "Bekræft adgangskode:"
+
+#~ msgid "Change my password"
+#~ msgstr "Skift min adgangskode"
+
+#~ msgid "Password reset complete"
+#~ msgstr "Adgangskode nulstillet"
+
+#~ msgid "Your password has been set. You may go ahead and log in now."
+#~ msgstr "Din adgangskode er blevet angivet. Du kan nu logge ind."
+
+#~ msgid "Logged out"
+#~ msgstr "Logget ud"
+
+#~ msgid "Thanks for spending some quality time with Fidus Writer today."
+#~ msgstr "Tak for at bruge Fidus Writer i dag."
+
+#~ msgid "Log in again"
+#~ msgstr "Log ind igen"

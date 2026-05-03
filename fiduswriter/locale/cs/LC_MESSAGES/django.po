@@ -1,64 +1,66 @@
-# English translations for Fidus Writer.
-# Copyright (C) 2024
-# This file is distributed under the same license as the Fidus Writer package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Fidus Writer\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 09:06+0000\n"
-"PO-Revision-Date: 2024-01-04 00:00+0000\n"
-"Last-Translator: \n"
-"Language-Team: English\n"
-"Language: en\n"
+"POT-Creation-Date: 2026-05-03 10:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
+"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 #: base/settings.py:273
 msgid "English"
-msgstr ""
+msgstr "angličtina"
 
 #: base/settings.py:274
 msgid "Bulgarian"
-msgstr ""
+msgstr "bulharský"
 
 #: base/settings.py:275
 msgid "German"
-msgstr ""
+msgstr "Němec"
 
 #: base/settings.py:276
 msgid "French"
-msgstr ""
+msgstr "francouzština"
 
 #: base/settings.py:277
 msgid "Italian"
-msgstr ""
+msgstr "italština"
 
 #: base/settings.py:278
 msgid "Spanish"
-msgstr ""
+msgstr "španělština"
 
 #: base/settings.py:279
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "portugalština (Brazílie)"
 
 #: base/settings.py:396
 msgid "Fidus Writer Admin"
-msgstr ""
+msgstr "Správce Fidus Writer"
 
 #: base/settings.py:397
 msgid "Fidus Writer Administration Site"
-msgstr ""
+msgstr "Administrační stránka Fidus Writer"
 
 #: base/settings.py:398
 msgid "Welcome to the Fidus Writer Administration Site"
-msgstr ""
+msgstr "Vítejte na stránkách administrace Fidus Writer"
 
 #: base/templates/500.html:5 base/templates/500.html:8
 msgid "Error 500"
-msgstr ""
+msgstr "Chyba 500"
 
 #: base/templates/500.html:9
 msgid ""
@@ -69,23 +71,23 @@ msgstr ""
 #: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
-msgstr ""
+msgstr "Administrátorská konzole"
 
 #: base/templates/admin/console.html:18
 msgid "Current number of users:"
-msgstr ""
+msgstr "Aktuální počet uživatelů:"
 
 #: base/templates/admin/console.html:21
 msgid "Current number of user sessions:"
-msgstr ""
+msgstr "Aktuální počet uživatelských relací:"
 
 #: base/templates/admin/console.html:23
 msgid "Send a system message to all connected users:"
-msgstr ""
+msgstr "Odeslat systémovou zprávu všem připojeným uživatelům:"
 
 #: base/templates/admin/console.html:27
 msgid "Message"
-msgstr ""
+msgstr "Zpráva"
 
 #: base/templates/admin/console.html:29
 msgid ""
@@ -95,41 +97,41 @@ msgstr ""
 
 #: base/templates/admin/console.html:36
 msgid "Send to connected users"
-msgstr ""
+msgstr "Odeslat připojeným uživatelům"
 
 #: base/templates/admin/overview.html:10
 msgid "Extras"
-msgstr ""
+msgstr "Extra"
 
 #: base/templates/admin/overview.html:17
 #: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
-msgstr ""
+msgstr "Údržba dokumentů"
 
 #: base/templates/api_404.html:5 base/templates/api_404.html:8
 msgid "Error 404"
-msgstr ""
+msgstr "Chyba 404"
 
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
-msgstr ""
+msgstr "Omlouváme se, ale tato stránka nebyla nalezena."
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr ""
+msgstr "Řešení typu vše v jednom pro společné akademické psaní."
 
 #: base/templates/app.html:46
 msgid "JavaScript disabled"
-msgstr ""
+msgstr "JavaScript zakázán"
 
 #: base/templates/app.html:47
 msgid "Fidus Writer requires you to enable JavaScript."
-msgstr ""
+msgstr "Fidus Writer vyžaduje, abyste povolili JavaScript."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
-msgstr ""
+msgstr "Prohlížeč není podporován"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
 msgid ""
@@ -143,11 +145,11 @@ msgstr ""
 
 #: document/admin.py:59
 msgid "Duplicate selected document templates"
-msgstr ""
+msgstr "Duplikovat vybrané šablony dokumentů"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:887
 msgid "Untitled"
-msgstr ""
+msgstr "Bez názvu"
 
 #: document/emails.py:21
 #, python-format
@@ -183,28 +185,28 @@ msgstr ""
 
 #: document/emails.py:89
 msgid "shared"
-msgstr ""
+msgstr "sdílené"
 
 #: document/emails.py:91 document/emails.py:207 document/emails.py:286
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
 #: document/emails.py:93 document/emails.py:209
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: document/emails.py:95
 msgid "Access Rights"
-msgstr ""
+msgstr "Přístupová práva"
 
 #: document/emails.py:98 document/emails.py:214
 msgid "Access the document"
-msgstr ""
+msgstr "Přístup k dokumentu"
 
 #: document/emails.py:101
 #, python-format
 msgid "Document shared: %(document_title)s"
-msgstr ""
+msgstr "Dokument sdílen: %(document_title)s"
 
 #: document/emails.py:123
 #, python-format
@@ -228,7 +230,7 @@ msgstr ""
 #: document/emails.py:143
 #, python-format
 msgid "Comment on : %(document_title)s"
-msgstr ""
+msgstr "Komentář k : %(document_title)s"
 
 #: document/emails.py:148
 #, python-format
@@ -252,7 +254,7 @@ msgstr ""
 #: document/emails.py:166
 #, python-format
 msgid "Comment assignment on : %(document_title)s"
-msgstr ""
+msgstr "Přiřazení komentáře dne : %(document_title)s"
 
 #: document/emails.py:171
 #, python-format
@@ -264,7 +266,7 @@ msgstr ""
 
 #: document/emails.py:211
 msgid "Comment"
-msgstr ""
+msgstr "Komentář"
 
 #: document/emails.py:239
 #, python-format
@@ -284,34 +286,34 @@ msgstr ""
 
 #: document/emails.py:284
 msgid "access request"
-msgstr ""
+msgstr "žádost o přístup"
 
 #: document/emails.py:288
 msgid "Requested by"
-msgstr ""
+msgstr "Vyžádáno uživatelem"
 
 #: document/emails.py:290
 msgid "Requested rights"
-msgstr ""
+msgstr "Požadovaná práva"
 
 #: document/emails.py:293
 msgid "Grant access"
-msgstr ""
+msgstr "Udělit přístup"
 
 #: document/emails.py:297
 #, python-format
 msgid "Access request: %(document_title)s"
-msgstr ""
+msgstr "Žádost o přístup: %(document_title)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
 msgid "Add %(name)s"
-msgstr ""
+msgstr "Přidejte %(name)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr ""
+msgstr "Údržba"
 
 #: document/templates/admin/document/maintenance.html:19
 msgid ""
@@ -326,19 +328,19 @@ msgstr ""
 
 #: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
-msgstr ""
+msgstr "Aktualizujte všechny dokumenty (NEBEZPEČÍ!)"
 
 #: style/models.py:74
 msgid "Default"
-msgstr ""
+msgstr "Výchozí"
 
 #: style/views.py:27
 msgid "The template needs at least 1 document style"
-msgstr ""
+msgstr "Šablona potřebuje alespoň 1 styl dokumentu"
 
 #: user/admin.py:11
 msgid "Connections"
-msgstr ""
+msgstr "Spojení"
 
 #: user/emails.py:10
 #, python-format
@@ -356,15 +358,15 @@ msgstr ""
 
 #: user/emails.py:34
 msgid "Invite for Fidus Writer"
-msgstr ""
+msgstr "Pozvání pro Fidus Writer"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
-msgstr ""
+msgstr "Zaregistrujte se/přihlaste se a přijměte/odmítněte pozvánku"
 
 #: user/emails.py:40
 msgid "Fidus Writer contact invite"
-msgstr ""
+msgstr "Kontaktní pozvánka Fidus Writer"
 
 #: user/emails.py:53
 #, python-format
@@ -383,15 +385,15 @@ msgstr ""
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
-msgstr ""
+msgstr "Pozvání pro Fidus Writer bylo odmítnuto"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
-msgstr ""
+msgstr "Podívejte se na svůj seznam kontaktů"
 
 #: user/emails.py:82
 msgid "Fidus Writer invite declined"
-msgstr ""
+msgstr "Pozvánka Fidus Writer odmítnuta"
 
 #: user/emails.py:95
 #, python-format
@@ -410,37 +412,37 @@ msgstr ""
 
 #: user/emails.py:118
 msgid "Invite for Fidus Writer accepted"
-msgstr ""
+msgstr "Pozvánka pro Fidus Writer přijata"
 
 #: user/emails.py:124
 msgid "Fidus Writer invite accepted"
-msgstr ""
+msgstr "Pozvánka Fidus Writer přijata"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
-msgstr ""
+msgstr "Kód musí mít přesně 6 číslic (0-9)."
 
 #: user/models.py:55
 msgid "Interface language preference"
-msgstr ""
+msgstr "Předvolba jazyka rozhraní"
 
 #: user/models.py:62
 msgid "User preferences (e.g., encryption dialog dismissal)"
-msgstr ""
+msgstr "Uživatelské předvolby (např. odmítnutí dialogového okna šifrování)"
 
 #: user/models.py:73
 msgid "Can login as another user"
-msgstr ""
+msgstr "Může se přihlásit jako jiný uživatel"
 
 #: user/models.py:102
 msgid "email address"
-msgstr ""
+msgstr "e-mailová adresa"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
 msgid "Hello from %(site_name)s!"
-msgstr ""
+msgstr "Zdraví vás %(site_name)s!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 #, python-format
@@ -458,7 +460,7 @@ msgstr ""
 #: user/templates/account/email/password_reset_key_message.html:26
 #, python-format
 msgid "Thank you from %(site_name)s!"
-msgstr ""
+msgstr "Děkujeme od %(site_name)s!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid ""
@@ -475,20 +477,20 @@ msgstr ""
 #: user/templates/account/email/password_reset_key_message.html:21
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgstr "V případě, že jste zapomněli, vaše uživatelské jméno je %(username)s."
 
 #: user/views.py:624
 msgid "Code is invalid"
-msgstr ""
+msgstr "Kód je neplatný"
 
 #: usermedia/views.py:37
 msgid "Filetype not supported"
-msgstr ""
+msgstr "Typ souboru není podporován"
 
 #: usermedia/views.py:44
 msgid "Image too large"
-msgstr ""
+msgstr "Obrázek je příliš velký"
 
 #: usermedia/views.py:71
 msgid "No file uploaded"
-msgstr ""
+msgstr "Nebyl nahrán žádný soubor"

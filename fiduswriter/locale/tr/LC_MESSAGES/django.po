@@ -1,64 +1,65 @@
-# English translations for Fidus Writer.
-# Copyright (C) 2024
-# This file is distributed under the same license as the Fidus Writer package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Fidus Writer\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 09:06+0000\n"
-"PO-Revision-Date: 2024-01-04 00:00+0000\n"
-"Last-Translator: \n"
-"Language-Team: English\n"
-"Language: en\n"
+"POT-Creation-Date: 2026-05-03 10:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 #: base/settings.py:273
 msgid "English"
-msgstr ""
+msgstr "İngilizce"
 
 #: base/settings.py:274
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgarca"
 
 #: base/settings.py:275
 msgid "German"
-msgstr ""
+msgstr "Almanca"
 
 #: base/settings.py:276
 msgid "French"
-msgstr ""
+msgstr "Fransızca"
 
 #: base/settings.py:277
 msgid "Italian"
-msgstr ""
+msgstr "İtalyan"
 
 #: base/settings.py:278
 msgid "Spanish"
-msgstr ""
+msgstr "İspanyol"
 
 #: base/settings.py:279
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portekizce (Brezilya)"
 
 #: base/settings.py:396
 msgid "Fidus Writer Admin"
-msgstr ""
+msgstr "Fidus Yazar Yöneticisi"
 
 #: base/settings.py:397
 msgid "Fidus Writer Administration Site"
-msgstr ""
+msgstr "Fidus Yazar Yönetim Sitesi"
 
 #: base/settings.py:398
 msgid "Welcome to the Fidus Writer Administration Site"
-msgstr ""
+msgstr "Fidus Yazar Yönetim Sitesine Hoş Geldiniz"
 
 #: base/templates/500.html:5 base/templates/500.html:8
 msgid "Error 500"
-msgstr ""
+msgstr "Hata 500"
 
 #: base/templates/500.html:9
 msgid ""
@@ -69,23 +70,23 @@ msgstr ""
 #: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
-msgstr ""
+msgstr "Yönetici Konsolu"
 
 #: base/templates/admin/console.html:18
 msgid "Current number of users:"
-msgstr ""
+msgstr "Mevcut kullanıcı sayısı:"
 
 #: base/templates/admin/console.html:21
 msgid "Current number of user sessions:"
-msgstr ""
+msgstr "Mevcut kullanıcı oturumu sayısı:"
 
 #: base/templates/admin/console.html:23
 msgid "Send a system message to all connected users:"
-msgstr ""
+msgstr "Bağlı tüm kullanıcılara bir sistem mesajı gönderin:"
 
 #: base/templates/admin/console.html:27
 msgid "Message"
-msgstr ""
+msgstr "Mesaj"
 
 #: base/templates/admin/console.html:29
 msgid ""
@@ -95,41 +96,41 @@ msgstr ""
 
 #: base/templates/admin/console.html:36
 msgid "Send to connected users"
-msgstr ""
+msgstr "Bağlı kullanıcılara gönder"
 
 #: base/templates/admin/overview.html:10
 msgid "Extras"
-msgstr ""
+msgstr "Ekstralar"
 
 #: base/templates/admin/overview.html:17
 #: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
-msgstr ""
+msgstr "Belge Bakımı"
 
 #: base/templates/api_404.html:5 base/templates/api_404.html:8
 msgid "Error 404"
-msgstr ""
+msgstr "Hata 404"
 
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
-msgstr ""
+msgstr "Üzgünüz ama bu sayfa bulunamadı."
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr ""
+msgstr "İşbirliğine dayalı akademik yazılar için hepsi bir arada çözüm."
 
 #: base/templates/app.html:46
 msgid "JavaScript disabled"
-msgstr ""
+msgstr "JavaScript devre dışı bırakıldı"
 
 #: base/templates/app.html:47
 msgid "Fidus Writer requires you to enable JavaScript."
-msgstr ""
+msgstr "Fidus Writer, JavaScript'i etkinleştirmenizi gerektirir."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
-msgstr ""
+msgstr "Tarayıcı desteklenmiyor"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
 msgid ""
@@ -143,11 +144,11 @@ msgstr ""
 
 #: document/admin.py:59
 msgid "Duplicate selected document templates"
-msgstr ""
+msgstr "Seçilen belge şablonlarını çoğalt"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:887
 msgid "Untitled"
-msgstr ""
+msgstr "İsimsiz"
 
 #: document/emails.py:21
 #, python-format
@@ -183,28 +184,28 @@ msgstr ""
 
 #: document/emails.py:89
 msgid "shared"
-msgstr ""
+msgstr "Paylaşıldı"
 
 #: document/emails.py:91 document/emails.py:207 document/emails.py:286
 msgid "Document"
-msgstr ""
+msgstr "Belge"
 
 #: document/emails.py:93 document/emails.py:209
 msgid "Author"
-msgstr ""
+msgstr "Yazar"
 
 #: document/emails.py:95
 msgid "Access Rights"
-msgstr ""
+msgstr "Erişim Hakları"
 
 #: document/emails.py:98 document/emails.py:214
 msgid "Access the document"
-msgstr ""
+msgstr "Belgeye erişme"
 
 #: document/emails.py:101
 #, python-format
 msgid "Document shared: %(document_title)s"
-msgstr ""
+msgstr "Paylaşılan belge: %(document_title)s"
 
 #: document/emails.py:123
 #, python-format
@@ -228,7 +229,7 @@ msgstr ""
 #: document/emails.py:143
 #, python-format
 msgid "Comment on : %(document_title)s"
-msgstr ""
+msgstr "Yorum yap : %(document_title)s"
 
 #: document/emails.py:148
 #, python-format
@@ -252,7 +253,7 @@ msgstr ""
 #: document/emails.py:166
 #, python-format
 msgid "Comment assignment on : %(document_title)s"
-msgstr ""
+msgstr "Şununla ilgili yorum ataması: %(document_title)s"
 
 #: document/emails.py:171
 #, python-format
@@ -264,7 +265,7 @@ msgstr ""
 
 #: document/emails.py:211
 msgid "Comment"
-msgstr ""
+msgstr "Yorum"
 
 #: document/emails.py:239
 #, python-format
@@ -284,34 +285,34 @@ msgstr ""
 
 #: document/emails.py:284
 msgid "access request"
-msgstr ""
+msgstr "erişim isteği"
 
 #: document/emails.py:288
 msgid "Requested by"
-msgstr ""
+msgstr "Talep eden"
 
 #: document/emails.py:290
 msgid "Requested rights"
-msgstr ""
+msgstr "Talep edilen haklar"
 
 #: document/emails.py:293
 msgid "Grant access"
-msgstr ""
+msgstr "Erişim ver"
 
 #: document/emails.py:297
 #, python-format
 msgid "Access request: %(document_title)s"
-msgstr ""
+msgstr "Erişim isteği: %(document_title)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
 msgid "Add %(name)s"
-msgstr ""
+msgstr "%(name)s'yi ekle"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr ""
+msgstr "Bakım"
 
 #: document/templates/admin/document/maintenance.html:19
 msgid ""
@@ -326,19 +327,19 @@ msgstr ""
 
 #: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
-msgstr ""
+msgstr "Tüm belgeleri güncelleyin (TEHLİKE!)"
 
 #: style/models.py:74
 msgid "Default"
-msgstr ""
+msgstr "Varsayılan"
 
 #: style/views.py:27
 msgid "The template needs at least 1 document style"
-msgstr ""
+msgstr "Şablonun en az 1 belge stiline ihtiyacı var"
 
 #: user/admin.py:11
 msgid "Connections"
-msgstr ""
+msgstr "Bağlantılar"
 
 #: user/emails.py:10
 #, python-format
@@ -356,15 +357,15 @@ msgstr ""
 
 #: user/emails.py:34
 msgid "Invite for Fidus Writer"
-msgstr ""
+msgstr "Fidus Yazarına Davet Edin"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
-msgstr ""
+msgstr "Kaydolun/giriş yapın ve daveti kabul edin/reddedin"
 
 #: user/emails.py:40
 msgid "Fidus Writer contact invite"
-msgstr ""
+msgstr "Fidus Yazarı iletişim daveti"
 
 #: user/emails.py:53
 #, python-format
@@ -383,15 +384,15 @@ msgstr ""
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
-msgstr ""
+msgstr "Fidus Writer'a davet reddedildi"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
-msgstr ""
+msgstr "Kişi listenizi görün"
 
 #: user/emails.py:82
 msgid "Fidus Writer invite declined"
-msgstr ""
+msgstr "Fidus Yazar daveti reddedildi"
 
 #: user/emails.py:95
 #, python-format
@@ -410,37 +411,37 @@ msgstr ""
 
 #: user/emails.py:118
 msgid "Invite for Fidus Writer accepted"
-msgstr ""
+msgstr "Fidus Writer'a davet kabul edildi"
 
 #: user/emails.py:124
 msgid "Fidus Writer invite accepted"
-msgstr ""
+msgstr "Fidus Yazar daveti kabul edildi"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
-msgstr ""
+msgstr "Kod tam olarak 6 haneli (0-9) olmalıdır."
 
 #: user/models.py:55
 msgid "Interface language preference"
-msgstr ""
+msgstr "Arayüz dili tercihi"
 
 #: user/models.py:62
 msgid "User preferences (e.g., encryption dialog dismissal)"
-msgstr ""
+msgstr "Kullanıcı tercihleri ​​(ör. şifreleme iletişim kutusunun reddedilmesi)"
 
 #: user/models.py:73
 msgid "Can login as another user"
-msgstr ""
+msgstr "Başka bir kullanıcı olarak giriş yapabilir"
 
 #: user/models.py:102
 msgid "email address"
-msgstr ""
+msgstr "e-posta adresi"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
 msgid "Hello from %(site_name)s!"
-msgstr ""
+msgstr "%(site_name)s'den merhaba!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 #, python-format
@@ -458,7 +459,7 @@ msgstr ""
 #: user/templates/account/email/password_reset_key_message.html:26
 #, python-format
 msgid "Thank you from %(site_name)s!"
-msgstr ""
+msgstr "%(site_name)s'den teşekkür ederiz!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid ""
@@ -475,20 +476,20 @@ msgstr ""
 #: user/templates/account/email/password_reset_key_message.html:21
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgstr "Unuttuysanız kullanıcı adınız %(username)s."
 
 #: user/views.py:624
 msgid "Code is invalid"
-msgstr ""
+msgstr "Kod geçersiz"
 
 #: usermedia/views.py:37
 msgid "Filetype not supported"
-msgstr ""
+msgstr "Dosya türü desteklenmiyor"
 
 #: usermedia/views.py:44
 msgid "Image too large"
-msgstr ""
+msgstr "Resim çok büyük"
 
 #: usermedia/views.py:71
 msgid "No file uploaded"
-msgstr ""
+msgstr "Hiçbir dosya yüklenmedi"

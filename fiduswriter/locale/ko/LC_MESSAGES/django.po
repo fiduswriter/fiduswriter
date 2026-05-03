@@ -1,64 +1,65 @@
-# English translations for Fidus Writer.
-# Copyright (C) 2024
-# This file is distributed under the same license as the Fidus Writer package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Fidus Writer\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 09:06+0000\n"
-"PO-Revision-Date: 2024-01-04 00:00+0000\n"
-"Last-Translator: \n"
-"Language-Team: English\n"
-"Language: en\n"
+"POT-Creation-Date: 2026-05-03 10:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
+"Plural-Forms: nplurals=1; plural=0;\n"
 #: base/settings.py:273
 msgid "English"
-msgstr ""
+msgstr "영어"
 
 #: base/settings.py:274
 msgid "Bulgarian"
-msgstr ""
+msgstr "불가리아 사람"
 
 #: base/settings.py:275
 msgid "German"
-msgstr ""
+msgstr "독일 사람"
 
 #: base/settings.py:276
 msgid "French"
-msgstr ""
+msgstr "프랑스 국민"
 
 #: base/settings.py:277
 msgid "Italian"
-msgstr ""
+msgstr "이탈리아 사람"
 
 #: base/settings.py:278
 msgid "Spanish"
-msgstr ""
+msgstr "스페인 사람"
 
 #: base/settings.py:279
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "포르투갈어(브라질)"
 
 #: base/settings.py:396
 msgid "Fidus Writer Admin"
-msgstr ""
+msgstr "Fidus 작가 관리자"
 
 #: base/settings.py:397
 msgid "Fidus Writer Administration Site"
-msgstr ""
+msgstr "Fidus 작가 관리 사이트"
 
 #: base/settings.py:398
 msgid "Welcome to the Fidus Writer Administration Site"
-msgstr ""
+msgstr "Fidus Writer 관리 사이트에 오신 것을 환영합니다."
 
 #: base/templates/500.html:5 base/templates/500.html:8
 msgid "Error 500"
-msgstr ""
+msgstr "오류 500"
 
 #: base/templates/500.html:9
 msgid ""
@@ -69,23 +70,23 @@ msgstr ""
 #: base/templates/admin/console.html:4 base/templates/admin/console.html:16
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
-msgstr ""
+msgstr "관리 콘솔"
 
 #: base/templates/admin/console.html:18
 msgid "Current number of users:"
-msgstr ""
+msgstr "현재 사용자 수:"
 
 #: base/templates/admin/console.html:21
 msgid "Current number of user sessions:"
-msgstr ""
+msgstr "현재 사용자 세션 수:"
 
 #: base/templates/admin/console.html:23
 msgid "Send a system message to all connected users:"
-msgstr ""
+msgstr "연결된 모든 사용자에게 시스템 메시지를 보냅니다."
 
 #: base/templates/admin/console.html:27
 msgid "Message"
-msgstr ""
+msgstr "메시지"
 
 #: base/templates/admin/console.html:29
 msgid ""
@@ -95,41 +96,41 @@ msgstr ""
 
 #: base/templates/admin/console.html:36
 msgid "Send to connected users"
-msgstr ""
+msgstr "연결된 사용자에게 보내기"
 
 #: base/templates/admin/overview.html:10
 msgid "Extras"
-msgstr ""
+msgstr "엑스트라"
 
 #: base/templates/admin/overview.html:17
 #: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
-msgstr ""
+msgstr "문서 유지관리"
 
 #: base/templates/api_404.html:5 base/templates/api_404.html:8
 msgid "Error 404"
-msgstr ""
+msgstr "오류 404"
 
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
-msgstr ""
+msgstr "죄송합니다. 이 페이지를 찾을 수 없습니다."
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr ""
+msgstr "학술 공동 저술을 위한 올인원 솔루션입니다."
 
 #: base/templates/app.html:46
 msgid "JavaScript disabled"
-msgstr ""
+msgstr "자바스크립트가 비활성화되었습니다."
 
 #: base/templates/app.html:47
 msgid "Fidus Writer requires you to enable JavaScript."
-msgstr ""
+msgstr "Fidus Writer를 사용하려면 JavaScript를 활성화해야 합니다."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
-msgstr ""
+msgstr "지원되지 않는 브라우저"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
 msgid ""
@@ -143,11 +144,11 @@ msgstr ""
 
 #: document/admin.py:59
 msgid "Duplicate selected document templates"
-msgstr ""
+msgstr "선택한 문서 템플릿 복제"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:887
 msgid "Untitled"
-msgstr ""
+msgstr "제목 없음"
 
 #: document/emails.py:21
 #, python-format
@@ -183,28 +184,28 @@ msgstr ""
 
 #: document/emails.py:89
 msgid "shared"
-msgstr ""
+msgstr "공유됨"
 
 #: document/emails.py:91 document/emails.py:207 document/emails.py:286
 msgid "Document"
-msgstr ""
+msgstr "문서"
 
 #: document/emails.py:93 document/emails.py:209
 msgid "Author"
-msgstr ""
+msgstr "작가"
 
 #: document/emails.py:95
 msgid "Access Rights"
-msgstr ""
+msgstr "접근 권한"
 
 #: document/emails.py:98 document/emails.py:214
 msgid "Access the document"
-msgstr ""
+msgstr "문서에 액세스"
 
 #: document/emails.py:101
 #, python-format
 msgid "Document shared: %(document_title)s"
-msgstr ""
+msgstr "공유된 문서: %(document_title)s"
 
 #: document/emails.py:123
 #, python-format
@@ -228,7 +229,7 @@ msgstr ""
 #: document/emails.py:143
 #, python-format
 msgid "Comment on : %(document_title)s"
-msgstr ""
+msgstr "댓글: %(document_title)s"
 
 #: document/emails.py:148
 #, python-format
@@ -252,7 +253,7 @@ msgstr ""
 #: document/emails.py:166
 #, python-format
 msgid "Comment assignment on : %(document_title)s"
-msgstr ""
+msgstr "%(document_title)s에 대한 댓글 할당"
 
 #: document/emails.py:171
 #, python-format
@@ -264,7 +265,7 @@ msgstr ""
 
 #: document/emails.py:211
 msgid "Comment"
-msgstr ""
+msgstr "논평"
 
 #: document/emails.py:239
 #, python-format
@@ -284,34 +285,34 @@ msgstr ""
 
 #: document/emails.py:284
 msgid "access request"
-msgstr ""
+msgstr "액세스 요청"
 
 #: document/emails.py:288
 msgid "Requested by"
-msgstr ""
+msgstr "요청자"
 
 #: document/emails.py:290
 msgid "Requested rights"
-msgstr ""
+msgstr "요청된 권리"
 
 #: document/emails.py:293
 msgid "Grant access"
-msgstr ""
+msgstr "액세스 권한 부여"
 
 #: document/emails.py:297
 #, python-format
 msgid "Access request: %(document_title)s"
-msgstr ""
+msgstr "액세스 요청: %(document_title)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
 msgid "Add %(name)s"
-msgstr ""
+msgstr "%(name)s 추가"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr ""
+msgstr "유지"
 
 #: document/templates/admin/document/maintenance.html:19
 msgid ""
@@ -326,19 +327,19 @@ msgstr ""
 
 #: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
-msgstr ""
+msgstr "모든 문서 업데이트(위험!)"
 
 #: style/models.py:74
 msgid "Default"
-msgstr ""
+msgstr "기본"
 
 #: style/views.py:27
 msgid "The template needs at least 1 document style"
-msgstr ""
+msgstr "템플릿에는 문서 스타일이 1개 이상 필요합니다."
 
 #: user/admin.py:11
 msgid "Connections"
-msgstr ""
+msgstr "사이"
 
 #: user/emails.py:10
 #, python-format
@@ -356,15 +357,15 @@ msgstr ""
 
 #: user/emails.py:34
 msgid "Invite for Fidus Writer"
-msgstr ""
+msgstr "Fidus 작가 초대"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
-msgstr ""
+msgstr "가입/로그인 및 초대 수락/거부"
 
 #: user/emails.py:40
 msgid "Fidus Writer contact invite"
-msgstr ""
+msgstr "Fidus Writer 연락처 초대"
 
 #: user/emails.py:53
 #, python-format
@@ -383,15 +384,15 @@ msgstr ""
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
-msgstr ""
+msgstr "Fidus Writer 초대가 거부되었습니다."
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
-msgstr ""
+msgstr "연락처 목록 보기"
 
 #: user/emails.py:82
 msgid "Fidus Writer invite declined"
-msgstr ""
+msgstr "Fidus 작가 초대가 거부되었습니다."
 
 #: user/emails.py:95
 #, python-format
@@ -410,37 +411,37 @@ msgstr ""
 
 #: user/emails.py:118
 msgid "Invite for Fidus Writer accepted"
-msgstr ""
+msgstr "Fidus Writer 초대가 수락되었습니다."
 
 #: user/emails.py:124
 msgid "Fidus Writer invite accepted"
-msgstr ""
+msgstr "Fidus 작가 초대가 수락되었습니다."
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
-msgstr ""
+msgstr "코드는 정확히 6자리(0-9)여야 합니다."
 
 #: user/models.py:55
 msgid "Interface language preference"
-msgstr ""
+msgstr "인터페이스 언어 기본 설정"
 
 #: user/models.py:62
 msgid "User preferences (e.g., encryption dialog dismissal)"
-msgstr ""
+msgstr "사용자 기본 설정(예: 암호화 대화상자 닫기)"
 
 #: user/models.py:73
 msgid "Can login as another user"
-msgstr ""
+msgstr "다른 사용자로 로그인 가능"
 
 #: user/models.py:102
 msgid "email address"
-msgstr ""
+msgstr "이메일 주소"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
 msgid "Hello from %(site_name)s!"
-msgstr ""
+msgstr "%(site_name)s에서 안녕하세요!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 #, python-format
@@ -458,7 +459,7 @@ msgstr ""
 #: user/templates/account/email/password_reset_key_message.html:26
 #, python-format
 msgid "Thank you from %(site_name)s!"
-msgstr ""
+msgstr "%(site_name)s에서 감사드립니다!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid ""
@@ -475,20 +476,20 @@ msgstr ""
 #: user/templates/account/email/password_reset_key_message.html:21
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgstr "잊어버린 경우를 대비해 사용자 이름은 %(username)s입니다."
 
 #: user/views.py:624
 msgid "Code is invalid"
-msgstr ""
+msgstr "코드가 유효하지 않습니다"
 
 #: usermedia/views.py:37
 msgid "Filetype not supported"
-msgstr ""
+msgstr "지원되지 않는 파일 형식"
 
 #: usermedia/views.py:44
 msgid "Image too large"
-msgstr ""
+msgstr "이미지가 너무 큼"
 
 #: usermedia/views.py:71
 msgid "No file uploaded"
-msgstr ""
+msgstr "업로드된 파일이 없습니다."

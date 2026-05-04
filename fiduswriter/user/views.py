@@ -436,7 +436,7 @@ def invites_connect(user, key=None):
 def invite(request):
     response = {}
     status = 200
-    key = request.POST["key"]
+    key = request.JSON["key"]
     connected = invites_connect(request.user, key)
     if connected:
         response["redirect"] = "/user/contacts/"

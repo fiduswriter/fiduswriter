@@ -552,7 +552,7 @@ def get_confirmkey_data(request):
     Get data for an email confirmation key
     """
     response = {}
-    key = request.POST["key"]
+    key = request.JSON["key"]
     confirmation = EmailConfirmationHMAC.from_key(key)
     if not confirmation:
         qs = EmailConfirmation.objects.all_valid()

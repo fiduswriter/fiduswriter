@@ -235,7 +235,11 @@ def delete_user(request):
     user = request.user
     # Only remove users who are not marked as having staff status
     # to prevent administratoras from deleting themselves accidentally.
-    if not user.check_password(request.POST["password"]):
+    if hasattr(request, "JSON") and isinstance(request.JSON, dict):
+        password = request.JSON["password"]
+    else:
+        password = request.POST["password"]
+    if not user.check_password(password):
         status = 401
     elif user.is_staff:
         status = 403
@@ -837,7 +841,10 @@ def save_encryption_key(request):
     """Create or update the user's encryption keys."""
     response = {}
     status = 200
-    data = request.JSON.get("data", {})
+    if hasattr(request, "JSON") and isinstance(request.JSON, dict):
+        data = request.JSON.get("data", {})
+    else:
+        data = json.loads(request.POST.get("data", "{}"))
     key_record, created = UserEncryptionKey.objects.get_or_create(
         user=request.user,
         defaults={

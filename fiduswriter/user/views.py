@@ -94,7 +94,7 @@ def add_email(request):
 @require_POST
 def delete_email(request):
     response = {}
-    email = request.POST["email"]
+    email = request.JSON["email"]
     response["msg"] = f"Removed e-mail address {email}"
     status = 200
     email_address = EmailAddress.objects.filter(
@@ -117,7 +117,7 @@ def delete_email(request):
 @require_POST
 def primary_email(request):
     response = {}
-    email = request.POST["email"]
+    email = request.JSON["email"]
     email_address = EmailAddress.objects.filter(
         user=request.user, email=email, verified=True
     ).first()
@@ -144,7 +144,7 @@ def primary_email(request):
 @require_POST
 def delete_socialaccount(request):
     account = SocialAccount.objects.filter(
-        id=request.POST["socialaccount"], user=request.user
+        id=request.JSON["socialaccount"], user=request.user
     ).first()
     if not account:
         return JsonResponse({"msg": "Unknown account"}, status=404)
@@ -717,12 +717,8 @@ def two_factor_verify(request):
     Verify a TOTP code during setup.
     """
 
-    if hasattr(request, "JSON") and isinstance(request.JSON, dict):
-        code = request.JSON.get("code", "").strip()
-        device_id = request.JSON.get("device_id")
-    else:
-        code = request.POST.get("code", "").strip()
-        device_id = request.POST.get("device_id")
+    code = request.JSON.get("code", "").strip()
+    device_id = request.JSON.get("device_id")
 
     if not code or len(code) != 6:
         return JsonResponse(
@@ -841,10 +837,7 @@ def save_encryption_key(request):
     """Create or update the user's encryption keys."""
     response = {}
     status = 200
-    if hasattr(request, "JSON") and isinstance(request.JSON, dict):
-        data = request.JSON.get("data", {})
-    else:
-        data = json.loads(request.POST.get("data", "{}"))
+    data = request.JSON.get("data", {})
     key_record, created = UserEncryptionKey.objects.get_or_create(
         user=request.user,
         defaults={
@@ -909,15 +902,8 @@ def update_preferences(request):
     # Update allowed preference keys
     allowed_keys = {"has_dismissed_passphrase_offer"}
     for key in allowed_keys:
-        value = request.POST.get(key)
-        if value is not None:
-            # Convert string "true"/"false" to boolean
-            if value.lower() == "true":
-                preferences[key] = True
-            elif value.lower() == "false":
-                preferences[key] = False
-            else:
-                preferences[key] = value
+        if key in request.JSON:
+            preferences[key] = request.JSON[key]
 
     user.preferences = preferences
     user.save()

@@ -97,7 +97,7 @@ def save(request):
 def delete(request):
     response = {}
     status = 201
-    ids = request.POST.getlist("ids[]")
+    ids = request.JSON["ids"]
     UserImage.objects.filter(image_id__in=ids, owner=request.user).delete()
     for image in Image.objects.filter(id__in=ids):
         if image.is_deletable():
@@ -147,14 +147,13 @@ def images(request):
 def save_category(request):
     response = {}
     response["entries"] = []
-    ids = request.POST.getlist("ids[]")
-    titles = request.POST.getlist("titles[]")
+    ids = request.JSON["ids"]
+    titles = request.JSON["titles"]
     ImageCategory.objects.filter(category_owner=request.user).exclude(
         id__in=ids
     ).delete()
     x = 0
     for the_id in ids:
-        the_id = int(the_id)
         the_title = titles[x]
         x += 1
         if 0 == the_id:

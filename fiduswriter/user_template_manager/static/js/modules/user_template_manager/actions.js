@@ -3,7 +3,7 @@ import {
     activateWait,
     addAlert,
     deactivateWait,
-    postJson
+    jsonPostJson
 } from "../common"
 import {
     DocumentTemplateExporter,
@@ -26,7 +26,7 @@ export class DocTemplatesActions {
             return
         }
 
-        postJson("/api/user_template_manager/delete/", {id})
+        jsonPostJson("/api/user_template_manager/delete/", {id})
             .catch(error => {
                 addAlert(
                     "error",
@@ -82,7 +82,7 @@ export class DocTemplatesActions {
     }
 
     copyDocTemplate(oldDocTemplate) {
-        return postJson("/api/user_template_manager/copy/", {
+        return jsonPostJson("/api/user_template_manager/copy/", {
             id: oldDocTemplate.id,
             title: `${gettext("Copy of")} ${oldDocTemplate.title}`
         })

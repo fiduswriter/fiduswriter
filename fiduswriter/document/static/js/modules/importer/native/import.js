@@ -1,4 +1,10 @@
-import {addAlert, deactivateWait, postJson, shortFileTitle} from "../../common"
+import {
+    addAlert,
+    deactivateWait,
+    jsonPostJson,
+    postJson,
+    shortFileTitle
+} from "../../common"
 import {extractTemplate} from "../../document_template"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {GetImages} from "./get_images"
@@ -266,7 +272,7 @@ export class NativeImporter {
                 bibliography: this.bibliography
             }
         }
-        return postJson("/api/document/import/", saveData)
+        return jsonPostJson("/api/document/import/", saveData)
             .then(({json}) => {
                 const docInfo = {
                     is_owner: true,

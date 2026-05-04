@@ -51,7 +51,7 @@ from document.helpers.token_access import get_token_access
 def get_documentlist_extra(request):
     response = {}
     status = 200
-    ids = request.POST["ids"].split(",")
+    ids = request.JSON["ids"]
     docs = (
         Document.objects.filter(
             Q(owner=request.user) | Q(accessright__user=request.user)
@@ -187,7 +187,7 @@ def get_access_rights(request):
     status = 200
     avatars = Avatars()
     ar_qs = AccessRight.objects.filter(document__owner=request.user)
-    doc_ids = request.POST.getlist("document_ids[]")
+    doc_ids = request.JSON.get("document_ids", [])
     if len(doc_ids) > 0:
         ar_qs = ar_qs.filter(document_id__in=doc_ids)
     access_rights = []
@@ -245,8 +245,8 @@ def _handle_automatic_key_sharing(document, user):
 def save_access_rights(request):
     User = get_user_model()
     response = {}
-    doc_ids = json.loads(request.POST["document_ids"])
-    rights = json.loads(request.POST["access_rights"])
+    doc_ids = request.JSON["document_ids"]
+    rights = request.JSON["access_rights"]
     for doc_id in doc_ids:
         doc = Document.objects.filter(pk=doc_id, owner=request.user).first()
         if not doc:
@@ -401,7 +401,7 @@ def get_documentlist(request):
 def delete(request):
     response = {}
     status = 200
-    doc_id = int(request.POST["id"])
+    doc_id = request.JSON["id"]
     document = Document.objects.get(pk=doc_id, owner=request.user)
     if document.is_deletable():
         image_ids = list(
@@ -425,8 +425,8 @@ def delete(request):
 def move(request):
     response = {}
     status = 200
-    doc_id = int(request.POST["id"])
-    path = request.POST["path"]
+    doc_id = request.JSON["id"]
+    path = request.JSON["path"]
     document = Document.objects.filter(pk=doc_id).first()
     if not document:
         response["done"] = False
@@ -456,9 +456,9 @@ def move(request):
 @require_POST
 def create_doc(request):
     response = {}
-    template_id = request.POST["template_id"]
-    path = request.POST["path"]
-    e2ee = request.POST.get("e2ee", "") == "true"
+    template_id = request.JSON["template_id"]
+    path = request.JSON["path"]
+    e2ee = request.JSON.get("e2ee", False)
 
     # Check E2EE mode
     e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
@@ -484,10 +484,10 @@ def create_doc(request):
     e2ee_salt = None
     e2ee_iterations = 600000
     if e2ee:
-        salt_b64 = request.POST.get("e2ee_salt")
+        salt_b64 = request.JSON.get("e2ee_salt")
         if salt_b64:
             e2ee_salt = base64.b64decode(salt_b64)
-        e2ee_iterations = int(request.POST.get("e2ee_iterations", 600000))
+        e2ee_iterations = request.JSON.get("e2ee_iterations", 600000)
 
     document = Document.objects.create(
         owner_id=request.user.pk,
@@ -716,12 +716,12 @@ def e2ee_image(request):
 def delete_e2ee_image(request):
     response = {}
     document = Document.objects.filter(
-        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+        owner_id=request.user.pk, id=request.JSON["doc_id"]
     ).first()
     if not document or not document.e2ee:
         return JsonResponse(response, status=401)
 
-    image_id = int(request.POST.get("image_id", 0))
+    image_id = request.JSON.get("image_id", 0)
     EncryptedDocumentImage.objects.filter(
         document=document, id=image_id
     ).delete()
@@ -733,7 +733,7 @@ def delete_e2ee_image(request):
 @require_POST
 def import_doc(request):
     response = {}
-    doc_id = request.POST["id"]
+    doc_id = request.JSON["id"]
     # There is a doc_id, so we overwrite an existing doc rather than
     # creating a new one.
     document = Document.objects.get(id=int(doc_id))
@@ -748,19 +748,19 @@ def import_doc(request):
         response["error"] = "No access to file"
         status = 403
         return JsonResponse(response, status=status)
-    document.title = request.POST["title"]
+    document.title = request.JSON["title"]
     if document.e2ee:
         # For E2EE documents, content/comments/bibliography are
         # encrypted strings (opaque Base64 ciphertext). Store as-is
         # and record that a snapshot exists at version 0.
-        document.content = request.POST["content"]
-        document.comments = request.POST["comments"]
-        document.bibliography = request.POST["bibliography"]
+        document.content = request.JSON["content"]
+        document.comments = request.JSON["comments"]
+        document.bibliography = request.JSON["bibliography"]
         document.e2ee_snapshot_version = 0
     else:
-        document.content = json.loads(request.POST["content"])
-        document.comments = json.loads(request.POST["comments"])
-        document.bibliography = json.loads(request.POST["bibliography"])
+        document.content = request.JSON["content"]
+        document.comments = request.JSON["comments"]
+        document.bibliography = request.JSON["bibliography"]
     # document.doc_version should always be the current version, so don't
     # bother about it.
     document.save()
@@ -832,7 +832,7 @@ def get_revision(request, revision_id):
 def delete_revision(request):
     response = {}
     status = 405
-    revision_id = request.POST["id"]
+    revision_id = request.JSON["id"]
     revision = DocumentRevision.objects.filter(pk=int(revision_id)).first()
     if revision:
         document = revision.document
@@ -858,11 +858,11 @@ def has_doc_access(doc, user):
 @require_POST
 def comment_notify(request):
     response = {}
-    doc_id = request.POST["doc_id"]
-    collaborator_id = request.POST["collaborator_id"]
-    comment_text = request.POST["comment_text"]
-    comment_html = bleach.clean(request.POST["comment_html"], strip=True)
-    notification_type = request.POST["type"]
+    doc_id = request.JSON["doc_id"]
+    collaborator_id = request.JSON["collaborator_id"]
+    comment_text = request.JSON["comment_text"]
+    comment_html = bleach.clean(request.JSON["comment_html"], strip=True)
+    notification_type = request.JSON["type"]
     User = get_user_model()
     collaborator = User.objects.filter(pk=collaborator_id).first()
     document = Document.objects.filter(pk=doc_id).first()
@@ -902,7 +902,7 @@ def comment_notify(request):
 @ajax_required
 @require_POST
 def get_template_for_doc(request):
-    doc_id = request.POST.get("id")
+    doc_id = request.JSON.get("id")
     if request.user.is_authenticated:
         doc = (
             Document.objects.filter(id=doc_id)
@@ -916,7 +916,7 @@ def get_template_for_doc(request):
             .first()
         )
     else:
-        token_str = request.POST.get("token", "")
+        token_str = request.JSON.get("token", "")
         token_doc, _rights = get_token_access(token_str)
         if token_doc and str(token_doc.id) == str(doc_id):
             doc = (
@@ -959,7 +959,7 @@ def get_template_for_doc(request):
 @require_POST
 def get_template(request):
     response = {}
-    import_id = request.POST["import_id"]
+    import_id = request.JSON["import_id"]
     doc_template = DocumentTemplate.objects.filter(
         Q(user=request.user) | Q(user=None), import_id=import_id
     ).first()
@@ -978,7 +978,7 @@ def get_template(request):
 @require_POST
 def get_ws_base(request):
     response = {}
-    doc_id = int(request.POST.get("id"))
+    doc_id = request.JSON.get("id")
     if len(settings.PORTS) < 2:
         ws_url_base = "/ws"
     else:
@@ -995,8 +995,8 @@ def get_doc_styles(request):
     """Return styles data for a document (export templates, document styles,
     document templates). This was previously sent via WebSocket on subscribe.
     """
-    doc_id = request.POST.get("id")
-    token_str = request.POST.get("token", "")
+    doc_id = request.JSON.get("id")
+    token_str = request.JSON.get("token", "")
 
     # Resolve the document and access rights
     if request.user.is_authenticated:
@@ -1062,9 +1062,9 @@ def get_doc_data(request):
     """Return document data for the editor. This was previously sent via
     WebSocket as the 'doc_data' message. The client will reconcile any
     version drift via the WebSocket after connecting."""
-    doc_id = request.POST.get("id")
-    token_str = request.POST.get("token", "")
-    v_str = request.POST.get("v")
+    doc_id = request.JSON.get("id")
+    token_str = request.JSON.get("token", "")
+    v_str = request.JSON.get("v")
 
     # Resolve document and access rights (same logic as get_doc_styles)
     doc = None
@@ -1329,10 +1329,10 @@ def get_doc_data(request):
 @require_POST
 def create_share_token(request):
     response = {}
-    document_id = int(request.POST.get("document_id"))
-    rights = request.POST.get("rights")
-    expires_at = request.POST.get("expires_at") or None
-    note = request.POST.get("note", "")
+    document_id = request.JSON.get("document_id")
+    rights = request.JSON.get("rights")
+    expires_at = request.JSON.get("expires_at") or None
+    note = request.JSON.get("note", "")
 
     # Check if user owns the document
     document = Document.objects.filter(
@@ -1364,7 +1364,7 @@ def create_share_token(request):
 @require_POST
 def list_share_tokens(request):
     response = {}
-    document_id = int(request.POST.get("document_id"))
+    document_id = request.JSON.get("document_id")
 
     # Check if user owns the document
     document = Document.objects.filter(
@@ -1399,7 +1399,7 @@ def list_share_tokens(request):
 @require_POST
 def revoke_share_token(request):
     response = {}
-    token_id = int(request.POST.get("token_id"))
+    token_id = request.JSON.get("token_id")
     token = ShareToken.objects.filter(
         id=token_id,
         document__owner=request.user,
@@ -1448,8 +1448,8 @@ def request_access(request):
     """
 
     response = {}
-    document_id = int(request.POST.get("document_id"))
-    requested_rights = request.POST.get("rights", "read")
+    document_id = request.JSON.get("document_id")
+    requested_rights = request.JSON.get("rights", "read")
 
     # Only allow upgrade requests (only 'write' makes sense as upgrade from read/comment)
     valid_rights = ["write", "write-tracked", "comment", "review", "read"]
@@ -1515,24 +1515,24 @@ def get_all_old_docs(request):
 def save_doc(request):
     response = {}
     status = 200
-    doc_id = request.POST["id"]
-    doc = Document.objects.get(pk=int(doc_id))
+    doc_id = request.JSON["id"]
+    doc = Document.objects.get(pk=doc_id)
     # Only looking at fields that may have changed.
-    content = request.POST.get("content", False)
-    bibliography = request.POST.get("bibliography", False)
-    comments = request.POST.get("comments", False)
-    diffs = request.POST.get("diffs", False)
-    version = request.POST.get("version", False)
-    if content:
-        doc.content = json.loads(content)
-    if bibliography:
-        doc.bibliography = json.loads(bibliography)
-    if comments:
-        doc.comments = json.loads(comments)
-    if version:
+    content = request.JSON.get("content")
+    bibliography = request.JSON.get("bibliography")
+    comments = request.JSON.get("comments")
+    diffs = request.JSON.get("diffs")
+    version = request.JSON.get("version")
+    if content is not None:
+        doc.content = content
+    if bibliography is not None:
+        doc.bibliography = bibliography
+    if comments is not None:
+        doc.comments = comments
+    if version is not None:
         doc.version = version
-    if diffs:
-        doc.diffs = json.loads(diffs)
+    if diffs is not None:
+        doc.diffs = diffs
     doc.doc_version = FW_DOCUMENT_VERSION
     doc.save()
     return JsonResponse(response, status=status)
@@ -1544,7 +1544,7 @@ def save_doc(request):
 def get_user_biblist(request):
     response = {}
     status = 200
-    user_id = request.POST["user_id"]
+    user_id = request.JSON["user_id"]
     response["bibList"] = serializer.serialize(
         Entry.objects.filter(entry_owner_id=user_id),
         fields=("entry_key", "entry_owner", "bib_type", "fields"),
@@ -1571,7 +1571,7 @@ def get_all_template_ids(request):
 @ajax_required
 @require_POST
 def get_template_admin(request, type="all"):
-    template_id = request.POST.get("id")
+    template_id = request.JSON.get("id")
     doc_template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
     if doc_template is None:
         return JsonResponse({}, status=405)
@@ -1602,14 +1602,14 @@ def get_template_admin(request, type="all"):
 def save_template(request):
     response = {}
     status = 405
-    template_id = request.POST["id"]
+    template_id = request.JSON["id"]
     template = DocumentTemplate.objects.filter(pk=int(template_id)).first()
     if template:
         status = 200
         # Only looking at fields that may have changed.
-        content = request.POST.get("content", False)
-        if content:
-            template.content = json.loads(content)
+        content = request.JSON.get("content")
+        if content is not None:
+            template.content = content
         template.doc_version = FW_DOCUMENT_VERSION
         template.save()
     return JsonResponse(response, status=status)
@@ -1668,14 +1668,14 @@ def save_document_encryption_key(request):
     """Create or update a DocumentEncryptionKey record."""
     response = {}
     status = 200
-    doc_id = int(request.POST["document_id"])
+    doc_id = request.JSON["document_id"]
     document = Document.objects.filter(pk=doc_id).first()
     if not document:
         return JsonResponse({"error": "Document not found"}, status=404)
 
     # Now only support User holders (no more UserInvite)
     User = get_user_model()
-    holder_id = int(request.POST.get("holder_id", request.user.pk))
+    holder_id = request.JSON.get("holder_id", request.user.pk)
     holder = User.objects.filter(pk=holder_id).first()
     if not holder:
         return JsonResponse({"error": "Holder user not found"}, status=404)
@@ -1696,17 +1696,16 @@ def save_document_encryption_key(request):
         document=document,
         holder=holder,
         defaults={
-            "encrypted_key": request.POST["encrypted_key"],
-            "encrypted_with_master_key": request.POST.get(
-                "encrypted_with_master_key", "true"
-            )
-            == "true",
+            "encrypted_key": request.JSON["encrypted_key"],
+            "encrypted_with_master_key": request.JSON.get(
+                "encrypted_with_master_key", True
+            ),
         },
     )
     if not created:
-        dek_record.encrypted_key = request.POST["encrypted_key"]
-        dek_record.encrypted_with_master_key = (
-            request.POST.get("encrypted_with_master_key", "true") == "true"
+        dek_record.encrypted_key = request.JSON["encrypted_key"]
+        dek_record.encrypted_with_master_key = request.JSON.get(
+            "encrypted_with_master_key", True
         )
         dek_record.save()
     response["id"] = dek_record.id
@@ -1720,7 +1719,7 @@ def get_document_encryption_key(request):
     """Get the DocumentEncryptionKey for the current user and a document."""
     response = {}
     status = 200
-    doc_id = int(request.POST["document_id"])
+    doc_id = request.JSON["document_id"]
     document = Document.objects.filter(pk=doc_id).first()
     if not document:
         return JsonResponse({"error": "Document not found"}, status=404)
@@ -1756,7 +1755,7 @@ def update_document_encryption_key(request):
     """Update a DocumentEncryptionKey (key upgrade after asymmetric decryption)."""
     response = {}
     status = 200
-    dek_id = int(request.POST["id"])
+    dek_id = request.JSON["id"]
     dek_record = DocumentEncryptionKey.objects.filter(pk=dek_id).first()
     if not dek_record:
         return JsonResponse({"error": "Key not found"}, status=404)
@@ -1767,9 +1766,9 @@ def update_document_encryption_key(request):
     ):
         return JsonResponse({"error": "Not allowed"}, status=403)
 
-    dek_record.encrypted_key = request.POST["encrypted_key"]
-    dek_record.encrypted_with_master_key = (
-        request.POST.get("encrypted_with_master_key", "true") == "true"
+    dek_record.encrypted_key = request.JSON["encrypted_key"]
+    dek_record.encrypted_with_master_key = request.JSON.get(
+        "encrypted_with_master_key", True
     )
     dek_record.save()
     response["id"] = dek_record.id
@@ -1844,11 +1843,11 @@ def update_revision(request):
 def add_images_to_doc(request):
     response = {}
     status = 201
-    doc_id = request.POST["doc_id"]
+    doc_id = request.JSON["doc_id"]
     doc = Document.objects.get(id=doc_id)
     # Delete all existing image links
     DocumentImage.objects.filter(document_id=doc_id).delete()
-    ids = request.POST.getlist("ids[]")
+    ids = request.JSON["ids"]
     for id in ids:
         doc_image_data = {"document": doc, "title": "Deleted"}
         image = Image.objects.filter(id=id).first()

@@ -9,7 +9,7 @@ import {
     addAlert,
     ensureCSS,
     findTarget,
-    postJson,
+    jsonPostJson,
     showSystemMessage
 } from "../common"
 import {ContactsOverview} from "../contacts"
@@ -442,7 +442,7 @@ export class App {
     }
 
     getConfiguration() {
-        return postJson("/api/base/configuration/")
+        return jsonPostJson("/api/base/configuration/")
             .then(({json}) =>
                 Object.entries(json).forEach(
                     ([key, value]) => (this.config[key] = value)

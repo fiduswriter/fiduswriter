@@ -9,7 +9,7 @@ import {
     ensureCSS,
     escapeText,
     findTarget,
-    postJson,
+    jsonPostJson,
     setDocTitle,
     whenReady
 } from "../common"
@@ -264,7 +264,7 @@ export class DocTemplatesOverview {
         if (this.app.isOffline()) {
             return this.showCached()
         }
-        return postJson("/api/user_template_manager/list/")
+        return jsonPostJson("/api/user_template_manager/list/")
             .then(({json}) => {
                 this.updateIndexedDB(json)
                 this.initializeView(json)

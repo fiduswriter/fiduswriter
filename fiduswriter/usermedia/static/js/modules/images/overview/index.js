@@ -14,8 +14,8 @@ import {
     escapeText,
     findTarget,
     isActivationEvent,
+    jsonPost,
     localizeDate,
-    post,
     setDocTitle,
     whenReady
 } from "../../common"
@@ -97,7 +97,7 @@ export class ImageOverview {
             return
         }
         activateWait()
-        post("/api/usermedia/delete/", {ids})
+        jsonPost("/api/usermedia/delete/", {ids})
             .catch(error => {
                 addAlert("error", gettext("The image(s) could not be deleted"))
                 deactivateWait()

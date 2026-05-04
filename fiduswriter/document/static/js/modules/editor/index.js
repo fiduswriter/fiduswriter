@@ -15,7 +15,7 @@ import {
     addAlert,
     deactivateWait,
     ensureCSS,
-    postJson,
+    jsonPostJson,
     showSystemMessage,
     whenReady
 } from "../common"
@@ -246,7 +246,7 @@ export class Editor {
                 initPromises.push(this._createE2EEDocument())
             } else {
                 initPromises.push(
-                    postJson("/api/document/create_doc/", {
+                    jsonPostJson("/api/document/create_doc/", {
                         template_id: this.docInfo.templateId,
                         path: this.docInfo.path
                     }).then(({json}) => {
@@ -266,7 +266,7 @@ export class Editor {
         if (uuid4Pattern.test(this.docInfo.id)) {
             this.docInfo.token = this.docInfo.id
             initPromises.push(
-                postJson(
+                jsonPostJson(
                     `/api/document/share_token/validate/${this.docInfo.token}/`
                 ).then(({json, status}) => {
                     if (status === 200 && json.document_id) {
@@ -297,14 +297,14 @@ export class Editor {
                 }
                 const wsBasePromise = this.docInfo.wsBase
                     ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
-                    : postJson("/api/document/get_ws_base/", {
+                    : jsonPostJson("/api/document/get_ws_base/", {
                           id: this.docInfo.id
                       })
-                const stylesPromise = postJson(
+                const stylesPromise = jsonPostJson(
                     "/api/document/get_doc_styles/",
                     stylesPayload
                 )
-                const docDataPromise = postJson(
+                const docDataPromise = jsonPostJson(
                     "/api/document/get_doc_data/",
                     stylesPayload
                 )
@@ -464,7 +464,7 @@ export class Editor {
                                 // our version (v) lets the endpoint include the
                                 // covering diffs as `m` so adjustDocument can
                                 // do a precise merge.
-                                postJson("/api/document/get_doc_data/", {
+                                jsonPostJson("/api/document/get_doc_data/", {
                                     id: this.docInfo.id,
                                     token: this.docInfo.token,
                                     v: this.docInfo.version
@@ -790,12 +790,12 @@ export class Editor {
         )
 
         // Create the document on the server with E2EE parameters
-        const {json, status} = await postJson("/api/document/create_doc/", {
+        const {json, status} = await jsonPostJson("/api/document/create_doc/", {
             template_id: this.docInfo.templateId,
             path: this.docInfo.path,
-            e2ee: "true",
+            e2ee: true,
             e2ee_salt: saltBase64,
-            e2ee_iterations: String(iterations)
+            e2ee_iterations: iterations
         })
 
         if (status === 403) {

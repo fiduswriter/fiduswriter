@@ -15,7 +15,7 @@ import {
     escapeText,
     findTarget,
     infoTooltip,
-    postJson,
+    jsonPostJson,
     setDocTitle,
     shortFileTitle,
     whenReady
@@ -217,7 +217,7 @@ export class DocumentOverview {
             return cachedPromise
         }
         return whenReady()
-            .then(() => postJson("/api/document/documentlist/"))
+            .then(() => jsonPostJson("/api/document/documentlist/"))
             .then(({json}) => {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
@@ -243,7 +243,7 @@ export class DocumentOverview {
          * This allows the overview to show more documents decrypted.
          */
         try {
-            const response = await postJson(
+            const response = await jsonPostJson(
                 "/api/document/encryption_key/get_all/",
                 {}
             )

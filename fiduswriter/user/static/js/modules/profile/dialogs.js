@@ -287,7 +287,7 @@ export const deleteEmailDialog = (target, app) => {
             click: () => {
                 activateWait()
 
-                post("/api/user/email/delete/", {
+                jsonPost("/api/user/email/delete/", {
                     email
                 })
                     .then(() => {
@@ -336,7 +336,7 @@ export const deleteSocialaccountDialog = (target, app) => {
             click: () => {
                 activateWait()
 
-                post("/api/user/socialaccountdelete/", {
+                jsonPost("/api/user/socialaccountdelete/", {
                     socialaccount
                 })
                     .then(() => {
@@ -389,7 +389,7 @@ export const changePrimaryEmailDialog = app => {
             click: () => {
                 activateWait()
 
-                post("/api/user/email/primary/", {
+                jsonPost("/api/user/email/primary/", {
                     email
                 })
                     .then(() => {

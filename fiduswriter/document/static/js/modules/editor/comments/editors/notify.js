@@ -1,9 +1,9 @@
-import {post} from "../../../common"
+import {jsonPost} from "../../../common"
 import {serializeCommentNode} from "./schema"
 
 export const notifyMentionedUser = (docId, userId, comment) => {
     const {html, text} = serializeCommentNode(comment)
-    return post("/api/document/comment_notify/", {
+    return jsonPost("/api/document/comment_notify/", {
         doc_id: docId,
         collaborator_id: userId,
         comment_html: html,

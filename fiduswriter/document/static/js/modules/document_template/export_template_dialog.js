@@ -1,5 +1,12 @@
 import JSZip from "jszip"
-import {Dialog, escapeText, findTarget, get, postJson} from "../common"
+import {
+    Dialog,
+    escapeText,
+    findTarget,
+    get,
+    jsonPostJson,
+    postJson
+} from "../common"
 
 export class ExportTemplateDialog {
     constructor(
@@ -142,7 +149,7 @@ export class ExportTemplateDialog {
     }
 
     deleteTemplate() {
-        postJson("/api/style/delete_export_template/", {id: this.id})
+        jsonPostJson("/api/style/delete_export_template/", {id: this.id})
             .then(() => {
                 const oldTemplateIndex = this.allTemplates.findIndex(
                     style => style.pk === this.id

@@ -1,4 +1,4 @@
-import {addAlert, findTarget, getJson, postJson, whenReady} from "../common"
+import {addAlert, findTarget, getJson, jsonPostJson, whenReady} from "../common"
 
 // To see how many users are currently online and send them maintenance messages
 
@@ -44,7 +44,7 @@ export class AdminConsole {
     }
 
     sendSystemMessage(message) {
-        return postJson("/api/base/send_system_message/", {message}).then(
+        return jsonPostJson("/api/base/send_system_message/", {message}).then(
             () => {
                 addAlert("info", gettext("Message delivered successfully!"))
                 const button = document.querySelector(

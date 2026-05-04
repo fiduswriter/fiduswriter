@@ -1,0 +1,28 @@
+import json
+from django.conf import settings
+
+
+class JsonToPostMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        content_type = request.META.get("CONTENT_TYPE", "")
+
+        # Only intercept JSON payloads for write methods
+        if (
+            request.method in ("POST", "PUT", "PATCH", "DELETE")
+            and "application/json" in content_type
+        ):
+            if request.body:
+                try:
+                    data = json.loads(request.body)
+                    request.JSON = data
+                    if isinstance(data, dict):
+                        csrftoken = data.get("csrfmiddlewaretoken", None)
+                        if csrftoken:
+                            request.META[settings.CSRF_HEADER_NAME] = csrftoken
+                except json.JSONDecodeError:
+                    pass  # Let downstream handle invalid JSON gracefully
+
+        return self.get_response(request)

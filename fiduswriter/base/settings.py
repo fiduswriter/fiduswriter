@@ -154,6 +154,7 @@ SECRET_KEY = "2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4"
 BASE_MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "base.middleware.JsonToPostMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django_otp.middleware.OTPMiddleware",  # Two-factor authentication (can be disabled via REMOVED_APPS)

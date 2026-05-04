@@ -54,6 +54,7 @@ jobs:
                     - document.tests.test_path
                     - document.tests.test_share_link_access
                     - document.tests.test_e2ee
+                    - "document.tests.test_views_unit document.tests.test_helpers"
                     - bibliography
                     - usermedia
                     - user_template_manager

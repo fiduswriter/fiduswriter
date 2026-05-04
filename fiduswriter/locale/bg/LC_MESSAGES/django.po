@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-04 06:33+0000\n"
+"POT-Creation-Date: 2026-05-04 11:44+0000\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,42 +11,97 @@ msgstr ""
 "X-Generator: POEditor.com\n"
 
 #: base/settings.py:273
-msgid "English"
-msgstr "Английски"
+msgid "Arabic"
+msgstr "арабски"
 
 #: base/settings.py:274
 msgid "Bulgarian"
 msgstr "Български"
 
 #: base/settings.py:275
+msgid "Czech"
+msgstr "чешки"
+
+#: base/settings.py:276
+#| msgid "Spanish"
+msgid "Danish"
+msgstr "датски"
+
+#: base/settings.py:277
 msgid "German"
 msgstr "Немски"
 
-#: base/settings.py:276
-msgid "French"
-msgstr "Френски"
-
-#: base/settings.py:277
-msgid "Italian"
-msgstr "Италиански"
-
 #: base/settings.py:278
+msgid "English"
+msgstr "Английски"
+
+#: base/settings.py:279
 msgid "Spanish"
 msgstr "Испански"
 
-#: base/settings.py:279
+#: base/settings.py:280
+msgid "French"
+msgstr "Френски"
+
+#: base/settings.py:281
+msgid "Italian"
+msgstr "Италиански"
+
+#: base/settings.py:282
+msgid "Japanese"
+msgstr "японски"
+
+#: base/settings.py:283
+msgid "Korean"
+msgstr "корейски"
+
+#: base/settings.py:284
+msgid "Norwegian Bokmål"
+msgstr "норвежки букмол"
+
+#: base/settings.py:285
+msgid "Dutch"
+msgstr "холандски"
+
+#: base/settings.py:286
+#| msgid "English"
+msgid "Polish"
+msgstr "полски"
+
+#: base/settings.py:287
 msgid "Portuguese (Brazil)"
 msgstr "Португалски (Бразилия)"
 
-#: base/settings.py:396
+#: base/settings.py:288
+#| msgid "Portuguese (Brazil)"
+msgid "Portuguese (Portugal)"
+msgstr "португалски (Португалия)"
+
+#: base/settings.py:289
+msgid "Russian"
+msgstr "руски"
+
+#: base/settings.py:290
+msgid "Swedish"
+msgstr "шведски"
+
+#: base/settings.py:291
+msgid "Turkish"
+msgstr "турски"
+
+#: base/settings.py:292
+msgid "Chinese (Simplified)"
+msgstr "китайски (опростен)"
+
+#: base/settings.py:409
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:397
+#: base/settings.py:410
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: base/settings.py:398
+#: base/settings.py:411
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 

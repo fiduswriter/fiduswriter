@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 10:48+0000\n"
+"POT-Creation-Date: 2026-05-04 11:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,42 +19,97 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: base/settings.py:273
-msgid "English"
-msgstr "إنجليزي"
+msgid "Arabic"
+msgstr "عربي"
 
 #: base/settings.py:274
 msgid "Bulgarian"
 msgstr "البلغارية"
 
 #: base/settings.py:275
+msgid "Czech"
+msgstr "التشيكية"
+
+#: base/settings.py:276
+#| msgid "Spanish"
+msgid "Danish"
+msgstr "دانماركي"
+
+#: base/settings.py:277
 msgid "German"
 msgstr "الألمانية"
 
-#: base/settings.py:276
-msgid "French"
-msgstr "فرنسي"
-
-#: base/settings.py:277
-msgid "Italian"
-msgstr "ايطالي"
-
 #: base/settings.py:278
+msgid "English"
+msgstr "إنجليزي"
+
+#: base/settings.py:279
 msgid "Spanish"
 msgstr "الأسبانية"
 
-#: base/settings.py:279
+#: base/settings.py:280
+msgid "French"
+msgstr "فرنسي"
+
+#: base/settings.py:281
+msgid "Italian"
+msgstr "ايطالي"
+
+#: base/settings.py:282
+msgid "Japanese"
+msgstr "اليابانية"
+
+#: base/settings.py:283
+msgid "Korean"
+msgstr "كوري"
+
+#: base/settings.py:284
+msgid "Norwegian Bokmål"
+msgstr "البوكمال النرويجية"
+
+#: base/settings.py:285
+msgid "Dutch"
+msgstr "هولندي"
+
+#: base/settings.py:286
+#| msgid "English"
+msgid "Polish"
+msgstr "بولندي"
+
+#: base/settings.py:287
 msgid "Portuguese (Brazil)"
 msgstr "البرتغالية (البرازيل)"
 
-#: base/settings.py:396
+#: base/settings.py:288
+#| msgid "Portuguese (Brazil)"
+msgid "Portuguese (Portugal)"
+msgstr "البرتغالية (البرتغال)"
+
+#: base/settings.py:289
+msgid "Russian"
+msgstr "الروسية"
+
+#: base/settings.py:290
+msgid "Swedish"
+msgstr "السويدية"
+
+#: base/settings.py:291
+msgid "Turkish"
+msgstr "تركي"
+
+#: base/settings.py:292
+msgid "Chinese (Simplified)"
+msgstr "الصينية (المبسطة)"
+
+#: base/settings.py:409
 msgid "Fidus Writer Admin"
 msgstr "مشرف الكاتب فيدوس"
 
-#: base/settings.py:397
+#: base/settings.py:410
 msgid "Fidus Writer Administration Site"
 msgstr "موقع إدارة الكاتب Fidus"
 
-#: base/settings.py:398
+#: base/settings.py:411
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "مرحبًا بك في موقع إدارة Fidus Writer"
 

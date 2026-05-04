@@ -392,13 +392,26 @@ export const setDocTitle = (title, app) => {
 }
 
 const LANGUAGES = {
+    ar: "العربية",
     bg: "Български",
+    cs: "Čeština",
+    da: "Dansk",
     de: "Deutsch",
     en: "English",
     es: "Español",
     fr: "Français",
     it: "Italiano",
-    "pt-br": "Português (Brazil)"
+    ja: "日本語",
+    ko: "한국어",
+    nb: "Norsk bokmål",
+    nl: "Nederlands",
+    pl: "Polski",
+    "pt-br": "Português (Brasil)",
+    "pt-pt": "Português (Portugal)",
+    ru: "Русский",
+    sv: "Svenska",
+    tr: "Türkçe",
+    "zh-hans": "简体中文"
 }
 
 export const langName = code => {

@@ -270,13 +270,26 @@ def gettext(s):
 
 
 LANGUAGES = (
-    ("en", gettext("English")),
+    ("ar", gettext("Arabic")),
     ("bg", gettext("Bulgarian")),
+    ("cs", gettext("Czech")),
+    ("da", gettext("Danish")),
     ("de", gettext("German")),
+    ("en", gettext("English")),
+    ("es", gettext("Spanish")),
     ("fr", gettext("French")),
     ("it", gettext("Italian")),
-    ("es", gettext("Spanish")),
+    ("ja", gettext("Japanese")),
+    ("ko", gettext("Korean")),
+    ("nb", gettext("Norwegian Bokmål")),
+    ("nl", gettext("Dutch")),
+    ("pl", gettext("Polish")),
     ("pt-br", gettext("Portuguese (Brazil)")),
+    ("pt-pt", gettext("Portuguese (Portugal)")),
+    ("ru", gettext("Russian")),
+    ("sv", gettext("Swedish")),
+    ("tr", gettext("Turkish")),
+    ("zh-hans", gettext("Chinese (Simplified)")),
 )
 
 LOGIN_REDIRECT_URL = "/"

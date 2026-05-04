@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 10:48+0000\n"
+"POT-Creation-Date: 2026-05-04 11:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,42 +19,97 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: base/settings.py:273
-msgid "English"
-msgstr "영어"
+msgid "Arabic"
+msgstr "아라비아 말"
 
 #: base/settings.py:274
 msgid "Bulgarian"
 msgstr "불가리아 사람"
 
 #: base/settings.py:275
+msgid "Czech"
+msgstr "체코 사람"
+
+#: base/settings.py:276
+#| msgid "Spanish"
+msgid "Danish"
+msgstr "덴마크 말"
+
+#: base/settings.py:277
 msgid "German"
 msgstr "독일 사람"
 
-#: base/settings.py:276
-msgid "French"
-msgstr "프랑스 국민"
-
-#: base/settings.py:277
-msgid "Italian"
-msgstr "이탈리아 사람"
-
 #: base/settings.py:278
+msgid "English"
+msgstr "영어"
+
+#: base/settings.py:279
 msgid "Spanish"
 msgstr "스페인 사람"
 
-#: base/settings.py:279
+#: base/settings.py:280
+msgid "French"
+msgstr "프랑스 국민"
+
+#: base/settings.py:281
+msgid "Italian"
+msgstr "이탈리아 사람"
+
+#: base/settings.py:282
+msgid "Japanese"
+msgstr "일본어"
+
+#: base/settings.py:283
+msgid "Korean"
+msgstr "한국인"
+
+#: base/settings.py:284
+msgid "Norwegian Bokmål"
+msgstr "노르웨이어 복몰어"
+
+#: base/settings.py:285
+msgid "Dutch"
+msgstr "네덜란드 사람"
+
+#: base/settings.py:286
+#| msgid "English"
+msgid "Polish"
+msgstr "광택"
+
+#: base/settings.py:287
 msgid "Portuguese (Brazil)"
 msgstr "포르투갈어(브라질)"
 
-#: base/settings.py:396
+#: base/settings.py:288
+#| msgid "Portuguese (Brazil)"
+msgid "Portuguese (Portugal)"
+msgstr "포르투갈어(포르투갈)"
+
+#: base/settings.py:289
+msgid "Russian"
+msgstr "러시아인"
+
+#: base/settings.py:290
+msgid "Swedish"
+msgstr "스웨덴어"
+
+#: base/settings.py:291
+msgid "Turkish"
+msgstr "터키어"
+
+#: base/settings.py:292
+msgid "Chinese (Simplified)"
+msgstr "중국어(간체)"
+
+#: base/settings.py:409
 msgid "Fidus Writer Admin"
 msgstr "Fidus 작가 관리자"
 
-#: base/settings.py:397
+#: base/settings.py:410
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus 작가 관리 사이트"
 
-#: base/settings.py:398
+#: base/settings.py:411
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Fidus Writer 관리 사이트에 오신 것을 환영합니다."
 

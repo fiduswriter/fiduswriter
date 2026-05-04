@@ -358,7 +358,7 @@ def invites_add(request):
     email = False
     errored = False
     status = 202
-    user_string = request.POST["user_string"]
+    user_string = request.JSON["user_string"]
     if (
         UserInvite.objects.filter(username=user_string)
         .filter(by=request.user)

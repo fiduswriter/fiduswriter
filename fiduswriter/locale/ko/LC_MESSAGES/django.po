@@ -1,0 +1,598 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: base/settings.py:273
+msgid "Arabic"
+msgstr "아라비아 말"
+
+#: base/settings.py:274
+msgid "Bulgarian"
+msgstr "불가리아 사람"
+
+#: base/settings.py:275
+msgid "Czech"
+msgstr "체코 사람"
+
+#: base/settings.py:276
+#| msgid "Spanish"
+msgid "Danish"
+msgstr "덴마크 말"
+
+#: base/settings.py:277
+msgid "German"
+msgstr "독일 사람"
+
+#: base/settings.py:278
+msgid "English"
+msgstr "영어"
+
+#: base/settings.py:279
+msgid "Spanish"
+msgstr "스페인 사람"
+
+#: base/settings.py:280
+msgid "French"
+msgstr "프랑스 국민"
+
+#: base/settings.py:281
+msgid "Italian"
+msgstr "이탈리아 사람"
+
+#: base/settings.py:282
+msgid "Japanese"
+msgstr "일본어"
+
+#: base/settings.py:283
+msgid "Korean"
+msgstr "한국인"
+
+#: base/settings.py:284
+msgid "Norwegian Bokmål"
+msgstr "노르웨이어 복몰어"
+
+#: base/settings.py:285
+msgid "Dutch"
+msgstr "네덜란드 사람"
+
+#: base/settings.py:286
+#| msgid "English"
+msgid "Polish"
+msgstr "광택"
+
+#: base/settings.py:287
+msgid "Portuguese (Brazil)"
+msgstr "포르투갈어(브라질)"
+
+#: base/settings.py:288
+#| msgid "Portuguese (Brazil)"
+msgid "Portuguese (Portugal)"
+msgstr "포르투갈어(포르투갈)"
+
+#: base/settings.py:289
+msgid "Russian"
+msgstr "러시아인"
+
+#: base/settings.py:290
+msgid "Swedish"
+msgstr "스웨덴어"
+
+#: base/settings.py:291
+msgid "Turkish"
+msgstr "터키어"
+
+#: base/settings.py:292
+msgid "Chinese (Simplified)"
+msgstr "중국어(간체)"
+
+#: base/settings.py:409
+msgid "Fidus Writer Admin"
+msgstr "Fidus 작가 관리자"
+
+#: base/settings.py:410
+msgid "Fidus Writer Administration Site"
+msgstr "Fidus 작가 관리 사이트"
+
+#: base/settings.py:411
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr "Fidus Writer 관리 사이트에 오신 것을 환영합니다."
+
+#: base/templates/500.html:5 base/templates/500.html:8
+msgid "Error 500"
+msgstr "오류 500"
+
+#: base/templates/500.html:9
+msgid ""
+"We are sorry, but a server error occured. Our team will be looking into the "
+"issue shortly."
+msgstr "죄송합니다. 서버 오류가 발생했습니다. 우리 팀에서 곧 문제를 조사할 것입니다."
+
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/overview.html:14
+msgid "Admin Console"
+msgstr "관리 콘솔"
+
+#: base/templates/admin/console.html:18
+msgid "Current number of users:"
+msgstr "현재 사용자 수:"
+
+#: base/templates/admin/console.html:21
+msgid "Current number of user sessions:"
+msgstr "현재 사용자 세션 수:"
+
+#: base/templates/admin/console.html:23
+msgid "Send a system message to all connected users:"
+msgstr "연결된 모든 사용자에게 시스템 메시지를 보냅니다."
+
+#: base/templates/admin/console.html:27
+msgid "Message"
+msgstr "메시지"
+
+#: base/templates/admin/console.html:29
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+"이 시스템은 예약된 유지 관리를 위해 30분 후에 오프라인 상태가 됩니다. 귀하의 모든 작업은 자동으로 저장되며 곧 다시 "
+"연락드리겠습니다."
+
+#: base/templates/admin/console.html:36
+msgid "Send to connected users"
+msgstr "연결된 사용자에게 보내기"
+
+#: base/templates/admin/overview.html:10
+msgid "Extras"
+msgstr "엑스트라"
+
+#: base/templates/admin/overview.html:17
+#: document/templates/admin/document/maintenance.html:17
+msgid "Document Maintenance"
+msgstr "문서 유지관리"
+
+#: base/templates/api_404.html:5 base/templates/api_404.html:8
+msgid "Error 404"
+msgstr "오류 404"
+
+#: base/templates/api_404.html:9
+msgid "We are sorry, but this page was not found."
+msgstr "죄송합니다. 이 페이지를 찾을 수 없습니다."
+
+#: base/templates/app.html:9
+msgid "The all in one solution for collaborative academic writing."
+msgstr "학술 공동 저술을 위한 올인원 솔루션입니다."
+
+#: base/templates/app.html:46
+msgid "JavaScript disabled"
+msgstr "자바스크립트가 비활성화되었습니다."
+
+#: base/templates/app.html:47
+msgid "Fidus Writer requires you to enable JavaScript."
+msgstr "Fidus Writer를 사용하려면 JavaScript를 활성화해야 합니다."
+
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr "지원되지 않는 브라우저"
+
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
+"\n"
+"귀하의 브라우저는 Fidus Writer에서 지원되지 않습니다.\n"
+"                업데이트해주세요! 전류를 사용하는 것이 좋습니다.\n"
+"                Chrome/Chromium 또는 Firefox 버전\n"
+"                데스크톱 컴퓨터."
+
+#: document/admin.py:59
+msgid "Duplicate selected document templates"
+msgstr "선택한 문서 템플릿 복제"
+
+#: document/emails.py:18 document/emails.py:236 document/views.py:887
+msgid "Untitled"
+msgstr "제목 없음"
+
+#: document/emails.py:21
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"Open the document: %(link)s"
+msgstr ""
+"안녕하세요 %(collaborator_name)s님,\n"
+"%(owner)s님이 '%(document_title)s' 문서에 대한 귀하의 액세스 권한을 %(rights)s(으)로 변경했습니다. \n"
+"문서 열기: %(link)s"
+
+#: document/emails.py:32
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
+" %(rights)s on the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>안녕하세요 %(collaborator_name)s님,<br>%(owner)s님이 '%(document_title)s' 문서에 대한 "
+"귀하의 액세스 권한을 %(rights)s로 변경했습니다.</p>"
+
+#: document/emails.py:43
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"Open document: %(link)s"
+msgstr ""
+"안녕하세요 %(collaborator_name)s님,\n"
+"%(owner)s님이 '%(document_title)s' 문서를 귀하와 공유했으며 귀하에게 %(rights)s 액세스 권한을 부여했습니다. \n"
+"문서 열기: %(link)s"
+
+#: document/emails.py:55
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document "
+"'%(document_title)s' with you and given you %(rights)s access rights.</p>"
+msgstr ""
+"<p>안녕하세요 %(collaborator_name)s님,<br>%(owner)s님이 '%(document_title)s' 문서를 귀하와"
+" 공유했으며 귀하에게 %(rights)s 액세스 권한을 부여했습니다.</p>"
+
+#: document/emails.py:89
+msgid "shared"
+msgstr "공유됨"
+
+#: document/emails.py:91 document/emails.py:207 document/emails.py:286
+msgid "Document"
+msgstr "문서"
+
+#: document/emails.py:93 document/emails.py:209
+msgid "Author"
+msgstr "작가"
+
+#: document/emails.py:95
+msgid "Access Rights"
+msgstr "접근 권한"
+
+#: document/emails.py:98 document/emails.py:214
+msgid "Access the document"
+msgstr "문서에 액세스"
+
+#: document/emails.py:101
+#, python-format
+msgid "Document shared: %(document_title)s"
+msgstr "공유된 문서: %(document_title)s"
+
+#: document/emails.py:123
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"안녕하세요 %(collaborator_name)s님,\n"
+"%(commentator)s님이 '%(document)s' 문서의 댓글에서 귀하를 멘션했습니다:\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"여기 문서로 이동하세요: %(link)s"
+
+#: document/emails.py:136
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
+" in the document '%(document_title)s'."
+msgstr ""
+"안녕하세요, %(collaborator_name)s님,<br>%(commentator)s님이 '%(document_title)s' 문서의"
+" 댓글에서 귀하를 언급했습니다."
+
+#: document/emails.py:143
+#, python-format
+msgid "Comment on : %(document_title)s"
+msgstr "댓글: %(document_title)s"
+
+#: document/emails.py:148
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"안녕하세요 %(collaborator_name)s님,\n"
+"%(commentator)s님이 '%(document)s' 문서의 댓글에 귀하를 할당했습니다:\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"여기 문서로 이동하세요: %(link)s"
+
+#: document/emails.py:159
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
+"in the document '%(document_title)s'."
+msgstr ""
+"안녕하세요, %(collaborator_name)s님,<br>%(commentator)s님이 '%(document_title)s' 문서의"
+" 댓글에 귀하를 할당했습니다."
+
+#: document/emails.py:166
+#, python-format
+msgid "Comment assignment on : %(document_title)s"
+msgstr "%(document_title)s에 대한 댓글 할당"
+
+#: document/emails.py:171
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a "
+"comment in the document '%(document)s':</p>%(comment_html)s<p>Go to the "
+"document <a href=\"%(link)s\">here</a>.</p>"
+msgstr ""
+"<p>안녕하세요 %(collaborator_name)s님,<br>%(commentator)s님이 '%(document)s' 문서의 댓글에"
+" 귀하를 할당했습니다:</p>%(comment_html)s<p><a href=\"%(link)s\">여기</a>에서 문서로 "
+"이동하세요.</p>"
+
+#: document/emails.py:211
+msgid "Comment"
+msgstr "논평"
+
+#: document/emails.py:239
+#, python-format
+msgid ""
+"Hey %(owner_name)s,\n"
+"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"Open the document to grant access: %(link)s"
+msgstr ""
+"안녕하세요 %(owner_name)s님,\n"
+"%(requester_name)s님이 '%(document_title)s' 문서에 대한 %(rights)s 액세스를 요청했습니다. \n"
+"액세스 권한을 부여하려면 문서를 엽니다. %(link)s"
+
+#: document/emails.py:251
+#, python-format
+msgid ""
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
+" to the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>안녕하세요 %(owner_name)s 님,<br>%(requester_name)s님이 '%(document_title)s' 문서에 "
+"대한 %(rights)s 액세스를 요청했습니다.</p>"
+
+#: document/emails.py:284
+msgid "access request"
+msgstr "액세스 요청"
+
+#: document/emails.py:288
+msgid "Requested by"
+msgstr "요청자"
+
+#: document/emails.py:290
+msgid "Requested rights"
+msgstr "요청된 권리"
+
+#: document/emails.py:293
+msgid "Grant access"
+msgstr "액세스 권한 부여"
+
+#: document/emails.py:297
+#, python-format
+msgid "Access request: %(document_title)s"
+msgstr "액세스 요청: %(document_title)s"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr "%(name)s 추가"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:13
+#: document/templates/admin/document/maintenance.html:4
+msgid "Maintenance"
+msgstr "유지"
+
+#: document/templates/admin/document/maintenance.html:19
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
+"            no user is currently editing any document!\n"
+"            "
+msgstr ""
+"\n"
+"Fidus Writer를 업그레이드하기 전과 후에 모든 문서를 업데이트해야 합니다.\n"
+"            모든 사용자를 최신 문서 버전으로 업데이트합니다. 그걸 아는 경우에만 이렇게 하세요.\n"
+"            현재 어떤 사용자도 문서를 편집하고 있지 않습니다!"
+
+#: document/templates/admin/document/maintenance.html:27
+msgid "Update all documents (DANGER!)"
+msgstr "모든 문서 업데이트(위험!)"
+
+#: style/models.py:74
+msgid "Default"
+msgstr "기본"
+
+#: style/views.py:27
+msgid "The template needs at least 1 document style"
+msgstr "템플릿에는 문서 스타일이 1개 이상 필요합니다."
+
+#: user/admin.py:11
+msgid "Connections"
+msgstr "사이"
+
+#: user/emails.py:10
+#, python-format
+msgid ""
+"Hey %(email)s,%(sender)s has invited you to connect on Fidus Writer. \n"
+"Accept or reject the invite through this link: %(link)s"
+msgstr ""
+"안녕하세요 %(email)s,%(sender)s님이 Fidus Writer에 연결하도록 귀하를 초대했습니다. \n"
+"다음 링크를 통해 초대를 수락하거나 거부하세요: %(link)s"
+
+#: user/emails.py:19
+#, python-format
+msgid ""
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
+"Writer.</p>"
+msgstr ""
+"<p>안녕하세요 %(email)s님,<br> %(sender)s님이 Fidus Writer에 연결하도록 귀하를 초대했습니다.</p>"
+
+#: user/emails.py:34
+msgid "Invite for Fidus Writer"
+msgstr "Fidus 작가 초대"
+
+#: user/emails.py:37
+msgid "Sign up/log in and accept/reject the invite"
+msgstr "가입/로그인 및 초대 수락/거부"
+
+#: user/emails.py:40
+msgid "Fidus Writer contact invite"
+msgstr "Fidus Writer 연락처 초대"
+
+#: user/emails.py:53
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"안녕하세요 %(recipient_name)s님, %(sender_name)s님이 Fidus Writer 연결 초대를 거부했습니다. \n"
+"여기에서 연락처 목록을 확인하세요: %(link)s"
+
+#: user/emails.py:62
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>안녕하세요 %(recipient_name)s님,<br> %(sender_name)s님이 Fidus Writer 연결 초대를 "
+"거부했습니다.</p>"
+
+#: user/emails.py:76
+msgid "Invite for Fidus Writer declined"
+msgstr "Fidus Writer 초대가 거부되었습니다."
+
+#: user/emails.py:79 user/emails.py:121
+msgid "See your list of contacts"
+msgstr "연락처 목록 보기"
+
+#: user/emails.py:82
+msgid "Fidus Writer invite declined"
+msgstr "Fidus 작가 초대가 거부되었습니다."
+
+#: user/emails.py:95
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"안녕하세요 %(recipient_name)s님, %(sender_name)s님이 Fidus Writer 연결 초대를 수락했습니다. \n"
+"여기에서 연락처 목록을 확인하세요: %(link)s"
+
+#: user/emails.py:104
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has accepted your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>안녕하세요 %(recipient_name)s님,<br> %(sender_name)s님이 Fidus Writer 연결 초대를 "
+"수락했습니다.</p>"
+
+#: user/emails.py:118
+msgid "Invite for Fidus Writer accepted"
+msgstr "Fidus Writer 초대가 수락되었습니다."
+
+#: user/emails.py:124
+msgid "Fidus Writer invite accepted"
+msgstr "Fidus 작가 초대가 수락되었습니다."
+
+#: user/forms.py:20
+msgid "Code must be exactly 6 digits (0-9)."
+msgstr "코드는 정확히 6자리(0-9)여야 합니다."
+
+#: user/models.py:55
+msgid "Interface language preference"
+msgstr "인터페이스 언어 기본 설정"
+
+#: user/models.py:62
+msgid "User preferences (e.g., encryption dialog dismissal)"
+msgstr "사용자 기본 설정(예: 암호화 대화상자 닫기)"
+
+#: user/models.py:73
+msgid "Can login as another user"
+msgstr "다른 사용자로 로그인 가능"
+
+#: user/models.py:102
+msgid "email address"
+msgstr "이메일 주소"
+
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "%(site_name)s에서 안녕하세요!"
+
+#: user/templates/account/email/email_confirmation_message.html:12
+#, python-format
+msgid ""
+"You are receiving this e-mail because user %(user_display)s has given yours "
+"as an e-mail address to connect their account."
+msgstr "이 이메일은 %(user_display)s 사용자가 계정 연결을 위해 귀하의 이메일 주소를 제공했기 때문에 발송되었습니다."
+
+#: user/templates/account/email/email_confirmation_message.html:16
+#, python-format
+msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
+msgstr "이것이 올바른지 확인하려면 <a href=\"%(url)s\">%(url)s</a>로 이동하세요."
+
+#: user/templates/account/email/email_confirmation_message.html:20
+#: user/templates/account/email/password_reset_key_message.html:26
+#, python-format
+msgid "Thank you from %(site_name)s!"
+msgstr "%(site_name)s에서 감사드립니다!"
+
+#: user/templates/account/email/password_reset_key_message.html:11
+msgid ""
+"You are receiving this e-mail because you or someone else has requested a "
+"password for your user account."
+msgstr "귀하 또는 다른 사람이 귀하의 사용자 계정에 대한 비밀번호를 요청했기 때문에 이 이메일을 받으셨습니다."
+
+#: user/templates/account/email/password_reset_key_message.html:14
+msgid ""
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr "비밀번호 재설정을 요청하지 않은 경우에는 무시해도 됩니다. 비밀번호를 재설정하려면 아래 링크를 클릭하세요."
+
+#: user/templates/account/email/password_reset_key_message.html:21
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "잊어버린 경우를 대비해 사용자 이름은 %(username)s입니다."
+
+#: user/views.py:624
+msgid "Code is invalid"
+msgstr "코드가 유효하지 않습니다"
+
+#: usermedia/views.py:37
+msgid "Filetype not supported"
+msgstr "지원되지 않는 파일 형식"
+
+#: usermedia/views.py:44
+msgid "Image too large"
+msgstr "이미지가 너무 큼"
+
+#: usermedia/views.py:71
+msgid "No file uploaded"
+msgstr "업로드된 파일이 없습니다."

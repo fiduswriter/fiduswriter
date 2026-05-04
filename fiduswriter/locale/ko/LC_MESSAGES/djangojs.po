@@ -1,0 +1,5348 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-03 10:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: base/static/js/modules/404/index.js:6
+#: base/static/js/modules/flatpage/index.js:32
+msgid "Page not found"
+msgstr "페이지를 찾을 수 없습니다"
+
+#: base/static/js/modules/404/index.js:8
+#: base/static/js/modules/flatpage/index.js:34
+msgid "Error 404"
+msgstr "오류 404"
+
+#: base/static/js/modules/404/index.js:9
+#: base/static/js/modules/flatpage/index.js:35
+msgid "The page you are looking for cannot be found."
+msgstr "찾으시는 페이지를 찾을 수 없습니다."
+
+#: base/static/js/modules/admin_console/index.js:36
+msgid "Sending..."
+msgstr "배상..."
+
+#: base/static/js/modules/admin_console/index.js:49
+msgid "Message delivered successfully!"
+msgstr "메시지가 성공적으로 전달되었습니다!"
+
+#: base/static/js/modules/admin_console/index.js:53
+msgid "Message delivered"
+msgstr "메시지가 전달되었습니다."
+
+#: base/static/js/modules/app/index.js:201
+msgid "You are viewing a cached version of this page."
+msgstr "귀하는 이 페이지의 캐시된 버전을 보고 계십니다."
+
+#: base/static/js/modules/app/index.js:349
+msgid ""
+"Other users have requested to connect with you. Go to the contacts page to "
+"accept their invites."
+msgstr "다른 사용자가 귀하와 연결을 요청했습니다. 초대를 수락하려면 연락처 페이지로 이동하세요."
+
+#: base/static/js/modules/app/index.js:353
+msgid "Go to contacts"
+msgstr "연락처로 이동"
+
+#: base/static/js/modules/common/basic.js:252
+msgid "System message"
+msgstr "시스템 메시지"
+
+#: base/static/js/modules/common/dialog.js:29
+#: base/static/js/modules/common/dialog.js:32
+msgid "Help"
+msgstr "돕다"
+
+#: base/static/js/modules/common/dialog.js:38
+#: base/static/js/modules/common/dialog.js:41
+#: base/static/js/modules/common/dialog.js:79
+#: document/static/js/modules/editor/menus/headerbar/model.js:158
+#: document/static/js/modules/editor/menus/headerbar/model.js:190
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:92
+msgid "Close"
+msgstr "닫다"
+
+#: base/static/js/modules/common/dialog.js:84
+#: document/static/js/modules/documents/overview/index.js:915
+#: document/static/js/modules/editor/collab/doc.js:371
+#: document/static/js/modules/editor/collab/doc.js:577
+#: document/static/js/modules/editor/comments/editors/answer.js:22
+#: document/static/js/modules/editor/comments/editors/comment.js:103
+#: document/static/js/modules/editor/dialogs/templates.js:237
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:219
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:442
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:589
+#: document/static/js/modules/editor/e2ee/password-dialog.js:183
+msgid "Cancel"
+msgstr "취소"
+
+#: base/static/js/modules/common/dialog.js:89
+#: document/static/js/modules/editor/index.js:330
+#: document/static/js/modules/editor/index.js:588
+msgid "OK"
+msgstr "좋아요"
+
+#: base/static/js/modules/common/file/dialog.js:39
+#: base/static/js/modules/common/file/selector.js:53
+#: base/static/js/modules/common/file/tools.js:6
+#: base/static/js/modules/common/file/tools.js:16
+#: base/static/js/modules/common/file/tools.js:36
+#: bibliography/static/js/modules/bibliography/overview/index.js:278
+#: document/static/js/modules/editor/dialogs/citation.js:121
+#: document/static/js/modules/editor/dialogs/citation.js:172
+#: document/static/js/modules/editor/menus/headerbar/view.js:503
+#: document/static/js/modules/exporter/tools/file.js:3
+#: document/static/js/modules/importer/docx/convert.js:84
+#: document/static/js/modules/importer/docx/convert.js:92
+#: document/static/js/modules/importer/docx/convert.js:520
+#: document/static/js/modules/importer/docx/import.js:48
+#: document/static/js/modules/importer/odt/convert.js:460
+#: document/static/js/modules/importer/odt/convert.js:471
+#: document/static/js/modules/importer/odt/import.js:113
+#: document/static/js/modules/importer/pandoc/import.js:21
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:224
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:229
+#: usermedia/static/js/modules/images/overview/index.js:175
+msgid "Untitled"
+msgstr "제목 없음"
+
+#: base/static/js/modules/common/file/dialog.js:67
+#: base/static/js/modules/common/file/new_folder_dialog.js:8
+msgid "New folder"
+msgstr "새 폴더"
+
+#: base/static/js/modules/common/file/dialog.js:81
+#: bibliography/static/js/modules/bibliography/form/index.js:88
+#: bibliography/static/js/modules/bibliography/overview/index.js:320
+#: document/static/js/modules/documents/access_rights/index.js:292
+#: document/static/js/modules/editor/comments/editors/answer.js:19
+#: document/static/js/modules/editor/comments/editors/comment.js:100
+#: user/static/js/modules/contacts/add_dialog.js:12
+#: user/static/js/modules/profile/dialogs.js:124
+#: user/static/js/modules/profile/dialogs.js:215
+#: user/static/js/modules/profile/dialogs.js:385
+#: user/static/js/modules/profile/templates.js:259
+#: usermedia/static/js/modules/images/overview/categories.js:73
+msgid "Submit"
+msgstr "제출하다"
+
+#: base/static/js/modules/common/file/new_folder_dialog.js:16
+msgid "Create folder"
+msgstr "폴더 생성"
+
+#: base/static/js/modules/common/file/templates.js:5
+msgid "Path"
+msgstr "길"
+
+#: base/static/js/modules/common/file/templates.js:6
+msgid "Insert path"
+msgstr "경로 삽입"
+
+#: base/static/js/modules/common/file/templates.js:11
+msgid "Insert folder name"
+msgstr "폴더 이름 삽입"
+
+#: base/static/js/modules/common/overview_menu.js:409
+msgid "Action completed"
+msgstr "작업 완료"
+
+#: base/static/js/modules/common/overview_menu.js:590
+msgid "Type to search"
+msgstr "검색하려면 입력하세요."
+
+#: base/static/js/modules/common/templates.js:16
+#: base/static/js/modules/prelogin/templates.js:15
+msgid "Site navigation"
+msgstr "사이트 탐색"
+
+#: base/static/js/modules/common/templates.js:31
+#: document/static/js/modules/documents/access_rights/templates.js:13
+#: user/static/js/modules/contacts/index.js:57
+msgid "Contacts"
+msgstr "콘택트 렌즈"
+
+#: base/static/js/modules/common/templates.js:32
+msgid "Log out"
+msgstr "로그아웃"
+
+#: base/static/js/modules/common/ws.js:13
+msgid "Warning! Some data is unsaved"
+msgstr "경고! 일부 데이터가 저장되지 않았습니다."
+
+#: base/static/js/modules/common/ws.js:14
+#: document/static/js/modules/editor/index.js:393
+msgid "Disconnected. Attempting to reconnect..."
+msgstr "연결이 끊어졌습니다. 다시 연결을 시도하는 중..."
+
+#: base/static/js/modules/copyright_dialog/index.js:83
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:317
+#: document/static/js/modules/editor/dialogs/language.js:16
+msgid "Change"
+msgstr "변화"
+
+#: base/static/js/modules/copyright_dialog/index.js:104
+msgid "Set copyright information"
+msgstr "저작권 정보 설정"
+
+#: base/static/js/modules/copyright_dialog/templates.js:16
+msgid "License URL"
+msgstr "라이선스 URL"
+
+#: base/static/js/modules/copyright_dialog/templates.js:19
+msgid "License Title"
+msgstr "라이센스 제목"
+
+#: base/static/js/modules/copyright_dialog/templates.js:35
+#: bibliography/static/js/modules/bibliography/form/fields/key.js:30
+msgid "From list"
+msgstr "목록에서"
+
+#: base/static/js/modules/copyright_dialog/templates.js:36
+#: bibliography/static/js/modules/bibliography/form/fields/key.js:31
+msgid "Custom"
+msgstr "관습"
+
+#: base/static/js/modules/copyright_dialog/templates.js:44
+msgid "License start date (optional)"
+msgstr "라이센스 시작일(선택사항)"
+
+#: base/static/js/modules/copyright_dialog/templates.js:59
+msgid "Copyright holder"
+msgstr "저작권 보유자"
+
+#: base/static/js/modules/copyright_dialog/templates.js:60
+msgid ""
+"If the work is not in the public domain, specify who the copyright holder "
+"is."
+msgstr "저작물이 공개 도메인에 속하지 않는 경우 저작권 보유자가 누구인지 명시하세요."
+
+#: base/static/js/modules/copyright_dialog/templates.js:66
+msgid "Copyright year"
+msgstr "저작권 연도"
+
+#: base/static/js/modules/copyright_dialog/templates.js:67
+msgid ""
+"If the work is not in the public domain, specify the year of the copyright."
+msgstr "저작물이 공개 도메인에 속하지 않는 경우 저작권 연도를 명시하세요."
+
+#: base/static/js/modules/copyright_dialog/templates.js:73
+msgid "Available to read for free?"
+msgstr "무료로 읽을 수 있나요?"
+
+#: base/static/js/modules/copyright_dialog/templates.js:74
+msgid "Specify whether the work can be accessed without paying a fee."
+msgstr "수수료를 지불하지 않고 저작물에 액세스할 수 있는지 여부를 지정합니다."
+
+#: base/static/js/modules/copyright_dialog/templates.js:80
+msgid "License(s)"
+msgstr "라이센스"
+
+#: base/static/js/modules/copyright_dialog/templates.js:81
+msgid ""
+"List any licenses the work is available under. If the license only applies "
+"from a given date, please specify the date in the ISO8601 format (such as "
+"\"2012-10-15\")."
+msgstr ""
+"해당 저작물에 사용할 수 있는 라이선스를 나열하세요. 라이센스가 특정 날짜부터만 적용되는 경우 ISO8601 형식(예: "
+"\\\"2012-10-15\\\")으로 날짜를 지정하세요."
+
+#: base/static/js/modules/offline/index.js:6
+#: base/static/js/modules/offline/index.js:8
+msgid "Disconnected"
+msgstr "연결이 끊김"
+
+#: base/static/js/modules/offline/index.js:11
+msgid "You are currently disconnected from the %(appName)s server."
+msgstr "현재 %(appName)s 서버와의 연결이 끊어졌습니다."
+
+#: base/static/js/modules/offline/index.js:23
+msgid "Reload page"
+msgstr "페이지 새로고침"
+
+#: base/static/js/modules/prelogin/index.js:18
+msgid "Terms and Conditions"
+msgstr "이용약관"
+
+#: base/static/js/modules/prelogin/index.js:22
+msgid "Privacy policy"
+msgstr "개인 정보 보호 정책"
+
+#: base/static/js/modules/prelogin/index.js:26
+msgid "Equations and Math with MathLive"
+msgstr "MathLive를 사용한 방정식 및 수학"
+
+#: base/static/js/modules/prelogin/index.js:31
+msgid "Citations with Citation Style Language"
+msgstr "인용 스타일 언어를 사용한 인용"
+
+#: base/static/js/modules/prelogin/index.js:36
+msgid "Editing with ProseMirror"
+msgstr "ProseMirror로 편집하기"
+
+#: base/static/js/modules/prelogin/index.js:44
+#: user/static/js/modules/login/index.js:30
+#: user/static/js/modules/login/index.js:69
+msgid "Log in"
+msgstr "로그인"
+
+#: base/static/js/modules/prelogin/templates.js:56
+msgid "Select language"
+msgstr "언어 선택"
+
+#: base/static/js/modules/setup/index.js:6
+#: base/static/js/modules/setup/index.js:8
+#: document/static/js/modules/editor/dialogs/citation.js:48
+#: document/static/js/modules/editor/dialogs/code_block.js:113
+#: document/static/js/modules/editor/dialogs/contributor.js:28
+#: document/static/js/modules/editor/dialogs/contributor.js:119
+#: document/static/js/modules/editor/dialogs/figure.js:359
+#: document/static/js/modules/editor/dialogs/link.js:57
+#: document/static/js/modules/editor/dialogs/link.js:67
+#: document/static/js/modules/editor/dialogs/math.js:29
+#: document/static/js/modules/editor/dialogs/ordered_list.js:56
+#: document/static/js/modules/editor/dialogs/table.js:178
+#: usermedia/static/js/modules/images/edit_dialog/index.js:42
+msgid "Update"
+msgstr "업데이트"
+
+#: base/static/js/modules/setup/index.js:11
+msgid "The %(appName)s server is currently being updated. Please wait."
+msgstr "%(appName)s 서버가 현재 업데이트 중입니다. 기다리세요."
+
+#: bibliography/static/js/modules/bibliography/database/index.js:93
+msgid "Could not obtain bibliography data"
+msgstr "참고문헌 데이터를 가져올 수 없습니다."
+
+#: bibliography/static/js/modules/bibliography/database/index.js:112
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:16
+msgid "The bibliography could not be updated"
+msgstr "참고문헌을 업데이트할 수 없습니다."
+
+#: bibliography/static/js/modules/bibliography/database/index.js:118
+#: bibliography/static/js/modules/bibliography/database/index.js:166
+#: bibliography/static/js/modules/bibliography/database/index.js:226
+#: bibliography/static/js/modules/bibliography/form/index.js:56
+#: bibliography/static/js/modules/bibliography/import/dialog.js:20
+#: bibliography/static/js/modules/bibliography/import/dialog.js:42
+#: bibliography/static/js/modules/bibliography/overview/index.js:313
+#: bibliography/static/js/modules/bibliography/overview/index.js:341
+#: document/static/js/modules/exporter/native/revision.js:45
+#: document/static/js/modules/exporter/native/revision.js:73
+#: usermedia/static/js/modules/images/overview/index.js:94
+#: usermedia/static/js/modules/images/overview/index.js:108
+msgid "You are currently offline. Please try again when you are back online."
+msgstr "현재 오프라인 상태입니다. 다시 온라인 상태가 되면 다시 시도해 주세요."
+
+#: bibliography/static/js/modules/bibliography/database/index.js:131
+msgid "The bibliography has been updated."
+msgstr "참고문헌이 업데이트되었습니다."
+
+#: bibliography/static/js/modules/bibliography/database/index.js:152
+#: usermedia/static/js/modules/images/overview/categories.js:32
+msgid "The categories have been updated"
+msgstr "카테고리가 업데이트되었습니다."
+
+#: bibliography/static/js/modules/bibliography/database/index.js:159
+msgid "The categories could not be updated"
+msgstr "카테고리를 업데이트할 수 없습니다."
+
+#: bibliography/static/js/modules/bibliography/database/index.js:211
+msgid "The bibliography item(s) have been deleted"
+msgstr "참고문헌 항목이 삭제되었습니다."
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:59
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:54
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:54
+#: document/static/js/modules/document_template/templates.js:102
+#: document/static/js/modules/editor/e2ee/password-dialog.js:106
+#: document/static/js/modules/editor/marginboxes/templates.js:240
+#: document/static/js/modules/editor/menus/toolbar/model.js:371
+msgid "Strong"
+msgstr "강한"
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:63
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:58
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:58
+#: document/static/js/modules/document_template/templates.js:106
+#: document/static/js/modules/editor/marginboxes/templates.js:239
+#: document/static/js/modules/editor/menus/toolbar/model.js:408
+msgid "Emphasis"
+msgstr "중요성"
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:67
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:62
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:62
+msgid "Small caps"
+msgstr "작은 대문자"
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:71
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:66
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:66
+msgid "Subscript₊"
+msgstr "아래첨자₊"
+
+#: bibliography/static/js/modules/bibliography/form/fields/literal.js:75
+#: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:70
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:70
+msgid "Supscript²"
+msgstr "아래첨자²"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:40
+msgid "Person"
+msgstr "사람"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:41
+msgid "Organization"
+msgstr "조직"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:86
+msgid "Prefix used"
+msgstr "사용된 접두사"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:92
+#: user/static/js/modules/profile/templates.js:92
+msgid "First name"
+msgstr "이름"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:98
+msgid "Prefix"
+msgstr "접두사"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:104
+#: user/static/js/modules/profile/templates.js:96
+msgid "Last name"
+msgstr "성"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:110
+msgid "Suffix"
+msgstr "접미사"
+
+#: bibliography/static/js/modules/bibliography/form/fields/name.js:124
+msgid "Organization name"
+msgstr "조직 이름"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:30
+msgid "Single value"
+msgstr "단일 값"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:31
+msgid "Range"
+msgstr "범위"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:88
+msgid "From"
+msgstr "에서"
+
+#: bibliography/static/js/modules/bibliography/form/fields/range.js:94
+msgid "To"
+msgstr "에게"
+
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:74
+msgid "CasE ProTecT"
+msgstr "케이스 보호"
+
+#: bibliography/static/js/modules/bibliography/form/index.js:62
+msgid "Edit Source"
+msgstr "소스 편집"
+
+#: bibliography/static/js/modules/bibliography/form/index.js:66
+msgid "Register New Source"
+msgstr "새로운 소스 등록"
+
+#: bibliography/static/js/modules/bibliography/form/index.js:320
+msgid "Error in form, check highlighted values!"
+msgstr "양식에 오류가 있습니다. 강조표시된 값을 확인하세요!"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:12
+msgid "Select source type"
+msgstr "소스 유형 선택"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:29
+msgid "Required Fields"
+msgstr "필수항목"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:32
+msgid "Optional Fields"
+msgstr "선택 필드"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:35
+#: bibliography/static/js/modules/bibliography/form/templates.js:50
+msgid "Categories"
+msgstr "카테고리"
+
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:6
+msgid "No bibliography entries could be found in import file."
+msgstr "가져오기 파일에서 참고문헌 항목을 찾을 수 없습니다."
+
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:8
+msgid "An error occured while reading a bibliography entry"
+msgstr "참고문헌 항목을 읽는 동안 오류가 발생했습니다."
+
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:10
+msgid "Field cannot not be saved. Fidus Writer does not support the field."
+msgstr "필드를 저장할 수 없습니다. Fidus Writer는 해당 필드를 지원하지 않습니다."
+
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:13
+msgid ""
+"Entry has been saved as \"misc\". Fidus Writer does not support the entry "
+"type."
+msgstr "항목이 \\\"기타\\\"로 저장되었습니다. Fidus Writer는 해당 항목 유형을 지원하지 않습니다."
+
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:15
+msgid "Field does not contain a valid EDTF string."
+msgstr "필드에 유효한 EDTF 문자열이 포함되어 있지 않습니다."
+
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:17
+msgid "The file format could not be recognized."
+msgstr "파일 형식을 인식할 수 없습니다."
+
+#: bibliography/static/js/modules/bibliography/import/bibliography_import.js:68
+msgid "There was an issue with the bibliography import"
+msgstr "참고문헌 가져오기에 문제가 발생했습니다."
+
+#: bibliography/static/js/modules/bibliography/import/dialog.js:27
+#: document/static/js/modules/documents/overview/actions.js:113
+#: document/static/js/modules/documents/overview/actions.js:207
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:117
+msgid "Import"
+msgstr "수입"
+
+#: bibliography/static/js/modules/bibliography/import/dialog.js:73
+msgid "Import a bibliography"
+msgstr "참고문헌 가져오기"
+
+#: bibliography/static/js/modules/bibliography/import/templates.js:6
+#: document/static/js/modules/documents/overview/actions.js:353
+#: document/static/js/modules/documents/overview/templates.js:8
+#: user/static/js/modules/profile/templates.js:10
+#: user_template_manager/static/js/modules/user_template_manager/templates.js:6
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:43
+msgid "Select a file"
+msgstr "파일 선택"
+
+#: bibliography/static/js/modules/bibliography/import/templates.js:10
+msgid ""
+"Supported formats: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote "
+"Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT citations, DOCX citations"
+msgstr ""
+"지원되는 형식: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote Tagged, Citavi"
+" XML, Citavi JSON, NBIB/PubMed, ODT 인용, DOCX 인용"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:68
+msgid "Bibliography Manager"
+msgstr "참고문헌 관리자"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:108
+#: document/static/js/modules/editor/dialogs/citation.js:236
+msgid "No sources registered"
+msgstr "등록된 소스가 없습니다."
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:109
+#: document/static/js/modules/editor/dialogs/citation.js:237
+msgid "No sources found"
+msgstr "소스를 찾을 수 없습니다."
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:117
+#: document/static/js/modules/document_template/document_style_dialog.js:84
+#: document/static/js/modules/document_template/templates.js:156
+#: document/static/js/modules/document_template/templates.js:247
+#: document/static/js/modules/document_template/templates.js:320
+#: document/static/js/modules/document_template/templates.js:403
+#: document/static/js/modules/document_template/templates.js:476
+#: document/static/js/modules/document_template/templates.js:527
+#: document/static/js/modules/document_template/templates.js:813
+#: document/static/js/modules/document_template/templates.js:836
+#: document/static/js/modules/documents/overview/index.js:556
+#: document/static/js/modules/editor/dialogs/citation.js:247
+#: document/static/js/modules/editor/dialogs/code_block.js:234
+#: document/static/js/modules/editor/dialogs/templates.js:221
+#: document/static/js/modules/editor/dialogs/templates.js:311
+#: document/static/js/modules/editor/menus/toolbar/model.js:166
+#: document/static/js/modules/editor/state_plugins/links.js:254
+#: document/static/js/modules/editor/state_plugins/placeholders.js:41
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:111
+#: usermedia/static/js/modules/images/selection_dialog/index.js:124
+msgid "Title"
+msgstr "제목"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:118
+msgid "Sourcetype"
+msgstr "소스 유형"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:119
+#: document/static/js/modules/editor/dialogs/citation.js:247
+#: document/static/js/modules/editor/dialogs/templates.js:312
+#: document/static/js/modules/editor/marginboxes/templates.js:333
+#: document/static/js/modules/editor/marginboxes/templates.js:334
+#: document/static/js/modules/editor/marginboxes/templates.js:392
+#: document/static/js/modules/editor/marginboxes/templates.js:393
+msgid "Author"
+msgstr "작가"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:120
+msgid "Published"
+msgstr "게시됨"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:359
+#: usermedia/static/js/modules/images/overview/categories.js:104
+msgid "Edit Categories"
+msgstr "카테고리 편집"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:375
+#: document/static/js/modules/document_template/document_style_dialog.js:74
+#: document/static/js/modules/document_template/document_style_dialog.js:172
+#: document/static/js/modules/document_template/export_template_dialog.js:82
+#: document/static/js/modules/document_template/export_template_dialog.js:178
+#: document/static/js/modules/document_template/templates.js:821
+#: document/static/js/modules/documents/access_rights/templates.js:28
+#: document/static/js/modules/documents/overview/actions.js:89
+#: document/static/js/modules/documents/overview/index.js:149
+#: document/static/js/modules/documents/revisions/index.js:133
+#: document/static/js/modules/documents/revisions/templates.js:11
+#: document/static/js/modules/editor/marginboxes/templates.js:531
+#: document/static/js/modules/editor/marginboxes/templates.js:538
+#: document/static/js/modules/editor/marginboxes/templates.js:539
+#: user/static/js/modules/contacts/delete_dialog.js:13
+#: user/static/js/modules/profile/delete_user.js:18
+#: user/static/js/modules/profile/dialogs.js:100
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:60
+#: usermedia/static/js/modules/images/overview/index.js:126
+msgid "Delete"
+msgstr "삭제"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:389
+#: document/static/js/modules/document_template/document_style_dialog.js:186
+#: document/static/js/modules/document_template/export_template_dialog.js:192
+#: document/static/js/modules/documents/overview/actions.js:70
+#: document/static/js/modules/documents/overview/index.js:141
+#: document/static/js/modules/documents/revisions/index.js:151
+#: user/static/js/modules/contacts/delete_dialog.js:33
+#: user/static/js/modules/profile/delete_user.js:40
+#: user/static/js/modules/profile/dialogs.js:112
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:75
+#: usermedia/static/js/modules/images/overview/index.js:140
+msgid "Confirm deletion"
+msgstr "삭제 확인"
+
+#: bibliography/static/js/modules/bibliography/overview/index.js:390
+msgid "Delete the bibliography item(s)"
+msgstr "참고문헌 항목 삭제"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:7
+#: document/static/js/modules/documents/overview/menu.js:192
+#: user/static/js/modules/contacts/menu.js:7
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:27
+#: usermedia/static/js/modules/images/overview/menu.js:4
+msgid "Delete selected"
+msgstr "선택 항목 삭제"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:8
+msgid "Delete selected bibliography entries."
+msgstr "선택한 참고문헌 항목을 삭제합니다."
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:21
+msgid "Export selected"
+msgstr "선택한 내보내기"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:22
+msgid "Export selected bibliography entries."
+msgstr "선택한 참고문헌 항목을 내보냅니다."
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:47
+#: usermedia/static/js/modules/images/overview/menu.js:26
+msgid "All categories"
+msgstr "모든 카테고리"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:60
+#: usermedia/static/js/modules/images/overview/menu.js:39
+msgid "Edit categories"
+msgstr "카테고리 수정"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:67
+#: document/static/js/modules/editor/dialogs/citation.js:32
+msgid "Register new source"
+msgstr "새로운 소스 등록"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:85
+msgid "Import bibliography"
+msgstr "참고문헌 가져오기"
+
+#: bibliography/static/js/modules/bibliography/overview/menu.js:100
+msgid "Search bibliography"
+msgstr "참고문헌 검색"
+
+#: bibliography/static/js/modules/bibliography/tools.js:36
+msgid "and"
+msgstr "그리고"
+
+#: bibliography/static/js/modules/bibliography/tools.js:41
+msgid "and others"
+msgstr "그리고 다른 사람들"
+
+#: document/static/js/modules/document_template/change_admin.js:93
+msgid "Source/Editor"
+msgstr "소스/편집자"
+
+#: document/static/js/modules/document_template/designer.js:101
+msgid "The template needs a title."
+msgstr "템플릿에는 제목이 필요합니다."
+
+#: document/static/js/modules/document_template/designer.js:109
+msgid "The template needs an ID."
+msgstr "템플릿에는 ID가 필요합니다."
+
+#: document/static/js/modules/document_template/designer.js:115
+msgid "The template ID cannot contain spaces."
+msgstr "템플릿 ID에는 공백이 포함될 수 없습니다."
+
+#: document/static/js/modules/document_template/designer.js:255
+msgid "All document parts need an ID."
+msgstr "모든 문서 부분에는 ID가 필요합니다."
+
+#: document/static/js/modules/document_template/designer.js:262
+msgid "IDs cannot contain spaces."
+msgstr "ID에는 공백이 포함될 수 없습니다."
+
+#: document/static/js/modules/document_template/designer.js:280
+msgid "IDs have to be unique."
+msgstr "ID는 고유해야 합니다."
+
+#: document/static/js/modules/document_template/document_style_dialog.js:18
+#: document/static/js/modules/document_template/export_template_dialog.js:26
+#: document/static/js/modules/editor/dialogs/revision.js:14
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:86
+msgid "Save"
+msgstr "구하다"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:81
+msgid "Document style"
+msgstr "문서 스타일"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:90
+msgid "Slug"
+msgstr "강타"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:96
+msgid "CSS Style"
+msgstr "CSS 스타일"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:102
+msgid "Files"
+msgstr "파일"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:118
+msgid "Add a file"
+msgstr "파일 추가"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:187
+msgid "Do you really want to delete the document style?"
+msgstr "정말로 문서 스타일을 삭제하시겠습니까?"
+
+#: document/static/js/modules/document_template/document_style_dialog.js:202
+msgid "All fields need to be filled out."
+msgstr "모든 필드를 작성해야 합니다."
+
+#: document/static/js/modules/document_template/document_style_dialog.js:207
+msgid "A slug can only contain letters, numbers, hyphens and underscores."
+msgstr "슬러그에는 문자, 숫자, 하이픈 및 밑줄만 포함될 수 있습니다."
+
+#: document/static/js/modules/document_template/document_style_dialog.js:216
+msgid "The slug has to be unique."
+msgstr "슬러그는 고유해야 합니다."
+
+#: document/static/js/modules/document_template/document_style_dialog.js:286
+msgid "A file with the same name exists already."
+msgstr "같은 이름의 파일이 이미 존재합니다."
+
+#: document/static/js/modules/document_template/export_template_dialog.js:89
+msgid "Export template"
+msgstr "템플릿 내보내기"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:93
+#: document/static/js/modules/editor/menus/headerbar/model.js:40
+#: usermedia/static/js/modules/images/overview/index.js:255
+msgid "File"
+msgstr "파일"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:102
+msgid "Select"
+msgstr "선택하다"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:108
+msgid "Filetype"
+msgstr "파일 형식"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:116
+msgid "Found tags"
+msgstr "발견된 태그"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:122
+msgid "Missing tags"
+msgstr "태그 누락"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:193
+msgid "Do you really want to delete the export template?"
+msgstr "내보내기 템플릿을 삭제하시겠습니까?"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:206
+msgid "You need to upload a template file in ODT or DOCX format."
+msgstr "ODT 또는 DOCX 형식의 템플릿 파일을 업로드해야 합니다."
+
+#: document/static/js/modules/document_template/export_template_dialog.js:220
+msgid "Another export file with the same filename exists already."
+msgstr "동일한 파일 이름을 가진 다른 내보내기 파일이 이미 존재합니다."
+
+#: document/static/js/modules/document_template/export_template_dialog.js:256
+msgid "Unknown filetype"
+msgstr "알 수 없는 파일 형식"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:373
+msgid "Selected file not supported."
+msgstr "선택한 파일은 지원되지 않습니다."
+
+#: document/static/js/modules/document_template/importer.js:42
+msgid "The uploaded file does not appear to be a Fidus Writer Template file."
+msgstr "업로드된 파일이 Fidus Writer 템플릿 파일이 아닌 것 같습니다."
+
+#: document/static/js/modules/document_template/importer.js:70
+#: document/static/js/modules/importer/native/file.js:57
+#: document/static/js/modules/importer/native/file.js:85
+msgid "The uploaded file does not appear to be a Fidus Writer file."
+msgstr "업로드된 파일이 Fidus Writer 파일이 아닌 것 같습니다."
+
+#: document/static/js/modules/document_template/importer.js:159
+#: document/static/js/modules/importer/docx/import.js:70
+#: document/static/js/modules/importer/native/file.js:204
+#: document/static/js/modules/importer/odt/import.js:139
+#: document/static/js/modules/importer/pandoc/import.js:160
+msgid "successfully imported."
+msgstr "성공적으로 가져왔습니다."
+
+#: document/static/js/modules/document_template/importer.js:166
+#: document/static/js/modules/importer/native/file.js:211
+msgid ""
+"The uploaded file does not appear to be of the version used on this server: "
+msgstr "업로드된 파일이 이 서버에서 사용되는 버전이 아닌 것 같습니다."
+
+#: document/static/js/modules/document_template/list_admin.js:37
+msgid "Upload FIDUSTEMPLATE"
+msgstr "FIDUSTEMPLATE 업로드"
+
+#: document/static/js/modules/document_template/list_admin.js:42
+msgid "Download selected as FIDUSTEMPLATE"
+msgstr "FIDUSTEMPLATE로 선택된 다운로드"
+
+#: document/static/js/modules/document_template/schema.js:90
+#: document/static/js/modules/document_template/schema.js:153
+#: document/static/js/modules/document_template/schema.js:215
+msgid "Change to heading "
+msgstr "제목으로 변경"
+
+#: document/static/js/modules/document_template/schema.js:91
+#: document/static/js/modules/document_template/schema.js:154
+#: document/static/js/modules/document_template/schema.js:216
+msgid "Heading level "
+msgstr "제목 수준"
+
+#: document/static/js/modules/document_template/schema.js:99
+msgid "Insert Table"
+msgstr "표 삽입"
+
+#: document/static/js/modules/document_template/schema.js:100
+#: document/static/js/modules/document_template/schema.js:194
+#: document/static/js/modules/document_template/schema.js:198
+#: document/static/js/modules/document_template/templates.js:92
+#: document/static/js/modules/document_template/templates.js:468
+#: document/static/js/modules/editor/menus/toolbar/model.js:858
+msgid "Table"
+msgstr "테이블"
+
+#: document/static/js/modules/document_template/schema.js:162
+#: document/static/js/modules/document_template/schema.js:164
+msgid "Insert column after"
+msgstr "뒤에 열 삽입"
+
+#: document/static/js/modules/document_template/schema.js:163
+msgid "Insert column before"
+msgstr "앞에 열 삽입"
+
+#: document/static/js/modules/document_template/schema.js:165
+#: document/static/js/modules/editor/menus/table/model.js:204
+msgid "Delete column"
+msgstr "열 삭제"
+
+#: document/static/js/modules/document_template/schema.js:166
+msgid "Insert row before"
+msgstr "앞에 행 삽입"
+
+#: document/static/js/modules/document_template/schema.js:167
+msgid "Insert row after"
+msgstr "뒤에 행 삽입"
+
+#: document/static/js/modules/document_template/schema.js:168
+#: document/static/js/modules/editor/menus/table/model.js:178
+msgid "Delete row"
+msgstr "행 삭제"
+
+#: document/static/js/modules/document_template/schema.js:169
+msgid "Split cell"
+msgstr "셀 분할"
+
+#: document/static/js/modules/document_template/schema.js:170
+#: document/static/js/modules/editor/menus/table/model.js:234
+msgid "Merge cells"
+msgstr "셀 병합"
+
+#: document/static/js/modules/document_template/schema.js:171
+#: document/static/js/modules/editor/menus/table/model.js:327
+msgid "Toggle header column"
+msgstr "헤더 열 전환"
+
+#: document/static/js/modules/document_template/schema.js:172
+#: document/static/js/modules/editor/menus/table/model.js:300
+msgid "Toggle header row"
+msgstr "헤더 행 전환"
+
+#: document/static/js/modules/document_template/schema.js:173
+msgid "Toggle header cells"
+msgstr "헤더 셀 전환"
+
+#: document/static/js/modules/document_template/schema.js:174
+#: document/static/js/modules/editor/marginboxes/templates.js:231
+#: document/static/js/modules/editor/menus/table/model.js:400
+msgid "Delete table"
+msgstr "테이블 삭제"
+
+#: document/static/js/modules/document_template/templates.js:9
+msgid "Allowed elements"
+msgstr "허용되는 요소"
+
+#: document/static/js/modules/document_template/templates.js:13
+#: document/static/js/modules/editor/marginboxes/templates.js:256
+msgid "Paragraph"
+msgstr "절"
+
+#: document/static/js/modules/document_template/templates.js:17
+#: document/static/js/modules/document_template/templates.js:186
+#: document/static/js/modules/editor/marginboxes/templates.js:257
+#: document/static/js/modules/editor/menus/navigator/model.js:4
+msgid "Heading 1"
+msgstr "제목 1"
+
+#: document/static/js/modules/document_template/templates.js:21
+#: document/static/js/modules/document_template/templates.js:190
+#: document/static/js/modules/editor/marginboxes/templates.js:258
+#: document/static/js/modules/editor/menus/navigator/model.js:8
+msgid "Heading 2"
+msgstr "제목 2"
+
+#: document/static/js/modules/document_template/templates.js:25
+#: document/static/js/modules/document_template/templates.js:194
+#: document/static/js/modules/editor/marginboxes/templates.js:259
+#: document/static/js/modules/editor/menus/navigator/model.js:12
+msgid "Heading 3"
+msgstr "제목 3"
+
+#: document/static/js/modules/document_template/templates.js:29
+#: document/static/js/modules/document_template/templates.js:198
+#: document/static/js/modules/editor/marginboxes/templates.js:260
+#: document/static/js/modules/editor/menus/navigator/model.js:16
+msgid "Heading 4"
+msgstr "제목 4"
+
+#: document/static/js/modules/document_template/templates.js:33
+#: document/static/js/modules/document_template/templates.js:202
+#: document/static/js/modules/editor/marginboxes/templates.js:261
+#: document/static/js/modules/editor/menus/navigator/model.js:20
+msgid "Heading 5"
+msgstr "제목 5"
+
+#: document/static/js/modules/document_template/templates.js:37
+#: document/static/js/modules/document_template/templates.js:206
+#: document/static/js/modules/editor/marginboxes/templates.js:262
+#: document/static/js/modules/editor/menus/navigator/model.js:24
+msgid "Heading 6"
+msgstr "제목 6"
+
+#: document/static/js/modules/document_template/templates.js:44
+#: document/static/js/modules/editor/marginboxes/templates.js:263
+msgid "Code block"
+msgstr "코드 블록"
+
+#: document/static/js/modules/document_template/templates.js:49
+#: document/static/js/modules/editor/menus/toolbar/model.js:25
+#: document/static/js/modules/editor/menus/toolbar/model.js:837
+msgid "Figure"
+msgstr "수치"
+
+#: document/static/js/modules/document_template/templates.js:53
+#: document/static/js/modules/editor/marginboxes/templates.js:264
+msgid "Ordered list"
+msgstr "주문 목록"
+
+#: document/static/js/modules/document_template/templates.js:57
+#: document/static/js/modules/editor/marginboxes/templates.js:265
+#: document/static/js/modules/editor/menus/toolbar/model.js:628
+msgid "Bullet list"
+msgstr "글머리 기호 목록"
+
+#: document/static/js/modules/document_template/templates.js:61
+msgid "Horizontal rule"
+msgstr "수평선"
+
+#: document/static/js/modules/document_template/templates.js:65
+msgid "Equation"
+msgstr "방정식"
+
+#: document/static/js/modules/document_template/templates.js:69
+msgid "Citation"
+msgstr "소환"
+
+#: document/static/js/modules/document_template/templates.js:73
+#: document/static/js/modules/editor/dialogs/templates.js:16
+msgid "Cross reference"
+msgstr "상호 참조"
+
+#: document/static/js/modules/document_template/templates.js:77
+#: document/static/js/modules/editor/menus/toolbar/model.js:668
+msgid "Blockquote"
+msgstr "인용구"
+
+#: document/static/js/modules/document_template/templates.js:84
+#: document/static/js/modules/editor/menus/toolbar/model.js:158
+#: document/static/js/modules/editor/menus/toolbar/model.js:733
+msgid "Footnote"
+msgstr "각주"
+
+#: document/static/js/modules/document_template/templates.js:98
+msgid "Allowed marks"
+msgstr "허용된 마크"
+
+#: document/static/js/modules/document_template/templates.js:110
+#: document/static/js/modules/editor/marginboxes/templates.js:241
+#: document/static/js/modules/editor/menus/toolbar/model.js:440
+msgid "Underline"
+msgstr "밑줄"
+
+#: document/static/js/modules/document_template/templates.js:114
+#: document/static/js/modules/editor/dialogs/link.js:241
+#: document/static/js/modules/editor/menus/toolbar/model.js:708
+msgid "Link"
+msgstr "링크"
+
+#: document/static/js/modules/document_template/templates.js:118
+#: document/static/js/modules/editor/menus/toolbar/model.js:477
+msgid "Superscript"
+msgstr "어깨 기호"
+
+#: document/static/js/modules/document_template/templates.js:122
+#: document/static/js/modules/editor/menus/toolbar/model.js:514
+msgid "Subscript"
+msgstr "아래첨자"
+
+#: document/static/js/modules/document_template/templates.js:126
+#: document/static/js/modules/editor/menus/toolbar/model.js:24
+#: document/static/js/modules/editor/menus/toolbar/model.js:551
+msgid "Code"
+msgstr "암호"
+
+#: document/static/js/modules/document_template/templates.js:148
+msgid "Heading"
+msgstr "표제"
+
+#: document/static/js/modules/document_template/templates.js:151
+#: document/static/js/modules/document_template/templates.js:242
+#: document/static/js/modules/document_template/templates.js:315
+#: document/static/js/modules/document_template/templates.js:398
+#: document/static/js/modules/document_template/templates.js:471
+#: document/static/js/modules/document_template/templates.js:522
+#: document/static/js/modules/editor/menus/code_block/model.js:6
+#: document/static/js/modules/editor/menus/figure/model.js:7
+#: document/static/js/modules/editor/menus/table/model.js:388
+msgid "Configure"
+msgstr "구성"
+
+#: document/static/js/modules/document_template/templates.js:155
+#: document/static/js/modules/document_template/templates.js:246
+#: document/static/js/modules/document_template/templates.js:319
+#: document/static/js/modules/document_template/templates.js:380
+#: document/static/js/modules/document_template/templates.js:402
+#: document/static/js/modules/document_template/templates.js:475
+#: document/static/js/modules/document_template/templates.js:526
+#: document/static/js/modules/document_template/templates.js:814
+msgid "ID"
+msgstr "ID"
+
+#: document/static/js/modules/document_template/templates.js:160
+#: document/static/js/modules/document_template/templates.js:252
+#: document/static/js/modules/document_template/templates.js:324
+#: document/static/js/modules/document_template/templates.js:408
+msgid "Metadata function"
+msgstr "메타데이터 기능"
+
+#: document/static/js/modules/document_template/templates.js:162
+#: document/static/js/modules/document_template/templates.js:254
+#: document/static/js/modules/document_template/templates.js:326
+#: document/static/js/modules/document_template/templates.js:410
+#: document/static/js/modules/editor/dialogs/code_block.js:205
+#: document/static/js/modules/editor/dialogs/code_block.js:221
+#: document/static/js/modules/editor/dialogs/templates.js:167
+#: document/static/js/modules/editor/dialogs/templates.js:271
+msgid "None"
+msgstr "없음"
+
+#: document/static/js/modules/document_template/templates.js:163
+msgid "Subtitle"
+msgstr "부제"
+
+#: document/static/js/modules/document_template/templates.js:164
+msgid "Title (translated)"
+msgstr "제목(번역됨)"
+
+#: document/static/js/modules/document_template/templates.js:167
+#: document/static/js/modules/document_template/templates.js:259
+#: document/static/js/modules/document_template/templates.js:339
+#: document/static/js/modules/document_template/templates.js:414
+#: document/static/js/modules/document_template/templates.js:480
+msgid "Locking"
+msgstr "잠금"
+
+#: document/static/js/modules/document_template/templates.js:169
+#: document/static/js/modules/document_template/templates.js:261
+#: document/static/js/modules/document_template/templates.js:341
+#: document/static/js/modules/document_template/templates.js:416
+#: document/static/js/modules/document_template/templates.js:482
+msgid "User can change contents"
+msgstr "사용자가 내용을 변경할 수 있습니다."
+
+#: document/static/js/modules/document_template/templates.js:170
+#: document/static/js/modules/document_template/templates.js:262
+#: document/static/js/modules/document_template/templates.js:342
+#: document/static/js/modules/document_template/templates.js:417
+#: document/static/js/modules/document_template/templates.js:483
+msgid "User can not change contents"
+msgstr "사용자는 내용을 변경할 수 없습니다"
+
+#: document/static/js/modules/document_template/templates.js:171
+#: document/static/js/modules/document_template/templates.js:263
+#: document/static/js/modules/document_template/templates.js:343
+#: document/static/js/modules/document_template/templates.js:418
+msgid "User can only add content"
+msgstr "사용자는 콘텐츠만 추가할 수 있습니다."
+
+#: document/static/js/modules/document_template/templates.js:174
+#: document/static/js/modules/document_template/templates.js:266
+#: document/static/js/modules/document_template/templates.js:346
+#: document/static/js/modules/document_template/templates.js:421
+#: document/static/js/modules/document_template/templates.js:487
+#: document/static/js/modules/document_template/templates.js:531
+msgid "Optional"
+msgstr "선택 과목"
+
+#: document/static/js/modules/document_template/templates.js:176
+#: document/static/js/modules/document_template/templates.js:268
+#: document/static/js/modules/document_template/templates.js:348
+#: document/static/js/modules/document_template/templates.js:423
+#: document/static/js/modules/document_template/templates.js:489
+#: document/static/js/modules/document_template/templates.js:533
+msgid "Obligatory field"
+msgstr "필수항목"
+
+#: document/static/js/modules/document_template/templates.js:177
+#: document/static/js/modules/document_template/templates.js:269
+#: document/static/js/modules/document_template/templates.js:349
+#: document/static/js/modules/document_template/templates.js:424
+#: document/static/js/modules/document_template/templates.js:490
+#: document/static/js/modules/document_template/templates.js:534
+msgid "Optional, shown by default"
+msgstr "선택사항(기본적으로 표시됨)"
+
+#: document/static/js/modules/document_template/templates.js:178
+#: document/static/js/modules/document_template/templates.js:270
+#: document/static/js/modules/document_template/templates.js:350
+#: document/static/js/modules/document_template/templates.js:425
+#: document/static/js/modules/document_template/templates.js:491
+#: document/static/js/modules/document_template/templates.js:535
+msgid "Optional, not shown by default"
+msgstr "선택사항, 기본적으로 표시되지 않음"
+
+#: document/static/js/modules/document_template/templates.js:182
+msgid "Allowed headings"
+msgstr "허용되는 제목"
+
+#: document/static/js/modules/document_template/templates.js:209
+#: document/static/js/modules/document_template/templates.js:355
+#: document/static/js/modules/document_template/templates.js:496
+#: document/static/js/modules/editor/dialogs/code_block.js:202
+#: user/static/js/modules/profile/templates.js:201
+msgid "Language"
+msgstr "언어"
+
+#: document/static/js/modules/document_template/templates.js:211
+#: document/static/js/modules/document_template/templates.js:357
+#: document/static/js/modules/document_template/templates.js:498
+msgid "Document language"
+msgstr "문서 언어"
+
+#: document/static/js/modules/document_template/templates.js:219
+#: document/static/js/modules/document_template/templates.js:274
+#: document/static/js/modules/document_template/templates.js:365
+#: document/static/js/modules/document_template/templates.js:429
+#: document/static/js/modules/document_template/templates.js:506
+msgid "Initial content"
+msgstr "초기 내용"
+
+#: document/static/js/modules/document_template/templates.js:223
+#: document/static/js/modules/document_template/templates.js:278
+#: document/static/js/modules/document_template/templates.js:369
+#: document/static/js/modules/document_template/templates.js:433
+#: document/static/js/modules/document_template/templates.js:510
+#: document/static/js/modules/editor/marginboxes/templates.js:422
+msgid "Instructions"
+msgstr "지침"
+
+#: document/static/js/modules/document_template/templates.js:239
+msgid "Namelist"
+msgstr "이름 목록"
+
+#: document/static/js/modules/document_template/templates.js:251
+#: document/static/js/modules/document_template/templates.js:407
+msgid "Item title"
+msgstr "항목 제목"
+
+#: document/static/js/modules/document_template/templates.js:255
+msgid "Authors"
+msgstr "저자"
+
+#: document/static/js/modules/document_template/templates.js:256
+msgid "Editors"
+msgstr "편집자"
+
+#: document/static/js/modules/document_template/templates.js:312
+msgid "Richtext"
+msgstr "서식 있는 텍스트"
+
+#: document/static/js/modules/document_template/templates.js:327
+#: document/static/js/modules/importer/pandoc/convert.js:147
+msgid "Abstract"
+msgstr "추상적인"
+
+#: document/static/js/modules/document_template/templates.js:328
+msgid "Cases/Case Reports"
+msgstr "사례/사례 보고서"
+
+#: document/static/js/modules/document_template/templates.js:329
+msgid "Conclusions/Comment"
+msgstr "결론/의견"
+
+#: document/static/js/modules/document_template/templates.js:330
+msgid "Discussion/Interpretation"
+msgstr "토론/해석"
+
+#: document/static/js/modules/document_template/templates.js:331
+msgid "Introduction/Synopsis"
+msgstr "소개/시놉시스"
+
+#: document/static/js/modules/document_template/templates.js:332
+msgid "Materials"
+msgstr "재료"
+
+#: document/static/js/modules/document_template/templates.js:333
+msgid "Methods/Methodology/Procedures"
+msgstr "방법/방법론/절차"
+
+#: document/static/js/modules/document_template/templates.js:334
+msgid "Results/Statement of Findings"
+msgstr "결과/조사 결과 설명"
+
+#: document/static/js/modules/document_template/templates.js:335
+msgid "Subjects/Participants/Patients"
+msgstr "피험자/참가자/환자"
+
+#: document/static/js/modules/document_template/templates.js:336
+msgid "Supplementary materials"
+msgstr "보충자료"
+
+#: document/static/js/modules/document_template/templates.js:378
+msgid "Separator"
+msgstr "분리 기호"
+
+#: document/static/js/modules/document_template/templates.js:395
+msgid "Tags"
+msgstr "태그"
+
+#: document/static/js/modules/document_template/templates.js:411
+msgid "Keywords"
+msgstr "키워드"
+
+#: document/static/js/modules/document_template/templates.js:484
+msgid "User can not change first row"
+msgstr "사용자는 첫 번째 행을 변경할 수 없습니다."
+
+#: document/static/js/modules/document_template/templates.js:519
+msgid "Table of Contents"
+msgstr "목차"
+
+#: document/static/js/modules/document_template/templates.js:732
+msgid "Select which code block categories are available:"
+msgstr "사용 가능한 코드 블록 카테고리를 선택하세요."
+
+#: document/static/js/modules/document_template/templates.js:789
+msgid "Add new document style"
+msgstr "새 문서 스타일 추가"
+
+#: document/static/js/modules/document_template/templates.js:801
+msgid "Add new export template"
+msgstr "새 내보내기 템플릿 추가"
+
+#: document/static/js/modules/document_template/templates.js:819
+msgid "Element types"
+msgstr "요소 유형"
+
+#: document/static/js/modules/document_template/templates.js:820
+msgid "Document structure"
+msgstr "문서 구조"
+
+#: document/static/js/modules/document_template/templates.js:847
+msgid "Setting"
+msgstr "환경"
+
+#: document/static/js/modules/document_template/templates.js:848
+msgid "Value"
+msgstr "값"
+
+#: document/static/js/modules/document_template/templates.js:854
+msgid "Footnote specifications"
+msgstr "각주 사양"
+
+#: document/static/js/modules/document_template/templates.js:862
+msgid "Available languages"
+msgstr "사용 가능한 언어"
+
+#: document/static/js/modules/document_template/templates.js:870
+#: user/static/js/modules/profile/templates.js:203
+msgid "Default language"
+msgstr "기본 언어"
+
+#: document/static/js/modules/document_template/templates.js:878
+msgid "Permitted paper sizes"
+msgstr "허용되는 용지 크기"
+
+#: document/static/js/modules/document_template/templates.js:886
+msgid "Code block languages"
+msgstr "코드 블록 언어"
+
+#: document/static/js/modules/document_template/templates.js:894
+msgid "Code block categories"
+msgstr "코드 블록 카테고리"
+
+#: document/static/js/modules/document_template/templates.js:902
+msgid "Custom bibliography header"
+msgstr "맞춤 참고문헌 헤더"
+
+#: document/static/js/modules/document_template/templates.js:910
+msgid "Available citation styles"
+msgstr "사용 가능한 인용 스타일"
+
+#: document/static/js/modules/document_template/templates.js:918
+msgid "Default citation style"
+msgstr "기본 인용 스타일"
+
+#: document/static/js/modules/document_template/templates.js:928
+msgid "Document styles"
+msgstr "문서 스타일"
+
+#: document/static/js/modules/document_template/templates.js:938
+msgid "Export templates"
+msgstr "템플릿 내보내기"
+
+#: document/static/js/modules/documents/access_rights/index.js:54
+msgid "Cannot load document access data."
+msgstr "문서 액세스 데이터를 로드할 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:72
+msgid "Basic"
+msgstr "기초적인"
+
+#: document/static/js/modules/documents/access_rights/index.js:73
+msgid "Basic access rights"
+msgstr "기본 접근권한"
+
+#: document/static/js/modules/documents/access_rights/index.js:77
+#: document/static/js/modules/documents/access_rights/index.js:79
+#: document/static/js/modules/documents/access_rights/templates.js:92
+#: document/static/js/modules/documents/access_rights/templates.js:98
+msgid "Write"
+msgstr "쓰다"
+
+#: document/static/js/modules/documents/access_rights/index.js:88
+#: document/static/js/modules/documents/access_rights/templates.js:99
+msgid "Write tracked"
+msgstr "추적된 쓰기"
+
+#: document/static/js/modules/documents/access_rights/index.js:90
+msgid "Write with changes tracked"
+msgstr "변경 사항을 추적하여 쓰기"
+
+#: document/static/js/modules/documents/access_rights/index.js:99
+#: document/static/js/modules/documents/access_rights/index.js:101
+#: document/static/js/modules/documents/access_rights/templates.js:97
+#: document/static/js/modules/editor/menus/selection/model.js:43
+msgid "Comment"
+msgstr "논평"
+
+#: document/static/js/modules/documents/access_rights/index.js:110
+#: document/static/js/modules/documents/access_rights/index.js:112
+#: document/static/js/modules/documents/access_rights/templates.js:90
+#: document/static/js/modules/documents/access_rights/templates.js:93
+msgid "Read"
+msgstr "읽다"
+
+#: document/static/js/modules/documents/access_rights/index.js:121
+#: document/static/js/modules/documents/access_rights/index.js:139
+#: document/static/js/modules/documents/access_rights/templates.js:95
+msgid "Review"
+msgstr "검토"
+
+#: document/static/js/modules/documents/access_rights/index.js:122
+msgid "Access rights used within document review"
+msgstr "문서 검토에 사용되는 접근 권한"
+
+#: document/static/js/modules/documents/access_rights/index.js:126
+msgid "No comments"
+msgstr "댓글 없음"
+
+#: document/static/js/modules/documents/access_rights/index.js:129
+msgid "Read document but not see comments and chats of others"
+msgstr "문서를 읽지만 다른 사람의 댓글과 채팅은 볼 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:142
+msgid "Comment, but not see comments and chats of others"
+msgstr "댓글을 달 수 있지만 다른 사람의 댓글과 채팅은 볼 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:152
+#: document/static/js/modules/documents/access_rights/templates.js:96
+msgid "Review tracked"
+msgstr "추적된 리뷰"
+
+#: document/static/js/modules/documents/access_rights/index.js:155
+msgid "Write with tracked changes, but not see comments and chats of others"
+msgstr "변경 사항을 추적하여 작성하지만 다른 사람의 댓글과 채팅은 볼 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:231
+#: document/static/js/modules/documents/overview/index.js:763
+msgid "End-to-end encrypted document"
+msgstr "엔드투엔드 암호화 문서"
+
+#: document/static/js/modules/documents/access_rights/index.js:232
+msgid ""
+"This document is end-to-end encrypted. Collaborators without a personal "
+"passphrase will need the document password shared with them through a secure"
+" channel outside of Fidus Writer. Do not send the password through the "
+"document chat."
+msgstr ""
+"이 문서는 엔드투엔드 암호화되어 있습니다. 개인 암호가 없는 공동작업자는 Fidus Writer 외부의 보안 채널을 통해 문서 비밀번호를"
+" 공유해야 합니다. 문서채팅으로 비밀번호를 보내지 마세요."
+
+#: document/static/js/modules/documents/access_rights/index.js:240
+#: user/static/js/modules/contacts/add_dialog.js:51
+msgid "Add contact or invite new user"
+msgstr "연락처 추가 또는 새 사용자 초대"
+
+#: document/static/js/modules/documents/access_rights/index.js:241
+#: user/static/js/modules/contacts/add_dialog.js:52
+msgid "Add contact"
+msgstr "연락처 추가"
+
+#: document/static/js/modules/documents/access_rights/index.js:317
+msgid "Share your document with others"
+msgstr "다른 사람과 문서 공유"
+
+#: document/static/js/modules/documents/access_rights/index.js:344
+#: document/static/js/modules/documents/access_rights/templates.js:38
+msgid "Loading…"
+msgstr "로드 중…"
+
+#: document/static/js/modules/documents/access_rights/index.js:352
+msgid "Could not load share links."
+msgstr "공유 링크를 로드할 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:358
+msgid "Create share link"
+msgstr "공유 링크 만들기"
+
+#: document/static/js/modules/documents/access_rights/index.js:367
+#: document/static/js/modules/documents/overview/index.js:919
+msgid "Create"
+msgstr "만들다"
+
+#: document/static/js/modules/documents/access_rights/index.js:417
+msgid "Share link created."
+msgstr "공유 링크가 생성되었습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:423
+msgid "Could not create share link."
+msgstr "공유 링크를 생성할 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:449
+msgid "Share link revoked."
+msgstr "공유 링크가 취소되었습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:451
+#: document/static/js/modules/documents/access_rights/index.js:455
+msgid "Could not revoke share link."
+msgstr "공유 링크를 취소할 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:571
+msgid "Link copied to clipboard."
+msgstr "링크가 클립보드에 복사되었습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:573
+msgid "Could not copy link."
+msgstr "링크를 복사할 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/index.js:638
+msgid "Access rights have been saved"
+msgstr "접근 권한이 저장되었습니다"
+
+#: document/static/js/modules/documents/access_rights/index.js:644
+msgid "Access rights could not be saved"
+msgstr "액세스 권한을 저장할 수 없습니다."
+
+#: document/static/js/modules/documents/access_rights/templates.js:6
+msgid "People"
+msgstr "사람들"
+
+#: document/static/js/modules/documents/access_rights/templates.js:7
+msgid "Share link"
+msgstr "링크 공유"
+
+#: document/static/js/modules/documents/access_rights/templates.js:11
+msgid "My contacts"
+msgstr "내 연락처"
+
+#: document/static/js/modules/documents/access_rights/templates.js:23
+msgid "My collaborators"
+msgstr "내 공동작업자"
+
+#: document/static/js/modules/documents/access_rights/templates.js:26
+msgid "Collaborators"
+msgstr "협력자"
+
+#: document/static/js/modules/documents/access_rights/templates.js:27
+#: document/static/js/modules/documents/access_rights/templates.js:85
+#: document/static/js/modules/documents/overview/index.js:561
+msgid "Rights"
+msgstr "진상"
+
+#: document/static/js/modules/documents/access_rights/templates.js:41
+msgid "Create new share link"
+msgstr "새 공유 링크 만들기"
+
+#: document/static/js/modules/documents/access_rights/templates.js:48
+msgid "No active share links yet."
+msgstr "아직 활성 공유 링크가 없습니다."
+
+#: document/static/js/modules/documents/access_rights/templates.js:57
+msgid "never"
+msgstr "절대"
+
+#: document/static/js/modules/documents/access_rights/templates.js:62
+msgid "expires"
+msgstr "만료"
+
+#: document/static/js/modules/documents/access_rights/templates.js:67
+#: document/static/js/modules/editor/state_plugins/links.js:264
+#: document/static/js/modules/editor/state_plugins/links.js:265
+msgid "Copy link"
+msgstr "링크 복사"
+
+#: document/static/js/modules/documents/access_rights/templates.js:70
+msgid "Revoke"
+msgstr "취소"
+
+#: document/static/js/modules/documents/access_rights/templates.js:91
+#: document/static/js/modules/documents/access_rights/templates.js:94
+msgid "Read without comments"
+msgstr "댓글 없이 읽기"
+
+#: document/static/js/modules/documents/access_rights/templates.js:106
+msgid "Expires"
+msgstr "만료"
+
+#: document/static/js/modules/documents/access_rights/templates.js:108
+msgid "YYYY-MM-DD or empty"
+msgstr "YYYY-MM-DD 또는 비어 있음"
+
+#: document/static/js/modules/documents/access_rights/templates.js:112
+msgid "Note"
+msgstr "메모"
+
+#: document/static/js/modules/documents/access_rights/templates.js:114
+msgid "optional label, e.g. \"for reviewers\""
+msgstr "선택적 라벨(예: \"리뷰어를 위한\""
+
+#: document/static/js/modules/documents/access_rights/templates.js:120
+msgid "Document password"
+msgstr "문서 비밀번호"
+
+#: document/static/js/modules/documents/access_rights/templates.js:122
+msgid "Enter the document password to include it in the link"
+msgstr "링크에 포함하려면 문서 비밀번호를 입력하세요."
+
+#: document/static/js/modules/documents/access_rights/templates.js:125
+msgid ""
+"If you enter the password above, it will be embedded in the link (after #). "
+"Anyone with the link can open the document. Only share such links through "
+"secure channels."
+msgstr ""
+"위의 비밀번호를 입력하시면 링크(#뒤)에 비밀번호가 삽입됩니다. 링크가 있는 사람은 누구나 문서를 열 수 있습니다. 이러한 링크는 보안 "
+"채널을 통해서만 공유하십시오."
+
+#: document/static/js/modules/documents/access_rights/templates.js:145
+#: document/static/js/modules/documents/access_rights/templates.js:168
+msgid "Invite"
+msgstr "초대하다"
+
+#: document/static/js/modules/documents/overview/actions.js:39
+msgid "Document has been deleted"
+msgstr "문서가 삭제되었습니다"
+
+#: document/static/js/modules/documents/overview/actions.js:49
+msgid "Could not delete document"
+msgstr "문서를 삭제할 수 없습니다."
+
+#: document/static/js/modules/documents/overview/actions.js:59
+msgid "You cannot delete a document while you are offline."
+msgstr "오프라인 상태에서는 문서를 삭제할 수 없습니다."
+
+#: document/static/js/modules/documents/overview/actions.js:75
+msgid "Do you really want to delete the following documents?"
+msgstr "다음 문서를 정말로 삭제하시겠습니까?"
+
+#: document/static/js/modules/documents/overview/actions.js:78
+msgid "Do you really want to delete the following document?"
+msgstr "다음 문서를 정말로 삭제하시겠습니까?"
+
+#: document/static/js/modules/documents/overview/actions.js:159
+msgid "Import a Fidus file"
+msgstr "Fidus 파일 가져오기"
+
+#: document/static/js/modules/documents/overview/actions.js:189
+msgid "Import as:"
+msgstr "다음으로 가져오기:"
+
+#: document/static/js/modules/documents/overview/actions.js:217
+msgid "File too large"
+msgstr "파일이 너무 큼"
+
+#: document/static/js/modules/documents/overview/actions.js:231
+msgid "No importable files found in ZIP"
+msgstr "ZIP에 가져올 수 있는 파일이 없습니다."
+
+#: document/static/js/modules/documents/overview/actions.js:287
+msgid "Unsupported file format"
+msgstr "지원되지 않는 파일 형식"
+
+#: document/static/js/modules/documents/overview/actions.js:346
+msgid "Import a text document in a different format"
+msgstr "다른 형식으로 텍스트 문서 가져오기"
+
+#: document/static/js/modules/documents/overview/actions.js:360
+msgid "Supported formats"
+msgstr "지원되는 형식"
+
+#: document/static/js/modules/documents/overview/actions.js:362
+msgid ""
+"You can also upload a ZIP file that contains one file in any of these "
+"formats as well as images and/or bibtex file."
+msgstr "이미지 및/또는 bibtex 파일뿐만 아니라 이러한 형식의 파일 하나가 포함된 ZIP 파일을 업로드할 수도 있습니다."
+
+#: document/static/js/modules/documents/overview/actions.js:443
+#: document/static/js/modules/editor/document_template/index.js:129
+msgid "Encrypt the copy"
+msgstr "복사본을 암호화하세요"
+
+#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/editor/document_template/index.js:136
+msgid "Choose document template"
+msgstr "문서 템플릿 선택"
+
+#: document/static/js/modules/documents/overview/actions.js:452
+msgid "Select document template for copies"
+msgstr "복사본용 문서 템플릿 선택"
+
+#: document/static/js/modules/documents/overview/actions.js:452
+#: document/static/js/modules/editor/document_template/index.js:138
+msgid "Select document template for copy."
+msgstr "복사할 문서 템플릿을 선택합니다."
+
+#: document/static/js/modules/documents/overview/actions.js:465
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
+#: document/static/js/modules/editor/document_template/index.js:151
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:301
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:340
+msgid "Copy"
+msgstr "복사"
+
+#: document/static/js/modules/documents/overview/actions.js:514
+msgid "Could not copy document."
+msgstr "문서를 복사할 수 없습니다."
+
+#: document/static/js/modules/documents/overview/actions.js:544
+#: document/static/js/modules/documents/overview/actions.js:576
+#: document/static/js/modules/editor/document_template/index.js:229
+#: document/static/js/modules/editor/document_template/index.js:283
+msgid "Incorrect password."
+msgstr "비밀번호가 잘못되었습니다."
+
+#: document/static/js/modules/documents/overview/actions.js:798
+msgid ""
+"You cannot view the revision history of a document while you are offline."
+msgstr "오프라인 상태에서는 문서의 개정 내역을 볼 수 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:84
+msgid "Document Overview"
+msgstr "문서 개요"
+
+#: document/static/js/modules/documents/overview/index.js:115
+msgid "You cannot access rights data of a document while you are offline."
+msgstr "오프라인 상태에서는 문서의 권한 데이터에 액세스할 수 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:143
+msgid ""
+"Leaving an empty folder will delete it. Do you really want to delete this "
+"folder?"
+msgstr "빈 폴더를 남겨두면 삭제됩니다. 정말로 이 폴더를 삭제하시겠습니까?"
+
+#: document/static/js/modules/documents/overview/index.js:189
+msgid "You cannot open a document while you are offline."
+msgstr "오프라인 상태에서는 문서를 열 수 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:233
+msgid "Document data loading failed."
+msgstr "문서 데이터를 로드하지 못했습니다."
+
+#: document/static/js/modules/documents/overview/index.js:546
+msgid "No documents available"
+msgstr "사용 가능한 문서가 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:547
+msgid "No documents found"
+msgstr "문서를 찾을 수 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:557
+msgid "Revisions"
+msgstr "개정"
+
+#: document/static/js/modules/documents/overview/index.js:558
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:112
+msgid "Created"
+msgstr "생성됨"
+
+#: document/static/js/modules/documents/overview/index.js:559
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:113
+msgid "Last changed"
+msgstr "마지막으로 변경됨"
+
+#: document/static/js/modules/documents/overview/index.js:560
+msgid "Owner"
+msgstr "소유자"
+
+#: document/static/js/modules/documents/overview/index.js:753
+#: document/static/js/modules/editor/e2ee/password-dialog.js:196
+msgid "Encrypted Document"
+msgstr "암호화된 문서"
+
+#: document/static/js/modules/documents/overview/index.js:800
+msgid "Undefined"
+msgstr "한정되지 않은"
+
+#: document/static/js/modules/documents/overview/index.js:813
+msgid "Copy selected as..."
+msgstr "선택한 항목 복사..."
+
+#: document/static/js/modules/documents/overview/index.js:815
+msgid "Copy the documents and assign them to a specific template."
+msgstr "문서를 복사하여 특정 템플릿에 할당합니다."
+
+#: document/static/js/modules/documents/overview/index.js:866
+msgid ""
+"Encrypted documents protect your content so that only people with the "
+"password can read it."
+msgstr "암호화된 문서는 비밀번호를 아는 사람만 읽을 수 있도록 콘텐츠를 보호합니다."
+
+#: document/static/js/modules/documents/overview/index.js:867
+#: document/static/js/modules/documents/overview/index.js:881
+msgid "Advantages"
+msgstr "장점"
+
+#: document/static/js/modules/documents/overview/index.js:869
+msgid "Only people with the password can read the document."
+msgstr "비밀번호를 아는 사람만 문서를 읽을 수 있습니다."
+
+#: document/static/js/modules/documents/overview/index.js:870
+msgid "The server cannot access the document contents."
+msgstr "서버가 문서 내용에 액세스할 수 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:872
+#: document/static/js/modules/documents/overview/index.js:887
+msgid "Disadvantages"
+msgstr "단점"
+
+#: document/static/js/modules/documents/overview/index.js:874
+msgid "Limited access rights options (no tracked changes or review modes)."
+msgstr "제한된 액세스 권한 옵션(변경 사항 추적 또는 검토 모드 없음)"
+
+#: document/static/js/modules/documents/overview/index.js:875
+msgid ""
+"If you lose the password or passphrase, there is no way to recover the "
+"document."
+msgstr "비밀번호나 비밀번호 문구를 잊어버린 경우 문서를 복구할 수 있는 방법이 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:876
+msgid ""
+"You must share the password with collaborators manually (unless they use a "
+"personal passphrase)."
+msgstr "공동작업자와 수동으로 비밀번호를 공유해야 합니다(개인 비밀번호 문구를 사용하지 않는 한)."
+
+#: document/static/js/modules/documents/overview/index.js:880
+msgid "Regular documents are the default and work well for most users."
+msgstr "일반 문서는 기본값이며 대부분의 사용자에게 적합합니다."
+
+#: document/static/js/modules/documents/overview/index.js:883
+msgid "Full access rights options including tracked changes and review modes."
+msgstr "변경 사항 추적 및 검토 모드를 포함한 전체 액세스 권한 옵션."
+
+#: document/static/js/modules/documents/overview/index.js:884
+msgid "No risk of losing access if you forget a password."
+msgstr "비밀번호를 잊어버려도 액세스 권한을 잃을 위험이 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:885
+msgid "Easier collaboration — no need to share passwords with collaborators."
+msgstr "더 쉬운 공동 작업 — 공동 작업자와 비밀번호를 공유할 필요가 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:889
+msgid "The server can technically access the document contents."
+msgstr "서버는 기술적으로 문서 내용에 접근할 수 있습니다."
+
+#: document/static/js/modules/documents/overview/index.js:890
+msgid "No additional protection beyond your account password."
+msgstr "귀하의 계정 비밀번호 외에는 추가 보호가 없습니다."
+
+#: document/static/js/modules/documents/overview/index.js:894
+msgid "Choose encryption type of new document."
+msgstr "새 문서의 암호화 유형을 선택합니다."
+
+#: document/static/js/modules/documents/overview/index.js:899
+msgid "Non-encrypted"
+msgstr "암호화되지 않음"
+
+#: document/static/js/modules/documents/overview/index.js:904
+msgid "Encrypted"
+msgstr "암호화됨"
+
+#: document/static/js/modules/documents/overview/index.js:948
+msgid "Set Up Personal Encryption (Optional)"
+msgstr "개인 암호화 설정(선택 사항)"
+
+#: document/static/js/modules/documents/overview/index.js:950
+msgid ""
+"Would you like to set up a personal passphrase now? This will allow you to "
+"unlock all your encrypted documents with a single passphrase."
+msgstr "지금 개인 암호를 설정하시겠습니까? 이렇게 하면 단일 암호 문구로 암호화된 모든 문서의 잠금을 해제할 수 있습니다."
+
+#: document/static/js/modules/documents/overview/index.js:951
+msgid "Note:"
+msgstr "메모:"
+
+#: document/static/js/modules/documents/overview/index.js:951
+msgid "This is optional. You can also use a per-document password instead."
+msgstr "이는 선택사항입니다. 대신 문서별 비밀번호를 사용할 수도 있습니다."
+
+#: document/static/js/modules/documents/overview/index.js:955
+msgid "Skip for Now"
+msgstr "지금은 건너뛰기"
+
+#: document/static/js/modules/documents/overview/index.js:966
+msgid "Set Up Passphrase"
+msgstr "암호 설정"
+
+#: document/static/js/modules/documents/overview/index.js:1001
+#: user/static/js/modules/profile/index.js:219
+msgid "Failed to set up passphrase: "
+msgstr "암호를 설정하지 못했습니다:"
+
+#: document/static/js/modules/documents/overview/menu.js:7
+msgid "Move selected"
+msgstr "선택 항목 이동"
+
+#: document/static/js/modules/documents/overview/menu.js:8
+msgid "Move the documents that have been selected."
+msgstr "선택한 문서를 이동합니다."
+
+#: document/static/js/modules/documents/overview/menu.js:18
+msgid "Move documents"
+msgstr "문서 이동"
+
+#: document/static/js/modules/documents/overview/menu.js:19
+msgid "Move document"
+msgstr "문서 이동"
+
+#: document/static/js/modules/documents/overview/menu.js:23
+msgid "Document has been moved"
+msgstr "문서가 이동되었습니다."
+
+#: document/static/js/modules/documents/overview/menu.js:24
+msgid "Could not move document"
+msgstr "문서를 이동할 수 없습니다."
+
+#: document/static/js/modules/documents/overview/menu.js:38
+msgid "Share selected"
+msgstr "선택 공유"
+
+#: document/static/js/modules/documents/overview/menu.js:39
+msgid "Share the documents that have been selected."
+msgstr "선택한 문서를 공유하세요."
+
+#: document/static/js/modules/documents/overview/menu.js:50
+msgid "You cannot share documents of other users"
+msgstr "다른 사용자의 문서는 공유할 수 없습니다"
+
+#: document/static/js/modules/documents/overview/menu.js:74
+msgid "Copy selected"
+msgstr "선택 항목 복사"
+
+#: document/static/js/modules/documents/overview/menu.js:75
+msgid "Copy the documents that have been selected."
+msgstr "선택한 문서를 복사합니다."
+
+#: document/static/js/modules/documents/overview/menu.js:87
+msgid "Export selected as Epub"
+msgstr "Epub으로 내보내기가 선택됨"
+
+#: document/static/js/modules/documents/overview/menu.js:89
+msgid "Export the documents that have been selected as Epub files."
+msgstr "선택한 문서를 Epub 파일로 내보냅니다."
+
+#: document/static/js/modules/documents/overview/menu.js:102
+msgid "Export selected as HTML"
+msgstr "선택한 항목을 HTML로 내보내기"
+
+#: document/static/js/modules/documents/overview/menu.js:104
+msgid "Export the documents that have been selected as HTML files."
+msgstr "선택한 문서를 HTML 파일로 내보냅니다."
+
+#: document/static/js/modules/documents/overview/menu.js:117
+msgid "Export selected as LaTeX"
+msgstr "LaTeX로 내보내기가 선택되었습니다."
+
+#: document/static/js/modules/documents/overview/menu.js:119
+msgid "Export the documents that have been selected as LaTeX files."
+msgstr "선택한 문서를 LaTeX 파일로 내보냅니다."
+
+#: document/static/js/modules/documents/overview/menu.js:132
+msgid "Export selected as JATS"
+msgstr "JATS로 내보내기 선택"
+
+#: document/static/js/modules/documents/overview/menu.js:134
+msgid "Export the documents that have been selected as JATS files."
+msgstr "JATS 파일로 선택한 문서를 내보냅니다."
+
+#: document/static/js/modules/documents/overview/menu.js:147
+msgid "Export selected as BITS"
+msgstr "BITS로 내보내기가 선택되었습니다."
+
+#: document/static/js/modules/documents/overview/menu.js:149
+msgid "Export the documents that have been selected as BITS files."
+msgstr "선택한 문서를 BITS 파일로 내보냅니다."
+
+#: document/static/js/modules/documents/overview/menu.js:162
+msgid "Export selected as FIDUS"
+msgstr "FIDUS로 내보내기가 선택됨"
+
+#: document/static/js/modules/documents/overview/menu.js:164
+msgid ""
+"Export the documents that have been selected as FIDUS files including their "
+"templates."
+msgstr "템플릿을 포함하여 FIDUS 파일로 선택한 문서를 내보냅니다."
+
+#: document/static/js/modules/documents/overview/menu.js:177
+msgid "Export selected as Slim FIDUS"
+msgstr "Slim FIDUS로 내보내기 선택"
+
+#: document/static/js/modules/documents/overview/menu.js:179
+msgid ""
+"Export the documents that have been selected as FIDUS files without their "
+"templates."
+msgstr "템플릿 없이 FIDUS 파일로 선택한 문서를 내보냅니다."
+
+#: document/static/js/modules/documents/overview/menu.js:193
+msgid "Delete the documents that have been selected."
+msgstr "선택한 문서를 삭제합니다."
+
+#: document/static/js/modules/documents/overview/menu.js:204
+msgid "You cannot delete documents of other users"
+msgstr "다른 사용자의 문서는 삭제할 수 없습니다"
+
+#: document/static/js/modules/documents/overview/menu.js:228
+msgid "Create new document"
+msgstr "새 문서 만들기"
+
+#: document/static/js/modules/documents/overview/menu.js:235
+msgid "Create new folder"
+msgstr "새 폴더 만들기"
+
+#: document/static/js/modules/documents/overview/menu.js:253
+msgid "Upload FIDUS document"
+msgstr "FIDUS 문서 업로드"
+
+#: document/static/js/modules/documents/overview/menu.js:261
+msgid "Import document"
+msgstr "문서 가져오기"
+
+#: document/static/js/modules/documents/overview/menu.js:269
+msgid "Search documents"
+msgstr "문서 검색"
+
+#: document/static/js/modules/documents/revisions/index.js:37
+msgid "Saved revisions of"
+msgstr "저장된 개정판"
+
+#: document/static/js/modules/documents/revisions/index.js:93
+msgid "Revision of"
+msgstr "개정"
+
+#: document/static/js/modules/documents/revisions/index.js:153
+msgid "Do you really want to delete the revision?"
+msgstr "정말로 개정판을 삭제하시겠습니까?"
+
+#: document/static/js/modules/documents/revisions/index.js:171
+msgid "Revision deleted"
+msgstr "버전이 삭제되었습니다."
+
+#: document/static/js/modules/documents/revisions/index.js:180
+msgid "Could not delete revision."
+msgstr "버전을 삭제할 수 없습니다."
+
+#: document/static/js/modules/documents/revisions/templates.js:7
+msgid "Time"
+msgstr "시간"
+
+#: document/static/js/modules/documents/revisions/templates.js:8
+msgid "Description"
+msgstr "설명"
+
+#: document/static/js/modules/documents/revisions/templates.js:9
+#: document/static/js/modules/editor/marginboxes/templates.js:525
+msgid "Recreate"
+msgstr "재창조"
+
+#: document/static/js/modules/documents/revisions/templates.js:10
+#: document/static/js/modules/editor/menus/headerbar/model.js:280
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:89
+msgid "Download"
+msgstr "다운로드"
+
+#: document/static/js/modules/documents/tools.js:71
+msgid "Could not obtain extra document data"
+msgstr "추가 문서 데이터를 얻을 수 없습니다"
+
+#: document/static/js/modules/editor/citations/index.js:301
+msgid "No tracking"
+msgstr "추적 불가"
+
+#: document/static/js/modules/editor/citations/index.js:302
+msgid "Changes to citation sources are not being tracked!"
+msgstr "인용 출처에 대한 변경 사항이 추적되지 않습니다!"
+
+#: document/static/js/modules/editor/clipboard/copy/serializers.js:48
+#: menu/static/js/modules/menu/index.js:23
+msgid "Bibliography"
+msgstr "서지"
+
+#: document/static/js/modules/editor/collab/chat.js:65
+msgid "[Encrypted message - decryption failed]"
+msgstr "[암호화된 메시지 - 복호화 실패]"
+
+#: document/static/js/modules/editor/collab/chat.js:70
+msgid "[Encrypted message - enter password to read]"
+msgstr "[암호화된 메시지 - 읽으려면 비밀번호를 입력하세요.]"
+
+#: document/static/js/modules/editor/collab/chat.js:144
+msgid "Send a message..."
+msgstr "메시지 보내기..."
+
+#: document/static/js/modules/editor/collab/doc.js:309
+msgid "Incorrect passphrase. Please try again."
+msgstr "잘못된 암호입니다. 다시 시도해 주세요."
+
+#: document/static/js/modules/editor/collab/doc.js:351
+msgid "Recovery Failed"
+msgstr "복구 실패"
+
+#: document/static/js/modules/editor/collab/doc.js:354
+msgid ""
+"The recovery key you entered is incorrect, or the recovery process failed. "
+"Please try again."
+msgstr "입력한 복구 키가 올바르지 않거나 복구 프로세스가 실패했습니다. 다시 시도해 주세요."
+
+#: document/static/js/modules/editor/collab/doc.js:358
+#: document/static/js/modules/editor/collab/doc.js:563
+msgid "Retry"
+msgstr "다시 해 보다"
+
+#: document/static/js/modules/editor/collab/doc.js:556
+msgid "Decryption Failed"
+msgstr "암호 해독 실패"
+
+#: document/static/js/modules/editor/collab/doc.js:559
+msgid "That password didn't work. Please try again."
+msgstr "해당 비밀번호는 작동하지 않았습니다. 다시 시도해 주세요."
+
+#: document/static/js/modules/editor/collab/doc.js:818
+msgid "Updating document. Please wait..."
+msgstr "문서를 업데이트하는 중입니다. 기다리세요..."
+
+#: document/static/js/modules/editor/collab/doc.js:823
+msgid ""
+"It's taking a bit longer than usual, but it should be ready soon. Please "
+"wait..."
+msgstr "평소보다 시간이 조금 더 걸리고 있지만 곧 준비될 것입니다. 기다리세요..."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:155
+msgid "Merge Complete"
+msgstr "병합 완료"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:163
+msgid "Merge Resolution warning"
+msgstr "병합 해결 경고"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:165
+msgid ""
+"Not all changes have been resolved. Please make sure to review all the "
+"changes to before proceeding."
+msgstr "모든 변경 사항이 해결된 것은 아닙니다. 계속하기 전에 모든 변경 사항을 검토하시기 바랍니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:169
+msgid "Proceed to Merge"
+msgstr "병합을 진행하세요"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:185
+msgid "Merging Offline Document"
+msgstr "오프라인 문서 병합"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:186
+msgid "Common Document"
+msgstr "공통문서"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:186
+msgid "Online Document"
+msgstr "온라인 문서"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:186
+msgid "Offline Document"
+msgstr "오프라인 문서"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:191
+msgid "Merge Dialog Frequent Questions"
+msgstr "병합 대화 상자 자주 묻는 질문"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:194
+msgid "Why am I seeing this merge dialog?"
+msgstr "이 병합 대화 상자가 표시되는 이유는 무엇입니까?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:196
+msgid ""
+"You are seeing this merge dialog because you were offline for a long time, "
+"and the changes you made to the document while you were offline conflicted "
+"with the changes made by other users. So it was not possible to merge your "
+"edits in automatically."
+msgstr ""
+"오랫동안 오프라인 상태였으며 오프라인 상태에서 문서에 적용한 변경 사항이 다른 사용자가 변경한 내용과 충돌했기 때문에 이 병합 대화 "
+"상자가 표시되었습니다. 따라서 편집 내용을 자동으로 병합할 수 없었습니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:200
+msgid "Am I the only one seeing this dialog?"
+msgstr "이 대화창이 보이는 건 저뿐인가요?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:202
+msgid ""
+"Yes, you are the only one who can see this dialog. Therefore it would be "
+"great if you could ask your collaborators to stop editing the document, so "
+"that once you are finished with the merge, it will not lead to more "
+"conflicts."
+msgstr ""
+"예, 이 대화 상자를 볼 수 있는 유일한 사람은 귀하입니다. 따라서 공동작업자에게 문서 편집을 중지하도록 요청할 수 있으면 병합이 "
+"완료되면 더 이상 충돌이 발생하지 않도록 할 수 있다면 좋을 것입니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:207
+msgid ""
+"What if my collaborators continue working on the document while I am "
+"merging?"
+msgstr "내가 병합하는 동안 공동작업자가 문서 작업을 계속하면 어떻게 되나요?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:210
+msgid ""
+"Do not worry, we can handle such a situation as we will simply show you "
+"another merge dialog."
+msgstr "걱정하지 마십시오. 다른 병합 대화 상자를 간단히 표시하므로 그러한 상황을 처리할 수 있습니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:214
+msgid "Why am I seeing three editors?"
+msgstr "편집자가 세 명이나 보이는 이유는 무엇입니까?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:216
+msgid ""
+"The editor on the left will show the last common version of the document. It"
+" is shown for reference only. The editor in the middle is the merge editor "
+"and it initially contains the document resulting from other users' edits. "
+"The editor on the right is the offline editor and it contains the document "
+"resulting from your changes while you were offline."
+msgstr ""
+"왼쪽 편집기에는 문서의 마지막 공통 버전이 표시됩니다. 이는 참조용으로만 표시됩니다. 가운데에 있는 편집기는 병합 편집기이며 처음에는 "
+"다른 사용자가 편집한 결과로 생성된 문서가 포함됩니다. 오른쪽 편집기는 오프라인 편집기이며 오프라인 상태에서 변경한 결과로 발생한 문서가"
+" 포함되어 있습니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:221
+msgid "What are the green and red highlights in the editors?"
+msgstr "편집기에서 녹색과 빨간색 하이라이트는 무엇입니까?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:224
+msgid ""
+"The editors in the middle and on the right will show content that is "
+"highlighted in green. They also contain text that is highlighted in red. The"
+" text marked in green corresponds to the text that was edited (added) by you"
+" or other users. The text marked in red corresponds to text that was deleted"
+" by either you or other users. The insertions and deletions made by other "
+"users will be marked in the merge editor. The insertions and deletions made "
+"by you will be marked in the offline editor on the right."
+msgstr ""
+"중앙과 오른쪽의 편집기에는 녹색으로 강조 표시된 콘텐츠가 표시됩니다. 또한 빨간색으로 강조 표시된 텍스트도 포함되어 있습니다. 녹색으로 "
+"표시된 텍스트는 본인 또는 다른 사용자가 편집(추가)한 텍스트에 해당합니다. 빨간색으로 표시된 텍스트는 귀하 또는 다른 사용자가 삭제한 "
+"텍스트에 해당합니다. 다른 사용자가 삽입하고 삭제한 내용은 병합 편집기에 표시됩니다. 귀하가 삽입하고 삭제한 내용은 오른쪽 오프라인 "
+"편집기에 표시됩니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:229
+msgid "How do I accept or reject a particular change?"
+msgstr "특정 변경 사항을 어떻게 수락하거나 거부합니까?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:233
+msgid ""
+"Accepting or rejecting a change in the merge editor in the middle or the "
+"offline editor on the right causes a change in the merge editor. You can "
+"accept a change by directly clicking on the highlighted text. A dropdown "
+"menu will appear and you can then either accept or reject the change. When "
+"you click on the highlighted text, it also highlights the changes that will "
+"get accepted. %(mergeImage)s As shown in the above image one can click on a "
+"highlighted change, and click on accept change. On accepting a change it "
+"will be reflected in the merged document editor in the middle. Rejecting a "
+"change works in the same way except on reject a change the highlight of the "
+"change will be lost, with it the ability to accept, reject or copy a change."
+msgstr ""
+"중앙의 병합 편집기나 오른쪽의 오프라인 편집기에서 변경 사항을 수락하거나 거부하면 병합 편집기에 변경 사항이 적용됩니다. 강조 표시된 "
+"텍스트를 직접 클릭하여 변경 사항을 수락할 수 있습니다. 드롭다운 메뉴가 나타나면 변경 사항을 수락하거나 거부할 수 있습니다. 강조 "
+"표시된 텍스트를 클릭하면 승인될 변경 사항도 강조 표시됩니다. %(mergeImage)s 위 이미지에 표시된 것처럼 강조 표시된 변경 "
+"사항을 클릭하고 변경 사항 수락을 클릭할 수 있습니다. 변경 사항을 수락하면 중간에 있는 병합 문서 편집기에 반영됩니다. 변경 거부는 "
+"변경 사항을 승인, 거부 또는 복사할 수 있는 기능과 함께 변경 사항의 강조 표시가 손실된다는 점을 제외하면 동일한 방식으로 작동합니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:242
+msgid "I cannot accept a particular change. What do I do?"
+msgstr "나는 특정한 변화를 받아들일 수 없습니다. 어떻게 해야 하나요?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:245
+msgid ""
+"If you cannot automatically accept a change into the merge editor, do not "
+"worry. You can choose to copy the change either by clicking on the copy "
+"button or manually copy the change and then paste it in the merge editor in "
+"the middle. It is as simple as that!"
+msgstr ""
+"병합 편집기에서 변경 사항을 자동으로 수락할 수 없는 경우 걱정하지 마세요. 복사 버튼을 클릭하여 변경 사항을 복사하거나 변경 사항을 "
+"수동으로 복사한 다음 중간에 있는 병합 편집기에 붙여넣을 수 있습니다. 그것은 그렇게 간단합니다!"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:249
+msgid "Can I edit content in all three editors?"
+msgstr "세 가지 편집기 모두에서 콘텐츠를 편집할 수 있나요?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:251
+msgid ""
+"You can edit the content only in the merge editor in the middle. You cannot "
+"edit content in the other two editors."
+msgstr "중간에 있는 병합 편집기에서만 내용을 편집할 수 있습니다. 다른 두 편집기에서는 콘텐츠를 편집할 수 없습니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:256
+msgid "Does the order in which I work on merging the changes matter?"
+msgstr "변경 사항을 병합하는 순서가 중요합니까?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:259
+msgid "It is always better to try to accept the changes in a linear fashion."
+msgstr "선형적인 방식으로 변화를 받아들이려고 노력하는 것이 항상 더 좋습니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:263
+msgid "What do I do after completing the merge?"
+msgstr "병합을 완료한 후에는 어떻게 해야 하나요?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:265
+msgid ""
+"After the merge is completed, you can click on the button 'Merge Complete' "
+"which in turn will move your changes from the merge editor in the middle to "
+"the main editor. Do note if other users made significant changes to the "
+"document while you were merging the document, you might have to merge the "
+"documents together again."
+msgstr ""
+"병합이 완료된 후 '병합 완료' 버튼을 클릭하면 변경 사항이 중간에 있는 병합 편집기에서 기본 편집기로 이동됩니다. 문서를 병합하는 동안"
+" 다른 사용자가 문서를 크게 변경한 경우 문서를 다시 병합해야 할 수도 있습니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:270
+msgid ""
+"What happens if I try to complete merge without resolving all the changes?"
+msgstr "모든 변경 사항을 해결하지 않고 병합을 완료하려고 하면 어떻게 되나요?"
+
+#: document/static/js/modules/editor/collab/merge/editor.js:273
+msgid ""
+"You will receive a warning when you try to complete a merge without "
+"accepting or rejecting all the changes. You can still proceed to merge the "
+"document. If you do that, all the insertions and deletions in the merge "
+"editor in the middle will be accepted automatically, and all the insertions "
+"and deletions in the offline editor on the right will be ignored."
+msgstr ""
+"모든 변경 사항을 수락하거나 거부하지 않고 병합을 완료하려고 하면 경고가 표시됩니다. 계속해서 문서 병합을 진행할 수 있습니다. 그렇게 "
+"하면 중간에 있는 병합 편집기에서 모든 삽입과 삭제가 자동으로 허용되고, 오른쪽 오프라인 편집기에서 모든 삽입과 삭제가 무시됩니다."
+
+#: document/static/js/modules/editor/collab/merge/editor.js:1053
+msgid ""
+"One or more of the image(s) you copied could not be found on the server. "
+"Consider re-uploading them once the document is merged."
+msgstr "복사한 이미지 중 하나 이상을 서버에서 찾을 수 없습니다. 문서가 병합되면 다시 업로드해 보세요."
+
+#: document/static/js/modules/editor/collab/merge/index.js:312
+msgid ""
+"One of the image(s) you copied could not be found on the server. Please try "
+"uploading it again."
+msgstr "복사한 이미지 중 하나를 서버에서 찾을 수 없습니다. 다시 업로드해 보세요."
+
+#: document/static/js/modules/editor/collab/merge/index.js:328
+msgid ""
+"The document was modified substantially by other users while you were "
+"offline. We have merged your changes in as tracked changes. You should "
+"verify that your edits still make sense."
+msgstr ""
+"오프라인 상태에서 다른 사용자가 문서를 상당 부분 수정했습니다. 귀하의 변경 사항을 추적된 변경 사항으로 병합했습니다. 편집 내용이 "
+"여전히 유효한지 확인해야 합니다."
+
+#: document/static/js/modules/editor/collab/merge/index.js:377
+msgid "Merge failed"
+msgstr "병합 실패"
+
+#: document/static/js/modules/editor/collab/merge/index.js:380
+msgid ""
+"An error occurred during the merge process, so we cannot save your work to "
+"the server any longer, and it is downloaded to your computer instead. Please"
+" consider importing it into a new document."
+msgstr ""
+"병합 프로세스 중에 오류가 발생하여 작업 내용을 더 이상 서버에 저장할 수 없으며 대신 컴퓨터에 다운로드됩니다. 새 문서로 가져오는 것을"
+" 고려해 보세요."
+
+#: document/static/js/modules/editor/collab/merge/index.js:384
+#: document/static/js/modules/editor/index.js:688
+msgid "Leave editor"
+msgstr "편집자 나가기"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/action.js:29
+msgid "Change copied to clipboard."
+msgstr "변경사항이 클립보드에 복사되었습니다."
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/action.js:32
+#: document/static/js/modules/editor/state_plugins/links.js:30
+msgid "Copy to clipboard failed. Please copy manually."
+msgstr "클립보드에 복사하지 못했습니다. 수동으로 복사해 주세요."
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/action.js:76
+#: document/static/js/modules/editor/collab/merge/state_plugins/action.js:113
+#: document/static/js/modules/editor/collab/merge/state_plugins/action.js:136
+msgid ""
+"The change could not be applied automatically. Please consider using the "
+"copy option to copy the changes."
+msgstr "변경 사항을 자동으로 적용할 수 없습니다. 변경 사항을 복사하려면 복사 옵션을 사용해 보세요."
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:292
+msgid "Format Change"
+msgstr "형식 변경"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:296
+msgid "Inserted by online users"
+msgstr "온라인 사용자가 삽입함"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:298
+msgid "Deleted by online users"
+msgstr "온라인 사용자가 삭제함"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:302
+msgid "Inserted by you"
+msgstr "내가 삽입함"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:304
+msgid "Deleted by you"
+msgstr "내가 삭제함"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:332
+msgid "Accept change"
+msgstr "변경 사항 수락"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:333
+msgid "Accept Change"
+msgstr "변경 수락"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:335
+msgid "Reject change"
+msgstr "변경 거부"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:336
+msgid "Reject Change"
+msgstr "변경 거부"
+
+#: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:338
+msgid "Copy content"
+msgstr "콘텐츠 복사"
+
+#: document/static/js/modules/editor/comments/editors/answer.js:19
+#: document/static/js/modules/editor/comments/editors/comment.js:100
+#: document/static/js/modules/editor/marginboxes/templates.js:498
+#: document/static/js/modules/editor/marginboxes/templates.js:499
+#: document/static/js/modules/editor/marginboxes/templates.js:535
+#: document/static/js/modules/editor/marginboxes/templates.js:536
+#: document/static/js/modules/editor/state_plugins/contributor_input/dropup.js:36
+#: document/static/js/modules/editor/state_plugins/links.js:270
+#: document/static/js/modules/editor/state_plugins/links.js:318
+msgid "Edit"
+msgstr "편집하다"
+
+#: document/static/js/modules/editor/comments/editors/comment.js:97
+msgid "High priority"
+msgstr "높은 우선순위"
+
+#: document/static/js/modules/editor/comments/interactions.js:345
+#: document/static/js/modules/editor/comments/interactions.js:405
+#: document/static/js/modules/editor/comments/store.js:59
+msgid "Reviewer"
+msgstr "리뷰어"
+
+#: document/static/js/modules/editor/databases/images.js:95
+msgid "Could not save encrypted image"
+msgstr "암호화된 이미지를 저장할 수 없습니다."
+
+#: document/static/js/modules/editor/databases/images.js:191
+msgid ""
+"One of the Image(s) you copied could not be found on the server. Please try "
+"uploading it again."
+msgstr "복사한 이미지 중 하나를 서버에서 찾을 수 없습니다. 다시 업로드해 보세요."
+
+#: document/static/js/modules/editor/dialogs/citation.js:22
+#: document/static/js/modules/editor/dialogs/code_block.js:14
+#: document/static/js/modules/editor/dialogs/figure.js:26
+#: document/static/js/modules/editor/dialogs/link.js:15
+#: document/static/js/modules/editor/dialogs/math.js:30
+#: document/static/js/modules/editor/dialogs/table.js:46
+#: document/static/js/modules/editor/dialogs/templates.js:234
+msgid "Insert"
+msgstr "끼워 넣다"
+
+#: document/static/js/modules/editor/dialogs/citation.js:39
+#: document/static/js/modules/editor/dialogs/code_block.js:120
+#: document/static/js/modules/editor/dialogs/figure.js:374
+#: document/static/js/modules/editor/dialogs/templates.js:314
+#: document/static/js/modules/editor/menus/code_block/model.js:40
+#: document/static/js/modules/editor/state_plugins/links.js:273
+#: document/static/js/modules/editor/state_plugins/links.js:297
+#: document/static/js/modules/editor/state_plugins/links.js:321
+#: user/static/js/modules/profile/dialogs.js:283
+#: user/static/js/modules/profile/dialogs.js:332
+msgid "Remove"
+msgstr "제거하다"
+
+#: document/static/js/modules/editor/dialogs/citation.js:69
+msgid "Configure Citation"
+msgstr "인용 구성"
+
+#: document/static/js/modules/editor/dialogs/citation.js:238
+#: usermedia/static/js/modules/images/selection_dialog/index.js:115
+msgid "Search..."
+msgstr "찾다..."
+
+#: document/static/js/modules/editor/dialogs/citation.js:410
+msgid "Please select at least one citation source!"
+msgstr "인용 출처를 하나 이상 선택하세요!"
+
+#: document/static/js/modules/editor/dialogs/code_block.js:147
+msgid "Configure code block"
+msgstr "코드 블록 구성"
+
+#: document/static/js/modules/editor/dialogs/code_block.js:218
+msgid "Category"
+msgstr "범주"
+
+#: document/static/js/modules/editor/dialogs/code_block.js:236
+msgid "Optional title"
+msgstr "선택적 제목"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:28
+#: document/static/js/modules/editor/dialogs/contributor.js:119
+#: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:22
+#: document/static/js/modules/editor/state_plugins/tag_input/tag_editor_plugins.js:20
+msgid "Add"
+msgstr "추가하다"
+
+#: document/static/js/modules/editor/dialogs/contributor.js:53
+msgid "Email is in incorrect format!"
+msgstr "이메일 형식이 잘못되었습니다!"
+
+#: document/static/js/modules/editor/dialogs/figure.js:33
+msgid "or"
+msgstr "또는"
+
+#: document/static/js/modules/editor/dialogs/figure.js:35
+msgid "Insert image"
+msgstr "이미지 삽입"
+
+#: document/static/js/modules/editor/dialogs/figure.js:46
+#: document/static/js/modules/editor/dialogs/math.js:112
+msgid "Functions"
+msgstr "기능"
+
+#: document/static/js/modules/editor/dialogs/figure.js:47
+#: document/static/js/modules/editor/dialogs/math.js:113
+msgid "Greek Letters"
+msgstr "그리스 문자"
+
+#: document/static/js/modules/editor/dialogs/figure.js:48
+#: document/static/js/modules/editor/dialogs/math.js:114
+msgid "LaTeX Command Mode"
+msgstr "LaTeX 명령 모드"
+
+#: document/static/js/modules/editor/dialogs/figure.js:49
+#: document/static/js/modules/editor/dialogs/math.js:115
+msgid "Numeric"
+msgstr "숫자"
+
+#: document/static/js/modules/editor/dialogs/figure.js:51
+#: document/static/js/modules/editor/dialogs/math.js:117
+msgid "Symbols and Roman Letters"
+msgstr "기호 및 로마자"
+
+#: document/static/js/modules/editor/dialogs/figure.js:53
+#: document/static/js/modules/editor/dialogs/math.js:119
+msgid "Copy to Clipboard"
+msgstr "클립보드에 복사"
+
+#: document/static/js/modules/editor/dialogs/figure.js:54
+#: document/static/js/modules/editor/dialogs/math.js:120
+#: document/static/js/modules/editor/menus/toolbar/model.js:894
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:65
+msgid "Redo"
+msgstr "다시 하다"
+
+#: document/static/js/modules/editor/dialogs/figure.js:56
+#: document/static/js/modules/editor/dialogs/math.js:122
+msgid "Toggle Virtual Keyboard"
+msgstr "가상 키보드 전환"
+
+#: document/static/js/modules/editor/dialogs/figure.js:58
+#: document/static/js/modules/editor/dialogs/math.js:124
+#: document/static/js/modules/editor/menus/toolbar/model.js:881
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:61
+msgid "Undo"
+msgstr "끄르다"
+
+#: document/static/js/modules/editor/dialogs/figure.js:97
+msgid "Type formula"
+msgstr "수식 입력"
+
+#: document/static/js/modules/editor/dialogs/figure.js:239
+msgid "Could not encrypt image"
+msgstr "이미지를 암호화할 수 없습니다."
+
+#: document/static/js/modules/editor/dialogs/figure.js:398
+msgid "Enter latex math or insert an image"
+msgstr "라텍스 수학을 입력하거나 이미지를 삽입하세요"
+
+#: document/static/js/modules/editor/dialogs/language.js:44
+msgid "Change language of the document"
+msgstr "문서의 언어 변경"
+
+#: document/static/js/modules/editor/dialogs/math.js:92
+msgid "Mathematical formula"
+msgstr "수학 공식"
+
+#: document/static/js/modules/editor/dialogs/ordered_list.js:68
+#: document/static/js/modules/editor/menus/ordered_list/model.js:6
+msgid "Set list start number"
+msgstr "목록 시작 번호 설정"
+
+#: document/static/js/modules/editor/dialogs/revision.js:32
+msgid "Revision description"
+msgstr "개정 설명"
+
+#: document/static/js/modules/editor/dialogs/table.js:83
+msgid "Insert table"
+msgstr "표 삽입"
+
+#: document/static/js/modules/editor/dialogs/table.js:190
+msgid "Configure table"
+msgstr "테이블 구성"
+
+#: document/static/js/modules/editor/dialogs/templates.js:21
+#: document/static/js/modules/editor/dialogs/templates.js:44
+msgid "Select Target"
+msgstr "대상 선택"
+
+#: document/static/js/modules/editor/dialogs/templates.js:39
+msgid "Internal"
+msgstr "내부"
+
+#: document/static/js/modules/editor/dialogs/templates.js:60
+msgid "External"
+msgstr "외부"
+
+#: document/static/js/modules/editor/dialogs/templates.js:65
+msgid "Link title"
+msgstr "링크 제목"
+
+#: document/static/js/modules/editor/dialogs/templates.js:67
+msgid "URL"
+msgstr "URL"
+
+#: document/static/js/modules/editor/dialogs/templates.js:74
+msgid "Description (optional)"
+msgstr "설명(선택사항)"
+
+#: document/static/js/modules/editor/dialogs/templates.js:134
+#: document/static/js/modules/editor/dialogs/templates.js:252
+msgid "Alignment"
+msgstr "조정"
+
+#: document/static/js/modules/editor/dialogs/templates.js:137
+#: document/static/js/modules/editor/dialogs/templates.js:255
+msgid "Left"
+msgstr "왼쪽"
+
+#: document/static/js/modules/editor/dialogs/templates.js:138
+#: document/static/js/modules/editor/dialogs/templates.js:256
+msgid "Center"
+msgstr "센터"
+
+#: document/static/js/modules/editor/dialogs/templates.js:139
+#: document/static/js/modules/editor/dialogs/templates.js:257
+msgid "Right"
+msgstr "오른쪽"
+
+#: document/static/js/modules/editor/dialogs/templates.js:144
+#: document/static/js/modules/editor/dialogs/templates.js:262
+msgid "Width"
+msgstr "너비"
+
+#: document/static/js/modules/editor/dialogs/templates.js:147
+msgid "100 %"
+msgstr "100%"
+
+#: document/static/js/modules/editor/dialogs/templates.js:148
+msgid "75 %"
+msgstr "75%"
+
+#: document/static/js/modules/editor/dialogs/templates.js:149
+msgid "50 %"
+msgstr "50%"
+
+#: document/static/js/modules/editor/dialogs/templates.js:150
+msgid "25 %"
+msgstr "25%"
+
+#: document/static/js/modules/editor/dialogs/templates.js:155
+msgid "Column style"
+msgstr "열 스타일"
+
+#: document/static/js/modules/editor/dialogs/templates.js:158
+msgid "Fixed width"
+msgstr "고정폭"
+
+#: document/static/js/modules/editor/dialogs/templates.js:159
+msgid "Fit content"
+msgstr "콘텐츠에 맞게"
+
+#: document/static/js/modules/editor/dialogs/templates.js:164
+#: document/static/js/modules/editor/dialogs/templates.js:268
+msgid "Listed as"
+msgstr "다음과 같이 나열됨"
+
+#: document/static/js/modules/editor/dialogs/templates.js:173
+#: document/static/js/modules/editor/dialogs/templates.js:282
+#: document/static/js/modules/editor/state_plugins/placeholders.js:84
+msgid "Caption"
+msgstr "표제"
+
+#: document/static/js/modules/editor/dialogs/templates.js:176
+#: document/static/js/modules/editor/dialogs/templates.js:285
+msgid "Enable"
+msgstr "할 수 있게 하다"
+
+#: document/static/js/modules/editor/dialogs/templates.js:177
+#: document/static/js/modules/editor/dialogs/templates.js:286
+msgid "Disable"
+msgstr "장애를 입히다"
+
+#: document/static/js/modules/editor/dialogs/templates.js:185
+msgid "List start"
+msgstr "목록 시작"
+
+#: document/static/js/modules/editor/dialogs/templates.js:220
+#: usermedia/static/js/modules/images/selection_dialog/index.js:124
+msgid "Image"
+msgstr "영상"
+
+#: document/static/js/modules/editor/dialogs/templates.js:230
+#: user/static/js/modules/profile/dialogs.js:22
+#: usermedia/static/js/modules/images/edit_dialog/index.js:43
+msgid "Upload"
+msgstr "업로드"
+
+#: document/static/js/modules/editor/dialogs/templates.js:297
+msgid "My sources"
+msgstr "내 소스"
+
+#: document/static/js/modules/editor/dialogs/templates.js:301
+msgid "Citation format"
+msgstr "인용 형식"
+
+#: document/static/js/modules/editor/dialogs/templates.js:304
+msgid "(Author, 1998)"
+msgstr "(저자, 1998)"
+
+#: document/static/js/modules/editor/dialogs/templates.js:305
+msgid "Author (1998)"
+msgstr "저자 (1998)"
+
+#: document/static/js/modules/editor/dialogs/templates.js:313
+msgid "Order"
+msgstr "주문하다"
+
+#: document/static/js/modules/editor/dialogs/templates.js:366
+msgid "Page"
+msgstr "페이지"
+
+#: document/static/js/modules/editor/dialogs/templates.js:370
+msgid "Text before"
+msgstr "이전에 문자 메시지 보내기"
+
+#: document/static/js/modules/editor/dialogs/templates.js:380
+msgid "Firstname"
+msgstr "이름"
+
+#: document/static/js/modules/editor/dialogs/templates.js:381
+msgid "Lastname"
+msgstr "성"
+
+#: document/static/js/modules/editor/dialogs/templates.js:382
+#: document/static/js/modules/schema/document/content.js:47
+#: user/static/js/modules/profile/templates.js:155
+msgid "Email"
+msgstr "이메일"
+
+#: document/static/js/modules/editor/dialogs/templates.js:383
+msgid "Institution"
+msgstr "기관"
+
+#: document/static/js/modules/editor/document_template/index.js:58
+msgid "Optional sections"
+msgstr "선택 섹션"
+
+#: document/static/js/modules/editor/document_template/index.js:60
+msgid "Choose which optional sections to enable."
+msgstr "활성화할 선택적 섹션을 선택합니다."
+
+#: document/static/js/modules/editor/document_template/index.js:66
+msgid "Show/hide"
+msgstr "표시/숨기기"
+
+#: document/static/js/modules/editor/document_template/index.js:109
+msgid "Create copy as ..."
+msgstr "다음 이름으로 사본 만들기..."
+
+#: document/static/js/modules/editor/document_template/index.js:112
+msgid "Create copy of the current document with a specific template."
+msgstr "특정 템플릿을 사용하여 현재 문서의 복사본을 만듭니다."
+
+#: document/static/js/modules/editor/document_template/index.js:331
+msgid "Export the document to a DOCX file with the given template."
+msgstr "주어진 템플릿을 사용하여 문서를 DOCX 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/document_template/index.js:354
+msgid "Export the document to an ODT file with the given template."
+msgstr "주어진 템플릿을 사용하여 문서를 ODT 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:26
+msgid ""
+"Set up a personal encryption passphrase. This passphrase will unlock all "
+"your encrypted documents — you will not need separate passwords for each "
+"document."
+msgstr ""
+"개인 암호화 암호를 설정하세요. 이 암호는 암호화된 모든 문서의 잠금을 해제하므로 각 문서에 대해 별도의 암호가 필요하지 않습니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:27
+msgid "Important:"
+msgstr "중요한:"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:27
+msgid ""
+"This passphrase is separate from your login password. If you lose it, your "
+"encrypted documents cannot be recovered."
+msgstr "이 암호는 로그인 암호와 별개입니다. 분실한 경우 암호화된 문서를 복구할 수 없습니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:29
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:182
+msgid "Passphrase"
+msgstr "암호"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:32
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:185
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:265
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:371
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
+msgid "Show passphrase"
+msgstr "암호 표시"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:41
+msgid "Confirm passphrase"
+msgstr "암호 확인"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:51
+msgid "Set Up Encryption"
+msgstr "암호화 설정"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:71
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:421
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:568
+msgid "Passphrase must be at least 8 characters long."
+msgstr "암호는 8자 이상이어야 합니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:80
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:430
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:577
+msgid "Passphrases do not match."
+msgstr "암호가 일치하지 않습니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:94
+msgid "Set Up Personal Encryption"
+msgstr "개인 암호화 설정"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:180
+msgid "Enter your personal encryption passphrase to unlock your documents."
+msgstr "문서의 잠금을 해제하려면 개인 암호화 암호를 입력하세요."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:195
+msgid "Unlock"
+msgstr "터놓다"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:208
+msgid "Please enter your passphrase."
+msgstr "암호를 입력하세요."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:230
+msgid "Recover with key"
+msgstr "키로 복구"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:241
+msgid "Unlock Encryption"
+msgstr "암호화 잠금 해제"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:261
+msgid "Hide passphrase"
+msgstr "암호 숨기기"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:296
+msgid "This is your recovery key."
+msgstr "이것이 복구 키입니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:297
+msgid ""
+"Store it somewhere safe (e.g., a password manager, printed copy). If you "
+"forget your passphrase, this is the ONLY way to recover your encrypted "
+"documents. We cannot recover it for you."
+msgstr ""
+"안전한 곳에 보관하세요(예: 비밀번호 관리자, 인쇄본). 암호 문구를 잊어버린 경우 이것이 암호화된 문서를 복구할 수 있는 유일한 "
+"방법입니다. 우리는 당신을 위해 그것을 복구할 수 없습니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:304
+msgid "Copy it now — it will not be shown again."
+msgstr "지금 복사하세요. 다시 표시되지 않습니다."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:310
+msgid "I have saved it"
+msgstr "나는 그것을 저장했다"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:323
+msgid "Recovery Key"
+msgstr "복구 키"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:338
+msgid "Copied!"
+msgstr "복사되었습니다!"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:361
+msgid ""
+"Enter your recovery key and a new passphrase to regain access to your "
+"encrypted documents."
+msgstr "암호화된 문서에 다시 액세스하려면 복구 키와 새 암호를 입력하세요."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
+msgid "Recovery key"
+msgstr "복구 키"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:368
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:518
+msgid "New passphrase"
+msgstr "새 암호"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:376
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:526
+msgid "Confirm new passphrase"
+msgstr "새 암호 확인"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:386
+msgid "Recover"
+msgstr "다시 덮다"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:412
+msgid "Please enter your recovery key."
+msgstr "복구 키를 입력하세요."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:452
+msgid "Recover Encryption"
+msgstr "암호화 복구"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:508
+msgid ""
+"Enter your current passphrase and a new passphrase to change your encryption"
+" password."
+msgstr "암호화 비밀번호를 변경하려면 현재 비밀번호 문구와 새 비밀번호 문구를 입력하세요."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:510
+msgid "Current passphrase"
+msgstr "현재 암호"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:536
+msgid "Change Passphrase"
+msgstr "암호 변경"
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:559
+msgid "Please enter your current passphrase."
+msgstr "현재 암호를 입력하세요."
+
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:599
+msgid "Change Encryption Passphrase"
+msgstr "암호화 암호 변경"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:28
+msgid "Password must be at least 5 characters long."
+msgstr "비밀번호는 5자 이상이어야 합니다."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:103
+msgid "Very weak"
+msgstr "매우 약함"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:104
+msgid "Weak"
+msgstr "약한"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:105
+msgid "Fair"
+msgstr "공정한"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:107
+msgid "Very strong"
+msgstr "매우 강함"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:142
+msgid ""
+"This document is end-to-end encrypted. Enter the password to decrypt it."
+msgstr "이 문서는 엔드투엔드 암호화되어 있습니다. 암호를 입력하여 해독하세요."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:144
+#: document/static/js/modules/editor/e2ee/password-dialog.js:261
+#: user/static/js/modules/login/index.js:64
+#: user/static/js/modules/login/index.js:65
+#: user/static/js/modules/password_reset/change_password.js:22
+#: user/static/js/modules/profile/templates.js:30
+#: user/static/js/modules/profile/templates.js:100
+#: user/static/js/modules/signup/index.js:27
+msgid "Password"
+msgstr "비밀번호"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:147
+#: document/static/js/modules/editor/e2ee/password-dialog.js:222
+#: document/static/js/modules/editor/e2ee/password-dialog.js:264
+#: document/static/js/modules/editor/e2ee/password-dialog.js:451
+msgid "Show password"
+msgstr "비밀번호 표시"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:161
+msgid "Decrypt"
+msgstr "암호 해독"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:172
+msgid "Please enter the password."
+msgstr "비밀번호를 입력해주세요."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:218
+msgid "Hide password"
+msgstr "비밀번호 숨기기"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:258
+msgid ""
+"Set a password to encrypt this document. You will need this password to open"
+" the document in the future."
+msgstr "이 문서를 암호화하려면 비밀번호를 설정하세요. 나중에 문서를 열려면 이 비밀번호가 필요합니다."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:259
+msgid ""
+"Tip: Use a passphrase with multiple words, e.g. \"correct-horse-battery-"
+"staple\". This is both secure and easy to remember."
+msgstr "팁: 여러 단어로 구성된 암호를 사용하세요. \\\"올바른 말 배터리 스테이플\\\". 이는 안전하고 기억하기 쉽습니다."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:273
+msgid "Confirm password"
+msgstr "비밀번호 확인"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:283
+msgid "Create Encrypted Document"
+msgstr "암호화된 문서 생성"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:313
+#: document/static/js/modules/editor/e2ee/password-dialog.js:520
+msgid "Passwords do not match."
+msgstr "비밀번호가 일치하지 않습니다."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:327
+msgid "Set Document Password"
+msgstr "문서 비밀번호 설정"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:427
+msgid "Current password"
+msgstr "현재 비밀번호"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:440
+msgid ""
+"Change the document password. After changing, you must share the new "
+"password with all collaborators."
+msgstr "문서 비밀번호를 변경하세요. 변경한 후에는 모든 공동작업자와 새 비밀번호를 공유해야 합니다."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:444
+#: user/static/js/modules/profile/templates.js:63
+msgid "New password"
+msgstr "새 비밀번호"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:461
+msgid "Confirm new password"
+msgstr "새 비밀번호 확인"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:473
+#: user/static/js/modules/password_reset/change_password.js:7
+#: user/static/js/modules/profile/dialogs.js:204
+msgid "Change Password"
+msgstr "비밀번호 변경"
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:501
+msgid "Please enter the current password."
+msgstr "현재 비밀번호를 입력해주세요."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:530
+msgid "New password must be different from the current password."
+msgstr "새 비밀번호는 현재 비밀번호와 달라야 합니다."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:547
+msgid "Change Document Password"
+msgstr "문서 비밀번호 변경"
+
+#: document/static/js/modules/editor/e2ee/snapshot-manager.js:148
+msgid ""
+"The document password was changed by another user. You will need to enter "
+"the new password to continue editing."
+msgstr "다른 사용자가 문서 비밀번호를 변경했습니다. 편집을 계속하려면 새 비밀번호를 입력해야 합니다."
+
+#: document/static/js/modules/editor/index.js:323
+#: document/static/js/modules/editor/index.js:581
+msgid "Invalid Share Link"
+msgstr "잘못된 공유 링크"
+
+#: document/static/js/modules/editor/index.js:326
+#: document/static/js/modules/editor/index.js:584
+msgid ""
+"This share link has expired or is invalid. Please ask the document owner for"
+" a new link."
+msgstr "이 공유 링크는 만료되었거나 유효하지 않습니다. 문서 소유자에게 새 링크를 요청하세요."
+
+#: document/static/js/modules/editor/index.js:390
+msgid ""
+"Warning! Not all your changes have been saved! You could suffer data loss. "
+"Attempting to reconnect..."
+msgstr "경고! 모든 변경사항이 저장되지 않았습니다! 데이터 손실이 발생할 수 있습니다. 다시 연결을 시도하는 중..."
+
+#: document/static/js/modules/editor/index.js:517
+msgid "Your document was out of sync and has been reset."
+msgstr "문서가 동기화되지 않아 재설정되었습니다."
+
+#: document/static/js/modules/editor/index.js:538
+msgid ""
+"Your Access rights have been modified. You now have %(accessRight)s access "
+"to this document."
+msgstr "귀하의 액세스 권한이 수정되었습니다. 이제 이 문서에 대한 %(accessRight)s 액세스 권한이 있습니다."
+
+#: document/static/js/modules/editor/index.js:607
+msgid "Session Expired"
+msgstr "세션이 만료되었습니다"
+
+#: document/static/js/modules/editor/index.js:610
+msgid ""
+"Your session expired while you were offline, so we cannot save your work to "
+"the server any longer, but you can download it to your computer instead. "
+"Please consider importing it as a new document after logging in."
+msgstr ""
+"오프라인 상태에서 세션이 만료되었으므로 작업 내용을 더 이상 서버에 저장할 수 없지만 대신 컴퓨터에 다운로드할 수 있습니다. 로그인 후 "
+"새 문서로 가져오기를 고려해 보세요."
+
+#: document/static/js/modules/editor/index.js:614
+msgid "Download Document"
+msgstr "문서 다운로드"
+
+#: document/static/js/modules/editor/index.js:628
+msgid "Proceed to Login page"
+msgstr "로그인 페이지로 이동"
+
+#: document/static/js/modules/editor/index.js:681
+msgid "Access rights modified"
+msgstr "액세스 권한이 수정되었습니다."
+
+#: document/static/js/modules/editor/index.js:684
+msgid ""
+"Your access rights were modified while you were offline, so we cannot save "
+"your work to the server any longer, and it is downloaded to your computer "
+"instead. Please consider importing it into a new document."
+msgstr ""
+"귀하가 오프라인인 동안 귀하의 액세스 권한이 수정되었으므로 귀하의 작업을 더 이상 서버에 저장할 수 없으며 대신 귀하의 컴퓨터에 "
+"다운로드됩니다. 새 문서로 가져오는 것을 고려해 보세요."
+
+#: document/static/js/modules/editor/index.js:733
+msgid "Incorrect passphrase."
+msgstr "잘못된 암호입니다."
+
+#: document/static/js/modules/editor/index.js:759
+#: user/static/js/modules/profile/index.js:250
+msgid "Recovery failed: "
+msgstr "복구 실패:"
+
+#: document/static/js/modules/editor/index.js:804
+msgid "E2EE is not enabled on this server."
+msgstr "이 서버에서는 E2EE가 활성화되어 있지 않습니다."
+
+#: document/static/js/modules/editor/index.js:958
+msgid ""
+"Changes you made to the document since going offline will be lost, if you "
+"choose to close/refresh the tab or close the browser."
+msgstr "탭을 닫거나 새로 고치거나 브라우저를 닫으면 오프라인 상태 이후에 문서에 적용한 변경 사항이 손실됩니다."
+
+#: document/static/js/modules/editor/marginboxes/index.js:595
+msgid "A cross reference has lost its target."
+msgstr "상호 참조가 대상을 잃었습니다."
+
+#: document/static/js/modules/editor/marginboxes/index.js:615
+msgid "An internal link has lost its target."
+msgstr "내부 링크가 대상을 잃었습니다."
+
+#: document/static/js/modules/editor/marginboxes/index.js:761
+#: document/static/js/modules/editor/marginboxes/index.js:804
+#: document/static/js/modules/editor/marginboxes/templates.js:34
+#: document/static/js/modules/editor/marginboxes/templates.js:65
+msgid "show more"
+msgstr "더 보여줘"
+
+#: document/static/js/modules/editor/marginboxes/index.js:802
+msgid "show less"
+msgstr "간략하게 표시"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:70
+msgid "replies"
+msgstr "답글"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:157
+msgid "Assigned to"
+msgstr "할당됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:211
+msgid "Insertion"
+msgstr "삽입"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:212
+msgid "Deletion"
+msgstr "삭제"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:213
+msgid "Format change"
+msgstr "형식 변경"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:214
+msgid "Block change"
+msgstr "블록 변경"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:215
+msgid "New paragraph"
+msgstr "새 단락"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:216
+msgid "New heading"
+msgstr "새 제목"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:217
+msgid "Inserted citation"
+msgstr "인용 삽입됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:218
+msgid "Wrapped into blockquote"
+msgstr "인용구로 포장됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:219
+msgid "Added code block"
+msgstr "코드 블록이 추가되었습니다."
+
+#: document/static/js/modules/editor/marginboxes/templates.js:220
+msgid "Inserted figure"
+msgstr "삽입된 그림"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:221
+msgid "New list item"
+msgstr "새 목록 항목"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:222
+msgid "Inserted table"
+msgstr "테이블이 삽입됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:223
+msgid "New keyword: %(keyword)s"
+msgstr "새 키워드: %(keyword)s"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:224
+msgid "Merged paragraph"
+msgstr "병합된 단락"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:225
+msgid "Merged heading"
+msgstr "병합된 제목"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:226
+msgid "Deleted citation"
+msgstr "삭제된 인용"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:227
+msgid "Unwrapped blockquote"
+msgstr "풀린 인용문"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:228
+msgid "Removed code block"
+msgstr "제거된 코드 블록"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:229
+msgid "Deleted figure"
+msgstr "삭제된 그림"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:230
+msgid "Lifted list item"
+msgstr "해제된 목록 항목"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:232
+msgid "Deleted keyword: %(keyword)s"
+msgstr "삭제된 키워드: %(keyword)s"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:233
+msgid "Changed into paragraph"
+msgstr "단락으로 변경됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:234
+msgid "Changed into heading %(level)s"
+msgstr "%(level)s 제목으로 변경됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:235
+msgid "Changed into code block"
+msgstr "코드블록으로 변경됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:247
+msgid "Removed"
+msgstr "제거됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:250
+#: usermedia/static/js/modules/images/overview/index.js:257
+msgid "Added"
+msgstr "추가됨"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:269
+msgid "Was"
+msgstr "였다"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:269
+msgid "start"
+msgstr "시작"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:294
+msgid "ca."
+msgstr "ca."
+
+#: document/static/js/modules/editor/marginboxes/templates.js:304
+msgid "Accept"
+msgstr "수용하다"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:305
+msgid "Reject"
+msgstr "거부하다"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:329
+msgid "Comments"
+msgstr "댓글"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:339
+#: document/static/js/modules/editor/marginboxes/templates.js:359
+msgid "Show comments from all authors."
+msgstr "모든 작성자의 의견을 표시합니다."
+
+#: document/static/js/modules/editor/marginboxes/templates.js:340
+#: document/static/js/modules/editor/marginboxes/templates.js:399
+msgid "Any"
+msgstr "어느"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:344
+#: document/static/js/modules/editor/marginboxes/templates.js:364
+msgid "Show comments of "
+msgstr "다음 댓글 표시"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:353
+#: document/static/js/modules/editor/marginboxes/templates.js:354
+msgid "Assignee"
+msgstr "양수인"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:360
+msgid "Any/None"
+msgstr "모두/없음"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:375
+msgid "Only major comments"
+msgstr "주요댓글만"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:381
+msgid "Resolved comments"
+msgstr "해결된 댓글"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:389
+msgid "Tracking"
+msgstr "추적"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:398
+msgid "Show track changes from all authors."
+msgstr "모든 작성자의 변경 내용을 추적합니다."
+
+#: document/static/js/modules/editor/marginboxes/templates.js:403
+msgid "Show track changes of "
+msgstr "다음의 변경 내용 추적 표시"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:416
+msgid "Informational"
+msgstr "정보 제공"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:428
+msgid "Warnings"
+msgstr "경고"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:504
+msgid "Assign comment to user"
+msgstr "사용자에게 댓글 할당"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:505
+msgid "Assign to"
+msgstr "할당 대상"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:510
+msgid "Remove user assignment from comment"
+msgstr "댓글에서 사용자 할당 제거"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:510
+msgid "No-one"
+msgstr "아무도"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:516
+msgid "Assign comment to"
+msgstr "다음에 댓글 할당"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:525
+msgid "Recreate comment"
+msgstr "댓글 다시 작성"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:526
+msgid "Resolve comment"
+msgstr "댓글 해결"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:526
+msgid "Resolve"
+msgstr "해결하다"
+
+#: document/static/js/modules/editor/marginboxes/templates.js:531
+msgid "Delete comment"
+msgstr "댓글 삭제"
+
+#: document/static/js/modules/editor/menus/code_block/model.js:8
+msgid "Configure the code block."
+msgstr "코드 블록을 구성합니다."
+
+#: document/static/js/modules/editor/menus/code_block/model.js:42
+msgid "Remove the code block."
+msgstr "코드 블록을 제거합니다."
+
+#: document/static/js/modules/editor/menus/figure/model.js:9
+msgid "Configure the figure."
+msgstr "그림을 구성합니다."
+
+#: document/static/js/modules/editor/menus/figure/model.js:26
+msgid "Delete figure"
+msgstr "그림 삭제"
+
+#: document/static/js/modules/editor/menus/figure/model.js:29
+msgid "Delete the figure"
+msgstr "그림 삭제"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:41
+msgid "File handling"
+msgstr "파일 처리"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:51
+msgid "Request Access"
+msgstr "액세스 요청"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:52
+msgid "Share"
+msgstr "공유하다"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:59
+msgid "Request to be added as a collaborator."
+msgstr "협력자로 추가해 달라고 요청합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:60
+msgid "Share the document with other users."
+msgstr "문서를 다른 사용자와 공유하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:78
+msgid "Your access request has been sent to the document owner."
+msgstr "귀하의 액세스 요청이 문서 소유자에게 전송되었습니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:86
+#: document/static/js/modules/editor/menus/headerbar/model.js:95
+msgid "Could not send access request."
+msgstr "액세스 요청을 보낼 수 없습니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:144
+msgid "Share Document Password"
+msgstr "문서 비밀번호 공유"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:149
+msgid ""
+"The following users don't have passphrase encryption. Please share the "
+"document password with them directly."
+msgstr "다음 사용자는 암호 암호화가 없습니다. 문서 비밀번호를 직접 공유해 주세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:191
+msgid "Sign up / Log in"
+msgstr "회원가입 / 로그인"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:197
+#: document/static/js/modules/editor/menus/headerbar/view.js:542
+#: document/static/js/modules/editor/menus/headerbar/view.js:543
+msgid "Close the document and return to the document overview menu."
+msgstr "문서를 닫고 문서 개요 메뉴로 돌아갑니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:199
+msgid "Sign up for an account or log in."
+msgstr "계정에 가입하거나 로그인하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:230
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:10
+msgid "Save revision"
+msgstr "개정판 저장"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:233
+msgid "Save a revision of the document."
+msgstr "문서의 개정판을 저장합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:255
+msgid "Create copy"
+msgstr "사본 만들기"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:258
+msgid "Create a copy of the document."
+msgstr "문서의 사본을 만듭니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:284
+msgid "Export the document as a FIDUS file including its template."
+msgstr "문서를 템플릿을 포함하여 FIDUS 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:299
+msgid "Print/PDF"
+msgstr "인쇄/PDF"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:303
+msgid "Either print or create a PDF using your browser print dialog."
+msgstr "브라우저 인쇄 대화 상자를 사용하여 PDF를 인쇄하거나 생성하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:326
+#: user/static/js/modules/password_reset/change_password.js:14
+msgid "Change password"
+msgstr "비밀번호 변경"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:329
+msgid "Change the password of this encrypted document."
+msgstr "암호화된 문서의 비밀번호를 변경하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:337
+msgid "Document key is not available. Please reload the document."
+msgstr "문서 키를 사용할 수 없습니다. 문서를 다시 로드해 주세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:364
+msgid ""
+"Your personal passphrase will still unlock this document. A new random "
+"password is generated automatically. Other passphrase users will receive it "
+"automatically; non-passphrase collaborators need it shared with them "
+"manually."
+msgstr ""
+"개인 암호로 이 문서의 잠금을 해제할 수 있습니다. 새로운 무작위 비밀번호가 자동으로 생성됩니다. 다른 암호 사용자는 자동으로 암호를 "
+"받게 됩니다. 암호가 없는 공동작업자는 이를 수동으로 공유해야 합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:471
+msgid ""
+"Document encryption key rotated. Other passphrase users will receive the new"
+" key automatically."
+msgstr "문서 암호화 키가 순환되었습니다. 다른 암호 사용자는 자동으로 새 키를 받게 됩니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:478
+msgid ""
+"Document password changed. Remember to share the new password with your "
+"collaborators."
+msgstr "문서 비밀번호가 변경되었습니다. 공동작업자와 새 비밀번호를 공유하는 것을 잊지 마세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:486
+msgid "The current password is incorrect."
+msgstr "현재 비밀번호가 올바르지 않습니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:502
+msgid "Export"
+msgstr "내보내다"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:503
+msgid "Export of the document contents"
+msgstr "문서 내용 내보내기"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:509
+msgid "HTML"
+msgstr "HTML"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:511
+msgid "Export the document to an HTML file."
+msgstr "문서를 HTML 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:532
+msgid "Epub"
+msgstr "이펍"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:535
+msgid "Export the document to an Epub electronic reader file."
+msgstr "문서를 Epub 전자 리더 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:558
+msgid "LaTeX"
+msgstr "유액"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:560
+msgid "Export the document to an LaTeX file."
+msgstr "문서를 LaTeX 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:580
+msgid "JATS"
+msgstr "자츠"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:583
+msgid ""
+"Export the document to a Journal Archiving and Interchange Tag Library NISO "
+"JATS Version 1.2 file."
+msgstr ""
+"문서를 Journal Archiving and Interchange Tag Library NISO JATS 버전 1.2 파일로 "
+"내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:606
+msgid "BITS"
+msgstr "비트"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:609
+msgid ""
+"Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
+msgstr "문서를 Book Interchange Tag Set BITS 버전 2.1 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:632
+msgid "Pandoc JSON"
+msgstr "판독 JSON"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:635
+msgid "Export the document to a Pandoc JSON file."
+msgstr "문서를 Pandoc JSON 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:657
+msgid "Slim FIDUS"
+msgstr "슬림 FIDUS"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:660
+msgid "Export the document to a FIDUS file without its template."
+msgstr "템플릿 없이 문서를 FIDUS 파일로 내보냅니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:676
+msgid "Settings"
+msgstr "설정"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:677
+msgid "Configure settings of this document."
+msgstr "이 문서의 설정을 구성합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:684
+msgid "Citation Style"
+msgstr "인용 스타일"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:686
+msgid "Choose your preferred citation style."
+msgstr "선호하는 인용 스타일을 선택하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:695
+msgid "Document Style"
+msgstr "문서 스타일"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:697
+msgid "Choose your preferred document style."
+msgstr "원하는 문서 스타일을 선택하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:709
+msgid "Text Language"
+msgstr "텍스트 언어"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:711
+msgid "Choose the language of the document."
+msgstr "문서의 언어를 선택하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:719
+#: document/static/js/modules/schema/const.js:19
+msgid "English (United States)"
+msgstr "영어(미국)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:724
+#: document/static/js/modules/schema/const.js:18
+msgid "English (United Kingdom)"
+msgstr "영어(영국)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:727
+#: document/static/js/modules/schema/const.js:23
+msgid "German (Germany)"
+msgstr "독일어(독일)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:730
+#: document/static/js/modules/schema/const.js:11
+msgid "Chinese (Simplified)"
+msgstr "중국어(간체)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:733
+#: document/static/js/modules/schema/const.js:47
+msgid "Spanish"
+msgstr "스페인 사람"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/schema/const.js:21
+msgid "French"
+msgstr "프랑스 국민"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:735
+#: document/static/js/modules/schema/const.js:30
+msgid "Japanese"
+msgstr "일본어"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:736
+#: document/static/js/modules/schema/const.js:29
+msgid "Italian"
+msgstr "이탈리아 사람"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:740
+#: document/static/js/modules/schema/const.js:38
+msgid "Portuguese (Brazil)"
+msgstr "포르투갈어(브라질)"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:790
+msgid "Other"
+msgstr "다른"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:841
+msgid "Paper Size"
+msgstr "용지 크기"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:844
+msgid "Choose a papersize for print and PDF generation."
+msgstr "인쇄 및 PDF 생성을 위한 용지 크기를 선택합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:852
+msgid "DIN A4"
+msgstr "DIN A4"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:855
+msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+msgstr "전 세계 대부분에서 사용되는 A4(DIN A4/ISO 216)입니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:878
+msgid "US Letter"
+msgstr "미국 편지"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:881
+msgid "The format used by the USA and some other American countries."
+msgstr "미국 및 기타 미국 국가에서 사용되는 형식입니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:909
+msgid "Copyright Information"
+msgstr "저작권 정보"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:933
+msgid "Tools"
+msgstr "도구"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:934
+msgid "Select document editing tool."
+msgstr "문서 편집 도구를 선택하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:940
+#: document/static/js/modules/editor/tools/word_count/index.js:13
+msgid "Word counter"
+msgstr "워드 카운터"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:942
+msgid "See document statistics."
+msgstr "문서 통계를 참조하세요."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:950
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:34
+#: document/static/js/modules/editor/tools/search_replace/index.js:265
+msgid "Search and replace"
+msgstr "검색 및 바꾸기"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:952
+msgid "Show a search and replace dialog."
+msgstr "검색 및 바꾸기 대화 상자를 표시합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:961
+msgid "Keyboard shortcuts"
+msgstr "키보드 단축키"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:964
+msgid "Show an overview of available keyboard shortcuts."
+msgstr "사용 가능한 키보드 단축키의 개요를 표시합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:976
+msgid "Track changes"
+msgstr "변경 사항 추적"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:978
+msgid "Tracking changes to the document"
+msgstr "문서 변경 사항 추적"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:984
+msgid "Record"
+msgstr "기록"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:986
+msgid "Record document changes"
+msgstr "문서 변경 사항 기록"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:1004
+msgid "Accept all"
+msgstr "모두 수락"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:1006
+msgid "Accept all tracked changes."
+msgstr "추적된 모든 변경 사항을 수락합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:1013
+msgid "Reject all"
+msgstr "모두 거부"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:1015
+msgid "Reject all tracked changes."
+msgstr "추적된 모든 변경 사항을 거부합니다."
+
+#: document/static/js/modules/editor/menus/headerbar/view.js:91
+msgid "You cannot close a document when you're offline."
+msgstr "오프라인에서는 문서를 닫을 수 없습니다."
+
+#: document/static/js/modules/editor/menus/headerbar/view.js:542
+#: document/static/js/modules/editor/menus/headerbar/view.js:543
+msgid "Sign up or log in"
+msgstr "가입 또는 로그인"
+
+#: document/static/js/modules/editor/menus/headerbar/view.js:543
+msgid "Close document"
+msgstr "문서 닫기"
+
+#: document/static/js/modules/editor/menus/image/model.js:6
+#: usermedia/static/js/modules/images/edit_dialog/model.js:98
+msgid "Set Copyright"
+msgstr "저작권 설정"
+
+#: document/static/js/modules/editor/menus/image/model.js:8
+#: usermedia/static/js/modules/images/edit_dialog/model.js:100
+msgid "Specify copyright information"
+msgstr "저작권 정보 지정"
+
+#: document/static/js/modules/editor/menus/image/model.js:20
+msgid "Remove image"
+msgstr "이미지 삭제"
+
+#: document/static/js/modules/editor/menus/image/model.js:22
+msgid "Remove the image that is previewed"
+msgstr "미리 본 이미지 제거"
+
+#: document/static/js/modules/editor/menus/ordered_list/model.js:9
+msgid "Specify the number from which this list is to start counting"
+msgstr "이 목록에서 계산을 시작할 숫자를 지정하세요."
+
+#: document/static/js/modules/editor/menus/selection/model.js:68
+#: document/static/js/modules/editor/state_plugins/links.js:283
+msgid "Anchor"
+msgstr "닻"
+
+#: document/static/js/modules/editor/menus/selection/model.js:103
+msgid "Accept all in selection"
+msgstr "선택 항목 모두 수락"
+
+#: document/static/js/modules/editor/menus/selection/model.js:119
+msgid "Reject all in selection"
+msgstr "선택 항목 모두 거부"
+
+#: document/static/js/modules/editor/menus/table/model.js:70
+msgid "Add row above"
+msgstr "위에 행 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:70
+#: document/static/js/modules/editor/menus/table/model.js:96
+#: document/static/js/modules/editor/menus/table/model.js:122
+#: document/static/js/modules/editor/menus/table/model.js:148
+#: document/static/js/modules/editor/menus/table/model.js:178
+#: document/static/js/modules/editor/menus/table/model.js:204
+#: document/static/js/modules/editor/menus/table/model.js:234
+#: document/static/js/modules/editor/menus/table/model.js:263
+#: document/static/js/modules/editor/menus/table/model.js:300
+#: document/static/js/modules/editor/menus/table/model.js:327
+#: document/static/js/modules/editor/menus/table/model.js:356
+msgid "Not tracked"
+msgstr "추적되지 않음"
+
+#: document/static/js/modules/editor/menus/table/model.js:72
+msgid "Add a row above the current row"
+msgstr "현재 행 위에 행 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:96
+msgid "Add row below"
+msgstr "아래에 행 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:98
+msgid "Add a row below the current row"
+msgstr "현재 행 아래에 행 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:122
+msgid "Add column left"
+msgstr "왼쪽에 열 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:124
+msgid "Add a column to the left of the current column"
+msgstr "현재 열 왼쪽에 열 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:148
+msgid "Add column right"
+msgstr "오른쪽에 열 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:150
+msgid "Add a column to the right of the current column"
+msgstr "현재 열 오른쪽에 열 추가"
+
+#: document/static/js/modules/editor/menus/table/model.js:180
+msgid "Delete current row"
+msgstr "현재 행 삭제"
+
+#: document/static/js/modules/editor/menus/table/model.js:206
+msgid "Delete current column"
+msgstr "현재 열 삭제"
+
+#: document/static/js/modules/editor/menus/table/model.js:236
+msgid "Merge selected cells"
+msgstr "선택한 셀 병합"
+
+#: document/static/js/modules/editor/menus/table/model.js:263
+msgid "Split cells"
+msgstr "셀 분할"
+
+#: document/static/js/modules/editor/menus/table/model.js:265
+msgid "Split selected cell"
+msgstr "선택한 셀 분할"
+
+#: document/static/js/modules/editor/menus/table/model.js:302
+msgid "Toggle header-status of currently selected row"
+msgstr "현재 선택한 행의 헤더 상태 전환"
+
+#: document/static/js/modules/editor/menus/table/model.js:330
+msgid "Toggle header-status of currently selected column"
+msgstr "현재 선택한 열의 헤더 상태 전환"
+
+#: document/static/js/modules/editor/menus/table/model.js:356
+msgid "Toggle header cell"
+msgstr "헤더 셀 전환"
+
+#: document/static/js/modules/editor/menus/table/model.js:359
+msgid "Toggle header-status of currently selected cells"
+msgstr "현재 선택한 셀의 헤더 상태 전환"
+
+#: document/static/js/modules/editor/menus/table/model.js:390
+msgid "Configure the table."
+msgstr "테이블을 구성합니다."
+
+#: document/static/js/modules/editor/menus/table/model.js:403
+msgid "Delete currently selected table"
+msgstr "현재 선택된 테이블 삭제"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:17
+msgid "Normal Text"
+msgstr "일반 텍스트"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:18
+msgid "1st Heading"
+msgstr "첫 번째 제목"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:19
+msgid "2nd Heading"
+msgstr "두 번째 제목"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:20
+msgid "3rd Heading"
+msgstr "세 번째 제목"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:21
+msgid "4th Heading"
+msgstr "네 번째 제목"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:22
+msgid "5th Heading"
+msgstr "5번째 제목"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:23
+msgid "6th Heading"
+msgstr "6번째 제목"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:129
+msgid "Open/close header menu"
+msgstr "헤더 메뉴 열기/닫기"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:588
+msgid "Numbered list"
+msgstr "번호가 매겨진 목록"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:759
+msgid "Cite"
+msgstr "인용문"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:786
+msgid "Horizontal line"
+msgstr "횡선"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:811
+msgid "Math"
+msgstr "수학"
+
+#: document/static/js/modules/editor/menus/toolbar/model.js:859
+msgid "Insert a table into the document."
+msgstr "문서에 표를 삽입합니다."
+
+#: document/static/js/modules/editor/menus/toolbar/view.js:268
+msgid "More"
+msgstr "더"
+
+#: document/static/js/modules/editor/navigator/index.js:408
+msgid "Untitled Document"
+msgstr "제목 없는 문서"
+
+#: document/static/js/modules/editor/navigator/index.js:494
+msgid "Back to navigator"
+msgstr "네비게이터로 돌아가기"
+
+#: document/static/js/modules/editor/navigator/index.js:497
+msgid "Document Navigator"
+msgstr "문서 탐색기"
+
+#: document/static/js/modules/editor/navigator/index.js:498
+msgid "Navigator settings"
+msgstr "네비게이터 설정"
+
+#: document/static/js/modules/editor/navigator/index.js:502
+msgid "Document headings"
+msgstr "문서 제목"
+
+#: document/static/js/modules/editor/navigator/index.js:504
+msgid "Filter options"
+msgstr "필터 옵션"
+
+#: document/static/js/modules/editor/navigator/index.js:509
+msgid "Toggle document navigator"
+msgstr "문서 탐색기 전환"
+
+#: document/static/js/modules/editor/navigator/index.js:510
+msgid "Document N̲avigator"
+msgstr "문서 탐색기"
+
+#: document/static/js/modules/editor/state_plugins/links.js:26
+msgid "Link copied to clipboard"
+msgstr "링크가 클립보드에 복사되었습니다."
+
+#: document/static/js/modules/editor/state_plugins/links.js:269
+msgid "Edit link"
+msgstr "링크 수정"
+
+#: document/static/js/modules/editor/state_plugins/links.js:272
+msgid "Remove link"
+msgstr "링크 삭제"
+
+#: document/static/js/modules/editor/state_plugins/links.js:291
+#: document/static/js/modules/editor/state_plugins/links.js:292
+msgid "Copy anchor"
+msgstr "앵커 복사"
+
+#: document/static/js/modules/editor/state_plugins/links.js:296
+msgid "Remove anchor"
+msgstr "앵커 제거"
+
+#: document/static/js/modules/editor/state_plugins/links.js:307
+msgid "Cross Reference"
+msgstr "상호 참조"
+
+#: document/static/js/modules/editor/state_plugins/links.js:317
+msgid "Edit cross reference"
+msgstr "상호 참조 편집"
+
+#: document/static/js/modules/editor/state_plugins/links.js:320
+msgid "Remove cross reference"
+msgstr "상호 참조 제거"
+
+#: document/static/js/modules/editor/tools/key_bindings/index.js:14
+msgid "Keyboard Shortcuts"
+msgstr "키보드 단축키"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:6
+msgid "Print"
+msgstr "인쇄"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:14
+msgid "Show keyboard shortcuts"
+msgstr "키보드 단축키 표시"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:18
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:26
+msgid "Paste with content detection"
+msgstr "콘텐츠 감지로 붙여넣기"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:22
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:30
+msgid "Paste without content detection"
+msgstr "내용 감지 없이 ​​붙여넣기"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:40
+msgid "Bold"
+msgstr "용감한"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:44
+msgid "Italics"
+msgstr "이탤릭체"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:49
+msgid "Lift"
+msgstr "승강기"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:53
+msgid "Wrap selection in bullet list"
+msgstr "글머리 기호 목록에서 선택 항목 줄 바꿈"
+
+#: document/static/js/modules/editor/tools/key_bindings/templates.js:57
+msgid "Wrap selection in numbered list"
+msgstr "번호 매기기 목록에서 선택 항목 줄 바꿈"
+
+#: document/static/js/modules/editor/tools/search_replace/index.js:30
+msgid "Previous"
+msgstr "이전의"
+
+#: document/static/js/modules/editor/tools/search_replace/index.js:82
+msgid "Next"
+msgstr "다음"
+
+#: document/static/js/modules/editor/tools/search_replace/index.js:136
+msgid "Replace"
+msgstr "바꾸다"
+
+#: document/static/js/modules/editor/tools/search_replace/index.js:154
+#: document/static/js/modules/editor/tools/search_replace/index.js:179
+#: document/static/js/modules/editor/tools/search_replace/index.js:223
+#: document/static/js/modules/editor/tools/search_replace/index.js:252
+msgid "Text replaced successfully"
+msgstr "텍스트가 성공적으로 교체되었습니다."
+
+#: document/static/js/modules/editor/tools/search_replace/index.js:186
+msgid "Replace All"
+msgstr "모두 바꾸기"
+
+#: document/static/js/modules/editor/tools/search_replace/index.js:266
+msgid "Search"
+msgstr "찾다"
+
+#: document/static/js/modules/editor/tools/search_replace/index.js:277
+msgid ""
+"Please note that there are match(es) within non-editable parts of the "
+"document, these match(es) won't be replaced when using 'replace' or 'replace"
+" all'"
+msgstr ""
+"문서의 편집할 수 없는 부분에 일치 항목이 있습니다. '교체' 또는 '모두 바꾸기'를 사용해도 이러한 일치 항목은 대체되지 않습니다."
+
+#: document/static/js/modules/editor/tools/search_replace/templates.js:4
+msgid "Find"
+msgstr "찾다"
+
+#: document/static/js/modules/editor/tools/search_replace/templates.js:13
+msgid "Replace with"
+msgstr "다음으로 교체"
+
+#: document/static/js/modules/editor/tools/word_count/templates.js:12
+msgid "Number of"
+msgstr "수"
+
+#: document/static/js/modules/editor/tools/word_count/templates.js:13
+msgid "Document"
+msgstr "문서"
+
+#: document/static/js/modules/editor/tools/word_count/templates.js:14
+msgid "Selection"
+msgstr "선택"
+
+#: document/static/js/modules/editor/tools/word_count/templates.js:19
+msgid "Words"
+msgstr "단어"
+
+#: document/static/js/modules/editor/tools/word_count/templates.js:24
+msgid "Characters without blanks"
+msgstr "공백이 없는 문자"
+
+#: document/static/js/modules/editor/tools/word_count/templates.js:29
+msgid "Characters with blanks"
+msgstr "공백이 있는 문자"
+
+#: document/static/js/modules/exporter/docx/metadata.js:64
+#: document/static/js/modules/exporter/docx/metadata.js:67
+#: document/static/js/modules/exporter/odt/metadata.js:67
+msgid "Unknown"
+msgstr "알려지지 않은"
+
+#: document/static/js/modules/exporter/native/copy.js:78
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:87
+msgid "Copy of"
+msgstr "사본"
+
+#: document/static/js/modules/exporter/native/copy.js:90
+msgid " successfully copied."
+msgstr "성공적으로 복사되었습니다."
+
+#: document/static/js/modules/exporter/native/revision.js:39
+msgid "Revision file could not be generated."
+msgstr "개정 파일을 생성할 수 없습니다."
+
+#: document/static/js/modules/exporter/native/revision.js:65
+msgid "Revision saved"
+msgstr "버전이 저장되었습니다."
+
+#: document/static/js/modules/exporter/native/revision.js:68
+msgid "Revision could not be saved."
+msgstr "버전을 저장할 수 없습니다."
+
+#: document/static/js/modules/exporter/native/shrink.js:18
+msgid "File export has been initiated."
+msgstr "파일 내보내기가 시작되었습니다."
+
+#: document/static/js/modules/exporter/print/index.js:18
+msgid "Printing has been initiated."
+msgstr "인쇄가 시작되었습니다."
+
+#: document/static/js/modules/importer/native/import.js:45
+msgid "Could not create document. Missing image file:"
+msgstr "문서를 생성할 수 없습니다. 누락된 이미지 파일:"
+
+#: document/static/js/modules/importer/native/import.js:148
+msgid "Could not save Image"
+msgstr "이미지를 저장할 수 없습니다."
+
+#: document/static/js/modules/importer/native/import.js:221
+msgid "Could not create document"
+msgstr "문서를 만들 수 없습니다."
+
+#: document/static/js/modules/importer/native/import.js:309
+msgid "Could not save "
+msgstr "저장할 수 없습니다."
+
+#: document/static/js/modules/importer/odt/import.js:46
+msgid "File does not contain content.xml"
+msgstr "파일에 content.xml이 포함되어 있지 않습니다."
+
+#: document/static/js/modules/maintenance/index.js:25
+msgid "Updating..."
+msgstr "업데이트 중..."
+
+#: document/static/js/modules/maintenance/index.js:26
+msgid "Updating documents."
+msgstr "문서를 업데이트하는 중입니다."
+
+#: document/static/js/modules/maintenance/index.js:44
+msgid "Downloaded batch"
+msgstr "다운로드된 배치"
+
+#: document/static/js/modules/maintenance/index.js:51
+msgid "All documents updated!"
+msgstr "모든 문서가 업데이트되었습니다!"
+
+#: document/static/js/modules/maintenance/index.js:53
+msgid "No documents to update."
+msgstr "업데이트할 문서가 없습니다."
+
+#: document/static/js/modules/maintenance/index.js:61
+msgid "Could not download batch"
+msgstr "일괄 다운로드할 수 없습니다."
+
+#: document/static/js/modules/maintenance/index.js:126
+msgid "The document has been updated"
+msgstr "문서가 업데이트되었습니다."
+
+#: document/static/js/modules/maintenance/index.js:132
+msgid "Updating document templates."
+msgstr "문서 템플릿을 업데이트하는 중입니다."
+
+#: document/static/js/modules/maintenance/index.js:140
+msgid "No document templates to update."
+msgstr "업데이트할 문서 템플릿이 없습니다."
+
+#: document/static/js/modules/maintenance/index.js:180
+msgid "The document template has been updated"
+msgstr "문서 템플릿이 업데이트되었습니다."
+
+#: document/static/js/modules/maintenance/index.js:184
+msgid "All document templates updated!"
+msgstr "모든 문서 템플릿이 업데이트되었습니다!"
+
+#: document/static/js/modules/maintenance/index.js:191
+msgid "Updating saved revisions."
+msgstr "저장된 버전을 업데이트하는 중입니다."
+
+#: document/static/js/modules/maintenance/index.js:197
+msgid "No document revisions to update."
+msgstr "업데이트할 문서 개정판이 없습니다."
+
+#: document/static/js/modules/maintenance/index.js:261
+msgid "The document revision has been updated: "
+msgstr "문서 개정판이 업데이트되었습니다:"
+
+#: document/static/js/modules/maintenance/index.js:273
+msgid "All documents, document templates and document revisions updated!"
+msgstr "모든 문서, 문서 템플릿 및 문서 개정판이 업데이트되었습니다!"
+
+#: document/static/js/modules/schema/common/reference.js:31
+msgid "Missing Target"
+msgstr "누락된 대상"
+
+#: document/static/js/modules/schema/common/reference.js:62
+msgid "Missing target"
+msgstr "누락된 목표"
+
+#: document/static/js/modules/schema/const.js:2
+msgid "Afrikaans"
+msgstr "아프리카 어"
+
+#: document/static/js/modules/schema/const.js:3
+msgid "Albanian"
+msgstr "알바니아"
+
+#: document/static/js/modules/schema/const.js:4
+msgid "Arabic"
+msgstr "아라비아 말"
+
+#: document/static/js/modules/schema/const.js:5
+msgid "Asturian"
+msgstr "아스투리아스어"
+
+#: document/static/js/modules/schema/const.js:6
+msgid "Belarusian"
+msgstr "벨로루시어"
+
+#: document/static/js/modules/schema/const.js:7
+msgid "Breton"
+msgstr "브르타뉴어"
+
+#: document/static/js/modules/schema/const.js:8
+msgid "Bulgarian"
+msgstr "불가리아 사람"
+
+#: document/static/js/modules/schema/const.js:9
+msgid "Catalan"
+msgstr "카탈로니아 사람"
+
+#: document/static/js/modules/schema/const.js:10
+msgid "Catalan (Valencia)"
+msgstr "카탈로니아어(발렌시아)"
+
+#: document/static/js/modules/schema/const.js:12
+msgid "Danish"
+msgstr "덴마크 말"
+
+#: document/static/js/modules/schema/const.js:13
+msgid "Dutch"
+msgstr "네덜란드 사람"
+
+#: document/static/js/modules/schema/const.js:14
+msgid "English (Australia)"
+msgstr "영어(호주)"
+
+#: document/static/js/modules/schema/const.js:15
+msgid "English (Canada)"
+msgstr "영어(캐나다)"
+
+#: document/static/js/modules/schema/const.js:16
+msgid "English (New Zealand)"
+msgstr "영어(뉴질랜드)"
+
+#: document/static/js/modules/schema/const.js:17
+msgid "English (South Africa)"
+msgstr "영어(남아프리카 공화국)"
+
+#: document/static/js/modules/schema/const.js:20
+msgid "Esperanto"
+msgstr "에스페란토 말"
+
+#: document/static/js/modules/schema/const.js:22
+msgid "Galician"
+msgstr "갈리시아어"
+
+#: document/static/js/modules/schema/const.js:24
+msgid "German (Austria)"
+msgstr "독일어(오스트리아)"
+
+#: document/static/js/modules/schema/const.js:25
+msgid "German (Switzerland)"
+msgstr "독일어(스위스)"
+
+#: document/static/js/modules/schema/const.js:26
+msgid "Greek"
+msgstr "그리스 사람"
+
+#: document/static/js/modules/schema/const.js:27
+msgid "Hebrew"
+msgstr "헤브라이 사람"
+
+#: document/static/js/modules/schema/const.js:28
+msgid "Icelandic"
+msgstr "아이슬란드어"
+
+#: document/static/js/modules/schema/const.js:31
+msgid "Khmer"
+msgstr "크메르어"
+
+#: document/static/js/modules/schema/const.js:32
+msgid "Lithuanian"
+msgstr "리투아니아 사람"
+
+#: document/static/js/modules/schema/const.js:33
+msgid "Malayalam"
+msgstr "말라얄람어"
+
+#: document/static/js/modules/schema/const.js:34
+msgid "Norwegian (bokmål)"
+msgstr "노르웨이어(복몰)"
+
+#: document/static/js/modules/schema/const.js:35
+msgid "Norwegian (nynorsk)"
+msgstr "노르웨이어(니노르스크)"
+
+#: document/static/js/modules/schema/const.js:36
+msgid "Persian"
+msgstr "페르시아 인"
+
+#: document/static/js/modules/schema/const.js:37
+msgid "Polish"
+msgstr "광택"
+
+#: document/static/js/modules/schema/const.js:39
+msgid "Portuguese (Portugal)"
+msgstr "포르투갈어(포르투갈)"
+
+#: document/static/js/modules/schema/const.js:40
+msgid "Romanian"
+msgstr "루마니아 사람"
+
+#: document/static/js/modules/schema/const.js:41
+msgid "Russian"
+msgstr "러시아인"
+
+#: document/static/js/modules/schema/const.js:42
+msgid "Turkish"
+msgstr "터키어"
+
+#: document/static/js/modules/schema/const.js:43
+msgid "Serbian (Cyrillic)"
+msgstr "세르비아어(키릴 문자)"
+
+#: document/static/js/modules/schema/const.js:44
+msgid "Serbian (Latin)"
+msgstr "세르비아어(라틴어)"
+
+#: document/static/js/modules/schema/const.js:45
+msgid "Slovak"
+msgstr "슬로바키아 사람"
+
+#: document/static/js/modules/schema/const.js:46
+msgid "Slovenian"
+msgstr "슬로베니아"
+
+#: document/static/js/modules/schema/const.js:48
+msgid "Swedish"
+msgstr "스웨덴어"
+
+#: document/static/js/modules/schema/const.js:49
+msgid "Tamil"
+msgstr "타밀 사람"
+
+#: document/static/js/modules/schema/const.js:50
+msgid "Tagalog"
+msgstr "타갈로그어"
+
+#: document/static/js/modules/schema/const.js:51
+msgid "Ukrainian"
+msgstr "우크라이나 말"
+
+#: feedback/static/js/modules/feedback/index.js:22
+msgid "Tech support"
+msgstr "기술 지원"
+
+#: feedback/static/js/modules/feedback/index.js:23
+msgid "Did you encounter an error or bug?"
+msgstr "오류나 버그가 발생했나요?"
+
+#: feedback/static/js/modules/feedback/index.js:24
+msgid "Give a brief description of what has happened."
+msgstr "무슨 일이 일어났는지 간략하게 설명해주세요."
+
+#: feedback/static/js/modules/feedback/index.js:28
+msgid "submit"
+msgstr "제출하다"
+
+#: feedback/static/js/modules/feedback/index.js:32
+msgid "Thank you for your report!"
+msgstr "신고해 주셔서 감사합니다!"
+
+#: feedback/static/js/modules/feedback/index.js:34
+msgid "Close technical support"
+msgstr "긴밀한 기술 지원"
+
+#: feedback/static/js/modules/feedback/index.js:59
+msgid "Technical support"
+msgstr "기술지원"
+
+#: menu/static/js/modules/menu/index.js:15
+msgid "Documents"
+msgstr "서류"
+
+#: menu/static/js/modules/menu/index.js:17
+msgid "edit documents"
+msgstr "문서 편집"
+
+#: menu/static/js/modules/menu/index.js:25
+msgid "manage bibliography library"
+msgstr "참고문헌 라이브러리 관리"
+
+#: menu/static/js/modules/menu/index.js:31
+#: usermedia/static/js/modules/images/selection_dialog/index.js:90
+msgid "Images"
+msgstr "이미지"
+
+#: menu/static/js/modules/menu/index.js:33
+msgid "manage image files"
+msgstr "이미지 파일 관리"
+
+#: user/static/js/modules/contacts/add_dialog.js:88
+msgid "You cannot add yourself to your contacts!"
+msgstr "연락처에 자신을 추가할 수 없습니다!"
+
+#: user/static/js/modules/contacts/add_dialog.js:92
+msgid "This person is already in your contacts!"
+msgstr "이 사람은 이미 연락처에 있습니다!"
+
+#: user/static/js/modules/contacts/add_dialog.js:95
+msgid "Invalid email!"
+msgstr "이메일이 잘못되었습니다!"
+
+#: user/static/js/modules/contacts/delete_dialog.js:35
+msgid "Remove from contacts"
+msgstr "연락처에서 삭제"
+
+#: user/static/js/modules/contacts/index.js:86
+msgid "No contacts available"
+msgstr "사용 가능한 연락처가 없습니다."
+
+#: user/static/js/modules/contacts/index.js:87
+msgid "No contacts found"
+msgstr "연락처를 찾을 수 없습니다."
+
+#: user/static/js/modules/contacts/index.js:96
+msgid "Name"
+msgstr "이름"
+
+#: user/static/js/modules/contacts/index.js:97
+msgid "Type"
+msgstr "유형"
+
+#: user/static/js/modules/contacts/index.js:98
+msgid "Email address"
+msgstr "이메일 주소"
+
+#: user/static/js/modules/contacts/index.js:219
+msgid "Could not obtain contacts list"
+msgstr "연락처 목록을 가져올 수 없습니다."
+
+#: user/static/js/modules/contacts/menu.js:8
+msgid "Delete selected contacts."
+msgstr "선택한 연락처를 삭제합니다."
+
+#: user/static/js/modules/contacts/menu.js:37
+msgid "Invite contact"
+msgstr "연락처 초대"
+
+#: user/static/js/modules/contacts/menu.js:51
+msgid "Search contacts"
+msgstr "연락처 검색"
+
+#: user/static/js/modules/contacts/respond_invite.js:21
+msgid "Accept all invites"
+msgstr "모든 초대 수락"
+
+#: user/static/js/modules/contacts/respond_invite.js:22
+msgid "Accept invite"
+msgstr "초대 수락"
+
+#: user/static/js/modules/contacts/respond_invite.js:41
+msgid "Decline all invites"
+msgstr "모든 초대를 거절하세요"
+
+#: user/static/js/modules/contacts/respond_invite.js:42
+msgid "Decline invite"
+msgstr "초대 거절"
+
+#: user/static/js/modules/contacts/respond_invite.js:62
+msgid "Accept of invite"
+msgstr "초대 수락"
+
+#: user/static/js/modules/contacts/respond_invite.js:66
+msgid "Do you want to accept the below invites?"
+msgstr "아래 초대를 수락하시겠습니까?"
+
+#: user/static/js/modules/contacts/respond_invite.js:67
+msgid "Do you want to accept the below invite?"
+msgstr "아래 초대를 수락하시겠습니까?"
+
+#: user/static/js/modules/contacts/templates.js:11
+msgid "E-mail address or username"
+msgstr "이메일 주소 또는 사용자 이름"
+
+#: user/static/js/modules/contacts/templates.js:17
+msgid "User"
+msgstr "사용자"
+
+#: user/static/js/modules/contacts/templates.js:19
+msgid "Invite you sent"
+msgstr "내가 보낸 초대장"
+
+#: user/static/js/modules/contacts/templates.js:21
+msgid "Invite you received"
+msgstr "초대장을 받았습니다"
+
+#: user/static/js/modules/contacts/templates.js:27
+msgid "Respond"
+msgstr "대답하다"
+
+#: user/static/js/modules/email_confirm/index.js:22
+msgid "Confirm Email"
+msgstr "이메일 확인"
+
+#: user/static/js/modules/email_confirm/index.js:131
+msgid "Email verified!"
+msgstr "이메일이 확인되었습니다!"
+
+#: user/static/js/modules/email_confirm/templates.js:9
+msgid "Confirm E-mail Address"
+msgstr "이메일 주소 확인"
+
+#: user/static/js/modules/email_confirm/templates.js:9
+msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+msgstr "이메일 주소 확인 및 이용약관 동의"
+
+#: user/static/js/modules/email_confirm/templates.js:23
+msgid ""
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
+msgstr "<a href=\\\"mailto:%(email)s\\\">%(email)s</a>) 이메일을 소유하고 있는지 확인하세요."
+
+#: user/static/js/modules/email_confirm/templates.js:30
+msgid ""
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
+"%(username)s, and that you have read and agree to our <a "
+"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
+"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+msgstr ""
+"<a href=\\\"mailto:%(email)s\\\">%(email)s</a> 이메일을 소유하고 있으며, 사용자 이름 "
+"%(username)s을(를) 신청하고, <a href=\\\"/pages/terms/\\\" "
+"target=\\\"_blank\\\">이용약관</a> 및 <a href=\\\"/pages/privacy/\\\" "
+"target=\\\"_blank\\\">개인정보 보호를 읽고 동의했는지 확인하세요. 정책</a>."
+
+#: user/static/js/modules/email_confirm/templates.js:40
+msgid "Confirm"
+msgstr "확인하다"
+
+#: user/static/js/modules/email_confirm/templates.js:48
+msgid ""
+"I have read and agree to the <a href=\"/pages/terms/\" "
+"target=\"_blank\">Terms and Conditions</a>."
+msgstr "<a href=\\\"/pages/terms/\\\" target=\\\"_blank\\\">이용약관</a>을 읽었으며 이에 동의합니다."
+
+#: user/static/js/modules/email_confirm/templates.js:55
+msgid ""
+"I am aware that I am signing up for a test account and that service may be "
+"ended abruptly and without notice, leaving me without my files."
+msgstr "나는 테스트 계정에 가입하고 있으며 서비스가 예고 없이 갑자기 종료되어 내 파일이 남지 않을 수 있다는 것을 알고 있습니다."
+
+#: user/static/js/modules/email_confirm/templates.js:60
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please try to open "
+"another account."
+msgstr "이 이메일 확인 링크는 만료되었거나 유효하지 않습니다. 다른 계좌를 개설해 보세요."
+
+#: user/static/js/modules/email_confirm/templates.js:64
+msgid "Thanks for verifying!"
+msgstr "확인해 주셔서 감사합니다!"
+
+#: user/static/js/modules/email_confirm/templates.js:65
+msgid "You can now log in."
+msgstr "이제 로그인할 수 있습니다."
+
+#: user/static/js/modules/login/index.js:10
+msgid "Login"
+msgstr "로그인"
+
+#: user/static/js/modules/login/index.js:17
+msgid "New here?"
+msgstr "여기에 새로 왔나요?"
+
+#: user/static/js/modules/login/index.js:21
+#: user/static/js/modules/signup/index.js:10
+#: user/static/js/modules/signup/index.js:41
+msgid "Sign up"
+msgstr "가입"
+
+#: user/static/js/modules/login/index.js:42
+msgid "Login with"
+msgstr "다음으로 로그인"
+
+#: user/static/js/modules/login/index.js:59
+#: user/static/js/modules/profile/templates.js:29
+#: user/static/js/modules/profile/templates.js:88
+#: user/static/js/modules/profile/templates.js:220
+#: user/static/js/modules/signup/index.js:22
+msgid "Username"
+msgstr "사용자 이름"
+
+#: user/static/js/modules/login/index.js:60
+msgid "Username or e-mail"
+msgstr "사용자 이름 또는 이메일"
+
+#: user/static/js/modules/login/index.js:72
+msgid "Remember me"
+msgstr "나를 기억해"
+
+#: user/static/js/modules/login/index.js:74
+msgid "Forgot Password?"
+msgstr "비밀번호를 잊으셨나요?"
+
+#: user/static/js/modules/login/index.js:136
+#: user/static/js/modules/login/index.js:140
+#: user/static/js/modules/password_reset/change_password.js:62
+#: user/static/js/modules/password_reset/change_password.js:67
+#: user/static/js/modules/password_reset/request_email.js:63
+#: user/static/js/modules/signup/index.js:111
+#: user/static/js/modules/signup/index.js:115
+#: user/static/js/modules/signup/index.js:119
+#: user/static/js/modules/signup/index.js:130
+msgid "This field is required."
+msgstr "이 필드는 필수입니다."
+
+#: user/static/js/modules/login/index.js:208
+#: user/static/js/modules/signup/index.js:144
+msgid "Verify Your E-mail Address"
+msgstr "이메일 주소 확인"
+
+#: user/static/js/modules/login/index.js:211
+msgid ""
+"We have sent an e-mail to your email address for verification. Follow the "
+"link provided to finalize the signup process."
+msgstr "확인을 위해 귀하의 이메일 주소로 이메일을 보냈습니다. 제공된 링크를 따라 가입 절차를 완료하세요."
+
+#: user/static/js/modules/login/index.js:215
+#: user/static/js/modules/password_reset/request_email.js:87
+#: user/static/js/modules/signup/index.js:155
+msgid "Please contact us if you do not receive it within a few minutes."
+msgstr "몇 분 내에 받지 못하시면 연락주시기 바랍니다."
+
+#: user/static/js/modules/password_reset/change_password.js:15
+msgid ""
+"You have indicated that you have forgotten your password. Please enter your "
+"new password in the form twice."
+msgstr "귀하는 비밀번호를 잊어버렸다고 표시했습니다. 양식에 새 비밀번호를 두 번 입력하세요."
+
+#: user/static/js/modules/password_reset/change_password.js:21
+#: user/static/js/modules/signup/index.js:26
+msgid "Create a password"
+msgstr "비밀번호 만들기"
+
+#: user/static/js/modules/password_reset/change_password.js:26
+#: user/static/js/modules/signup/index.js:31
+msgid "Confirm your password"
+msgstr "비밀번호를 확인하세요"
+
+#: user/static/js/modules/password_reset/change_password.js:27
+#: user/static/js/modules/signup/index.js:32
+msgid "Password (again)"
+msgstr "비밀번호(다시)"
+
+#: user/static/js/modules/password_reset/change_password.js:31
+msgid "Change My Password"
+msgstr "내 비밀번호 변경"
+
+#: user/static/js/modules/password_reset/change_password.js:72
+#: user/static/js/modules/signup/index.js:123
+msgid "You must type the same password each time."
+msgstr "매번 동일한 비밀번호를 입력해야 합니다."
+
+#: user/static/js/modules/password_reset/change_password.js:88
+#: user/static/js/modules/password_reset/request_email.js:13
+msgid "Password reset"
+msgstr "비밀번호 재설정"
+
+#: user/static/js/modules/password_reset/change_password.js:91
+msgid ""
+"Your password has been reset and you can now log in with the new password."
+msgstr "귀하의 비밀번호가 재설정되었으며 이제 새로운 비밀번호로 로그인하실 수 있습니다."
+
+#: user/static/js/modules/password_reset/request_email.js:7
+msgid "Reset Password"
+msgstr "비밀번호 재설정"
+
+#: user/static/js/modules/password_reset/request_email.js:14
+msgid ""
+"Forgotten your password? Enter your e-mail address in the form, and we'll "
+"send you an e-mail allowing you to reset it."
+msgstr "비밀번호를 잊으셨나요? 양식에 이메일 주소를 입력하시면 재설정할 수 있는 이메일을 보내드립니다."
+
+#: user/static/js/modules/password_reset/request_email.js:17
+msgid ""
+"If you have any trouble resetting your password, please <a "
+"href=\"mailto:%(contactEmail)s\">contact us</a>."
+msgstr ""
+"비밀번호를 재설정하는 데 문제가 있는 경우 <a href=\\\"mailto:%(contactEmail)s\\\">저희에게 연락</a>해"
+" 주세요."
+
+#: user/static/js/modules/password_reset/request_email.js:27
+#: user/static/js/modules/password_reset/request_email.js:28
+#: user/static/js/modules/signup/index.js:36
+#: user/static/js/modules/signup/index.js:37
+msgid "E-mail address"
+msgstr "이메일 주소"
+
+#: user/static/js/modules/password_reset/request_email.js:32
+msgid "Reset My Password"
+msgstr "내 비밀번호 재설정"
+
+#: user/static/js/modules/password_reset/request_email.js:59
+#: user/static/js/modules/signup/index.js:127
+msgid "This is not a valid email."
+msgstr "유효한 이메일이 아닙니다."
+
+#: user/static/js/modules/password_reset/request_email.js:76
+msgid "Instructions emailed"
+msgstr "지침이 이메일로 전송됨"
+
+#: user/static/js/modules/password_reset/request_email.js:80
+msgid ""
+"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with "
+"instructions on how to reset your password."
+msgstr ""
+"비밀번호를 재설정하는 방법에 대한 지침이 포함된 이메일을 <a "
+"href=\\\"mailto:%(email)s\\\">%(email)s</a>로 보냈습니다."
+
+#: user/static/js/modules/profile/delete_user.js:61
+msgid "Staff accounts have to be deleted through the admin interface."
+msgstr "직원 계정은 관리 인터페이스를 통해 삭제해야 합니다."
+
+#: user/static/js/modules/profile/delete_user.js:66
+msgid "Password incorrect."
+msgstr "비밀번호가 잘못되었습니다."
+
+#: user/static/js/modules/profile/delete_user.js:69
+msgid "Could not delete user account."
+msgstr "사용자 계정을 삭제할 수 없습니다."
+
+#: user/static/js/modules/profile/dialogs.js:47
+msgid "Could not update profile avatar"
+msgstr "프로필 아바타를 업데이트할 수 없습니다."
+
+#: user/static/js/modules/profile/dialogs.js:65
+msgid "Upload your profile picture"
+msgstr "프로필 사진 업로드"
+
+#: user/static/js/modules/profile/dialogs.js:93
+msgid "Could not delete avatar"
+msgstr "아바타를 삭제할 수 없습니다."
+
+#: user/static/js/modules/profile/dialogs.js:142
+msgid "All fields are required!"
+msgstr "모든 필드를 필수로 입력하세요!"
+
+#: user/static/js/modules/profile/dialogs.js:149
+msgid "Please confirm the new password!"
+msgstr "새로운 비밀번호를 확인해 주세요!"
+
+#: user/static/js/modules/profile/dialogs.js:165
+msgid "The password has been changed."
+msgstr "비밀번호가 변경되었습니다."
+
+#: user/static/js/modules/profile/dialogs.js:181
+msgid "The password could not be changed!"
+msgstr "비밀번호를 변경할 수 없습니다!"
+
+#: user/static/js/modules/profile/dialogs.js:192
+msgid "The password could not be changed"
+msgstr "비밀번호를 변경할 수 없습니다."
+
+#: user/static/js/modules/profile/dialogs.js:226
+msgid "New email address is required!"
+msgstr "새로운 이메일 주소가 필요합니다!"
+
+#: user/static/js/modules/profile/dialogs.js:245
+msgid "Confirmation e-mail sent to"
+msgstr "확인 이메일이 전송되었습니다."
+
+#: user/static/js/modules/profile/dialogs.js:258
+msgid "The email could not be added!"
+msgstr "이메일을 추가할 수 없습니다!"
+
+#: user/static/js/modules/profile/dialogs.js:270
+msgid "Add Email"
+msgstr "이메일 추가"
+
+#: user/static/js/modules/profile/dialogs.js:298
+msgid "Email successfully deleted!"
+msgstr "이메일이 삭제되었습니다!"
+
+#: user/static/js/modules/profile/dialogs.js:304
+msgid "The email could not be deleted!"
+msgstr "이메일을 삭제할 수 없습니다!"
+
+#: user/static/js/modules/profile/dialogs.js:316
+#: user/static/js/modules/profile/dialogs.js:368
+msgid "Confirm remove"
+msgstr "제거 확인"
+
+#: user/static/js/modules/profile/dialogs.js:318
+msgid "Remove the email address"
+msgstr "이메일 주소 삭제"
+
+#: user/static/js/modules/profile/dialogs.js:349
+msgid "account successfully deleted!"
+msgstr "계정이 삭제되었습니다!"
+
+#: user/static/js/modules/profile/dialogs.js:356
+msgid "The account could not be deleted!"
+msgstr "계정을 삭제할 수 없습니다!"
+
+#: user/static/js/modules/profile/dialogs.js:370
+msgid "Remove the link to the account at"
+msgstr "다음에서 계정에 대한 링크를 제거하세요."
+
+#: user/static/js/modules/profile/dialogs.js:402
+msgid "The primary email has been updated."
+msgstr "기본 이메일이 업데이트되었습니다."
+
+#: user/static/js/modules/profile/dialogs.js:410
+msgid "The email could not be set to be primary email."
+msgstr "이메일을 기본 이메일로 설정할 수 없습니다."
+
+#: user/static/js/modules/profile/dialogs.js:423
+msgid "Confirm set primary"
+msgstr "기본 설정 확인"
+
+#: user/static/js/modules/profile/dialogs.js:425
+msgid "Set this email as the address primary"
+msgstr "이 이메일을 기본 주소로 설정하세요."
+
+#: user/static/js/modules/profile/index.js:131
+msgid "Configure profile"
+msgstr "프로필 구성"
+
+#: user/static/js/modules/profile/index.js:273
+msgid "Passphrase changed successfully."
+msgstr "암호가 성공적으로 변경되었습니다."
+
+#: user/static/js/modules/profile/index.js:277
+msgid "Failed to change passphrase: "
+msgstr "암호를 변경하지 못했습니다:"
+
+#: user/static/js/modules/profile/index.js:296
+msgid "Could not save profile data"
+msgstr "프로필 데이터를 저장할 수 없습니다."
+
+#: user/static/js/modules/profile/templates.js:5
+msgid "Delete the avatar?"
+msgstr "아바타를 삭제하시겠습니까?"
+
+#: user/static/js/modules/profile/templates.js:17
+msgid "NOTICE: ALL OF YOUR INFORMATION WILL DISAPPEAR FROM OUR SYSTEM!"
+msgstr "주의 사항: 귀하의 모든 정보가 우리 시스템에서 사라집니다!"
+
+#: user/static/js/modules/profile/templates.js:20
+msgid ""
+"Really delete your account? Type in your username and password below to "
+"confirm deletion."
+msgstr "계정을 삭제하시겠습니까? 삭제를 확인하려면 아래에 사용자 이름과 비밀번호를 입력하세요."
+
+#: user/static/js/modules/profile/templates.js:23
+msgid "We cannot reverse an account deletion."
+msgstr "계정 삭제는 취소할 수 없습니다."
+
+#: user/static/js/modules/profile/templates.js:26
+msgid ""
+"Some copies of your files may temporarily be kept in our backup system, but "
+"also these will disappear automatically in due time."
+msgstr ""
+"귀하의 파일 사본 중 일부는 당사의 백업 시스템에 일시적으로 보관될 수 있지만, 이 역시 적절한 시간이 지나면 자동으로 사라집니다."
+
+#: user/static/js/modules/profile/templates.js:40
+msgid "Enter the new E-mail address"
+msgstr "새 이메일 주소를 입력하세요"
+
+#: user/static/js/modules/profile/templates.js:61
+msgid "Old password"
+msgstr "이전 비밀번호"
+
+#: user/static/js/modules/profile/templates.js:66
+msgid "Confirm the new password"
+msgstr "새 비밀번호를 확인하세요"
+
+#: user/static/js/modules/profile/templates.js:77
+msgid "Edit profile picture"
+msgstr "프로필 사진 수정"
+
+#: user/static/js/modules/profile/templates.js:80
+msgid "Change picture"
+msgstr "사진 변경"
+
+#: user/static/js/modules/profile/templates.js:81
+msgid "Delete picture"
+msgstr "사진 삭제"
+
+#: user/static/js/modules/profile/templates.js:106
+#: user/static/js/modules/two_factor/index.js:223
+msgid "Two-Factor Authentication"
+msgstr "2단계 인증"
+
+#: user/static/js/modules/profile/templates.js:110
+msgid "Enabled"
+msgstr "활성화됨"
+
+#: user/static/js/modules/profile/templates.js:114
+msgid "Disabled"
+msgstr "장애가 있는"
+
+#: user/static/js/modules/profile/templates.js:119
+msgid "Enable 2FA"
+msgstr "2FA 활성화"
+
+#: user/static/js/modules/profile/templates.js:123
+#: user/static/js/modules/two_factor/index.js:135
+msgid "Disable 2FA"
+msgstr "2FA 비활성화"
+
+#: user/static/js/modules/profile/templates.js:127
+msgid "End-to-End Encryption"
+msgstr "종단 간 암호화"
+
+#: user/static/js/modules/profile/templates.js:131
+msgid "Personal passphrase set up"
+msgstr "개인 비밀번호 문구 설정"
+
+#: user/static/js/modules/profile/templates.js:135
+msgid "Not set up"
+msgstr "설정되지 않음"
+
+#: user/static/js/modules/profile/templates.js:140
+msgid "Set up encryption passphrase"
+msgstr "암호화 암호 설정"
+
+#: user/static/js/modules/profile/templates.js:144
+msgid "Change passphrase"
+msgstr "암호 변경"
+
+#: user/static/js/modules/profile/templates.js:148
+msgid "Recover with recovery key"
+msgstr "복구 키로 복구"
+
+#: user/static/js/modules/profile/templates.js:156
+msgid "Primary address"
+msgstr "기본 주소"
+
+#: user/static/js/modules/profile/templates.js:157
+msgid "Verified"
+msgstr "확인됨"
+
+#: user/static/js/modules/profile/templates.js:219
+msgid "Social Account Provider"
+msgstr "소셜 계정 제공자"
+
+#: user/static/js/modules/profile/templates.js:247
+msgid "Connect"
+msgstr "연결하다"
+
+#: user/static/js/modules/profile/templates.js:262
+msgid "Delete account"
+msgstr "계정 삭제"
+
+#: user/static/js/modules/signup/index.js:7
+msgid "Signup"
+msgstr "가입"
+
+#: user/static/js/modules/signup/index.js:13
+msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr "이미 계정이 있나요? 그런 다음 <a href=\\\"/\\\" title=\\\"Login\\\">로그인</a>해 주세요."
+
+#: user/static/js/modules/signup/index.js:21
+msgid "Choose your username"
+msgstr "사용자 이름을 선택하세요"
+
+#: user/static/js/modules/signup/index.js:47
+msgid "Sign Up Closed"
+msgstr "회원가입이 마감되었습니다"
+
+#: user/static/js/modules/signup/index.js:48
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "죄송합니다. 현재 가입이 마감되었습니다."
+
+#: user/static/js/modules/signup/index.js:148
+msgid ""
+"We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
+"verification. Follow the link provided to finalize the signup process."
+msgstr ""
+"확인을 위해 <a href=\\\"mailto:%(email)s\\\">%(email)s</a>로 이메일을 보냈습니다. 제공된 링크를 "
+"따라 가입 절차를 완료하세요."
+
+#: user/static/js/modules/two_factor/index.js:44
+msgid "Could not generate QR code. Please use the secret key below."
+msgstr "QR 코드를 생성할 수 없습니다. 아래 비밀키를 이용해 주세요."
+
+#: user/static/js/modules/two_factor/index.js:53
+#: user/static/js/modules/two_factor/index.js:187
+msgid "Verify"
+msgstr "확인하다"
+
+#: user/static/js/modules/two_factor/index.js:62
+#: user/static/js/modules/two_factor/index.js:197
+msgid "Please enter a 6-digit code."
+msgstr "6자리 코드를 입력해주세요."
+
+#: user/static/js/modules/two_factor/index.js:83
+#: user/static/js/modules/two_factor/index.js:214
+msgid "Could not verify the code."
+msgstr "코드를 확인할 수 없습니다."
+
+#: user/static/js/modules/two_factor/index.js:95
+msgid "Set Up Two-Factor Authentication"
+msgstr "2단계 인증 설정"
+
+#: user/static/js/modules/two_factor/index.js:97
+msgid ""
+"Scan this QR code with your authenticator app (Google Authenticator, Authy, "
+"etc.)"
+msgstr "인증 앱(Google Authenticator, Authy 등)으로 이 QR 코드를 스캔하세요."
+
+#: user/static/js/modules/two_factor/index.js:99
+msgid "Or enter this code manually:"
+msgstr "또는 다음 코드를 수동으로 입력하세요."
+
+#: user/static/js/modules/two_factor/index.js:102
+msgid "Enter the 6-digit code from your authenticator app to verify:"
+msgstr "인증 앱의 6자리 코드를 입력하여 다음을 확인하세요."
+
+#: user/static/js/modules/two_factor/index.js:153
+msgid "Could not disable two-factor authentication."
+msgstr "2단계 인증을 비활성화할 수 없습니다."
+
+#: user/static/js/modules/two_factor/index.js:169
+msgid "Disable Two-Factor Authentication"
+msgstr "2단계 인증 비활성화"
+
+#: user/static/js/modules/two_factor/index.js:170
+msgid ""
+"Are you sure you want to disable two-factor authentication? This will reduce"
+" the security of your account."
+msgstr "이중 인증을 비활성화하시겠습니까? 이렇게 하면 계정의 보안이 약화됩니다."
+
+#: user/static/js/modules/two_factor/index.js:224
+msgid "Enter the 6-digit code from your authenticator app:"
+msgstr "인증 앱의 6자리 코드를 입력하세요."
+
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:33
+msgid "Could not delete document template"
+msgstr "문서 템플릿을 삭제할 수 없습니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:41
+msgid "Document template successfully deleted"
+msgstr "문서 템플릿이 삭제되었습니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:51
+msgid "Document template still required by documents"
+msgstr "문서에 여전히 필요한 문서 템플릿"
+
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:78
+msgid "Delete the document templates?"
+msgstr "문서 템플릿을 삭제하시겠습니까?"
+
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:78
+msgid "Delete the document template?"
+msgstr "문서 템플릿을 삭제하시겠습니까?"
+
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:92
+msgid "The document template could not be copied"
+msgstr "문서 템플릿을 복사할 수 없습니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/actions.js:168
+msgid "Import a Fidus Template file"
+msgstr "Fidus 템플릿 파일 가져오기"
+
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:71
+msgid "Close the template without saving and return to the overview"
+msgstr "저장하지 않고 템플릿을 닫고 개요로 돌아가기"
+
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:77
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:98
+msgid "Template Editor"
+msgstr "템플릿 편집기"
+
+#: user_template_manager/static/js/modules/user_template_manager/editor.js:122
+msgid "Saved template"
+msgstr "저장된 템플릿"
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:7
+msgid "Create new document template"
+msgstr "새 문서 템플릿 만들기"
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:16
+msgid "Upload FIDUSTEMPLATE file"
+msgstr "FIDUSTEMPLATE 파일 업로드"
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:28
+msgid "Delete selected document templates."
+msgstr "선택한 문서 템플릿을 삭제합니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:40
+msgid "You cannot delete system document templates."
+msgstr "시스템 문서 템플릿은 삭제할 수 없습니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:50
+msgid "Duplicate selected"
+msgstr "중복 선택됨"
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:51
+msgid "Duplicate selected document templates."
+msgstr "선택한 문서 템플릿을 복제합니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:65
+msgid "Download selected"
+msgstr "선택한 다운로드"
+
+#: user_template_manager/static/js/modules/user_template_manager/menu.js:66
+msgid "Download selected document templates."
+msgstr "선택한 문서 템플릿을 다운로드하세요."
+
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:61
+msgid "Document Templates Overview"
+msgstr "문서 템플릿 개요"
+
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:94
+msgid "No document templates available"
+msgstr "사용 가능한 문서 템플릿이 없습니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:95
+msgid "No document templates found"
+msgstr "문서 템플릿을 찾을 수 없습니다."
+
+#: user_template_manager/static/js/modules/user_template_manager/overview.js:278
+msgid "Document templates loading failed."
+msgstr "문서 템플릿을 로드하지 못했습니다."
+
+#: user_template_manager/static/js/plugins/menu/user_template_manager.js:11
+msgid "Document Templates"
+msgstr "문서 템플릿"
+
+#: user_template_manager/static/js/plugins/menu/user_template_manager.js:13
+msgid "Templates"
+msgstr "템플릿"
+
+#: usermedia/static/js/modules/images/database.js:47
+msgid "Image is larger than the maximum permitted size"
+msgstr "이미지가 최대 허용 크기보다 큽니다."
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:31
+msgid "Update Image Information"
+msgstr "이미지 정보 업데이트"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:32
+msgid "Upload Image"
+msgstr "이미지 업로드"
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:185
+msgid "The image has been updated."
+msgstr "이미지가 업데이트되었습니다."
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:198
+msgid "Some errors were found. Please examine the form."
+msgstr "일부 오류가 발견되었습니다. 양식을 검토해 주세요."
+
+#: usermedia/static/js/modules/images/edit_dialog/index.js:210
+msgid "You are currently offline. Please try again after going online."
+msgstr "현재 오프라인 상태입니다. 온라인에 접속한 후 다시 시도해 주세요."
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:10
+msgid "Rotate Left"
+msgstr "왼쪽으로 회전"
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:12
+msgid "Rotate-left"
+msgstr "왼쪽으로 회전"
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:40
+msgid "Rotate Right"
+msgstr "오른쪽으로 회전"
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:42
+msgid "Rotate-right"
+msgstr "오른쪽으로 회전"
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:70
+#: usermedia/static/js/modules/images/edit_dialog/model.js:122
+msgid "Crop"
+msgstr "수확고"
+
+#: usermedia/static/js/modules/images/edit_dialog/model.js:72
+msgid "Crop image"
+msgstr "이미지 자르기"
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:9
+msgid "Select categories"
+msgstr "카테고리 선택"
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:36
+msgid "Insert a title"
+msgstr "제목을 삽입하세요"
+
+#: usermedia/static/js/modules/images/edit_dialog/templates.js:49
+msgid "Edit Image"
+msgstr "이미지 편집"
+
+#: usermedia/static/js/modules/images/overview/categories.js:25
+msgid "Could not update categories"
+msgstr "카테고리를 업데이트할 수 없습니다."
+
+#: usermedia/static/js/modules/images/overview/index.js:70
+msgid "Media Manager"
+msgstr "미디어 관리자"
+
+#: usermedia/static/js/modules/images/overview/index.js:102
+msgid "The image(s) could not be deleted"
+msgstr "이미지를 삭제할 수 없습니다."
+
+#: usermedia/static/js/modules/images/overview/index.js:118
+msgid "The image(s) have been deleted"
+msgstr "이미지가 삭제되었습니다."
+
+#: usermedia/static/js/modules/images/overview/index.js:141
+msgid "Delete the image(s)"
+msgstr "이미지 삭제"
+
+#: usermedia/static/js/modules/images/overview/index.js:235
+#: usermedia/static/js/modules/images/selection_dialog/index.js:113
+msgid "No images available"
+msgstr "사용 가능한 이미지가 없습니다."
+
+#: usermedia/static/js/modules/images/overview/index.js:236
+#: usermedia/static/js/modules/images/selection_dialog/index.js:114
+msgid "No images found"
+msgstr "이미지를 찾을 수 없습니다"
+
+#: usermedia/static/js/modules/images/overview/index.js:256
+msgid "Size (px)"
+msgstr "크기(px)"
+
+#: usermedia/static/js/modules/images/overview/menu.js:5
+msgid "Delete selected images."
+msgstr "선택한 이미지를 삭제합니다."
+
+#: usermedia/static/js/modules/images/overview/menu.js:47
+msgid "Upload new image"
+msgstr "새 이미지 업로드"
+
+#: usermedia/static/js/modules/images/overview/menu.js:67
+msgid "Search images"
+msgstr "이미지 검색"
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:39
+msgid "Add new image"
+msgstr "새 이미지 추가"
+
+#: usermedia/static/js/modules/images/selection_dialog/index.js:70
+msgid "Use image"
+msgstr "이미지 사용"

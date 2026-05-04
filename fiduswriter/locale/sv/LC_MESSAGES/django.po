@@ -1,0 +1,691 @@
+# Swedish translation for Fidus Writer
+# Johannes Wilm <johannes@fiduswriter.org>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Fidus Writer backend\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"PO-Revision-Date: 2025-05-03 10:00+0200\n"
+"Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
+"Language-Team: <johannes@fiduswriter.org>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Manual\n"
+
+#: base/settings.py:273
+msgid "Arabic"
+msgstr "arabiska"
+
+#: base/settings.py:274
+msgid "Bulgarian"
+msgstr "Bulgariska"
+
+#: base/settings.py:275
+msgid "Czech"
+msgstr "tjeckiska"
+
+#: base/settings.py:276
+#| msgid "Spanish"
+msgid "Danish"
+msgstr "danska"
+
+#: base/settings.py:277
+msgid "German"
+msgstr "Tyska"
+
+#: base/settings.py:278
+msgid "English"
+msgstr "Engelska"
+
+#: base/settings.py:279
+msgid "Spanish"
+msgstr "Spanska"
+
+#: base/settings.py:280
+msgid "French"
+msgstr "Franska"
+
+#: base/settings.py:281
+msgid "Italian"
+msgstr "Italienska"
+
+#: base/settings.py:282
+msgid "Japanese"
+msgstr "japanska"
+
+#: base/settings.py:283
+msgid "Korean"
+msgstr "koreanska"
+
+#: base/settings.py:284
+msgid "Norwegian Bokmål"
+msgstr "norskt bokmål"
+
+#: base/settings.py:285
+msgid "Dutch"
+msgstr "holländska"
+
+#: base/settings.py:286
+#| msgid "English"
+msgid "Polish"
+msgstr "polska"
+
+#: base/settings.py:287
+msgid "Portuguese (Brazil)"
+msgstr "Portugisiska (Brasilien)"
+
+#: base/settings.py:288
+#| msgid "Portuguese (Brazil)"
+msgid "Portuguese (Portugal)"
+msgstr "Portugisiska (Portugal)"
+
+#: base/settings.py:289
+msgid "Russian"
+msgstr "ryska"
+
+#: base/settings.py:290
+msgid "Swedish"
+msgstr "svenska"
+
+#: base/settings.py:291
+msgid "Turkish"
+msgstr "turkiska"
+
+#: base/settings.py:292
+msgid "Chinese (Simplified)"
+msgstr "kinesiska (förenklad)"
+
+#: base/settings.py:409
+msgid "Fidus Writer Admin"
+msgstr "Fidus Writer Admin"
+
+#: base/settings.py:410
+msgid "Fidus Writer Administration Site"
+msgstr "Fidus Writer Administrationswebbplats"
+
+#: base/settings.py:411
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr "Välkommen till Fidus Writer Administrationswebbplats"
+
+#: base/templates/500.html:5 base/templates/500.html:8
+msgid "Error 500"
+msgstr "Fel 500"
+
+#: base/templates/500.html:9
+msgid ""
+"We are sorry, but a server error occured. Our team will be looking into the "
+"issue shortly."
+msgstr ""
+"Vi ber om ursäkt, men ett serverfel uppstod. Vårt team kommer att titta på "
+"problemet inom kort."
+
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/overview.html:14
+msgid "Admin Console"
+msgstr "Admin-konsol"
+
+#: base/templates/admin/console.html:18
+msgid "Current number of users:"
+msgstr "Nuvarande antal användare:"
+
+#: base/templates/admin/console.html:21
+msgid "Current number of user sessions:"
+msgstr "Nuvarande antal användarsessioner:"
+
+#: base/templates/admin/console.html:23
+msgid "Send a system message to all connected users:"
+msgstr "Skicka ett systemmeddelande till alla anslutna användare:"
+
+#: base/templates/admin/console.html:27
+msgid "Message"
+msgstr "Meddelande"
+
+#: base/templates/admin/console.html:29
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+"Detta system kommer att gå offline för schemalagt underhåll om 30 minuter. "
+"Allt ditt arbete sparas automatiskt och vi är tillbaka snart."
+
+#: base/templates/admin/console.html:36
+msgid "Send to connected users"
+msgstr "Skicka till anslutna användare"
+
+#: base/templates/admin/overview.html:10
+msgid "Extras"
+msgstr "Extrafunktioner"
+
+#: base/templates/admin/overview.html:17
+#: document/templates/admin/document/maintenance.html:17
+msgid "Document Maintenance"
+msgstr "Dokumentunderhåll"
+
+#: base/templates/api_404.html:5 base/templates/api_404.html:8
+msgid "Error 404"
+msgstr "Fel 404"
+
+#: base/templates/api_404.html:9
+msgid "We are sorry, but this page was not found."
+msgstr "Vi är ledsna, men den här sidan hittades inte."
+
+#: base/templates/app.html:9
+msgid "The all in one solution for collaborative academic writing."
+msgstr "Allt-i-ett-lösningen för samarbetande akademiskt skrivande."
+
+#: base/templates/app.html:46
+msgid "JavaScript disabled"
+msgstr "JavaScript inaktiverat"
+
+#: base/templates/app.html:47
+msgid "Fidus Writer requires you to enable JavaScript."
+msgstr "Fidus Writer kräver att du aktiverar JavaScript."
+
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr "Webbläsare stöds inte"
+
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
+"\n"
+"Din webbläsare stöds inte av Fidus Writer.\n"
+"                Uppdatera gärna! Vi rekommenderar att du använder en ström\n"
+"                version av Chrome/Chromium eller Firefox på en\n"
+"                stationär dator."
+
+#: document/admin.py:59
+msgid "Duplicate selected document templates"
+msgstr "Duplicera valda dokumentmallar"
+
+#: document/emails.py:18 document/emails.py:236 document/views.py:887
+msgid "Untitled"
+msgstr "Ofrälse"
+
+#: document/emails.py:21
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"Open the document: %(link)s"
+msgstr ""
+"Hej %(collaborator_name)s,\n"
+"%(owner)s har ändrat dina åtkomsträttigheter till %(rights)s på dokumentet '%(document_title)s'. \n"
+"Öppna dokumentet: %(link)s"
+
+#: document/emails.py:32
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
+" %(rights)s on the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>Hej %(collaborator_name)s,<br>%(owner)s har ändrat dina "
+"åtkomsträttigheter till %(rights)s på dokumentet \"%(document_title)s\".</p>"
+
+#: document/emails.py:43
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"Open document: %(link)s"
+msgstr ""
+"Hej %(collaborator_name)s,\n"
+"%(owner)s har delat dokumentet '%(document_title)s' med dig och gett dig %(rights)s åtkomsträttigheter. \n"
+"Öppna dokument: %(link)s"
+
+#: document/emails.py:55
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document "
+"'%(document_title)s' with you and given you %(rights)s access rights.</p>"
+msgstr ""
+"<p>Hej %(collaborator_name)s,<br>%(owner)s har delat dokumentet "
+"\"%(document_title)s\" med dig och gett dig %(rights)s "
+"åtkomsträttigheter.</p>"
+
+#: document/emails.py:89
+msgid "shared"
+msgstr "delad"
+
+#: document/emails.py:91 document/emails.py:207 document/emails.py:286
+msgid "Document"
+msgstr "Dokumentera"
+
+#: document/emails.py:93 document/emails.py:209
+msgid "Author"
+msgstr "Författare"
+
+#: document/emails.py:95
+msgid "Access Rights"
+msgstr "Åtkomsträttigheter"
+
+#: document/emails.py:98 document/emails.py:214
+msgid "Access the document"
+msgstr "Öppna dokumentet"
+
+#: document/emails.py:101
+#, python-format
+msgid "Document shared: %(document_title)s"
+msgstr "Dokument delat: %(document_title)s"
+
+#: document/emails.py:123
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"Hej %(collaborator_name)s,\n"
+"%(commentator)s har nämnt dig i en kommentar i dokumentet \"%(document)s\":\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Gå till dokumentet här: %(link)s"
+
+#: document/emails.py:136
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
+" in the document '%(document_title)s'."
+msgstr ""
+"Hej %(collaborator_name)s,<br>%(commentator)s har nämnt dig i en kommentar i"
+" dokumentet \"%(document_title)s\"."
+
+#: document/emails.py:143
+#, python-format
+msgid "Comment on : %(document_title)s"
+msgstr "Kommentar till : %(document_title)s"
+
+#: document/emails.py:148
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"Hej %(collaborator_name)s,\n"
+"%(commentator)s har tilldelat dig en kommentar i dokumentet \"%(document)s\":\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Gå till dokumentet här: %(link)s"
+
+#: document/emails.py:159
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
+"in the document '%(document_title)s'."
+msgstr ""
+"Hej %(collaborator_name)s,<br>%(commentator)s har tilldelat dig en kommentar"
+" i dokumentet \"%(document_title)s\"."
+
+#: document/emails.py:166
+#, python-format
+msgid "Comment assignment on : %(document_title)s"
+msgstr "Kommentarsuppgift på: %(document_title)s"
+
+#: document/emails.py:171
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a "
+"comment in the document '%(document)s':</p>%(comment_html)s<p>Go to the "
+"document <a href=\"%(link)s\">here</a>.</p>"
+msgstr ""
+"<p>Hej %(collaborator_name)s,<br>%(commentator)s har tilldelat dig en "
+"kommentar i dokumentet \"%(document)s\":</p>%(comment_html)s<p>Gå till "
+"dokumentet <a href=\"%(link)s\">här</a>.</p>"
+
+#: document/emails.py:211
+msgid "Comment"
+msgstr "Kommentar"
+
+#: document/emails.py:239
+#, python-format
+msgid ""
+"Hey %(owner_name)s,\n"
+"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"Open the document to grant access: %(link)s"
+msgstr ""
+"Hej %(owner_name)s,\n"
+"%(requester_name)s har begärt %(rights)s tillgång till dokumentet '%(document_title)s'. \n"
+"Öppna dokumentet för att ge åtkomst: %(link)s"
+
+#: document/emails.py:251
+#, python-format
+msgid ""
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
+" to the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>Hej %(owner_name)s,<br>%(requester_name)s har begärt %(rights)s åtkomst "
+"till dokumentet \"%(document_title)s\".</p>"
+
+#: document/emails.py:284
+msgid "access request"
+msgstr "tillgångsbegäran"
+
+#: document/emails.py:288
+msgid "Requested by"
+msgstr "Begärd av"
+
+#: document/emails.py:290
+msgid "Requested rights"
+msgstr "Begärda rättigheter"
+
+#: document/emails.py:293
+msgid "Grant access"
+msgstr "Bevilja åtkomst"
+
+#: document/emails.py:297
+#, python-format
+msgid "Access request: %(document_title)s"
+msgstr "Åtkomstbegäran: %(document_title)s"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr "Lägg till %(name)s"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:13
+#: document/templates/admin/document/maintenance.html:4
+msgid "Maintenance"
+msgstr "Underhåll"
+
+#: document/templates/admin/document/maintenance.html:19
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
+"            no user is currently editing any document!\n"
+"            "
+msgstr ""
+"\n"
+"Innan och efter uppgradering av Fidus Writer bör du uppdatera alla dokument\n"
+"            av alla användare till den senaste dokumentversionen. Gör bara detta om du vet det\n"
+"            ingen användare redigerar för närvarande något dokument!"
+
+#: document/templates/admin/document/maintenance.html:27
+msgid "Update all documents (DANGER!)"
+msgstr "Uppdatera alla dokument (FARA!)"
+
+#: style/models.py:74
+msgid "Default"
+msgstr "Standard"
+
+#: style/views.py:27
+msgid "The template needs at least 1 document style"
+msgstr "Mallen behöver minst en dokumentstil"
+
+#: user/admin.py:11
+msgid "Connections"
+msgstr "Anslutningar"
+
+#: user/emails.py:10
+#, python-format
+msgid ""
+"Hey %(email)s,%(sender)s has invited you to connect on Fidus Writer. \n"
+"Accept or reject the invite through this link: %(link)s"
+msgstr ""
+"Hej %(email)s,%(sender)s har bjudit in dig att ansluta på Fidus Writer. \n"
+"Acceptera eller avvisa inbjudan via denna länk: %(link)s"
+
+#: user/emails.py:19
+#, python-format
+msgid ""
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
+"Writer.</p>"
+msgstr ""
+"<p>Hej %(email)s,<br> %(sender)s har bjudit in dig att ansluta till Fidus "
+"Writer.</p>"
+
+#: user/emails.py:34
+msgid "Invite for Fidus Writer"
+msgstr "Bjud in till Fidus Writer"
+
+#: user/emails.py:37
+msgid "Sign up/log in and accept/reject the invite"
+msgstr "Registrera dig/logga in och acceptera/avvisa inbjudan"
+
+#: user/emails.py:40
+msgid "Fidus Writer contact invite"
+msgstr "Fidus Writer kontaktinbjudan"
+
+#: user/emails.py:53
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"Hej %(recipient_name)s, %(sender_name)s har tackat nej till din inbjudan att ansluta till Fidus Writer. \n"
+"Se din lista över kontakter här: %(link)s"
+
+#: user/emails.py:62
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>Hej %(recipient_name)s,<br> %(sender_name)s har tackat nej till din "
+"inbjudan att ansluta till Fidus Writer.</p>"
+
+#: user/emails.py:76
+msgid "Invite for Fidus Writer declined"
+msgstr "Inbjudan till Fidus Writer avslogs"
+
+#: user/emails.py:79 user/emails.py:121
+msgid "See your list of contacts"
+msgstr "Se din lista över kontakter"
+
+#: user/emails.py:82
+msgid "Fidus Writer invite declined"
+msgstr "Fidus Writer-inbjudan avvisades"
+
+#: user/emails.py:95
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"Hej %(recipient_name)s, %(sender_name)s har accepterat din inbjudan att ansluta på Fidus Writer. \n"
+"Se din lista över kontakter här: %(link)s"
+
+#: user/emails.py:104
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has accepted your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>Hej %(recipient_name)s,<br> %(sender_name)s har accepterat din inbjudan "
+"att ansluta på Fidus Writer.</p>"
+
+#: user/emails.py:118
+msgid "Invite for Fidus Writer accepted"
+msgstr "Inbjudan till Fidus Writer accepteras"
+
+#: user/emails.py:124
+msgid "Fidus Writer invite accepted"
+msgstr "Fidus Writer-inbjudan accepteras"
+
+#: user/forms.py:20
+msgid "Code must be exactly 6 digits (0-9)."
+msgstr "Koden måste vara exakt 6 siffror (0-9)."
+
+#: user/models.py:55
+msgid "Interface language preference"
+msgstr "Gränssnittsspråk"
+
+#: user/models.py:62
+msgid "User preferences (e.g., encryption dialog dismissal)"
+msgstr "Användarinställningar (t.ex. avvisande av krypteringsdialogruta)"
+
+#: user/models.py:73
+msgid "Can login as another user"
+msgstr "Kan logga in som en annan användare"
+
+#: user/models.py:102
+msgid "email address"
+msgstr "e-postadress"
+
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "Hej från %(site_name)s!"
+
+#: user/templates/account/email/email_confirmation_message.html:12
+#, python-format
+msgid ""
+"You are receiving this e-mail because user %(user_display)s has given yours "
+"as an e-mail address to connect their account."
+msgstr ""
+"Du får det här e-postmeddelandet eftersom användaren %(user_display)s har "
+"angett din som en e-postadress för att koppla sitt konto."
+
+#: user/templates/account/email/email_confirmation_message.html:16
+#, python-format
+msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
+msgstr ""
+"För att bekräfta att detta är korrekt, gå till <a "
+"href=\"%(url)s\">%(url)s</a>."
+
+#: user/templates/account/email/email_confirmation_message.html:20
+#: user/templates/account/email/password_reset_key_message.html:26
+#, python-format
+msgid "Thank you from %(site_name)s!"
+msgstr "Tack från %(site_name)s!"
+
+#: user/templates/account/email/password_reset_key_message.html:11
+msgid ""
+"You are receiving this e-mail because you or someone else has requested a "
+"password for your user account."
+msgstr ""
+"Du får detta e-postmeddelande för att du eller någon annan har begärt ett "
+"lösenord för ditt användarkonto."
+
+#: user/templates/account/email/password_reset_key_message.html:14
+msgid ""
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+"Det kan säkert ignoreras om du inte begärde en lösenordsåterställning. "
+"Klicka på länken nedan för att återställa ditt lösenord."
+
+#: user/templates/account/email/password_reset_key_message.html:21
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "Om du har glömt, är ditt användarnamn %(username)s."
+
+#: user/views.py:624
+msgid "Code is invalid"
+msgstr "Koden är ogiltig"
+
+#: usermedia/views.py:37
+msgid "Filetype not supported"
+msgstr "Filtyp stöds inte"
+
+#: usermedia/views.py:44
+msgid "Image too large"
+msgstr "Bilden är för stor"
+
+#: usermedia/views.py:71
+msgid "No file uploaded"
+msgstr "Ingen fil laddad upp"
+
+#~ msgid "System Overview"
+#~ msgstr "Systemöversikt"
+
+#~ msgid "Number of users:"
+#~ msgstr "Antal användare:"
+
+#~ msgid "Number of documents:"
+#~ msgstr "Antal dokument:"
+
+#~ msgid "Number of active sessions:"
+#~ msgstr "Antal aktiva sessioner:"
+
+#~ msgid "Log in"
+#~ msgstr "Logga in"
+
+#~ msgid "Username:"
+#~ msgstr "Användarnamn:"
+
+#~ msgid "Password:"
+#~ msgstr "Lösenord:"
+
+#~ msgid "Forgot password?"
+#~ msgstr "Glömt lösenordet?"
+
+#~ msgid "Don't have an account? Register here."
+#~ msgstr "Har du inte ett konto? Registrera dig här."
+
+#~ msgid "Reset password"
+#~ msgstr "Återställ lösenord"
+
+#~ msgid ""
+#~ "Forgotten your password? Enter your email address below, and we'll email "
+#~ "instructions for setting a new one."
+#~ msgstr ""
+#~ "Glömt ditt lösenord? Ange din e-postadress nedan så skickar vi instruktioner"
+#~ " för att skapa ett nytt."
+
+#~ msgid "Reset my password"
+#~ msgstr "Återställ mitt lösenord"
+
+#~ msgid "Password reset sent"
+#~ msgstr "Lösenord återställt"
+
+#~ msgid ""
+#~ "We've emailed you instructions for setting your password, if an account "
+#~ "exists with the email you entered. You should receive them shortly."
+#~ msgstr ""
+#~ "Vi har skickat instruktioner för att skapa ditt lösenord via e-post, om det "
+#~ "finns ett konto med den e-post du angav. Du bör få dem inom kort."
+
+#~ msgid "Enter new password"
+#~ msgstr "Ange nytt lösenord"
+
+#~ msgid ""
+#~ "Please enter your new password twice so we can verify you typed it in "
+#~ "correctly."
+#~ msgstr ""
+#~ "Ange ditt nya lösenord två gånger så att vi kan bekräfta att du har angett "
+#~ "det korrekt."
+
+#~ msgid "New password:"
+#~ msgstr "Nytt lösenord:"
+
+#~ msgid "Confirm password:"
+#~ msgstr "Bekräfta lösenord:"
+
+#~ msgid "Change my password"
+#~ msgstr "Ändra mitt lösenord"
+
+#~ msgid "Password reset complete"
+#~ msgstr "Lösenord återställt"
+
+#~ msgid "Your password has been set. You may go ahead and log in now."
+#~ msgstr "Ditt lösenord har ställts in. Du kan nu logga in."
+
+#~ msgid "Logged out"
+#~ msgstr "Utloggad"
+
+#~ msgid "Thanks for spending some quality time with Fidus Writer today."
+#~ msgstr "Tack för att du använde Fidus Writer idag."
+
+#~ msgid "Log in again"
+#~ msgstr "Logga in igen"

@@ -1083,6 +1083,22 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             len(self.get_images(self.driver2)),
         )
 
+        # Wait for captions to be rendered in the DOM before reading
+        # their text, as custom node views may recreate the figcaption
+        # element briefly during collaborative sync.
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption"),
+                "My figure",
+            )
+        )
+        WebDriverWait(self.driver2, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, "div.doc-body figure figcaption"),
+                "My figure",
+            )
+        )
+
         self.assertEqual(9, len(self.get_caption(self.driver2)))
         self.assertEqual(
             len(self.get_caption(self.driver)),

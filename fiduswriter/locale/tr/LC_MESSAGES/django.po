@@ -1,0 +1,611 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: base/settings.py:273
+msgid "Arabic"
+msgstr "Arapça"
+
+#: base/settings.py:274
+msgid "Bulgarian"
+msgstr "Bulgarca"
+
+#: base/settings.py:275
+msgid "Czech"
+msgstr "Çek"
+
+#: base/settings.py:276
+#| msgid "Spanish"
+msgid "Danish"
+msgstr "Danimarka"
+
+#: base/settings.py:277
+msgid "German"
+msgstr "Almanca"
+
+#: base/settings.py:278
+msgid "English"
+msgstr "İngilizce"
+
+#: base/settings.py:279
+msgid "Spanish"
+msgstr "İspanyol"
+
+#: base/settings.py:280
+msgid "French"
+msgstr "Fransızca"
+
+#: base/settings.py:281
+msgid "Italian"
+msgstr "İtalyan"
+
+#: base/settings.py:282
+msgid "Japanese"
+msgstr "Japonca"
+
+#: base/settings.py:283
+msgid "Korean"
+msgstr "Korece"
+
+#: base/settings.py:284
+msgid "Norwegian Bokmål"
+msgstr "Norveç Bokmål'ı"
+
+#: base/settings.py:285
+msgid "Dutch"
+msgstr "Flemenkçe"
+
+#: base/settings.py:286
+#| msgid "English"
+msgid "Polish"
+msgstr "Lehçe"
+
+#: base/settings.py:287
+msgid "Portuguese (Brazil)"
+msgstr "Portekizce (Brezilya)"
+
+#: base/settings.py:288
+#| msgid "Portuguese (Brazil)"
+msgid "Portuguese (Portugal)"
+msgstr "Portekizce (Portekiz)"
+
+#: base/settings.py:289
+msgid "Russian"
+msgstr "Rusça"
+
+#: base/settings.py:290
+msgid "Swedish"
+msgstr "İsveççe"
+
+#: base/settings.py:291
+msgid "Turkish"
+msgstr "Türkçe"
+
+#: base/settings.py:292
+msgid "Chinese (Simplified)"
+msgstr "Çince (Basitleştirilmiş)"
+
+#: base/settings.py:409
+msgid "Fidus Writer Admin"
+msgstr "Fidus Yazar Yöneticisi"
+
+#: base/settings.py:410
+msgid "Fidus Writer Administration Site"
+msgstr "Fidus Yazar Yönetim Sitesi"
+
+#: base/settings.py:411
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr "Fidus Yazar Yönetim Sitesine Hoş Geldiniz"
+
+#: base/templates/500.html:5 base/templates/500.html:8
+msgid "Error 500"
+msgstr "Hata 500"
+
+#: base/templates/500.html:9
+msgid ""
+"We are sorry, but a server error occured. Our team will be looking into the "
+"issue shortly."
+msgstr ""
+"Üzgünüz ama bir sunucu hatası oluştu. Ekibimiz kısa süre içinde sorunla "
+"ilgilenecek."
+
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/overview.html:14
+msgid "Admin Console"
+msgstr "Yönetici Konsolu"
+
+#: base/templates/admin/console.html:18
+msgid "Current number of users:"
+msgstr "Mevcut kullanıcı sayısı:"
+
+#: base/templates/admin/console.html:21
+msgid "Current number of user sessions:"
+msgstr "Mevcut kullanıcı oturumu sayısı:"
+
+#: base/templates/admin/console.html:23
+msgid "Send a system message to all connected users:"
+msgstr "Bağlı tüm kullanıcılara bir sistem mesajı gönderin:"
+
+#: base/templates/admin/console.html:27
+msgid "Message"
+msgstr "Mesaj"
+
+#: base/templates/admin/console.html:29
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr ""
+"Bu sistem 30 dakika içinde planlı bakım nedeniyle çevrimdışı duruma geçecek."
+" Tüm çalışmalarınız otomatik olarak kaydedilecek ve kısa süre içinde geri "
+"döneceğiz."
+
+#: base/templates/admin/console.html:36
+msgid "Send to connected users"
+msgstr "Bağlı kullanıcılara gönder"
+
+#: base/templates/admin/overview.html:10
+msgid "Extras"
+msgstr "Ekstralar"
+
+#: base/templates/admin/overview.html:17
+#: document/templates/admin/document/maintenance.html:17
+msgid "Document Maintenance"
+msgstr "Belge Bakımı"
+
+#: base/templates/api_404.html:5 base/templates/api_404.html:8
+msgid "Error 404"
+msgstr "Hata 404"
+
+#: base/templates/api_404.html:9
+msgid "We are sorry, but this page was not found."
+msgstr "Üzgünüz ama bu sayfa bulunamadı."
+
+#: base/templates/app.html:9
+msgid "The all in one solution for collaborative academic writing."
+msgstr "İşbirliğine dayalı akademik yazılar için hepsi bir arada çözüm."
+
+#: base/templates/app.html:46
+msgid "JavaScript disabled"
+msgstr "JavaScript devre dışı bırakıldı"
+
+#: base/templates/app.html:47
+msgid "Fidus Writer requires you to enable JavaScript."
+msgstr "Fidus Writer, JavaScript'i etkinleştirmenizi gerektirir."
+
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr "Tarayıcı desteklenmiyor"
+
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
+"\n"
+"Tarayıcınız Fidus Writer tarafından desteklenmiyor.\n"
+"                Lütfen güncelleyin! Bir akım kullanmanızı öneririz\n"
+"                Chrome/Chromium veya Firefox sürümü\n"
+"                masaüstü bilgisayar."
+
+#: document/admin.py:59
+msgid "Duplicate selected document templates"
+msgstr "Seçilen belge şablonlarını çoğalt"
+
+#: document/emails.py:18 document/emails.py:236 document/views.py:887
+msgid "Untitled"
+msgstr "İsimsiz"
+
+#: document/emails.py:21
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"Open the document: %(link)s"
+msgstr ""
+"Merhaba %(collaborator_name)s,\n"
+"%(owner)s, '%(document_title)s' belgesindeki erişim haklarınızı %(rights)s olarak değiştirdi. \n"
+"Belgeyi açın: %(link)s"
+
+#: document/emails.py:32
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
+" %(rights)s on the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>Merhaba %(collaborator_name)s,<br>%(owner)s, '%(document_title)s' "
+"belgesindeki erişim haklarınızı %(rights)s olarak değiştirdi.</p>"
+
+#: document/emails.py:43
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"Open document: %(link)s"
+msgstr ""
+"Merhaba %(collaborator_name)s,\n"
+"%(owner)s, '%(document_title)s' belgesini sizinle paylaştı ve size %(rights)s erişim haklarını verdi. \n"
+"Belgeyi aç: %(link)s"
+
+#: document/emails.py:55
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document "
+"'%(document_title)s' with you and given you %(rights)s access rights.</p>"
+msgstr ""
+"<p>Merhaba %(collaborator_name)s,<br>%(owner)s, '%(document_title)s' "
+"belgesini sizinle paylaştı ve size %(rights)s erişim haklarını verdi.</p>"
+
+#: document/emails.py:89
+msgid "shared"
+msgstr "Paylaşıldı"
+
+#: document/emails.py:91 document/emails.py:207 document/emails.py:286
+msgid "Document"
+msgstr "Belge"
+
+#: document/emails.py:93 document/emails.py:209
+msgid "Author"
+msgstr "Yazar"
+
+#: document/emails.py:95
+msgid "Access Rights"
+msgstr "Erişim Hakları"
+
+#: document/emails.py:98 document/emails.py:214
+msgid "Access the document"
+msgstr "Belgeye erişme"
+
+#: document/emails.py:101
+#, python-format
+msgid "Document shared: %(document_title)s"
+msgstr "Paylaşılan belge: %(document_title)s"
+
+#: document/emails.py:123
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"Merhaba %(collaborator_name)s,\n"
+"%(commentator)s, '%(document)s' belgesindeki bir yorumda sizden bahsetti:\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Belgeye buradan gidin: %(link)s"
+
+#: document/emails.py:136
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
+" in the document '%(document_title)s'."
+msgstr ""
+"Merhaba %(collaborator_name)s,<br>%(commentator)s, '%(document_title)s' "
+"belgesindeki bir yorumda sizden bahsetti."
+
+#: document/emails.py:143
+#, python-format
+msgid "Comment on : %(document_title)s"
+msgstr "Yorum yap : %(document_title)s"
+
+#: document/emails.py:148
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"Merhaba %(collaborator_name)s,\n"
+"%(commentator)s sizi '%(document)s' belgesindeki bir yoruma atadı:\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Belgeye buradan gidin: %(link)s"
+
+#: document/emails.py:159
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
+"in the document '%(document_title)s'."
+msgstr ""
+"Merhaba %(collaborator_name)s,<br>%(commentator)s sizi '%(document_title)s' "
+"belgesindeki bir yoruma atadı."
+
+#: document/emails.py:166
+#, python-format
+msgid "Comment assignment on : %(document_title)s"
+msgstr "Şununla ilgili yorum ataması: %(document_title)s"
+
+#: document/emails.py:171
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a "
+"comment in the document '%(document)s':</p>%(comment_html)s<p>Go to the "
+"document <a href=\"%(link)s\">here</a>.</p>"
+msgstr ""
+"<p>Merhaba %(collaborator_name)s,<br>%(commentator)s sizi '%(document)s' "
+"belgesindeki bir yoruma atadı:</p>%(comment_html)s<p><a "
+"href=\"%(link)s\">buradan</a> belgeye gidin.</p>"
+
+#: document/emails.py:211
+msgid "Comment"
+msgstr "Yorum"
+
+#: document/emails.py:239
+#, python-format
+msgid ""
+"Hey %(owner_name)s,\n"
+"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"Open the document to grant access: %(link)s"
+msgstr ""
+"Merhaba %(owner_name)s,\n"
+"%(requester_name)s, '%(document_title)s' belgesine %(rights)s erişimi istedi. \n"
+"Erişim izni vermek için belgeyi açın: %(link)s"
+
+#: document/emails.py:251
+#, python-format
+msgid ""
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
+" to the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>Merhaba %(owner_name)s,<br>%(requester_name)s, '%(document_title)s' "
+"belgesine %(rights)s erişimi istedi.</p>"
+
+#: document/emails.py:284
+msgid "access request"
+msgstr "erişim isteği"
+
+#: document/emails.py:288
+msgid "Requested by"
+msgstr "Talep eden"
+
+#: document/emails.py:290
+msgid "Requested rights"
+msgstr "Talep edilen haklar"
+
+#: document/emails.py:293
+msgid "Grant access"
+msgstr "Erişim ver"
+
+#: document/emails.py:297
+#, python-format
+msgid "Access request: %(document_title)s"
+msgstr "Erişim isteği: %(document_title)s"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr "%(name)s'yi ekle"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:13
+#: document/templates/admin/document/maintenance.html:4
+msgid "Maintenance"
+msgstr "Bakım"
+
+#: document/templates/admin/document/maintenance.html:19
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
+"            no user is currently editing any document!\n"
+"            "
+msgstr ""
+"\n"
+"Fidus Writer'ı yükseltmeden önce ve sonra tüm belgeleri güncellemelisiniz\n"
+"            tüm kullanıcıların en yeni belge sürümüne aktarılmasını sağlar. Bunu ancak bunu biliyorsanız yapın\n"
+"            şu anda hiçbir kullanıcı herhangi bir belgeyi düzenlemiyor!"
+
+#: document/templates/admin/document/maintenance.html:27
+msgid "Update all documents (DANGER!)"
+msgstr "Tüm belgeleri güncelleyin (TEHLİKE!)"
+
+#: style/models.py:74
+msgid "Default"
+msgstr "Varsayılan"
+
+#: style/views.py:27
+msgid "The template needs at least 1 document style"
+msgstr "Şablonun en az 1 belge stiline ihtiyacı var"
+
+#: user/admin.py:11
+msgid "Connections"
+msgstr "Bağlantılar"
+
+#: user/emails.py:10
+#, python-format
+msgid ""
+"Hey %(email)s,%(sender)s has invited you to connect on Fidus Writer. \n"
+"Accept or reject the invite through this link: %(link)s"
+msgstr ""
+"Merhaba %(email)s,%(sender)s sizi Fidus Writer'a bağlanmaya davet etti. \n"
+"Daveti bu bağlantı aracılığıyla kabul edin veya reddedin: %(link)s"
+
+#: user/emails.py:19
+#, python-format
+msgid ""
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
+"Writer.</p>"
+msgstr ""
+"<p>Merhaba %(email)s,<br> %(sender)s sizi Fidus Writer'a bağlanmaya davet "
+"etti.</p>"
+
+#: user/emails.py:34
+msgid "Invite for Fidus Writer"
+msgstr "Fidus Yazarına Davet Edin"
+
+#: user/emails.py:37
+msgid "Sign up/log in and accept/reject the invite"
+msgstr "Kaydolun/giriş yapın ve daveti kabul edin/reddedin"
+
+#: user/emails.py:40
+msgid "Fidus Writer contact invite"
+msgstr "Fidus Yazarı iletişim daveti"
+
+#: user/emails.py:53
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"Merhaba %(recipient_name)s, %(sender_name)s, Fidus Writer'a bağlanma davetinizi reddetti. \n"
+"Kişi listenizi burada görebilirsiniz: %(link)s"
+
+#: user/emails.py:62
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>Merhaba %(recipient_name)s,<br> %(sender_name)s, Fidus Writer'a bağlanma "
+"davetinizi reddetti.</p>"
+
+#: user/emails.py:76
+msgid "Invite for Fidus Writer declined"
+msgstr "Fidus Writer'a davet reddedildi"
+
+#: user/emails.py:79 user/emails.py:121
+msgid "See your list of contacts"
+msgstr "Kişi listenizi görün"
+
+#: user/emails.py:82
+msgid "Fidus Writer invite declined"
+msgstr "Fidus Yazar daveti reddedildi"
+
+#: user/emails.py:95
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"Merhaba %(recipient_name)s, %(sender_name)s, Fidus Writer'a bağlanma davetinizi kabul etti. \n"
+"Kişi listenizi burada görebilirsiniz: %(link)s"
+
+#: user/emails.py:104
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has accepted your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>Merhaba %(recipient_name)s,<br> %(sender_name)s, Fidus Writer'a bağlanma "
+"davetinizi kabul etti.</p>"
+
+#: user/emails.py:118
+msgid "Invite for Fidus Writer accepted"
+msgstr "Fidus Writer'a davet kabul edildi"
+
+#: user/emails.py:124
+msgid "Fidus Writer invite accepted"
+msgstr "Fidus Yazar daveti kabul edildi"
+
+#: user/forms.py:20
+msgid "Code must be exactly 6 digits (0-9)."
+msgstr "Kod tam olarak 6 haneli (0-9) olmalıdır."
+
+#: user/models.py:55
+msgid "Interface language preference"
+msgstr "Arayüz dili tercihi"
+
+#: user/models.py:62
+msgid "User preferences (e.g., encryption dialog dismissal)"
+msgstr ""
+"Kullanıcı tercihleri ​​(ör. şifreleme iletişim kutusunun reddedilmesi)"
+
+#: user/models.py:73
+msgid "Can login as another user"
+msgstr "Başka bir kullanıcı olarak giriş yapabilir"
+
+#: user/models.py:102
+msgid "email address"
+msgstr "e-posta adresi"
+
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "%(site_name)s'den merhaba!"
+
+#: user/templates/account/email/email_confirmation_message.html:12
+#, python-format
+msgid ""
+"You are receiving this e-mail because user %(user_display)s has given yours "
+"as an e-mail address to connect their account."
+msgstr ""
+"Bu e-postayı, %(user_display)s kullanıcısı, hesabını bağlamak için e-posta "
+"adresi olarak sizin adresinizi verdiği için alıyorsunuz."
+
+#: user/templates/account/email/email_confirmation_message.html:16
+#, python-format
+msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
+msgstr ""
+"Bunun doğru olduğunu onaylamak için <a href=\"%(url)s\">%(url)s</a>'ye "
+"gidin."
+
+#: user/templates/account/email/email_confirmation_message.html:20
+#: user/templates/account/email/password_reset_key_message.html:26
+#, python-format
+msgid "Thank you from %(site_name)s!"
+msgstr "%(site_name)s'den teşekkür ederiz!"
+
+#: user/templates/account/email/password_reset_key_message.html:11
+msgid ""
+"You are receiving this e-mail because you or someone else has requested a "
+"password for your user account."
+msgstr ""
+"Bu e-postayı siz veya bir başkası kullanıcı hesabınız için şifre talebinde "
+"bulunduğunuz için alıyorsunuz."
+
+#: user/templates/account/email/password_reset_key_message.html:14
+msgid ""
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+"Parola sıfırlama isteğinde bulunmadıysanız, güvenle göz ardı edilebilir. "
+"Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın."
+
+#: user/templates/account/email/password_reset_key_message.html:21
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "Unuttuysanız kullanıcı adınız %(username)s."
+
+#: user/views.py:624
+msgid "Code is invalid"
+msgstr "Kod geçersiz"
+
+#: usermedia/views.py:37
+msgid "Filetype not supported"
+msgstr "Dosya türü desteklenmiyor"
+
+#: usermedia/views.py:44
+msgid "Image too large"
+msgstr "Resim çok büyük"
+
+#: usermedia/views.py:71
+msgid "No file uploaded"
+msgstr "Hiçbir dosya yüklenmedi"

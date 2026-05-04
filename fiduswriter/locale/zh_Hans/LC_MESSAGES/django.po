@@ -1,0 +1,668 @@
+# Chinese (Simplified) translation for Fidus Writer
+# Johannes Wilm <johannes@fiduswriter.org>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Fidus Writer backend\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"PO-Revision-Date: 2025-05-03 10:00+0800\n"
+"Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
+"Language-Team: <johannes@fiduswriter.org>\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Manual\n"
+
+#: base/settings.py:273
+msgid "Arabic"
+msgstr "阿拉伯"
+
+#: base/settings.py:274
+msgid "Bulgarian"
+msgstr "保加利亚语"
+
+#: base/settings.py:275
+msgid "Czech"
+msgstr "捷克语"
+
+#: base/settings.py:276
+#| msgid "Spanish"
+msgid "Danish"
+msgstr "丹麦语"
+
+#: base/settings.py:277
+msgid "German"
+msgstr "德语"
+
+#: base/settings.py:278
+msgid "English"
+msgstr "英语"
+
+#: base/settings.py:279
+msgid "Spanish"
+msgstr "西班牙语"
+
+#: base/settings.py:280
+msgid "French"
+msgstr "法语"
+
+#: base/settings.py:281
+msgid "Italian"
+msgstr "意大利语"
+
+#: base/settings.py:282
+msgid "Japanese"
+msgstr "日本人"
+
+#: base/settings.py:283
+msgid "Korean"
+msgstr "韩国人"
+
+#: base/settings.py:284
+msgid "Norwegian Bokmål"
+msgstr "挪威博克马尔语"
+
+#: base/settings.py:285
+msgid "Dutch"
+msgstr "荷兰语"
+
+#: base/settings.py:286
+#| msgid "English"
+msgid "Polish"
+msgstr "抛光"
+
+#: base/settings.py:287
+msgid "Portuguese (Brazil)"
+msgstr "葡萄牙语（巴西）"
+
+#: base/settings.py:288
+#| msgid "Portuguese (Brazil)"
+msgid "Portuguese (Portugal)"
+msgstr "葡萄牙语（葡萄牙）"
+
+#: base/settings.py:289
+msgid "Russian"
+msgstr "俄语"
+
+#: base/settings.py:290
+msgid "Swedish"
+msgstr "瑞典"
+
+#: base/settings.py:291
+msgid "Turkish"
+msgstr "土耳其"
+
+#: base/settings.py:292
+msgid "Chinese (Simplified)"
+msgstr "中文（简体）"
+
+#: base/settings.py:409
+msgid "Fidus Writer Admin"
+msgstr "Fidus Writer 管理"
+
+#: base/settings.py:410
+msgid "Fidus Writer Administration Site"
+msgstr "Fidus Writer 管理站点"
+
+#: base/settings.py:411
+msgid "Welcome to the Fidus Writer Administration Site"
+msgstr "欢迎访问 Fidus Writer 管理站点"
+
+#: base/templates/500.html:5 base/templates/500.html:8
+msgid "Error 500"
+msgstr "错误 500"
+
+#: base/templates/500.html:9
+msgid ""
+"We are sorry, but a server error occured. Our team will be looking into the "
+"issue shortly."
+msgstr "抱歉，服务器发生错误。我们的团队将很快调查此问题。"
+
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/overview.html:14
+msgid "Admin Console"
+msgstr "管理控制台"
+
+#: base/templates/admin/console.html:18
+msgid "Current number of users:"
+msgstr "当前用户数量："
+
+#: base/templates/admin/console.html:21
+msgid "Current number of user sessions:"
+msgstr "当前用户会话数量："
+
+#: base/templates/admin/console.html:23
+msgid "Send a system message to all connected users:"
+msgstr "向所有连接的用户发送系统消息："
+
+#: base/templates/admin/console.html:27
+msgid "Message"
+msgstr "消息"
+
+#: base/templates/admin/console.html:29
+msgid ""
+"This system will go offline for scheduled maintenance in 30 minutes. All "
+"your work will be saved automatically and we will be back shortly."
+msgstr "系统将在 30 分钟后离线进行计划维护。您的所有工作将自动保存，我们很快会回来。"
+
+#: base/templates/admin/console.html:36
+msgid "Send to connected users"
+msgstr "发送给已连接的用户"
+
+#: base/templates/admin/overview.html:10
+msgid "Extras"
+msgstr "附加功能"
+
+#: base/templates/admin/overview.html:17
+#: document/templates/admin/document/maintenance.html:17
+msgid "Document Maintenance"
+msgstr "文件维护"
+
+#: base/templates/api_404.html:5 base/templates/api_404.html:8
+msgid "Error 404"
+msgstr "错误404"
+
+#: base/templates/api_404.html:9
+msgid "We are sorry, but this page was not found."
+msgstr "很抱歉，找不到该页面。"
+
+#: base/templates/app.html:9
+msgid "The all in one solution for collaborative academic writing."
+msgstr "协作学术写作的多合一解决方案。"
+
+#: base/templates/app.html:46
+msgid "JavaScript disabled"
+msgstr "JavaScript 已禁用"
+
+#: base/templates/app.html:47
+msgid "Fidus Writer requires you to enable JavaScript."
+msgstr "Fidus Writer 要求您启用 JavaScript。"
+
+#: browser_check/templates/browser_check/browser_not_supported.html:4
+#: browser_check/templates/browser_check/browser_not_supported.html:27
+msgid "Browser not supported"
+msgstr "浏览器不支持"
+
+#: browser_check/templates/browser_check/browser_not_supported.html:28
+msgid ""
+"\n"
+"                Your browser is not supported by Fidus Writer.\n"
+"                Please update! We recommend using a current\n"
+"                version of Chrome/Chromium or Firefox on a\n"
+"                desktop computer.\n"
+"            "
+msgstr ""
+"\n"
+"Fidus Writer 不支持您的浏览器。\n"
+"                请更新！我们建议使用电流\n"
+"                Chrome/Chromium 或 Firefox 版本\n"
+"                台式电脑。"
+
+#: document/admin.py:59
+msgid "Duplicate selected document templates"
+msgstr "复制选定的文档模板"
+
+#: document/emails.py:18 document/emails.py:236 document/views.py:887
+msgid "Untitled"
+msgstr "无题"
+
+#: document/emails.py:21
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"Open the document: %(link)s"
+msgstr ""
+"嘿 %(collaborator_name)s，\n"
+"%(owner)s 已将您对文档“%(document_title)s”的访问权限更改为 %(rights)s。 \n"
+"打开文档：%(link)s"
+
+#: document/emails.py:32
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
+" %(rights)s on the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>嘿，%(collaborator_name)s，<br>%(owner)s 已将您对文档“%(document_title)s”的访问权限更改为 "
+"%(rights)s。</p>"
+
+#: document/emails.py:43
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"Open document: %(link)s"
+msgstr ""
+"嘿 %(collaborator_name)s，\n"
+"%(owner)s 已与您共享文档“%(document_title)s”并授予您 %(rights)s 访问权限。 \n"
+"打开文档：%(link)s"
+
+#: document/emails.py:55
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document "
+"'%(document_title)s' with you and given you %(rights)s access rights.</p>"
+msgstr ""
+"<p>嘿 %(collaborator_name)s，<br>%(owner)s 已与您共享文档“%(document_title)s”并授予您 "
+"%(rights)s 访问权限。</p>"
+
+#: document/emails.py:89
+msgid "shared"
+msgstr "共享"
+
+#: document/emails.py:91 document/emails.py:207 document/emails.py:286
+msgid "Document"
+msgstr "文档"
+
+#: document/emails.py:93 document/emails.py:209
+msgid "Author"
+msgstr "作者"
+
+#: document/emails.py:95
+msgid "Access Rights"
+msgstr "访问权"
+
+#: document/emails.py:98 document/emails.py:214
+msgid "Access the document"
+msgstr "访问文档"
+
+#: document/emails.py:101
+#, python-format
+msgid "Document shared: %(document_title)s"
+msgstr "共享文档：%(document_title)s"
+
+#: document/emails.py:123
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"嘿 %(collaborator_name)s，\n"
+"%(commentator)s 在文档“%(document)s”的评论中提到了您：\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"转到此处的文档：%(link)s"
+
+#: document/emails.py:136
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
+" in the document '%(document_title)s'."
+msgstr ""
+"嘿 %(collaborator_name)s，<br>%(commentator)s 在文档“%(document_title)s”的评论中提到了您。"
+
+#: document/emails.py:143
+#, python-format
+msgid "Comment on : %(document_title)s"
+msgstr "评论：%(document_title)s"
+
+#: document/emails.py:148
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Go to the document here: %(link)s"
+msgstr ""
+"嘿 %(collaborator_name)s，\n"
+"%(commentator)s 已将文档“%(document)s”中的评论分配给您：\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"转到此处的文档：%(link)s"
+
+#: document/emails.py:159
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
+"in the document '%(document_title)s'."
+msgstr ""
+"嘿 %(collaborator_name)s，<br>%(commentator)s "
+"已将文档“%(document_title)s”中的评论分配给您。"
+
+#: document/emails.py:166
+#, python-format
+msgid "Comment assignment on : %(document_title)s"
+msgstr "对 %(document_title)s 的评论分配"
+
+#: document/emails.py:171
+#, python-format
+msgid ""
+"<p>Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a "
+"comment in the document '%(document)s':</p>%(comment_html)s<p>Go to the "
+"document <a href=\"%(link)s\">here</a>.</p>"
+msgstr ""
+"<p>嘿，%(collaborator_name)s，<br>%(commentator)s "
+"已将文档“%(document)s”中的评论分配给您：</p>%(comment_html)s<p>转到<a "
+"href=\"%(link)s\">此处</a>的文档。</p>"
+
+#: document/emails.py:211
+msgid "Comment"
+msgstr "评论"
+
+#: document/emails.py:239
+#, python-format
+msgid ""
+"Hey %(owner_name)s,\n"
+"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"Open the document to grant access: %(link)s"
+msgstr ""
+"嘿 %(owner_name)s，\n"
+"%(requester_name)s 已请求 %(rights)s 访问文档“%(document_title)s”。 \n"
+"打开文档以授予访问权限：%(link)s"
+
+#: document/emails.py:251
+#, python-format
+msgid ""
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
+" to the document '%(document_title)s'.</p>"
+msgstr ""
+"<p>嘿 %(owner_name)s，<br>%(requester_name)s 已请求 %(rights)s "
+"访问文档“%(document_title)s”。</p>"
+
+#: document/emails.py:284
+msgid "access request"
+msgstr "访问请求"
+
+#: document/emails.py:288
+msgid "Requested by"
+msgstr "请求者"
+
+#: document/emails.py:290
+msgid "Requested rights"
+msgstr "请求的权利"
+
+#: document/emails.py:293
+msgid "Grant access"
+msgstr "授予访问权限"
+
+#: document/emails.py:297
+#, python-format
+msgid "Access request: %(document_title)s"
+msgstr "访问请求：%(document_title)s"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr "添加 %(name)s"
+
+#: document/templates/admin/document/document/change_list_object_tools.html:13
+#: document/templates/admin/document/maintenance.html:4
+msgid "Maintenance"
+msgstr "维护"
+
+#: document/templates/admin/document/maintenance.html:19
+msgid ""
+"\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
+"            no user is currently editing any document!\n"
+"            "
+msgstr ""
+"\n"
+"升级 Fidus Writer 前后，应更新所有文档\n"
+"            所有用户更新到最新的文档版本。仅当您知道这一点时才执行此操作\n"
+"            当前没有用户正在编辑任何文档！"
+
+#: document/templates/admin/document/maintenance.html:27
+msgid "Update all documents (DANGER!)"
+msgstr "更新所有文档（危险！）"
+
+#: style/models.py:74
+msgid "Default"
+msgstr "默认"
+
+#: style/views.py:27
+msgid "The template needs at least 1 document style"
+msgstr "模板至少需要 1 种文档样式"
+
+#: user/admin.py:11
+msgid "Connections"
+msgstr "连接"
+
+#: user/emails.py:10
+#, python-format
+msgid ""
+"Hey %(email)s,%(sender)s has invited you to connect on Fidus Writer. \n"
+"Accept or reject the invite through this link: %(link)s"
+msgstr ""
+"嘿，%(email)s，%(sender)s 已邀请您在 Fidus Writer 上进行连接。 \n"
+"通过此链接接受或拒绝邀请：%(link)s"
+
+#: user/emails.py:19
+#, python-format
+msgid ""
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
+"Writer.</p>"
+msgstr "<p>嘿 %(email)s，<br> %(sender)s 邀请您在 Fidus Writer 上进行连接。</p>"
+
+#: user/emails.py:34
+msgid "Invite for Fidus Writer"
+msgstr "Fidus 作家邀请"
+
+#: user/emails.py:37
+msgid "Sign up/log in and accept/reject the invite"
+msgstr "注册/登录并接受/拒绝邀请"
+
+#: user/emails.py:40
+msgid "Fidus Writer contact invite"
+msgstr "Fidus Writer 联系邀请"
+
+#: user/emails.py:53
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"嘿，%(recipient_name)s，%(sender_name)s 拒绝了您在 Fidus Writer 上进行连接的邀请。 \n"
+"请在此处查看您的联系人列表：%(link)s"
+
+#: user/emails.py:62
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>嘿，%(recipient_name)s，<br>%(sender_name)s 拒绝了您在 Fidus Writer 上进行连接的邀请。</p>"
+
+#: user/emails.py:76
+msgid "Invite for Fidus Writer declined"
+msgstr "Fidus 作家的邀请被拒绝"
+
+#: user/emails.py:79 user/emails.py:121
+msgid "See your list of contacts"
+msgstr "查看您的联系人列表"
+
+#: user/emails.py:82
+msgid "Fidus Writer invite declined"
+msgstr "Fidus 作家邀请被拒绝"
+
+#: user/emails.py:95
+#, python-format
+msgid ""
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"See your list of contacts here: %(link)s"
+msgstr ""
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"请在此处查看您的联系人列表：%(link)s"
+
+#: user/emails.py:104
+#, python-format
+msgid ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s has accepted your invite to "
+"connect on Fidus Writer.</p>"
+msgstr ""
+"<p>嘿 %(recipient_name)s，<br> %(sender_name)s 已接受您在 Fidus Writer "
+"上进行连接的邀请。</p>"
+
+#: user/emails.py:118
+msgid "Invite for Fidus Writer accepted"
+msgstr "Fidus 作家的邀请已接受"
+
+#: user/emails.py:124
+msgid "Fidus Writer invite accepted"
+msgstr "Fidus 作家邀请已接受"
+
+#: user/forms.py:20
+msgid "Code must be exactly 6 digits (0-9)."
+msgstr "代码必须正好是 6 位数字 (0-9)。"
+
+#: user/models.py:55
+msgid "Interface language preference"
+msgstr "界面语言偏好"
+
+#: user/models.py:62
+msgid "User preferences (e.g., encryption dialog dismissal)"
+msgstr "用户首选项（例如，加密对话框关闭）"
+
+#: user/models.py:73
+msgid "Can login as another user"
+msgstr "可以以其他用户身份登录"
+
+#: user/models.py:102
+msgid "email address"
+msgstr "电子邮件"
+
+#: user/templates/account/email/email_confirmation_message.html:7
+#: user/templates/account/email/password_reset_key_message.html:7
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr "%(site_name)s 向您问好！"
+
+#: user/templates/account/email/email_confirmation_message.html:12
+#, python-format
+msgid ""
+"You are receiving this e-mail because user %(user_display)s has given yours "
+"as an e-mail address to connect their account."
+msgstr "您收到这封电子邮件是因为用户 %(user_display)s 已将您的电子邮件地址作为连接其帐户的电子邮件地址。"
+
+#: user/templates/account/email/email_confirmation_message.html:16
+#, python-format
+msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
+msgstr "要确认此信息是否正确，请转至 <a href=\"%(url)s\">%(url)s</a>。"
+
+#: user/templates/account/email/email_confirmation_message.html:20
+#: user/templates/account/email/password_reset_key_message.html:26
+#, python-format
+msgid "Thank you from %(site_name)s!"
+msgstr "感谢 %(site_name)s 的支持！"
+
+#: user/templates/account/email/password_reset_key_message.html:11
+msgid ""
+"You are receiving this e-mail because you or someone else has requested a "
+"password for your user account."
+msgstr "您收到此电子邮件是因为您或其他人要求您提供用户帐户的密码。"
+
+#: user/templates/account/email/password_reset_key_message.html:14
+msgid ""
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr "如果您没有请求重置密码，则可以安全地忽略它。单击下面的链接重置您的密码。"
+
+#: user/templates/account/email/password_reset_key_message.html:21
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "如果您忘记了，您的用户名是 %(username)s。"
+
+#: user/views.py:624
+msgid "Code is invalid"
+msgstr "代码无效"
+
+#: usermedia/views.py:37
+msgid "Filetype not supported"
+msgstr "不支持的文件类型"
+
+#: usermedia/views.py:44
+msgid "Image too large"
+msgstr "图片太大"
+
+#: usermedia/views.py:71
+msgid "No file uploaded"
+msgstr "没有上传文件"
+
+#~ msgid "System Overview"
+#~ msgstr "系统概览"
+
+#~ msgid "Number of users:"
+#~ msgstr "用户数量："
+
+#~ msgid "Number of documents:"
+#~ msgstr "文档数量："
+
+#~ msgid "Number of active sessions:"
+#~ msgstr "活跃会话数量："
+
+#~ msgid "Log in"
+#~ msgstr "登录"
+
+#~ msgid "Username:"
+#~ msgstr "用户名："
+
+#~ msgid "Password:"
+#~ msgstr "密码："
+
+#~ msgid "Forgot password?"
+#~ msgstr "忘记密码？"
+
+#~ msgid "Don't have an account? Register here."
+#~ msgstr "没有账户？在此注册。"
+
+#~ msgid "Reset password"
+#~ msgstr "重置密码"
+
+#~ msgid ""
+#~ "Forgotten your password? Enter your email address below, and we'll email "
+#~ "instructions for setting a new one."
+#~ msgstr "忘记密码？在下方输入您的电子邮件地址，我们将通过电子邮件发送设置新密码的说明。"
+
+#~ msgid "Reset my password"
+#~ msgstr "重置我的密码"
+
+#~ msgid "Password reset sent"
+#~ msgstr "密码重置邮件已发送"
+
+#~ msgid ""
+#~ "We've emailed you instructions for setting your password, if an account "
+#~ "exists with the email you entered. You should receive them shortly."
+#~ msgstr "如果输入的电子邮件地址存在账户，我们已向您发送了设置密码的说明。您应该很快会收到。"
+
+#~ msgid "Enter new password"
+#~ msgstr "输入新密码"
+
+#~ msgid ""
+#~ "Please enter your new password twice so we can verify you typed it in "
+#~ "correctly."
+#~ msgstr "请两次输入新密码，以便我们验证您输入正确。"
+
+#~ msgid "New password:"
+#~ msgstr "新密码："
+
+#~ msgid "Confirm password:"
+#~ msgstr "确认密码："
+
+#~ msgid "Change my password"
+#~ msgstr "更改我的密码"
+
+#~ msgid "Password reset complete"
+#~ msgstr "密码重置完成"
+
+#~ msgid "Your password has been set. You may go ahead and log in now."
+#~ msgstr "您的密码已设置。您现在可以登录了。"
+
+#~ msgid "Logged out"
+#~ msgstr "已登出"
+
+#~ msgid "Thanks for spending some quality time with Fidus Writer today."
+#~ msgstr "感谢您今天使用 Fidus Writer。"
+
+#~ msgid "Log in again"
+#~ msgstr "再次登录"

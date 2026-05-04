@@ -1,11 +1,10 @@
-#
 # Johannes Wilm <johannes@fiduswriter.org>, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 09:06+0000\n"
+"POT-Creation-Date: 2026-05-04 06:33+0000\n"
 "PO-Revision-Date: 2025-04-17 18:50+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: German <johannes@fiduswriter.org>\n"
@@ -226,7 +225,8 @@ msgstr "Urheber"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder is."
+"If the work is not in the public domain, specify who the copyright holder "
+"is."
 msgstr ""
 "Wenn das Werk nicht gemeinfrei ist, geben Sie an, wer der Inhaber des "
 "Urheberrechts ist."
@@ -248,8 +248,8 @@ msgstr "Kostenlos zum Lesen verfügbar?"
 #: base/static/js/modules/copyright_dialog/templates.js:74
 msgid "Specify whether the work can be accessed without paying a fee."
 msgstr ""
-"Geben Sie an, ob auf die Arbeit zugegriffen werden kann, ohne eine Gebühr zu "
-"zahlen."
+"Geben Sie an, ob auf die Arbeit zugegriffen werden kann, ohne eine Gebühr zu"
+" zahlen."
 
 #: base/static/js/modules/copyright_dialog/templates.js:80
 msgid "License(s)"
@@ -261,9 +261,9 @@ msgid ""
 "from a given date, please specify the date in the ISO8601 format (such as "
 "\"2012-10-15\")."
 msgstr ""
-"Listen Sie alle Lizenzen auf, unter denen die Arbeit verfügbar ist. Wenn die "
-"Lizenz nur ab einem bestimmten Datum gilt, geben Sie das Datum im ISO8601-"
-"Format an (z. B. \"2012-10-15\")."
+"Listen Sie alle Lizenzen auf, unter denen die Arbeit verfügbar ist. Wenn die"
+" Lizenz nur ab einem bestimmten Datum gilt, geben Sie das Datum im "
+"ISO8601-Format an (z. B. \"2012-10-15\")."
 
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
@@ -496,10 +496,8 @@ msgid "No bibliography entries could be found in import file."
 msgstr "In der Importdatei wurden keine Bibliographieeinträge gefunden."
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:8
-#, fuzzy
-#| msgid "An error occured while reading a bibtex entry"
 msgid "An error occured while reading a bibliography entry"
-msgstr "Beim Lesen eines Bibtex-Eintrags ist ein Fehler aufgetreten"
+msgstr "Beim Lesen eines Bibliographieeintrags ist ein Fehler aufgetreten"
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:10
 msgid "Field cannot not be saved. Fidus Writer does not support the field."
@@ -519,16 +517,12 @@ msgid "Field does not contain a valid EDTF string."
 msgstr "Das Feld enthält keine gültige EDTF-Zeichenfolge."
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:17
-#, fuzzy
-#| msgid "The document template could not be copied"
 msgid "The file format could not be recognized."
-msgstr "Die Dokumentvorlage konnte nicht kopiert werden"
+msgstr "Das Dateiformat konnte nicht erkannt werden."
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:68
-#, fuzzy
-#| msgid "There was an issue with the bibtex import"
 msgid "There was an issue with the bibliography import"
-msgstr "Es gab ein Problem mit dem Bibtex-Import"
+msgstr "Beim Import der Bibliografie ist ein Problem aufgetreten"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
 #: document/static/js/modules/documents/overview/actions.js:113
@@ -538,10 +532,8 @@ msgid "Import"
 msgstr "Importieren"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:73
-#, fuzzy
-#| msgid "Import a BibTex library"
 msgid "Import a bibliography"
-msgstr "Importieren Sie eine BibTex-Bibliothek"
+msgstr "Importieren Sie eine Bibliographie"
 
 #: bibliography/static/js/modules/bibliography/import/templates.js:6
 #: document/static/js/modules/documents/overview/actions.js:353
@@ -557,6 +549,8 @@ msgid ""
 "Supported formats: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote "
 "Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT citations, DOCX citations"
 msgstr ""
+"Unterstützte Formate: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote "
+"Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT-Zitate, DOCX-Zitate"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:68
 msgid "Bibliography Manager"
@@ -694,10 +688,8 @@ msgid "Register new source"
 msgstr "Neue Quelle registrieren"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:85
-#, fuzzy
-#| msgid "Search bibliography"
 msgid "Import bibliography"
-msgstr "Bibliographie durchsuchen"
+msgstr "Bibliographie importieren"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:100
 msgid "Search bibliography"
@@ -1070,17 +1062,13 @@ msgstr "Verknüpfung"
 
 #: document/static/js/modules/document_template/templates.js:118
 #: document/static/js/modules/editor/menus/toolbar/model.js:477
-#, fuzzy
-#| msgid "Supscript²"
 msgid "Superscript"
-msgstr "Hochgestellt²"
+msgstr "Hochgestellt"
 
 #: document/static/js/modules/document_template/templates.js:122
 #: document/static/js/modules/editor/menus/toolbar/model.js:514
-#, fuzzy
-#| msgid "Subscript₊"
 msgid "Subscript"
-msgstr "Tiefgestellt₊"
+msgstr "Index"
 
 #: document/static/js/modules/document_template/templates.js:126
 #: document/static/js/modules/editor/menus/toolbar/model.js:24
@@ -1327,7 +1315,7 @@ msgstr "Inhaltsverzeichnis"
 
 #: document/static/js/modules/document_template/templates.js:732
 msgid "Select which code block categories are available:"
-msgstr ""
+msgstr "Wählen Sie aus, welche Codeblockkategorien verfügbar sind:"
 
 #: document/static/js/modules/document_template/templates.js:789
 msgid "Add new document style"
@@ -1371,16 +1359,12 @@ msgid "Permitted paper sizes"
 msgstr "Zulässige Papierformate"
 
 #: document/static/js/modules/document_template/templates.js:886
-#, fuzzy
-#| msgid "Select language"
 msgid "Code block languages"
-msgstr "Sprache auswählen"
+msgstr "Codeblocksprachen"
 
 #: document/static/js/modules/document_template/templates.js:894
-#, fuzzy
-#| msgid "Select categories"
 msgid "Code block categories"
-msgstr "Kategorie auswählen"
+msgstr "Codeblockkategorien"
 
 #: document/static/js/modules/document_template/templates.js:902
 msgid "Custom bibliography header"
@@ -1479,18 +1463,20 @@ msgstr ""
 
 #: document/static/js/modules/documents/access_rights/index.js:231
 #: document/static/js/modules/documents/overview/index.js:763
-#, fuzzy
-#| msgid "Could not create document"
 msgid "End-to-end encrypted document"
-msgstr "Dokument konnte nicht erstellt werden"
+msgstr "End-to-End-verschlüsseltes Dokument"
 
 #: document/static/js/modules/documents/access_rights/index.js:232
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure "
-"channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure"
+" channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
+"Dieses Dokument ist Ende-zu-Ende-verschlüsselt. Mitarbeiter ohne persönliche"
+" Passphrase benötigen das Dokumentpasswort, das ihnen über einen sicheren "
+"Kanal außerhalb von Fidus Writer mitgeteilt wird. Senden Sie das Passwort "
+"nicht über den Dokumenten-Chat."
 
 #: document/static/js/modules/documents/access_rights/index.js:240
 #: user/static/js/modules/contacts/add_dialog.js:51
@@ -1509,63 +1495,45 @@ msgstr "Teile dein Dokument mit anderen"
 #: document/static/js/modules/documents/access_rights/index.js:344
 #: document/static/js/modules/documents/access_rights/templates.js:38
 msgid "Loading…"
-msgstr ""
+msgstr "Laden…"
 
 #: document/static/js/modules/documents/access_rights/index.js:352
-#, fuzzy
-#| msgid "Could not save "
 msgid "Could not load share links."
-msgstr "Konnte nicht speichern "
+msgstr "Die Freigabelinks konnten nicht geladen werden."
 
 #: document/static/js/modules/documents/access_rights/index.js:358
-#, fuzzy
-#| msgid "Create new folder"
 msgid "Create share link"
-msgstr "Neuen Ordner erstellen"
+msgstr "Teilen-Link erstellen"
 
 #: document/static/js/modules/documents/access_rights/index.js:367
 #: document/static/js/modules/documents/overview/index.js:919
-#, fuzzy
-#| msgid "Created"
 msgid "Create"
-msgstr "Erstellt"
+msgstr "Erstellen"
 
 #: document/static/js/modules/documents/access_rights/index.js:417
-#, fuzzy
-#| msgid "Share selected"
 msgid "Share link created."
-msgstr "Auswahl teilen"
+msgstr "Teilen-Link erstellt."
 
 #: document/static/js/modules/documents/access_rights/index.js:423
-#, fuzzy
-#| msgid "Could not create document"
 msgid "Could not create share link."
-msgstr "Dokument konnte nicht erstellt werden"
+msgstr "Der Freigabelink konnte nicht erstellt werden."
 
 #: document/static/js/modules/documents/access_rights/index.js:449
-#, fuzzy
-#| msgid "Share selected"
 msgid "Share link revoked."
-msgstr "Auswahl teilen"
+msgstr "Link zum Teilen widerrufen."
 
 #: document/static/js/modules/documents/access_rights/index.js:451
 #: document/static/js/modules/documents/access_rights/index.js:455
-#, fuzzy
-#| msgid "Could not delete revision."
 msgid "Could not revoke share link."
-msgstr "Revision konnte nicht gelöscht werden."
+msgstr "Der Freigabelink konnte nicht widerrufen werden."
 
 #: document/static/js/modules/documents/access_rights/index.js:571
-#, fuzzy
-#| msgid "Link copied to clipboard"
 msgid "Link copied to clipboard."
-msgstr "Link in die Zwischenablage kopiert"
+msgstr "Link in die Zwischenablage kopiert."
 
 #: document/static/js/modules/documents/access_rights/index.js:573
-#, fuzzy
-#| msgid "Could not save "
 msgid "Could not copy link."
-msgstr "Konnte nicht speichern "
+msgstr "Link konnte nicht kopiert werden."
 
 #: document/static/js/modules/documents/access_rights/index.js:638
 msgid "Access rights have been saved"
@@ -1577,13 +1545,11 @@ msgstr "Zugriffsrechte konnten nicht gespeichert werden"
 
 #: document/static/js/modules/documents/access_rights/templates.js:6
 msgid "People"
-msgstr ""
+msgstr "Menschen"
 
 #: document/static/js/modules/documents/access_rights/templates.js:7
-#, fuzzy
-#| msgid "Share"
 msgid "Share link"
-msgstr "Teilen"
+msgstr "Link teilen"
 
 #: document/static/js/modules/documents/access_rights/templates.js:11
 msgid "My contacts"
@@ -1604,22 +1570,20 @@ msgid "Rights"
 msgstr "Rechte"
 
 #: document/static/js/modules/documents/access_rights/templates.js:41
-#, fuzzy
-#| msgid "Create new folder"
 msgid "Create new share link"
-msgstr "Neuen Ordner erstellen"
+msgstr "Erstellen Sie einen neuen Freigabelink"
 
 #: document/static/js/modules/documents/access_rights/templates.js:48
 msgid "No active share links yet."
-msgstr ""
+msgstr "Noch keine aktiven Freigabelinks."
 
 #: document/static/js/modules/documents/access_rights/templates.js:57
 msgid "never"
-msgstr ""
+msgstr "niemals"
 
 #: document/static/js/modules/documents/access_rights/templates.js:62
 msgid "expires"
-msgstr ""
+msgstr "läuft ab"
 
 #: document/static/js/modules/documents/access_rights/templates.js:67
 #: document/static/js/modules/editor/state_plugins/links.js:264
@@ -1629,22 +1593,20 @@ msgstr "Link kopieren"
 
 #: document/static/js/modules/documents/access_rights/templates.js:70
 msgid "Revoke"
-msgstr ""
+msgstr "Widerrufen"
 
 #: document/static/js/modules/documents/access_rights/templates.js:91
 #: document/static/js/modules/documents/access_rights/templates.js:94
-#, fuzzy
-#| msgid "Recreate comment"
 msgid "Read without comments"
-msgstr "Kommentar neu erstellen"
+msgstr "Ohne Kommentare lesen"
 
 #: document/static/js/modules/documents/access_rights/templates.js:106
 msgid "Expires"
-msgstr ""
+msgstr "Läuft ab"
 
 #: document/static/js/modules/documents/access_rights/templates.js:108
 msgid "YYYY-MM-DD or empty"
-msgstr ""
+msgstr "JJJJ-MM-TT oder leer"
 
 #: document/static/js/modules/documents/access_rights/templates.js:112
 msgid "Note"
@@ -1652,17 +1614,15 @@ msgstr "Notiz"
 
 #: document/static/js/modules/documents/access_rights/templates.js:114
 msgid "optional label, e.g. \"for reviewers\""
-msgstr ""
+msgstr "optionale Beschriftung, z.B. „für Rezensenten“"
 
 #: document/static/js/modules/documents/access_rights/templates.js:120
-#, fuzzy
-#| msgid "Documents"
 msgid "Document password"
-msgstr "Dokumente"
+msgstr "Dokumentpasswort"
 
 #: document/static/js/modules/documents/access_rights/templates.js:122
 msgid "Enter the document password to include it in the link"
-msgstr ""
+msgstr "Geben Sie das Dokumentkennwort ein, um es in den Link aufzunehmen"
 
 #: document/static/js/modules/documents/access_rights/templates.js:125
 msgid ""
@@ -1670,6 +1630,9 @@ msgid ""
 "Anyone with the link can open the document. Only share such links through "
 "secure channels."
 msgstr ""
+"Wenn Sie oben das Passwort eingeben, wird es in den Link eingebettet (nach "
+"#). Jeder, der über den Link verfügt, kann das Dokument öffnen. Teilen Sie "
+"solche Links nur über sichere Kanäle."
 
 #: document/static/js/modules/documents/access_rights/templates.js:145
 #: document/static/js/modules/documents/access_rights/templates.js:168
@@ -1735,7 +1698,7 @@ msgstr ""
 #: document/static/js/modules/documents/overview/actions.js:443
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
-msgstr ""
+msgstr "Verschlüsseln Sie die Kopie"
 
 #: document/static/js/modules/documents/overview/actions.js:450
 #: document/static/js/modules/editor/document_template/index.js:136
@@ -1760,19 +1723,15 @@ msgid "Copy"
 msgstr "Kopieren"
 
 #: document/static/js/modules/documents/overview/actions.js:514
-#, fuzzy
-#| msgid "Could not move document"
 msgid "Could not copy document."
-msgstr "Dokument konnte nicht verschoben werden"
+msgstr "Dokument konnte nicht kopiert werden."
 
 #: document/static/js/modules/documents/overview/actions.js:544
 #: document/static/js/modules/documents/overview/actions.js:576
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
-#, fuzzy
-#| msgid "Create a password"
 msgid "Incorrect password."
-msgstr "Passwort erstellen"
+msgstr "Falsches Passwort."
 
 #: document/static/js/modules/documents/overview/actions.js:798
 msgid ""
@@ -1796,8 +1755,8 @@ msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
 msgstr ""
-"Wenn Sie einen leeren Ordner verlassen, wird er gelöscht. Möchten Sie diesen "
-"Ordner wirklich löschen?"
+"Wenn Sie einen leeren Ordner verlassen, wird er gelöscht. Möchten Sie diesen"
+" Ordner wirklich löschen?"
 
 #: document/static/js/modules/documents/overview/index.js:189
 msgid "You cannot open a document while you are offline."
@@ -1835,10 +1794,8 @@ msgstr "Besitzer"
 
 #: document/static/js/modules/documents/overview/index.js:753
 #: document/static/js/modules/editor/e2ee/password-dialog.js:196
-#, fuzzy
-#| msgid "Untitled Document"
 msgid "Encrypted Document"
-msgstr "Unbenanntes Dokument"
+msgstr "Verschlüsseltes Dokument"
 
 #: document/static/js/modules/documents/overview/index.js:800
 msgid "Undefined"
@@ -1858,115 +1815,127 @@ msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
 msgstr ""
+"Verschlüsselte Dokumente schützen Ihre Inhalte, sodass nur Personen mit dem "
+"Passwort sie lesen können."
 
 #: document/static/js/modules/documents/overview/index.js:867
 #: document/static/js/modules/documents/overview/index.js:881
 msgid "Advantages"
-msgstr ""
+msgstr "Vorteile"
 
 #: document/static/js/modules/documents/overview/index.js:869
 msgid "Only people with the password can read the document."
-msgstr ""
+msgstr "Nur Personen mit dem Passwort können das Dokument lesen."
 
 #: document/static/js/modules/documents/overview/index.js:870
-#, fuzzy
-#| msgid "Export of the document contents"
 msgid "The server cannot access the document contents."
-msgstr "Export des Inhaltes des Dokumentes"
+msgstr "Der Server kann nicht auf den Dokumentinhalt zugreifen."
 
 #: document/static/js/modules/documents/overview/index.js:872
 #: document/static/js/modules/documents/overview/index.js:887
 msgid "Disadvantages"
-msgstr ""
+msgstr "Nachteile"
 
 #: document/static/js/modules/documents/overview/index.js:874
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr ""
+"Eingeschränkte Zugriffsrechte (keine nachverfolgten Änderungen oder "
+"Überprüfungsmodi)."
 
 #: document/static/js/modules/documents/overview/index.js:875
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
 msgstr ""
+"Wenn Sie das Passwort oder die Passphrase verlieren, gibt es keine "
+"Möglichkeit, das Dokument wiederherzustellen."
 
 #: document/static/js/modules/documents/overview/index.js:876
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
 msgstr ""
+"Sie müssen das Passwort den Mitarbeitern manuell mitteilen (es sei denn, "
+"diese verwenden eine persönliche Passphrase)."
 
 #: document/static/js/modules/documents/overview/index.js:880
 msgid "Regular documents are the default and work well for most users."
 msgstr ""
+"Normale Dokumente sind die Standardeinstellung und funktionieren für die "
+"meisten Benutzer gut."
 
 #: document/static/js/modules/documents/overview/index.js:883
 msgid "Full access rights options including tracked changes and review modes."
 msgstr ""
+"Vollständige Zugriffsrechte, einschließlich nachverfolgter Änderungen und "
+"Überprüfungsmodi."
 
 #: document/static/js/modules/documents/overview/index.js:884
 msgid "No risk of losing access if you forget a password."
 msgstr ""
+"Kein Risiko, den Zugriff zu verlieren, wenn Sie ein Passwort vergessen."
 
 #: document/static/js/modules/documents/overview/index.js:885
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr ""
+"Einfachere Zusammenarbeit – keine Notwendigkeit, Passwörter mit Mitarbeitern"
+" zu teilen."
 
 #: document/static/js/modules/documents/overview/index.js:889
 msgid "The server can technically access the document contents."
-msgstr ""
+msgstr "Der Server kann technisch auf die Dokumentinhalte zugreifen."
 
 #: document/static/js/modules/documents/overview/index.js:890
 msgid "No additional protection beyond your account password."
-msgstr ""
+msgstr "Kein zusätzlicher Schutz über Ihr Kontopasswort hinaus."
 
 #: document/static/js/modules/documents/overview/index.js:894
-#, fuzzy
-#| msgid "Choose the language of the document."
 msgid "Choose encryption type of new document."
-msgstr "Wählen Sie die Sprache des Dokumentes."
+msgstr "Wählen Sie den Verschlüsselungstyp des neuen Dokuments."
 
 #: document/static/js/modules/documents/overview/index.js:899
 msgid "Non-encrypted"
-msgstr ""
+msgstr "Unverschlüsselt"
 
 #: document/static/js/modules/documents/overview/index.js:904
 msgid "Encrypted"
-msgstr ""
+msgstr "Verschlüsselt"
 
 #: document/static/js/modules/documents/overview/index.js:948
-#, fuzzy
-#| msgid "Description (optional)"
 msgid "Set Up Personal Encryption (Optional)"
-msgstr "Beschreibung (optional)"
+msgstr "Persönliche Verschlüsselung einrichten (optional)"
 
 #: document/static/js/modules/documents/overview/index.js:950
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
 msgstr ""
+"Möchten Sie jetzt eine persönliche Passphrase einrichten? Dadurch können Sie"
+" alle Ihre verschlüsselten Dokumente mit einer einzigen Passphrase "
+"entsperren."
 
 #: document/static/js/modules/documents/overview/index.js:951
-#, fuzzy
-#| msgid "Note"
 msgid "Note:"
-msgstr "Notiz"
+msgstr "Notiz:"
 
 #: document/static/js/modules/documents/overview/index.js:951
 msgid "This is optional. You can also use a per-document password instead."
 msgstr ""
+"Dies ist optional. Sie können stattdessen auch ein dokumentspezifisches "
+"Passwort verwenden."
 
 #: document/static/js/modules/documents/overview/index.js:955
 msgid "Skip for Now"
-msgstr ""
+msgstr "Vorerst überspringen"
 
 #: document/static/js/modules/documents/overview/index.js:966
 msgid "Set Up Passphrase"
-msgstr ""
+msgstr "Passphrase einrichten"
 
 #: document/static/js/modules/documents/overview/index.js:1001
 #: user/static/js/modules/profile/index.js:219
 msgid "Failed to set up passphrase: "
-msgstr ""
+msgstr "Passphrase konnte nicht eingerichtet werden:"
 
 #: document/static/js/modules/documents/overview/menu.js:7
 msgid "Move selected"
@@ -2162,11 +2131,11 @@ msgstr "Bibliografie"
 
 #: document/static/js/modules/editor/collab/chat.js:65
 msgid "[Encrypted message - decryption failed]"
-msgstr ""
+msgstr "[Verschlüsselte Nachricht – Entschlüsselung fehlgeschlagen]"
 
 #: document/static/js/modules/editor/collab/chat.js:70
 msgid "[Encrypted message - enter password to read]"
-msgstr ""
+msgstr "[Verschlüsselte Nachricht – zum Lesen Passwort eingeben]"
 
 #: document/static/js/modules/editor/collab/chat.js:144
 msgid "Send a message..."
@@ -2174,34 +2143,33 @@ msgstr "Eine Nachricht schicken..."
 
 #: document/static/js/modules/editor/collab/doc.js:309
 msgid "Incorrect passphrase. Please try again."
-msgstr ""
+msgstr "Falsche Passphrase. Bitte versuchen Sie es erneut."
 
 #: document/static/js/modules/editor/collab/doc.js:351
-#, fuzzy
-#| msgid "Remove image"
 msgid "Recovery Failed"
-msgstr "Entferne Bild"
+msgstr "Wiederherstellung fehlgeschlagen"
 
 #: document/static/js/modules/editor/collab/doc.js:354
 msgid ""
 "The recovery key you entered is incorrect, or the recovery process failed. "
 "Please try again."
 msgstr ""
+"Der von Ihnen eingegebene Wiederherstellungsschlüssel ist falsch oder der "
+"Wiederherstellungsvorgang ist fehlgeschlagen. Bitte versuchen Sie es erneut."
 
 #: document/static/js/modules/editor/collab/doc.js:358
 #: document/static/js/modules/editor/collab/doc.js:563
 msgid "Retry"
-msgstr ""
+msgstr "Wiederholen"
 
 #: document/static/js/modules/editor/collab/doc.js:556
-#, fuzzy
-#| msgid "Description"
 msgid "Decryption Failed"
-msgstr "Beschreibung"
+msgstr "Entschlüsselung fehlgeschlagen"
 
 #: document/static/js/modules/editor/collab/doc.js:559
 msgid "That password didn't work. Please try again."
 msgstr ""
+"Dieses Passwort hat nicht funktioniert. Bitte versuchen Sie es erneut."
 
 #: document/static/js/modules/editor/collab/doc.js:818
 msgid "Updating document. Please wait..."
@@ -2283,14 +2251,15 @@ msgid ""
 "that once you are finished with the merge, it will not lead to more "
 "conflicts."
 msgstr ""
-"Ja, Sie sind die einzige Person, die diesen Dialog sehen kann. Daher wäre es "
-"großartig, wenn Sie Ihre Mitarbeiter bitten könnten, die Bearbeitung des "
+"Ja, Sie sind die einzige Person, die diesen Dialog sehen kann. Daher wäre es"
+" großartig, wenn Sie Ihre Mitarbeiter bitten könnten, die Bearbeitung des "
 "Dokuments zu beenden, damit es nicht zu weiteren Konflikten kommt, sobald "
 "Sie mit dem Zusammenführen fertig sind."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am merging?"
+"What if my collaborators continue working on the document while I am "
+"merging?"
 msgstr ""
 "Was passiert, wenn meine Mitarbeiter während des Zusammenführens weiter an "
 "dem Dokument arbeiten?"
@@ -2309,8 +2278,8 @@ msgstr "Warum sehe ich drei Editoren?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It "
-"is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It"
+" is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
@@ -2329,10 +2298,10 @@ msgstr "Was sind die grünen und roten Highlights in den Editoren?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The "
-"text marked in green corresponds to the text that was edited (added) by you "
-"or other users. The text marked in red corresponds to text that was deleted "
-"by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The"
+" text marked in green corresponds to the text that was edited (added) by you"
+" or other users. The text marked in red corresponds to text that was deleted"
+" by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2365,9 +2334,9 @@ msgstr ""
 "Das Akzeptieren oder Ablehnen einer Änderung im Zusammenführungseditor in "
 "der Mitte oder im Offline-Editor rechts führt zu einer Änderung im "
 "Zusammenführungseditor. Sie können eine Änderung akzeptieren, indem Sie "
-"direkt auf den markierten Text klicken. Ein Dropdown-Menü wird angezeigt und "
-"Sie können die Änderung entweder akzeptieren oder ablehnen. Wenn Sie auf den "
-"markierten Text klicken, werden auch die Änderungen hervorgehoben, die "
+"direkt auf den markierten Text klicken. Ein Dropdown-Menü wird angezeigt und"
+" Sie können die Änderung entweder akzeptieren oder ablehnen. Wenn Sie auf "
+"den markierten Text klicken, werden auch die Änderungen hervorgehoben, die "
 "akzeptiert werden. %(mergeImage)s Wie im obigen Bild gezeigt, kann man auf "
 "eine hervorgehobene Änderung klicken und auf \"Änderung akzeptieren\" "
 "klicken. Wenn Sie eine Änderung akzeptieren, wird sie im "
@@ -2402,8 +2371,8 @@ msgid ""
 "You can edit the content only in the merge editor in the middle. You cannot "
 "edit content in the other two editors."
 msgstr ""
-"Sie können den Inhalt nur im Zusammenführungseditor in der Mitte bearbeiten. "
-"Sie können keine Inhalte in den beiden anderen Editoren bearbeiten."
+"Sie können den Inhalt nur im Zusammenführungseditor in der Mitte bearbeiten."
+" Sie können keine Inhalte in den beiden anderen Editoren bearbeiten."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:256
 msgid "Does the order in which I work on merging the changes matter?"
@@ -2452,10 +2421,10 @@ msgid ""
 msgstr ""
 "Sie erhalten eine Warnung, wenn Sie versuchen, eine Zusammenführung "
 "abzuschließen, ohne alle Änderungen zu akzeptieren oder abzulehnen. Sie "
-"können das Dokument weiterhin zusammenführen. Wenn Sie dies tun, werden alle "
-"Einfügungen und Löschungen im Zusammenführungseditor in der Mitte "
-"automatisch akzeptiert und alle Einfügungen und Löschungen im Offline-Editor "
-"rechts werden ignoriert."
+"können das Dokument weiterhin zusammenführen. Wenn Sie dies tun, werden alle"
+" Einfügungen und Löschungen im Zusammenführungseditor in der Mitte "
+"automatisch akzeptiert und alle Einfügungen und Löschungen im Offline-Editor"
+" rechts werden ignoriert."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:1053
 msgid ""
@@ -2492,8 +2461,8 @@ msgstr "Zusammenführen fehlgeschlagen"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please "
-"consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please"
+" consider importing it into a new document."
 msgstr ""
 "Während des Zusammenführungsvorgangs ist ein Fehler aufgetreten, sodass wir "
 "Ihre Arbeit nicht mehr auf dem Server speichern können und sie stattdessen "
@@ -2512,7 +2481,8 @@ msgstr "Änderung in Zwischenablage kopiert."
 #: document/static/js/modules/editor/collab/merge/state_plugins/action.js:32
 #: document/static/js/modules/editor/state_plugins/links.js:30
 msgid "Copy to clipboard failed. Please copy manually."
-msgstr "Kopieren in die Zwischenablage fehlgeschlagen. Bitte manuell kopieren."
+msgstr ""
+"Kopieren in die Zwischenablage fehlgeschlagen. Bitte manuell kopieren."
 
 #: document/static/js/modules/editor/collab/merge/state_plugins/action.js:76
 #: document/static/js/modules/editor/collab/merge/state_plugins/action.js:113
@@ -2587,10 +2557,8 @@ msgid "Reviewer"
 msgstr "Gutachter"
 
 #: document/static/js/modules/editor/databases/images.js:95
-#, fuzzy
-#| msgid "Could not save Image"
 msgid "Could not save encrypted image"
-msgstr "Bild konnte nicht gespeichert werden"
+msgstr "Verschlüsseltes Bild konnte nicht gespeichert werden"
 
 #: document/static/js/modules/editor/databases/images.js:191
 msgid ""
@@ -2637,22 +2605,16 @@ msgid "Please select at least one citation source!"
 msgstr "Wähle bitte mindestens eine Zitierungsquelle!"
 
 #: document/static/js/modules/editor/dialogs/code_block.js:147
-#, fuzzy
-#| msgid "Configure the table."
 msgid "Configure code block"
-msgstr "Konfigurieren Sie die Tabelle."
+msgstr "Codeblock konfigurieren"
 
 #: document/static/js/modules/editor/dialogs/code_block.js:218
-#, fuzzy
-#| msgid "Categories"
 msgid "Category"
-msgstr "Kategorien"
+msgstr "Kategorie"
 
 #: document/static/js/modules/editor/dialogs/code_block.js:236
-#, fuzzy
-#| msgid "Optional Fields"
 msgid "Optional title"
-msgstr "Optionale Angaben"
+msgstr "Optionaler Titel"
 
 #: document/static/js/modules/editor/dialogs/contributor.js:28
 #: document/static/js/modules/editor/dialogs/contributor.js:119
@@ -2727,10 +2689,8 @@ msgid "Type formula"
 msgstr "Geben Sie die Formel ein"
 
 #: document/static/js/modules/editor/dialogs/figure.js:239
-#, fuzzy
-#| msgid "Could not save Image"
 msgid "Could not encrypt image"
-msgstr "Bild konnte nicht gespeichert werden"
+msgstr "Bild konnte nicht verschlüsselt werden"
 
 #: document/static/js/modules/editor/dialogs/figure.js:398
 msgid "Enter latex math or insert an image"
@@ -2927,7 +2887,8 @@ msgstr "Optionale Abschnitte"
 
 #: document/static/js/modules/editor/document_template/index.js:60
 msgid "Choose which optional sections to enable."
-msgstr "Wählen Sie die optionalen Abschnitte aus, die aktiviert werden sollen."
+msgstr ""
+"Wählen Sie die optionalen Abschnitte aus, die aktiviert werden sollen."
 
 #: document/static/js/modules/editor/document_template/index.js:66
 msgid "Show/hide"
@@ -2959,23 +2920,26 @@ msgid ""
 "your encrypted documents — you will not need separate passwords for each "
 "document."
 msgstr ""
+"Richten Sie eine persönliche Verschlüsselungspassphrase ein. Mit dieser "
+"Passphrase entsperren Sie alle Ihre verschlüsselten Dokumente – Sie "
+"benötigen nicht für jedes Dokument ein separates Passwort."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:27
-#, fuzzy
-#| msgid "Import as:"
 msgid "Important:"
-msgstr "Importieren als:"
+msgstr "Wichtig:"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:27
 msgid ""
 "This passphrase is separate from your login password. If you lose it, your "
 "encrypted documents cannot be recovered."
 msgstr ""
+"Diese Passphrase ist von Ihrem Login-Passwort getrennt. Bei Verlust können "
+"Ihre verschlüsselten Dokumente nicht wiederhergestellt werden."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:29
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:182
 msgid "Passphrase"
-msgstr ""
+msgstr "Passphrase"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:32
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:185
@@ -2984,63 +2948,61 @@ msgstr ""
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
 msgid "Show passphrase"
-msgstr ""
+msgstr "Passphrase anzeigen"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:41
-#, fuzzy
-#| msgid "Confirm your password"
 msgid "Confirm passphrase"
-msgstr "Passwort bestätigen"
+msgstr "Passphrase bestätigen"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:51
 msgid "Set Up Encryption"
-msgstr ""
+msgstr "Verschlüsselung einrichten"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:71
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:421
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:568
 msgid "Passphrase must be at least 8 characters long."
-msgstr ""
+msgstr "Die Passphrase muss mindestens 8 Zeichen lang sein."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:80
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:430
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:577
 msgid "Passphrases do not match."
-msgstr ""
+msgstr "Passphrasen stimmen nicht überein."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:94
 msgid "Set Up Personal Encryption"
-msgstr ""
+msgstr "Richten Sie die persönliche Verschlüsselung ein"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:180
 msgid "Enter your personal encryption passphrase to unlock your documents."
 msgstr ""
+"Geben Sie Ihr persönliches Verschlüsselungspasswort ein, um Ihre Dokumente "
+"zu entsperren."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:195
 msgid "Unlock"
-msgstr ""
+msgstr "Entsperren"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:208
 msgid "Please enter your passphrase."
-msgstr ""
+msgstr "Bitte geben Sie Ihr Passwort ein."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:230
-#, fuzzy
-#| msgid "Replace with"
 msgid "Recover with key"
-msgstr "Ersetzen mit"
+msgstr "Mit Schlüssel wiederherstellen"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:241
 msgid "Unlock Encryption"
-msgstr ""
+msgstr "Verschlüsselung entsperren"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:261
 msgid "Hide passphrase"
-msgstr ""
+msgstr "Passphrase ausblenden"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:296
 msgid "This is your recovery key."
-msgstr ""
+msgstr "Dies ist Ihr Wiederherstellungsschlüssel."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:297
 msgid ""
@@ -3048,117 +3010,111 @@ msgid ""
 "forget your passphrase, this is the ONLY way to recover your encrypted "
 "documents. We cannot recover it for you."
 msgstr ""
+"Bewahren Sie es an einem sicheren Ort auf (z. B. in einem Passwort-Manager "
+"oder in einer gedruckten Kopie). Wenn Sie Ihr Passwort vergessen, ist dies "
+"die EINZIGE Möglichkeit, Ihre verschlüsselten Dokumente wiederherzustellen. "
+"Wir können es nicht für Sie wiederherstellen."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:304
 msgid "Copy it now — it will not be shown again."
-msgstr ""
+msgstr "Kopieren Sie es jetzt – es wird nicht mehr angezeigt."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:310
 msgid "I have saved it"
-msgstr ""
+msgstr "Ich habe es gespeichert"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:323
-#, fuzzy
-#| msgid "Remove image"
 msgid "Recovery Key"
-msgstr "Entferne Bild"
+msgstr "Wiederherstellungsschlüssel"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:338
 msgid "Copied!"
-msgstr ""
+msgstr "Kopiert!"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:361
 msgid ""
 "Enter your recovery key and a new passphrase to regain access to your "
 "encrypted documents."
 msgstr ""
+"Geben Sie Ihren Wiederherstellungsschlüssel und eine neue Passphrase ein, um"
+" wieder Zugriff auf Ihre verschlüsselten Dokumente zu erhalten."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
-#, fuzzy
-#| msgid "Remove image"
 msgid "Recovery key"
-msgstr "Entferne Bild"
+msgstr "Wiederherstellungsschlüssel"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:368
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:518
-#, fuzzy
-#| msgid "New password"
 msgid "New passphrase"
-msgstr "Neues Passwort"
+msgstr "Neue Passphrase"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:376
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:526
-#, fuzzy
-#| msgid "Confirm the new password"
 msgid "Confirm new passphrase"
-msgstr "Neues Passwort bestätigen"
+msgstr "Bestätigen Sie die neue Passphrase"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:386
-#, fuzzy
-#| msgid "Record"
 msgid "Recover"
-msgstr "Aufzeichnen"
+msgstr "Genesen"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:412
 msgid "Please enter your recovery key."
-msgstr ""
+msgstr "Bitte geben Sie Ihren Wiederherstellungsschlüssel ein."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:452
-#, fuzzy
-#| msgid "Resolve comment"
 msgid "Recover Encryption"
-msgstr "Kommentar auflösen"
+msgstr "Verschlüsselung wiederherstellen"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:508
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption "
-"password."
+"Enter your current passphrase and a new passphrase to change your encryption"
+" password."
 msgstr ""
+"Geben Sie Ihre aktuelle Passphrase und eine neue Passphrase ein, um Ihr "
+"Verschlüsselungspasswort zu ändern."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:510
 msgid "Current passphrase"
-msgstr ""
+msgstr "Aktuelle Passphrase"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:536
-#, fuzzy
-#| msgid "Change Password"
 msgid "Change Passphrase"
-msgstr "Passwort ändern"
+msgstr "Passphrase ändern"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:559
 msgid "Please enter your current passphrase."
-msgstr ""
+msgstr "Bitte geben Sie Ihr aktuelles Passwort ein."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:599
-#, fuzzy
-#| msgid "Change My Password"
 msgid "Change Encryption Passphrase"
-msgstr "Ändere mein Passwort"
+msgstr "Ändern Sie die Verschlüsselungspassphrase"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:28
 msgid "Password must be at least 5 characters long."
-msgstr ""
+msgstr "Das Passwort muss mindestens 5 Zeichen lang sein."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:103
 msgid "Very weak"
-msgstr ""
+msgstr "Sehr schwach"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:104
 msgid "Weak"
-msgstr ""
+msgstr "Schwach"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:105
 msgid "Fair"
-msgstr ""
+msgstr "Gerecht"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:107
 msgid "Very strong"
-msgstr ""
+msgstr "Sehr stark"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:142
 msgid ""
 "This document is end-to-end encrypted. Enter the password to decrypt it."
 msgstr ""
+"Dieses Dokument ist Ende-zu-Ende-verschlüsselt. Geben Sie das Passwort ein, "
+"um es zu entschlüsseln."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
 #: document/static/js/modules/editor/e2ee/password-dialog.js:261
@@ -3175,75 +3131,66 @@ msgstr "Passwort"
 #: document/static/js/modules/editor/e2ee/password-dialog.js:222
 #: document/static/js/modules/editor/e2ee/password-dialog.js:264
 #: document/static/js/modules/editor/e2ee/password-dialog.js:451
-#, fuzzy
-#| msgid "New password"
 msgid "Show password"
-msgstr "Neues Passwort"
+msgstr "Passwort anzeigen"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:161
 msgid "Decrypt"
-msgstr ""
+msgstr "Entschlüsseln"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:172
-#, fuzzy
-#| msgid "Please confirm the new password!"
 msgid "Please enter the password."
-msgstr "Bitte neues Passwort bestätigen!"
+msgstr "Bitte geben Sie das Passwort ein."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:218
-#, fuzzy
-#| msgid "Old password"
 msgid "Hide password"
-msgstr "Altes Passwort"
+msgstr "Passwort verbergen"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:258
 msgid ""
-"Set a password to encrypt this document. You will need this password to open "
-"the document in the future."
+"Set a password to encrypt this document. You will need this password to open"
+" the document in the future."
 msgstr ""
+"Legen Sie ein Passwort fest, um dieses Dokument zu verschlüsseln. Dieses "
+"Passwort benötigen Sie künftig zum Öffnen des Dokuments."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
 "Tip: Use a passphrase with multiple words, e.g. \"correct-horse-battery-"
 "staple\". This is both secure and easy to remember."
 msgstr ""
+"Tipp: Verwenden Sie eine Passphrase mit mehreren Wörtern, z. „richtige-"
+"Pferde-Batterie-Grundnahrungsmittel“. Dies ist sowohl sicher als auch leicht"
+" zu merken."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:273
-#, fuzzy
-#| msgid "Confirm your password"
 msgid "Confirm password"
 msgstr "Passwort bestätigen"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:283
-#, fuzzy
-#| msgid "Create new document"
 msgid "Create Encrypted Document"
-msgstr "Neues Dokument erstellen"
+msgstr "Erstellen Sie ein verschlüsseltes Dokument"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:313
 #: document/static/js/modules/editor/e2ee/password-dialog.js:520
-#, fuzzy
-#| msgid "Password incorrect."
 msgid "Passwords do not match."
-msgstr "Falsches Passwort."
+msgstr "Passwörter stimmen nicht überein."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:327
-#, fuzzy
-#| msgid "Reset Password"
 msgid "Set Document Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Dokumentkennwort festlegen"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:427
-#, fuzzy
-#| msgid "Create a password"
 msgid "Current password"
-msgstr "Passwort erstellen"
+msgstr "Aktuelles Passwort"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:440
 msgid ""
 "Change the document password. After changing, you must share the new "
 "password with all collaborators."
 msgstr ""
+"Ändern Sie das Dokumentkennwort. Nach der Änderung müssen Sie das neue "
+"Passwort allen Mitarbeitern mitteilen."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:444
 #: user/static/js/modules/profile/templates.js:63
@@ -3251,8 +3198,6 @@ msgid "New password"
 msgstr "Neues Passwort"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:461
-#, fuzzy
-#| msgid "Confirm the new password"
 msgid "Confirm new password"
 msgstr "Neues Passwort bestätigen"
 
@@ -3263,46 +3208,38 @@ msgid "Change Password"
 msgstr "Passwort ändern"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:501
-#, fuzzy
-#| msgid "Please confirm the new password!"
 msgid "Please enter the current password."
-msgstr "Bitte neues Passwort bestätigen!"
+msgstr "Bitte geben Sie das aktuelle Passwort ein."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:530
 msgid "New password must be different from the current password."
-msgstr ""
+msgstr "Das neue Passwort muss sich vom aktuellen Passwort unterscheiden."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:547
-#, fuzzy
-#| msgid "Change Password"
 msgid "Change Document Password"
-msgstr "Passwort ändern"
+msgstr "Dokumentpasswort ändern"
 
 #: document/static/js/modules/editor/e2ee/snapshot-manager.js:148
 msgid ""
 "The document password was changed by another user. You will need to enter "
 "the new password to continue editing."
 msgstr ""
+"Das Dokumentkennwort wurde von einem anderen Benutzer geändert. Sie müssen "
+"das neue Passwort eingeben, um mit der Bearbeitung fortfahren zu können."
 
 #: document/static/js/modules/editor/index.js:323
 #: document/static/js/modules/editor/index.js:581
-#, fuzzy
-#| msgid "Invalid email!"
 msgid "Invalid Share Link"
-msgstr "Ungültige E-Mail!"
+msgstr "Ungültiger Freigabelink"
 
 #: document/static/js/modules/editor/index.js:326
 #: document/static/js/modules/editor/index.js:584
-#, fuzzy
-#| msgid ""
-#| "This e-mail confirmation link expired or is invalid. Please try to open "
-#| "another account."
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for "
-"a new link."
+"This share link has expired or is invalid. Please ask the document owner for"
+" a new link."
 msgstr ""
-"Dieser E-Mail-Bestätigungslink ist abgelaufen oder ungültig. Bitte versuchen "
-"Sie ein anderes Konto zu eröffnen."
+"Dieser Freigabelink ist abgelaufen oder ungültig. Bitte fragen Sie den "
+"Eigentümer des Dokuments nach einem neuen Link."
 
 #: document/static/js/modules/editor/index.js:390
 msgid ""
@@ -3358,24 +3295,22 @@ msgid ""
 "instead. Please consider importing it into a new document."
 msgstr ""
 "Ihre Zugriffsrechte wurden geändert, während Sie offline waren, so dass wir "
-"Ihre Arbeit nicht mehr auf dem Server speichern können. Stattdessen wird sie "
-"auf Ihren Computer heruntergeladen. Bitte erwägen Sie den Import in ein "
+"Ihre Arbeit nicht mehr auf dem Server speichern können. Stattdessen wird sie"
+" auf Ihren Computer heruntergeladen. Bitte erwägen Sie den Import in ein "
 "neues Dokument."
 
 #: document/static/js/modules/editor/index.js:733
 msgid "Incorrect passphrase."
-msgstr ""
+msgstr "Falsche Passphrase."
 
 #: document/static/js/modules/editor/index.js:759
 #: user/static/js/modules/profile/index.js:250
-#, fuzzy
-#| msgid "Merge failed"
 msgid "Recovery failed: "
-msgstr "Zusammenführen fehlgeschlagen"
+msgstr "Wiederherstellung fehlgeschlagen:"
 
 #: document/static/js/modules/editor/index.js:804
 msgid "E2EE is not enabled on this server."
-msgstr ""
+msgstr "E2EE ist auf diesem Server nicht aktiviert."
 
 #: document/static/js/modules/editor/index.js:958
 msgid ""
@@ -3631,16 +3566,12 @@ msgid "Delete comment"
 msgstr "Kommentar löschen"
 
 #: document/static/js/modules/editor/menus/code_block/model.js:8
-#, fuzzy
-#| msgid "Configure the table."
 msgid "Configure the code block."
-msgstr "Konfigurieren Sie die Tabelle."
+msgstr "Konfigurieren Sie den Codeblock."
 
 #: document/static/js/modules/editor/menus/code_block/model.js:42
-#, fuzzy
-#| msgid "Removed code block"
 msgid "Remove the code block."
-msgstr "Codeblock entfernt"
+msgstr "Entfernen Sie den Codeblock."
 
 #: document/static/js/modules/editor/menus/figure/model.js:9
 msgid "Configure the figure."
@@ -3660,7 +3591,7 @@ msgstr "Dateiverwaltung"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:51
 msgid "Request Access"
-msgstr ""
+msgstr "Zugriff anfordern"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:52
 msgid "Share"
@@ -3668,7 +3599,7 @@ msgstr "Teilen"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:59
 msgid "Request to be added as a collaborator."
-msgstr ""
+msgstr "Bitte um Aufnahme als Mitarbeiter."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:60
 msgid "Share the document with other users."
@@ -3676,32 +3607,28 @@ msgstr "Teile das Dokument mit anderen Benutzern."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:78
 msgid "Your access request has been sent to the document owner."
-msgstr ""
+msgstr "Ihre Zugriffsanfrage wurde an den Dokumenteneigentümer gesendet."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:86
 #: document/static/js/modules/editor/menus/headerbar/model.js:95
-#, fuzzy
-#| msgid "Basic access rights"
 msgid "Could not send access request."
-msgstr "Grundlegende Zugriffsrechte"
+msgstr "Zugriffsanfrage konnte nicht gesendet werden."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:144
-#, fuzzy
-#| msgid "Reset Password"
 msgid "Share Document Password"
-msgstr "Passwort zurücksetzen"
+msgstr "Dokumentpasswort teilen"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:149
 msgid ""
 "The following users don't have passphrase encryption. Please share the "
 "document password with them directly."
 msgstr ""
+"Die folgenden Benutzer verfügen nicht über eine Passphrase-Verschlüsselung. "
+"Bitte teilen Sie ihnen das Dokumentpasswort direkt mit."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:191
-#, fuzzy
-#| msgid "Sign up"
 msgid "Sign up / Log in"
-msgstr "Registrieren"
+msgstr "Registrieren / Anmelden"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:197
 #: document/static/js/modules/editor/menus/headerbar/view.js:542
@@ -3711,7 +3638,7 @@ msgstr "Dokument schließen und zur Übersicht zurückkehren."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:199
 msgid "Sign up for an account or log in."
-msgstr ""
+msgstr "Eröffnen Sie ein Konto oder melden Sie sich an."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:230
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:10
@@ -3741,7 +3668,8 @@ msgstr "Drucken / PDF"
 #: document/static/js/modules/editor/menus/headerbar/model.js:303
 msgid "Either print or create a PDF using your browser print dialog."
 msgstr ""
-"Drucken oder erstellen Sie eine PDF-Datei mit dem Druckdialog Ihres Browsers."
+"Drucken oder erstellen Sie eine PDF-Datei mit dem Druckdialog Ihres "
+"Browsers."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:326
 #: user/static/js/modules/password_reset/change_password.js:14
@@ -3749,16 +3677,13 @@ msgid "Change password"
 msgstr "Passwort ändern"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:329
-#, fuzzy
-#| msgid "Choose the language of the document."
 msgid "Change the password of this encrypted document."
-msgstr "Wählen Sie die Sprache des Dokumentes."
+msgstr "Ändern Sie das Passwort dieses verschlüsselten Dokuments."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:337
-#, fuzzy
-#| msgid "Document template still required by documents"
 msgid "Document key is not available. Please reload the document."
-msgstr "Dokumentvorlage wird von Dokumenten noch benötigt"
+msgstr ""
+"Der Dokumentschlüssel ist nicht verfügbar. Bitte laden Sie das Dokument neu."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:364
 msgid ""
@@ -3767,24 +3692,30 @@ msgid ""
 "automatically; non-passphrase collaborators need it shared with them "
 "manually."
 msgstr ""
+"Ihr persönliches Passwort wird dieses Dokument weiterhin entsperren. Es wird"
+" automatisch ein neues zufälliges Passwort generiert. Andere Passphrase-"
+"Benutzer erhalten es automatisch; Mitarbeiter ohne Passphrase müssen diese "
+"manuell mit ihnen teilen."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:471
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new "
-"key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new"
+" key automatically."
 msgstr ""
+"Dokumentverschlüsselungsschlüssel gedreht. Andere Passphrase-Benutzer "
+"erhalten den neuen Schlüssel automatisch."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:478
 msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
 msgstr ""
+"Dokumentpasswort geändert. Denken Sie daran, das neue Passwort Ihren "
+"Mitarbeitern mitzuteilen."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:486
-#, fuzzy
-#| msgid "Password incorrect."
 msgid "The current password is incorrect."
-msgstr "Falsches Passwort."
+msgstr "Das aktuelle Passwort ist falsch."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:502
 msgid "Export"
@@ -4039,7 +3970,7 @@ msgstr "Ein Dokument kann nicht geschlossen werden, wenn Sie offline sind."
 #: document/static/js/modules/editor/menus/headerbar/view.js:542
 #: document/static/js/modules/editor/menus/headerbar/view.js:543
 msgid "Sign up or log in"
-msgstr ""
+msgstr "Registrieren oder einloggen"
 
 #: document/static/js/modules/editor/menus/headerbar/view.js:543
 msgid "Close document"
@@ -4364,12 +4295,12 @@ msgstr "Suche"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace "
-"all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace"
+" all'"
 msgstr ""
 "Bitte beachten Sie, dass es Übereinstimmungen in nicht bearbeitbaren Teilen "
-"des Dokuments gibt. Diese Übereinstimmung(en) werden nicht ersetzt, wenn Sie "
-"\"ersetzen\" oder \"alle ersetzen\" verwenden."
+"des Dokuments gibt. Diese Übereinstimmung(en) werden nicht ersetzt, wenn Sie"
+" \"ersetzen\" oder \"alle ersetzen\" verwenden."
 
 #: document/static/js/modules/editor/tools/search_replace/templates.js:4
 msgid "Find"
@@ -4857,25 +4788,26 @@ msgstr "Bestätige die E-Mailadresse und stimme den Geschäftsbedingungen zu"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 msgstr ""
 "Bitte bestätigen Sie, dass Sie Eigentümer der E-Mail-Adresse <a "
 "href=\"mailto:%(email)s\">%(email)s</a> sind."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
+"%(username)s, and that you have read and agree to our <a "
+"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
+"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
 msgstr ""
-"Bitte bestätigen Sie, dass Sie die E-Mail-Adresse <a href=\"mailto:%"
-"(email)s\">%(email)s</a> besitzen, dass Sie den Benutzernamen %(username)s "
-"beantragen und dass Sie diese gelesen und akzeptiert haben zu unseren <a "
-"href=\"/pages/terms/\" target=\"_blank\"> Nutzungsbedingungen </a> und <a "
-"href=\"/pages/privacy/\" target=\"_blank\"> Datenschutzbestimmungen </a> ."
+"Bitte bestätigen Sie, dass Sie die E-Mail-Adresse <a "
+"href=\"mailto:%(email)s\">%(email)s</a> besitzen, dass Sie den Benutzernamen"
+" %(username)s beantragen und dass Sie diese gelesen und akzeptiert haben zu "
+"unseren <a href=\"/pages/terms/\" target=\"_blank\"> Nutzungsbedingungen "
+"</a> und <a href=\"/pages/privacy/\" target=\"_blank\"> "
+"Datenschutzbestimmungen </a> ."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4895,8 +4827,8 @@ msgid ""
 "I am aware that I am signing up for a test account and that service may be "
 "ended abruptly and without notice, leaving me without my files."
 msgstr ""
-"Mir ist bekannt, dass ich mich für ein Testkonto anmelde und dass der Dienst "
-"möglicherweise abrupt und ohne Vorankündigung beendet wird und ich keine "
+"Mir ist bekannt, dass ich mich für ein Testkonto anmelde und dass der Dienst"
+" möglicherweise abrupt und ohne Vorankündigung beendet wird und ich keine "
 "Dateien mehr habe."
 
 #: user/static/js/modules/email_confirm/templates.js:60
@@ -4904,8 +4836,8 @@ msgid ""
 "This e-mail confirmation link expired or is invalid. Please try to open "
 "another account."
 msgstr ""
-"Dieser E-Mail-Bestätigungslink ist abgelaufen oder ungültig. Bitte versuchen "
-"Sie ein anderes Konto zu eröffnen."
+"Dieser E-Mail-Bestätigungslink ist abgelaufen oder ungültig. Bitte versuchen"
+" Sie ein anderes Konto zu eröffnen."
 
 #: user/static/js/modules/email_confirm/templates.js:64
 msgid "Thanks for verifying!"
@@ -5044,11 +4976,11 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a href=\"mailto:%"
-"(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a "
+"href=\"mailto:%(contactEmail)s\">contact us</a>."
 msgstr ""
-"Wenn Sie Probleme beim Zurücksetzen Ihres Passworts haben, <a href=\"mailto:%"
-"(contactEmail)s\">kontaktieren Sie uns</a>."
+"Wenn Sie Probleme beim Zurücksetzen Ihres Passworts haben, <a "
+"href=\"mailto:%(contactEmail)s\">kontaktieren Sie uns</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -5189,14 +5121,12 @@ msgid "Configure profile"
 msgstr "Profil konfigurieren"
 
 #: user/static/js/modules/profile/index.js:273
-#, fuzzy
-#| msgid "Message delivered successfully!"
 msgid "Passphrase changed successfully."
-msgstr "Nachricht erfolgreich zugestellt!"
+msgstr "Passphrase erfolgreich geändert."
 
 #: user/static/js/modules/profile/index.js:277
 msgid "Failed to change passphrase: "
-msgstr ""
+msgstr "Passphrase konnte nicht geändert werden:"
 
 #: user/static/js/modules/profile/index.js:296
 msgid "Could not save profile data"
@@ -5259,60 +5189,48 @@ msgstr "Bild löschen"
 #: user/static/js/modules/profile/templates.js:106
 #: user/static/js/modules/two_factor/index.js:223
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Zwei-Faktor-Authentifizierung"
 
 #: user/static/js/modules/profile/templates.js:110
-#, fuzzy
-#| msgid "Enable"
 msgid "Enabled"
-msgstr "Aktivieren"
+msgstr "Ermöglicht"
 
 #: user/static/js/modules/profile/templates.js:114
-#, fuzzy
-#| msgid "Disable"
 msgid "Disabled"
-msgstr "Deaktivieren"
+msgstr "Deaktiviert"
 
 #: user/static/js/modules/profile/templates.js:119
-#, fuzzy
-#| msgid "Enable"
 msgid "Enable 2FA"
-msgstr "Aktivieren"
+msgstr "Aktivieren Sie 2FA"
 
 #: user/static/js/modules/profile/templates.js:123
 #: user/static/js/modules/two_factor/index.js:135
-#, fuzzy
-#| msgid "Disable"
 msgid "Disable 2FA"
-msgstr "Deaktivieren"
+msgstr "Deaktivieren Sie 2FA"
 
 #: user/static/js/modules/profile/templates.js:127
 msgid "End-to-End Encryption"
-msgstr ""
+msgstr "Ende-zu-Ende-Verschlüsselung"
 
 #: user/static/js/modules/profile/templates.js:131
 msgid "Personal passphrase set up"
-msgstr ""
+msgstr "Persönliche Passphrase eingerichtet"
 
 #: user/static/js/modules/profile/templates.js:135
 msgid "Not set up"
-msgstr ""
+msgstr "Nicht eingerichtet"
 
 #: user/static/js/modules/profile/templates.js:140
 msgid "Set up encryption passphrase"
-msgstr ""
+msgstr "Richten Sie eine Verschlüsselungspassphrase ein"
 
 #: user/static/js/modules/profile/templates.js:144
-#, fuzzy
-#| msgid "Change password"
 msgid "Change passphrase"
-msgstr "Passwort ändern"
+msgstr "Passphrase ändern"
 
 #: user/static/js/modules/profile/templates.js:148
-#, fuzzy
-#| msgid "Remove image"
 msgid "Recover with recovery key"
-msgstr "Entferne Bild"
+msgstr "Wiederherstellen mit Wiederherstellungsschlüssel"
 
 #: user/static/js/modules/profile/templates.js:156
 msgid "Primary address"
@@ -5339,8 +5257,7 @@ msgid "Signup"
 msgstr "Anmelden"
 
 #: user/static/js/modules/signup/index.js:13
-msgid ""
-"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
 msgstr ""
 "Haben Sie schon ein Konto? Dann <a href=\"/\" title=\"Login\">melden Sie "
 "sich bitte an</a>."
@@ -5362,70 +5279,72 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
 "verification. Follow the link provided to finalize the signup process."
 msgstr ""
-"Wir haben eine E-Mail zur Bestätigung an <a href=\"mailto:%(email)s\">%"
-"(email)s</a> gesendet. Folgen Sie dem angegebenen Link, um den "
-"Anmeldevorgang abzuschließen."
+"Wir haben eine E-Mail zur Bestätigung an <a "
+"href=\"mailto:%(email)s\">%(email)s</a> gesendet. Folgen Sie dem angegebenen"
+" Link, um den Anmeldevorgang abzuschließen."
 
 #: user/static/js/modules/two_factor/index.js:44
 msgid "Could not generate QR code. Please use the secret key below."
 msgstr ""
+"Der QR-Code konnte nicht generiert werden. Bitte verwenden Sie den unten "
+"stehenden geheimen Schlüssel."
 
 #: user/static/js/modules/two_factor/index.js:53
 #: user/static/js/modules/two_factor/index.js:187
-#, fuzzy
-#| msgid "Verified"
 msgid "Verify"
-msgstr "Verifiziert"
+msgstr "Verifizieren"
 
 #: user/static/js/modules/two_factor/index.js:62
 #: user/static/js/modules/two_factor/index.js:197
 msgid "Please enter a 6-digit code."
-msgstr ""
+msgstr "Bitte geben Sie einen 6-stelligen Code ein."
 
 #: user/static/js/modules/two_factor/index.js:83
 #: user/static/js/modules/two_factor/index.js:214
-#, fuzzy
-#| msgid "Could not save profile data"
 msgid "Could not verify the code."
-msgstr "Profildaten konnten nicht gespeichert werden"
+msgstr "Der Code konnte nicht überprüft werden."
 
 #: user/static/js/modules/two_factor/index.js:95
 msgid "Set Up Two-Factor Authentication"
-msgstr ""
+msgstr "Richten Sie die Zwei-Faktor-Authentifizierung ein"
 
 #: user/static/js/modules/two_factor/index.js:97
 msgid ""
 "Scan this QR code with your authenticator app (Google Authenticator, Authy, "
 "etc.)"
 msgstr ""
+"Scannen Sie diesen QR-Code mit Ihrer Authentifizierungs-App (Google "
+"Authenticator, Authy usw.)"
 
 #: user/static/js/modules/two_factor/index.js:99
 msgid "Or enter this code manually:"
-msgstr ""
+msgstr "Oder geben Sie diesen Code manuell ein:"
 
 #: user/static/js/modules/two_factor/index.js:102
 msgid "Enter the 6-digit code from your authenticator app to verify:"
 msgstr ""
+"Geben Sie den 6-stelligen Code Ihrer Authentifizierungs-App ein, um "
+"Folgendes zu überprüfen:"
 
 #: user/static/js/modules/two_factor/index.js:153
-#, fuzzy
-#| msgid "Could not delete revision."
 msgid "Could not disable two-factor authentication."
-msgstr "Revision konnte nicht gelöscht werden."
+msgstr "Die Zwei-Faktor-Authentifizierung konnte nicht deaktiviert werden."
 
 #: user/static/js/modules/two_factor/index.js:169
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Deaktivieren Sie die Zwei-Faktor-Authentifizierung"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce "
-"the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce"
+" the security of your account."
 msgstr ""
+"Sind Sie sicher, dass Sie die Zwei-Faktor-Authentifizierung deaktivieren "
+"möchten? Dadurch wird die Sicherheit Ihres Kontos verringert."
 
 #: user/static/js/modules/two_factor/index.js:224
 msgid "Enter the 6-digit code from your authenticator app:"
-msgstr ""
+msgstr "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein:"
 
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:33
 msgid "Could not delete document template"
@@ -5905,20 +5824,18 @@ msgstr "Verwende das Bild"
 #~ msgstr "gesammt Anzahl Bände"
 
 #~ msgid "In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1"
-#~ msgstr ""
-#~ "Im <em>Extended Date Time Format</em> (EDTF) 1.0 <br> Level 0 oder 1"
+#~ msgstr "Im <em>Extended Date Time Format</em> (EDTF) 1.0 <br> Level 0 oder 1"
 
 #~ msgid ""
 #~ "Prefixed is \"used\" when it is used in cases where only the last name is "
-#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", "
-#~ "so the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into "
-#~ "\"van Gogh\", so the prefix \"van\" is used."
+#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so"
+#~ " the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
+#~ "Gogh\", so the prefix \"van\" is used."
 #~ msgstr ""
 #~ "Das Präfix wird verwendet, wenn er in Fällen in denen nur der Nachname "
 #~ "verwendet wird auftaucht. Zum Beispiel: Aus \"Ludwig van Beethoven\" wird "
-#~ "\"Beethoven\", daher wird das Präfix \"van\" nicht verwendet. Aus "
-#~ "\"Vincent van Gogh\" wird \"van Gogh\", daher wird das Präfix \"van\" "
-#~ "verwendet."
+#~ "\"Beethoven\", daher wird das Präfix \"van\" nicht verwendet. Aus \"Vincent "
+#~ "van Gogh\" wird \"van Gogh\", daher wird das Präfix \"van\" verwendet."
 
 #~ msgid "Range or single page, column, paragraph, section, line"
 #~ msgstr "Bereich oder einzelne Seite, Spalte, Absatz, Abschnitt, Zeile"
@@ -6187,815 +6104,501 @@ msgstr "Verwende das Bild"
 #~ msgid "Upload BibTeX file"
 #~ msgstr "BibTeX-Datei hochladen"
 
-#, fuzzy
-#~| msgid "Locking"
 #~ msgid "Looking..."
-#~ msgstr "Verriegelung"
+#~ msgstr "Suchen..."
 
-#, fuzzy
-#~| msgid "Search"
 #~ msgid "search"
-#~ msgstr "Suche"
+#~ msgstr "suchen"
 
-#, fuzzy
-#~| msgid "Journal article"
 #~ msgid "Journal"
-#~ msgstr "Artikel in Fachzeitschrift"
+#~ msgstr "Zeitschrift"
 
-#, fuzzy
-#~| msgid "Published"
 #~ msgid "Title/Published"
-#~ msgstr "Veröffentlicht"
+#~ msgstr "Titel/veröffentlicht"
 
-#, fuzzy
-#~| msgid "Remove image"
 #~ msgid "Remove marks"
-#~ msgstr "Entferne Bild"
+#~ msgstr "Markierungen entfernen"
 
-#, fuzzy
-#~| msgid "All fields need to be filled out."
 #~ msgid "Editor and journal name need to be filled out."
-#~ msgstr "Alle Felder müssen ausgefüllt werden."
+#~ msgstr "Herausgeber und Zeitschriftenname müssen ausgefüllt werden."
 
-#, fuzzy
-#~| msgid "Journal article"
 #~ msgid "Journal saved."
-#~ msgstr "Artikel in Fachzeitschrift"
+#~ msgstr "Tagebuch gespeichert."
 
-#, fuzzy
-#~| msgid "Could not obtain contacts list"
 #~ msgid "Could not obtain submission info."
-#~ msgstr "Kontaktliste konnte nicht abgerufen werden"
+#~ msgstr "Die Übermittlungsinformationen konnten nicht abgerufen werden."
 
-#, fuzzy
-#~| msgid "Save revision"
 #~ msgid "Submit revision"
-#~ msgstr "Revision speichern"
+#~ msgstr "Überarbeitung einreichen"
 
-#, fuzzy
-#~| msgid "Revision could not be saved."
 #~ msgid "Updates could not be submitted."
-#~ msgstr "Revision konnte nicht gespeichert werden."
+#~ msgstr "Aktualisierungen konnten nicht übermittelt werden."
 
-#, fuzzy
-#~| msgid "Revision could not be saved."
 #~ msgid "Review could not be submitted."
-#~ msgstr "Revision konnte nicht gespeichert werden."
+#~ msgstr "Bewertung konnte nicht übermittelt werden."
 
-#, fuzzy
-#~| msgid "Review tracked"
 #~ msgid "Review submitted"
-#~ msgstr "Reviewer mit nachverfolgten Änderungen"
+#~ msgstr "Bewertung eingereicht"
 
-#, fuzzy
-#~| msgid "Submitted"
 #~ msgid "Article submitted"
-#~ msgstr "Eingereicht"
+#~ msgstr "Artikel eingereicht"
 
-#, fuzzy
-#~| msgid "Revision could not be saved."
 #~ msgid "Article could not be submitted."
-#~ msgstr "Revision konnte nicht gespeichert werden."
+#~ msgstr "Artikel konnte nicht übermittelt werden."
 
-#, fuzzy
-#~| msgid "Library information"
 #~ msgid "Submission information"
-#~ msgstr "Bibliotheksinformation"
+#~ msgstr "Informationen zur Einreichung"
 
-#, fuzzy
-#~| msgid "Foreword author(s)"
 #~ msgid "Corresponding author"
-#~ msgstr "Vorwort Autor(en)"
+#~ msgstr "Korrespondierender Autor"
 
-#, fuzzy
-#~| msgid "Citation"
 #~ msgid "Affiliation"
-#~ msgstr "Zitat"
+#~ msgstr "Zugehörigkeit"
 
-#, fuzzy
-#~| msgid "Leave editor"
 #~ msgid "Message for editor"
-#~ msgstr "Editor verlassen"
+#~ msgstr "Nachricht an den Herausgeber"
 
-#, fuzzy
-#~| msgid "Choose your username"
 #~ msgid "Choose One"
-#~ msgstr "Wähle deinen Nutzernamen"
+#~ msgstr "Wählen Sie eine aus"
 
-#, fuzzy
-#~| msgid "Accept all in selection"
 #~ msgid "Accept Submission"
-#~ msgstr "Akzeptiere alle in Auswahl"
+#~ msgstr "Akzeptieren Sie die Einreichung"
 
-#, fuzzy
-#~| msgid "Revision deleted"
 #~ msgid "Revisions Required"
-#~ msgstr "Revision gelöscht"
+#~ msgstr "Überarbeitungen erforderlich"
 
-#, fuzzy
-#~| msgid "Decline invite"
 #~ msgid "Decline Submission"
-#~ msgstr "Einladung ablehnen"
+#~ msgstr "Einreichung ablehnen"
 
-#, fuzzy
-#~| msgid "Comments"
 #~ msgid "See Comments"
-#~ msgstr "Kommentare"
+#~ msgstr "Siehe Kommentare"
 
-#, fuzzy
-#~| msgid "Book"
 #~ msgid "DocBook"
-#~ msgstr "Buch"
+#~ msgstr "DocBook"
 
-#, fuzzy
-#~| msgid "Export the document to an HTML file."
 #~ msgid "Export the document to a DocBook file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine HTML-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit pandoc in eine DocBook-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an HTML file."
 #~ msgid "Export the document to an Adobe Indesign ICML file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine HTML-Datei."
+#~ msgstr ""
+#~ "Exportieren Sie das Dokument mit Pandoc in eine Adobe Indesign ICML-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to a Pandoc JSON file."
 #~ msgid "Export the document to a markdown file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine Pandoc-JSON-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit Pandoc in eine Markdown-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an LaTeX file."
 #~ msgid "Export the document to a Commonmark file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine LaTeX-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit pandoc in eine Commonmark-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an Epub electronic reader file."
 #~ msgid "Export the document to a GitHub-Flavored Markdown file using pandoc."
-#~ msgstr "Exportiere das Dokument in eine Epub Datei."
+#~ msgstr ""
+#~ "Exportieren Sie das Dokument mit pandoc in eine GitHub-basierte Markdown-"
+#~ "Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an HTML file."
 #~ msgid "Export the document to a Markua file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine HTML-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit Pandoc in eine Markua-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an HTML file."
 #~ msgid "Export the document to a MultiMarkdown file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine HTML-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit pandoc in eine MultiMarkdown-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to a Pandoc JSON file."
 #~ msgid "Export the document to a Pandoc Markdown file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine Pandoc-JSON-Datei."
+#~ msgstr ""
+#~ "Exportieren Sie das Dokument mit Pandoc in eine Pandoc-Markdown-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to a Pandoc JSON file."
 #~ msgid "Export the document to a PHP Markdown Extra file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine Pandoc-JSON-Datei."
+#~ msgstr ""
+#~ "Exportieren Sie das Dokument mit pandoc in eine PHP Markdown Extra-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an LaTeX file."
 #~ msgid "Export the document to a richtext file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine LaTeX-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit Pandoc in eine Richtext-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an LaTeX file."
 #~ msgid "Export the document to a textile file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine LaTeX-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit Pandoc in eine Textildatei."
 
-#, fuzzy
-#~| msgid "Export the document to an LaTeX file."
 #~ msgid "Export the document to a TEI Simple file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine LaTeX-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit Pandoc in eine einfache TEI-Datei."
 
-#, fuzzy
-#~| msgid "Export the document to an HTML file."
 #~ msgid "Export the document to a typst file using pandoc."
-#~ msgstr "Exportieren Sie das Dokument in eine HTML-Datei."
+#~ msgstr "Exportieren Sie das Dokument mit Pandoc in eine Typst-Datei."
 
-#, fuzzy
-#~| msgid "Unknown filetype"
 #~ msgid "Unknown file type"
 #~ msgstr "Unbekannter Dateityp"
 
-#, fuzzy
-#~| msgid "Description"
 #~ msgid "Modify subscription"
-#~ msgstr "Beschreibung"
+#~ msgstr "Abonnement ändern"
 
-#, fuzzy
-#~| msgid "Description"
 #~ msgid "Subscription"
-#~ msgstr "Beschreibung"
+#~ msgstr "Abonnement"
 
-#, fuzzy
-#~| msgid "Document Overview"
 #~ msgid "Plan overview"
-#~ msgstr "Dokumentenübersicht"
+#~ msgstr "Planübersicht"
 
-#, fuzzy
-#~| msgid "Description"
 #~ msgid "Cancel subscription"
-#~ msgstr "Beschreibung"
+#~ msgstr "Abo kündigen"
 
-#, fuzzy
-#~| msgid "Description"
 #~ msgid "Switch subscription"
-#~ msgstr "Beschreibung"
+#~ msgstr "Abonnement wechseln"
 
-#, fuzzy
-#~| msgid "Do you really want to delete the document style?"
 #~ msgid "Do you really want to switch your subscription type?"
-#~ msgstr "Möchten Sie den Dokumentstil wirklich löschen?"
+#~ msgstr "Möchten Sie wirklich Ihren Abonnementtyp wechseln?"
 
-#, fuzzy
-#~| msgid "Move documents"
 #~ msgid "2 free documents"
-#~ msgstr "Dokumente verschieben"
+#~ msgstr "2 kostenlose Dokumente"
 
-#, fuzzy
-#~| msgid "My collaborators"
 #~ msgid "Unlimited collaborators"
-#~ msgstr "Meine Helfer"
+#~ msgstr "Unbegrenzte Anzahl an Mitarbeitern"
 
-#, fuzzy
-#~| msgid "Delete the bibliography item(s)"
 #~ msgid "Unlimited bibliography items"
-#~ msgstr "Titel enfernen"
+#~ msgstr "Unbegrenzte Bibliographie-Elemente"
 
-#, fuzzy
-#~| msgid "Default language"
 #~ msgid "Default"
-#~ msgstr "Standardsprache"
+#~ msgstr "Standard"
 
-#, fuzzy
-#~| msgid "Untitled Document"
 #~ msgid "Unlimited documents"
-#~ msgstr "Unbenanntes Dokument"
+#~ msgstr "Unbegrenzte Dokumente"
 
-#, fuzzy
-#~| msgid "Select"
 #~ msgid "See"
-#~ msgstr "Wählen"
+#~ msgstr "Sehen"
 
-#, fuzzy
-#~| msgid "Import as:"
 #~ msgid "Import from database"
-#~ msgstr "Importieren als:"
+#~ msgstr "Aus Datenbank importieren"
 
-#, fuzzy
-#~| msgid "Book"
 #~ msgid "Books"
-#~ msgstr "Buch"
+#~ msgstr "Bücher"
 
-#, fuzzy
-#~| msgid "In press"
 #~ msgid "Impressum"
-#~ msgstr "In der Presse"
+#~ msgstr "Impressum"
 
-#, fuzzy
-#~| msgid "Import as:"
 #~ msgid "Import from Database"
-#~ msgstr "Importieren als:"
+#~ msgstr "Aus Datenbank importieren"
 
-#, fuzzy
-#~| msgid "Cannot load document access data."
 #~ msgid "Cannot load book access data."
-#~ msgstr "Dokumentenzugriffsdaten können nicht geladen werden."
+#~ msgstr "Buchzugriffsdaten können nicht geladen werden."
 
-#, fuzzy
-#~| msgid "Share your document with others"
 #~ msgid "Share your book with others"
-#~ msgstr "Teile dein Dokument mit anderen"
+#~ msgstr "Teilen Sie Ihr Buch mit anderen"
 
-#, fuzzy
-#~| msgid "Basic"
 #~ msgid "Basic info"
-#~ msgstr "Basic"
+#~ msgstr "Grundlegende Informationen"
 
-#, fuzzy
-#~| msgid "Library information"
 #~ msgid "Basic book information"
-#~ msgstr "Bibliotheksinformation"
+#~ msgstr "Grundlegende Buchinformationen"
 
-#, fuzzy
-#~| msgid "Chapter or section"
 #~ msgid "Chapters"
-#~ msgstr "Kapitel oder Abschnitt"
+#~ msgstr "Kapitel"
 
-#, fuzzy
-#~| msgid "Document Navigator"
 #~ msgid "Documents assigned as chapters"
-#~ msgstr "Dokumentnavigator"
+#~ msgstr "Als Kapitel zugeordnete Dokumente"
 
-#, fuzzy
-#~| msgid "Bibliography Manager"
 #~ msgid "Bibliography related settings"
-#~ msgstr "Bibliografiemanager"
+#~ msgstr "Bibliographiebezogene Einstellungen"
 
-#, fuzzy
-#~| msgid "Deleted citation"
 #~ msgid "ODT related settings"
-#~ msgstr "Zitierung gestrichen"
+#~ msgstr "ODT-bezogene Einstellungen"
 
-#, fuzzy
-#~| msgid "Could not delete document"
 #~ msgid "Could not delete book"
-#~ msgstr "Dokument konnte nicht gelöscht werden"
+#~ msgstr "Das Buch konnte nicht gelöscht werden"
 
-#, fuzzy
-#~| msgid "Document has been deleted"
 #~ msgid "Book has been deleted"
-#~ msgstr "Dokument wurde gelöscht"
+#~ msgstr "Buch wurde gelöscht"
 
-#, fuzzy
-#~| msgid "Do you really want to delete the following documents?"
 #~ msgid "Do you really want to delete the following books?"
-#~ msgstr "Möchten Sie die folgenden Dokumente wirklich löschen?"
+#~ msgstr "Möchten Sie die folgenden Bücher wirklich löschen?"
 
-#, fuzzy
-#~| msgid "Do you really want to delete the following document?"
 #~ msgid "Do you really want to delete the following book?"
-#~ msgstr "Möchten Sie das folgende Dokument wirklich löschen?"
+#~ msgstr "Möchten Sie das folgende Buch wirklich löschen?"
 
-#, fuzzy
-#~| msgid "Edit Categories"
 #~ msgid "Edit Chapter"
-#~ msgstr "Kategorien bearbeiten"
+#~ msgstr "Kapitel bearbeiten"
 
-#, fuzzy
-#~| msgid "Revision could not be saved."
 #~ msgid "The book could not be saved"
-#~ msgstr "Revision konnte nicht gespeichert werden."
+#~ msgstr "Das Buch konnte nicht gespeichert werden"
 
-#, fuzzy
-#~| msgid "Create copy"
 #~ msgid "Create Book"
-#~ msgstr "Kopie erstellen"
+#~ msgstr "Buch erstellen"
 
-#, fuzzy
-#~| msgid "Edit link"
 #~ msgid "Edit Book"
-#~ msgstr "Link bearbeiten"
+#~ msgstr "Buch bearbeiten"
 
-#, fuzzy
-#~| msgid "Document Overview"
 #~ msgid "Book Overview"
-#~ msgstr "Dokumentenübersicht"
+#~ msgstr "Buchübersicht"
 
-#, fuzzy
-#~| msgid "No contacts available"
 #~ msgid "No books available"
-#~ msgstr "Keine Kontakte verfügbar"
+#~ msgstr "Keine Bücher verfügbar"
 
-#, fuzzy
-#~| msgid "No sources found"
 #~ msgid "No books found"
-#~ msgstr "Keine Quellen gefunden"
+#~ msgstr "Keine Bücher gefunden"
 
-#, fuzzy
-#~| msgid "You cannot delete documents while you are offline."
 #~ msgid "You cannot delete books while you are offline."
-#~ msgstr "Sie können keine Dokumente löschen, während Sie offline sind."
+#~ msgstr "Sie können keine Bücher löschen, während Sie offline sind."
 
-#, fuzzy
-#~| msgid "Search"
 #~ msgid "Search books"
-#~ msgstr "Suche"
+#~ msgstr "Bücher suchen"
 
 #~ msgid "Epub export has been initiated."
 #~ msgstr "Epub export wurde initiert."
 
-#, fuzzy
-#~| msgid "HTML export has been initiated."
 #~ msgid "BITS export has been initiated."
-#~ msgstr "HTML export wurde initiert."
+#~ msgstr "Der BITS-Export wurde gestartet."
 
 #~ msgid "HTML export has been initiated."
 #~ msgstr "HTML export wurde initiert."
 
-#, fuzzy
-#~| msgid "HTML export has been initiated."
 #~ msgid "Unified HTML export has been initiated."
-#~ msgstr "HTML export wurde initiert."
+#~ msgstr "Der einheitliche HTML-Export wurde gestartet."
 
-#, fuzzy
-#~| msgid "File export has been initiated."
 #~ msgid "LaTeX export has been initiated."
-#~ msgstr "Dateiexport wurde initiert."
+#~ msgstr "Der LaTeX-Export wurde gestartet."
 
-#, fuzzy
-#~| msgid "File export has been initiated."
 #~ msgid "DOCX export has been initiated."
-#~ msgstr "Dateiexport wurde initiert."
+#~ msgstr "Der DOCX-Export wurde gestartet."
 
-#, fuzzy
-#~| msgid "HTML export has been initiated."
 #~ msgid "ODT export has been initiated."
-#~ msgstr "HTML export wurde initiert."
+#~ msgstr "Der ODT-Export wurde gestartet."
 
-#, fuzzy
-#~| msgid "Printing has been initiated."
 #~ msgid "Print has been initiated."
-#~ msgstr "Der Druckvorgang wurde gestartet."
+#~ msgstr "Der Druck wurde gestartet."
 
-#, fuzzy
-#~| msgid "Move the documents that have been selected."
 #~ msgid "Move the books that have been selected."
-#~ msgstr "Verschieben Sie die ausgewählten Dokumente."
+#~ msgstr "Verschieben Sie die ausgewählten Bücher."
 
-#, fuzzy
-#~| msgid "In book"
 #~ msgid "Move book"
-#~ msgstr "Im Buch"
+#~ msgstr "Buch verschieben"
 
-#, fuzzy
-#~| msgid "Document has been moved"
 #~ msgid "Book has been moved"
-#~ msgstr "Dokument wurde verschoben"
+#~ msgstr "Buch wurde verschoben"
 
-#, fuzzy
-#~| msgid "Delete selected"
 #~ msgid "Delete selected books."
-#~ msgstr "Auswahl löschen"
+#~ msgstr "Ausgewählte Bücher löschen."
 
-#, fuzzy
-#~| msgid "You cannot delete documents of other users"
 #~ msgid "You cannot delete books of other users."
-#~ msgstr "Sie können keine Dokumente anderer Benutzer löschen"
+#~ msgstr "Sie können keine Bücher anderer Benutzer löschen."
 
-#, fuzzy
-#~| msgid "Share selected"
 #~ msgid "Share selected books."
-#~ msgstr "Auswahl teilen"
+#~ msgstr "Teilen Sie ausgewählte Bücher."
 
-#, fuzzy
-#~| msgid "You cannot share documents of other users"
 #~ msgid "You cannot share books of other users."
-#~ msgstr "Sie können keine Dokumente anderer Benutzer freigeben"
+#~ msgstr "Sie können keine Bücher anderer Benutzer teilen."
 
-#, fuzzy
-#~| msgid "Copy selected as..."
 #~ msgid "Copy selected books."
-#~ msgstr "Kopiere ausgewählte als ..."
+#~ msgstr "Ausgewählte Bücher kopieren."
 
-#, fuzzy
-#~| msgid "Export selected as BITS"
 #~ msgid "Export selected books as BITS."
-#~ msgstr "Exportiere ausgewählte als BITS"
+#~ msgstr "Exportieren Sie ausgewählte Bücher als BITS."
 
-#, fuzzy
-#~| msgid "Export selected as Epub"
 #~ msgid "Export selected books as Epub."
-#~ msgstr "Auswahl als Epub exportieren"
+#~ msgstr "Exportieren Sie ausgewählte Bücher als Epub."
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export selected books as HTML."
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Exportieren Sie ausgewählte Bücher als HTML."
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export selected as Unified HTML"
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Export als Unified HTML ausgewählt"
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export selected books as Single-file HTML."
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Exportieren Sie ausgewählte Bücher als Einzeldatei-HTML."
 
-#, fuzzy
-#~| msgid "Export selected as LaTeX"
 #~ msgid "Export selected books as LaTeX."
-#~ msgstr "Auswahl als LaTeX exportieren"
+#~ msgstr "Exportieren Sie ausgewählte Bücher als LaTeX."
 
-#, fuzzy
-#~| msgid "Export selected as LaTeX"
 #~ msgid "Export selected as DOCX"
-#~ msgstr "Auswahl als LaTeX exportieren"
+#~ msgstr "Export als DOCX ausgewählt"
 
-#, fuzzy
-#~| msgid "Export selected as LaTeX"
 #~ msgid "Export selected books as DOCX."
-#~ msgstr "Auswahl als LaTeX exportieren"
+#~ msgstr "Exportieren Sie ausgewählte Bücher als DOCX."
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export selected as ODT"
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Export als ODT ausgewählt"
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export selected books as ODT."
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Ausgewählte Bücher als ODT exportieren."
 
-#, fuzzy
-#~| msgid "Export selected"
 #~ msgid "Export selected to Print/PDF"
-#~ msgstr "Auswahl exportieren"
+#~ msgstr "Ausgewählte Datei zum Drucken/PDF exportieren"
 
-#, fuzzy
-#~| msgid "Export selected bibliography entries."
 #~ msgid "Export selected books to the print dialog."
-#~ msgstr "Exportieren Sie ausgewählte Bibliographieeinträge."
+#~ msgstr "Exportieren Sie ausgewählte Bücher in den Druckdialog."
 
-#, fuzzy
-#~| msgid "Export selected as BITS"
 #~ msgid "Export as BITS"
-#~ msgstr "Exportiere ausgewählte als BITS"
+#~ msgstr "Als BITS exportieren"
 
-#, fuzzy
-#~| msgid ""
-#~| "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 #~ msgid "Export book as Book Interchange Tag Set."
-#~ msgstr ""
-#~ "Exportieren Sie das Dokument in eine Book Interchange Tag Set BITS "
-#~ "Version 2.1-Datei."
+#~ msgstr "Buch als Book Interchange Tag Set exportieren."
 
-#, fuzzy
-#~| msgid "Export selected as Epub"
 #~ msgid "Export as Epub"
-#~ msgstr "Auswahl als Epub exportieren"
+#~ msgstr "Als Epub exportieren"
 
-#, fuzzy
-#~| msgid "Export selected as Epub"
 #~ msgid "Export book as Epub."
-#~ msgstr "Auswahl als Epub exportieren"
+#~ msgstr "Buch als Epub exportieren."
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export as HTML"
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Als HTML exportieren"
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export book as HTML."
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Buch als HTML exportieren."
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export as Unified HTML"
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Als Unified HTML exportieren"
 
-#, fuzzy
-#~| msgid "Export selected as LaTeX"
 #~ msgid "Export as LaTeX"
-#~ msgstr "Auswahl als LaTeX exportieren"
+#~ msgstr "Als LaTeX exportieren"
 
-#, fuzzy
-#~| msgid "Export selected as LaTeX"
 #~ msgid "Export book as LaTeX."
-#~ msgstr "Auswahl als LaTeX exportieren"
+#~ msgstr "Buch als LaTeX exportieren."
 
-#, fuzzy
-#~| msgid "Export templates"
 #~ msgid "Export as DOCX"
-#~ msgstr "Vorlagen exportieren"
+#~ msgstr "Als DOCX exportieren"
 
-#, fuzzy
-#~| msgid "Export"
 #~ msgid "Export as ODT"
-#~ msgstr "Exportieren"
+#~ msgstr "Als ODT exportieren"
 
-#, fuzzy
-#~| msgid "Print/PDF"
 #~ msgid "Export to Print/PDF"
-#~ msgstr "Drucken / PDF"
+#~ msgstr "Als Ausdruck/PDF exportieren"
 
-#, fuzzy
-#~| msgid "Accept all tracked changes."
 #~ msgid "Unresolved tracked changes"
-#~ msgstr "Akzeptieren Sie alle nachverfolgten Änderungen."
+#~ msgstr "Ungelöste nachverfolgte Änderungen"
 
-#, fuzzy
-#~| msgid "An internal link has lost its target."
 #~ msgid "Internal links without target"
-#~ msgstr "Ein interner Link hat sein Ziel verloren."
+#~ msgstr "Interne Links ohne Ziel"
 
-#, fuzzy
-#~| msgid "Resolved comments"
 #~ msgid "Unresolved comments"
-#~ msgstr "Kommentare aufgelöst"
+#~ msgstr "Ungelöste Kommentare"
 
-#, fuzzy
-#~| msgid "A cross reference has lost its target."
 #~ msgid "Cross references without targets"
-#~ msgstr "Ein Querverweis hat sein Ziel verloren."
+#~ msgstr "Querverweise ohne Ziele"
 
-#, fuzzy
-#~| msgid "Item title"
 #~ msgid "No chapter title"
-#~ msgstr "Artikelbezeichnung"
+#~ msgstr "Kein Kapiteltitel"
 
-#, fuzzy
-#~| msgid "No sources found"
 #~ msgid "No issues were found:"
-#~ msgstr "Keine Quellen gefunden"
+#~ msgstr "Es wurden keine Probleme gefunden:"
 
-#, fuzzy
-#~| msgid "The template needs a title."
 #~ msgid "Each chapter has a title."
-#~ msgstr "Die Vorlage benötigt einen Titel."
+#~ msgstr "Jedes Kapitel hat einen Titel."
 
-#, fuzzy
-#~| msgid "Reject all tracked changes."
 #~ msgid "There are no unresolved tracked changes."
-#~ msgstr "Alle nachverfolgten Änderungen ablehnen."
+#~ msgstr "Es gibt keine ungelösten nachverfolgten Änderungen."
 
-#, fuzzy
-#~| msgid "Resolved comments"
 #~ msgid "There are no unresolved comments."
-#~ msgstr "Kommentare aufgelöst"
+#~ msgstr "Es gibt keine ungelösten Kommentare."
 
-#, fuzzy
-#~| msgid "A cross reference has lost its target."
 #~ msgid "All cross references have working targets."
-#~ msgstr "Ein Querverweis hat sein Ziel verloren."
+#~ msgstr "Alle Querverweise haben Arbeitsziele."
 
-#, fuzzy
-#~| msgid "An internal link has lost its target."
 #~ msgid "All internal links have working targets."
-#~ msgstr "Ein interner Link hat sein Ziel verloren."
+#~ msgstr "Alle internen Links haben funktionierende Ziele."
 
-#, fuzzy
-#~| msgid "Published"
 #~ msgid "Publisher"
-#~ msgstr "Veröffentlicht"
+#~ msgstr "Herausgeber"
 
-#, fuzzy
-#~| msgid "Copyright Information"
 #~ msgid "Copyright notice"
-#~ msgstr "Urheberrechtsinformation"
+#~ msgstr "Urheberrechtshinweis"
 
-#, fuzzy
-#~| msgid "Citation Style"
 #~ msgid "Citation style"
 #~ msgstr "Zitierstil"
 
-#, fuzzy
-#~| msgid "Default citation style"
 #~ msgid "Select citation style for the book"
-#~ msgstr "Standard-Zitierstil"
+#~ msgstr "Wählen Sie den Zitierstil für das Buch"
 
-#, fuzzy
-#~| msgid "Book title"
 #~ msgid "Book style"
-#~ msgstr "Buchtitel"
+#~ msgstr "Buchstil"
 
-#, fuzzy
-#~| msgid "Paper Size"
 #~ msgid "Paper size"
-#~ msgstr "Papiergröße"
+#~ msgstr "Papierformat"
 
-#, fuzzy
-#~| msgid "Remove image"
 #~ msgid "Cover image"
-#~ msgstr "Entferne Bild"
+#~ msgstr "Titelbild"
 
-#, fuzzy
-#~| msgid "Select a file"
 #~ msgid "Select a cover image"
-#~ msgstr "Datei wählen"
+#~ msgstr "Wählen Sie ein Titelbild aus"
 
-#, fuzzy
-#~| msgid "Select Target"
 #~ msgid "Select Image"
-#~ msgstr "Ziel auswählen"
+#~ msgstr "Wählen Sie Bild aus"
 
-#, fuzzy
-#~| msgid "Remove image"
 #~ msgid "Remove Image"
-#~ msgstr "Entferne Bild"
+#~ msgstr "Bild entfernen"
 
-#, fuzzy
-#~| msgid "Templates"
 #~ msgid "ODT Template"
-#~ msgstr "Vorlagen"
+#~ msgstr "ODT-Vorlage"
 
-#, fuzzy
-#~| msgid "Select document template for copies"
 #~ msgid "Select an ODT template file"
-#~ msgstr "Wählen Sie die Dokumentvorlage für Kopien aus"
+#~ msgstr "Wählen Sie eine ODT-Vorlagendatei aus"
 
-#, fuzzy
-#~| msgid "Select a file"
 #~ msgid "Select ODT template file"
-#~ msgstr "Datei wählen"
+#~ msgstr "Wählen Sie die ODT-Vorlagendatei aus"
 
-#, fuzzy
-#~| msgid "Import a Fidus Template file"
 #~ msgid "Remove ODT template file"
-#~ msgstr "Importieren einer Fidus-Dokumentvorlage"
+#~ msgstr "ODT-Vorlagendatei entfernen"
 
-#, fuzzy
-#~| msgid "Templates"
 #~ msgid "DOCX Template"
-#~ msgstr "Vorlagen"
+#~ msgstr "DOCX-Vorlage"
 
-#, fuzzy
-#~| msgid "Select document template for copies"
 #~ msgid "Select an DOCX template file"
-#~ msgstr "Wählen Sie die Dokumentvorlage für Kopien aus"
+#~ msgstr "Wählen Sie eine DOCX-Vorlagendatei aus"
 
-#, fuzzy
-#~| msgid "Select a file"
 #~ msgid "Select DOCX template file"
-#~ msgstr "Datei wählen"
+#~ msgstr "Wählen Sie eine DOCX-Vorlagendatei aus"
 
-#, fuzzy
-#~| msgid "Import a Fidus Template file"
 #~ msgid "Remove DOCX template file"
-#~ msgstr "Importieren einer Fidus-Dokumentvorlage"
+#~ msgstr "Entfernen Sie die DOCX-Vorlagendatei"
 
-#, fuzzy
-#~| msgid "Move documents"
 #~ msgid "My documents"
-#~ msgstr "Dokumente verschieben"
+#~ msgstr "Meine Dokumente"
 
-#, fuzzy
-#~| msgid "Book author(s)"
 #~ msgid "Book chapters"
-#~ msgstr "Buchautor(en)"
+#~ msgstr "Buchkapitel"
 
-#, fuzzy
-#~| msgid "Book pagination"
 #~ msgid "Book part"
-#~ msgstr "Seitennummerierung"
+#~ msgstr "Buchteil"
 
-#, fuzzy
-#~| msgid "Book title"
 #~ msgid "Book part title"
-#~ msgstr "Buchtitel"
+#~ msgstr "Titel des Buchteils"
 
-#, fuzzy
-#~| msgid "Export selected bibliography entries."
 #~ msgid "Export selected to Git repository."
-#~ msgstr "Exportieren Sie ausgewählte Bibliographieeinträge."
+#~ msgstr "Ausgewähltes in das Git-Repository exportieren."
 
-#, fuzzy
-#~| msgid "System message"
 #~ msgid "Commit message"
-#~ msgstr "Systemnachricht"
+#~ msgstr "Commit-Nachricht"
 
-#, fuzzy
-#~| msgid "Updating..."
 #~ msgid "Updating"
-#~ msgstr "Aktualisierung wird druchgeführt..."
+#~ msgstr "Aktualisierung"
 
-#, fuzzy
-#~| msgid "System message"
 #~ msgid "Enter commit message"
-#~ msgstr "Systemnachricht"
+#~ msgstr "Geben Sie die Commit-Nachricht ein"
 
-#, fuzzy
-#~| msgid "Could not delete revision."
 #~ msgid "Could not publish book to repository."
-#~ msgstr "Revision konnte nicht gelöscht werden."
+#~ msgstr "Buch konnte nicht im Repository veröffentlicht werden."
 
-#, fuzzy
-#~| msgid "Reload page"
 #~ msgid "Reload"
-#~ msgstr "Seite neuladen"
+#~ msgstr "Neu laden"
 
-#, fuzzy
-#~| msgid "Export"
 #~ msgid "Export EPUB"
-#~ msgstr "Exportieren"
+#~ msgstr "EPUB exportieren"
 
-#, fuzzy
-#~| msgid "Export"
 #~ msgid "Export HTML"
-#~ msgstr "Exportieren"
+#~ msgstr "HTML exportieren"
 
-#, fuzzy
-#~| msgid "Export selected as HTML"
 #~ msgid "Export Unified HTML"
-#~ msgstr "Auswahl als HTML exportieren"
+#~ msgstr "Exportieren Sie einheitliches HTML"
 
-#, fuzzy
-#~| msgid "Export selected as LaTeX"
 #~ msgid "Export LaTeX"
-#~ msgstr "Auswahl als LaTeX exportieren"
+#~ msgstr "LaTeX exportieren"
 
-#, fuzzy
-#~| msgid "Export"
 #~ msgid "Export ODT"
-#~ msgstr "Exportieren"
+#~ msgstr "ODT exportieren"
 
-#, fuzzy
-#~| msgid "Export"
 #~ msgid "Export DOCX"
-#~ msgstr "Exportieren"
+#~ msgstr "DOCX exportieren"
 
 #~ msgid "Safari bug warning"
 #~ msgstr "Safari Fehler Warnung"
 
 #~ msgid ""
-#~ "Unfortunately Safari has a bug which makes it impossible to export to "
-#~ "this format. Please use Chrome or Firefox (on a desktop computer)."
+#~ "Unfortunately Safari has a bug which makes it impossible to export to this "
+#~ "format. Please use Chrome or Firefox (on a desktop computer)."
 #~ msgstr ""
-#~ "Leider hat Safari einen Fehler, der es unmöglich macht, in dieses Format "
-#~ "zu exportieren. Bitte verwenden Sie Chrome oder Firefox (auf einem "
-#~ "Desktop-Computer)."
+#~ "Leider hat Safari einen Fehler, der es unmöglich macht, in dieses Format zu "
+#~ "exportieren. Bitte verwenden Sie Chrome oder Firefox (auf einem Desktop-"
+#~ "Computer)."
 
 #~ msgid "Export selected as HTML (old)"
 #~ msgstr "Auswahl als HTML (alt) exportieren"

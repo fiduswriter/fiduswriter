@@ -1,4 +1,3 @@
-#
 # Norwegian Bokmål translation for Fidus Writer
 # Johannes Wilm <johannes@fiduswriter.org>, 2025.
 #
@@ -6,10 +5,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 10:20+0000\n"
+"POT-Creation-Date: 2026-05-04 06:33+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
-"Language-Team:  <johannes@fiduswriter.org>\n"
+"Language-Team: <johannes@fiduswriter.org>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -98,46 +97,42 @@ msgstr ""
 "arbeidet ditt lagres automatisk, og vi er tilbake snart."
 
 #: base/templates/admin/console.html:36
-#, fuzzy
-#| msgid "Send a system message to all connected users:"
 msgid "Send to connected users"
-msgstr "Send en systemmelding til alle tilkoblede brukere:"
+msgstr "Send til tilkoblede brukere"
 
 #: base/templates/admin/overview.html:10
 msgid "Extras"
-msgstr ""
+msgstr "Ekstrautstyr"
 
 #: base/templates/admin/overview.html:17
 #: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
-msgstr ""
+msgstr "Dokumentvedlikehold"
 
 #: base/templates/api_404.html:5 base/templates/api_404.html:8
-#, fuzzy
-#| msgid "Error 500"
 msgid "Error 404"
-msgstr "Feil 500"
+msgstr "Feil 404"
 
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
-msgstr ""
+msgstr "Vi beklager, men denne siden ble ikke funnet."
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr ""
+msgstr "Alt-i-ett-løsningen for samarbeidende akademisk skriving."
 
 #: base/templates/app.html:46
 msgid "JavaScript disabled"
-msgstr ""
+msgstr "JavaScript er deaktivert"
 
 #: base/templates/app.html:47
 msgid "Fidus Writer requires you to enable JavaScript."
-msgstr ""
+msgstr "Fidus Writer krever at du aktiverer JavaScript."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
-msgstr ""
+msgstr "Nettleser støttes ikke"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
 msgid ""
@@ -148,39 +143,50 @@ msgid ""
 "                desktop computer.\n"
 "            "
 msgstr ""
+"\n"
+"Nettleseren din støttes ikke av Fidus Writer.\n"
+"                Vennligst oppdater! Vi anbefaler å bruke en aktuell\n"
+"                versjon av Chrome/Chromium eller Firefox på en\n"
+"                stasjonær datamaskin."
 
 #: document/admin.py:59
 msgid "Duplicate selected document templates"
-msgstr ""
+msgstr "Dupliser valgte dokumentmaler"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:887
 msgid "Untitled"
-msgstr ""
+msgstr "Uten tittel"
 
 #: document/emails.py:21
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has changed your access rights to %(rights)s on the document "
-"'%(document_title)s'. \n"
+"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
 "Open the document: %(link)s"
 msgstr ""
+"Hei %(collaborator_name)s,\n"
+"%(owner)s har endret tilgangsrettighetene dine til %(rights)s på dokumentet '%(document_title)s'. \n"
+"Åpne dokumentet: %(link)s"
 
 #: document/emails.py:32
 #, python-format
 msgid ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to "
-"%(rights)s on the document '%(document_title)s'.</p>"
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
+" %(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
+"<p>Hei %(collaborator_name)s,<br>%(owner)s har endret tilgangsrettighetene "
+"dine til %(rights)s på dokumentet '%(document_title)s'.</p>"
 
 #: document/emails.py:43
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document_title)s' with you and given "
-"you %(rights)s access rights. \n"
+"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
 "Open document: %(link)s"
 msgstr ""
+"Hei %(collaborator_name)s,\n"
+"%(owner)s har delt dokumentet '%(document_title)s' med deg og gitt deg %(rights)s tilgangsrettigheter. \n"
+"Åpne dokument: %(link)s"
 
 #: document/emails.py:55
 #, python-format
@@ -188,67 +194,81 @@ msgid ""
 "<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document "
 "'%(document_title)s' with you and given you %(rights)s access rights.</p>"
 msgstr ""
+"<p>Hei %(collaborator_name)s,<br>%(owner)s har delt dokumentet "
+"'%(document_title)s' med deg og gitt deg %(rights)s tilgangsrettigheter.</p>"
 
 #: document/emails.py:89
 msgid "shared"
-msgstr ""
+msgstr "delt"
 
 #: document/emails.py:91 document/emails.py:207 document/emails.py:286
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
 #: document/emails.py:93 document/emails.py:209
 msgid "Author"
-msgstr ""
+msgstr "Forfatter"
 
 #: document/emails.py:95
 msgid "Access Rights"
-msgstr ""
+msgstr "Tilgangsrettigheter"
 
 #: document/emails.py:98 document/emails.py:214
 msgid "Access the document"
-msgstr ""
+msgstr "Få tilgang til dokumentet"
 
 #: document/emails.py:101
 #, python-format
 msgid "Document shared: %(document_title)s"
-msgstr ""
+msgstr "Dokument delt: %(document_title)s"
 
 #: document/emails.py:123
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has mentioned you in a comment in the document "
-"'%(document)s':\n"
+"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
 "Go to the document here: %(link)s"
 msgstr ""
+"Hei %(collaborator_name)s,\n"
+"%(commentator)s har nevnt deg i en kommentar i dokumentet '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Gå til dokumentet her: %(link)s"
 
 #: document/emails.py:136
 #, python-format
 msgid ""
-"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment "
-"in the document '%(document_title)s'."
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
+" in the document '%(document_title)s'."
 msgstr ""
+"Hei %(collaborator_name)s,<br>%(commentator)s har nevnt deg i en kommentar i"
+" dokumentet '%(document_title)s'."
 
 #: document/emails.py:143
 #, python-format
 msgid "Comment on : %(document_title)s"
-msgstr ""
+msgstr "Kommentar til : %(document_title)s"
 
 #: document/emails.py:148
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has assigned you to a comment in the document "
-"'%(document)s':\n"
+"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
 "Go to the document here: %(link)s"
 msgstr ""
+"Hei %(collaborator_name)s,\n"
+"%(commentator)s har tildelt deg en kommentar i dokumentet '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Gå til dokumentet her: %(link)s"
 
 #: document/emails.py:159
 #, python-format
@@ -256,11 +276,13 @@ msgid ""
 "Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
 "in the document '%(document_title)s'."
 msgstr ""
+"Hei %(collaborator_name)s,<br>%(commentator)s har tildelt deg en kommentar i"
+" dokumentet '%(document_title)s'."
 
 #: document/emails.py:166
 #, python-format
 msgid "Comment assignment on : %(document_title)s"
-msgstr ""
+msgstr "Kommentaroppgave på : %(document_title)s"
 
 #: document/emails.py:171
 #, python-format
@@ -269,84 +291,93 @@ msgid ""
 "comment in the document '%(document)s':</p>%(comment_html)s<p>Go to the "
 "document <a href=\"%(link)s\">here</a>.</p>"
 msgstr ""
+"<p>Hei %(collaborator_name)s,<br>%(commentator)s har tildelt deg en "
+"kommentar i dokumentet '%(document)s':</p>%(comment_html)s<p>Gå til "
+"dokumentet <a href=\"%(link)s\">her</a>.</p>"
 
 #: document/emails.py:211
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: document/emails.py:239
 #, python-format
 msgid ""
 "Hey %(owner_name)s,\n"
-"%(requester_name)s has requested %(rights)s access to the document "
-"'%(document_title)s'. \n"
+"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
 "Open the document to grant access: %(link)s"
 msgstr ""
+"Hei %(owner_name)s,\n"
+"%(requester_name)s har bedt om %(rights)s tilgang til dokumentet '%(document_title)s'. \n"
+"Åpne dokumentet for å gi tilgang: %(link)s"
 
 #: document/emails.py:251
 #, python-format
 msgid ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access "
-"to the document '%(document_title)s'.</p>"
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
+" to the document '%(document_title)s'.</p>"
 msgstr ""
+"<p>Hei %(owner_name)s,<br>%(requester_name)s har bedt om %(rights)s tilgang "
+"til dokumentet '%(document_title)s'.</p>"
 
 #: document/emails.py:284
 msgid "access request"
-msgstr ""
+msgstr "tilgangsforespørsel"
 
 #: document/emails.py:288
 msgid "Requested by"
-msgstr ""
+msgstr "Forespurt av"
 
 #: document/emails.py:290
 msgid "Requested rights"
-msgstr ""
+msgstr "Forespurte rettigheter"
 
 #: document/emails.py:293
 msgid "Grant access"
-msgstr ""
+msgstr "Gi tilgang"
 
 #: document/emails.py:297
 #, python-format
 msgid "Access request: %(document_title)s"
-msgstr ""
+msgstr "Tilgangsforespørsel: %(document_title)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
 msgid "Add %(name)s"
-msgstr ""
+msgstr "Legg til %(name)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr ""
+msgstr "Vedlikehold"
 
 #: document/templates/admin/document/maintenance.html:19
 msgid ""
 "\n"
-"            Before and after upgrading Fidus Writer, you should update all "
-"the documents\n"
-"            of all users to the newest document version. Only do this if you "
-"know that\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
+"\n"
+"Før og etter oppgradering av Fidus Writer bør du oppdatere alle dokumentene\n"
+"            av alle brukere til den nyeste dokumentversjonen. Gjør dette bare hvis du vet det\n"
+"            ingen bruker redigerer noe dokument for øyeblikket!"
 
 #: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
-msgstr ""
+msgstr "Oppdater alle dokumenter (FARE!)"
 
 #: style/models.py:74
 msgid "Default"
-msgstr ""
+msgstr "Misligholde"
 
 #: style/views.py:27
 msgid "The template needs at least 1 document style"
-msgstr ""
+msgstr "Malen trenger minst én dokumentstil"
 
 #: user/admin.py:11
 msgid "Connections"
-msgstr ""
+msgstr "Tilkoblinger"
 
 #: user/emails.py:10
 #, python-format
@@ -354,37 +385,38 @@ msgid ""
 "Hey %(email)s,%(sender)s has invited you to connect on Fidus Writer. \n"
 "Accept or reject the invite through this link: %(link)s"
 msgstr ""
+"Hei %(email)s,%(sender)s har invitert deg til å koble til på Fidus Writer. \n"
+"Godta eller avslå invitasjonen via denne lenken: %(link)s"
 
 #: user/emails.py:19
 #, python-format
 msgid ""
-"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus Writer."
-"</p>"
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
+"Writer.</p>"
 msgstr ""
+"<p>Hei %(email)s,<br> %(sender)s har invitert deg til å koble til på Fidus "
+"Writer.</p>"
 
 #: user/emails.py:34
-#, fuzzy
-#| msgid "Log in to Fidus Writer"
 msgid "Invite for Fidus Writer"
-msgstr "Logg inn på Fidus Writer"
+msgstr "Inviter til Fidus Writer"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
-msgstr ""
+msgstr "Registrer deg/logg inn og godta/avslå invitasjonen"
 
 #: user/emails.py:40
-#, fuzzy
-#| msgid "Fidus Writer Administration Site"
 msgid "Fidus Writer contact invite"
-msgstr "Fidus Writer Administrasjonsside"
+msgstr "Fidus Writer kontaktinvitasjon"
 
 #: user/emails.py:53
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect "
-"on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
+"Hei %(recipient_name)s, %(sender_name)s har avslått invitasjonen din til å koble til på Fidus Writer. \n"
+"Se listen over kontakter her: %(link)s"
 
 #: user/emails.py:62
 #, python-format
@@ -392,30 +424,29 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
+"<p>Hei %(recipient_name)s,<br> %(sender_name)s har avslått invitasjonen din "
+"til å koble til på Fidus Writer.</p>"
 
 #: user/emails.py:76
-#, fuzzy
-#| msgid "Fidus Writer Admin"
 msgid "Invite for Fidus Writer declined"
-msgstr "Fidus Writer Admin"
+msgstr "Invitasjon til Fidus Writer avslått"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
-msgstr ""
+msgstr "Se listen over kontakter"
 
 #: user/emails.py:82
-#, fuzzy
-#| msgid "Fidus Writer Admin"
 msgid "Fidus Writer invite declined"
-msgstr "Fidus Writer Admin"
+msgstr "Fidus Writer-invitasjon ble avslått"
 
 #: user/emails.py:95
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect "
-"on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
+"Hei %(recipient_name)s, %(sender_name)s har godtatt invitasjonen din til å koble til på Fidus Writer. \n"
+"Se listen over kontakter her: %(link)s"
 
 #: user/emails.py:104
 #, python-format
@@ -423,44 +454,42 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has accepted your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
+"<p>Hei %(recipient_name)s,<br> %(sender_name)s har godtatt invitasjonen din "
+"til å koble til på Fidus Writer.</p>"
 
 #: user/emails.py:118
 msgid "Invite for Fidus Writer accepted"
-msgstr ""
+msgstr "Invitasjon til Fidus Writer akseptert"
 
 #: user/emails.py:124
-#, fuzzy
-#| msgid "Fidus Writer Administration Site"
 msgid "Fidus Writer invite accepted"
-msgstr "Fidus Writer Administrasjonsside"
+msgstr "Fidus Writer-invitasjon akseptert"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
-msgstr ""
+msgstr "Koden må være nøyaktig 6 sifre (0-9)."
 
 #: user/models.py:55
 msgid "Interface language preference"
-msgstr ""
+msgstr "Foretrukket grensesnittspråk"
 
 #: user/models.py:62
 msgid "User preferences (e.g., encryption dialog dismissal)"
-msgstr ""
+msgstr "Brukerinnstillinger (f.eks. avvisning av krypteringsdialog)"
 
 #: user/models.py:73
 msgid "Can login as another user"
-msgstr ""
+msgstr "Kan logge inn som en annen bruker"
 
 #: user/models.py:102
-#, fuzzy
-#| msgid "Email address:"
 msgid "email address"
-msgstr "E-postadresse:"
+msgstr "e-postadresse"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
 msgid "Hello from %(site_name)s!"
-msgstr ""
+msgstr "Hei fra %(site_name)s!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 #, python-format
@@ -468,50 +497,57 @@ msgid ""
 "You are receiving this e-mail because user %(user_display)s has given yours "
 "as an e-mail address to connect their account."
 msgstr ""
+"Du mottar denne e-posten fordi brukeren %(user_display)s har gitt din som en"
+" e-postadresse for å koble til kontoen sin."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 #, python-format
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
 msgstr ""
+"For å bekrefte at dette er riktig, gå til <a href=\"%(url)s\">%(url)s</a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
 #, python-format
 msgid "Thank you from %(site_name)s!"
-msgstr ""
+msgstr "Takk fra %(site_name)s!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid ""
 "You are receiving this e-mail because you or someone else has requested a "
 "password for your user account."
 msgstr ""
+"Du mottar denne e-posten fordi du eller noen andre har bedt om passord for "
+"brukerkontoen din."
 
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid ""
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
+"Det kan trygt ignoreres hvis du ikke ba om tilbakestilling av passord. Klikk"
+" på lenken nedenfor for å tilbakestille passordet ditt."
 
 #: user/templates/account/email/password_reset_key_message.html:21
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgstr "Hvis du har glemt det, er brukernavnet ditt %(username)s."
 
 #: user/views.py:624
 msgid "Code is invalid"
-msgstr ""
+msgstr "Koden er ugyldig"
 
 #: usermedia/views.py:37
 msgid "Filetype not supported"
-msgstr ""
+msgstr "Filtype støttes ikke"
 
 #: usermedia/views.py:44
 msgid "Image too large"
-msgstr ""
+msgstr "Bildet er for stort"
 
 #: usermedia/views.py:71
 msgid "No file uploaded"
-msgstr ""
+msgstr "Ingen fil lastet opp"
 
 #~ msgid "System Overview"
 #~ msgstr "Systemoversikt"
@@ -570,8 +606,8 @@ msgstr ""
 #~ "Please enter your new password twice so we can verify you typed it in "
 #~ "correctly."
 #~ msgstr ""
-#~ "Skriv inn det nye passordet ditt to ganger slik at vi kan bekrefte at du "
-#~ "har skrevet det riktig."
+#~ "Skriv inn det nye passordet ditt to ganger slik at vi kan bekrefte at du har"
+#~ " skrevet det riktig."
 
 #~ msgid "New password:"
 #~ msgstr "Nytt passord:"

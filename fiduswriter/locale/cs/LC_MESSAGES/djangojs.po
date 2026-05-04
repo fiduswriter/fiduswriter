@@ -16,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
-"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+
 #: base/static/js/modules/404/index.js:6
 #: base/static/js/modules/flatpage/index.js:32
 msgid "Page not found"
@@ -54,6 +54,8 @@ msgid ""
 "Other users have requested to connect with you. Go to the contacts page to "
 "accept their invites."
 msgstr ""
+"Ostatní uživatelé požádali o spojení s vámi. Přejděte na stránku kontaktů a "
+"přijměte jejich pozvání."
 
 #: base/static/js/modules/app/index.js:353
 msgid "Go to contacts"
@@ -227,8 +229,9 @@ msgstr "Držitel autorských práv"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder is."
-msgstr ""
+"If the work is not in the public domain, specify who the copyright holder "
+"is."
+msgstr "Pokud dílo není volné dílo, uveďte, kdo je držitelem autorských práv."
 
 #: base/static/js/modules/copyright_dialog/templates.js:66
 msgid "Copyright year"
@@ -237,7 +240,7 @@ msgstr "Rok autorských práv"
 #: base/static/js/modules/copyright_dialog/templates.js:67
 msgid ""
 "If the work is not in the public domain, specify the year of the copyright."
-msgstr ""
+msgstr "Pokud dílo není volným dílem, uveďte rok vzniku autorských práv."
 
 #: base/static/js/modules/copyright_dialog/templates.js:73
 msgid "Available to read for free?"
@@ -257,6 +260,8 @@ msgid ""
 "from a given date, please specify the date in the ISO8601 format (such as "
 "\"2012-10-15\")."
 msgstr ""
+"Uveďte všechny licence, pod kterými je dílo dostupné. Pokud licence platí "
+"pouze od daného data, uveďte datum ve formátu ISO8601 (např. „2012-10-15“)."
 
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
@@ -498,7 +503,7 @@ msgstr "Pole nelze uložit. Fidus Writer toto pole nepodporuje."
 msgid ""
 "Entry has been saved as \"misc\". Fidus Writer does not support the entry "
 "type."
-msgstr ""
+msgstr "Záznam byl uložen jako \"misc\". Fidus Writer nepodporuje typ záznamu."
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:15
 msgid "Field does not contain a valid EDTF string."
@@ -537,6 +542,8 @@ msgid ""
 "Supported formats: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote "
 "Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT citations, DOCX citations"
 msgstr ""
+"Podporované formáty: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote "
+"Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT citace, DOCX citace"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:68
 msgid "Bibliography Manager"
@@ -832,7 +839,7 @@ msgstr "úspěšně importováno."
 #: document/static/js/modules/importer/native/file.js:211
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
-msgstr ""
+msgstr "Zdá se, že nahraný soubor nemá verzi používanou na tomto serveru:"
 
 #: document/static/js/modules/document_template/list_admin.js:37
 msgid "Upload FIDUSTEMPLATE"
@@ -1437,7 +1444,8 @@ msgstr "Recenze byla sledována"
 
 #: document/static/js/modules/documents/access_rights/index.js:155
 msgid "Write with tracked changes, but not see comments and chats of others"
-msgstr "Pište se sledovanými změnami, ale nezobrazujte komentáře a chaty ostatních"
+msgstr ""
+"Pište se sledovanými změnami, ale nezobrazujte komentáře a chaty ostatních"
 
 #: document/static/js/modules/documents/access_rights/index.js:231
 #: document/static/js/modules/documents/overview/index.js:763
@@ -1447,10 +1455,14 @@ msgstr "End-to-end šifrovaný dokument"
 #: document/static/js/modules/documents/access_rights/index.js:232
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure "
-"channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure"
+" channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
+"Tento dokument je šifrován end-to-end. Spolupracovníci bez osobní přístupové"
+" fráze budou potřebovat heslo dokumentu sdílené s nimi prostřednictvím "
+"zabezpečeného kanálu mimo Fidus Writer. Neposílejte heslo přes dokumentový "
+"chat."
 
 #: document/static/js/modules/documents/access_rights/index.js:240
 #: user/static/js/modules/contacts/add_dialog.js:51
@@ -1604,6 +1616,9 @@ msgid ""
 "Anyone with the link can open the document. Only share such links through "
 "secure channels."
 msgstr ""
+"Pokud zadáte výše uvedené heslo, bude vloženo do odkazu (za #). Dokument "
+"může otevřít kdokoli, kdo má odkaz. Sdílejte takové odkazy pouze "
+"prostřednictvím zabezpečených kanálů."
 
 #: document/static/js/modules/documents/access_rights/templates.js:145
 #: document/static/js/modules/documents/access_rights/templates.js:168
@@ -1663,6 +1678,8 @@ msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
 msgstr ""
+"Můžete také nahrát soubor ZIP, který obsahuje jeden soubor v kterémkoli z "
+"těchto formátů a také obrázky a/nebo soubor bibtex."
 
 #: document/static/js/modules/documents/overview/actions.js:443
 #: document/static/js/modules/editor/document_template/index.js:129
@@ -1705,7 +1722,7 @@ msgstr "Nesprávné heslo."
 #: document/static/js/modules/documents/overview/actions.js:798
 msgid ""
 "You cannot view the revision history of a document while you are offline."
-msgstr ""
+msgstr "Když jste offline, nemůžete zobrazit historii revizí dokumentu."
 
 #: document/static/js/modules/documents/overview/index.js:84
 msgid "Document Overview"
@@ -1720,6 +1737,8 @@ msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
 msgstr ""
+"Pokud ponecháte prázdnou složku, smaže se. Opravdu chcete smazat tuto "
+"složku?"
 
 #: document/static/js/modules/documents/overview/index.js:189
 msgid "You cannot open a document while you are offline."
@@ -1777,6 +1796,8 @@ msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
 msgstr ""
+"Šifrované dokumenty chrání váš obsah, takže jej mohou číst pouze lidé s "
+"heslem."
 
 #: document/static/js/modules/documents/overview/index.js:867
 #: document/static/js/modules/documents/overview/index.js:881
@@ -1798,19 +1819,25 @@ msgstr "Nevýhody"
 
 #: document/static/js/modules/documents/overview/index.js:874
 msgid "Limited access rights options (no tracked changes or review modes)."
-msgstr "Omezené možnosti přístupových práv (žádné sledované změny nebo režimy kontroly)."
+msgstr ""
+"Omezené možnosti přístupových práv (žádné sledované změny nebo režimy "
+"kontroly)."
 
 #: document/static/js/modules/documents/overview/index.js:875
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
 msgstr ""
+"Pokud ztratíte heslo nebo přístupovou frázi, neexistuje způsob, jak dokument"
+" obnovit."
 
 #: document/static/js/modules/documents/overview/index.js:876
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
 msgstr ""
+"Heslo musíte sdílet se spolupracovníky ručně (pokud nepoužívají osobní "
+"přístupové heslo)."
 
 #: document/static/js/modules/documents/overview/index.js:880
 msgid "Regular documents are the default and work well for most users."
@@ -1818,7 +1845,8 @@ msgstr "Běžné dokumenty jsou výchozí a fungují dobře pro většinu uživa
 
 #: document/static/js/modules/documents/overview/index.js:883
 msgid "Full access rights options including tracked changes and review modes."
-msgstr "Úplné možnosti přístupových práv včetně sledovaných změn a režimů kontroly."
+msgstr ""
+"Úplné možnosti přístupových práv včetně sledovaných změn a režimů kontroly."
 
 #: document/static/js/modules/documents/overview/index.js:884
 msgid "No risk of losing access if you forget a password."
@@ -1857,6 +1885,8 @@ msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
 msgstr ""
+"Chcete nyní nastavit osobní přístupovou frázi? To vám umožní odemknout "
+"všechny vaše šifrované dokumenty pomocí jediné přístupové fráze."
 
 #: document/static/js/modules/documents/overview/index.js:951
 msgid "Note:"
@@ -1864,7 +1894,9 @@ msgstr "Poznámka:"
 
 #: document/static/js/modules/documents/overview/index.js:951
 msgid "This is optional. You can also use a per-document password instead."
-msgstr "Toto je nepovinné. Místo toho můžete také použít heslo pro jednotlivé dokumenty."
+msgstr ""
+"Toto je nepovinné. Místo toho můžete také použít heslo pro jednotlivé "
+"dokumenty."
 
 #: document/static/js/modules/documents/overview/index.js:955
 msgid "Skip for Now"
@@ -1972,6 +2004,8 @@ msgid ""
 "Export the documents that have been selected as FIDUS files including their "
 "templates."
 msgstr ""
+"Exportujte dokumenty, které byly vybrány jako soubory FIDUS, včetně jejich "
+"šablon."
 
 #: document/static/js/modules/documents/overview/menu.js:177
 msgid "Export selected as Slim FIDUS"
@@ -1982,6 +2016,8 @@ msgid ""
 "Export the documents that have been selected as FIDUS files without their "
 "templates."
 msgstr ""
+"Exportujte dokumenty, které byly vybrány jako soubory FIDUS bez jejich "
+"šablon."
 
 #: document/static/js/modules/documents/overview/menu.js:193
 msgid "Delete the documents that have been selected."
@@ -2092,6 +2128,8 @@ msgid ""
 "The recovery key you entered is incorrect, or the recovery process failed. "
 "Please try again."
 msgstr ""
+"Zadaný obnovovací klíč je nesprávný nebo proces obnovy selhal. Zkuste to "
+"prosím znovu."
 
 #: document/static/js/modules/editor/collab/doc.js:358
 #: document/static/js/modules/editor/collab/doc.js:563
@@ -2115,6 +2153,8 @@ msgid ""
 "It's taking a bit longer than usual, but it should be ready soon. Please "
 "wait..."
 msgstr ""
+"Trvá to trochu déle než obvykle, ale mělo by to být brzy hotové. Čekejte "
+"prosím..."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:155
 msgid "Merge Complete"
@@ -2129,6 +2169,8 @@ msgid ""
 "Not all changes have been resolved. Please make sure to review all the "
 "changes to before proceeding."
 msgstr ""
+"Ne všechny změny byly vyřešeny. Než budete pokračovat, nezapomeňte "
+"zkontrolovat všechny změny."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:169
 msgid "Proceed to Merge"
@@ -2165,6 +2207,10 @@ msgid ""
 "with the changes made by other users. So it was not possible to merge your "
 "edits in automatically."
 msgstr ""
+"Toto slučovací dialogové okno se vám zobrazuje, protože jste byli dlouhou "
+"dobu offline a změny provedené v dokumentu, když jste byli offline, byly v "
+"rozporu se změnami provedenými ostatními uživateli. Nebylo tedy možné "
+"sloučit vaše úpravy automaticky."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:200
 msgid "Am I the only one seeing this dialog?"
@@ -2177,17 +2223,25 @@ msgid ""
 "that once you are finished with the merge, it will not lead to more "
 "conflicts."
 msgstr ""
+"Ano, jste jediný, kdo vidí tento dialog. Proto by bylo skvělé, kdybyste "
+"mohli požádat své spolupracovníky, aby přestali upravovat dokument, aby po "
+"dokončení sloučení nevedlo k dalším konfliktům."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am merging?"
+"What if my collaborators continue working on the document while I am "
+"merging?"
 msgstr ""
+"Co když moji spolupracovníci budou během slučování pokračovat v práci na "
+"dokumentu?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:210
 msgid ""
 "Do not worry, we can handle such a situation as we will simply show you "
 "another merge dialog."
 msgstr ""
+"Nebojte se, takovou situaci zvládneme, protože vám jednoduše ukážeme další "
+"slučovací dialog."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:214
 msgid "Why am I seeing three editors?"
@@ -2195,12 +2249,16 @@ msgstr "Proč vidím tři redaktory?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It "
-"is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It"
+" is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
 msgstr ""
+"Editor vlevo zobrazí poslední běžnou verzi dokumentu. Je zobrazen pouze pro "
+"informaci. Editor uprostřed je slučovací editor a zpočátku obsahuje dokument"
+" vyplývající z úprav ostatních uživatelů. Editor napravo je offline editor a"
+" obsahuje dokument vyplývající z vašich změn, když jste byli offline."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:221
 msgid "What are the green and red highlights in the editors?"
@@ -2209,13 +2267,20 @@ msgstr "Jaké jsou zelené a červené zvýraznění v editorech?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The "
-"text marked in green corresponds to the text that was edited (added) by you "
-"or other users. The text marked in red corresponds to text that was deleted "
-"by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The"
+" text marked in green corresponds to the text that was edited (added) by you"
+" or other users. The text marked in red corresponds to text that was deleted"
+" by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
+"Editory uprostřed a napravo zobrazí obsah, který je zvýrazněn zeleně. "
+"Obsahují také text, který je zvýrazněn červeně. Zeleně označený text "
+"odpovídá textu, který jste upravili (přidali) vy nebo jiní uživatelé. "
+"Červeně označený text odpovídá textu, který jste smazali vy nebo jiní "
+"uživatelé. Vložení a odstranění provedená jinými uživateli budou označena v "
+"editoru sloučení. Vámi provedená vložení a smazání budou označena v offline "
+"editoru vpravo."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:229
 msgid "How do I accept or reject a particular change?"
@@ -2234,6 +2299,16 @@ msgid ""
 "change works in the same way except on reject a change the highlight of the "
 "change will be lost, with it the ability to accept, reject or copy a change."
 msgstr ""
+"Přijetí nebo odmítnutí změny v editoru sloučení uprostřed nebo v offline "
+"editoru vpravo způsobí změnu v editoru sloučení. Změnu můžete přijmout "
+"přímým kliknutím na zvýrazněný text. Zobrazí se rozevírací nabídka a poté "
+"můžete změnu přijmout nebo odmítnout. Když kliknete na zvýrazněný text, "
+"zvýrazní se také změny, které budou přijaty. %(mergeImage)s Jak je "
+"znázorněno na obrázku výše, můžete kliknout na zvýrazněnou změnu a kliknout "
+"na přijmout změnu. Po přijetí změny se projeví v editoru sloučených "
+"dokumentů uprostřed. Odmítnutí změny funguje stejným způsobem kromě toho, že"
+" při odmítnutí změny dojde ke ztrátě zvýraznění změny, s možností změny "
+"přijmout, odmítnout nebo zkopírovat."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:242
 msgid "I cannot accept a particular change. What do I do?"
@@ -2246,6 +2321,10 @@ msgid ""
 "button or manually copy the change and then paste it in the merge editor in "
 "the middle. It is as simple as that!"
 msgstr ""
+"Pokud nemůžete automaticky přijmout změnu do editoru sloučení, nemějte "
+"obavy. Změnu můžete zkopírovat buď kliknutím na tlačítko kopírovat, nebo "
+"ručně zkopírovat změnu a poté ji vložit do slučovacího editoru uprostřed. Je"
+" to tak jednoduché!"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:249
 msgid "Can I edit content in all three editors?"
@@ -2256,6 +2335,8 @@ msgid ""
 "You can edit the content only in the merge editor in the middle. You cannot "
 "edit content in the other two editors."
 msgstr ""
+"Obsah můžete upravovat pouze v editoru sloučení uprostřed. V ostatních dvou "
+"editorech nemůžete upravovat obsah."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:256
 msgid "Does the order in which I work on merging the changes matter?"
@@ -2277,11 +2358,17 @@ msgid ""
 "document while you were merging the document, you might have to merge the "
 "documents together again."
 msgstr ""
+"Po dokončení sloučení můžete kliknout na tlačítko 'Sloučení dokončeno', "
+"které zase přesune vaše změny z editoru sloučení uprostřed do hlavního "
+"editoru. Uvědomte si, že pokud jiní uživatelé provedli v dokumentu významné "
+"změny, když jste dokument slučovali, možná budete muset dokumenty sloučit "
+"znovu."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:270
 msgid ""
 "What happens if I try to complete merge without resolving all the changes?"
 msgstr ""
+"Co se stane, když se pokusím dokončit sloučení bez vyřešení všech změn?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:273
 msgid ""
@@ -2291,18 +2378,27 @@ msgid ""
 "editor in the middle will be accepted automatically, and all the insertions "
 "and deletions in the offline editor on the right will be ignored."
 msgstr ""
+"Když se pokusíte dokončit sloučení bez přijetí nebo odmítnutí všech změn, "
+"obdržíte varování. Stále můžete pokračovat ve sloučení dokumentu. Pokud to "
+"uděláte, všechna vložení a odstranění v editoru sloučení uprostřed budou "
+"automaticky přijata a všechna vložení a odstranění v offline editoru vpravo "
+"budou ignorována."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:1053
 msgid ""
 "One or more of the image(s) you copied could not be found on the server. "
 "Consider re-uploading them once the document is merged."
 msgstr ""
+"Jeden nebo více obrázků, které jste zkopírovali, nebylo možné na serveru "
+"nalézt. Po sloučení dokumentu zvažte jejich opětovné nahrání."
 
 #: document/static/js/modules/editor/collab/merge/index.js:312
 msgid ""
 "One of the image(s) you copied could not be found on the server. Please try "
 "uploading it again."
 msgstr ""
+"Jeden z obrázků, které jste zkopírovali, nebyl na serveru nalezen. Zkuste to"
+" prosím nahrát znovu."
 
 #: document/static/js/modules/editor/collab/merge/index.js:328
 msgid ""
@@ -2310,6 +2406,9 @@ msgid ""
 "offline. We have merged your changes in as tracked changes. You should "
 "verify that your edits still make sense."
 msgstr ""
+"Když jste byli offline, dokument byl podstatně upraven jinými uživateli. "
+"Vaše změny jsme sloučili jako sledované změny. Měli byste si ověřit, že vaše"
+" úpravy stále dávají smysl."
 
 #: document/static/js/modules/editor/collab/merge/index.js:377
 msgid "Merge failed"
@@ -2318,9 +2417,12 @@ msgstr "Sloučení se nezdařilo"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please "
-"consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please"
+" consider importing it into a new document."
 msgstr ""
+"Během procesu sloučení došlo k chybě, takže vaši práci již nemůžeme ukládat "
+"na server a místo toho se stáhne do vašeho počítače. Zvažte import do nového"
+" dokumentu."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
 #: document/static/js/modules/editor/index.js:688
@@ -2343,6 +2445,8 @@ msgid ""
 "The change could not be applied automatically. Please consider using the "
 "copy option to copy the changes."
 msgstr ""
+"Změnu nebylo možné použít automaticky. Zvažte použití možnosti kopírování ke"
+" zkopírování změn."
 
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:292
 msgid "Format Change"
@@ -2415,6 +2519,8 @@ msgid ""
 "One of the Image(s) you copied could not be found on the server. Please try "
 "uploading it again."
 msgstr ""
+"Jeden z obrázků, které jste zkopírovali, nebyl nalezen na serveru. Zkuste to"
+" prosím nahrát znovu."
 
 #: document/static/js/modules/editor/dialogs/citation.js:22
 #: document/static/js/modules/editor/dialogs/code_block.js:14
@@ -2763,6 +2869,9 @@ msgid ""
 "your encrypted documents — you will not need separate passwords for each "
 "document."
 msgstr ""
+"Nastavte osobní šifrovací heslo. Tato přístupová fráze odemkne všechny vaše "
+"šifrované dokumenty – nebudete potřebovat samostatná hesla pro každý "
+"dokument."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:27
 msgid "Important:"
@@ -2773,6 +2882,8 @@ msgid ""
 "This passphrase is separate from your login password. If you lose it, your "
 "encrypted documents cannot be recovered."
 msgstr ""
+"Tato přístupová fráze je oddělená od vašeho přihlašovacího hesla. Pokud jej "
+"ztratíte, vaše zašifrované dokumenty nelze obnovit."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:29
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:182
@@ -2814,7 +2925,8 @@ msgstr "Nastavte osobní šifrování"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:180
 msgid "Enter your personal encryption passphrase to unlock your documents."
-msgstr "Chcete-li odemknout své dokumenty, zadejte své osobní šifrovací heslo."
+msgstr ""
+"Chcete-li odemknout své dokumenty, zadejte své osobní šifrovací heslo."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:195
 msgid "Unlock"
@@ -2846,6 +2958,9 @@ msgid ""
 "forget your passphrase, this is the ONLY way to recover your encrypted "
 "documents. We cannot recover it for you."
 msgstr ""
+"Uložte jej na bezpečném místě (např. správce hesel, tištěnou kopii). Pokud "
+"zapomenete svou přístupovou frázi, je to JEDINÝ způsob, jak obnovit "
+"zašifrované dokumenty. Nemůžeme to pro vás obnovit."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:304
 msgid "Copy it now — it will not be shown again."
@@ -2868,6 +2983,8 @@ msgid ""
 "Enter your recovery key and a new passphrase to regain access to your "
 "encrypted documents."
 msgstr ""
+"Zadejte svůj obnovovací klíč a novou přístupovou frázi, abyste znovu získali"
+" přístup k zašifrovaným dokumentům."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
 msgid "Recovery key"
@@ -2897,9 +3014,11 @@ msgstr "Obnovit šifrování"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:508
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption "
-"password."
+"Enter your current passphrase and a new passphrase to change your encryption"
+" password."
 msgstr ""
+"Zadejte své aktuální přístupové heslo a nové heslo pro změnu šifrovacího "
+"hesla."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:510
 msgid "Current passphrase"
@@ -2940,7 +3059,7 @@ msgstr "Velmi silný"
 #: document/static/js/modules/editor/e2ee/password-dialog.js:142
 msgid ""
 "This document is end-to-end encrypted. Enter the password to decrypt it."
-msgstr ""
+msgstr "Tento dokument je šifrován end-to-end. Pro dešifrování zadejte heslo."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
 #: document/static/js/modules/editor/e2ee/password-dialog.js:261
@@ -2974,15 +3093,19 @@ msgstr "Skrýt heslo"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:258
 msgid ""
-"Set a password to encrypt this document. You will need this password to open "
-"the document in the future."
+"Set a password to encrypt this document. You will need this password to open"
+" the document in the future."
 msgstr ""
+"Nastavte heslo pro zašifrování tohoto dokumentu. Toto heslo budete "
+"potřebovat k otevření dokumentu v budoucnu."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
 "Tip: Use a passphrase with multiple words, e.g. \"correct-horse-battery-"
 "staple\". This is both secure and easy to remember."
 msgstr ""
+"Tip: Použijte přístupovou frázi s více slovy, např. \"správná-koňská-"
+"baterie-svorka\". To je bezpečné a snadno zapamatovatelné."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:273
 msgid "Confirm password"
@@ -3010,6 +3133,8 @@ msgid ""
 "Change the document password. After changing, you must share the new "
 "password with all collaborators."
 msgstr ""
+"Změňte heslo dokumentu. Po změně musíte nové heslo sdílet se všemi "
+"spolupracovníky."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:444
 #: user/static/js/modules/profile/templates.js:63
@@ -3043,6 +3168,8 @@ msgid ""
 "The document password was changed by another user. You will need to enter "
 "the new password to continue editing."
 msgstr ""
+"Heslo dokumentu bylo změněno jiným uživatelem. Chcete-li pokračovat v "
+"úpravách, budete muset zadat nové heslo."
 
 #: document/static/js/modules/editor/index.js:323
 #: document/static/js/modules/editor/index.js:581
@@ -3052,15 +3179,19 @@ msgstr "Neplatný odkaz na sdílení"
 #: document/static/js/modules/editor/index.js:326
 #: document/static/js/modules/editor/index.js:584
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for "
-"a new link."
+"This share link has expired or is invalid. Please ask the document owner for"
+" a new link."
 msgstr ""
+"Tento odkaz na sdílení vypršel nebo je neplatný. Požádejte vlastníka "
+"dokumentu o nový odkaz."
 
 #: document/static/js/modules/editor/index.js:390
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
 msgstr ""
+"Varování! Ne všechny vaše změny byly uloženy! Mohli byste utrpět ztrátu dat."
+" Pokus o opětovné připojení..."
 
 #: document/static/js/modules/editor/index.js:517
 msgid "Your document was out of sync and has been reset."
@@ -3071,6 +3202,8 @@ msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
 msgstr ""
+"Vaše přístupová práva byla změněna. Nyní máte %(accessRight)s přístup k "
+"tomuto dokumentu."
 
 #: document/static/js/modules/editor/index.js:607
 msgid "Session Expired"
@@ -3082,6 +3215,9 @@ msgid ""
 "the server any longer, but you can download it to your computer instead. "
 "Please consider importing it as a new document after logging in."
 msgstr ""
+"Vaše relace vypršela, když jste byli offline, takže vaši práci již nemůžeme "
+"ukládat na server, ale můžete si ji stáhnout do svého počítače. Po "
+"přihlášení zvažte jeho import jako nového dokumentu."
 
 #: document/static/js/modules/editor/index.js:614
 msgid "Download Document"
@@ -3101,6 +3237,9 @@ msgid ""
 "your work to the server any longer, and it is downloaded to your computer "
 "instead. Please consider importing it into a new document."
 msgstr ""
+"Vaše přístupová práva byla změněna, když jste byli offline, takže vaši práci"
+" již nemůžeme ukládat na server a místo toho je stažena do vašeho počítače. "
+"Zvažte import do nového dokumentu."
 
 #: document/static/js/modules/editor/index.js:733
 msgid "Incorrect passphrase."
@@ -3120,6 +3259,8 @@ msgid ""
 "Changes you made to the document since going offline will be lost, if you "
 "choose to close/refresh the tab or close the browser."
 msgstr ""
+"Pokud se rozhodnete zavřít/obnovit kartu nebo zavřít prohlížeč, změny "
+"provedené v dokumentu od přechodu do režimu offline budou ztraceny."
 
 #: document/static/js/modules/editor/marginboxes/index.js:595
 msgid "A cross reference has lost its target."
@@ -3423,6 +3564,8 @@ msgid ""
 "The following users don't have passphrase encryption. Please share the "
 "document password with them directly."
 msgstr ""
+"Následující uživatelé nemají šifrování přístupové fráze. Sdělte jim prosím "
+"heslo dokumentu přímo."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:191
 msgid "Sign up / Log in"
@@ -3465,7 +3608,8 @@ msgstr "Tisk/PDF"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:303
 msgid "Either print or create a PDF using your browser print dialog."
-msgstr "Vytiskněte nebo vytvořte PDF pomocí tiskového dialogového okna prohlížeče."
+msgstr ""
+"Vytiskněte nebo vytvořte PDF pomocí tiskového dialogového okna prohlížeče."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:326
 #: user/static/js/modules/password_reset/change_password.js:14
@@ -3487,18 +3631,26 @@ msgid ""
 "automatically; non-passphrase collaborators need it shared with them "
 "manually."
 msgstr ""
+"Vaše osobní přístupová fráze bude tento dokument stále odemykat. Nové "
+"náhodné heslo se vygeneruje automaticky. Ostatní uživatelé přístupové fráze "
+"jej obdrží automaticky; spolupracovníci bez přístupové fráze jej potřebují "
+"sdílet s nimi ručně."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:471
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new "
-"key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new"
+" key automatically."
 msgstr ""
+"Šifrovací klíč dokumentu byl otočen. Ostatní uživatelé s přístupovou frází "
+"obdrží nový klíč automaticky."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:478
 msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
 msgstr ""
+"Heslo dokumentu změněno. Nezapomeňte nové heslo sdílet se svými "
+"spolupracovníky."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:486
 msgid "The current password is incorrect."
@@ -3545,6 +3697,8 @@ msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
 msgstr ""
+"Exportujte dokument do souboru Journal Archiving and Interchange Tag Library"
+" NISO JATS verze 1.2."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:606
 msgid "BITS"
@@ -3554,6 +3708,7 @@ msgstr "BITS"
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr ""
+"Exportujte dokument do souboru Book Interchange Tag Set BITS verze 2.1."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:632
 msgid "Pandoc JSON"
@@ -4078,9 +4233,11 @@ msgstr "Vyhledávání"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace "
-"all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace"
+" all'"
 msgstr ""
+"Vezměte prosím na vědomí, že v neupravitelných částech dokumentu jsou shody,"
+" tyto shody nebudou nahrazeny při použití „nahradit“ nebo „nahradit vše“"
 
 #: document/static/js/modules/editor/tools/search_replace/templates.js:4
 msgid "Find"
@@ -4227,7 +4384,8 @@ msgstr "Revize dokumentu byla aktualizována:"
 
 #: document/static/js/modules/maintenance/index.js:273
 msgid "All documents, document templates and document revisions updated!"
-msgstr "Všechny dokumenty, šablony dokumentů a revize dokumentů byly aktualizovány!"
+msgstr ""
+"Všechny dokumenty, šablony dokumentů a revize dokumentů byly aktualizovány!"
 
 #: document/static/js/modules/schema/common/reference.js:31
 msgid "Missing Target"
@@ -4568,18 +4726,25 @@ msgstr "Potvrďte e-mailovou adresu a potvrďte souhlas s podmínkami"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 msgstr ""
+"Potvrďte prosím, že vlastníte e-mail <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
+"%(username)s, and that you have read and agree to our <a "
+"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
+"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
 msgstr ""
+"Potvrďte prosím, že vlastníte e-mail <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, že žádáte o uživatelské jméno "
+"%(username)s a že jste si přečetli naše <a href=\"/pages/terms/\" "
+"target=\"_blank\">Smluvní podmínky</a> a <a href=\"/pages/privacy/\" "
+"target=\"_blank\">Zásady ochrany osobních údajů a souhlasíte s nimi."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4590,18 +4755,24 @@ msgid ""
 "I have read and agree to the <a href=\"/pages/terms/\" "
 "target=\"_blank\">Terms and Conditions</a>."
 msgstr ""
+"Přečetl jsem si <a href=\"/pages/terms/\" target=\"_blank\">Smluvní "
+"podmínky</a> a souhlasím s nimi."
 
 #: user/static/js/modules/email_confirm/templates.js:55
 msgid ""
 "I am aware that I am signing up for a test account and that service may be "
 "ended abruptly and without notice, leaving me without my files."
 msgstr ""
+"Jsem si vědom toho, že se přihlašuji k testovacímu účtu a že tato služba "
+"může být náhle a bez upozornění ukončena, takže budu bez souborů."
 
 #: user/static/js/modules/email_confirm/templates.js:60
 msgid ""
 "This e-mail confirmation link expired or is invalid. Please try to open "
 "another account."
 msgstr ""
+"Platnost tohoto e-mailového potvrzovacího odkazu vypršela nebo je neplatný. "
+"Zkuste si otevřít jiný účet."
 
 #: user/static/js/modules/email_confirm/templates.js:64
 msgid "Thanks for verifying!"
@@ -4671,6 +4842,8 @@ msgid ""
 "We have sent an e-mail to your email address for verification. Follow the "
 "link provided to finalize the signup process."
 msgstr ""
+"Na vaši e-mailovou adresu jsme zaslali e-mail pro ověření. Kliknutím na "
+"uvedený odkaz dokončete proces registrace."
 
 #: user/static/js/modules/login/index.js:215
 #: user/static/js/modules/password_reset/request_email.js:87
@@ -4683,6 +4856,8 @@ msgid ""
 "You have indicated that you have forgotten your password. Please enter your "
 "new password in the form twice."
 msgstr ""
+"Uvedli jste, že jste zapomněli heslo. Zadejte prosím své nové heslo do "
+"formuláře dvakrát."
 
 #: user/static/js/modules/password_reset/change_password.js:21
 #: user/static/js/modules/signup/index.js:26
@@ -4717,6 +4892,7 @@ msgstr "Obnovení hesla"
 msgid ""
 "Your password has been reset and you can now log in with the new password."
 msgstr ""
+"Vaše heslo bylo resetováno a nyní se můžete přihlásit pomocí nového hesla."
 
 #: user/static/js/modules/password_reset/request_email.js:7
 msgid "Reset Password"
@@ -4727,12 +4903,16 @@ msgid ""
 "Forgotten your password? Enter your e-mail address in the form, and we'll "
 "send you an e-mail allowing you to reset it."
 msgstr ""
+"Zapomněli jste heslo? Zadejte svou e-mailovou adresu do formuláře a my vám "
+"zašleme e-mail, který vám umožní ji resetovat."
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a href=\"mailto:%"
-"(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a "
+"href=\"mailto:%(contactEmail)s\">contact us</a>."
 msgstr ""
+"Pokud máte nějaké potíže s resetováním hesla, <a "
+"href=\"mailto:%(contactEmail)s\">kontaktujte nás</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -4759,10 +4939,14 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with "
 "instructions on how to reset your password."
 msgstr ""
+"Na adresu <a href=\"mailto:%(email)s\">%(email)s</a> jsme odeslali e-mail s "
+"pokyny, jak obnovit heslo."
 
 #: user/static/js/modules/profile/delete_user.js:61
 msgid "Staff accounts have to be deleted through the admin interface."
-msgstr "Účty zaměstnanců je nutné smazat prostřednictvím administrátorského rozhraní."
+msgstr ""
+"Účty zaměstnanců je nutné smazat prostřednictvím administrátorského "
+"rozhraní."
 
 #: user/static/js/modules/profile/delete_user.js:66
 msgid "Password incorrect."
@@ -4894,6 +5078,8 @@ msgid ""
 "Really delete your account? Type in your username and password below to "
 "confirm deletion."
 msgstr ""
+"Opravdu smazat svůj účet? Pro potvrzení smazání zadejte níže své uživatelské"
+" jméno a heslo."
 
 #: user/static/js/modules/profile/templates.js:23
 msgid "We cannot reverse an account deletion."
@@ -4904,6 +5090,8 @@ msgid ""
 "Some copies of your files may temporarily be kept in our backup system, but "
 "also these will disappear automatically in due time."
 msgstr ""
+"Některé kopie vašich souborů mohou být dočasně uchovány v našem záložním "
+"systému, ale také tyto časem automaticky zmizí."
 
 #: user/static/js/modules/profile/templates.js:40
 msgid "Enter the new E-mail address"
@@ -5000,9 +5188,8 @@ msgid "Signup"
 msgstr "Registrace"
 
 #: user/static/js/modules/signup/index.js:13
-msgid ""
-"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
-msgstr ""
+msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr "Už máte účet? Poté se prosím <a href=\"/\" title=\"Login\">přihlaste</a>."
 
 #: user/static/js/modules/signup/index.js:21
 msgid "Choose your username"
@@ -5021,10 +5208,13 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
 "verification. Follow the link provided to finalize the signup process."
 msgstr ""
+"Odeslali jsme e-mail na adresu <a href=\"mailto:%(email)s\">%(email)s</a> "
+"pro ověření. Kliknutím na uvedený odkaz dokončete proces registrace."
 
 #: user/static/js/modules/two_factor/index.js:44
 msgid "Could not generate QR code. Please use the secret key below."
-msgstr "Nepodařilo se vygenerovat QR kód. Použijte prosím níže uvedený tajný klíč."
+msgstr ""
+"Nepodařilo se vygenerovat QR kód. Použijte prosím níže uvedený tajný klíč."
 
 #: user/static/js/modules/two_factor/index.js:53
 #: user/static/js/modules/two_factor/index.js:187
@@ -5050,6 +5240,8 @@ msgid ""
 "Scan this QR code with your authenticator app (Google Authenticator, Authy, "
 "etc.)"
 msgstr ""
+"Naskenujte tento QR kód pomocí vaší ověřovací aplikace (Google "
+"Authenticator, Authy atd.)"
 
 #: user/static/js/modules/two_factor/index.js:99
 msgid "Or enter this code manually:"
@@ -5069,9 +5261,11 @@ msgstr "Zakázat dvoufaktorové ověřování"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce "
-"the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce"
+" the security of your account."
 msgstr ""
+"Opravdu chcete zakázat dvoufaktorové ověřování? To sníží zabezpečení vašeho "
+"účtu."
 
 #: user/static/js/modules/two_factor/index.js:224
 msgid "Enter the 6-digit code from your authenticator app:"

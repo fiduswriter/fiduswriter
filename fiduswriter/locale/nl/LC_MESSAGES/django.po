@@ -1,4 +1,3 @@
-#
 # Dutch translation for Fidus Writer
 # Johannes Wilm <johannes@fiduswriter.org>, 2025.
 #
@@ -6,10 +5,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 10:34+0000\n"
+"POT-Creation-Date: 2026-05-04 06:33+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
-"Language-Team:  <johannes@fiduswriter.org>\n"
+"Language-Team: <johannes@fiduswriter.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -98,46 +97,42 @@ msgstr ""
 "wordt automatisch opgeslagen en we zijn binnenkort terug."
 
 #: base/templates/admin/console.html:36
-#, fuzzy
-#| msgid "Send a system message to all connected users:"
 msgid "Send to connected users"
-msgstr "Stuur een systeembericht naar alle verbonden gebruikers:"
+msgstr "Verzenden naar verbonden gebruikers"
 
 #: base/templates/admin/overview.html:10
 msgid "Extras"
-msgstr ""
+msgstr "Extra's"
 
 #: base/templates/admin/overview.html:17
 #: document/templates/admin/document/maintenance.html:17
 msgid "Document Maintenance"
-msgstr ""
+msgstr "Documentonderhoud"
 
 #: base/templates/api_404.html:5 base/templates/api_404.html:8
-#, fuzzy
-#| msgid "Error 500"
 msgid "Error 404"
-msgstr "Fout 500"
+msgstr "Fout 404"
 
 #: base/templates/api_404.html:9
 msgid "We are sorry, but this page was not found."
-msgstr ""
+msgstr "Het spijt ons, maar deze pagina is niet gevonden."
 
 #: base/templates/app.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr ""
+msgstr "De alles-in-één oplossing voor collaboratief academisch schrijven."
 
 #: base/templates/app.html:46
 msgid "JavaScript disabled"
-msgstr ""
+msgstr "JavaScript uitgeschakeld"
 
 #: base/templates/app.html:47
 msgid "Fidus Writer requires you to enable JavaScript."
-msgstr ""
+msgstr "Voor Fidus Writer is het nodig dat u JavaScript inschakelt."
 
 #: browser_check/templates/browser_check/browser_not_supported.html:4
 #: browser_check/templates/browser_check/browser_not_supported.html:27
 msgid "Browser not supported"
-msgstr ""
+msgstr "Browser niet ondersteund"
 
 #: browser_check/templates/browser_check/browser_not_supported.html:28
 msgid ""
@@ -148,39 +143,50 @@ msgid ""
 "                desktop computer.\n"
 "            "
 msgstr ""
+"\n"
+"Uw browser wordt niet ondersteund door Fidus Writer.\n"
+"                Update alstublieft! Wij raden aan om stroom te gebruiken\n"
+"                versie van Chrome/Chromium of Firefox op een\n"
+"                desktopcomputer."
 
 #: document/admin.py:59
 msgid "Duplicate selected document templates"
-msgstr ""
+msgstr "Dupliceer geselecteerde documentsjablonen"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:887
 msgid "Untitled"
-msgstr ""
+msgstr "Zonder titel"
 
 #: document/emails.py:21
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has changed your access rights to %(rights)s on the document "
-"'%(document_title)s'. \n"
+"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
 "Open the document: %(link)s"
 msgstr ""
+"Hallo %(collaborator_name)s,\n"
+"%(owner)s heeft uw toegangsrechten tot %(rights)s op het document '%(document_title)s' gewijzigd. \n"
+"Open het document: %(link)s"
 
 #: document/emails.py:32
 #, python-format
 msgid ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to "
-"%(rights)s on the document '%(document_title)s'.</p>"
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
+" %(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s heeft je toegangsrechten "
+"gewijzigd naar %(rights)s voor het document '%(document_title)s'.</p>"
 
 #: document/emails.py:43
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document_title)s' with you and given "
-"you %(rights)s access rights. \n"
+"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
 "Open document: %(link)s"
 msgstr ""
+"Hallo %(collaborator_name)s,\n"
+"%(owner)s heeft het document '%(document_title)s' met u gedeeld en u %(rights)s toegangsrechten gegeven. \n"
+"Document openen: %(link)s"
 
 #: document/emails.py:55
 #, python-format
@@ -188,67 +194,82 @@ msgid ""
 "<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document "
 "'%(document_title)s' with you and given you %(rights)s access rights.</p>"
 msgstr ""
+"<p>Hey %(collaborator_name)s,<br>%(owner)s heeft het document "
+"'%(document_title)s' met je gedeeld en je %(rights)s toegangsrechten "
+"gegeven.</p>"
 
 #: document/emails.py:89
 msgid "shared"
-msgstr ""
+msgstr "gedeeld"
 
 #: document/emails.py:91 document/emails.py:207 document/emails.py:286
 msgid "Document"
-msgstr ""
+msgstr "Document"
 
 #: document/emails.py:93 document/emails.py:209
 msgid "Author"
-msgstr ""
+msgstr "Auteur"
 
 #: document/emails.py:95
 msgid "Access Rights"
-msgstr ""
+msgstr "Toegangsrechten"
 
 #: document/emails.py:98 document/emails.py:214
 msgid "Access the document"
-msgstr ""
+msgstr "Open het document"
 
 #: document/emails.py:101
 #, python-format
 msgid "Document shared: %(document_title)s"
-msgstr ""
+msgstr "Document gedeeld: %(document_title)s"
 
 #: document/emails.py:123
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has mentioned you in a comment in the document "
-"'%(document)s':\n"
+"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
 "Go to the document here: %(link)s"
 msgstr ""
+"Hallo %(collaborator_name)s,\n"
+"%(commentator)s heeft je genoemd in een opmerking in het document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Ga hier naar het document: %(link)s"
 
 #: document/emails.py:136
 #, python-format
 msgid ""
-"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment "
-"in the document '%(document_title)s'."
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
+" in the document '%(document_title)s'."
 msgstr ""
+"Hallo %(collaborator_name)s,<br>%(commentator)s heeft je genoemd in een "
+"opmerking in het document '%(document_title)s'."
 
 #: document/emails.py:143
 #, python-format
 msgid "Comment on : %(document_title)s"
-msgstr ""
+msgstr "Reageer op: %(document_title)s"
 
 #: document/emails.py:148
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has assigned you to a comment in the document "
-"'%(document)s':\n"
+"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
 "Go to the document here: %(link)s"
 msgstr ""
+"Hallo %(collaborator_name)s,\n"
+"%(commentator)s heeft u toegewezen aan een opmerking in het document '%(document)s':\n"
+"\n"
+"%(comment_text)s\n"
+"\n"
+"Ga hier naar het document: %(link)s"
 
 #: document/emails.py:159
 #, python-format
@@ -256,11 +277,13 @@ msgid ""
 "Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
 "in the document '%(document_title)s'."
 msgstr ""
+"Hallo %(collaborator_name)s,<br>%(commentator)s heeft je toegewezen aan een "
+"opmerking in het document '%(document_title)s'."
 
 #: document/emails.py:166
 #, python-format
 msgid "Comment assignment on : %(document_title)s"
-msgstr ""
+msgstr "Toewijzing van commentaar op: %(document_title)s"
 
 #: document/emails.py:171
 #, python-format
@@ -269,84 +292,93 @@ msgid ""
 "comment in the document '%(document)s':</p>%(comment_html)s<p>Go to the "
 "document <a href=\"%(link)s\">here</a>.</p>"
 msgstr ""
+"<p>Hey %(collaborator_name)s,<br>%(commentator)s heeft je toegewezen aan een"
+" opmerking in het document '%(document)s':</p>%(comment_html)s<p>Ga <a "
+"href=\"%(link)s\">hier</a> naar het document.</p>"
 
 #: document/emails.py:211
 msgid "Comment"
-msgstr ""
+msgstr "Opmerking"
 
 #: document/emails.py:239
 #, python-format
 msgid ""
 "Hey %(owner_name)s,\n"
-"%(requester_name)s has requested %(rights)s access to the document "
-"'%(document_title)s'. \n"
+"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
 "Open the document to grant access: %(link)s"
 msgstr ""
+"Hallo %(owner_name)s,\n"
+"%(requester_name)s heeft %(rights)s toegang gevraagd tot het document '%(document_title)s'. \n"
+"Open het document om toegang te verlenen: %(link)s"
 
 #: document/emails.py:251
 #, python-format
 msgid ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access "
-"to the document '%(document_title)s'.</p>"
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
+" to the document '%(document_title)s'.</p>"
 msgstr ""
+"<p>Hey %(owner_name)s,<br>%(requester_name)s heeft %(rights)s toegang "
+"gevraagd tot het document '%(document_title)s'.</p>"
 
 #: document/emails.py:284
 msgid "access request"
-msgstr ""
+msgstr "toegangsverzoek"
 
 #: document/emails.py:288
 msgid "Requested by"
-msgstr ""
+msgstr "Aangevraagd door"
 
 #: document/emails.py:290
 msgid "Requested rights"
-msgstr ""
+msgstr "Gevraagde rechten"
 
 #: document/emails.py:293
 msgid "Grant access"
-msgstr ""
+msgstr "Toegang verlenen"
 
 #: document/emails.py:297
 #, python-format
 msgid "Access request: %(document_title)s"
-msgstr ""
+msgstr "Toegangsverzoek: %(document_title)s"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:8
 #, python-format
 msgid "Add %(name)s"
-msgstr ""
+msgstr "Voeg %(name)s toe"
 
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr ""
+msgstr "Onderhoud"
 
 #: document/templates/admin/document/maintenance.html:19
 msgid ""
 "\n"
-"            Before and after upgrading Fidus Writer, you should update all "
-"the documents\n"
-"            of all users to the newest document version. Only do this if you "
-"know that\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
+"\n"
+"Voor en na het upgraden van Fidus Writer moet u alle documenten bijwerken\n"
+"            van alle gebruikers naar de nieuwste documentversie. Doe dit alleen als je dat weet\n"
+"            geen enkele gebruiker bewerkt momenteel een document!"
 
 #: document/templates/admin/document/maintenance.html:27
 msgid "Update all documents (DANGER!)"
-msgstr ""
+msgstr "Update alle documenten (GEVAAR!)"
 
 #: style/models.py:74
 msgid "Default"
-msgstr ""
+msgstr "Standaard"
 
 #: style/views.py:27
 msgid "The template needs at least 1 document style"
-msgstr ""
+msgstr "De sjabloon heeft minimaal 1 documentstijl nodig"
 
 #: user/admin.py:11
 msgid "Connections"
-msgstr ""
+msgstr "Verbindingen"
 
 #: user/emails.py:10
 #, python-format
@@ -354,37 +386,38 @@ msgid ""
 "Hey %(email)s,%(sender)s has invited you to connect on Fidus Writer. \n"
 "Accept or reject the invite through this link: %(link)s"
 msgstr ""
+"Hallo %(email)s,%(sender)s heeft je uitgenodigd om verbinding te maken met Fidus Writer. \n"
+"Accepteer of wijs de uitnodiging af via deze link: %(link)s"
 
 #: user/emails.py:19
 #, python-format
 msgid ""
-"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus Writer."
-"</p>"
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
+"Writer.</p>"
 msgstr ""
+"<p>Hey %(email)s,<br> %(sender)s heeft je uitgenodigd om verbinding te maken"
+" met Fidus Writer.</p>"
 
 #: user/emails.py:34
-#, fuzzy
-#| msgid "Log in to Fidus Writer"
 msgid "Invite for Fidus Writer"
-msgstr "Inloggen op Fidus Writer"
+msgstr "Uitnodiging voor Fidus Schrijver"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
-msgstr ""
+msgstr "Meld u aan/log in en accepteer/weiger de uitnodiging"
 
 #: user/emails.py:40
-#, fuzzy
-#| msgid "Fidus Writer Administration Site"
 msgid "Fidus Writer contact invite"
-msgstr "Fidus Writer Administratiesite"
+msgstr "Fidus Schrijver contactuitnodiging"
 
 #: user/emails.py:53
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect "
-"on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
+"Hallo %(recipient_name)s, %(sender_name)s heeft je uitnodiging om verbinding te maken met Fidus Writer afgewezen. \n"
+"Bekijk hier uw lijst met contacten: %(link)s"
 
 #: user/emails.py:62
 #, python-format
@@ -392,30 +425,29 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s heeft je uitnodiging om "
+"verbinding te maken met Fidus Writer afgewezen.</p>"
 
 #: user/emails.py:76
-#, fuzzy
-#| msgid "Fidus Writer Admin"
 msgid "Invite for Fidus Writer declined"
-msgstr "Fidus Writer Admin"
+msgstr "Uitnodiging voor Fidus Schrijver afgewezen"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
-msgstr ""
+msgstr "Bekijk uw lijst met contacten"
 
 #: user/emails.py:82
-#, fuzzy
-#| msgid "Fidus Writer Admin"
 msgid "Fidus Writer invite declined"
-msgstr "Fidus Writer Admin"
+msgstr "De uitnodiging voor Fidus Schrijver is afgewezen"
 
 #: user/emails.py:95
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect "
-"on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
+"Hallo %(recipient_name)s, %(sender_name)s heeft je uitnodiging geaccepteerd om verbinding te maken met Fidus Writer. \n"
+"Bekijk hier uw lijst met contacten: %(link)s"
 
 #: user/emails.py:104
 #, python-format
@@ -423,44 +455,44 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has accepted your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
+"<p>Hey %(recipient_name)s,<br> %(sender_name)s heeft je uitnodiging "
+"geaccepteerd om verbinding te maken met Fidus Writer.</p>"
 
 #: user/emails.py:118
 msgid "Invite for Fidus Writer accepted"
-msgstr ""
+msgstr "Uitnodiging voor Fidus Schrijver geaccepteerd"
 
 #: user/emails.py:124
-#, fuzzy
-#| msgid "Fidus Writer Administration Site"
 msgid "Fidus Writer invite accepted"
-msgstr "Fidus Writer Administratiesite"
+msgstr "Fidus Schrijveruitnodiging geaccepteerd"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
-msgstr ""
+msgstr "De code moet exact 6 cijfers bevatten (0-9)."
 
 #: user/models.py:55
 msgid "Interface language preference"
-msgstr ""
+msgstr "Interfacetaalvoorkeur"
 
 #: user/models.py:62
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
+"Gebruikersvoorkeuren (bijvoorbeeld het sluiten van het "
+"versleutelingsdialoogvenster)"
 
 #: user/models.py:73
 msgid "Can login as another user"
-msgstr ""
+msgstr "Kan inloggen als een andere gebruiker"
 
 #: user/models.py:102
-#, fuzzy
-#| msgid "Email address:"
 msgid "email address"
-msgstr "E-mailadres:"
+msgstr "e-mailadres"
 
 #: user/templates/account/email/email_confirmation_message.html:7
 #: user/templates/account/email/password_reset_key_message.html:7
 #, python-format
 msgid "Hello from %(site_name)s!"
-msgstr ""
+msgstr "Hallo van %(site_name)s!"
 
 #: user/templates/account/email/email_confirmation_message.html:12
 #, python-format
@@ -468,50 +500,58 @@ msgid ""
 "You are receiving this e-mail because user %(user_display)s has given yours "
 "as an e-mail address to connect their account."
 msgstr ""
+"U ontvangt deze e-mail omdat gebruiker %(user_display)s uw e-mailadres heeft"
+" opgegeven om zijn/haar account te koppelen."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 #, python-format
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
 msgstr ""
+"Om te bevestigen dat dit juist is, ga naar <a href=\"%(url)s\">%(url)s</a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
 #, python-format
 msgid "Thank you from %(site_name)s!"
-msgstr ""
+msgstr "Bedankt namens %(site_name)s!"
 
 #: user/templates/account/email/password_reset_key_message.html:11
 msgid ""
 "You are receiving this e-mail because you or someone else has requested a "
 "password for your user account."
 msgstr ""
+"U ontvangt deze e-mail omdat u of iemand anders een wachtwoord voor uw "
+"gebruikersaccount heeft aangevraagd."
 
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid ""
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
+"Het kan veilig worden genegeerd als u geen wachtwoordreset heeft "
+"aangevraagd. Klik op de onderstaande link om uw wachtwoord opnieuw in te "
+"stellen."
 
 #: user/templates/account/email/password_reset_key_message.html:21
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgstr "Mocht u het vergeten zijn: uw gebruikersnaam is %(username)s."
 
 #: user/views.py:624
 msgid "Code is invalid"
-msgstr ""
+msgstr "Code is ongeldig"
 
 #: usermedia/views.py:37
 msgid "Filetype not supported"
-msgstr ""
+msgstr "Bestandstype niet ondersteund"
 
 #: usermedia/views.py:44
 msgid "Image too large"
-msgstr ""
+msgstr "Afbeelding te groot"
 
 #: usermedia/views.py:71
 msgid "No file uploaded"
-msgstr ""
+msgstr "Geen bestand geüpload"
 
 #~ msgid "System Overview"
 #~ msgstr "Systeemoverzicht"
@@ -561,8 +601,8 @@ msgstr ""
 #~ "exists with the email you entered. You should receive them shortly."
 #~ msgstr ""
 #~ "We hebben instructies voor het instellen van uw wachtwoord via e-mail "
-#~ "gestuurd, als er een account bestaat met de e-mail die u heeft ingevoerd. "
-#~ "U zou ze binnenkort moeten ontvangen."
+#~ "gestuurd, als er een account bestaat met de e-mail die u heeft ingevoerd. U "
+#~ "zou ze binnenkort moeten ontvangen."
 
 #~ msgid "Enter new password"
 #~ msgstr "Voer nieuw wachtwoord in"
@@ -571,8 +611,8 @@ msgstr ""
 #~ "Please enter your new password twice so we can verify you typed it in "
 #~ "correctly."
 #~ msgstr ""
-#~ "Voer uw nieuwe wachtwoord tweemaal in zodat we kunnen controleren dat u "
-#~ "het correct heeft ingevoerd."
+#~ "Voer uw nieuwe wachtwoord tweemaal in zodat we kunnen controleren dat u het "
+#~ "correct heeft ingevoerd."
 
 #~ msgid "New password:"
 #~ msgstr "Nieuw wachtwoord:"

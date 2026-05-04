@@ -163,6 +163,68 @@ confirmation before overwriting it unless `--noinput` is passed.
 - **Browser Testing**: Selenium WebDriver
 - **Test Requirements**: Install with `pip install -r test-requirements.txt`
 
+## API Request/Response Pattern
+
+All AJAX endpoints in Fidus Writer accept **JSON request bodies** instead of classic HTML form data.
+
+### Middleware: `JsonToPostMiddleware`
+
+**File:** `base/middleware.py`
+
+This middleware intercepts every `POST`/`PUT`/`PATCH`/`DELETE` request whose `Content-Type` is `application/json`, parses the body with `json.loads`, and attaches the result to `request.JSON`. It also pulls `csrfmiddlewaretoken` out of the JSON body (if present) and injects it into the request meta, but the recommended approach is to send the CSRF token as the `X-CSRFToken` header.
+
+### Backend conventions
+
+- **Use `request.JSON`** to read parameters in all AJAX views that do not use Django form objects or handle file uploads.
+- **Keep `request.POST`** when:
+  - A Django form object is instantiated directly from the request (e.g. `PasswordChangeForm(user=request.user, data=request.POST)`, `AddEmailForm(request.user, request.POST)`). These form classes read `request.POST` internally.
+  - The view receives a file upload via `request.FILES`. Multipart form submissions cannot carry JSON bodies, so data fields arrive via `request.POST`.
+
+**Typical backend pattern:**
+
+```fiduswriter/fiduswriter/document/views.py#L1-5
+@login_required
+@ajax_required
+@require_POST
+def my_view(request):
+    doc_id = request.JSON["doc_id"]   # read from parsed JSON body
+    some_flag = request.JSON.get("flag", False)  # with default
+    ids = request.JSON["ids"]         # JSON arrays arrive as Python lists
+```
+
+**Important type differences vs. form data:**
+
+| Value type | Old `request.POST` pattern | New `request.JSON` pattern |
+|---|---|---|
+| Integer | `int(request.POST["id"])` | `int(request.JSON["id"])` |
+| Boolean | `request.POST["flag"] == "true"` | `request.JSON["flag"]` (native `bool`) |
+| JSON object/array | `json.loads(request.POST["data"])` | `request.JSON["data"]` (already parsed) |
+| List | `request.POST.getlist("ids[]")` | `request.JSON["ids"]` (native `list`) |
+
+### Frontend conventions
+
+Three helper functions in `base/static/js/modules/common/network.js` send JSON to the backend:
+
+| Function | Description |
+|---|---|
+| `jsonPostBare(url, object, csrfToken?)` | POST JSON, return raw `Response` |
+| `jsonPost(url, object, csrfToken?)` | POST JSON, strip Django messages, raise on HTTP errors |
+| `jsonPostJson(url, object, csrfToken?)` | POST JSON, return parsed JSON body |
+
+All three automatically add `Content-Type: application/json`, `X-CSRFToken`, and `X-Requested-With: XMLHttpRequest` headers. No `csrfmiddlewaretoken` field is needed in the request object.
+
+**Usage example:**
+
+```fiduswriter/fiduswriter/base/static/js/modules/common/network.js#L1-5
+import {jsonPost} from "../common"
+
+const response = await jsonPost("/api/document/delete/", {
+    id: documentId
+})
+```
+
+---
+
 ## Frontend Routing Architecture
 
 Fidus Writer is a single-page application (SPA). The Django backend serves the same HTML shell for all non-API paths; client-side JavaScript then decides what to render based on the URL.

@@ -1272,17 +1272,18 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         response = self.client.post(
             "/api/document/save_access_rights/",
-            {
-                "document_ids": json.dumps([doc.id]),
-                "access_rights": json.dumps(
-                    [
+            json.dumps(
+                {
+                    "document_ids": [doc.id],
+                    "access_rights": [
                         {
                             "holder": {"id": recipient.id, "type": "user"},
                             "rights": "read",
                         }
-                    ]
-                ),
-            },
+                    ],
+                }
+            ),
+            content_type="application/json",
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
 

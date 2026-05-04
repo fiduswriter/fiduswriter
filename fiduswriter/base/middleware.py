@@ -7,6 +7,10 @@ class JsonToPostMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Always initialise request.JSON so that views can rely on it
+        # existing regardless of content-type.  It will be overwritten below
+        # with the parsed body when the request actually carries JSON.
+        request.JSON = {}
         content_type = request.META.get("CONTENT_TYPE", "")
 
         # Only intercept JSON payloads for write methods

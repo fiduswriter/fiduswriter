@@ -4,7 +4,8 @@ import {
     activateWait,
     addAlert,
     deactivateWait,
-    jsonPostJson
+    jsonPostJson,
+    postJson
 } from "../common"
 
 export const twoFactorSetupDialog = () => {
@@ -199,7 +200,7 @@ export const twoFactorLoginDialog = ({
                 }
 
                 activateWait()
-                jsonPostJson("/api/user/login/", {
+                postJson("/api/user/login/", {
                     login,
                     password,
                     remember,

@@ -713,8 +713,12 @@ def two_factor_verify(request):
     Verify a TOTP code during setup.
     """
 
-    code = request.POST.get("code", "").strip()
-    device_id = request.POST.get("device_id")
+    if hasattr(request, "JSON") and isinstance(request.JSON, dict):
+        code = request.JSON.get("code", "").strip()
+        device_id = request.JSON.get("device_id")
+    else:
+        code = request.POST.get("code", "").strip()
+        device_id = request.POST.get("device_id")
 
     if not code or len(code) != 6:
         return JsonResponse(

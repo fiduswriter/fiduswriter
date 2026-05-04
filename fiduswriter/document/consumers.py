@@ -10,14 +10,12 @@ from copy import deepcopy
 from dataclasses import dataclass
 
 from asgiref.sync import sync_to_async
-from django.db.utils import DatabaseError
-
 from django.conf import settings
-from django.db.utils import IntegrityError
 
 from base.helpers.ws import get_url_base
 from document.helpers.session_user_info import SessionUserInfo
 from document import prosemirror
+from document.helpers import document_store
 
 from base.base_consumer import BaseWebsocketConsumer, GuestUser, TokenUser
 from document.models import (
@@ -27,7 +25,6 @@ from document.models import (
     FW_DOCUMENT_VERSION,
 )
 from document.helpers.token_access import get_token_access
-from usermedia.models import Image, DocumentImage, UserImage
 from user.helpers import Avatars
 
 logger = logging.getLogger(__name__)
@@ -221,19 +218,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
             self.id = 0
             # Initialize document content from template if empty.
-            # We only do this when content is a dict — once an
-            # e2ee snapshot is saved, the content becomes a Base64
-            # string and isinstance skips it.
-            if (
-                isinstance(doc_db.content, dict)
-                and "type" not in doc_db.content
-            ):
-                doc_db.content = deepcopy(doc_db.template.content)
-                if "type" not in doc_db.content:
-                    doc_db.content["type"] = "doc"
-                if "content" not in doc_db.content:
-                    doc_db.content["content"] = [{"type": "title"}]
-                await doc_db.asave()
+            await document_store.initialize_document_content(doc_db)
             if doc_db.e2ee:
                 # For E2EE documents, we cannot create a prosemirror
                 # node from the content. The client will decrypt and
@@ -409,49 +394,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 del self.session["doc"].bibliography[id]
 
     async def update_images(self, image_updates):
-        if self.session["doc"].e2ee:
-            # For E2EE documents, image metadata is inside encrypted diffs.
-            # The server cannot process it; clients handle it locally.
-            # EncryptedDocumentImage records are created via the dedicated
-            # e2ee_image endpoint, not through diff processing.
-            return
-        for iu in image_updates:
-            if "id" not in iu:
-                continue
-            id = iu["id"]
-            if iu["type"] == "update":
-                # Ensure that access rights exist
-                has_access = await UserImage.objects.filter(
-                    image__id=id, owner=self.user_info.user
-                ).aexists()
-
-                if not has_access:
-                    continue
-
-                doc_image = await DocumentImage.objects.filter(
-                    document_id=self.session["doc"].id, image_id=id
-                ).afirst()
-
-                if doc_image:
-                    doc_image.title = iu["image"]["title"]
-                    doc_image.copyright = iu["image"]["copyright"]
-                    await doc_image.asave()
-                else:
-                    await DocumentImage.objects.acreate(
-                        document_id=self.session["doc"].id,
-                        image_id=id,
-                        title=iu["image"]["title"],
-                        copyright=iu["image"]["copyright"],
-                    )
-            elif iu["type"] == "delete":
-                await DocumentImage.objects.filter(
-                    document_id=self.session["doc"].id, image_id=id
-                ).adelete()
-
-                async for image in Image.objects.filter(id=id).aiterator():
-                    can_delete = await sync_to_async(image.is_deletable)()
-                    if can_delete:
-                        await image.adelete()
+        await document_store.update_document_images(
+            self.session["doc"].id,
+            image_updates,
+            self.user_info.user,
+            doc_e2ee=self.session["doc"].e2ee,
+        )
 
     async def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
@@ -549,11 +497,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             WebsocketConsumer.get_session(self.user_info.document_id)
             and self.user_info.path_object
         ):
-            self.user_info.path_object.path = message["path"]
-            await self.user_info.path_object.asave(
-                update_fields=[
-                    "path",
-                ]
+            await document_store.save_path_object(
+                self.user_info.path_object, message["path"]
             )
             await WebsocketConsumer.send_updates(
                 message,
@@ -661,11 +606,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 ]
                 self.session["doc"].version += 1
                 if "ti" in message:  # ti = title
-                    self.session["doc"].title = message["ti"][-255:]
-                    # Immediately persist the new title so the overview page
-                    # always sees the correct value, even before the full
-                    # periodic save or the disconnect-triggered save completes.
-                    await self.session["doc"].asave(update_fields=["title"])
+                    await document_store.save_document_title(
+                        self.session["doc"], message["ti"]
+                    )
                 if "cu" in message:  # cu = comment updates
                     await self.update_comments(message["cu"])
                 if "bu" in message:  # bu = bibliography updates
@@ -1030,120 +973,42 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await asyncio.gather(*send_tasks)
 
     @classmethod
-    def serialize_content(cls, session):
-        if session["doc"].e2ee:
-            # For E2EE documents, content is already encrypted
-            # and stored via e2ee_snapshot messages. No server-side
-            # serialization is needed.
-            return
-        if "node_updates" in session and session["node_updates"]:
-            session["doc"].content = prosemirror.to_mini_json(session["node"])
-            session["node_updates"] = False
-
-    @classmethod
     async def save_document_async(cls, document_id, force=False):
         session = cls.get_session(document_id)
         if not session:
             return
-        if (
-            not force
-            and session["doc"].version == session["last_saved_version"]
-        ):
-            return
-        logger.debug(
-            f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
-            f"Doc version:{session['doc'].version}"
+        node = None
+        if not session["doc"].e2ee and session.get("node_updates"):
+            node = session["node"]
+        saved = await document_store.save_document_async(
+            doc=session["doc"],
+            node=node,
+            force=force,
+            last_saved_version=session["last_saved_version"],
         )
-        cls.serialize_content(session)
-        update_fields = [
-            "title",
-            "version",
-            "content",
-            "diffs",
-            "comments",
-            "bibliography",
-            "updated",
-        ]
-        # Include E2EE fields when saving an encrypted document
-        # (e.g., after a password change updates the salt/iterations)
-        if session["doc"].e2ee:
-            update_fields.extend(
-                [
-                    "e2ee",
-                    "e2ee_salt",
-                    "e2ee_iterations",
-                    "e2ee_snapshot_version",
-                ]
-            )
-        try:
-            # this try block is to avoid a db exception
-            # in case the doc has been deleted from the db
-            # in fiduswriter the owner of a doc could delete a doc
-            # while an invited writer is editing the same doc
-            await session["doc"].asave(update_fields=update_fields)
-
-        except DatabaseError as e:
-            expected_msg = "Save with update_fields did not affect any rows."
-            if str(e) == expected_msg:
-                try:
-                    await session["doc"].asave()
-                except IntegrityError:
-                    pass
-            else:
-                raise e
-        session["last_saved_version"] = session["doc"].version
+        if saved:
+            session["last_saved_version"] = session["doc"].version
+            if not session["doc"].e2ee:
+                session["node_updates"] = False
 
     @classmethod
     def save_document(cls, document_id, force=False):
         session = cls.get_session(document_id)
         if not session:
             return
-        if (
-            not force
-            and session["doc"].version == session["last_saved_version"]
-        ):
-            return
-        logger.debug(
-            f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
-            f"Doc version:{session['doc'].version}"
+        node = None
+        if not session["doc"].e2ee and session.get("node_updates"):
+            node = session["node"]
+        saved = document_store.save_document(
+            doc=session["doc"],
+            node=node,
+            force=force,
+            last_saved_version=session["last_saved_version"],
         )
-        cls.serialize_content(session)
-        update_fields = [
-            "title",
-            "version",
-            "content",
-            "diffs",
-            "comments",
-            "bibliography",
-            "updated",
-        ]
-        # Include E2EE fields when saving an encrypted document
-        if session["doc"].e2ee:
-            update_fields.extend(
-                [
-                    "e2ee",
-                    "e2ee_salt",
-                    "e2ee_iterations",
-                    "e2ee_snapshot_version",
-                ]
-            )
-        try:
-            # this try block is to avoid a db exception
-            # in case the doc has been deleted from the db
-            # in fiduswriter the owner of a doc could delete a doc
-            # while an invited writer is editing the same doc
-            session["doc"].save(update_fields=update_fields)
-
-        except DatabaseError as e:
-            expected_msg = "Save with update_fields did not affect any rows."
-            if str(e) == expected_msg:
-                try:
-                    session["doc"].save()
-                except IntegrityError:
-                    pass
-            else:
-                raise e
-        session["last_saved_version"] = session["doc"].version
+        if saved:
+            session["last_saved_version"] = session["doc"].version
+            if not session["doc"].e2ee:
+                session["node_updates"] = False
 
     @classmethod
     def save_all_docs(cls):

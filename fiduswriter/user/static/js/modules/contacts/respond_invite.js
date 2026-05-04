@@ -1,4 +1,4 @@
-import {Dialog, escapeText, postJson} from "../common"
+import {Dialog, escapeText, jsonPostJson} from "../common"
 
 export class RespondInviteDialog {
     constructor(
@@ -22,8 +22,8 @@ export class RespondInviteDialog {
                         : gettext("Accept invite"),
                 classes: "fw-dark",
                 click: () => {
-                    postJson("/api/user/invites/accept/", {
-                        invites: JSON.stringify(this.invites)
+                    jsonPostJson("/api/user/invites/accept/", {
+                        invites: this.invites
                     }).then(({json, status}) => {
                         dialog.close()
                         if (status == 200) {
@@ -42,8 +42,8 @@ export class RespondInviteDialog {
                         : gettext("Decline invite"),
                 classes: "fw-dark",
                 click: () => {
-                    postJson("/api/user/invites/decline/", {
-                        invites: JSON.stringify(this.invites)
+                    jsonPostJson("/api/user/invites/decline/", {
+                        invites: this.invites
                     }).then(({status}) => {
                         dialog.close()
                         if (status == 200) {

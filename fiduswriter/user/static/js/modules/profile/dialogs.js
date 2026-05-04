@@ -4,8 +4,9 @@ import {
     addAlert,
     deactivateWait,
     escapeText,
-    post,
-    postJson
+    jsonPost,
+    jsonPostJson,
+    post
 } from "../common"
 import {
     changeAvatarDialogTemplate,
@@ -84,7 +85,7 @@ export const changeAvatarDialog = app => {
 const deleteAvatar = app => {
     activateWait()
 
-    post("/api/user/avatar/delete/")
+    jsonPost("/api/user/avatar/delete/")
         .then(() => deactivateWait())
         .then(() => app.getConfiguration())
         .then(() => app.selectPage())
@@ -152,7 +153,7 @@ export const changePwdDialog = ({username}) => {
 
                 activateWait()
 
-                postJson("/api/user/passwordchange/", {
+                jsonPostJson("/api/user/passwordchange/", {
                     old_password: oldPwd,
                     new_password1: newPwd1,
                     new_password2: newPwd2
@@ -229,7 +230,7 @@ export const addEmailDialog = app => {
 
                 document.getElementById("new-profile-email").value = email
 
-                postJson("/api/user/email/add/", {
+                jsonPostJson("/api/user/email/add/", {
                     email
                 })
                     .then(({json, status}) => {
@@ -285,7 +286,7 @@ export const deleteEmailDialog = (target, app) => {
             click: () => {
                 activateWait()
 
-                post("/api/user/email/delete/", {
+                jsonPost("/api/user/email/delete/", {
                     email
                 })
                     .then(() => {
@@ -334,7 +335,7 @@ export const deleteSocialaccountDialog = (target, app) => {
             click: () => {
                 activateWait()
 
-                post("/api/user/socialaccountdelete/", {
+                jsonPost("/api/user/socialaccountdelete/", {
                     socialaccount
                 })
                     .then(() => {
@@ -387,7 +388,7 @@ export const changePrimaryEmailDialog = app => {
             click: () => {
                 activateWait()
 
-                post("/api/user/email/primary/", {
+                jsonPost("/api/user/email/primary/", {
                     email
                 })
                     .then(() => {

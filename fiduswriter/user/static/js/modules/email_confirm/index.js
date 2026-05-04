@@ -3,8 +3,8 @@ import {
     activateWait,
     addAlert,
     deactivateWait,
-    post,
-    postJson,
+    jsonPost,
+    jsonPostJson,
     whenReady
 } from "../common"
 import {PreloginPage} from "../prelogin"
@@ -34,7 +34,7 @@ export class EmailConfirm extends PreloginPage {
         this.formChecks = []
         this.confirmQuestionsTemplates = []
         this.confirmMethods = [
-            () => post(`/api/user/confirm-email/${this.key}/`)
+            () => jsonPost(`/api/user/confirm-email/${this.key}/`)
         ]
     }
 
@@ -47,7 +47,7 @@ export class EmailConfirm extends PreloginPage {
     }
 
     getConfirmData() {
-        return postJson("/api/user/get_confirmkey_data/", {key: this.key})
+        return jsonPostJson("/api/user/get_confirmkey_data/", {key: this.key})
             .then(({json}) => {
                 this.username = json.username
                 this.email = json.email

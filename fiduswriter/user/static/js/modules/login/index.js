@@ -1,5 +1,5 @@
 import * as pluginLoaders from "../../plugins/login"
-import {escapeText, post, postJson} from "../common"
+import {escapeText, jsonPostJson} from "../common"
 import {PreloginPage} from "../prelogin"
 import {twoFactorLoginDialog} from "../two_factor"
 
@@ -143,7 +143,7 @@ export class LoginPage extends PreloginPage {
             if (errors) {
                 return
             }
-            return postJson("/api/user/login/", {login, password, remember})
+            return jsonPostJson("/api/user/login/", {login, password, remember})
                 .catch(response => {
                     if (
                         !(response instanceof Response) ||

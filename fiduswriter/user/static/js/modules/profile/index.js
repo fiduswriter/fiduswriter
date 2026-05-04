@@ -6,7 +6,7 @@ import {
     dropdownSelect,
     ensureCSS,
     findTarget,
-    post,
+    jsonPost,
     setDocTitle,
     whenReady
 } from "../common"
@@ -282,15 +282,15 @@ export class Profile {
     save() {
         activateWait()
         const newLang = this.dom.querySelector("#language").value
-        return post("/api/user/save/", {
-            form_data: JSON.stringify({
+        return jsonPost("/api/user/save/", {
+            form_data: {
                 user: {
                     username: this.dom.querySelector("#username").value,
                     first_name: this.dom.querySelector("#first_name").value,
                     last_name: this.dom.querySelector("#last_name").value,
                     language: newLang
                 }
-            })
+            }
         })
             .catch(() =>
                 addAlert("error", gettext("Could not save profile data"))

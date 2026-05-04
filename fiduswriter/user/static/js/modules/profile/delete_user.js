@@ -3,7 +3,7 @@ import {
     activateWait,
     addAlert,
     deactivateWait,
-    postBare
+    jsonPostBare
 } from "../common"
 import {deleteUserDialogTemplate} from "./templates"
 
@@ -49,7 +49,7 @@ export class DeleteUserDialog {
     deleteCurrentUser(password) {
         activateWait()
 
-        postBare("/api/user/delete/", {password}).then(response => {
+        jsonPostBare("/api/user/delete/", {password}).then(response => {
             switch (response.status) {
                 case 200:
                     window.location = "/"

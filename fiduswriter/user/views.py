@@ -254,7 +254,7 @@ def save_profile(request):
     Save user profile information
     """
     response = {}
-    form_data = json.loads(request.POST["form_data"])
+    form_data = request.JSON["form_data"]
     User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
     user_form = UserForm(form_data["user"], instance=user_object)
@@ -451,7 +451,7 @@ def invite(request):
 def invites_accept(request):
     response = {}
     status = 200
-    invites = json.loads(request.POST["invites"])
+    invites = request.JSON["invites"]
     response["contacts"] = []
     avatars = Avatars()
     for invite in invites:
@@ -497,7 +497,7 @@ def invites_decline(request):
     Decline an invite
     """
     response = {}
-    invites = json.loads(request.POST["invites"])
+    invites = request.JSON["invites"]
     for invite in invites:
         for ui in request.user.invites_to.filter(id=invite["id"]):
             link = HttpRequest.build_absolute_uri(request, "/user/contacts/")
@@ -514,7 +514,7 @@ def delete_contacts(request):
     Delete a contact
     """
     response = {}
-    former_contacts = json.loads(request.POST["contacts"])
+    former_contacts = request.JSON["contacts"]
     for former_contact in former_contacts:
         if former_contact["type"] == "user":
             # Revoke all permissions given to this user
@@ -833,7 +833,7 @@ def save_encryption_key(request):
     """Create or update the user's encryption keys."""
     response = {}
     status = 200
-    data = json.loads(request.POST.get("data", "{}"))
+    data = request.JSON.get("data", {})
     key_record, created = UserEncryptionKey.objects.get_or_create(
         user=request.user,
         defaults={

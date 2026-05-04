@@ -68,7 +68,7 @@ export const changePwdDialogTemplate = ({username}) =>
         <tr><td><span id="fw-password-change-error" class="warning"></span></td></tr>
     </tbody></table>`
 
-export const profileContents = (user, socialaccount_providers) =>
+export const profileContents = (user, socialaccount_providers, settings = {}) =>
     `<div id="profile-wrapper" class="clearfix ui-dialog ui-dialog-fullpage">
         <div id="profile-avatar">
             ${avatarTemplate({user})}
@@ -102,7 +102,9 @@ export const profileContents = (user, socialaccount_providers) =>
                     <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
                 </div>
             </form>
-            <div class="profile-data-row">
+            ${
+                settings.TWO_FACTOR_ENABLED
+                    ? `<div class="profile-data-row">
                 <label class="form-label">${gettext("Two-Factor Authentication")}</label>
                 <div id="two-factor-status">
                     <span id="two-factor-enabled-status" style="display: none;">
@@ -122,8 +124,12 @@ export const profileContents = (user, socialaccount_providers) =>
                     <i class="fa fa-shield-alt"></i>
                     ${gettext("Disable 2FA")}
                 </span>
-            </div>
-            <div class="profile-data-row">
+            </div>`
+                    : ""
+            }
+            ${
+                settings.E2EE_MODE && settings.E2EE_MODE !== "disabled"
+                    ? `<div class="profile-data-row">
                 <label class="form-label">${gettext("End-to-End Encryption")}</label>
                 <div id="e2ee-passphrase-status">
                     <span id="e2ee-passphrase-enabled-status" style="display: none;">
@@ -147,7 +153,9 @@ export const profileContents = (user, socialaccount_providers) =>
                     <i class="fa fa-key"></i>
                     ${gettext("Recover with recovery key")}
                 </span>
-            </div>
+            </div>`
+                    : ""
+            }
             <div class="profile-data-row">
                 <table class="fw-data-table profile-email-table">
                     <thead class="fw-data-table-header">

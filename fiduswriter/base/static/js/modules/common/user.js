@@ -1,7 +1,7 @@
-import {post} from "./network"
+import {jsonPost} from "./network"
 
 export const setLanguage = (_config, language) =>
-    post("/api/i18n/setlang/", {language}).then(() => {
+    jsonPost("/api/i18n/setlang/", {language}).then(() => {
         // We delete the network cache as this contains the JS
         // translations.
         caches.keys().then(names => {

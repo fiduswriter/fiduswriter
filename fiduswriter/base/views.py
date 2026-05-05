@@ -216,3 +216,29 @@ def flatpage(request):
         response["title"] = flatpage.title
         response["content"] = flatpage.content
     return JsonResponse(response, status=status)
+
+
+@require_POST
+def set_language(request):
+    """
+    Set the active language. Accepts JSON (language key) or form POST.
+    Replaces Django's built-in set_language for JSON-capable clients.
+    """
+    from django.utils.translation import check_for_language, activate
+
+    language = request.JSON.get("language") or request.POST.get("language")
+    if language and check_for_language(language):
+        activate(language)
+        response = JsonResponse({})
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            language,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            path=settings.LANGUAGE_COOKIE_PATH,
+            domain=settings.LANGUAGE_COOKIE_DOMAIN,
+            secure=settings.LANGUAGE_COOKIE_SECURE,
+            httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+            samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+        )
+        return response
+    return JsonResponse({"error": "Invalid language code"}, status=400)

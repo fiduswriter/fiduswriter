@@ -11,7 +11,7 @@
 ## Technology Stack
 
 ### Backend
-- **Framework**: Django 5.2.9
+- **Framework**: Django 6.0.4
 - **ASGI Server**: Daphne 4.1.2
 - **WebSockets**: Django Channels 4.3.2
 - **Python Version**: Python 3.x
@@ -177,11 +177,9 @@ For `POST` requests with `Content-Type: multipart/form-data`, the middleware add
 
 ### Backend conventions
 
-- **Use `request.JSON`** to read parameters in all AJAX views that do not use Django form objects or handle file uploads.
-- **Keep `request.POST`** when:
-  - A Django form object is instantiated directly from the request (e.g. `PasswordChangeForm(user=request.user, data=request.POST)`, `AddEmailForm(request.user, request.POST)`). These form classes read `request.POST` internally.
-  - The view receives a file upload via `request.FILES` and the frontend used the legacy `post` helpers that send each field as a separate form entry.
-- **Use `request.JSON` for file uploads too** when the frontend uses the `jsonPost*` helpers with a `files` argument. In this case the JSON payload is embedded as a single `json` form field and the middleware parses it into `request.JSON`, while the files are available in `request.FILES` as usual.
+- **Always use `request.JSON`** to read parameters in AJAX views. `request.JSON` is always initialised (to `{}`) by the middleware, regardless of content type.
+- **File uploads** use the hybrid multipart approach: the frontend passes `files` to `jsonPost*`, the middleware extracts the embedded `json` field and populates `request.JSON`, and the files are in `request.FILES` as usual.
+- **Never use `request.POST`** in new view code.
 
 **Typical backend pattern:**
 
@@ -195,18 +193,33 @@ def my_view(request):
     ids = request.JSON["ids"]         # JSON arrays arrive as Python lists
 ```
 
-**Important type differences vs. form data:**
+**Type differences vs. classic form data:**
 
-| Value type | Old `request.POST` pattern | New `request.JSON` pattern |
+| Value type | Old `request.POST` pattern | `request.JSON` pattern |
 |---|---|---|
 | Integer | `int(request.POST["id"])` | `int(request.JSON["id"])` |
 | Boolean | `request.POST["flag"] == "true"` | `request.JSON["flag"]` (native `bool`) |
 | JSON object/array | `json.loads(request.POST["data"])` | `request.JSON["data"]` (already parsed) |
 | List | `request.POST.getlist("ids[]")` | `request.JSON["ids"]` (native `list`) |
 
+### Class-based views wrapping allauth forms: `JsonFormMixin`
+
+**File:** `base/mixins.py`
+
+Allauth's class-based views (e.g. `LoginView`, `SignupView`, `PasswordResetView`, `PasswordResetFromKeyView`) derive from Django's `FormView` and populate the form from `request.POST` internally via `get_form_kwargs`. To make these views accept a JSON body instead, inherit from `JsonFormMixin` **before** the allauth base class:
+
+```fiduswriter/fiduswriter/user/views.py#L1-5
+from base.mixins import JsonFormMixin
+
+class FidusPasswordResetView(JsonFormMixin, PasswordResetView):
+    pass
+```
+
+The mixin overrides `get_form_kwargs` to build a `MultiValueDict` from `request.JSON` whenever the request carries a JSON body, replacing the empty `request.POST`. Boolean values are converted to `"true"`/`"false"` strings so Django's `CheckboxInput`/`BooleanField` handles them correctly. The mixin is already applied to all the project's allauth view subclasses in `user/views.py`.
+
 ### Frontend conventions
 
-Three helper functions in `base/static/js/modules/common/network.js` send JSON to the backend:
+Use the three `jsonPost*` helpers in `base/static/js/modules/common/network.js` for all requests to the backend:
 
 | Function | Description |
 |---|---|
@@ -227,6 +240,16 @@ const response = await jsonPost("/api/document/delete/", {
     id: documentId
 })
 ```
+
+**Deprecated functions — do not use in new code:**
+
+| Function | Replacement |
+|---|---|
+| `postBare(url, params?)` | `jsonPostBare(url, object?, null, files?)` |
+| `post(url, params?)` | `jsonPost(url, object?, null, files?)` |
+| `postJson(url, params?)` | `jsonPostJson(url, object?)` |
+
+`postBare` (and the `post`/`postJson` wrappers built on top of it) send `multipart/form-data` instead of JSON. They are still exported for backwards compatibility but emit a `console.warn` deprecation notice. All existing call sites in the project have been migrated to the `jsonPost*` equivalents.
 
 ---
 

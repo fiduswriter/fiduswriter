@@ -659,6 +659,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
             )
+            await self.unfixable()
+            return
 
     async def handle_e2ee_snapshot(self, message):
         """Handle a full encrypted snapshot from a client.

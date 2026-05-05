@@ -12,9 +12,11 @@ from django.conf import settings
 from django.views.i18n import JavaScriptCatalog
 from django.views.static import serve as static_serve
 
+from user.views import FidusPasswordResetFromKeyView
+
 from .views import app as app_view, api_404 as api_404_view
 from .views import admin_console as admin_console_view
-from .views import manifest_json
+from .views import manifest_json, set_language as set_language_view
 
 
 admin.site.site_header = settings.ADMIN_SITE_HEADER
@@ -61,6 +63,8 @@ urlpatterns = [
             "path": "sw.js",
         },
     ),
+    # I18n manual language switcher (JSON-capable override must come first)
+    path("api/i18n/setlang/", set_language_view, name="set_language"),
     # I18n manual language switcher
     re_path("^api/i18n/", include("django.conf.urls.i18n")),
     # I18n Javascript translations
@@ -96,6 +100,15 @@ if settings.STATIC_URL[0] == "/":
             {"document_root": settings.STATIC_ROOT},
         ),
     ]
+
+# Register JSON-capable password reset confirm view before the dynamic allauth.account URLs
+urlpatterns += [
+    re_path(
+        r"^api/account/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$",
+        FidusPasswordResetFromKeyView.as_view(),
+        name="account_reset_password_from_key",
+    ),
+]
 
 for app in settings.INSTALLED_APPS:
     try:

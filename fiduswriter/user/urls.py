@@ -69,6 +69,11 @@ urlpatterns = [
     ),
     re_path(r"^signup/$", views.signup, name="account_signup"),
     re_path(r"^login/$", views.login, name="account_login"),
+    re_path(
+        r"^password/reset/$",
+        views.FidusPasswordResetView.as_view(),
+        name="account_reset_password",
+    ),
     # Authentication handling
     re_path("", include("allauth.urls")),
 ]

@@ -215,14 +215,39 @@ class SeleniumHelper:
                 self.leave_site(driver)
         return super().tearDown()
 
+    def safe_get(self, driver, url, retries=3):
+        """Navigate to url, retrying on transient timeout errors."""
+        for attempt in range(retries):
+            try:
+                driver.get(url)
+                return
+            except (
+                MaxRetryError,
+                ReadTimeoutError,
+                TimeoutException,
+                WebDriverException,
+            ):
+                if attempt == retries - 1:
+                    raise
+                time.sleep(1)
+
     def leave_site(self, driver):
         try:
             driver.execute_script(
-                "if (window.theApp) {window.theApp.page = null;}"
+                # Properly close the current page (e.g. editor WebSocket)
+                # before navigating away so the browser is not left with
+                # dangling connections that can make the next driver.get()
+                # hang in CI.
+                "if (window.theApp && window.theApp.page && window.theApp.page.close) {"
+                "  window.theApp.page.close();"
+                "}"
                 # Suppress any 'Leave site?' beforeunload dialog so that
                 # driver.get() below cannot be blocked by it.
                 "window.onbeforeunload = null;"
             )
+        except (MaxRetryError, ReadTimeoutError, WebDriverException):
+            pass
+        try:
             driver.get("data:,")
         except (MaxRetryError, ReadTimeoutError, WebDriverException):
             pass

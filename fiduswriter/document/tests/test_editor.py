@@ -452,7 +452,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             return self.check_body(driver, body_text, seconds - 0.1)
 
     def test_track_changes(self):
-        self.driver.get(self.base_url)
+        self.safe_get(self.driver, self.base_url)
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()

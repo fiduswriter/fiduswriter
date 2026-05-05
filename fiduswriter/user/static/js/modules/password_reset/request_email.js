@@ -1,4 +1,4 @@
-import {escapeText, post} from "../common"
+import {escapeText, jsonPost} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetRequest extends PreloginPage {
@@ -67,7 +67,7 @@ export class PasswordResetRequest extends PreloginPage {
                     return
                 }
 
-                post("/api/user/password/reset/", {email})
+                jsonPost("/api/user/password/reset/", {email})
                     .then(() => {
                         if (document.body !== this.dom) {
                             return

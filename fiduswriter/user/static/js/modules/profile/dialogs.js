@@ -5,9 +5,7 @@ import {
     deactivateWait,
     escapeText,
     jsonPost,
-    jsonPostJson,
-    post,
-    postJson
+    jsonPostJson
 } from "../common"
 import {
     changeAvatarDialogTemplate,
@@ -33,7 +31,7 @@ export const changeAvatarDialog = app => {
 
                 const file = avatarUploader.files[0]
 
-                post("/api/user/avatar/upload/", {
+                jsonPost("/api/user/avatar/upload/", {}, null, {
                     avatar: {
                         file,
                         filename: file.name
@@ -86,7 +84,7 @@ export const changeAvatarDialog = app => {
 const deleteAvatar = app => {
     activateWait()
 
-    post("/api/user/avatar/delete/")
+    jsonPost("/api/user/avatar/delete/")
         .then(() => deactivateWait())
         .then(() => app.getConfiguration())
         .then(() => app.selectPage())
@@ -154,7 +152,7 @@ export const changePwdDialog = ({username}) => {
 
                 activateWait()
 
-                postJson("/api/user/passwordchange/", {
+                jsonPostJson("/api/user/passwordchange/", {
                     old_password: oldPwd,
                     new_password1: newPwd1,
                     new_password2: newPwd2
@@ -231,7 +229,7 @@ export const addEmailDialog = app => {
 
                 document.getElementById("new-profile-email").value = email
 
-                postJson("/api/user/email/add/", {
+                jsonPostJson("/api/user/email/add/", {
                     email
                 })
                     .then(({json, status}) => {

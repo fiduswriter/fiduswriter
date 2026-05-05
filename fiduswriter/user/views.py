@@ -5,6 +5,7 @@ from django.http import JsonResponse, HttpRequest
 from django.db.models import Q
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
 from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
@@ -18,22 +19,28 @@ from django_otp import user_has_device
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from base.decorators import ajax_required
+from base.mixins import JsonFormMixin
 from .forms import UserForm, FidusLoginForm
 from document.models import AccessRight
 from .models import UserInvite, UserEncryptionKey
 from .helpers import Avatars
 from . import emails
 
+
 from allauth.account.models import (
     EmailAddress,
     EmailConfirmation,
     EmailConfirmationHMAC,
 )
-from allauth.account.views import LoginView, SignupView
+from allauth.account.views import (
+    LoginView,
+    SignupView,
+    PasswordResetView,
+    PasswordResetFromKeyView,
+)
 from allauth.account import signals
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.signals import social_account_removed
-from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
 
 from avatar.models import Avatar
@@ -49,19 +56,29 @@ def password_change(request):
     """
     Change password
     """
-    response = {}
-    form = PasswordChangeForm(user=request.user, data=request.POST)
-    if form.is_valid():
-        status = 200
-        form.save()
-        # Updating the password logs out all other sessions for the user
-        # except the current one.
-        update_session_auth_hash(request, form.user)
-    else:
-        response["msg"] = form.errors
-        status = 201
-
-    return JsonResponse(response, status=status)
+    old_password = request.JSON.get("old_password", "")
+    new_password1 = request.JSON.get("new_password1", "")
+    new_password2 = request.JSON.get("new_password2", "")
+    errors = {}
+    if not request.user.check_password(old_password):
+        errors["old_password"] = [
+            _(
+                "Your old password was entered incorrectly. Please enter it again."
+            )
+        ]
+    if new_password1 != new_password2:
+        errors["new_password2"] = [_("The two password fields didn't match.")]
+    if not errors:
+        try:
+            validate_password(new_password1, request.user)
+        except ValidationError as e:
+            errors["new_password1"] = list(e.messages)
+    if errors:
+        return JsonResponse({"msg": errors}, status=201)
+    request.user.set_password(new_password1)
+    request.user.save()
+    update_session_auth_hash(request, request.user)
+    return JsonResponse({}, status=200)
 
 
 @login_required
@@ -72,7 +89,9 @@ def add_email(request):
     Add email address
     """
     response = {}
-    add_email_form = AddEmailForm(request.user, request.POST)
+    add_email_form = AddEmailForm(
+        request.user, {"email": request.JSON.get("email", "")}
+    )
     if add_email_form.is_valid():
         status = 200
         email_address = add_email_form.save(request)
@@ -235,10 +254,7 @@ def delete_user(request):
     user = request.user
     # Only remove users who are not marked as having staff status
     # to prevent administratoras from deleting themselves accidentally.
-    if hasattr(request, "JSON") and isinstance(request.JSON, dict):
-        password = request.JSON["password"]
-    else:
-        password = request.POST["password"]
+    password = request.JSON["password"]
     if not user.check_password(password):
         status = 401
     elif user.is_staff:
@@ -583,22 +599,23 @@ def get_confirmkey_data(request):
     return JsonResponse(response, status=status)
 
 
-class FidusSignupView(SignupView):
+class FidusSignupView(JsonFormMixin, SignupView):
     def form_valid(self, form):
         if not settings.REGISTRATION_OPEN:
             return HttpResponseRedirect("/")
         ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
-        if "invite_key" in self.request.POST:
-            invites_connect(self.user, self.request.POST["invite_key"])
+        invite_key = self.request.JSON.get("invite_key")
+        if invite_key:
+            invites_connect(self.user, invite_key)
         return ret
 
 
 signup = FidusSignupView.as_view()
 
 
-class FidusLoginView(LoginView):
+class FidusLoginView(JsonFormMixin, LoginView):
     form_class = FidusLoginForm
 
     def form_valid(self, form):
@@ -616,9 +633,9 @@ class FidusLoginView(LoginView):
                         user=user, confirmed=True
                     ).first()
                     if verified_device:
-                        if "twofactor" in self.request.POST:
-                            code = self.request.POST["twofactor"]
-                            if verified_device.verify_token(code):
+                        twofactor = self.request.JSON.get("twofactor")
+                        if twofactor:
+                            if verified_device.verify_token(twofactor):
                                 # User has verified their device, continue normally
                                 form_response = super().form_valid(form)
                                 location = form_response["Location"]
@@ -627,7 +644,7 @@ class FidusLoginView(LoginView):
                                 form.add_error(
                                     "twofactor", _("Code is invalid")
                                 )
-                        elif "twofactor" not in self.request.POST:
+                        else:
                             # User has a confirmed device but needs to verify with token
                             # Ask to add 2FA verification code
                             # Not translated as frontend will handle it.
@@ -955,3 +972,11 @@ def has_encryption_keys(request):
 
 
 login = FidusLoginView.as_view()
+
+
+class FidusPasswordResetView(JsonFormMixin, PasswordResetView):
+    pass
+
+
+class FidusPasswordResetFromKeyView(JsonFormMixin, PasswordResetFromKeyView):
+    pass

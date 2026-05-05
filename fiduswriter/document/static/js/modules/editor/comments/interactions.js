@@ -1,7 +1,7 @@
 import {GapCursor} from "prosemirror-gapcursor"
 import {TextSelection} from "prosemirror-state"
 
-import {findTarget, post} from "../../common"
+import {findTarget, jsonPost} from "../../common"
 import {
     deactivateAllSelectedChanges,
     getCommentDuringCreationDecoration
@@ -318,7 +318,7 @@ export class ModCommentInteractions {
         const comment = this.mod.store.findComment(id)
         const {html, text} = serializeComment(comment.comment)
 
-        post("/api/document/comment_notify/", {
+        jsonPost("/api/document/comment_notify/", {
             doc_id: this.mod.editor.docInfo.id,
             collaborator_id: user,
             comment_html: html,

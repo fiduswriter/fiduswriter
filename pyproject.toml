@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "fiduswriter"
 description = "A semantic wordprocessor for academic purposes"
 readme = "README.md"
-license = {text = "AGPL-3.0-or-later"}
+license = "AGPL-3.0-or-later"
 authors = [
   {email = "mail@lundinfo.com", name = "Lund Info AB"},
 ]
@@ -14,9 +14,8 @@ requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
-  "Framework :: Django :: 5.1",
+  "Framework :: Django :: 6.0",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
@@ -35,15 +34,15 @@ homepage = "https://www.fiduswriter.org"
 repository = "https://www.github.com/fiduswriter/fiduswriter"
 
 [project.optional-dependencies]
-books = ["fiduswriter-books ~= 4.0.0"]
-citation-api-import = ["fiduswriter-citation-api-import ~= 4.0.0"]
-languagetool = ["fiduswriter-languagetool ~= 4.0.0"]
-ojs = ["fiduswriter-ojs ~= 4.0.0"]
-pandoc = ["fiduswriter-pandoc ~= 4.0.3"]
-phplist = ["fiduswriter-phplist ~= 4.0.0"]
-gitrepo-export = ["fiduswriter-gitrepo-export ~= 4.0.0"]
-payment-paddle = ["fiduswriter-payment-paddle ~= 4.0.0"]
-website = ["fiduswriter-website ~= 4.0.0"]
+#books = ["fiduswriter-books ~= 4.0.0"]
+#citation-api-import = ["fiduswriter-citation-api-import ~= 4.0.0"]
+#languagetool = ["fiduswriter-languagetool ~= 4.0.0"]
+#ojs = ["fiduswriter-ojs ~= 4.0.0"]
+#pandoc = ["fiduswriter-pandoc ~= 4.0.3"]
+#phplist = ["fiduswriter-phplist ~= 4.0.0"]
+#gitrepo-export = ["fiduswriter-gitrepo-export ~= 4.0.0"]
+#payment-paddle = ["fiduswriter-payment-paddle ~= 4.0.0"]
+#website = ["fiduswriter-website ~= 4.0.0"]
 mysql = ["mysqlclient"]
 postgresql = ["psycopg2"]
 

@@ -74,6 +74,10 @@ export const getJson = (url, params = {}, csrfToken = false) =>
     get(url, params, csrfToken).then(response => response.json())
 
 export const postBare = (url, params = {}, csrfToken = false) => {
+    console.warn(
+        `postBare("${url}") is deprecated and will be removed in a future version. ` +
+            "Use jsonPostBare() instead."
+    )
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }

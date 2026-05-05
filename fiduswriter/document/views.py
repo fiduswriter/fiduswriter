@@ -1,7 +1,6 @@
 import time
 import os
 import bleach
-import json
 import base64
 from copy import deepcopy
 
@@ -510,7 +509,7 @@ def import_create(request):
     status = 201
 
     # Check E2EE mode
-    e2ee = request.POST.get("e2ee", "") == "true"
+    e2ee = request.JSON.get("e2ee", False)
     e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
     if e2ee and e2ee_mode == "disabled":
         return JsonResponse(
@@ -522,7 +521,7 @@ def import_create(request):
             status=403,
         )
 
-    import_id = request.POST["import_id"]
+    import_id = request.JSON["import_id"]
     document_template = (
         DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None), import_id=import_id
@@ -560,7 +559,7 @@ def import_create(request):
                 et.document_template = document_template
                 et.save()
     if not document_template:
-        template_title = request.POST["template_title"]
+        template_title = request.JSON["template_title"]
         counter = 0
         base_template_title = template_title
         while DocumentTemplate.objects.filter(
@@ -568,7 +567,7 @@ def import_create(request):
         ).first():
             counter += 1
             template_title = f"{base_template_title} {counter}"
-        content = json.loads(request.POST["template"])
+        content = request.JSON["template"]
         document_template = DocumentTemplate()
         document_template.title = template_title
         document_template.import_id = import_id
@@ -576,8 +575,8 @@ def import_create(request):
         document_template.content = content
         document_template.save()
         files = request.FILES.getlist("files[]")
-        document_styles = json.loads(request.POST.get("document_styles"))
-        export_templates = json.loads(request.POST.get("export_templates"))
+        document_styles = request.JSON.get("document_styles")
+        export_templates = request.JSON.get("export_templates")
         for style in document_styles:
             doc_style = DocumentStyle.objects.create(
                 title=style["title"],
@@ -601,7 +600,7 @@ def import_create(request):
                     template_file=file,
                     file_type=e_template["file_type"],
                 )
-    path = request.POST["path"]
+    path = request.JSON["path"]
     if len(path):
         counter = 0
         base_path = path
@@ -615,10 +614,10 @@ def import_create(request):
     e2ee_salt = None
     e2ee_iterations = 600000
     if e2ee:
-        salt_b64 = request.POST.get("e2ee_salt")
+        salt_b64 = request.JSON.get("e2ee_salt")
         if salt_b64:
             e2ee_salt = base64.b64decode(salt_b64)
-        e2ee_iterations = int(request.POST.get("e2ee_iterations", 600000))
+        e2ee_iterations = int(request.JSON.get("e2ee_iterations", 600000))
 
     document = Document.objects.create(
         owner=request.user,
@@ -1819,7 +1818,7 @@ def get_all_revision_ids(request):
 def update_revision(request):
     response = {}
     status = 405
-    revision_id = request.POST["id"]
+    revision_id = request.JSON["id"]
     revision = DocumentRevision.objects.filter(pk=int(revision_id)).first()
     if revision:
         status = 200

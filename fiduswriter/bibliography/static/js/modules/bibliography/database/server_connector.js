@@ -1,11 +1,11 @@
-import {post, postJson} from "../../common/network"
+import {jsonPost, jsonPostJson} from "../../common/network"
 
 // class for server calls of BibliographyDB.
 export class BibliographyDBServerConnector {
     constructor() {}
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
-        return postJson("/api/bibliography/biblist/", {
+        return jsonPostJson("/api/bibliography/biblist/", {
             last_modified: lastModified,
             number_of_entries: numberOfEntries,
             user_id: localStorageOwnerId
@@ -33,14 +33,14 @@ export class BibliographyDBServerConnector {
     }
 
     saveBibEntries(tmpDB, isNew) {
-        return postJson("/api/bibliography/save/", {
+        return jsonPostJson("/api/bibliography/save/", {
             is_new: isNew,
-            bibs: JSON.stringify(tmpDB)
+            bibs: tmpDB
         }).then(({json}) => json["id_translations"])
     }
 
     saveCategories(cats) {
-        return postJson("/api/bibliography/save_category/", cats).then(
+        return jsonPostJson("/api/bibliography/save_category/", cats).then(
             ({json}) => {
                 return json.entries
             }
@@ -48,10 +48,10 @@ export class BibliographyDBServerConnector {
     }
 
     deleteCategory(ids) {
-        return post("/api/bibliography/delete_category/", {ids})
+        return jsonPost("/api/bibliography/delete_category/", {ids})
     }
 
     deleteBibEntries(ids) {
-        return post("/api/bibliography/delete/", {ids})
+        return jsonPost("/api/bibliography/delete/", {ids})
     }
 }

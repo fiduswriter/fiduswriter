@@ -4,8 +4,8 @@ import {
     addAlert,
     deactivateWait,
     escapeText,
-    longFilePath,
-    postJson
+    jsonPostJson,
+    longFilePath
 } from "../../common"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {
@@ -32,7 +32,7 @@ export class DocumentOverviewActions {
         if (!doc) {
             return Promise.resolve()
         }
-        return postJson("/api/document/delete/", {id}).then(({json}) => {
+        return jsonPostJson("/api/document/delete/", {id}).then(({json}) => {
             if (json.done) {
                 addAlert(
                     "success",

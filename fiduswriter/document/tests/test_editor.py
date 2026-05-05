@@ -547,6 +547,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             ".editor-toolbar .multi-buttons .ui-button:nth-child(5)",
         ).click()
 
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
+                )
+            )
+            >= 6
+        )
         change_tracking_boxes = self.driver.find_elements(
             By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
         )

@@ -15,7 +15,7 @@ from document.models import DocumentTemplate
 @ajax_required
 def delete_document_style(request):
     response = {}
-    id = int(request.POST["id"])
+    id = request.JSON["id"]
     style_selector = {"id": id}
     if not request.user.is_staff:
         style_selector["document_template__user"] = request.user
@@ -88,7 +88,7 @@ def save_document_style(request):
 @ajax_required
 def delete_export_template(request):
     response = {}
-    id = int(request.POST["id"])
+    id = request.JSON["id"]
     template_selector = {"id": id}
     if not request.user.is_staff:
         template_selector["document_template__user"] = request.user

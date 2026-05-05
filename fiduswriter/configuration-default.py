@@ -152,7 +152,7 @@ INSTALLED_APPS = [
 # A list of apps to remove from the default installation
 # This is useful for disabling features you don't need
 REMOVED_APPS = [
-    # Example: Disable two-factor authentication for admin interface
+    # Example: Disable two-factor authentication entirely
     # 'django_otp',
     # Example: Disable brute-force protection (for development only)
     # 'axes',

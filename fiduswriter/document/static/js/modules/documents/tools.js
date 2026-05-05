@@ -1,4 +1,4 @@
-import {addAlert, postJson} from "../common"
+import {addAlert, jsonPostJson} from "../common"
 import {acceptAllNoInsertions} from "../editor/track"
 import {getSettings} from "../schema/convert"
 
@@ -29,8 +29,8 @@ export const getMissingDocumentListData = (
     })
 
     if (incompleteIds.length > 0) {
-        return postJson("/api/document/documentlist/extra/", {
-            ids: incompleteIds.join(",")
+        return jsonPostJson("/api/document/documentlist/extra/", {
+            ids: incompleteIds
         })
             .then(({json}) => {
                 json.documents.forEach(extraValues => {

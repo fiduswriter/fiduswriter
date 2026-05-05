@@ -8,8 +8,8 @@ import {
     escapeText,
     findTarget,
     get,
+    jsonPost,
     longFilePath,
-    post,
     shortFileTitle
 } from "../../common"
 import {FidusFileImporter} from "../../importer/native"
@@ -160,7 +160,7 @@ export class DocumentRevisionsDialog {
     }
 
     deleteRevision(id) {
-        return post("/api/document/delete_revision/", {id})
+        return jsonPost("/api/document/delete_revision/", {id})
             .then(() => {
                 const thisTr = document.querySelector(`tr.revision-${id}`),
                     documentId = thisTr.dataset.document,

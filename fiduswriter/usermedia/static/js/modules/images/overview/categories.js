@@ -3,7 +3,7 @@ import {
     activateWait,
     addAlert,
     deactivateWait,
-    postJson
+    jsonPostJson
 } from "../../common"
 import {usermediaEditcategoriesTemplate} from "./templates"
 
@@ -17,7 +17,7 @@ export class ImageOverviewCategories {
     saveCategories(cats) {
         activateWait()
 
-        postJson("/api/usermedia/save_category/", {
+        jsonPostJson("/api/usermedia/save_category/", {
             ids: cats.ids,
             titles: cats.titles
         })

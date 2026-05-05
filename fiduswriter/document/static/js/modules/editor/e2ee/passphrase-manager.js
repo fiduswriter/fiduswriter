@@ -10,7 +10,7 @@
  * - DEK sharing: encrypt DEK with recipient's public key
  */
 
-import {getJson, postJson} from "../../common"
+import {getJson, jsonPost, jsonPostJson} from "../../common"
 import {E2EEKeyManager} from "./key-manager"
 import {PassphraseCrypto} from "./passphrase-crypto"
 
@@ -105,7 +105,7 @@ export class PassphraseManager {
                 encrypted_master_key_backup: encryptedMasterKeyBackup
             })
         }
-        const {status} = await postJson(
+        const {status} = await jsonPostJson(
             "/api/user/encryption_key/save/",
             saveData
         )
@@ -217,7 +217,7 @@ export class PassphraseManager {
                 encrypted_master_key_backup: encryptedMasterKeyBackup
             })
         }
-        const {status} = await postJson(
+        const {status} = await jsonPostJson(
             "/api/user/encryption_key/save/",
             saveData
         )
@@ -307,7 +307,7 @@ export class PassphraseManager {
                 encrypted_master_key_backup: encryptedMasterKeyBackup
             })
         }
-        const {status} = await postJson(
+        const {status} = await jsonPostJson(
             "/api/user/encryption_key/save/",
             saveData
         )
@@ -341,7 +341,7 @@ export class PassphraseManager {
             return null
         }
 
-        const {json} = await postJson("/api/document/encryption_key/get/", {
+        const {json} = await jsonPostJson("/api/document/encryption_key/get/", {
             document_id: documentId
         })
         if (!json.has_key) {
@@ -367,10 +367,10 @@ export class PassphraseManager {
             // Upgrade to master-key encryption for next time
             const upgradedEncryptedPassword =
                 await PassphraseCrypto.encryptString(password, masterKey)
-            await postJson("/api/document/encryption_key/update/", {
+            await jsonPostJson("/api/document/encryption_key/update/", {
                 id: json.id,
                 encrypted_key: upgradedEncryptedPassword,
-                encrypted_with_master_key: "true"
+                encrypted_with_master_key: true
             })
         }
 
@@ -429,12 +429,12 @@ export class PassphraseManager {
         const saveData = {
             document_id: documentId,
             encrypted_key: encryptedKey,
-            encrypted_with_master_key: encryptedWithMasterKey ? "true" : "false"
+            encrypted_with_master_key: encryptedWithMasterKey
         }
         if (holderId) {
             saveData.holder_id = holderId
         }
-        const {json, status} = await postJson(
+        const {json, status} = await jsonPostJson(
             "/api/document/encryption_key/save/",
             saveData
         )
@@ -492,7 +492,7 @@ export class PassphraseManager {
      */
     static async markPassphraseDismissed() {
         try {
-            await postJson("/api/user/preferences/update/", {
+            await jsonPost("/api/user/preferences/update/", {
                 has_dismissed_passphrase_offer: true
             })
         } catch (_e) {

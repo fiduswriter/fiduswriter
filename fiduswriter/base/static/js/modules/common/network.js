@@ -119,7 +119,7 @@ export const postJson = (url, params = {}, csrfToken = false) =>
         response.json().then(json => ({json, status: response.status}))
     )
 
-export const jsonPost = (url, object, csrfToken = false) => {
+export const jsonPostBare = (url, object = {}, csrfToken = false) => {
     // post json object rather than form data.
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
@@ -135,9 +135,18 @@ export const jsonPost = (url, object, csrfToken = false) => {
         credentials: "include",
         body: JSON.stringify(object)
     })
+}
+
+export const jsonPost = (url, object = {}, csrfToken = false) =>
+    jsonPostBare(url, object, csrfToken)
         .then(removeDjangoMessages)
         .then(handleFetchErrors)
-}
+
+// post json object and return json and status
+export const jsonPostJson = (url, object = {}, csrfToken = false) =>
+    jsonPost(url, object, csrfToken).then(response =>
+        response.json().then(json => ({json, status: response.status}))
+    )
 
 export const ensureCSS = cssUrl => {
     if (typeof cssUrl === "object") {

@@ -1,5 +1,5 @@
 import * as pluginLoaders from "../../plugins/login"
-import {escapeText, post, postJson} from "../common"
+import {escapeText, postJson} from "../common"
 import {PreloginPage} from "../prelogin"
 import {twoFactorLoginDialog} from "../two_factor"
 

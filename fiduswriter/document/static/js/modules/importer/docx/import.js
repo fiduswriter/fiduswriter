@@ -1,4 +1,4 @@
-import {escapeText, postJson} from "../../common"
+import {escapeText, jsonPostJson} from "../../common"
 import {NativeImporter} from "../native"
 import {DocxConvert} from "./convert"
 
@@ -24,7 +24,7 @@ export class DocxImporter {
     }
 
     getTemplate() {
-        return postJson("/api/document/get_template/", {
+        return jsonPostJson("/api/document/get_template/", {
             import_id: this.importId
         }).then(({json}) => {
             this.template = json.template

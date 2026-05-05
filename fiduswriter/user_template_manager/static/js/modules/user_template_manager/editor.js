@@ -2,8 +2,8 @@ import {
     addAlert,
     ensureCSS,
     findTarget,
-    post,
-    postJson,
+    jsonPost,
+    jsonPostJson,
     setDocTitle,
     whenReady
 } from "../common"
@@ -31,7 +31,7 @@ export class DocTemplatesEditor {
             .getStyles()
             .then(styles => {
                 this.citationStyles = styles
-                return postJson("/api/user_template_manager/get/", {
+                return jsonPostJson("/api/user_template_manager/get/", {
                     id: this.id
                 })
             })
@@ -114,7 +114,7 @@ export class DocTemplatesEditor {
             this.showErrors(errors)
             return Promise.reject()
         } else {
-            return post("/api/user_template_manager/save/", {
+            return jsonPost("/api/user_template_manager/save/", {
                 id: this.id,
                 value,
                 import_id,

@@ -10,7 +10,7 @@ import {
     baseBodyTemplate,
     escapeText,
     findTarget,
-    postJson,
+    jsonPostJson,
     setDocTitle,
     whenReady
 } from "../common"
@@ -204,7 +204,7 @@ export class ContactsOverview {
         if (this.app.isOffline()) {
             return cachedPromise
         }
-        return postJson("/api/user/contacts/list/")
+        return jsonPostJson("/api/user/contacts/list/")
             .then(({json}) => {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {

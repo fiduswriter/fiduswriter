@@ -94,7 +94,7 @@ def add_email(request):
 @require_POST
 def delete_email(request):
     response = {}
-    email = request.POST["email"]
+    email = request.JSON["email"]
     response["msg"] = f"Removed e-mail address {email}"
     status = 200
     email_address = EmailAddress.objects.filter(
@@ -117,7 +117,7 @@ def delete_email(request):
 @require_POST
 def primary_email(request):
     response = {}
-    email = request.POST["email"]
+    email = request.JSON["email"]
     email_address = EmailAddress.objects.filter(
         user=request.user, email=email, verified=True
     ).first()
@@ -144,7 +144,7 @@ def primary_email(request):
 @require_POST
 def delete_socialaccount(request):
     account = SocialAccount.objects.filter(
-        id=request.POST["socialaccount"], user=request.user
+        id=request.JSON["socialaccount"], user=request.user
     ).first()
     if not account:
         return JsonResponse({"msg": "Unknown account"}, status=404)
@@ -235,7 +235,11 @@ def delete_user(request):
     user = request.user
     # Only remove users who are not marked as having staff status
     # to prevent administratoras from deleting themselves accidentally.
-    if not user.check_password(request.POST["password"]):
+    if hasattr(request, "JSON") and isinstance(request.JSON, dict):
+        password = request.JSON["password"]
+    else:
+        password = request.POST["password"]
+    if not user.check_password(password):
         status = 401
     elif user.is_staff:
         status = 403
@@ -254,7 +258,7 @@ def save_profile(request):
     Save user profile information
     """
     response = {}
-    form_data = json.loads(request.POST["form_data"])
+    form_data = request.JSON["form_data"]
     User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
     user_form = UserForm(form_data["user"], instance=user_object)
@@ -358,7 +362,7 @@ def invites_add(request):
     email = False
     errored = False
     status = 202
-    user_string = request.POST["user_string"]
+    user_string = request.JSON["user_string"]
     if (
         UserInvite.objects.filter(username=user_string)
         .filter(by=request.user)
@@ -436,7 +440,7 @@ def invites_connect(user, key=None):
 def invite(request):
     response = {}
     status = 200
-    key = request.POST["key"]
+    key = request.JSON["key"]
     connected = invites_connect(request.user, key)
     if connected:
         response["redirect"] = "/user/contacts/"
@@ -451,7 +455,7 @@ def invite(request):
 def invites_accept(request):
     response = {}
     status = 200
-    invites = json.loads(request.POST["invites"])
+    invites = request.JSON["invites"]
     response["contacts"] = []
     avatars = Avatars()
     for invite in invites:
@@ -497,7 +501,7 @@ def invites_decline(request):
     Decline an invite
     """
     response = {}
-    invites = json.loads(request.POST["invites"])
+    invites = request.JSON["invites"]
     for invite in invites:
         for ui in request.user.invites_to.filter(id=invite["id"]):
             link = HttpRequest.build_absolute_uri(request, "/user/contacts/")
@@ -514,7 +518,7 @@ def delete_contacts(request):
     Delete a contact
     """
     response = {}
-    former_contacts = json.loads(request.POST["contacts"])
+    former_contacts = request.JSON["contacts"]
     for former_contact in former_contacts:
         if former_contact["type"] == "user":
             # Revoke all permissions given to this user
@@ -552,7 +556,7 @@ def get_confirmkey_data(request):
     Get data for an email confirmation key
     """
     response = {}
-    key = request.POST["key"]
+    key = request.JSON["key"]
     confirmation = EmailConfirmationHMAC.from_key(key)
     if not confirmation:
         qs = EmailConfirmation.objects.all_valid()
@@ -713,8 +717,8 @@ def two_factor_verify(request):
     Verify a TOTP code during setup.
     """
 
-    code = request.POST.get("code", "").strip()
-    device_id = request.POST.get("device_id")
+    code = request.JSON.get("code", "").strip()
+    device_id = request.JSON.get("device_id")
 
     if not code or len(code) != 6:
         return JsonResponse(
@@ -833,7 +837,7 @@ def save_encryption_key(request):
     """Create or update the user's encryption keys."""
     response = {}
     status = 200
-    data = json.loads(request.POST.get("data", "{}"))
+    data = request.JSON.get("data", {})
     key_record, created = UserEncryptionKey.objects.get_or_create(
         user=request.user,
         defaults={
@@ -898,15 +902,8 @@ def update_preferences(request):
     # Update allowed preference keys
     allowed_keys = {"has_dismissed_passphrase_offer"}
     for key in allowed_keys:
-        value = request.POST.get(key)
-        if value is not None:
-            # Convert string "true"/"false" to boolean
-            if value.lower() == "true":
-                preferences[key] = True
-            elif value.lower() == "false":
-                preferences[key] = False
-            else:
-                preferences[key] = value
+        if key in request.JSON:
+            preferences[key] = request.JSON[key]
 
     user.preferences = preferences
     user.save()

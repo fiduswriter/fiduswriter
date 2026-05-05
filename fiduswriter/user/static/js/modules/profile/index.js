@@ -6,7 +6,7 @@ import {
     dropdownSelect,
     ensureCSS,
     findTarget,
-    post,
+    jsonPost,
     setDocTitle,
     whenReady
 } from "../common"
@@ -80,19 +80,24 @@ export class Profile {
                     case findTarget(event, ".delete-socialaccount", el):
                         deleteSocialaccountDialog(el.target, this.app)
                         break
-                    case findTarget(event, "#setup-two-factor", el):
+                    case this.app.settings.TWO_FACTOR_ENABLED &&
+                        findTarget(event, "#setup-two-factor", el):
                         dialog = twoFactorSetupDialog()
                         break
-                    case findTarget(event, "#disable-two-factor", el):
+                    case this.app.settings.TWO_FACTOR_ENABLED &&
+                        findTarget(event, "#disable-two-factor", el):
                         dialog = twoFactorDisableDialog()
                         break
-                    case findTarget(event, "#setup-e2ee-passphrase", el):
+                    case this.app.settings.E2EE_MODE !== "disabled" &&
+                        findTarget(event, "#setup-e2ee-passphrase", el):
                         this.setupE2EEPassphrase()
                         break
-                    case findTarget(event, "#change-e2ee-passphrase", el):
+                    case this.app.settings.E2EE_MODE !== "disabled" &&
+                        findTarget(event, "#change-e2ee-passphrase", el):
                         this.changeE2EEPassphrase()
                         break
-                    case findTarget(event, "#recover-e2ee-passphrase", el):
+                    case this.app.settings.E2EE_MODE !== "disabled" &&
+                        findTarget(event, "#recover-e2ee-passphrase", el):
                         this.recoverE2EEPassphrase()
                         break
                     default:
@@ -107,9 +112,13 @@ export class Profile {
                     )
                 )
             // Check and display two-factor authentication status
-            this.updateTwoFactorStatus()
+            if (this.app.settings.TWO_FACTOR_ENABLED) {
+                this.updateTwoFactorStatus()
+            }
             // Check and display E2EE passphrase status
-            this.updateE2EEPassphraseStatus()
+            if (this.app.settings.E2EE_MODE !== "disabled") {
+                this.updateE2EEPassphraseStatus()
+            }
         })
     }
 
@@ -117,7 +126,11 @@ export class Profile {
         this.dom = document.createElement("body")
         this.dom.classList.add("scrollable")
         this.dom.innerHTML = baseBodyTemplate({
-            contents: profileContents(this.user, this.socialaccount_providers),
+            contents: profileContents(
+                this.user,
+                this.socialaccount_providers,
+                this.app.settings
+            ),
             user: this.user,
             app: this.app
         })
@@ -282,15 +295,15 @@ export class Profile {
     save() {
         activateWait()
         const newLang = this.dom.querySelector("#language").value
-        return post("/api/user/save/", {
-            form_data: JSON.stringify({
+        return jsonPost("/api/user/save/", {
+            form_data: {
                 user: {
                     username: this.dom.querySelector("#username").value,
                     first_name: this.dom.querySelector("#first_name").value,
                     last_name: this.dom.querySelector("#last_name").value,
                     language: newLang
                 }
-            })
+            }
         })
             .catch(() =>
                 addAlert("error", gettext("Could not save profile data"))

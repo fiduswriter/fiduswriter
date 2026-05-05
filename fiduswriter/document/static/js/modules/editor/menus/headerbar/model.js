@@ -1,4 +1,4 @@
-import {Dialog, addAlert, postJson} from "../../../common"
+import {Dialog, addAlert, jsonPostJson} from "../../../common"
 import {CopyrightDialog} from "../../../copyright_dialog"
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
@@ -66,7 +66,7 @@ export const headerbarModel = () => ({
                             !editor.docInfo.is_owner
                         ) {
                             // TokenUser requesting access
-                            postJson("/api/document/request_access/", {
+                            jsonPostJson("/api/document/request_access/", {
                                 document_id: editor.docInfo.id,
                                 rights: "write"
                             })

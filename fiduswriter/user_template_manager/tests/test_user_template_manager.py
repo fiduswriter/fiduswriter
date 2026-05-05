@@ -1,4 +1,3 @@
-import time
 import os
 from tempfile import mkdtemp
 
@@ -63,7 +62,16 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, 'li.content-menu-item[data-index="1"]'
         ).click()
-        time.sleep(1)
+        # Wait for the duplicate to appear in the table
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr .fw-data-table-title a",
+                )
+            )
+            == 1
+        )
         editable_templates = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr .fw-data-table-title a"
         )
@@ -88,7 +96,6 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             EC.visibility_of_element_located((By.CLASS_NAME, "alerts-info"))
         )
         self.assertEqual(alert_element.is_displayed(), True)
-        time.sleep(1)
         file_path = os.path.join(
             self.download_dir, "copy-of-standard-article-copy.fidustemplate"
         )
@@ -96,7 +103,6 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         assert os.path.isfile(file_path)
         self.driver.refresh()
         self.driver.find_element(By.CSS_SELECTOR, "button.close").click()
-        time.sleep(1)
         upload_button = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (
@@ -112,13 +118,29 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Import"]'
         ).click()
-        time.sleep(1)
+        # Wait for the imported template to appear in the table
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(
+                    By.CSS_SELECTOR,
+                    ".fw-contents tbody tr .fw-data-table-title a",
+                )
+            )
+            == 2
+        )
         editable_templates = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr .fw-data-table-title a"
         )
         self.assertEqual(len(editable_templates), 2)
         os.remove(file_path)
         editable_templates[1].click()
+        # Wait for the template editor to finish loading
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(By.CSS_SELECTOR, ".export-templates button")
+            )
+            == 3
+        )
         export_template_buttons = self.driver.find_elements(
             By.CSS_SELECTOR, ".export-templates button"
         )
@@ -130,12 +152,27 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, "li.new_document .dropdown"
+        # Wait for the document overview to fully load (dropdown only appears
+        # after template data has been fetched and multipleNewDocumentMenuItem
+        # has been called), then open it
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "li.new_document .dropdown")
+            )
         ).click()
-        self.driver.find_elements(By.CSS_SELECTOR, ".fw-pulldown-item")[
-            1
-        ].click()
+        # Wait for pulldown items to be rendered, scoped to the new_document
+        # menu item to avoid matching items in other open menus
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(
+                    By.CSS_SELECTOR, "li.new_document .fw-pulldown-item"
+                )
+            )
+            >= 2
+        )
+        self.driver.find_elements(
+            By.CSS_SELECTOR, "li.new_document .fw-pulldown-item"
+        )[1].click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
@@ -143,7 +180,6 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "Article"
         )
-        time.sleep(1)
         # Export full
         self.driver.find_element(
             By.CSS_SELECTOR, '.header-nav-item[title="File handling"]'
@@ -191,14 +227,30 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
-        time.sleep(1)
+        # Wait for the first template row to be removed from the table
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(
+                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-alt"
+                )
+            )
+            == 1
+        )
         self.driver.find_element(
             By.CSS_SELECTOR, ".delete-doc-template"
         ).click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
-        time.sleep(1)
+        # Wait for both template rows to be removed from the table
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(
+                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-alt"
+                )
+            )
+            == 0
+        )
         # Import slim document
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
@@ -225,9 +277,20 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Templates"]'
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-data-table-title")
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-data-table-title"
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(By.CSS_SELECTOR, ".export-templates button")
+            )
+            >= 1
+        )
         export_template_buttons = self.driver.find_elements(
             By.CSS_SELECTOR, ".export-templates button"
         )
@@ -242,6 +305,15 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Delete"]'
         ).click()
+        # Wait for the template row to be removed before navigating away
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(
+                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-alt"
+                )
+            )
+            == 0
+        )
         # Import fat file
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
@@ -261,7 +333,11 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             slim_file_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
-        time.sleep(1)
+        # Wait for both imported documents to appear before checking count
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(d.find_elements(By.CSS_SELECTOR, ".delete-document"))
+            == 2
+        )
         # Check number of documents
         delete_links = self.driver.find_elements(
             By.CSS_SELECTOR, ".delete-document"
@@ -271,12 +347,24 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Templates"]'
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(By.CSS_SELECTOR, ".fw-data-table-title a")
+            )
+            == 1
+        )
         template_links = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-data-table-title a"
         )
         self.assertEqual(len(template_links), 1)
         # Check export templates in template
         template_links[0].click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: len(
+                d.find_elements(By.CSS_SELECTOR, ".export-templates button")
+            )
+            == 3
+        )
         export_template_buttons = self.driver.find_elements(
             By.CSS_SELECTOR, ".export-templates button"
         )

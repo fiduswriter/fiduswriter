@@ -1,5 +1,4 @@
 import time
-import json
 
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -27,8 +26,8 @@ serializer = SimpleSerializer()
 @ajax_required
 def biblist(request):
     response = {}
-    last_modified_onclient = int(request.POST["last_modified"])
-    number_of_entries_onclient = int(request.POST["number_of_entries"])
+    last_modified_onclient = request.JSON["last_modified"]
+    number_of_entries_onclient = request.JSON["number_of_entries"]
     aggregation_values = Entry.objects.filter(
         entry_owner=request.user.id
     ).aggregate(Max("last_modified"), Count("id"))
@@ -43,7 +42,7 @@ def biblist(request):
     if (
         last_modified_onclient < last_modified_onserver
         or number_of_entries_onclient > number_of_entries_onserver
-        or request.user.id != int(request.POST["user_id"])
+        or request.user.id != request.JSON["user_id"]
     ):
         entries = Entry.objects.filter(entry_owner=request.user).values(
             "id",
@@ -70,12 +69,12 @@ def biblist(request):
 @ajax_required
 def save(request):
     response = {}
-    bibs = json.loads(request.POST["bibs"])
+    bibs = request.JSON["bibs"]
     status = 200
     response["id_translations"] = []
     for b_id in list(bibs.keys()):
         bib = bibs[b_id]
-        if request.POST["is_new"] == "true":
+        if request.JSON["is_new"]:
             inserting_obj = {
                 "entry_owner_id": request.user.id,
                 "entry_key": bib["entry_key"][-64:],
@@ -109,7 +108,7 @@ def save(request):
 def delete(request):
     response = {}
     status = 201
-    ids = request.POST.getlist("ids[]")
+    ids = request.JSON["ids"]
     id_chunks = [ids[x : x + 100] for x in range(0, len(ids), 100)]
     for id_chunk in id_chunks:
         Entry.objects.filter(
@@ -125,14 +124,13 @@ def delete(request):
 def save_category(request):
     response = {}
     response["entries"] = []
-    ids = request.POST.getlist("ids[]")
-    titles = request.POST.getlist("titles[]")
+    ids = request.JSON["ids"]
+    titles = request.JSON["titles"]
     EntryCategory.objects.filter(category_owner=request.user).exclude(
         id__in=ids
     ).delete()
     x = 0
     for the_id in ids:
-        the_id = int(the_id)
         the_title = titles[x]
         x += 1
         if 0 == the_id:
@@ -160,6 +158,6 @@ def save_category(request):
 def delete_category(request):
     response = {}
     status = 201
-    ids = request.POST.getlist("ids[]")
+    ids = request.JSON["ids"]
     EntryCategory.objects.filter(pk__in=ids, entry_owner=request.user).delete()
     return JsonResponse(response, status=status)

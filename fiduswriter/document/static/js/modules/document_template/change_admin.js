@@ -1,5 +1,11 @@
 import {CSL} from "citeproc-plus"
-import {ensureCSS, escapeText, findTarget, postJson, whenReady} from "../common"
+import {
+    ensureCSS,
+    escapeText,
+    findTarget,
+    jsonPostJson,
+    whenReady
+} from "../common"
 import {DocumentTemplateDesigner} from "./designer"
 
 export class DocumentTemplateAdmin {
@@ -38,7 +44,7 @@ export class DocumentTemplateAdmin {
         ]
         if (this.id) {
             initialTasks.push(
-                postJson("/api/document/admin/get_template/extras/", {
+                jsonPostJson("/api/document/admin/get_template/extras/", {
                     id: this.id
                 }).then(({json}) => (this.templateExtras = json))
             )

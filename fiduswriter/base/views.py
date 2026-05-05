@@ -12,6 +12,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib.admin.views.decorators import staff_member_required
 
 from allauth.socialaccount.adapter import get_adapter
+from allauth.socialaccount.models import SocialApp
 
 from user.helpers import Avatars
 from .decorators import ajax_required
@@ -31,9 +32,13 @@ def app(request):
         "app.html",
         {
             "version": get_version(),
-            "settings": {
-                "E2EE_MODE": settings.E2EE_MODE,
-            },
+            "settings": json.dumps(
+                {
+                    "E2EE_MODE": settings.E2EE_MODE,
+                    "TWO_FACTOR_ENABLED": "django_otp"
+                    in settings.INSTALLED_APPS,
+                }
+            ),
         },
     )
 
@@ -115,7 +120,7 @@ def configuration(request):
                         "name": provider_account.to_str(),
                     }
                 )
-            except KeyError:
+            except (KeyError, SocialApp.DoesNotExist):
                 # Social account provider has been removed.
                 pass
         response["user"]["waiting_invites"] = user.invites_to.exists()
@@ -180,7 +185,7 @@ def send_system_message(request):
     Send out a system message to all clients connected to the frontend.
     """
     response = {}
-    message = request.POST["message"]
+    message = request.JSON["message"]
 
     servers = set(
         Presence.objects.values_list("server_url", flat=True).distinct()
@@ -203,7 +208,7 @@ def flatpage(request):
     """
     response = {}
     status = 404
-    url = request.POST["url"]
+    url = request.JSON["url"]
     site_id = get_current_site(request).id
     flatpage = FlatPage.objects.filter(url=url, sites=site_id).first()
     if flatpage:

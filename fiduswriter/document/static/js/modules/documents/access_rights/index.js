@@ -4,7 +4,8 @@ import {
     addAlert,
     enableDatePicker,
     findTarget,
-    postJson,
+    jsonPost,
+    jsonPostJson,
     setCheckableLabel
 } from "../../common"
 import {AddContactDialog} from "../../contacts/add_dialog"
@@ -47,7 +48,7 @@ export class DocumentAccessRightsDialog {
     }
 
     init() {
-        postJson("/api/document/get_access_rights/", {
+        jsonPostJson("/api/document/get_access_rights/", {
             document_ids: this.documentIds
         })
             .catch(error => {
@@ -342,7 +343,7 @@ export class DocumentAccessRightsDialog {
     loadShareTokens() {
         const listEl = this.dialog.dialogEl.querySelector("#share-token-list")
         listEl.innerHTML = `<p class="fw-ar-loading">${gettext("Loading…")}</p>`
-        postJson("/api/document/share_token/list/", {
+        jsonPostJson("/api/document/share_token/list/", {
             document_id: this.singleDocumentId
         })
             .then(({json}) => {
@@ -376,7 +377,7 @@ export class DocumentAccessRightsDialog {
                         const note = createDialog.dialogEl
                             .querySelector("#share-token-note")
                             .value.trim()
-                        postJson("/api/document/share_token/create/", {
+                        jsonPostJson("/api/document/share_token/create/", {
                             document_id: this.singleDocumentId,
                             rights,
                             expires_at: expiresRaw || "",
@@ -437,7 +438,7 @@ export class DocumentAccessRightsDialog {
     }
 
     revokeShareToken(tokenId, rowEl) {
-        postJson("/api/document/share_token/revoke/", {token_id: tokenId})
+        jsonPostJson("/api/document/share_token/revoke/", {token_id: tokenId})
             .then(({json}) => {
                 if (json.success) {
                     rowEl.remove()
@@ -630,9 +631,9 @@ export class DocumentAccessRightsDialog {
     }
 
     submitAccessRight(newAccessRights) {
-        postJson("/api/document/save_access_rights/", {
-            document_ids: JSON.stringify(this.documentIds),
-            access_rights: JSON.stringify(newAccessRights)
+        jsonPost("/api/document/save_access_rights/", {
+            document_ids: this.documentIds,
+            access_rights: newAccessRights
         })
             .then(() => {
                 addAlert("success", gettext("Access rights have been saved"))

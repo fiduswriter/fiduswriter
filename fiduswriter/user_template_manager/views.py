@@ -4,7 +4,7 @@ from copy import deepcopy
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from base.decorators import ajax_required
 from document.models import DocumentTemplate, FW_DOCUMENT_VERSION
@@ -53,7 +53,7 @@ def get_template(request):
 
 @login_required
 @ajax_required
-@require_POST
+@require_GET
 def list(request):
     response = {}
     status = 200

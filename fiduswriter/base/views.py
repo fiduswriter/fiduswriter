@@ -32,10 +32,13 @@ def app(request):
         "app.html",
         {
             "version": get_version(),
-            "settings": {
-                "E2EE_MODE": settings.E2EE_MODE,
-                "TWO_FACTOR_ENABLED": "django_otp" in settings.INSTALLED_APPS,
-            },
+            "settings": json.dumps(
+                {
+                    "E2EE_MODE": settings.E2EE_MODE,
+                    "TWO_FACTOR_ENABLED": "django_otp"
+                    in settings.INSTALLED_APPS,
+                }
+            ),
         },
     )
 

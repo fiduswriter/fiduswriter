@@ -173,12 +173,15 @@ All AJAX endpoints in Fidus Writer accept **JSON request bodies** instead of cla
 
 This middleware intercepts every `POST`/`PUT`/`PATCH`/`DELETE` request whose `Content-Type` is `application/json`, parses the body with `json.loads`, and attaches the result to `request.JSON`. It also pulls `csrfmiddlewaretoken` out of the JSON body (if present) and injects it into the request meta, but the recommended approach is to send the CSRF token as the `X-CSRFToken` header.
 
+For `POST` requests with `Content-Type: multipart/form-data`, the middleware additionally looks for a form field named `json`. When present, it parses that field's value with `json.loads` and attaches it to `request.JSON`. This allows hybrid requests that upload files via `FormData` while still sending a JSON payload that views can read through `request.JSON`.
+
 ### Backend conventions
 
 - **Use `request.JSON`** to read parameters in all AJAX views that do not use Django form objects or handle file uploads.
 - **Keep `request.POST`** when:
   - A Django form object is instantiated directly from the request (e.g. `PasswordChangeForm(user=request.user, data=request.POST)`, `AddEmailForm(request.user, request.POST)`). These form classes read `request.POST` internally.
-  - The view receives a file upload via `request.FILES`. Multipart form submissions cannot carry JSON bodies, so data fields arrive via `request.POST`.
+  - The view receives a file upload via `request.FILES` and the frontend used the legacy `post` helpers that send each field as a separate form entry.
+- **Use `request.JSON` for file uploads too** when the frontend uses the `jsonPost*` helpers with a `files` argument. In this case the JSON payload is embedded as a single `json` form field and the middleware parses it into `request.JSON`, while the files are available in `request.FILES` as usual.
 
 **Typical backend pattern:**
 
@@ -207,11 +210,13 @@ Three helper functions in `base/static/js/modules/common/network.js` send JSON t
 
 | Function | Description |
 |---|---|
-| `jsonPostBare(url, object, csrfToken?)` | POST JSON, return raw `Response` |
-| `jsonPost(url, object, csrfToken?)` | POST JSON, strip Django messages, raise on HTTP errors |
-| `jsonPostJson(url, object, csrfToken?)` | POST JSON, return parsed JSON body |
+| `jsonPostBare(url, object, csrfToken?, files?)` | POST JSON, return raw `Response` |
+| `jsonPost(url, object, csrfToken?, files?)` | POST JSON, strip Django messages, raise on HTTP errors |
+| `jsonPostJson(url, object, csrfToken?, files?)` | POST JSON, return parsed JSON body |
 
 All three automatically add `Content-Type: application/json`, `X-CSRFToken`, and `X-Requested-With: XMLHttpRequest` headers. No `csrfmiddlewaretoken` field is needed in the request object.
+
+When `files` is provided (a dictionary mapping field names to `File`/`Blob` values, arrays of files, or `{file, filename}` objects), the request is sent as `multipart/form-data` instead. The JSON `object` is serialised and attached as a single form field named `json`, the CSRF token is appended as `csrfmiddlewaretoken`, and each entry in `files` is appended under its key. On the backend the `JsonToPostMiddleware` parses the embedded JSON so the view can still read the payload via `request.JSON` while accessing uploaded files through `request.FILES`.
 
 **Usage example:**
 

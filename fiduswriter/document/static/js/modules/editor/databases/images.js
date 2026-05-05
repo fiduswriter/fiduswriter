@@ -9,7 +9,7 @@
  For E2EE documents, images are encrypted client-side and uploaded directly
  via a dedicated endpoint to an EncryptedDocumentImage model.
 */
-import {addAlert, get, jsonPost, postJson} from "../../common"
+import {addAlert, get, jsonPost, jsonPostJson} from "../../common"
 export class ModImageDB {
     constructor(mod) {
         mod.imageDB = this
@@ -52,19 +52,19 @@ export class ModImageDB {
         }
 
         // E2EE path: upload encrypted image directly to the document
-        const postData = {
+        const jsonData = {
             doc_id: this.mod.editor.docInfo.id,
             title: imageData.title,
-            copyright: JSON.stringify(imageData.copyright),
+            copyright: imageData.copyright,
             checksum: imageData.checksum || 0
         }
         if (imageData.original_file_type) {
-            postData.original_file_type = imageData.original_file_type
+            jsonData.original_file_type = imageData.original_file_type
         }
 
-        // postBare expects files wrapped as {file, filename}
+        const files = {}
         if (imageData.image) {
-            postData.image = {
+            files.image = {
                 file: imageData.image,
                 filename: imageData.original_file_type
                     ? `image.${imageData.original_file_type.split("/").pop()}`
@@ -72,7 +72,7 @@ export class ModImageDB {
             }
         }
 
-        return postJson("/api/document/e2ee_image/", postData)
+        return jsonPostJson("/api/document/e2ee_image/", jsonData, false, files)
             .then(({json}) => {
                 const dbEntry = {
                     id: json.id,

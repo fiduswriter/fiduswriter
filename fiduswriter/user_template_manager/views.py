@@ -1,4 +1,3 @@
-import json
 from copy import deepcopy
 
 from django.http import JsonResponse
@@ -98,11 +97,11 @@ def save(request):
 @require_POST
 def create(request):
     response = {}
-    title = request.POST.get("title")
-    content = json.loads(request.POST.get("content"))
-    import_id = request.POST.get("import_id")
-    document_styles = json.loads(request.POST.get("document_styles"))
-    export_templates = json.loads(request.POST.get("export_templates"))
+    title = request.JSON.get("title")
+    content = request.JSON.get("content")
+    import_id = request.JSON.get("import_id")
+    document_styles = request.JSON.get("document_styles")
+    export_templates = request.JSON.get("export_templates")
     counter = 0
     base_title = title
     while DocumentTemplate.objects.filter(

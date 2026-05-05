@@ -1,4 +1,4 @@
-import {Dialog, escapeText, findTarget, jsonPostJson, postJson} from "../common"
+import {Dialog, escapeText, findTarget, jsonPostJson} from "../common"
 
 export class DocumentStyleDialog {
     constructor(id, style, documentTemplateId, allStyles, refresh) {
@@ -219,15 +219,21 @@ export class DocumentStyleDialog {
     }
 
     save({title, slug, contents}) {
-        return postJson("/api/style/save_document_style/", {
-            id: this.id,
-            title,
-            slug,
-            contents,
-            template_id: this.documentTemplateId,
-            added_files: this.addedFiles,
-            deleted_files: this.deletedFiles
-        })
+        return jsonPostJson(
+            "/api/style/save_document_style/",
+            {
+                id: this.id,
+                title,
+                slug,
+                contents,
+                template_id: this.documentTemplateId,
+                deleted_files: this.deletedFiles
+            },
+            false,
+            {
+                added_files: this.addedFiles
+            }
+        )
     }
 
     bind() {

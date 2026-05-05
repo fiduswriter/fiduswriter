@@ -1,4 +1,4 @@
-import {escapeText, postJson} from "../common"
+import {escapeText, jsonPostJson} from "../common"
 import {
     MAX_FW_DOCUMENT_VERSION,
     MIN_FW_DOCUMENT_VERSION
@@ -139,16 +139,22 @@ export class DocumentTemplateImporter {
                     ),
                     filetypeVersion
                 )
-            return postJson(this.createUrl, {
-                title,
-                content,
-                import_id: content.attrs.import_id,
-                export_templates: JSON.stringify(exportTemplates),
-                document_styles: JSON.stringify(documentStyles),
-                files: this.otherFiles.map(
-                    ({filename, content}) => new File([content], filename)
-                )
-            }).then(({json}) => {
+            return jsonPostJson(
+                this.createUrl,
+                {
+                    title,
+                    content,
+                    import_id: content.attrs.import_id,
+                    export_templates: exportTemplates,
+                    document_styles: documentStyles
+                },
+                false,
+                {
+                    files: this.otherFiles.map(
+                        ({filename, content}) => new File([content], filename)
+                    )
+                }
+            ).then(({json}) => {
                 this.ok = true
                 this.docTemplate = {
                     id: json.id,

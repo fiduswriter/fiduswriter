@@ -641,14 +641,14 @@ def import_image(request):
     # create an image for a document (unencrypted only)
     response = {}
     document = Document.objects.filter(
-        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+        owner_id=request.user.pk, id=int(request.JSON["doc_id"])
     ).first()
     if document:
         status = 201
     else:
         status = 401
         return JsonResponse(response, status=status)
-    checksum = int(request.POST.get("checksum", 0))
+    checksum = request.JSON.get("checksum", 0)
     if checksum > 0:
         image = Image.objects.filter(checksum=checksum).first()
     else:
@@ -662,8 +662,8 @@ def import_image(request):
         image.save()
     doc_image = DocumentImage.objects.create(
         image=image,
-        title=request.POST["title"],
-        copyright=json.loads(request.POST["copyright"]),
+        title=request.JSON["title"],
+        copyright=request.JSON["copyright"],
         document=document,
     )
     response["id"] = doc_image.image.id
@@ -678,7 +678,7 @@ def e2ee_image(request):
     # The file is encrypted client-side; the server stores it as-is.
     response = {}
     document = Document.objects.filter(
-        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+        owner_id=request.user.pk, id=int(request.JSON["doc_id"])
     ).first()
     if not document or not document.e2ee:
         return JsonResponse(response, status=401)
@@ -687,24 +687,21 @@ def e2ee_image(request):
 
     # Copyright may be an encrypted Base64 string or a plaintext JSON dict.
     # Both are valid values for a JSONField (string and dict are valid JSON).
-    try:
-        copyright_value = json.loads(request.POST["copyright"])
-    except (json.JSONDecodeError, KeyError):
-        copyright_value = {}
+    copyright_value = request.JSON.get("copyright") or {}
     enc_image = EncryptedDocumentImage(
         document=document,
-        title=request.POST["title"],
+        title=request.JSON["title"],
         copyright=copyright_value,
     )
     if "image" in request.FILES:
         enc_image.image = request.FILES["image"]
-    if "checksum" in request.POST:
-        enc_image.checksum = int(request.POST["checksum"])
+    if "checksum" in request.JSON:
+        enc_image.checksum = int(request.JSON["checksum"])
     enc_image.save()
 
     response["id"] = enc_image.id
     response["image"] = enc_image.image.url
-    response["original_file_type"] = request.POST.get(
+    response["original_file_type"] = request.JSON.get(
         "original_file_type", "image/png"
     )
     return JsonResponse(response, status=201)
@@ -778,7 +775,7 @@ def upload_revision(request):
     response = {}
     status = 405
     can_save = False
-    document_id = request.POST["document_id"]
+    document_id = request.JSON["document_id"]
     document = Document.objects.filter(id=int(document_id)).first()
     if document:
         if document.owner == request.user:
@@ -794,7 +791,7 @@ def upload_revision(request):
         revision = DocumentRevision()
         revision.file_object = request.FILES["file"]
         revision.file_name = request.FILES["file"].name
-        revision.note = request.POST["note"]
+        revision.note = request.JSON["note"]
         revision.document_id = document_id
         revision.save()
     return JsonResponse(response, status=status)
@@ -1620,11 +1617,11 @@ def save_template(request):
 @require_POST
 def create_template_admin(request):
     response = {}
-    title = request.POST.get("title")
-    content = json.loads(request.POST.get("content"))
-    import_id = request.POST.get("import_id")
-    document_styles = json.loads(request.POST.get("document_styles"))
-    export_templates = json.loads(request.POST.get("export_templates"))
+    title = request.JSON.get("title")
+    content = request.JSON.get("content")
+    import_id = request.JSON.get("import_id")
+    document_styles = request.JSON.get("document_styles")
+    export_templates = request.JSON.get("export_templates")
     template = DocumentTemplate.objects.create(
         title=title,
         content=content,

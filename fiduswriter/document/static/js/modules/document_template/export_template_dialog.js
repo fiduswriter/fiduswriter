@@ -1,12 +1,5 @@
 import JSZip from "jszip"
-import {
-    Dialog,
-    escapeText,
-    findTarget,
-    get,
-    jsonPostJson,
-    postJson
-} from "../common"
+import {Dialog, escapeText, findTarget, get, jsonPostJson} from "../common"
 
 export class ExportTemplateDialog {
     constructor(
@@ -232,13 +225,19 @@ export class ExportTemplateDialog {
     }
 
     save() {
-        const saveValues = {
+        const jsonData = {
             id: this.id,
             template_id: this.documentTemplateId,
-            added_file: this.addedFile,
             added_file_type: this.addedFileType
         }
-        return postJson("/api/style/save_export_template/", saveValues)
+        return jsonPostJson(
+            "/api/style/save_export_template/",
+            jsonData,
+            false,
+            {
+                added_file: this.addedFile
+            }
+        )
     }
 
     checkRemoteFile(url) {

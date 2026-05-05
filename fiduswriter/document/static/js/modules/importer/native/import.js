@@ -2,7 +2,6 @@ import {
     addAlert,
     deactivateWait,
     jsonPostJson,
-    postJson,
     shortFileTitle
 } from "../../common"
 import {extractTemplate} from "../../document_template"
@@ -131,19 +130,19 @@ export class NativeImporter {
             return this._maybeDecryptImage(imageEntry)
                 .then(() => this._maybeEncryptImage(imageEntry))
                 .then(encryptedFile => {
-                    const postData = {
+                    const jsonData = {
                         doc_id: this.docId,
                         title: imageEntry.title,
-                        copyright: isE2EE
-                            ? JSON.stringify(imageEntry.copyright)
-                            : imageEntry.copyright,
-                        checksum: imageEntry.checksum,
+                        copyright: imageEntry.copyright,
+                        checksum: imageEntry.checksum
+                    }
+                    const files = {
                         image: {
                             file: encryptedFile,
                             filename: imageEntry.image.split("/").pop()
                         }
                     }
-                    return postJson(endpoint, postData)
+                    return jsonPostJson(endpoint, jsonData, false, files)
                 })
                 .then(
                     ({json}) => (ImageTranslationTable[imageEntry.id] = json.id)
@@ -217,7 +216,7 @@ export class NativeImporter {
 
         // We create the document on the server so that we have an ID for it and
         // can link the images to it.
-        return postJson("/api/document/import/create/", postData)
+        return jsonPostJson("/api/document/import/create/", postData)
             .then(({json}) => {
                 this.docId = json.id
                 this.path = json.path

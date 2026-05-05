@@ -39,7 +39,7 @@ jobs:
         strategy:
             matrix:
                 test:
-                    - "browser_check base"
+                    - "browser_check base style"
                     - user
                     - feedback
                     - document.tests.test_collaboration

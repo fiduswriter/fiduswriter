@@ -234,12 +234,15 @@ class SeleniumHelper:
     def leave_site(self, driver):
         try:
             driver.execute_script(
-                # Properly close the current page (e.g. editor WebSocket)
-                # before navigating away so the browser is not left with
-                # dangling connections that can make the next driver.get()
-                # hang in CI.
-                "if (window.theApp && window.theApp.page && window.theApp.page.close) {"
-                "  window.theApp.page.close();"
+                "if (window.theApp && window.theApp.page) {"
+                # Only call close() for non-E2EE pages. The E2EE editor's
+                # close() schedules an async snapshot + a 300 ms timeout
+                # before closing the WebSocket, which can race with the
+                # navigation below and leave the browser in a bad state.
+                "  if (!window.theApp.page.e2ee && window.theApp.page.close) {"
+                "    window.theApp.page.close();"
+                "  }"
+                "  window.theApp.page = null;"
                 "}"
                 # Suppress any 'Leave site?' beforeunload dialog so that
                 # driver.get() below cannot be blocked by it.

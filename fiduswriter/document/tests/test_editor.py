@@ -925,8 +925,13 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "li:nth-child(4) > .fw-pulldown-item"
         ).click()
-        # Check whether user now has write access
-        WebDriverWait(self.driver, self.wait_time).until(
+        # Check whether user now has write access.
+        # Creating a copy involves 2 HTTP round-trips (createDoc + saveDocument)
+        # followed by 3 more parallel requests to initialise the new editor
+        # (get_ws_base, get_doc_styles, get_doc_data) before render() replaces
+        # document.body and makes old_body stale. Under load this can easily
+        # exceed the default wait_time, so give it extra headroom.
+        WebDriverWait(self.driver, self.wait_time * 3).until(
             EC.staleness_of(old_body)
         )
         self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()

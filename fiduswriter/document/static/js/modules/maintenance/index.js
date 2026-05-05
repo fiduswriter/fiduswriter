@@ -6,7 +6,6 @@ import {
     get,
     jsonPost,
     jsonPostJson,
-    post,
     whenReady
 } from "../common"
 import {updateFile} from "../importer/native/update"
@@ -269,13 +268,19 @@ export class DocMaintenance {
         zipfs
             .generateAsync({type: "blob", mimeType: "application/fidus+zip"})
             .then(blob => {
-                post("/api/document/admin/update_revision/", {
-                    id,
-                    file: {
-                        file: blob,
-                        filename: "some_file.fidus"
+                jsonPost(
+                    "/api/document/admin/update_revision/",
+                    {
+                        id
+                    },
+                    false,
+                    {
+                        file: {
+                            file: blob,
+                            filename: "some_file.fidus"
+                        }
                     }
-                }).then(() => {
+                ).then(() => {
                     addAlert(
                         "success",
                         gettext("The document revision has been updated: ") + id

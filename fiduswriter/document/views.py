@@ -1,7 +1,6 @@
 import time
 import os
 import bleach
-import json
 import base64
 from copy import deepcopy
 
@@ -510,7 +509,7 @@ def import_create(request):
     status = 201
 
     # Check E2EE mode
-    e2ee = request.POST.get("e2ee", "") == "true"
+    e2ee = request.JSON.get("e2ee", False)
     e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
     if e2ee and e2ee_mode == "disabled":
         return JsonResponse(
@@ -522,7 +521,7 @@ def import_create(request):
             status=403,
         )
 
-    import_id = request.POST["import_id"]
+    import_id = request.JSON["import_id"]
     document_template = (
         DocumentTemplate.objects.filter(
             Q(user=request.user) | Q(user=None), import_id=import_id
@@ -560,7 +559,7 @@ def import_create(request):
                 et.document_template = document_template
                 et.save()
     if not document_template:
-        template_title = request.POST["template_title"]
+        template_title = request.JSON["template_title"]
         counter = 0
         base_template_title = template_title
         while DocumentTemplate.objects.filter(
@@ -568,7 +567,7 @@ def import_create(request):
         ).first():
             counter += 1
             template_title = f"{base_template_title} {counter}"
-        content = json.loads(request.POST["template"])
+        content = request.JSON["template"]
         document_template = DocumentTemplate()
         document_template.title = template_title
         document_template.import_id = import_id
@@ -576,8 +575,8 @@ def import_create(request):
         document_template.content = content
         document_template.save()
         files = request.FILES.getlist("files[]")
-        document_styles = json.loads(request.POST.get("document_styles"))
-        export_templates = json.loads(request.POST.get("export_templates"))
+        document_styles = request.JSON.get("document_styles")
+        export_templates = request.JSON.get("export_templates")
         for style in document_styles:
             doc_style = DocumentStyle.objects.create(
                 title=style["title"],
@@ -601,7 +600,7 @@ def import_create(request):
                     template_file=file,
                     file_type=e_template["file_type"],
                 )
-    path = request.POST["path"]
+    path = request.JSON["path"]
     if len(path):
         counter = 0
         base_path = path
@@ -615,10 +614,10 @@ def import_create(request):
     e2ee_salt = None
     e2ee_iterations = 600000
     if e2ee:
-        salt_b64 = request.POST.get("e2ee_salt")
+        salt_b64 = request.JSON.get("e2ee_salt")
         if salt_b64:
             e2ee_salt = base64.b64decode(salt_b64)
-        e2ee_iterations = int(request.POST.get("e2ee_iterations", 600000))
+        e2ee_iterations = int(request.JSON.get("e2ee_iterations", 600000))
 
     document = Document.objects.create(
         owner=request.user,
@@ -641,14 +640,14 @@ def import_image(request):
     # create an image for a document (unencrypted only)
     response = {}
     document = Document.objects.filter(
-        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+        owner_id=request.user.pk, id=int(request.JSON["doc_id"])
     ).first()
     if document:
         status = 201
     else:
         status = 401
         return JsonResponse(response, status=status)
-    checksum = int(request.POST.get("checksum", 0))
+    checksum = request.JSON.get("checksum", 0)
     if checksum > 0:
         image = Image.objects.filter(checksum=checksum).first()
     else:
@@ -662,8 +661,8 @@ def import_image(request):
         image.save()
     doc_image = DocumentImage.objects.create(
         image=image,
-        title=request.POST["title"],
-        copyright=json.loads(request.POST["copyright"]),
+        title=request.JSON["title"],
+        copyright=request.JSON["copyright"],
         document=document,
     )
     response["id"] = doc_image.image.id
@@ -678,7 +677,7 @@ def e2ee_image(request):
     # The file is encrypted client-side; the server stores it as-is.
     response = {}
     document = Document.objects.filter(
-        owner_id=request.user.pk, id=int(request.POST["doc_id"])
+        owner_id=request.user.pk, id=int(request.JSON["doc_id"])
     ).first()
     if not document or not document.e2ee:
         return JsonResponse(response, status=401)
@@ -687,24 +686,21 @@ def e2ee_image(request):
 
     # Copyright may be an encrypted Base64 string or a plaintext JSON dict.
     # Both are valid values for a JSONField (string and dict are valid JSON).
-    try:
-        copyright_value = json.loads(request.POST["copyright"])
-    except (json.JSONDecodeError, KeyError):
-        copyright_value = {}
+    copyright_value = request.JSON.get("copyright") or {}
     enc_image = EncryptedDocumentImage(
         document=document,
-        title=request.POST["title"],
+        title=request.JSON["title"],
         copyright=copyright_value,
     )
     if "image" in request.FILES:
         enc_image.image = request.FILES["image"]
-    if "checksum" in request.POST:
-        enc_image.checksum = int(request.POST["checksum"])
+    if "checksum" in request.JSON:
+        enc_image.checksum = int(request.JSON["checksum"])
     enc_image.save()
 
     response["id"] = enc_image.id
     response["image"] = enc_image.image.url
-    response["original_file_type"] = request.POST.get(
+    response["original_file_type"] = request.JSON.get(
         "original_file_type", "image/png"
     )
     return JsonResponse(response, status=201)
@@ -778,7 +774,7 @@ def upload_revision(request):
     response = {}
     status = 405
     can_save = False
-    document_id = request.POST["document_id"]
+    document_id = request.JSON["document_id"]
     document = Document.objects.filter(id=int(document_id)).first()
     if document:
         if document.owner == request.user:
@@ -794,7 +790,7 @@ def upload_revision(request):
         revision = DocumentRevision()
         revision.file_object = request.FILES["file"]
         revision.file_name = request.FILES["file"].name
-        revision.note = request.POST["note"]
+        revision.note = request.JSON["note"]
         revision.document_id = document_id
         revision.save()
     return JsonResponse(response, status=status)
@@ -1620,11 +1616,11 @@ def save_template(request):
 @require_POST
 def create_template_admin(request):
     response = {}
-    title = request.POST.get("title")
-    content = json.loads(request.POST.get("content"))
-    import_id = request.POST.get("import_id")
-    document_styles = json.loads(request.POST.get("document_styles"))
-    export_templates = json.loads(request.POST.get("export_templates"))
+    title = request.JSON.get("title")
+    content = request.JSON.get("content")
+    import_id = request.JSON.get("import_id")
+    document_styles = request.JSON.get("document_styles")
+    export_templates = request.JSON.get("export_templates")
     template = DocumentTemplate.objects.create(
         title=title,
         content=content,
@@ -1822,7 +1818,7 @@ def get_all_revision_ids(request):
 def update_revision(request):
     response = {}
     status = 405
-    revision_id = request.POST["id"]
+    revision_id = request.JSON["id"]
     revision = DocumentRevision.objects.filter(pk=int(revision_id)).first()
     if revision:
         status = 200

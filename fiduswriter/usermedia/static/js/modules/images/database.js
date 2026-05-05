@@ -1,10 +1,4 @@
-import {
-    activateWait,
-    addAlert,
-    deactivateWait,
-    jsonPostJson,
-    postJson
-} from "../common"
+import {activateWait, addAlert, deactivateWait, jsonPostJson} from "../common"
 
 /* A class that holds information about images uploaded by the user. */
 
@@ -32,11 +26,14 @@ export class ImageDB {
 
     saveImage(imageData) {
         activateWait()
-        const postData = Object.assign({}, imageData, {
-            cats: JSON.stringify(imageData.cats)
-        })
+        const {image, ...jsonData} = imageData
 
-        return postJson("/api/usermedia/save/", postData)
+        return jsonPostJson(
+            "/api/usermedia/save/",
+            jsonData,
+            false,
+            image ? {image} : {}
+        )
             .then(({json}) => {
                 deactivateWait()
                 if (Object.keys(json.errormsg).length) {

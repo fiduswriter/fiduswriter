@@ -39,11 +39,13 @@ jobs:
         strategy:
             matrix:
                 test:
-                    - "browser_check base"
+                    - "browser_check base style"
                     - user
                     - feedback
                     - document.tests.test_collaboration
-                    - document.tests.test_editor
+                    - document.tests.test_editor.EditorTest.test_crossrefs_and_internal_links
+                    - document.tests.test_editor.EditorTest.test_share_document
+                    - document.tests.test_editor.EditorTest.test_track_changes
                     - document.tests.test_offline
                     - document.tests.test_export
                     - document.tests.test_admin

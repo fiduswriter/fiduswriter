@@ -119,11 +119,44 @@ export const postJson = (url, params = {}, csrfToken = false) =>
         response.json().then(json => ({json, status: response.status}))
     )
 
-export const jsonPostBare = (url, object = {}, csrfToken = false) => {
+export const jsonPostBare = (
+    url,
+    object = {},
+    csrfToken = false,
+    files = {}
+) => {
     // post json object rather than form data.
     if (!csrfToken) {
         csrfToken = getCsrfToken() // Won't work in web worker.
     }
+
+    if (Object.keys(files).length) {
+        const body = new FormData()
+        body.append("csrfmiddlewaretoken", csrfToken)
+        body.append("json", JSON.stringify(object))
+        Object.keys(files).forEach(key => {
+            const value = files[key]
+            if (typeof value === "object" && value.file && value.filename) {
+                body.append(key, value.file, value.filename)
+            } else if (Array.isArray(value)) {
+                value.forEach(item => body.append(`${key}[]`, item))
+            } else {
+                body.append(key, value)
+            }
+        })
+
+        return fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+                Accept: "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            credentials: "include",
+            body
+        })
+    }
+
     return fetch(url, {
         method: "POST",
         headers: {
@@ -137,14 +170,14 @@ export const jsonPostBare = (url, object = {}, csrfToken = false) => {
     })
 }
 
-export const jsonPost = (url, object = {}, csrfToken = false) =>
-    jsonPostBare(url, object, csrfToken)
+export const jsonPost = (url, object = {}, csrfToken = false, files = {}) =>
+    jsonPostBare(url, object, csrfToken, files)
         .then(removeDjangoMessages)
         .then(handleFetchErrors)
 
 // post json object and return json and status
-export const jsonPostJson = (url, object = {}, csrfToken = false) =>
-    jsonPost(url, object, csrfToken).then(response =>
+export const jsonPostJson = (url, object = {}, csrfToken = false, files = {}) =>
+    jsonPost(url, object, csrfToken, files).then(response =>
         response.json().then(json => ({json, status: response.status}))
     )
 

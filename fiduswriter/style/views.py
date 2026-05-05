@@ -37,12 +37,12 @@ def delete_document_style(request):
 @ajax_required
 def save_document_style(request):
     response = {}
-    template_id = int(request.POST["template_id"])
+    template_id = int(request.JSON["template_id"])
     template_selector = {"id": template_id}
     if not request.user.is_staff:
         template_selector["user"] = request.user
     template = DocumentTemplate.objects.get(**template_selector)
-    id = int(request.POST["id"])
+    id = int(request.JSON["id"])
     if id > 0:
         document_style = DocumentStyle.objects.get(
             id=id, document_template=template
@@ -52,16 +52,16 @@ def save_document_style(request):
         document_style = DocumentStyle()
         document_style.document_template = template
         status = 201
-    document_style.title = request.POST["title"]
-    document_style.slug = request.POST["slug"]
-    document_style.contents = request.POST["contents"]
+    document_style.title = request.JSON["title"]
+    document_style.slug = request.JSON["slug"]
+    document_style.contents = request.JSON["contents"]
     try:
         document_style.full_clean()
         document_style.save()
     except ValidationError as e:
         response["errors"] = e.message_dict
         return JsonResponse(response, status=400)
-    deleted_files = request.POST.getlist("deleted_files[]")
+    deleted_files = request.JSON.get("deleted_files", [])
     added_files = request.FILES.getlist("added_files[]")
     for file in added_files:
         dsf = DocumentStyleFile()
@@ -103,12 +103,12 @@ def delete_export_template(request):
 @ajax_required
 def save_export_template(request):
     response = {}
-    template_id = int(request.POST["template_id"])
+    template_id = int(request.JSON["template_id"])
     template_selector = {"id": template_id}
     if not request.user.is_staff:
         template_selector["user"] = request.user
     template = DocumentTemplate.objects.get(**template_selector)
-    id = int(request.POST["id"])
+    id = int(request.JSON["id"])
     if id > 0:
         export_template = ExportTemplate.objects.get(
             id=id, document_template=template
@@ -119,7 +119,7 @@ def save_export_template(request):
         export_template.document_template = template
         status = 201
     export_template.template_file = request.FILES["added_file"]
-    export_template.file_type = request.POST["added_file_type"]
+    export_template.file_type = request.JSON["added_file_type"]
     try:
         export_template.full_clean()
         export_template.save()

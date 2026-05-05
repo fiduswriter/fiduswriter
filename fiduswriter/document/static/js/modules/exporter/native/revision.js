@@ -1,4 +1,4 @@
-import {addAlert, post} from "../../common"
+import {addAlert, jsonPost} from "../../common"
 import {createSlug} from "../tools/file"
 import {ShrinkFidus} from "./shrink"
 import {ZipFidus} from "./zip"
@@ -52,14 +52,20 @@ export class SaveRevision {
     }
 
     uploadRevision(blob) {
-        post("/api/document/upload/", {
-            note: this.note,
-            file: {
-                file: blob,
-                filename: createSlug(this.doc.title) + ".fidus"
+        jsonPost(
+            "/api/document/upload/",
+            {
+                note: this.note,
+                document_id: this.doc.id
             },
-            document_id: this.doc.id
-        })
+            false,
+            {
+                file: {
+                    file: blob,
+                    filename: createSlug(this.doc.title) + ".fidus"
+                }
+            }
+        )
             .then(
                 () => {
                     addAlert("success", gettext("Revision saved"))

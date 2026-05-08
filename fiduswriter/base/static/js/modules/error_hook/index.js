@@ -1,7 +1,5 @@
 import StackTrace from "stacktrace-js"
 
-import {getCookie} from "../common"
-
 export class ErrorHook {
     constructor() {}
 
@@ -23,9 +21,7 @@ export class ErrorHook {
         return fetch("/api/django_js_error_hook/", {
             method: "POST",
             headers: {
-                "X-CSRFToken": getCookie(
-                    window.settings?.CSRF_COOKIE_NAME || "csrftoken"
-                )
+                "X-CSRFToken": window.settings.getCsrfToken()
             },
             credentials: "include",
             body

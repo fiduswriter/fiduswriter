@@ -1,0 +1,27 @@
+<script type="text/javascript">
+    window.settings = {{ settings|safe }};
+    window.settings.staticUrl = function(url) {
+        return window.settings.STATIC_URL + url + "?v=" + window.settings.VERSION;
+    };
+    window.settings.getCsrfToken = function() {
+        var name = window.settings.CSRF_COOKIE_NAME || "csrftoken";
+        if (!document.cookie || document.cookie === "") {
+            return null;
+        }
+        var cookie = document.cookie
+            .split(";")
+            .map(function(c) { return c.trim(); })
+            .find(function(c) {
+                return c.substring(0, name.length + 1) === name + "=";
+            });
+        if (cookie) {
+            return decodeURIComponent(cookie.substring(name.length + 1));
+        }
+        return null;
+    };
+    window.settings.postResponseHook = function(response) {
+        document.cookie = "messages=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        return response;
+    };
+    window.staticUrl = window.settings.staticUrl;
+</script>

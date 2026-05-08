@@ -4,14 +4,9 @@ const WorkboxPlugin = require("@aaroon/workbox-rspack-plugin")
 const settings = window.settings // Replaced by django-npm-mjs
 const transpile = window.transpile // Replaced by django-npm-mjs
 
-// Settings are now passed from the backend via window.settings
-// Only keep transpile-specific variables that are needed at build time
 const predefinedVariables = {
     transpile_VERSION: transpile.VERSION
 }
-
-// staticUrl helper now uses runtime settings.STATIC_URL and transpile.VERSION
-predefinedVariables.staticUrl = `(url => settings.STATIC_URL + url + "?v=" + ${transpile.VERSION})`
 
 module.exports = {
     mode: settings.DEBUG ? "development" : "production",

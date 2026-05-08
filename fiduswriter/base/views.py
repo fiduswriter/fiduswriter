@@ -160,7 +160,13 @@ def admin_console(request):
     """
     Load the admin console page.
     """
-    return render(request, "admin/console.html")
+    return render(
+        request,
+        "admin/console.html",
+        {
+            "settings": json.dumps(get_frontend_settings()),
+        },
+    )
 
 
 @ajax_required

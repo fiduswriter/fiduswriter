@@ -21,13 +21,6 @@ export const getCookie = name => {
     return null
 }
 
-const deleteCookie = name => {
-    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-}
-
-const getCsrfToken = () =>
-    getCookie(window.settings?.CSRF_COOKIE_NAME || "csrftoken")
-
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = response => {
     if (!response.ok) {
@@ -36,18 +29,9 @@ const handleFetchErrors = response => {
     return response
 }
 
-// We don't use django messages in the frontend. The only messages that are recording
-//  are "user logged in" and "user logged out". The admin interface does use messages.
-// To prevent it from displaying lots of old login/logout messages, we delete the
-// messages after each post/get.
-const removeDjangoMessages = response => {
-    deleteCookie("messages")
-    return response
-}
-
 export const get = (url, params = {}, csrfToken = false) => {
     if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+        csrfToken = window.settings.getCsrfToken() // Won't work in web worker.
     }
     const queryString = Object.keys(params)
         .map(
@@ -67,7 +51,7 @@ export const get = (url, params = {}, csrfToken = false) => {
         },
         credentials: "include"
     })
-        .then(removeDjangoMessages)
+        .then(window.settings.postResponseHook)
         .then(handleFetchErrors)
 }
 
@@ -80,7 +64,7 @@ export const postBare = (url, params = {}, csrfToken = false) => {
             "Use jsonPostBare() instead."
     )
     if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+        csrfToken = window.settings.getCsrfToken() // Won't work in web worker.
     }
     const body = new FormData()
     body.append("csrfmiddlewaretoken", csrfToken)
@@ -115,7 +99,7 @@ export const postBare = (url, params = {}, csrfToken = false) => {
 
 export const post = (url, params = {}, csrfToken = false) =>
     postBare(url, params, csrfToken)
-        .then(removeDjangoMessages)
+        .then(window.settings.postResponseHook)
         .then(handleFetchErrors)
 
 // post and then return json and status
@@ -132,7 +116,7 @@ export const jsonPostBare = (
 ) => {
     // post json object rather than form data.
     if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+        csrfToken = window.settings.getCsrfToken() // Won't work in web worker.
     }
 
     if (Object.keys(files).length) {
@@ -177,7 +161,7 @@ export const jsonPostBare = (
 
 export const jsonPost = (url, object = {}, csrfToken = false, files = {}) =>
     jsonPostBare(url, object, csrfToken, files)
-        .then(removeDjangoMessages)
+        .then(window.settings.postResponseHook)
         .then(handleFetchErrors)
 
 // post json object and return json and status

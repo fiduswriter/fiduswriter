@@ -4,29 +4,14 @@ const WorkboxPlugin = require("@aaroon/workbox-rspack-plugin")
 const settings = window.settings // Replaced by django-npm-mjs
 const transpile = window.transpile // Replaced by django-npm-mjs
 
+// Settings are now passed from the backend via window.settings
+// Only keep transpile-specific variables that are needed at build time
 const predefinedVariables = {
-    settings_BRANDING_LOGO: settings.BRANDING_LOGO
-        ? JSON.stringify(settings.BRANDING_LOGO)
-        : false,
-    settings_STATIC_URL: JSON.stringify(settings.STATIC_URL),
-    settings_REGISTRATION_OPEN: settings.REGISTRATION_OPEN,
-    settings_SOCIALACCOUNT_OPEN: settings.SOCIALACCOUNT_OPEN,
-    settings_PASSWORD_LOGIN: settings.PASSWORD_LOGIN,
-    settings_CONTACT_EMAIL: JSON.stringify(settings.CONTACT_EMAIL),
-    settings_IS_FREE: settings.IS_FREE,
-    settings_TEST_SERVER: settings.TEST_SERVER,
-    settings_DEBUG: settings.DEBUG,
-    settings_CSRF_COOKIE_NAME: JSON.stringify(settings.CSRF_COOKIE_NAME),
-    settings_SOURCE_MAPS: JSON.stringify(settings.SOURCE_MAPS) || false,
-    settings_USE_SERVICE_WORKER: settings.USE_SERVICE_WORKER,
-    settings_MEDIA_MAX_SIZE: settings.MEDIA_MAX_SIZE,
-    settings_FOOTER_LINKS: JSON.stringify(settings.FOOTER_LINKS),
-    settings_LANGUAGES: JSON.stringify(settings.LANGUAGES),
-
     transpile_VERSION: transpile.VERSION
 }
 
-predefinedVariables.staticUrl = `(url => ${JSON.stringify(settings.STATIC_URL)} + url + "?v=" + ${transpile.VERSION})`
+// staticUrl helper now uses runtime settings.STATIC_URL and transpile.VERSION
+predefinedVariables.staticUrl = `(url => settings.STATIC_URL + url + "?v=" + ${transpile.VERSION})`
 
 module.exports = {
     mode: settings.DEBUG ? "development" : "production",

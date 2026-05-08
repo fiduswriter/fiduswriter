@@ -218,8 +218,8 @@ export class App {
 
     init() {
         if (
-            !settings_DEBUG &&
-            settings_USE_SERVICE_WORKER &&
+            !this.settings.DEBUG &&
+            this.settings.USE_SERVICE_WORKER &&
             "serviceWorker" in navigator
         ) {
             navigator.serviceWorker
@@ -257,7 +257,7 @@ export class App {
                         // We show a setup message instead.
                         this.page = this.openSetupPage()
                         this.page.init()
-                    } else if (settings_DEBUG) {
+                    } else if (this.settings.DEBUG) {
                         throw error
                     } else {
                         // We don't know what is going on, but we are in production
@@ -284,7 +284,7 @@ export class App {
             return this.selectPage().then(() => this.bind())
         }
         this.bibDB = new BibliographyDB(this)
-        this.imageDB = new ImageDB()
+        this.imageDB = new ImageDB(this)
         this.connectWs()
         return Promise.all([this.bibDB.getDB(), this.imageDB.getDB()])
             .then(() => {

@@ -25,7 +25,8 @@ const deleteCookie = name => {
     document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
 }
 
-const getCsrfToken = () => getCookie(settings_CSRF_COOKIE_NAME)
+const getCsrfToken = () =>
+    getCookie(window.settings?.CSRF_COOKIE_NAME || "csrftoken")
 
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = response => {

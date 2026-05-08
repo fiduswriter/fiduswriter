@@ -4,7 +4,8 @@ export const basePreloginTemplate = ({
     contents,
     language,
     headerLinks = [],
-    footerLinks = []
+    footerLinks = [],
+    settings = {}
 }) => `
 <div id="wait">
    <i class="fa fa-spinner fa-pulse"></i>
@@ -29,13 +30,13 @@ export const basePreloginTemplate = ({
           })
           .join("")}</nav>
 ${
-    settings_BRANDING_LOGO
-        ? `<div class="fw-login-branding-logo"><img src="${staticUrl(settings_BRANDING_LOGO)}" alt="Brand logo" /></div>`
+    settings?.BRANDING_LOGO
+        ? `<div class="fw-login-branding-logo"><img src="${staticUrl(settings.BRANDING_LOGO)}" alt="Brand logo" /></div>`
         : ""
 }
    </div>
    ${
-       settings_IS_FREE
+       settings?.IS_FREE
            ? `<div class="star"><img src="${staticUrl("img/free_star.avif")}" alt="Free"></div>`
            : ""
    }
@@ -54,7 +55,7 @@ ${
                 .join("")}
         </ul>
         <select id="lang-selection" aria-label="${gettext("Select language")}">
-            ${settings_LANGUAGES
+            ${(settings?.LANGUAGES || [])
                 .map(
                     ([code, _name]) =>
                         `<option value="${code}" ${language === code ? "selected" : ""}>${langName(code)}</option>`

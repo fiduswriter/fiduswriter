@@ -173,7 +173,8 @@ export const headerbarModel = () => ({
                             },
                             editor.e2ee?.encrypted,
                             editor.e2ee?.password || "",
-                            onShareSuccess
+                            onShareSuccess,
+                            editor.app.settings
                         )
                         dialog.init()
                     },
@@ -214,8 +215,8 @@ export const headerbarModel = () => ({
                             }
                         } else {
                             if (
-                                settings_REGISTRATION_OPEN ||
-                                settings_SOCIALACCOUNT_OPEN
+                                editor.app.settings?.REGISTRATION_OPEN ||
+                                editor.app.settings?.SOCIALACCOUNT_OPEN
                             ) {
                                 window.location.href = "/account/sign-up/"
                             } else {

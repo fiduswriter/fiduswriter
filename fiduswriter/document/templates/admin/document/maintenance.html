@@ -5,11 +5,17 @@
 {% block extrahead %}{{ block.super }}
 <link type="text/css" rel="stylesheet" href="{% static "css/colors.css" %}" />
 <link type="text/css" rel="stylesheet" href="{% static "css/alerts.css" %}" />
-<!--  Translations -->
+<!-- Translations -->
 <script type="text/javascript" src="/api/jsi18n/"></script>
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 <!-- JS error handling -->
 <script type="text/javascript" src="{% static "js/error_hook.mjs" %}" crossorigin="anonymous"></script>
+
+<!-- Set window.settings FIRST, before dependent scripts -->
+<script type="text/javascript">
+    window.settings = {{ settings|safe }};
+</script>
+
 <script type="text/javascript" src="{% static "js/maintenance.mjs" %}"></script>
 {% endblock %}
 {% block content %}

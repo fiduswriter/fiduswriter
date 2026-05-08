@@ -22,6 +22,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
     def maintenance_view(self, request):
         response = {}
+        response["settings"] = json.dumps(get_frontend_settings())
         return render(request, "admin/document/maintenance.html", response)
 
 

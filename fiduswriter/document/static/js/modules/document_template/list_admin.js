@@ -3,7 +3,8 @@ import {DocumentTemplateExporter} from "./exporter"
 import {DocumentTemplateImporter} from "./importer"
 
 export class DocumentTemplateListAdmin {
-    constructor() {
+    constructor(settings) {
+        this.settings = settings
         this.objectTools = false
         this.actionDropdown = false
     }

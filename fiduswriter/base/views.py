@@ -21,6 +21,30 @@ from .helpers.ws import get_url_base
 from .models import Presence
 
 
+def get_frontend_settings():
+    """Return the settings dict to pass to the frontend as JSON."""
+    return {
+        "E2EE_MODE": settings.E2EE_MODE,
+        "TWO_FACTOR_ENABLED": "django_otp" in settings.INSTALLED_APPS,
+        "BRANDING_LOGO": settings.BRANDING_LOGO,
+        "STATIC_URL": settings.STATIC_URL,
+        "REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
+        "SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
+        "PASSWORD_LOGIN": settings.PASSWORD_LOGIN,
+        "CONTACT_EMAIL": settings.CONTACT_EMAIL,
+        "IS_FREE": settings.IS_FREE,
+        "TEST_SERVER": settings.TEST_SERVER,
+        "DEBUG": settings.DEBUG,
+        "CSRF_COOKIE_NAME": settings.CSRF_COOKIE_NAME,
+        "SOURCE_MAPS": settings.SOURCE_MAPS,
+        "USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
+        "MEDIA_MAX_SIZE": settings.MEDIA_MAX_SIZE,
+        "FOOTER_LINKS": settings.FOOTER_LINKS,
+        "LANGUAGES": settings.LANGUAGES,
+        "VERSION": get_version(),
+    }
+
+
 @ensure_csrf_cookie
 def app(request):
     """
@@ -32,29 +56,7 @@ def app(request):
         "app.html",
         {
             "version": get_version(),
-            "settings": json.dumps(
-                {
-                    "E2EE_MODE": settings.E2EE_MODE,
-                    "TWO_FACTOR_ENABLED": "django_otp"
-                    in settings.INSTALLED_APPS,
-                    "BRANDING_LOGO": settings.BRANDING_LOGO,
-                    "STATIC_URL": settings.STATIC_URL,
-                    "REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
-                    "SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
-                    "PASSWORD_LOGIN": settings.PASSWORD_LOGIN,
-                    "CONTACT_EMAIL": settings.CONTACT_EMAIL,
-                    "IS_FREE": settings.IS_FREE,
-                    "TEST_SERVER": settings.TEST_SERVER,
-                    "DEBUG": settings.DEBUG,
-                    "CSRF_COOKIE_NAME": settings.CSRF_COOKIE_NAME,
-                    "SOURCE_MAPS": settings.SOURCE_MAPS,
-                    "USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
-                    "MEDIA_MAX_SIZE": settings.MEDIA_MAX_SIZE,
-                    "FOOTER_LINKS": settings.FOOTER_LINKS,
-                    "LANGUAGES": settings.LANGUAGES,
-                    "VERSION": get_version(),
-                }
-            ),
+            "settings": json.dumps(get_frontend_settings()),
         },
     )
 

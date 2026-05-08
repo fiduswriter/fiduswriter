@@ -3,10 +3,18 @@
 {% load transpile %}
 {% block extrahead %}{{ block.super }}
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-<!--  Translations -->
+<!-- Translations -->
 <script type="text/javascript" src="/api/jsi18n/"></script>
 <!-- JS error handling -->
 <script type="text/javascript" src="{% static "js/error_hook.mjs" %}" crossorigin="anonymous"></script>
+
+<!-- Set window.settings FIRST, before dependent scripts -->
+<script type="text/javascript">
+    window.settings = {{ settings|safe }};
+</script>
+
+<!-- Now load the admin script that uses window.settings -->
 <script type="text/javascript" src="{% static "js/document_template_list_admin.mjs" %}"></script>
+
 {{ media }}
 {% endblock %}

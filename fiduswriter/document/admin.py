@@ -42,6 +42,15 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
         extra_context["settings"] = json.dumps(get_frontend_settings())
         return super().changelist_view(request, extra_context=extra_context)
 
+    def changeform_view(
+        self, request, object_id=None, form_url="", extra_context=None
+    ):
+        extra_context = extra_context or {}
+        extra_context["settings"] = json.dumps(get_frontend_settings())
+        return super().changeform_view(
+            request, object_id, form_url, extra_context=extra_context
+        )
+
     def duplicate(self, request, queryset):
         for template in queryset:
             document_styles = list(template.documentstyle_set.all())

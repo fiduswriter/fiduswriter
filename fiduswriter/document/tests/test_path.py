@@ -133,7 +133,10 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.assertEqual(len(documents), 2)
         self.assertEqual(documents[0].text, "..")
-        self.assertEqual(documents[1].text, "February Doc")
+        self.assertEqual(
+            documents[1].find_element(By.CSS_SELECTOR, ".fw-searchable").text,
+            "February Doc",
+        )
         # Go up one folder
         documents[0].click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -146,7 +149,10 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(len(documents), 3)
         self.assertEqual(documents[0].text, "..")
         self.assertEqual(documents[1].text, "February")
-        self.assertEqual(documents[2].text, "Report 23")
+        self.assertEqual(
+            documents[2].find_element(By.CSS_SELECTOR, ".fw-searchable").text,
+            "Report 23",
+        )
         # Move initial document via overview page
         self.driver.find_element(
             By.CSS_SELECTOR, "tr:nth-child(3) > td > label"
@@ -207,8 +213,14 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.assertEqual(len(documents), 3)
         self.assertEqual(documents[0].text, "..")
-        self.assertEqual(documents[1].text, "Report 23")
-        self.assertEqual(documents[2].text, "February Doc")
+        self.assertEqual(
+            documents[1].find_element(By.CSS_SELECTOR, ".fw-searchable").text,
+            "Report 23",
+        )
+        self.assertEqual(
+            documents[2].find_element(By.CSS_SELECTOR, ".fw-searchable").text,
+            "February Doc",
+        )
         # Move both docs to a new folder
         self.driver.find_element(
             By.CSS_SELECTOR, "tr:nth-child(2) > td > label"
@@ -346,5 +358,11 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
         )
-        self.assertEqual(documents[1].text, "Report 23")
-        self.assertEqual(documents[2].text, "February Doc")
+        self.assertEqual(
+            documents[1].find_element(By.CSS_SELECTOR, ".fw-searchable").text,
+            "Report 23",
+        )
+        self.assertEqual(
+            documents[2].find_element(By.CSS_SELECTOR, ".fw-searchable").text,
+            "February Doc",
+        )

@@ -163,7 +163,12 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         )
         verify_btn.click()
 
-        time.sleep(1)
+        # Wait for the error alert to appear — the server returns 400 and the
+        # frontend's .catch() handler calls addAlert("error", …).
+        error_alert = WebDriverWait(self.drivers[0], self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".alerts-error"))
+        )
+        self.assertIsNotNone(error_alert)
 
         # Verify that dialog is still open (error occurred)
         dialog = self.drivers[0].find_element(By.ID, "two-factor-setup-dialog")
@@ -462,7 +467,13 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         )
         verify_btn.click()
 
-        time.sleep(1)
+        # Wait for the error alert — the server returns 400 for the bad
+        # code and the frontend's .catch() handler shows the alert while
+        # keeping the dialog open.
+        error_alert = WebDriverWait(self.drivers[0], self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".alerts-error"))
+        )
+        self.assertIsNotNone(error_alert)
 
         # Dialog should still be open
         two_fa_dialog = self.drivers[0].find_element(
@@ -471,7 +482,9 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         self.assertIsNotNone(two_fa_dialog)
 
     def test_two_factor_multiple_failed_attempts(self):
-        """Test that multiple failed 2FA attempts lock out the user."""
+        """Test that each failed 2FA login attempt shows an error and keeps the
+        dialog open. There is intentionally no lockout mechanism — this test
+        verifies the per-attempt rejection behaviour."""
         # Enable 2FA
         self.login_user(self.user2, self.drivers[0], self.clients[0])
         self.drivers[0].get(f"{self.live_server_url}/user/profile/")
@@ -529,7 +542,8 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
             EC.presence_of_element_located((By.ID, "two-factor-login-dialog"))
         )
 
-        # Make 3 failed attempts
+        # Make 3 failed attempts; each one must show an error alert and leave
+        # the dialog open so the user can try again.
         for i in range(3):
             code_input = self.drivers[0].find_element(By.ID, "two-factor-code")
             code_input.clear()
@@ -545,10 +559,25 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
             )
             verify_btn.click()
 
-            time.sleep(1)
+            # Each bad code must trigger a visible error alert.
+            error_alert = WebDriverWait(self.drivers[0], self.wait_time).until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, ".alerts-error")
+                )
+            )
+            self.assertIsNotNone(
+                error_alert,
+                f"Expected error alert after attempt {i + 1}, but none appeared.",
+            )
 
-            # Note: The warning check might need adjustment based on actual implementation
-            # This test may need to be updated if warnings are shown differently
+            # The 2FA dialog must remain open so the user can retry.
+            two_fa_dialog = self.drivers[0].find_element(
+                By.ID, "two-factor-login-dialog"
+            )
+            self.assertIsNotNone(
+                two_fa_dialog,
+                f"Expected 2FA dialog to stay open after attempt {i + 1}.",
+            )
 
     def test_two_factor_code_format_validation(self):
         """Test that code format is validated."""

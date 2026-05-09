@@ -11,8 +11,8 @@ export class PreloginPage {
         this.pluginLoaders = {}
         this.title = ""
         this.contents = ""
-        this.footerLinks = settings_FOOTER_LINKS.length
-            ? settings_FOOTER_LINKS
+        this.footerLinks = this.app.settings?.FOOTER_LINKS?.length
+            ? this.app.settings.FOOTER_LINKS
             : [
                   {
                       text: gettext("Terms and Conditions"),
@@ -99,7 +99,8 @@ export class PreloginPage {
             language: this.language,
             headerLinks: this.headerLinks,
             footerLinks: this.footerLinks,
-            contents: this.contents
+            contents: this.contents,
+            settings: this.app.settings
         })
         document.body = this.dom
         ensureCSS([staticUrl("css/prelogin.css")])

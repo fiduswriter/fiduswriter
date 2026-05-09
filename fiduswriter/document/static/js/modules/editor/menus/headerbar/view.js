@@ -524,7 +524,8 @@ export class HeaderbarView {
         if (this.editor.docInfo.token) {
             // Guest user — send to sign-up if open, otherwise to login
             exitUrl =
-                settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN
+                this.editor.app.settings?.REGISTRATION_OPEN ||
+                this.editor.app.settings?.SOCIALACCOUNT_OPEN
                     ? "/account/sign-up/"
                     : "/"
         } else {

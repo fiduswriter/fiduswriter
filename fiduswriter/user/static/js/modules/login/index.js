@@ -10,7 +10,8 @@ export class LoginPage extends PreloginPage {
         this.title = gettext("Login")
         this.pluginLoaders = pluginLoaders
         this.headerLinks =
-            settings_REGISTRATION_OPEN && settings_PASSWORD_LOGIN
+            this.app.settings?.REGISTRATION_OPEN &&
+            this.app.settings?.PASSWORD_LOGIN
                 ? [
                       {
                           type: "label",
@@ -29,7 +30,7 @@ export class LoginPage extends PreloginPage {
         this.contents = `<div class="fw-login-left">
             <h1 class="fw-login-title">${gettext("Log in")}</h1>
             ${
-                settings_SOCIALACCOUNT_OPEN
+                this.app.settings?.SOCIALACCOUNT_OPEN
                     ? this.socialaccount_providers.length
                         ? `<div class="socialaccount_ballot">
                     <ul class="socialaccount_providers">
@@ -51,7 +52,7 @@ export class LoginPage extends PreloginPage {
             }
         </div>
             ${
-                settings_PASSWORD_LOGIN
+                this.app.settings?.PASSWORD_LOGIN
                     ? `<div class="fw-login-right">
             <form>
                     <ul id="non-field-errors" class="errorlist"></ul>

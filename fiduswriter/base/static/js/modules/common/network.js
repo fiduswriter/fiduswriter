@@ -1,3 +1,5 @@
+import {getSettings} from "./settings"
+
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
@@ -21,12 +23,6 @@ export const getCookie = name => {
     return null
 }
 
-const deleteCookie = name => {
-    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-}
-
-const getCsrfToken = () => getCookie(settings_CSRF_COOKIE_NAME)
-
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = response => {
     if (!response.ok) {
@@ -35,18 +31,10 @@ const handleFetchErrors = response => {
     return response
 }
 
-// We don't use django messages in the frontend. The only messages that are recording
-//  are "user logged in" and "user logged out". The admin interface does use messages.
-// To prevent it from displaying lots of old login/logout messages, we delete the
-// messages after each post/get.
-const removeDjangoMessages = response => {
-    deleteCookie("messages")
-    return response
-}
-
 export const get = (url, params = {}, csrfToken = false) => {
+    const settings = getSettings()
     if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+        csrfToken = settings.getCsrfToken() // Won't work in web worker.
     }
     const queryString = Object.keys(params)
         .map(
@@ -57,7 +45,7 @@ export const get = (url, params = {}, csrfToken = false) => {
     if (queryString.length) {
         url = `${url}?${queryString}`
     }
-    return fetch(url, {
+    return fetch(settings.apiUrl(url), {
         method: "GET",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -66,7 +54,7 @@ export const get = (url, params = {}, csrfToken = false) => {
         },
         credentials: "include"
     })
-        .then(removeDjangoMessages)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
 }
 
@@ -74,12 +62,13 @@ export const getJson = (url, params = {}, csrfToken = false) =>
     get(url, params, csrfToken).then(response => response.json())
 
 export const postBare = (url, params = {}, csrfToken = false) => {
+    const settings = getSettings()
     console.warn(
         `postBare("${url}") is deprecated and will be removed in a future version. ` +
             "Use jsonPostBare() instead."
     )
     if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+        csrfToken = settings.getCsrfToken() // Won't work in web worker.
     }
     const body = new FormData()
     body.append("csrfmiddlewaretoken", csrfToken)
@@ -100,7 +89,7 @@ export const postBare = (url, params = {}, csrfToken = false) => {
         }
     })
 
-    return fetch(url, {
+    return fetch(settings.apiUrl(url), {
         method: "POST",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -112,11 +101,12 @@ export const postBare = (url, params = {}, csrfToken = false) => {
     })
 }
 
-export const post = (url, params = {}, csrfToken = false) =>
-    postBare(url, params, csrfToken)
-        .then(removeDjangoMessages)
+export const post = (url, params = {}, csrfToken = false) => {
+    const settings = getSettings()
+    return postBare(url, params, csrfToken)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
-
+}
 // post and then return json and status
 export const postJson = (url, params = {}, csrfToken = false) =>
     post(url, params, csrfToken).then(response =>
@@ -129,9 +119,11 @@ export const jsonPostBare = (
     csrfToken = false,
     files = {}
 ) => {
+    const settings = getSettings()
+
     // post json object rather than form data.
     if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+        csrfToken = settings.getCsrfToken() // Won't work in web worker.
     }
 
     if (Object.keys(files).length) {
@@ -149,7 +141,7 @@ export const jsonPostBare = (
             }
         })
 
-        return fetch(url, {
+        return fetch(settings.apiUrl(url), {
             method: "POST",
             headers: {
                 "X-CSRFToken": csrfToken,
@@ -161,7 +153,7 @@ export const jsonPostBare = (
         })
     }
 
-    return fetch(url, {
+    return fetch(settings.apiUrl(url), {
         method: "POST",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -174,10 +166,12 @@ export const jsonPostBare = (
     })
 }
 
-export const jsonPost = (url, object = {}, csrfToken = false, files = {}) =>
-    jsonPostBare(url, object, csrfToken, files)
-        .then(removeDjangoMessages)
+export const jsonPost = (url, object = {}, csrfToken = false, files = {}) => {
+    const settings = getSettings()
+    return jsonPostBare(url, object, csrfToken, files)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
+}
 
 // post json object and return json and status
 export const jsonPostJson = (url, object = {}, csrfToken = false, files = {}) =>

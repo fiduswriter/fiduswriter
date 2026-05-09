@@ -120,7 +120,11 @@ export class DocumentOverview {
                         const dialog = new DocumentAccessRightsDialog(
                             [docId],
                             this.contacts,
-                            memberDetails => this.contacts.push(memberDetails)
+                            memberDetails => this.contacts.push(memberDetails),
+                            false,
+                            "",
+                            null,
+                            this.app.settings
                         )
                         dialog.init()
                     }

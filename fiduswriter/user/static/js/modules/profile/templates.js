@@ -209,12 +209,10 @@ export const profileContents = (user, socialaccount_providers, settings = {}) =>
                 <label class="form-label">${gettext("Language")}</label>
                 <select name="language" id="language" class="entry-form dk fw-button fw-large">
                 <option value="">${gettext("Default language")}</option>
-                ${settings_LANGUAGES
-                    .map(
-                        ([code, _name]) =>
-                            `<option value="${code}" ${user.language === code ? "selected" : ""}>${langName(code)}</option>`
-                    )
-                    .join("")}
+                ${settings.LANGUAGES.map(
+                    ([code, _name]) =>
+                        `<option value="${code}" ${user.language === code ? "selected" : ""}>${langName(code)}</option>`
+                ).join("")}
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>

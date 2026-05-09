@@ -58,3 +58,7 @@ export {
     longFilePath,
     NewFolderDialog
 } from "./file"
+export {
+    initSettings,
+    getSettings
+} from "./settings"

@@ -3,6 +3,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path
 from django.utils.translation import gettext as _
+import json
+from base.views import get_frontend_settings
 from . import models
 
 
@@ -20,6 +22,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
     def maintenance_view(self, request):
         response = {}
+        response["settings"] = json.dumps(get_frontend_settings())
         return render(request, "admin/document/maintenance.html", response)
 
 
@@ -34,6 +37,20 @@ class DocumentTemplateAdmin(admin.ModelAdmin):
         "title",
         "user",
     )
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["settings"] = json.dumps(get_frontend_settings())
+        return super().changelist_view(request, extra_context=extra_context)
+
+    def changeform_view(
+        self, request, object_id=None, form_url="", extra_context=None
+    ):
+        extra_context = extra_context or {}
+        extra_context["settings"] = json.dumps(get_frontend_settings())
+        return super().changeform_view(
+            request, object_id, form_url, extra_context=extra_context
+        )
 
     def duplicate(self, request, queryset):
         for template in queryset:

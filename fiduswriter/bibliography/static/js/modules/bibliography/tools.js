@@ -1,3 +1,15 @@
+// Extract a display year from an EDTF date string.
+// Handles simple years, ranges (2023/2024), uncertainty (?, *, u), and open-ended dates.
+export function dateToYear(dateStr) {
+    if (!dateStr) {
+        return ""
+    }
+    // Take the first date component (before "/" for ranges or open-ended dates)
+    const firstPart = dateStr.split("/")[0]
+    // Strip uncertainty/wildcard characters to get a clean year
+    return firstPart.replace(/[?*u~]/g, "")
+}
+
 // Takes any richtext text field as used in bibliography and returns the text contents
 export function litToText(litStringArray) {
     let outText = ""

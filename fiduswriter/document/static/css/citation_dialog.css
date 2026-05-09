@@ -1,3 +1,7 @@
+#configure-citation .fw-ar-container {
+    width: 430px;
+}
+
 #cited-items h3,
 #my-sources h3 {
     margin-bottom: 15px;
@@ -19,7 +23,7 @@
 /* stylelint-enable selector-id-pattern */
 
 #selected-cite-source-table .fw-data-table-title > span {
-    width: 100px;
+    width: 80px;
 }
 
 #cite-source-table .fw-data-table-title > span {
@@ -54,7 +58,7 @@
 }
 
 .cite-extra-fields input {
-    width: 278px;
+    width: 230px;
     border-radius: 4px;
 }
 

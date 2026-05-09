@@ -308,8 +308,9 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
             </div>
             <table id="selected-cite-source-table" class="fw-data-table tablesorter">
                 <thead class="fw-data-table-header"><tr>
-                    <th width="135">${gettext("Title")}</th>
-                    <th width="135">${gettext("Author")}</th>
+                    <th width="110">${gettext("Title")}</th>
+                    <th width="110">${gettext("Author")}</th>
+                    <th width="50">${gettext("Year")}</th>
                     <th width="50" align="center">${gettext("Order")}</th>
                     <th width="50" align="center">${gettext("Remove")}</th>
                 </tr></thead>
@@ -324,16 +325,17 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
 export const selectedCitationTemplate = ({
     title,
     author,
+    year,
     id,
     db,
     prefix,
     locator
 }) =>
     `<tr id="selected-source-${db}-${id}" class="selected-source">
-        <td colspan="4" width="385">
+        <td colspan="5" width="470">
           <table class="fw-cite-parts-table">
               <tr>
-                  <td width="135">
+                  <td width="110">
                       <span class="fw-data-table-title fw-inline">
                           <i class="fa fa-book"></i>
                           <span data-id="${id}">
@@ -341,9 +343,14 @@ export const selectedCitationTemplate = ({
                           </span>
                       </span>
                   </td>
-                  <td width="135">
+                  <td width="110">
                       <span class="fw-inline">
                           ${escapeText(author)}
+                      </span>
+                  </td>
+                  <td width="50">
+                      <span class="fw-inline">
+                          ${escapeText(year)}
                       </span>
                   </td>
                   <td width="50" align="center">
@@ -361,7 +368,7 @@ export const selectedCitationTemplate = ({
                   </td>
               </tr>
               <tr>
-                  <td class="cite-extra-fields" colspan="3" width="335">
+                  <td class="cite-extra-fields" colspan="3" width="270">
                       <div>
                           <label>${gettext("Page")}</label>
                           <input class="fw-cite-page" type="text" value="${escapeText(locator)}" />

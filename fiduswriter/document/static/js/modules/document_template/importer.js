@@ -16,9 +16,14 @@ const TEXT_FILENAMES = [
 ]
 
 export class DocumentTemplateImporter {
-    constructor(file, createUrl = "/api/document/admin/create_template/") {
+    constructor(
+        file,
+        createUrl = "/api/document/admin/create_template/",
+        settings
+    ) {
         this.file = file
         this.createUrl = createUrl
+        this.settings = settings
 
         this.textFiles = []
         this.otherFiles = []
@@ -141,6 +146,7 @@ export class DocumentTemplateImporter {
                 )
             return jsonPostJson(
                 this.createUrl,
+                this.settings,
                 {
                     title,
                     content,

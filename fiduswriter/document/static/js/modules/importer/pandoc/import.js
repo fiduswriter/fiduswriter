@@ -4,11 +4,19 @@ import {NativeImporter} from "../native"
 import {PandocConvert} from "./convert"
 
 export class PandocImporter {
-    constructor(file, user, path, importId, options) {
+    constructor(
+        file,
+        user,
+        path,
+        importId,
+        options,
+        settings = window.settings
+    ) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
+        this.settings = settings
         this.additionalFiles = options.files
 
         this.template = null
@@ -32,9 +40,13 @@ export class PandocImporter {
     }
 
     async getTemplate() {
-        const {json} = await jsonPostJson("/api/document/get_template/", {
-            import_id: this.importId
-        })
+        const {json} = await jsonPostJson(
+            "/api/document/get_template/",
+            this.settings,
+            {
+                import_id: this.importId
+            }
+        )
         this.template = json.template
     }
 

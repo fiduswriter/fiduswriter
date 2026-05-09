@@ -8,7 +8,8 @@ export class ExportTemplateDialog {
         documentTemplateId,
         allTemplates,
         refresh,
-        documentTemplateValue
+        documentTemplateValue,
+        settings
     ) {
         this.id = id
         this.template = template
@@ -16,6 +17,7 @@ export class ExportTemplateDialog {
         this.allTemplates = allTemplates
         this.refresh = refresh
         this.documentTemplateValue = documentTemplateValue
+        this.settings = settings
         this.addedFile = false
         this.addedFileType = false
     }
@@ -142,7 +144,9 @@ export class ExportTemplateDialog {
     }
 
     deleteTemplate() {
-        jsonPostJson("/api/style/delete_export_template/", {id: this.id})
+        jsonPostJson("/api/style/delete_export_template/", this.settings, {
+            id: this.id
+        })
             .then(() => {
                 const oldTemplateIndex = this.allTemplates.findIndex(
                     style => style.pk === this.id
@@ -232,6 +236,7 @@ export class ExportTemplateDialog {
         }
         return jsonPostJson(
             "/api/style/save_export_template/",
+            this.settings,
             jsonData,
             false,
             {
@@ -241,7 +246,7 @@ export class ExportTemplateDialog {
     }
 
     checkRemoteFile(url) {
-        return get(url)
+        return get(url, this.settings)
             .then(response => response.blob())
             .then(blob => this.checkFile(blob))
     }

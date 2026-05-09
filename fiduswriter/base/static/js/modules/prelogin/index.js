@@ -87,7 +87,11 @@ export class PreloginPage {
             .querySelector("#lang-selection")
             .addEventListener("change", event => {
                 this.language = event.target.value
-                return setLanguage(this.app.config, this.language)
+                return setLanguage(
+                    this.app.config,
+                    this.language,
+                    this.app.settings
+                )
             })
     }
 
@@ -105,7 +109,7 @@ export class PreloginPage {
         document.body = this.dom
         ensureCSS([staticUrl("css/prelogin.css")])
         setDocTitle(this.title, this.app)
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 }

@@ -9,7 +9,10 @@ export const bulkMenuModel = () => ({
             action: overview => {
                 const selected = overview.getSelected()
                 if (selected.length) {
-                    const dialog = new DeleteContactDialog(selected)
+                    const dialog = new DeleteContactDialog(
+                        selected,
+                        overview.app.settings
+                    )
                     dialog.init().then(() => {
                         overview.contacts = overview.contacts.filter(
                             ocontact =>

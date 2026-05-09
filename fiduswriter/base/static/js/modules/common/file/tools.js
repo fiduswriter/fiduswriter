@@ -44,10 +44,10 @@ export const cleanPath = (title, path) => {
     return path
 }
 
-export const moveFile = (fileId, title, path, moveUrl) => {
+export const moveFile = (fileId, title, path, moveUrl, settings) => {
     path = cleanPath(title, path)
     return new Promise((resolve, reject) => {
-        jsonPostJson(moveUrl, {id: fileId, path}).then(({json}) => {
+        jsonPostJson(moveUrl, settings, {id: fileId, path}).then(({json}) => {
             if (json.done) {
                 resolve(path)
             } else {

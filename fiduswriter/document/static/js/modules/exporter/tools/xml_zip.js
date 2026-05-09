@@ -5,9 +5,10 @@ import {get} from "../../common"
 // and provide a mechanism to save the file.
 
 export class XmlZip {
-    constructor(url, mimeType) {
+    constructor(url, mimeType, settings = window.settings) {
         this.url = url
         this.mimeType = mimeType
+        this.settings = settings
         this.docs = {}
         this.extraFiles = {}
         this.rawFile = false
@@ -23,7 +24,7 @@ export class XmlZip {
     }
 
     downloadZip() {
-        return get(this.url)
+        return get(this.url, this.settings)
             .then(response => response.blob())
             .then(blob => (this.rawFile = blob))
     }

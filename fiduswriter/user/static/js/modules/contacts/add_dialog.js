@@ -77,7 +77,7 @@ export class AddContactDialog {
             return cancelPromise()
         }
 
-        return jsonPostJson("/api/user/invites/add/", {
+        return jsonPostJson("/api/user/invites/add/", this.settings, {
             user_string: userString
         }).then(({json, status}) => {
             if (status == 201) {

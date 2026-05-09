@@ -55,7 +55,7 @@ export class ContactsOverview {
         })
         document.body = this.dom
         setDocTitle(gettext("Contacts"), this.app)
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 
@@ -204,7 +204,7 @@ export class ContactsOverview {
         if (this.app.isOffline()) {
             return cachedPromise
         }
-        return jsonPostJson("/api/user/contacts/list/")
+        return jsonPostJson("/api/user/contacts/list/", this.app.settings)
             .then(({json}) => {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
@@ -297,7 +297,8 @@ export class ContactsOverview {
                                             invite.id === contact.id
                                     )
                             )),
-                        () => this.initializeView()
+                        () => this.initializeView(),
+                        this.app.settings
                     )
                     dialog.init()
                     break
@@ -319,7 +320,7 @@ export class ContactsOverview {
     }
 
     deleteContact(id, type) {
-        const dialog = new DeleteContactDialog([{id, type}])
+        const dialog = new DeleteContactDialog([{id, type}], this.app.settings)
         dialog.init().then(() => {
             this.contacts = this.contacts.filter(
                 ocontact => ocontact.id !== id || ocontact.type !== type

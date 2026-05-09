@@ -82,7 +82,7 @@ export class DocumentOverview {
         ])
         document.body = this.dom
         setDocTitle(gettext("Document Overview"), this.app)
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 
@@ -221,7 +221,9 @@ export class DocumentOverview {
             return cachedPromise
         }
         return whenReady()
-            .then(() => jsonPostJson("/api/document/documentlist/"))
+            .then(() =>
+                jsonPostJson("/api/document/documentlist/", this.app.settings)
+            )
             .then(({json}) => {
                 return cachedPromise.then(oldJson => {
                     if (!deepEqual(json, oldJson)) {
@@ -249,7 +251,7 @@ export class DocumentOverview {
         try {
             const response = await jsonPostJson(
                 "/api/document/encryption_key/get_all/",
-                {}
+                this.app.settings
             )
 
             if (!response.json?.keys?.length) {
@@ -935,9 +937,13 @@ export class DocumentOverview {
                                     "../../editor/e2ee/passphrase-manager.js"
                                 )
                                 const hasPassphraseKeys =
-                                    await PassphraseManager.hasEncryptionKeys()
+                                    await PassphraseManager.hasEncryptionKeys(
+                                        this.app.settings
+                                    )
                                 const hasDismissed =
-                                    await PassphraseManager.hasUserDismissedPassphraseOffer()
+                                    await PassphraseManager.hasUserDismissedPassphraseOffer(
+                                        this.app.settings
+                                    )
 
                                 if (!hasPassphraseKeys && !hasDismissed) {
                                     // Offer to set up passphrase
@@ -961,7 +967,10 @@ export class DocumentOverview {
                                                         type: "cancel",
                                                         click: async () => {
                                                             setupDialog.close()
-                                                            await PassphraseManager.markPassphraseDismissed()
+                                                            await PassphraseManager.markPassphraseDismissed(
+                                                                this.app
+                                                                    .settings
+                                                            )
                                                             resolve(false)
                                                         }
                                                     },
@@ -988,7 +997,8 @@ export class DocumentOverview {
                                                 try {
                                                     const {recoveryKey} =
                                                         await PassphraseManager.setupEncryption(
-                                                            passphrase
+                                                            passphrase,
+                                                            this.app.settings
                                                         )
                                                     const {
                                                         showRecoveryKeyDialog

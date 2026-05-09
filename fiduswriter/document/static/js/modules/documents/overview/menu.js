@@ -25,7 +25,8 @@ export const bulkMenuModel = () => ({
                         succcessCallback: (file, path) => {
                             file.path = path
                             overview.initTable()
-                        }
+                        },
+                        settings: overview.app.settings
                     })
                     dialog.init()
                 }

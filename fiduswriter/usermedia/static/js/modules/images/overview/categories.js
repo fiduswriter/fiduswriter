@@ -17,10 +17,14 @@ export class ImageOverviewCategories {
     saveCategories(cats) {
         activateWait()
 
-        jsonPostJson("/api/usermedia/save_category/", {
-            ids: cats.ids,
-            titles: cats.titles
-        })
+        jsonPostJson(
+            "/api/usermedia/save_category/",
+            this.imageOverview.app.settings,
+            {
+                ids: cats.ids,
+                titles: cats.titles
+            }
+        )
             .catch(error => {
                 addAlert("error", gettext("Could not update categories"))
                 deactivateWait()

@@ -7,93 +7,95 @@ import {
     jsonPostJson
 } from "../common"
 
-export const twoFactorSetupDialog = () => {
+export const twoFactorSetupDialog = (settings = window.settings) => {
     let secretKey = null
     let deviceId = null
 
     // Load setup data
     activateWait()
-    return jsonPostJson("/api/user/two-factor/setup/").then(({json}) => {
-        deactivateWait()
+    return jsonPostJson("/api/user/two-factor/setup/", settings).then(
+        ({json}) => {
+            deactivateWait()
 
-        if (json.status !== "success") {
-            addAlert("error", json.message)
-            return Promise.reject(json.message)
-        }
-
-        secretKey = json.secret_key
-        deviceId = json.device_id
-        const provisioningUri = json.provisioning_uri
-
-        const qrContainer = document.createElement("div")
-        qrContainer.className = "two-factor-qr-container"
-
-        QRCode.toCanvas(
-            provisioningUri,
-            {
-                width: 200,
-                margin: 2,
-                color: {
-                    dark: "#000000",
-                    light: "#ffffff"
-                }
-            },
-            function (error, canvas) {
-                if (error) {
-                    console.error("QR Code generation error:", error)
-                    qrContainer.innerHTML = `<p style="color: red;">${gettext("Could not generate QR code. Please use the secret key below.")}</p>`
-                } else {
-                    qrContainer.appendChild(canvas)
-                }
+            if (json.status !== "success") {
+                addAlert("error", json.message)
+                return Promise.reject(json.message)
             }
-        )
 
-        const buttons = [
-            {
-                text: gettext("Verify"),
-                classes: "fw-dark",
-                click: () => {
-                    const codeInput = document.querySelector("#two-factor-code")
-                    const code = codeInput.value.trim()
+            secretKey = json.secret_key
+            deviceId = json.device_id
+            const provisioningUri = json.provisioning_uri
 
-                    if (code.length !== 6) {
-                        addAlert(
-                            "error",
-                            gettext("Please enter a 6-digit code.")
-                        )
-                        return
+            const qrContainer = document.createElement("div")
+            qrContainer.className = "two-factor-qr-container"
+
+            QRCode.toCanvas(
+                provisioningUri,
+                {
+                    width: 200,
+                    margin: 2,
+                    color: {
+                        dark: "#000000",
+                        light: "#ffffff"
                     }
+                },
+                function (error, canvas) {
+                    if (error) {
+                        console.error("QR Code generation error:", error)
+                        qrContainer.innerHTML = `<p style="color: red;">${gettext("Could not generate QR code. Please use the secret key below.")}</p>`
+                    } else {
+                        qrContainer.appendChild(canvas)
+                    }
+                }
+            )
 
-                    jsonPostJson("/api/user/two-factor/verify/", {
-                        code,
-                        device_id: deviceId
-                    })
-                        .then(({json}) => {
-                            if (json.status === "success") {
-                                addAlert("success", json.message)
-                                dialog.close()
-                                window.location.reload()
-                            } else {
-                                addAlert("error", json.message)
-                            }
-                        })
-                        .catch(() => {
+            const buttons = [
+                {
+                    text: gettext("Verify"),
+                    classes: "fw-dark",
+                    click: () => {
+                        const codeInput =
+                            document.querySelector("#two-factor-code")
+                        const code = codeInput.value.trim()
+
+                        if (code.length !== 6) {
                             addAlert(
                                 "error",
-                                gettext("Could not verify the code.")
+                                gettext("Please enter a 6-digit code.")
                             )
-                        })
-                }
-            },
-            {
-                type: "cancel"
-            }
-        ]
+                            return
+                        }
 
-        const dialog = new Dialog({
-            id: "two-factor-setup-dialog",
-            title: gettext("Set Up Two-Factor Authentication"),
-            body: `
+                        jsonPostJson("/api/user/two-factor/verify/", settings, {
+                            code,
+                            device_id: deviceId
+                        })
+                            .then(({json}) => {
+                                if (json.status === "success") {
+                                    addAlert("success", json.message)
+                                    dialog.close()
+                                    window.location.reload()
+                                } else {
+                                    addAlert("error", json.message)
+                                }
+                            })
+                            .catch(() => {
+                                addAlert(
+                                    "error",
+                                    gettext("Could not verify the code.")
+                                )
+                            })
+                    }
+                },
+                {
+                    type: "cancel"
+                }
+            ]
+
+            const dialog = new Dialog({
+                id: "two-factor-setup-dialog",
+                title: gettext("Set Up Two-Factor Authentication"),
+                body: `
                     <p>${gettext("Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)")}</p>
                     <div class="two-factor-qr-wrapper"></div>
                     <p><strong>${gettext("Or enter this code manually:")}</strong></p>
@@ -103,40 +105,41 @@ export const twoFactorSetupDialog = () => {
                         <input type="text" id="two-factor-code" placeholder="123456" maxlength="6" class="fw-button fw-large" autocomplete="one-time-code" />
                     </div>
                 `,
-            buttons,
-            icon: "shield-alt",
-            width: 500
-        })
-
-        dialog.open()
-
-        const qrWrapper = dialog.dialogEl.querySelector(
-            ".two-factor-qr-wrapper"
-        )
-        if (qrWrapper && qrContainer) {
-            qrWrapper.appendChild(qrContainer)
-        }
-
-        const codeInput = dialog.dialogEl.querySelector("#two-factor-code")
-        if (codeInput) {
-            codeInput.addEventListener("keypress", event => {
-                if (event.key === "Enter") {
-                    event.preventDefault()
-                    buttons[0].click()
-                }
+                buttons,
+                icon: "shield-alt",
+                width: 500
             })
+
+            dialog.open()
+
+            const qrWrapper = dialog.dialogEl.querySelector(
+                ".two-factor-qr-wrapper"
+            )
+            if (qrWrapper && qrContainer) {
+                qrWrapper.appendChild(qrContainer)
+            }
+
+            const codeInput = dialog.dialogEl.querySelector("#two-factor-code")
+            if (codeInput) {
+                codeInput.addEventListener("keypress", event => {
+                    if (event.key === "Enter") {
+                        event.preventDefault()
+                        buttons[0].click()
+                    }
+                })
+            }
         }
-    })
+    )
 }
 
-export const twoFactorDisableDialog = () => {
+export const twoFactorDisableDialog = (settings = window.settings) => {
     const buttons = [
         {
             text: gettext("Disable 2FA"),
             classes: "fw-orange",
             click: () => {
                 activateWait()
-                jsonPostJson("/api/user/two-factor/disable/", {})
+                jsonPostJson("/api/user/two-factor/disable/", settings)
                     .then(({json}) => {
                         if (json.status === "success") {
                             addAlert("success", json.message)
@@ -176,12 +179,10 @@ export const twoFactorDisableDialog = () => {
     return dialog
 }
 
-export const twoFactorLoginDialog = ({
-    login,
-    password,
-    remember,
-    loginPage
-}) => {
+export const twoFactorLoginDialog = (
+    {login, password, remember, loginPage},
+    settings = window.settings
+) => {
     const buttons = [
         {
             text: gettext("Verify"),
@@ -199,7 +200,7 @@ export const twoFactorLoginDialog = ({
                 }
 
                 activateWait()
-                jsonPostJson("/api/user/login/", {
+                jsonPostJson("/api/user/login/", settings, {
                     login,
                     password,
                     remember,
@@ -241,8 +242,8 @@ export const twoFactorLoginDialog = ({
     return dialog
 }
 
-export const checkTwoFactorStatus = () => {
-    return jsonPostJson("/api/user/two-factor/status/")
+export const checkTwoFactorStatus = (settings = window.settings) => {
+    return jsonPostJson("/api/user/two-factor/status/", settings)
         .then(({json}) => {
             if (json.status === "success") {
                 return json.enabled

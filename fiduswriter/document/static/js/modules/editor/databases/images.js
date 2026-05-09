@@ -72,7 +72,13 @@ export class ModImageDB {
             }
         }
 
-        return jsonPostJson("/api/document/e2ee_image/", jsonData, false, files)
+        return jsonPostJson(
+            "/api/document/e2ee_image/",
+            this.mod.editor.app.settings,
+            jsonData,
+            false,
+            files
+        )
             .then(({json}) => {
                 const dbEntry = {
                     id: json.id,
@@ -129,10 +135,14 @@ export class ModImageDB {
     }
 
     deleteE2EEImageFromServer(id) {
-        jsonPost("/api/document/delete_e2ee_image/", {
-            doc_id: this.mod.editor.docInfo.id,
-            image_id: id
-        }).catch(() => {
+        jsonPost(
+            "/api/document/delete_e2ee_image/",
+            this.mod.editor.app.settings,
+            {
+                doc_id: this.mod.editor.docInfo.id,
+                image_id: id
+            }
+        ).catch(() => {
             // Silently ignore — orphaned image records are acceptable
         })
     }
@@ -207,7 +217,7 @@ export class ModImageDB {
 
         const newPromise = new Promise((resolve, reject) => {
             // Depends on the fact that service worker is working and cached the image basically.
-            get(imageUrl)
+            get(imageUrl, this.mod.editor.app.settings)
                 .then(response => response.blob())
                 .then(blob => {
                     const filename = imageUrl.split("/").pop()

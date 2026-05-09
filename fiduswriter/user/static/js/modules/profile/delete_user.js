@@ -49,27 +49,32 @@ export class DeleteUserDialog {
     deleteCurrentUser(password) {
         activateWait()
 
-        jsonPostBare("/api/user/delete/", {password}).then(response => {
-            switch (response.status) {
-                case 200:
-                    window.location = "/"
-                    break
-                case 403:
-                    addAlert(
-                        "error",
-                        gettext(
-                            "Staff accounts have to be deleted through the admin interface."
+        jsonPostBare("/api/user/delete/", this.settings, {password}).then(
+            response => {
+                switch (response.status) {
+                    case 200:
+                        window.location = "/"
+                        break
+                    case 403:
+                        addAlert(
+                            "error",
+                            gettext(
+                                "Staff accounts have to be deleted through the admin interface."
+                            )
                         )
-                    )
-                    break
-                case 401:
-                    addAlert("error", gettext("Password incorrect."))
-                    break
-                default:
-                    addAlert("error", gettext("Could not delete user account."))
-                    break
+                        break
+                    case 401:
+                        addAlert("error", gettext("Password incorrect."))
+                        break
+                    default:
+                        addAlert(
+                            "error",
+                            gettext("Could not delete user account.")
+                        )
+                        break
+                }
+                deactivateWait()
             }
-            deactivateWait()
-        })
+        )
     }
 }

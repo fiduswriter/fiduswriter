@@ -3,11 +3,19 @@ import {NativeImporter} from "../native"
 import {OdtConvert} from "./convert"
 
 export class OdtImporter {
-    constructor(file, user, path, importId, options = {}) {
+    constructor(
+        file,
+        user,
+        path,
+        importId,
+        options = {},
+        settings = window.settings
+    ) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
+        this.settings = settings
 
         this.bibDB = options.bibDB
 
@@ -25,7 +33,7 @@ export class OdtImporter {
     }
 
     getTemplate() {
-        return jsonPostJson("/api/document/get_template/", {
+        return jsonPostJson("/api/document/get_template/", this.settings, {
             import_id: this.importId
         }).then(({json}) => {
             this.template = json.template

@@ -1,10 +1,11 @@
 import {get} from "../../common"
 
 export class GetImages {
-    constructor(images, entries) {
+    constructor(images, entries, settings = window.settings) {
         this.images = images
         this.imageEntries = Object.values(this.images)
         this.entries = entries
+        this.settings = settings
         this.counter = 0
     }
 
@@ -62,7 +63,7 @@ export class GetImages {
                     entry.filename ===
                     `images/${this.imageEntries[this.counter].image.split("/").pop()}`
             ).url
-            return get(getUrl)
+            return get(getUrl, this.settings)
                 .then(response => response.blob())
                 .then(blob => {
                     this.imageEntries[this.counter]["file"] = blob

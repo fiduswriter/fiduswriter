@@ -3,11 +3,12 @@ import {descendantNodes} from "../tools/doc_content"
 import {svg2png} from "../tools/svg"
 
 export class DOCXExporterImages {
-    constructor(docContent, imageDB, xml, rels) {
+    constructor(docContent, imageDB, xml, rels, settings = window.settings) {
         this.docContent = docContent
         this.imageDB = imageDB
         this.xml = xml
         this.rels = rels
+        this.settings = settings
 
         this.images = {}
         this.ctXML = false
@@ -55,7 +56,7 @@ export class DOCXExporterImages {
             usedImgs.forEach(image => {
                 const imgDBEntry = this.imageDB.db[image]
                 p.push(
-                    get(imgDBEntry.image)
+                    get(imgDBEntry.image, this.settings)
                         .then(response => response.blob())
                         .then(blob => {
                             if (blob.type === "image/svg+xml") {

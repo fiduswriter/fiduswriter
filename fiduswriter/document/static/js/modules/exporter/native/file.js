@@ -6,12 +6,20 @@ import {ShrinkFidus} from "./shrink"
 import {ZipFidus} from "./zip"
 
 export class ExportFidusFile {
-    constructor(doc, bibDB, imageDB, includeTemplate = true, token = false) {
+    constructor(
+        doc,
+        bibDB,
+        imageDB,
+        includeTemplate = true,
+        token = false,
+        settings = window.settings
+    ) {
         this.doc = doc
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.includeTemplate = includeTemplate
         this.token = token
+        this.settings = settings
         return this.init()
     }
 
@@ -27,7 +35,8 @@ export class ExportFidusFile {
                     shrunkBibDB,
                     httpIncludes,
                     this.includeTemplate,
-                    this.token
+                    this.token,
+                    this.settings
                 )
                 return zipper.init()
             })

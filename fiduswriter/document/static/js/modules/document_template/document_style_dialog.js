@@ -1,12 +1,13 @@
 import {Dialog, escapeText, findTarget, jsonPostJson} from "../common"
 
 export class DocumentStyleDialog {
-    constructor(id, style, documentTemplateId, allStyles, refresh) {
+    constructor(id, style, documentTemplateId, allStyles, refresh, settings) {
         this.id = id
         this.style = style
         this.documentTemplateId = documentTemplateId
         this.allStyles = allStyles
         this.refresh = refresh
+        this.settings = settings
 
         this.addedFiles = []
         this.deletedFiles = []
@@ -136,7 +137,9 @@ export class DocumentStyleDialog {
     }
 
     deleteStyle() {
-        jsonPostJson("/api/style/delete_document_style/", {id: this.id})
+        jsonPostJson("/api/style/delete_document_style/", this.settings, {
+            id: this.id
+        })
             .then(() => {
                 const oldStyleIndex = this.allStyles.findIndex(
                     style => style.pk === this.id
@@ -221,6 +224,7 @@ export class DocumentStyleDialog {
     save({title, slug, contents}) {
         return jsonPostJson(
             "/api/style/save_document_style/",
+            this.settings,
             {
                 id: this.id,
                 title,

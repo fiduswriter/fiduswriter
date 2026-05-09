@@ -9,12 +9,14 @@ export class DocumentTemplateExporter {
         id,
         getUrl = "/api/document/admin/get_template/",
         download = true,
-        token = false
+        token = false,
+        settings
     ) {
         this.id = id
         this.getUrl = getUrl
         this.download = download
         this.token = token
+        this.settings = settings
 
         this.zipFileName = false
         this.docVersion = false
@@ -26,57 +28,61 @@ export class DocumentTemplateExporter {
         const params = this.token
             ? {id: this.id, token: this.token}
             : {id: this.id}
-        return jsonPostJson(this.getUrl, params).then(({json}) => {
-            this.docVersion = json.doc_version
-            this.zipFileName = `${createSlug(json.title)}.fidustemplate`
-            this.textFiles.push({
-                filename: "template.json",
-                contents: JSON.stringify(json.content)
-            })
-            const exportTemplates = []
-            json.export_templates.forEach(template => {
-                const filename = `exporttemplates/${template.fields.template_file.split("/").slice(-1)[0]}`
-                this.httpFiles.push({
-                    filename,
-                    url: template.fields.template_file
+        return jsonPostJson(this.getUrl, this.settings, params).then(
+            ({json}) => {
+                this.docVersion = json.doc_version
+                this.zipFileName = `${createSlug(json.title)}.fidustemplate`
+                this.textFiles.push({
+                    filename: "template.json",
+                    contents: JSON.stringify(json.content)
                 })
-                exportTemplates.push({
-                    file: filename,
-                    file_type: template.fields.file_type,
-                    title: template.fields.title
-                })
-            })
-            this.textFiles.push({
-                filename: "exporttemplates.json",
-                contents: JSON.stringify(exportTemplates)
-            })
-            const documentStyles = []
-            json.document_styles.forEach(docStyle => {
-                const style = {
-                    contents: docStyle.fields.contents,
-                    slug: docStyle.fields.slug,
-                    title: docStyle.fields.title,
-                    files: []
-                }
-                docStyle.fields.documentstylefile_set.forEach(docstyleFile => {
-                    const filename = `documentstyles/${docstyleFile[1]}`
+                const exportTemplates = []
+                json.export_templates.forEach(template => {
+                    const filename = `exporttemplates/${template.fields.template_file.split("/").slice(-1)[0]}`
                     this.httpFiles.push({
                         filename,
-                        url: docstyleFile[0]
+                        url: template.fields.template_file
                     })
-                    style.files.push(filename)
+                    exportTemplates.push({
+                        file: filename,
+                        file_type: template.fields.file_type,
+                        title: template.fields.title
+                    })
                 })
-                documentStyles.push(style)
-            })
-            this.textFiles.push({
-                filename: "documentstyles.json",
-                contents: JSON.stringify(documentStyles)
-            })
-            if (this.download) {
-                return this.createZip()
+                this.textFiles.push({
+                    filename: "exporttemplates.json",
+                    contents: JSON.stringify(exportTemplates)
+                })
+                const documentStyles = []
+                json.document_styles.forEach(docStyle => {
+                    const style = {
+                        contents: docStyle.fields.contents,
+                        slug: docStyle.fields.slug,
+                        title: docStyle.fields.title,
+                        files: []
+                    }
+                    docStyle.fields.documentstylefile_set.forEach(
+                        docstyleFile => {
+                            const filename = `documentstyles/${docstyleFile[1]}`
+                            this.httpFiles.push({
+                                filename,
+                                url: docstyleFile[0]
+                            })
+                            style.files.push(filename)
+                        }
+                    )
+                    documentStyles.push(style)
+                })
+                this.textFiles.push({
+                    filename: "documentstyles.json",
+                    contents: JSON.stringify(documentStyles)
+                })
+                if (this.download) {
+                    return this.createZip()
+                }
+                return Promise.resolve()
             }
-            return Promise.resolve()
-        })
+        )
     }
 
     createZip() {

@@ -144,7 +144,11 @@ export class LoginPage extends PreloginPage {
             if (errors) {
                 return
             }
-            return jsonPostJson("/api/user/login/", {login, password, remember})
+            return jsonPostJson("/api/user/login/", this.app.settings, {
+                login,
+                password,
+                remember
+            })
                 .catch(response => {
                     if (
                         !(response instanceof Response) ||
@@ -164,12 +168,15 @@ export class LoginPage extends PreloginPage {
                             !json.form.fields.password.errors.length
                         ) {
                             // User needs to complete 2FA verification
-                            twoFactorLoginDialog({
-                                login,
-                                password,
-                                remember,
-                                loginPage: this
-                            })
+                            twoFactorLoginDialog(
+                                {
+                                    login,
+                                    password,
+                                    remember,
+                                    loginPage: this
+                                },
+                                this.app.settings
+                            )
                         } else {
                             json.form.errors.forEach(
                                 error =>

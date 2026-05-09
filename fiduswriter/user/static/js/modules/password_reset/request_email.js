@@ -67,7 +67,9 @@ export class PasswordResetRequest extends PreloginPage {
                     return
                 }
 
-                jsonPost("/api/user/password/reset/", {email})
+                jsonPost("/api/user/password/reset/", this.app.settings, {
+                    email
+                })
                     .then(() => {
                         if (document.body !== this.dom) {
                             return

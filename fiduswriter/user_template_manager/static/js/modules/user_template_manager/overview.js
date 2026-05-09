@@ -59,7 +59,7 @@ export class DocTemplatesOverview {
             staticUrl("css/access_rights_dialog.css")
         ])
         setDocTitle(gettext("Document Templates Overview"), this.app)
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 
@@ -264,7 +264,7 @@ export class DocTemplatesOverview {
         if (this.app.isOffline()) {
             return this.showCached()
         }
-        return getJson("/api/user_template_manager/list/")
+        return getJson("/api/user_template_manager/list/", this.app.settings)
             .then(json => {
                 this.updateIndexedDB(json)
                 this.initializeView(json)

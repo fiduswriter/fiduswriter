@@ -66,7 +66,7 @@ export class BibliographyOverview {
             staticUrl("css/inline_tools.css")
         ])
         setDocTitle(gettext("Bibliography Manager"), this.app)
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 

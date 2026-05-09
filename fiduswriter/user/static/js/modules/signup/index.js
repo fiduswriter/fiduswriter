@@ -137,7 +137,7 @@ export class Signup extends PreloginPage {
             if (this.app.inviteKey) {
                 sendData["invite_key"] = this.app.inviteKey
             }
-            jsonPostJson("/api/user/signup/", sendData)
+            jsonPostJson("/api/user/signup/", this.app.settings, sendData)
                 .then(({json}) => {
                     if (json.location === "/api/account/confirm-email/") {
                         fwContents.innerHTML = `<div class="fw-login-left">

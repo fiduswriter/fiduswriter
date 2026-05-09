@@ -3,11 +3,19 @@ import {NativeImporter} from "../native"
 import {DocxConvert} from "./convert"
 
 export class DocxImporter {
-    constructor(file, user, path, importId, options = {}) {
+    constructor(
+        file,
+        user,
+        path,
+        importId,
+        options = {},
+        settings = window.settings
+    ) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
+        this.settings = settings
         this._options = options.files // Not used in the DOCX importer
 
         this.template = null
@@ -24,7 +32,7 @@ export class DocxImporter {
     }
 
     getTemplate() {
-        return jsonPostJson("/api/document/get_template/", {
+        return jsonPostJson("/api/document/get_template/", this.settings, {
             import_id: this.importId
         }).then(({json}) => {
             this.template = json.template

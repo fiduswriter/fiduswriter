@@ -19,10 +19,11 @@ import {documentrevisionsTemplate} from "./templates"
  * Functions for the recovering previously created document revisions.
  */
 export class DocumentRevisionsDialog {
-    constructor(documentId, documentList, user) {
+    constructor(documentId, documentList, user, settings = window.settings) {
         this.documentId = documentId // documentId The id in documentList.
         this.documentList = documentList
         this.user = user
+        this.settings = settings
         this.dialog = false
     }
 
@@ -81,7 +82,7 @@ export class DocumentRevisionsDialog {
 
     recreate(id, user) {
         const doc = this.documentList.find(doc => doc.id === this.documentId)
-        return get(`/api/document/get_revision/${id}/`)
+        return get(`/api/document/get_revision/${id}/`, this.settings)
             .then(response => response.blob())
             .then(blob => {
                 const importer = new FidusFileImporter(
@@ -116,7 +117,7 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        get(`/api/document/get_revision/${id}/`)
+        get(`/api/document/get_revision/${id}/`, this.settings)
             .then(response => response.blob())
             .then(blob => download(blob, filename, "application/fidus+zip"))
     }
@@ -160,7 +161,7 @@ export class DocumentRevisionsDialog {
     }
 
     deleteRevision(id) {
-        return jsonPost("/api/document/delete_revision/", {id})
+        return jsonPost("/api/document/delete_revision/", this.settings, {id})
             .then(() => {
                 const thisTr = document.querySelector(`tr.revision-${id}`),
                     documentId = thisTr.dataset.document,

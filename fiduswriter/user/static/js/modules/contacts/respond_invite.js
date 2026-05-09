@@ -5,12 +5,14 @@ export class RespondInviteDialog {
         invites,
         addCallback = _contacts => {},
         deleteCallback = _invites => {},
-        doneCallback = () => {}
+        doneCallback = () => {},
+        settings = window.settings
     ) {
         this.invites = invites
         this.addCallback = addCallback
         this.deleteCallback = deleteCallback
         this.doneCallback = doneCallback
+        this.settings = settings
     }
 
     init() {
@@ -22,7 +24,7 @@ export class RespondInviteDialog {
                         : gettext("Accept invite"),
                 classes: "fw-dark",
                 click: () => {
-                    jsonPostJson("/api/user/invites/accept/", {
+                    jsonPostJson("/api/user/invites/accept/", this.settings, {
                         invites: this.invites
                     }).then(({json, status}) => {
                         dialog.close()
@@ -42,7 +44,7 @@ export class RespondInviteDialog {
                         : gettext("Decline invite"),
                 classes: "fw-dark",
                 click: () => {
-                    jsonPostJson("/api/user/invites/decline/", {
+                    jsonPostJson("/api/user/invites/decline/", this.settings, {
                         invites: this.invites
                     }).then(({status}) => {
                         dialog.close()

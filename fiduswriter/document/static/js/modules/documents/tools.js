@@ -6,7 +6,8 @@ export const getMissingDocumentListData = (
     ids,
     documentList,
     schema,
-    rawContent = false
+    rawContent = false,
+    settings = window.settings
 ) => {
     // get extra data for the documents identified by the ids and updates the
     // documentList correspondingly.
@@ -29,7 +30,7 @@ export const getMissingDocumentListData = (
     })
 
     if (incompleteIds.length > 0) {
-        return jsonPostJson("/api/document/documentlist/extra/", {
+        return jsonPostJson("/api/document/documentlist/extra/", settings, {
             ids: incompleteIds
         })
             .then(({json}) => {

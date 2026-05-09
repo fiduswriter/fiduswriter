@@ -31,9 +31,13 @@ export class DocTemplatesEditor {
             .getStyles()
             .then(styles => {
                 this.citationStyles = styles
-                return jsonPostJson("/api/user_template_manager/get/", {
-                    id: this.id
-                })
+                return jsonPostJson(
+                    "/api/user_template_manager/get/",
+                    this.app.settings,
+                    {
+                        id: this.id
+                    }
+                )
             })
             .then(({json}) => {
                 this.template = json
@@ -54,7 +58,8 @@ export class DocTemplatesEditor {
                     this.template.document_styles,
                     this.citationStyles,
                     this.template.export_templates,
-                    this.dom.querySelector("#template-editor")
+                    this.dom.querySelector("#template-editor"),
+                    this.app.settings
                 )
                 this.templateDesigner.init()
                 this.bind()
@@ -96,7 +101,7 @@ export class DocTemplatesEditor {
         </div>`
         document.body = this.dom
         setDocTitle(gettext("Template Editor"), this.app)
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 
@@ -114,12 +119,16 @@ export class DocTemplatesEditor {
             this.showErrors(errors)
             return Promise.reject()
         } else {
-            return jsonPost("/api/user_template_manager/save/", {
-                id: this.id,
-                value,
-                import_id,
-                title
-            }).then(() => addAlert("info", gettext("Saved template")))
+            return jsonPost(
+                "/api/user_template_manager/save/",
+                this.app.settings,
+                {
+                    id: this.id,
+                    value,
+                    import_id,
+                    title
+                }
+            ).then(() => addAlert("info", gettext("Saved template")))
         }
     }
 
@@ -127,7 +136,10 @@ export class DocTemplatesEditor {
         this.save().then(() => {
             const exporter = new DocumentTemplateExporter(
                 this.id,
-                "/api/user_template_manager/get/"
+                "/api/user_template_manager/get/",
+                true,
+                false,
+                this.app.settings
             )
             exporter.init()
         })

@@ -442,7 +442,7 @@ export class App {
     }
 
     getConfiguration() {
-        return jsonPostJson("/api/base/configuration/")
+        return jsonPostJson("/api/base/configuration/", this.settings)
             .then(({json}) =>
                 Object.entries(json).forEach(
                     ([key, value]) => (this.config[key] = value)

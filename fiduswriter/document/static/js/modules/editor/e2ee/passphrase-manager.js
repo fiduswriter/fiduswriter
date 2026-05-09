@@ -18,9 +18,9 @@ export class PassphraseManager {
     /**
      * Check if the user has set up encryption keys on the server.
      */
-    static async hasEncryptionKeys() {
+    static async hasEncryptionKeys(settings) {
         try {
-            const data = await getJson("/api/user/encryption_key/")
+            const data = await getJson("/api/user/encryption_key/", settings)
             return data.has_key === true
         } catch (_e) {
             return false
@@ -55,7 +55,7 @@ export class PassphraseManager {
      * @param {string} passphrase - The user's chosen passphrase
      * @returns {Promise<Object>} {recoveryKey: string} - The recovery key to display
      */
-    static async setupEncryption(passphrase) {
+    static async setupEncryption(passphrase, settings) {
         // 1. Generate keys
         const masterKey = await PassphraseCrypto.generateMasterKey()
         const keyPair = await PassphraseCrypto.generateKeyPair()
@@ -107,6 +107,7 @@ export class PassphraseManager {
         }
         const {status} = await jsonPostJson(
             "/api/user/encryption_key/save/",
+            settings,
             saveData
         )
         if (status >= 400) {
@@ -125,9 +126,9 @@ export class PassphraseManager {
      * @param {string} passphrase - The user's passphrase
      * @returns {Promise<boolean>} true if successful
      */
-    static async unlockWithPassphrase(passphrase) {
+    static async unlockWithPassphrase(passphrase, settings = window.settings) {
         // 1. Fetch encrypted keys from server
-        const data = await getJson("/api/user/encryption_key/")
+        const data = await getJson("/api/user/encryption_key/", settings)
         if (!data.has_key) {
             throw new Error("No encryption keys found")
         }
@@ -163,9 +164,13 @@ export class PassphraseManager {
      * @param {string} newPassphrase - New passphrase
      * @returns {Promise<boolean>} true if successful
      */
-    static async changePassphrase(oldPassphrase, newPassphrase) {
+    static async changePassphrase(
+        oldPassphrase,
+        newPassphrase,
+        settings = window.settings
+    ) {
         // 1. Fetch encrypted keys from server
-        const data = await getJson("/api/user/encryption_key/")
+        const data = await getJson("/api/user/encryption_key/", settings)
         if (!data.has_key) {
             throw new Error("No encryption keys found")
         }
@@ -219,6 +224,7 @@ export class PassphraseManager {
         }
         const {status} = await jsonPostJson(
             "/api/user/encryption_key/save/",
+            settings,
             saveData
         )
         if (status >= 400) {
@@ -238,9 +244,13 @@ export class PassphraseManager {
      * @param {string} newPassphrase - The new passphrase to set
      * @returns {Promise<Object>} {newRecoveryKey: string}
      */
-    static async recoverWithRecoveryKey(recoveryKey, newPassphrase) {
+    static async recoverWithRecoveryKey(
+        recoveryKey,
+        newPassphrase,
+        settings = window.settings
+    ) {
         // 1. Fetch encrypted keys from server
-        const data = await getJson("/api/user/encryption_key/")
+        const data = await getJson("/api/user/encryption_key/", settings)
         if (!data.has_key) {
             throw new Error("No encryption keys found")
         }
@@ -309,6 +319,7 @@ export class PassphraseManager {
         }
         const {status} = await jsonPostJson(
             "/api/user/encryption_key/save/",
+            settings,
             saveData
         )
         if (status >= 400) {
@@ -334,16 +345,20 @@ export class PassphraseManager {
      * @param {number} documentId - The document ID
      * @returns {Promise<string|null>} The document password, or null if not available
      */
-    static async getDocumentPassword(documentId) {
+    static async getDocumentPassword(documentId, settings = window.settings) {
         const {masterKey, privateKey} =
             await PassphraseCrypto.getKeysFromSession()
         if (!masterKey || !privateKey) {
             return null
         }
 
-        const {json} = await jsonPostJson("/api/document/encryption_key/get/", {
-            document_id: documentId
-        })
+        const {json} = await jsonPostJson(
+            "/api/document/encryption_key/get/",
+            settings,
+            {
+                document_id: documentId
+            }
+        )
         if (!json.has_key) {
             return null
         }
@@ -367,11 +382,15 @@ export class PassphraseManager {
             // Upgrade to master-key encryption for next time
             const upgradedEncryptedPassword =
                 await PassphraseCrypto.encryptString(password, masterKey)
-            await jsonPostJson("/api/document/encryption_key/update/", {
-                id: json.id,
-                encrypted_key: upgradedEncryptedPassword,
-                encrypted_with_master_key: true
-            })
+            await jsonPostJson(
+                "/api/document/encryption_key/update/",
+                settings,
+                {
+                    id: json.id,
+                    encrypted_key: upgradedEncryptedPassword,
+                    encrypted_with_master_key: true
+                }
+            )
         }
 
         return password
@@ -396,7 +415,8 @@ export class PassphraseManager {
         password,
         holderId = null,
         _holderType = "user",
-        encryptedWithMasterKey = true
+        encryptedWithMasterKey = true,
+        settings = window.settings
     ) {
         let encryptedKey
         if (encryptedWithMasterKey) {
@@ -410,7 +430,8 @@ export class PassphraseManager {
             )
         } else {
             const pkJson = await getJson(
-                `/api/user/encryption_public_key/${holderId}/`
+                `/api/user/encryption_public_key/${holderId}/`,
+                settings
             )
             if (!pkJson.has_key) {
                 throw new Error("Recipient has not set up encryption")
@@ -436,6 +457,7 @@ export class PassphraseManager {
         }
         const {json, status} = await jsonPostJson(
             "/api/document/encryption_key/save/",
+            settings,
             saveData
         )
         if (status >= 400) {
@@ -464,10 +486,11 @@ export class PassphraseManager {
     /**
      * Check if a user has set up encryption keys (for sharing).
      */
-    static async userHasEncryptionKeys(userId) {
+    static async userHasEncryptionKeys(userId, settings = window.settings) {
         try {
             const data = await getJson(
-                `/api/user/encryption_public_key/${userId}/`
+                `/api/user/encryption_public_key/${userId}/`,
+                settings
             )
             return data.has_key === true
         } catch (_e) {
@@ -478,9 +501,9 @@ export class PassphraseManager {
     /**
      * Check if user has dismissed the passphrase setup offer.
      */
-    static async hasUserDismissedPassphraseOffer() {
+    static async hasUserDismissedPassphraseOffer(settings = window.settings) {
         try {
-            const data = await getJson("/api/user/preferences/get/")
+            const data = await getJson("/api/user/preferences/get/", settings)
             return data.preferences?.has_dismissed_passphrase_offer === true
         } catch (_e) {
             return false
@@ -490,9 +513,9 @@ export class PassphraseManager {
     /**
      * Mark that user has dismissed the passphrase setup offer.
      */
-    static async markPassphraseDismissed() {
+    static async markPassphraseDismissed(settings = window.settings) {
         try {
-            await jsonPost("/api/user/preferences/update/", {
+            await jsonPost("/api/user/preferences/update/", settings, {
                 has_dismissed_passphrase_offer: true
             })
         } catch (_e) {

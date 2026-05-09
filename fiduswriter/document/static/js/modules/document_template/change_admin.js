@@ -9,7 +9,8 @@ import {
 import {DocumentTemplateDesigner} from "./designer"
 
 export class DocumentTemplateAdmin {
-    constructor() {
+    constructor(settings) {
+        this.settings = settings
         this.objectTools = false
         this.contentTextarea = false
         this.templateDesigner = false
@@ -44,9 +45,13 @@ export class DocumentTemplateAdmin {
         ]
         if (this.id) {
             initialTasks.push(
-                jsonPostJson("/api/document/admin/get_template/extras/", {
-                    id: this.id
-                }).then(({json}) => (this.templateExtras = json))
+                jsonPostJson(
+                    "/api/document/admin/get_template/extras/",
+                    this.settings,
+                    {
+                        id: this.id
+                    }
+                ).then(({json}) => (this.templateExtras = json))
             )
         }
 
@@ -84,7 +89,8 @@ export class DocumentTemplateAdmin {
             this.templateExtras.document_styles || [],
             this.citationStyles,
             this.templateExtras.export_templates || [],
-            document.getElementById("template-editor")
+            document.getElementById("template-editor"),
+            this.settings
         )
         this.templateDesigner.init()
     }

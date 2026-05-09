@@ -3,10 +3,11 @@ import {descendantNodes} from "../tools/doc_content"
 import {svg2png} from "../tools/svg"
 
 export class ODTExporterImages {
-    constructor(docContent, xml, imageDB) {
+    constructor(docContent, xml, imageDB, settings = window.settings) {
         this.docContent = docContent
         this.xml = xml
         this.imageDB = imageDB
+        this.settings = settings
         this.images = {}
         this.manifestXml = false
     }
@@ -67,7 +68,7 @@ export class ODTExporterImages {
             usedImgs.forEach(image => {
                 const imgDBEntry = this.imageDB.db[image]
                 p.push(
-                    get(imgDBEntry.image)
+                    get(imgDBEntry.image, this.settings)
                         .then(response => response.blob())
                         .then(blob => {
                             const wImgId = this.addImage(

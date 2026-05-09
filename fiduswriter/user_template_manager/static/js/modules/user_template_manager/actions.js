@@ -26,7 +26,11 @@ export class DocTemplatesActions {
             return
         }
 
-        jsonPostJson("/api/user_template_manager/delete/", {id})
+        jsonPostJson(
+            "/api/user_template_manager/delete/",
+            this.docTemplatesOverview.app.settings,
+            {id}
+        )
             .catch(error => {
                 addAlert(
                     "error",
@@ -82,10 +86,14 @@ export class DocTemplatesActions {
     }
 
     copyDocTemplate(oldDocTemplate) {
-        return jsonPostJson("/api/user_template_manager/copy/", {
-            id: oldDocTemplate.id,
-            title: `${gettext("Copy of")} ${oldDocTemplate.title}`
-        })
+        return jsonPostJson(
+            "/api/user_template_manager/copy/",
+            this.docTemplatesOverview.app.settings,
+            {
+                id: oldDocTemplate.id,
+                title: `${gettext("Copy of")} ${oldDocTemplate.title}`
+            }
+        )
             .catch(error => {
                 addAlert(
                     "error",
@@ -106,7 +114,10 @@ export class DocTemplatesActions {
     downloadDocTemplate(id) {
         const exporter = new DocumentTemplateExporter(
             id,
-            "/api/user_template_manager/get/"
+            "/api/user_template_manager/get/",
+            true,
+            false,
+            this.docTemplatesOverview.app.settings
         )
         exporter.init()
     }
@@ -132,7 +143,8 @@ export class DocTemplatesActions {
 
                     const importer = new DocumentTemplateImporter(
                         fidusTemplateFile,
-                        "/api/user_template_manager/create/"
+                        "/api/user_template_manager/create/",
+                        this.docTemplatesOverview.app.settings
                     )
 
                     importer

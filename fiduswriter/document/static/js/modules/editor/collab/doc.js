@@ -206,15 +206,18 @@ export class ModCollabDoc {
                 return
             }
             try {
-                const existing =
-                    await PassphraseManager.getDocumentPassword(docId)
+                const existing = await PassphraseManager.getDocumentPassword(
+                    docId,
+                    this.mod.editor.app.settings
+                )
                 if (!existing) {
                     await PassphraseManager.saveDocumentPassword(
                         docId,
                         password,
                         null,
                         "user",
-                        true
+                        true,
+                        this.mod.editor.app.settings
                     )
                 }
             } catch (_e) {
@@ -259,7 +262,10 @@ export class ModCollabDoc {
 
         // --- Try passphrase path first ---
         if (PassphraseManager.hasKeysInSession()) {
-            const password = await PassphraseManager.getDocumentPassword(docId)
+            const password = await PassphraseManager.getDocumentPassword(
+                docId,
+                this.mod.editor.app.settings
+            )
             if (password) {
                 try {
                     await tryPassword(password)
@@ -275,7 +281,9 @@ export class ModCollabDoc {
 
         // If passphrase keys exist but are not in session, try to unlock
         if (!PassphraseManager.hasKeysInSession()) {
-            const hasKeys = await PassphraseManager.hasEncryptionKeys()
+            const hasKeys = await PassphraseManager.hasEncryptionKeys(
+                this.mod.editor.app.settings
+            )
             if (hasKeys) {
                 let errorMessage = ""
                 let unlocked = false
@@ -290,11 +298,13 @@ export class ModCollabDoc {
                     if (result.action === "unlock" && result.passphrase) {
                         try {
                             await PassphraseManager.unlockWithPassphrase(
-                                result.passphrase
+                                result.passphrase,
+                                this.mod.editor.app.settings
                             )
                             const password =
                                 await PassphraseManager.getDocumentPassword(
-                                    docId
+                                    docId,
+                                    this.mod.editor.app.settings
                                 )
                             if (password) {
                                 await tryPassword(password)
@@ -322,7 +332,8 @@ export class ModCollabDoc {
                                 const {newRecoveryKey} =
                                     await PassphraseManager.recoverWithRecoveryKey(
                                         recoverResult.recoveryKey,
-                                        recoverResult.newPassphrase
+                                        recoverResult.newPassphrase,
+                                        this.mod.editor.app.settings
                                     )
                                 const {showRecoveryKeyDialog} = await import(
                                     "../e2ee/passphrase-dialog.js"
@@ -528,7 +539,8 @@ export class ModCollabDoc {
                         try {
                             const existing =
                                 await PassphraseManager.getDocumentPassword(
-                                    this.mod.editor.docInfo.id
+                                    this.mod.editor.docInfo.id,
+                                    this.mod.editor.app.settings
                                 )
                             if (!existing) {
                                 await PassphraseManager.saveDocumentPassword(
@@ -536,7 +548,8 @@ export class ModCollabDoc {
                                     password,
                                     null,
                                     "user",
-                                    true
+                                    true,
+                                    this.mod.editor.app.settings
                                 )
                             }
                         } catch (_e) {

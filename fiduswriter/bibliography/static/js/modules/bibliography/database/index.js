@@ -8,7 +8,7 @@ export class BibliographyDB {
         this.app = app
         this.db = {}
         this.cats = []
-        this.sc = new BibliographyDBServerConnector()
+        this.sc = new BibliographyDBServerConnector(app.settings)
     }
 
     /** Get the bibliography from the server and create as this.db.

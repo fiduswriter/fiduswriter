@@ -20,7 +20,9 @@ export class FlatPage extends PreloginPage {
     }
 
     getPageData() {
-        return jsonPostJson("/api/base/flatpage/", {url: this.url})
+        return jsonPostJson("/api/base/flatpage/", this.app.settings, {
+            url: this.url
+        })
             .then(({json}) => {
                 this.title = json.title
                 this.contents = `<div class="fw-flatpage">

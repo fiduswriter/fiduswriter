@@ -19,7 +19,8 @@ export class NativeImporter {
         importId = null,
         requestedPath = "",
         template = null,
-        e2eeOptions = null
+        e2eeOptions = null,
+        settings = window.settings
     ) {
         this.doc = doc
         this.docId = false
@@ -32,12 +33,17 @@ export class NativeImporter {
         this.requestedPath = requestedPath
         this.template = template
         this.e2eeOptions = e2eeOptions // {enabled: boolean, key?: CryptoKey}
+        this.settings = settings
     }
 
     init() {
         const ImageTranslationTable = {}
         // We first create any new entries in the DB for images.
-        const imageGetter = new GetImages(this.images, this.otherFiles)
+        const imageGetter = new GetImages(
+            this.images,
+            this.otherFiles,
+            this.settings
+        )
         return imageGetter
             .init()
             .then(() => {
@@ -142,7 +148,13 @@ export class NativeImporter {
                             filename: imageEntry.image.split("/").pop()
                         }
                     }
-                    return jsonPostJson(endpoint, jsonData, false, files)
+                    return jsonPostJson(
+                        endpoint,
+                        this.settings,
+                        jsonData,
+                        false,
+                        files
+                    )
                 })
                 .then(
                     ({json}) => (ImageTranslationTable[imageEntry.id] = json.id)
@@ -221,6 +233,7 @@ export class NativeImporter {
         // can link the images to it.
         return jsonPostJson(
             "/api/document/import/create/",
+            this.settings,
             jsonData,
             false,
             files
@@ -279,7 +292,7 @@ export class NativeImporter {
                 bibliography: this.bibliography
             }
         }
-        return jsonPostJson("/api/document/import/", saveData)
+        return jsonPostJson("/api/document/import/", this.settings, saveData)
             .then(({json}) => {
                 const docInfo = {
                     is_owner: true,

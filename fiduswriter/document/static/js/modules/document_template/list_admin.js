@@ -80,7 +80,9 @@ export class DocumentTemplateListAdmin {
                         Promise.all(
                             files.map(file => {
                                 const importer = new DocumentTemplateImporter(
-                                    file
+                                    file,
+                                    "/api/document/admin/create_template/",
+                                    this.settings
                                 )
                                 return importer.init()
                             })
@@ -97,7 +99,13 @@ export class DocumentTemplateListAdmin {
                             )
                         ).map(el => Number.parseInt(el.value))
                         ids.forEach(id => {
-                            const exporter = new DocumentTemplateExporter(id)
+                            const exporter = new DocumentTemplateExporter(
+                                id,
+                                "/api/document/admin/get_template/",
+                                true,
+                                false,
+                                this.settings
+                            )
                             exporter.init()
                         })
                     }

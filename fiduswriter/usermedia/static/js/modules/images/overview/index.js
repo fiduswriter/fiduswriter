@@ -68,7 +68,7 @@ export class ImageOverview {
         document.body = this.dom
         ensureCSS([staticUrl("css/cropper.min.css")])
         setDocTitle(gettext("Media Manager"), this.app)
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 
@@ -97,7 +97,7 @@ export class ImageOverview {
             return
         }
         activateWait()
-        jsonPost("/api/usermedia/delete/", {ids})
+        jsonPost("/api/usermedia/delete/", this.app.settings, {ids})
             .catch(error => {
                 addAlert("error", gettext("The image(s) could not be deleted"))
                 deactivateWait()

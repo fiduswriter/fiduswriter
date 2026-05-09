@@ -76,9 +76,15 @@ export class PasswordResetChangePassword extends PreloginPage {
                 if (errors) {
                     return
                 }
-                get(`/api/account/password/reset/key/${this.key}/`)
+                get(
+                    `/api/account/password/reset/key/${this.key}/`,
+                    this.app.settings
+                )
                     .then(response => {
-                        return jsonPost(response.url, {password1, password2})
+                        return jsonPost(response.url, this.app.settings, {
+                            password1,
+                            password2
+                        })
                     })
                     .then(() => {
                         if (document.body !== this.dom) {

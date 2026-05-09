@@ -14,13 +14,15 @@ export class ZipFileCreator {
         binaryFiles = [],
         zipFiles = [],
         mimeType = "application/zip",
-        date = new Date()
+        date = new Date(),
+        settings
     ) {
         this.textFiles = textFiles
         this.binaryFiles = binaryFiles
         this.zipFiles = zipFiles
         this.mimeType = mimeType
         this.date = date
+        this.settings = settings
     }
 
     init() {
@@ -39,7 +41,7 @@ export class ZipFileCreator {
 
     includeZips() {
         const getZipBlobs = this.zipFiles.map(zipFile => {
-            return get(zipFile.url)
+            return get(zipFile.url, this.settings)
                 .then(response => response.blob())
                 .then(blob => (zipFile.blob = blob))
         })
@@ -63,7 +65,7 @@ export class ZipFileCreator {
             })
         })
         const blobPromises = this.binaryFiles.map(binaryFile =>
-            get(binaryFile.url)
+            get(binaryFile.url, this.settings)
                 .then(response => response.blob())
                 .then(blob =>
                     Promise.resolve({blob, filename: binaryFile.filename})

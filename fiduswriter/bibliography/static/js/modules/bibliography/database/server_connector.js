@@ -2,10 +2,12 @@ import {jsonPost, jsonPostJson} from "../../common/network"
 
 // class for server calls of BibliographyDB.
 export class BibliographyDBServerConnector {
-    constructor() {}
+    constructor(settings) {
+        this.settings = settings
+    }
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
-        return jsonPostJson("/api/bibliography/biblist/", {
+        return jsonPostJson("/api/bibliography/biblist/", this.settings, {
             last_modified: lastModified,
             number_of_entries: numberOfEntries,
             user_id: localStorageOwnerId
@@ -33,25 +35,29 @@ export class BibliographyDBServerConnector {
     }
 
     saveBibEntries(tmpDB, isNew) {
-        return jsonPostJson("/api/bibliography/save/", {
+        return jsonPostJson("/api/bibliography/save/", this.settings, {
             is_new: isNew,
             bibs: tmpDB
         }).then(({json}) => json["id_translations"])
     }
 
     saveCategories(cats) {
-        return jsonPostJson("/api/bibliography/save_category/", cats).then(
-            ({json}) => {
-                return json.entries
-            }
-        )
+        return jsonPostJson(
+            "/api/bibliography/save_category/",
+            this.settings,
+            cats
+        ).then(({json}) => {
+            return json.entries
+        })
     }
 
     deleteCategory(ids) {
-        return jsonPost("/api/bibliography/delete_category/", {ids})
+        return jsonPost("/api/bibliography/delete_category/", this.settings, {
+            ids
+        })
     }
 
     deleteBibEntries(ids) {
-        return jsonPost("/api/bibliography/delete/", {ids})
+        return jsonPost("/api/bibliography/delete/", this.settings, {ids})
     }
 }

@@ -369,7 +369,10 @@ export class Merge {
         new ExportFidusFile(
             this.getDocData(offlineDoc),
             this.mod.editor.mod.db.bibDB,
-            this.mod.editor.mod.db.imageDB
+            this.mod.editor.mod.db.imageDB,
+            true,
+            false,
+            this.mod.editor.app.settings
         )
 
         // Show up proper message

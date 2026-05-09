@@ -195,7 +195,7 @@ export class SiteMenu {
                                 sessionStorage.removeItem(key)
                             }
                         }
-                        jsonPost("/api/user/logout/").then(
+                        jsonPost("/api/user/logout/", this.app.settings).then(
                             () =>
                                 (window.location =
                                     this.app.routes[""].app === "document"

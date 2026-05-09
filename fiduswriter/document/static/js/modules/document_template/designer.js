@@ -45,7 +45,8 @@ export class DocumentTemplateDesigner {
         documentStyles,
         citationStyles,
         exportTemplates,
-        dom
+        dom,
+        settings
     ) {
         this.id = id
         this.title = title
@@ -54,6 +55,7 @@ export class DocumentTemplateDesigner {
         this.citationStyles = citationStyles
         this.exportTemplates = exportTemplates
         this.dom = dom
+        this.settings = settings
 
         this.editors = []
         this.listeners = {
@@ -626,7 +628,8 @@ export class DocumentTemplateDesigner {
                                 ".document-styles"
                             ).innerHTML = documentStylesTemplate({
                                 documentStyles: this.documentStyles
-                            }))
+                            })),
+                        this.settings
                     )
                     dialog.init()
                     break
@@ -650,7 +653,8 @@ export class DocumentTemplateDesigner {
                                 ).innerHTML = exportTemplatesTemplate({
                                     exportTemplates: this.exportTemplates
                                 })),
-                            value
+                            value,
+                            this.settings
                         )
                         dialog.init()
                     }

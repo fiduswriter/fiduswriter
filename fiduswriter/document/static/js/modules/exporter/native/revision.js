@@ -54,6 +54,7 @@ export class SaveRevision {
     uploadRevision(blob) {
         jsonPost(
             "/api/document/upload/",
+            this.app.settings,
             {
                 note: this.note,
                 document_id: this.doc.id

@@ -15,14 +15,16 @@ export class ImageDB {
 
         activateWait()
 
-        return jsonPostJson("/api/usermedia/images/").then(({json}) => {
-            this.cats = json.imageCategories
-            json.images.forEach(image => {
-                this.db[image.id] = image
-            })
-            deactivateWait()
-            return
-        })
+        return jsonPostJson("/api/usermedia/images/", this.app.settings).then(
+            ({json}) => {
+                this.cats = json.imageCategories
+                json.images.forEach(image => {
+                    this.db[image.id] = image
+                })
+                deactivateWait()
+                return
+            }
+        )
     }
 
     saveImage(imageData) {
@@ -31,6 +33,7 @@ export class ImageDB {
 
         return jsonPostJson(
             "/api/usermedia/save/",
+            this.app.settings,
             jsonData,
             false,
             image ? {image} : {}

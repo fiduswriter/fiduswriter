@@ -32,7 +32,11 @@ export class DocumentOverviewActions {
         if (!doc) {
             return Promise.resolve()
         }
-        return jsonPostJson("/api/document/delete/", {id}).then(({json}) => {
+        return jsonPostJson(
+            "/api/document/delete/",
+            this.documentOverview.app.settings,
+            {id}
+        ).then(({json}) => {
             if (json.done) {
                 addAlert(
                     "success",
@@ -388,7 +392,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() => {
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -416,7 +422,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() => {
             const docs = ids.map(id =>
                 this.documentOverview.documentList.find(
@@ -595,26 +603,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
-        ).then(() =>
-            ids.forEach(id => {
-                const doc = this.documentOverview.documentList.find(
-                    entry => entry.id === id
-                )
-                new ExportFidusFile(
-                    doc,
-                    {db: doc.bibliography},
-                    {db: doc.images}
-                )
-            })
-        )
-    }
-
-    downloadSlimNativeFiles(ids) {
-        getMissingDocumentListData(
-            ids,
-            this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() =>
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -624,7 +615,33 @@ export class DocumentOverviewActions {
                     doc,
                     {db: doc.bibliography},
                     {db: doc.images},
-                    false
+                    true,
+                    false,
+                    this.documentOverview.app.settings
+                )
+            })
+        )
+    }
+
+    downloadSlimNativeFiles(ids) {
+        getMissingDocumentListData(
+            ids,
+            this.documentOverview.documentList,
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
+        ).then(() =>
+            ids.forEach(id => {
+                const doc = this.documentOverview.documentList.find(
+                    entry => entry.id === id
+                )
+                new ExportFidusFile(
+                    doc,
+                    {db: doc.bibliography},
+                    {db: doc.images},
+                    false,
+                    false,
+                    this.documentOverview.app.settings
                 )
             })
         )
@@ -634,7 +651,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() =>
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -659,7 +678,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() => {
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -696,7 +717,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() =>
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -719,7 +742,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() =>
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -744,7 +769,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() =>
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -769,7 +796,9 @@ export class DocumentOverviewActions {
         getMissingDocumentListData(
             ids,
             this.documentOverview.documentList,
-            this.documentOverview.schema
+            this.documentOverview.schema,
+            false,
+            this.documentOverview.app.settings
         ).then(() =>
             ids.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
@@ -803,7 +832,8 @@ export class DocumentOverviewActions {
         const revDialog = new DocumentRevisionsDialog(
             documentId,
             this.documentOverview.documentList,
-            this.documentOverview.user
+            this.documentOverview.user,
+            this.documentOverview.app.settings
         )
         revDialog.init().then(actionObject => {
             switch (actionObject.action) {

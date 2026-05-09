@@ -66,10 +66,14 @@ export const headerbarModel = () => ({
                             !editor.docInfo.is_owner
                         ) {
                             // TokenUser requesting access
-                            jsonPostJson("/api/document/request_access/", {
-                                document_id: editor.docInfo.id,
-                                rights: "write"
-                            })
+                            jsonPostJson(
+                                "/api/document/request_access/",
+                                editor.app.settings,
+                                {
+                                    document_id: editor.docInfo.id,
+                                    rights: "write"
+                                }
+                            )
                                 .then(({json}) => {
                                     if (json.success) {
                                         addAlert(
@@ -114,7 +118,8 @@ export const headerbarModel = () => ({
                                     try {
                                         const hasKeys =
                                             await PassphraseManager.userHasEncryptionKeys(
-                                                ar.holder.id
+                                                ar.holder.id,
+                                                editor.app.settings
                                             )
                                         if (hasKeys) {
                                             // Recipient has passphrase keys —
@@ -124,7 +129,8 @@ export const headerbarModel = () => ({
                                                 editor.e2ee.password,
                                                 ar.holder.id,
                                                 "user",
-                                                false
+                                                false,
+                                                editor.app.settings
                                             )
                                         } else {
                                             noPassphraseUsers.push(
@@ -291,7 +297,8 @@ export const headerbarModel = () => ({
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
                             true,
-                            editor.docInfo.token
+                            editor.docInfo.token,
+                            editor.app.settings
                         )
                     },
                     disabled: editor => editor.app.isOffline()
@@ -455,7 +462,8 @@ export const headerbarModel = () => ({
                                                 newPassword,
                                                 null,
                                                 "user",
-                                                true
+                                                true,
+                                                editor.app.settings
                                             )
                                         } catch (_e) {
                                             console.error(
@@ -666,7 +674,9 @@ export const headerbarModel = () => ({
                             editor.getDoc(),
                             editor.mod.db.bibDB,
                             editor.mod.db.imageDB,
-                            false
+                            false,
+                            false,
+                            editor.app.settings
                         )
                     }
                 }

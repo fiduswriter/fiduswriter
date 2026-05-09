@@ -34,7 +34,11 @@ export class EmailConfirm extends PreloginPage {
         this.formChecks = []
         this.confirmQuestionsTemplates = []
         this.confirmMethods = [
-            () => jsonPost(`/api/user/confirm-email/${this.key}/`)
+            () =>
+                jsonPost(
+                    `/api/user/confirm-email/${this.key}/`,
+                    this.app.settings
+                )
         ]
     }
 
@@ -47,7 +51,11 @@ export class EmailConfirm extends PreloginPage {
     }
 
     getConfirmData() {
-        return jsonPostJson("/api/user/get_confirmkey_data/", {key: this.key})
+        return jsonPostJson(
+            "/api/user/get_confirmkey_data/",
+            this.app.settings,
+            {key: this.key}
+        )
             .then(({json}) => {
                 this.username = json.username
                 this.email = json.email

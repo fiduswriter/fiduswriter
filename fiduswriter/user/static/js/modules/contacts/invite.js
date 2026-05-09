@@ -18,11 +18,11 @@ export class ContactInvite {
             return this.app.page.init()
         }
 
-        return jsonPostJson("/api/user/invite/", {key: this.key}).then(
-            ({json}) => {
-                window.history.replaceState({}, "", json.redirect)
-                return this.app.selectPage()
-            }
-        )
+        return jsonPostJson("/api/user/invite/", this.app.settings, {
+            key: this.key
+        }).then(({json}) => {
+            window.history.replaceState({}, "", json.redirect)
+            return this.app.selectPage()
+        })
     }
 }

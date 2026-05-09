@@ -5,7 +5,8 @@ import {ensureCSS, jsonPost} from "../common"
 // This is also where browser sniffing happens to prevent still unsupported browsers from logging in.
 
 export class FeedbackTab {
-    constructor() {
+    constructor(settings = window.settings) {
+        this.settings = settings
         this.previousActiveElement = null
     }
 
@@ -101,7 +102,9 @@ export class FeedbackTab {
         closeFeedbackEl.style.display = "none"
         feedbackFormEl.style.visibility = "hidden"
 
-        jsonPost("/api/feedback/feedback/", {message: messageEl.value})
+        jsonPost("/api/feedback/feedback/", this.settings, {
+            message: messageEl.value
+        })
             .then(() => {
                 messageEl.value = ""
                 closeFeedbackEl.style.display = "block"

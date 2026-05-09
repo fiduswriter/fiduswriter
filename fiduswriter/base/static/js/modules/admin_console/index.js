@@ -3,7 +3,9 @@ import {addAlert, findTarget, getJson, jsonPostJson, whenReady} from "../common"
 // To see how many users are currently online and send them maintenance messages
 
 export class AdminConsole {
-    constructor() {}
+    constructor(settings) {
+        this.settings = settings
+    }
 
     init() {
         whenReady().then(() => {
@@ -44,19 +46,17 @@ export class AdminConsole {
     }
 
     sendSystemMessage(message) {
-        return jsonPostJson("/api/base/send_system_message/", {message}).then(
-            () => {
-                addAlert("info", gettext("Message delivered successfully!"))
-                const button = document.querySelector(
-                    "input#submit_user_message"
-                )
-                button.value = gettext("Message delivered")
-            }
-        )
+        return jsonPostJson("/api/base/send_system_message/", this.settings, {
+            message
+        }).then(() => {
+            addAlert("info", gettext("Message delivered successfully!"))
+            const button = document.querySelector("input#submit_user_message")
+            button.value = gettext("Message delivered")
+        })
     }
 
     render() {
-        return getJson("/api/base/connection_info/").then(
+        return getJson("/api/base/connection_info/", this.settings).then(
             ({sessions, users}) => {
                 const sessionCounterEl =
                     document.getElementById("session_count")

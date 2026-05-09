@@ -29,12 +29,12 @@ export class ModDocumentTemplate {
         //Cache the template files using Service Worker
         for (const key in styles.export_templates) {
             const template = styles.export_templates[key]
-            get(template.template_file)
+            get(template.template_file, this.editor.app.settings)
         }
         //Cache the required font related files too!
         this.documentStyles.forEach(docStyle => {
             docStyle.documentstylefile_set.forEach(([url, _filename]) =>
-                get(url)
+                get(url, this.editor.app.settings)
             )
         })
     }

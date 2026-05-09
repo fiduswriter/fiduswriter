@@ -318,13 +318,17 @@ export class ModCommentInteractions {
         const comment = this.mod.store.findComment(id)
         const {html, text} = serializeComment(comment.comment)
 
-        jsonPost("/api/document/comment_notify/", {
-            doc_id: this.mod.editor.docInfo.id,
-            collaborator_id: user,
-            comment_html: html,
-            comment_text: text,
-            type: "assign"
-        })
+        jsonPost(
+            "/api/document/comment_notify/",
+            this.mod.editor.app.settings,
+            {
+                doc_id: this.mod.editor.docInfo.id,
+                collaborator_id: user,
+                comment_html: html,
+                comment_text: text,
+                type: "assign"
+            }
+        )
     }
 
     updateComment({id, comment, isMajor}) {

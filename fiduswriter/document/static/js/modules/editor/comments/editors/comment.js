@@ -199,7 +199,12 @@ export class CommentEditor {
             const comment = this.view.state.doc,
                 docId = this.mod.editor.docInfo.id
             newUserTags.forEach(userId =>
-                notifyMentionedUser(docId, userId, comment)
+                notifyMentionedUser(
+                    docId,
+                    userId,
+                    comment,
+                    this.mod.editor.app.settings
+                )
             )
         }
     }

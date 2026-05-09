@@ -246,10 +246,14 @@ export class Editor {
                 initPromises.push(this._createE2EEDocument())
             } else {
                 initPromises.push(
-                    jsonPostJson("/api/document/create_doc/", {
-                        template_id: this.docInfo.templateId,
-                        path: this.docInfo.path
-                    }).then(({json}) => {
+                    jsonPostJson(
+                        "/api/document/create_doc/",
+                        this.app.settings,
+                        {
+                            template_id: this.docInfo.templateId,
+                            path: this.docInfo.path
+                        }
+                    ).then(({json}) => {
                         this.docInfo.id = json.id
                         window.history.replaceState(
                             "",
@@ -267,7 +271,8 @@ export class Editor {
             this.docInfo.token = this.docInfo.id
             initPromises.push(
                 jsonPostJson(
-                    `/api/document/share_token/validate/${this.docInfo.token}/`
+                    `/api/document/share_token/validate/${this.docInfo.token}/`,
+                    this.app.settings
                 ).then(({json, status}) => {
                     if (status === 200 && json.document_id) {
                         this.docInfo.id = json.document_id
@@ -297,15 +302,21 @@ export class Editor {
                 }
                 const wsBasePromise = this.docInfo.wsBase
                     ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
-                    : jsonPostJson("/api/document/get_ws_base/", {
-                          id: this.docInfo.id
-                      })
+                    : jsonPostJson(
+                          "/api/document/get_ws_base/",
+                          this.app.settings,
+                          {
+                              id: this.docInfo.id
+                          }
+                      )
                 const stylesPromise = jsonPostJson(
                     "/api/document/get_doc_styles/",
+                    this.app.settings,
                     stylesPayload
                 )
                 const docDataPromise = jsonPostJson(
                     "/api/document/get_doc_data/",
+                    this.app.settings,
                     stylesPayload
                 )
                 return Promise.all([
@@ -464,11 +475,15 @@ export class Editor {
                                 // our version (v) lets the endpoint include the
                                 // covering diffs as `m` so adjustDocument can
                                 // do a precise merge.
-                                jsonPostJson("/api/document/get_doc_data/", {
-                                    id: this.docInfo.id,
-                                    token: this.docInfo.token,
-                                    v: this.docInfo.version
-                                }).then(({json}) => {
+                                jsonPostJson(
+                                    "/api/document/get_doc_data/",
+                                    this.app.settings,
+                                    {
+                                        id: this.docInfo.id,
+                                        token: this.docInfo.token,
+                                        v: this.docInfo.version
+                                    }
+                                ).then(({json}) => {
                                     this.mod.collab.doc.receiveDocument(json)
                                 })
                                 break
@@ -620,7 +635,9 @@ export class Editor {
                                                 doc,
                                                 this.mod.db.bibDB,
                                                 this.mod.db.imageDB,
-                                                false
+                                                false,
+                                                false,
+                                                this.app.settings
                                             )
                                         }
                                     },
@@ -675,7 +692,10 @@ export class Editor {
         new ExportFidusFile(
             this.getDoc({use_current_view: true}),
             this.mod.db.bibDB,
-            this.mod.db.imageDB
+            this.mod.db.imageDB,
+            true,
+            false,
+            this.app.settings
         )
         const accessRightModifiedDialog = new Dialog({
             title: gettext("Access rights modified"),
@@ -712,7 +732,9 @@ export class Editor {
         let password, key, saltBase64, iterations
 
         // Check if the user has a personal passphrase set up
-        const hasPassphraseKeys = await PassphraseManager.hasEncryptionKeys()
+        const hasPassphraseKeys = await PassphraseManager.hasEncryptionKeys(
+            this.app.settings
+        )
 
         if (hasPassphraseKeys) {
             // Check if keys are unlocked in sessionStorage
@@ -727,7 +749,8 @@ export class Editor {
                 if (result.action === "unlock" && result.passphrase) {
                     try {
                         await PassphraseManager.unlockWithPassphrase(
-                            result.passphrase
+                            result.passphrase,
+                            this.app.settings
                         )
                     } catch (_e) {
                         addAlert("error", gettext("Incorrect passphrase."))
@@ -745,7 +768,8 @@ export class Editor {
                             const {newRecoveryKey} =
                                 await PassphraseManager.recoverWithRecoveryKey(
                                     recoverResult.recoveryKey,
-                                    recoverResult.newPassphrase
+                                    recoverResult.newPassphrase,
+                                    this.app.settings
                                 )
                             const {showRecoveryKeyDialog} = await import(
                                 "./e2ee/passphrase-dialog.js"
@@ -790,13 +814,17 @@ export class Editor {
         )
 
         // Create the document on the server with E2EE parameters
-        const {json, status} = await jsonPostJson("/api/document/create_doc/", {
-            template_id: this.docInfo.templateId,
-            path: this.docInfo.path,
-            e2ee: true,
-            e2ee_salt: saltBase64,
-            e2ee_iterations: iterations
-        })
+        const {json, status} = await jsonPostJson(
+            "/api/document/create_doc/",
+            this.app.settings,
+            {
+                template_id: this.docInfo.templateId,
+                path: this.docInfo.path,
+                e2ee: true,
+                e2ee_salt: saltBase64,
+                e2ee_iterations: iterations
+            }
+        )
 
         if (status === 403) {
             addAlert(
@@ -822,7 +850,8 @@ export class Editor {
                     password,
                     null,
                     "user",
-                    true
+                    true,
+                    this.app.settings
                 )
             } catch (_e) {
                 console.error("Failed to save document password:", _e)
@@ -937,7 +966,7 @@ export class Editor {
             </div>
         </div>
         <div id="unobtrusive-messages"></div>`
-        const feedbackTab = new FeedbackTab()
+        const feedbackTab = new FeedbackTab(this.app.settings)
         feedbackTab.init()
     }
 

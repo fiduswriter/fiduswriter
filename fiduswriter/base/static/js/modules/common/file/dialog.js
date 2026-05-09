@@ -15,8 +15,10 @@ export class FileDialog {
         successMessage = "", // Message for success
         errorMessage = "", // Message for failure
         succcessCallback = (_file, _path) => {}, // Callback on success
-        fileIcon = "far fa-file-alt"
+        fileIcon = "far fa-file-alt",
+        settings
     }) {
+        this.settings = settings
         this.title = title
         this.movingFiles = movingFiles
         this.allFiles = allFiles
@@ -122,7 +124,13 @@ export class FileDialog {
     }
 
     moveFile(file, requestedPath) {
-        return moveFile(file.id, file.title, requestedPath, this.moveUrl)
+        return moveFile(
+            file.id,
+            file.title,
+            requestedPath,
+            this.moveUrl,
+            this.settings
+        )
             .then(path => {
                 addAlert(
                     "success",

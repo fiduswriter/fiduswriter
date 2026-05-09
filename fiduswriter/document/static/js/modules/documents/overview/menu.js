@@ -61,7 +61,10 @@ export const bulkMenuModel = () => ({
                         ids,
                         overview.contacts,
                         memberDetails => overview.contacts.push(memberDetails),
-                        e2ee
+                        e2ee,
+                        "",
+                        null,
+                        overview.app.settings
                     )
                     dialog.init()
                 }

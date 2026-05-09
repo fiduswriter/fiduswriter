@@ -37,7 +37,7 @@ export const menuModel = () => ({
             title: gettext("Invite contact"),
             keys: "Alt-i",
             action: overview => {
-                const dialog = new AddContactDialog()
+                const dialog = new AddContactDialog(overview.app.settings)
                 dialog.init().then(contacts => {
                     contacts.forEach(contact => overview.contacts.push(contact))
                     overview.initializeView()

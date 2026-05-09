@@ -27,9 +27,10 @@ export class DocumentAccessRightsDialog {
         documentIds,
         contacts,
         newContactCall,
-        e2ee = false,
-        documentPassword = "",
-        onShareSuccess = null
+        e2ee,
+        documentPassword,
+        onShareSuccess,
+        settings
     ) {
         this.documentIds = documentIds
         this.contacts = contacts
@@ -45,6 +46,7 @@ export class DocumentAccessRightsDialog {
         // Optional callback invoked after access rights are saved successfully.
         // Receives the array of new access rights.
         this.onShareSuccess = onShareSuccess
+        this.settings = settings
     }
 
     init() {
@@ -237,12 +239,13 @@ export class DocumentAccessRightsDialog {
         const buttons = [
             {
                 text:
-                    settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN
+                    this.settings?.REGISTRATION_OPEN ||
+                    this.settings?.SOCIALACCOUNT_OPEN
                         ? gettext("Add contact or invite new user")
                         : gettext("Add contact"),
                 classes: "fw-light fw-add-button",
                 click: () => {
-                    const dialog = new AddContactDialog()
+                    const dialog = new AddContactDialog(this.settings)
                     dialog.init().then(contactsData => {
                         contactsData.forEach(contactData => {
                             if (contactData.id) {

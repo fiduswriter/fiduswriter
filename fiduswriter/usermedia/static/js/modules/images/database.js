@@ -3,7 +3,8 @@ import {activateWait, addAlert, deactivateWait, jsonPostJson} from "../common"
 /* A class that holds information about images uploaded by the user. */
 
 export class ImageDB {
-    constructor() {
+    constructor(app) {
+        this.app = app
         this.db = {}
         this.cats = []
     }
@@ -47,7 +48,7 @@ export class ImageDB {
                 if (error.status === 413) {
                     addAlert(
                         "error",
-                        `${gettext("Image is larger than the maximum permitted size")}${settings_MEDIA_MAX_SIZE ? `: ${Number.parseInt(settings_MEDIA_MAX_SIZE / 1000000)}MB` : "."}`
+                        `${gettext("Image is larger than the maximum permitted size")}${this.app.settings?.MEDIA_MAX_SIZE ? `: ${Number.parseInt(this.app.settings.MEDIA_MAX_SIZE / 1000000)}MB` : "."}`
                     )
                 } else if (error.message) {
                     addAlert("error", gettext(error.message))

@@ -1,4 +1,7 @@
 import {AdminConsole} from "./modules/admin_console/index.js"
+import {initSettings} from "./modules/common/settings.js"
+
+initSettings(window.settings)
 
 const theAdminConsole = new AdminConsole()
 

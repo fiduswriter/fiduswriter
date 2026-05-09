@@ -39,6 +39,9 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
+        empty_outbox(
+            MAIL_STORAGE_NAME
+        )  # Clear any emails left from a previous run
         self.user = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
@@ -435,16 +438,31 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         select = driver.find_element(By.ID, "language")
         select.find_element(By.CSS_SELECTOR, "option[value='es']").click()
-        driver.find_element(By.ID, "submit-profile").click()
+        submit_btn = driver.find_element(By.ID, "submit-profile")
+        submit_btn.click()
 
-        # Wait for the save to complete
-        time.sleep(1)
+        # Wait for the page to fully reload in Spanish
+        # (the save triggers window.location.reload() when language changes)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.staleness_of(submit_btn)
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "preferences-btn"))
+        )
+        # Also wait for the HTML lang attribute to reflect Spanish
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: d.execute_script("return document.documentElement.lang")
+            == "es"
+        )
 
         # Log out to test if language persists on login
         driver.find_element(By.ID, "preferences-btn").click()
-
-        driver.find_element(
-            By.XPATH, '//*[normalize-space()="Cerrar sesión"]'
+        # The preferences dropdown is a ContentMenu that renders li.content-menu-item elements.
+        # The logout option is the last item (profile=0, contacts=1, logout=2).
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "li.content-menu-item[data-index='2']")
+            )
         ).click()
 
         # Wait for login page

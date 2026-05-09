@@ -3,6 +3,9 @@
     window.settings.staticUrl = function(url) {
         return window.settings.STATIC_URL + url + "?v=" + window.settings.VERSION;
     };
+    window.settings.apiUrl = function(url) {
+        return url;
+    };
     window.settings.getCsrfToken = function() {
         var name = window.settings.CSRF_COOKIE_NAME || "csrftoken";
         if (!document.cookie || document.cookie === "") {

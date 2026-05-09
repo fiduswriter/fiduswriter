@@ -12,6 +12,7 @@ import {
     jsonPostJson,
     showSystemMessage
 } from "../common"
+import {getSettings, initSettings} from "../common/settings"
 import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
 import {EmailConfirm} from "../email_confirm"
@@ -31,7 +32,8 @@ import {Signup} from "../signup"
 
 export class App {
     constructor(settings = {}) {
-        this.settings = settings
+        initSettings(settings)
+        this.settings = getSettings()
         this.config = {}
         this.name = "Fidus Writer"
         this.config.app = this

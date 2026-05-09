@@ -1,3 +1,5 @@
+import {getSettings} from "./settings"
+
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
@@ -30,8 +32,9 @@ const handleFetchErrors = response => {
 }
 
 export const get = (url, params = {}, csrfToken = false) => {
+    const settings = getSettings()
     if (!csrfToken) {
-        csrfToken = window.settings.getCsrfToken() // Won't work in web worker.
+        csrfToken = settings.getCsrfToken() // Won't work in web worker.
     }
     const queryString = Object.keys(params)
         .map(
@@ -42,7 +45,7 @@ export const get = (url, params = {}, csrfToken = false) => {
     if (queryString.length) {
         url = `${url}?${queryString}`
     }
-    return fetch(url, {
+    return fetch(settings.apiURL(url), {
         method: "GET",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -51,7 +54,7 @@ export const get = (url, params = {}, csrfToken = false) => {
         },
         credentials: "include"
     })
-        .then(window.settings.postResponseHook)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
 }
 
@@ -59,12 +62,13 @@ export const getJson = (url, params = {}, csrfToken = false) =>
     get(url, params, csrfToken).then(response => response.json())
 
 export const postBare = (url, params = {}, csrfToken = false) => {
+    const settings = getSettings()
     console.warn(
         `postBare("${url}") is deprecated and will be removed in a future version. ` +
             "Use jsonPostBare() instead."
     )
     if (!csrfToken) {
-        csrfToken = window.settings.getCsrfToken() // Won't work in web worker.
+        csrfToken = settings.getCsrfToken() // Won't work in web worker.
     }
     const body = new FormData()
     body.append("csrfmiddlewaretoken", csrfToken)
@@ -85,7 +89,7 @@ export const postBare = (url, params = {}, csrfToken = false) => {
         }
     })
 
-    return fetch(url, {
+    return fetch(settings.apiURL(url), {
         method: "POST",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -97,11 +101,12 @@ export const postBare = (url, params = {}, csrfToken = false) => {
     })
 }
 
-export const post = (url, params = {}, csrfToken = false) =>
-    postBare(url, params, csrfToken)
-        .then(window.settings.postResponseHook)
+export const post = (url, params = {}, csrfToken = false) => {
+    const settings = getSettings()
+    return postBare(url, params, csrfToken)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
-
+}
 // post and then return json and status
 export const postJson = (url, params = {}, csrfToken = false) =>
     post(url, params, csrfToken).then(response =>
@@ -114,9 +119,11 @@ export const jsonPostBare = (
     csrfToken = false,
     files = {}
 ) => {
+    const settings = getSettings()
+
     // post json object rather than form data.
     if (!csrfToken) {
-        csrfToken = window.settings.getCsrfToken() // Won't work in web worker.
+        csrfToken = settings.getCsrfToken() // Won't work in web worker.
     }
 
     if (Object.keys(files).length) {
@@ -134,7 +141,7 @@ export const jsonPostBare = (
             }
         })
 
-        return fetch(url, {
+        return fetch(settings.apiURL(url), {
             method: "POST",
             headers: {
                 "X-CSRFToken": csrfToken,
@@ -146,7 +153,7 @@ export const jsonPostBare = (
         })
     }
 
-    return fetch(url, {
+    return fetch(settings.apiURL(url), {
         method: "POST",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -159,10 +166,12 @@ export const jsonPostBare = (
     })
 }
 
-export const jsonPost = (url, object = {}, csrfToken = false, files = {}) =>
-    jsonPostBare(url, object, csrfToken, files)
-        .then(window.settings.postResponseHook)
+export const jsonPost = (url, object = {}, csrfToken = false, files = {}) => {
+    const settings = getSettings()
+    return jsonPostBare(url, object, csrfToken, files)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
+}
 
 // post json object and return json and status
 export const jsonPostJson = (url, object = {}, csrfToken = false, files = {}) =>

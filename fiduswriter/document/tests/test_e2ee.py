@@ -378,14 +378,24 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         """
         old_password = "OldPass123"
         new_password = "NewPass456"
-        self.create_e2ee_document_via_ui(password=old_password)
+        doc_id = self.create_e2ee_document_via_ui(password=old_password)
         self.add_title_and_body(title="Change Pass", body="content here")
+
+        # Snapshot the current DB salt so we can detect when the server
+        # has committed the re-encrypted snapshot after the password change.
+        old_salt = Document.objects.get(id=doc_id).e2ee_salt
 
         # Open File menu
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
-        time.sleep(0.5)
+
+        # Wait for the pulldown to be populated before reading items.
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "li > .fw-pulldown-item")
+            )
+        )
 
         # Click "Change password"
         menu_items = self.driver.find_elements(
@@ -428,9 +438,22 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
-        # Wait for dialog to close. The re-encryption snapshot is sent
-        # asynchronously via WebSocket. Give it time to reach the server.
-        time.sleep(4)
+        # Wait for the JS-side success alert. It is only shown after
+        # reEncryptWithNewKey() has finished all crypto work and called
+        # ws.send() to queue the new snapshot for the server.
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".alerts-success")
+            )
+        )
+
+        # Now poll the database until the server consumer has received the
+        # WebSocket snapshot and committed the new salt.  This is the
+        # authoritative signal that re-opening the document will use the
+        # new key rather than the old one.
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda _: Document.objects.get(id=doc_id).e2ee_salt != old_salt
+        )
 
         # Verify the document still loads and content is preserved
         self.driver.get(self.base_url)
@@ -458,14 +481,6 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-
-        # Wait for either editor to load or error dialog to appear
-        time.sleep(3)
-        error_msg = self.driver.execute_script(
-            "return window.lastE2EEDecryptError || null;"
-        )
-        if error_msg:
-            print(f"JS DECRYPT ERROR: {error_msg}")
 
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))

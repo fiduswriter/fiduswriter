@@ -548,10 +548,6 @@ export class ModCollabDoc {
                     }
                 } catch (_error) {
                     console.error("E2EE DECRYPT ERROR:", _error)
-                    if (typeof window !== "undefined") {
-                        window.lastE2EEDecryptError =
-                            _error?.message || String(_error)
-                    }
                     const errorDialog = new Dialog({
                         title: gettext("Decryption Failed"),
                         id: "e2ee-decryption-failed",

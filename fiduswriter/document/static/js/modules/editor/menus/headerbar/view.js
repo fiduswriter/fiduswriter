@@ -448,12 +448,14 @@ export class HeaderbarView {
         const docTitleEl = document.body.querySelector("h1#document-title")
         const path = cleanPath(this.getTitle(), docTitleEl.innerText.trim())
         this.editor.docInfo.path = path
-        this.editor.ws.send(() => {
-            return {
-                type: "path_change",
-                path
-            }
-        })
+        if (this.editor.ws) {
+            this.editor.ws.send(() => {
+                return {
+                    type: "path_change",
+                    path
+                }
+            })
+        }
         this.update()
     }
 

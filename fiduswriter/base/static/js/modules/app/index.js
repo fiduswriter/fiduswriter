@@ -365,6 +365,9 @@ export class App {
     }
 
     connectWs() {
+        if (!this.config.ws_url_base) {
+            return
+        }
         this.ws = new WebSocketConnector({
             base: this.config.ws_url_base,
             path: "/base/",

@@ -45,7 +45,7 @@ export const get = (url, params = {}, csrfToken = false) => {
     if (queryString.length) {
         url = `${url}?${queryString}`
     }
-    return fetch(settings.apiURL(url), {
+    return fetch(settings.apiUrl(url), {
         method: "GET",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -89,7 +89,7 @@ export const postBare = (url, params = {}, csrfToken = false) => {
         }
     })
 
-    return fetch(settings.apiURL(url), {
+    return fetch(settings.apiUrl(url), {
         method: "POST",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -141,7 +141,7 @@ export const jsonPostBare = (
             }
         })
 
-        return fetch(settings.apiURL(url), {
+        return fetch(settings.apiUrl(url), {
             method: "POST",
             headers: {
                 "X-CSRFToken": csrfToken,
@@ -153,7 +153,7 @@ export const jsonPostBare = (
         })
     }
 
-    return fetch(settings.apiURL(url), {
+    return fetch(settings.apiUrl(url), {
         method: "POST",
         headers: {
             "X-CSRFToken": csrfToken,

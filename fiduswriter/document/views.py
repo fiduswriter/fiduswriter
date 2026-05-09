@@ -113,7 +113,7 @@ def documents_list(request):
             listed=True,
         )
         .defer("content", "comments", "bibliography", "doc_version", "diffs")
-        .select_related("owner")
+        .select_related("owner", "template")
         .prefetch_related(
             "accessright_set",
             "documentrevision_set",
@@ -173,6 +173,7 @@ def documents_list(request):
                 "updated": updated,
                 "rights": access_right,
                 "revisions": revision_list,
+                "template": document.template.title,
             }
         )
     return output_list

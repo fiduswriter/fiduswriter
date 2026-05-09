@@ -768,6 +768,7 @@ export class DocumentOverview {
                 <span class="fw-searchable${doc.e2ee && !hasDecryptedTitle ? " e2ee-encrypted-title" : ""}">
                     ${shortFileTitle(displayTitle, doc.path)}
                 </span>
+                ${doc.template ? `<small class="doc-template-name">${escapeText(doc.template)}</small>` : ""}
             </a>`,
             doc.revisions.length
                 ? `<span class="revisions" data-id="${doc.id}">

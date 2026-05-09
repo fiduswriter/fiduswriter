@@ -6,3 +6,10 @@
     width: 30px;
     text-align: center;
 }
+
+.fw-document-table a.fw-data-table-title .doc-template-name {
+    display: block;
+    font-size: 0.8em;
+    color: var(--cs-light-text-secondary);
+    margin-top: 2px;
+}

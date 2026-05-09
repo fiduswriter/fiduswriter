@@ -16,4 +16,7 @@ export const deleteFolderCell = ({subdir, ids}) =>
         '<i class="fa fa-trash-alt"></i>
 </span>`
 
-export const dateCell = ({date}) => localizeDate(date * 1000, "sortable-date")
+export const dateCell = ({date}) => ({
+    data: localizeDate(date * 1000, "sortable-date"),
+    text: localizeDate(date * 1000, "minutes")
+})

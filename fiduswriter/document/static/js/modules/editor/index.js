@@ -57,6 +57,7 @@ import {
     toolbarModel
 } from "./menus"
 import {ModNavigator} from "./navigator"
+import {NoCollabSave} from "./no_collab_save"
 import {ModTrack, acceptAllNoInsertions, amendTransaction} from "./track"
 
 import {ExportFidusFile} from "../exporter/native/file"
@@ -295,11 +296,17 @@ export class Editor {
                 if (this.docInfo.token) {
                     stylesPayload.token = this.docInfo.token
                 }
-                const wsBasePromise = this.docInfo.wsBase
-                    ? Promise.resolve({json: {ws_base: this.docInfo.wsBase}})
-                    : jsonPostJson("/api/document/get_ws_base/", {
-                          id: this.docInfo.id
-                      })
+                const collaborativeEditing =
+                    this.app.settings.COLLABORATIVE_EDITING !== false
+                const wsBasePromise = collaborativeEditing
+                    ? this.docInfo.wsBase
+                        ? Promise.resolve({
+                              json: {ws_base: this.docInfo.wsBase}
+                          })
+                        : jsonPostJson("/api/document/get_ws_base/", {
+                              id: this.docInfo.id
+                          })
+                    : Promise.resolve({json: {ws_base: ""}})
                 const stylesPromise = jsonPostJson(
                     "/api/document/get_doc_styles/",
                     stylesPayload
@@ -347,299 +354,326 @@ export class Editor {
                 let resubScribed = false
                 this.render()
                 this.initEditor()
-                // Include token in WebSocket path if present
-                let wsPath = `/document/${this.docInfo.id}/`
-                if (this.docInfo.token) {
-                    wsPath += `?token=${this.docInfo.token}`
-                }
-                this.ws = new WebSocketConnector({
-                    base: wsResult.json.ws_base,
-                    path: wsPath,
-                    appLoaded: () => this.view.state.plugins.length,
-                    anythingToSend: () => sendableSteps(this.view.state),
-                    initialMessage: () => {
-                        const message = {
-                            type: "subscribe",
-                            v: this.docInfo.version
-                        }
+                const collaborativeEditing =
+                    this.app.settings.COLLABORATIVE_EDITING !== false
+                if (collaborativeEditing) {
+                    // Include token in WebSocket path if present
+                    let wsPath = `/document/${this.docInfo.id}/`
+                    if (this.docInfo.token) {
+                        wsPath += `?token=${this.docInfo.token}`
+                    }
+                    this.ws = new WebSocketConnector({
+                        base: wsResult.json.ws_base,
+                        path: wsPath,
+                        appLoaded: () => this.view.state.plugins.length,
+                        anythingToSend: () => sendableSteps(this.view.state),
+                        initialMessage: () => {
+                            const message = {
+                                type: "subscribe",
+                                v: this.docInfo.version
+                            }
 
-                        if (this.ws.connectionCount) {
-                            message.connection = this.ws.connectionCount
-                        }
-                        return message
-                    },
-                    resubScribed: () => {
-                        if (
-                            sendableSteps(
-                                this.mod.footnotes.fnEditor.view.state
-                            )
-                        ) {
-                            this.mod.collab.doc.footnoteRender = true
-                        }
-                        resubScribed = true
-                        this.mod.footnotes.fnEditor.renderAllFootnotes()
-                        this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
-                    },
-                    restartMessage: () => ({
-                        type: "check_version",
-                        v: this.docInfo.version
-                    }),
-                    messagesElement: () =>
-                        this.dom.querySelector("#unobtrusive-messages"),
-                    warningNotAllSent: gettext(
-                        "Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."
-                    ),
-                    infoDisconnected: gettext(
-                        "Disconnected. Attempting to reconnect..."
-                    ),
-                    receiveData: data => {
-                        if (document.body !== this.dom) {
-                            return // user navigated away.
-                        }
-                        switch (data.type) {
-                            case "chat":
-                                this.mod.collab.chat.newMessage(data)
-                                break
-                            case "connections":
-                                this.mod.collab.updateParticipantList(
-                                    data.participant_list
+                            if (this.ws.connectionCount) {
+                                message.connection = this.ws.connectionCount
+                            }
+                            return message
+                        },
+                        resubScribed: () => {
+                            if (
+                                sendableSteps(
+                                    this.mod.footnotes.fnEditor.view.state
                                 )
-                                if (resubScribed) {
-                                    // Reconnecting after offline with
-                                    // local edits: ask the server to
-                                    // save first so that the REST
-                                    // refetch reflects the definitive
-                                    // server state and adjustDocument
-                                    // can run the tracked-changes merge.
-                                    const missingSteps = sendableSteps(
-                                        this.view.state
+                            ) {
+                                this.mod.collab.doc.footnoteRender = true
+                            }
+                            resubScribed = true
+                            this.mod.footnotes.fnEditor.renderAllFootnotes()
+                            this.mod.collab.doc.awaitingDiffResponse = true // wait sending diffs till the version is confirmed
+                        },
+                        restartMessage: () => ({
+                            type: "check_version",
+                            v: this.docInfo.version
+                        }),
+                        messagesElement: () =>
+                            this.dom.querySelector("#unobtrusive-messages"),
+                        warningNotAllSent: gettext(
+                            "Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect..."
+                        ),
+                        infoDisconnected: gettext(
+                            "Disconnected. Attempting to reconnect..."
+                        ),
+                        receiveData: data => {
+                            if (document.body !== this.dom) {
+                                return // user navigated away.
+                            }
+                            switch (data.type) {
+                                case "chat":
+                                    this.mod.collab.chat.newMessage(data)
+                                    break
+                                case "connections":
+                                    this.mod.collab.updateParticipantList(
+                                        data.participant_list
                                     )
-                                    this.mod.collab.doc.checkVersion(
-                                        missingSteps
-                                    )
-                                    resubScribed = false
-                                }
-                                break
-                            case "session_info":
-                                this.docInfo.session_id = data.session_id
-                                // Update access rights from server
-                                if (data.access_right) {
-                                    this.docInfo.access_rights =
-                                        data.access_right
-                                }
-                                // Update guest user identity with session_id
-                                if (!this.user.is_authenticated) {
-                                    this.user = {
-                                        id: this.docInfo.token,
-                                        username: `guest${data.session_id}`,
-                                        name: `Guest ${data.session_id}`,
-                                        is_authenticated: false
-                                    }
-                                }
-                                // Handle E2EE encryption parameters from server
-                                if (data.e2ee) {
-                                    if (!this.e2ee) {
-                                        this.e2ee = {
-                                            encrypted: true,
-                                            encryptionSalt: data.e2ee_salt,
-                                            encryptionIterations:
-                                                data.e2ee_iterations,
-                                            key: null,
-                                            snapshotManager:
-                                                new E2EESnapshotManager(this)
-                                        }
-                                    } else {
-                                        this.e2ee.encrypted = true
-                                        this.e2ee.encryptionSalt =
-                                            data.e2ee_salt
-                                        this.e2ee.encryptionIterations =
-                                            data.e2ee_iterations
-                                    }
-                                }
-                                break
-                            case "refetch_doc":
-                                // The server has forced a DB save before
-                                // sending this message, so the REST response
-                                // will be at the current server version. Passing
-                                // our version (v) lets the endpoint include the
-                                // covering diffs as `m` so adjustDocument can
-                                // do a precise merge.
-                                jsonPostJson("/api/document/get_doc_data/", {
-                                    id: this.docInfo.id,
-                                    token: this.docInfo.token,
-                                    v: this.docInfo.version
-                                }).then(({json}) => {
-                                    this.mod.collab.doc.receiveDocument(json)
-                                })
-                                break
-                            case "confirm_version":
-                                this.mod.collab.doc.cancelCurrentlyCheckingVersion()
-                                if (data["v"] !== this.docInfo.version) {
-                                    this.mod.collab.doc.checkVersion()
-                                    return
-                                }
-                                this.mod.collab.doc.confirmVersion(data["v"])
-                                this.mod.collab.doc.enableDiffSending()
-                                break
-                            case "selection_change":
-                                this.mod.collab.doc.cancelCurrentlyCheckingVersion()
-                                if (data["v"] !== this.docInfo.version) {
-                                    this.mod.collab.doc.checkVersion()
-                                    return
-                                }
-                                this.mod.collab.doc.receiveSelectionChange(data)
-                                break
-                            case "path_change":
-                                this.docInfo.path = data["path"]
-                                this.menu.headerView.update()
-                                break
-                            case "diff":
-                                if (data["cid"] === this.client_id) {
-                                    // The diff origins from the local user.
-                                    this.mod.collab.doc.confirmDiff(data["rid"])
-                                    return
-                                }
-                                if (data["v"] !== this.docInfo.version) {
-                                    this.mod.collab.doc.checkVersion()
-                                    return
-                                }
-                                this.mod.collab.doc.receiveDiff(data)
-                                break
-                            case "confirm_diff":
-                                this.mod.collab.doc.confirmDiff(data["rid"])
-                                break
-                            case "reject_diff":
-                                this.mod.collab.doc.rejectDiff(data["rid"])
-                                break
-                            case "patch_error":
-                                showSystemMessage(
-                                    gettext(
-                                        "Your document was out of sync and has been reset."
-                                    )
-                                )
-                                break
-                            case "access_right":
-                                if (
-                                    data.access_right !==
-                                    this.docInfo.access_rights
-                                ) {
-                                    if (
-                                        sendableSteps(this.view.state) &&
-                                        !WRITE_ROLES.includes(data.access_right)
-                                    ) {
-                                        // If the user's new rights does not allow him to update document , then download a copy of the
-                                        // same and ask him to re-open the document.
-                                        this.handleAccessRightModification()
-                                    } else {
-                                        addAlert(
-                                            "info",
-                                            interpolate(
-                                                gettext(
-                                                    "Your Access rights have been modified. You now have %(accessRight)s access to this document."
-                                                ),
-                                                {
-                                                    accessRight:
-                                                        data.access_right
-                                                },
-                                                true
-                                            )
+                                    if (resubScribed) {
+                                        // Reconnecting after offline with
+                                        // local edits: ask the server to
+                                        // save first so that the REST
+                                        // refetch reflects the definitive
+                                        // server state and adjustDocument
+                                        // can run the tracked-changes merge.
+                                        const missingSteps = sendableSteps(
+                                            this.view.state
                                         )
+                                        this.mod.collab.doc.checkVersion(
+                                            missingSteps
+                                        )
+                                        resubScribed = false
+                                    }
+                                    break
+                                case "session_info":
+                                    this.docInfo.session_id = data.session_id
+                                    // Update access rights from server
+                                    if (data.access_right) {
                                         this.docInfo.access_rights =
                                             data.access_right
                                     }
-                                }
-                                break
-                            case "request_snapshot":
-                                // Server is asking a write-capable client to
-                                // send an encrypted snapshot for persistence.
-                                if (this.e2ee && this.e2ee.snapshotManager) {
-                                    this.e2ee.snapshotManager.handleRequestSnapshot(
-                                        data
-                                    )
-                                }
-                                break
-                            case "e2ee_snapshot_received":
-                                // Server confirmed that an encrypted snapshot
-                                // was saved. Informational — no action needed.
-                                if (this.e2ee && this.e2ee.snapshotManager) {
-                                    this.e2ee.snapshotManager.handleSnapshotReceived(
-                                        data
-                                    )
-                                }
-                                break
-                            default:
-                                break
-                        }
-                    },
-                    failedAuth: () => {
-                        // Clear all E2EE keys on session expiration
-                        E2EEKeyManager.clearAllKeysFromSession()
-                        PassphraseManager.clearKeysFromSession()
-                        if (this.docInfo.token) {
-                            // Token-based access failed
-                            const tokenDialog = new Dialog({
-                                title: gettext("Invalid Share Link"),
-                                id: "invalid_token_dialog",
-                                body: gettext(
-                                    "This share link has expired or is invalid. Please ask the document owner for a new link."
-                                ),
-                                buttons: [
-                                    {
-                                        text: gettext("OK"),
-                                        classes: "fw-dark",
-                                        click: () => {
-                                            window.location.href = "/"
+                                    // Update guest user identity with session_id
+                                    if (!this.user.is_authenticated) {
+                                        this.user = {
+                                            id: this.docInfo.token,
+                                            username: `guest${data.session_id}`,
+                                            name: `Guest ${data.session_id}`,
+                                            is_authenticated: false
                                         }
                                     }
-                                ],
-                                canClose: false
-                            })
-                            tokenDialog.open()
-                            return
-                        }
-                        if (
-                            this.view.state.plugins.length &&
-                            sendableSteps(this.view.state) &&
-                            this.ws.connectionCount > 0
-                        ) {
-                            this.ws.online = false // To avoid Websocket trying to reconnect.
-                            const sessionDialog = new Dialog({
-                                title: gettext("Session Expired"),
-                                id: "session_expiration_dialog",
-                                body: gettext(
-                                    "Your session expired while you were offline, so we cannot save your work to the server any longer, but you can download it to your computer instead. Please consider importing it as a new document after logging in."
-                                ),
-                                buttons: [
-                                    {
-                                        text: gettext("Download Document"),
-                                        click: () => {
-                                            const doc = this.getDoc({
-                                                use_current_view: true
-                                            })
-                                            new ExportFidusFile(
-                                                doc,
-                                                this.mod.db.bibDB,
-                                                this.mod.db.imageDB,
-                                                false
+                                    // Handle E2EE encryption parameters from server
+                                    if (data.e2ee) {
+                                        if (!this.e2ee) {
+                                            this.e2ee = {
+                                                encrypted: true,
+                                                encryptionSalt: data.e2ee_salt,
+                                                encryptionIterations:
+                                                    data.e2ee_iterations,
+                                                key: null,
+                                                snapshotManager:
+                                                    new E2EESnapshotManager(
+                                                        this
+                                                    )
+                                            }
+                                        } else {
+                                            this.e2ee.encrypted = true
+                                            this.e2ee.encryptionSalt =
+                                                data.e2ee_salt
+                                            this.e2ee.encryptionIterations =
+                                                data.e2ee_iterations
+                                        }
+                                    }
+                                    break
+                                case "refetch_doc":
+                                    // The server has forced a DB save before
+                                    // sending this message, so the REST response
+                                    // will be at the current server version. Passing
+                                    // our version (v) lets the endpoint include the
+                                    // covering diffs as `m` so adjustDocument can
+                                    // do a precise merge.
+                                    jsonPostJson(
+                                        "/api/document/get_doc_data/",
+                                        {
+                                            id: this.docInfo.id,
+                                            token: this.docInfo.token,
+                                            v: this.docInfo.version
+                                        }
+                                    ).then(({json}) => {
+                                        this.mod.collab.doc.receiveDocument(
+                                            json
+                                        )
+                                    })
+                                    break
+                                case "confirm_version":
+                                    this.mod.collab.doc.cancelCurrentlyCheckingVersion()
+                                    if (data["v"] !== this.docInfo.version) {
+                                        this.mod.collab.doc.checkVersion()
+                                        return
+                                    }
+                                    this.mod.collab.doc.confirmVersion(
+                                        data["v"]
+                                    )
+                                    this.mod.collab.doc.enableDiffSending()
+                                    break
+                                case "selection_change":
+                                    this.mod.collab.doc.cancelCurrentlyCheckingVersion()
+                                    if (data["v"] !== this.docInfo.version) {
+                                        this.mod.collab.doc.checkVersion()
+                                        return
+                                    }
+                                    this.mod.collab.doc.receiveSelectionChange(
+                                        data
+                                    )
+                                    break
+                                case "path_change":
+                                    this.docInfo.path = data["path"]
+                                    this.menu.headerView.update()
+                                    break
+                                case "diff":
+                                    if (data["cid"] === this.client_id) {
+                                        // The diff origins from the local user.
+                                        this.mod.collab.doc.confirmDiff(
+                                            data["rid"]
+                                        )
+                                        return
+                                    }
+                                    if (data["v"] !== this.docInfo.version) {
+                                        this.mod.collab.doc.checkVersion()
+                                        return
+                                    }
+                                    this.mod.collab.doc.receiveDiff(data)
+                                    break
+                                case "confirm_diff":
+                                    this.mod.collab.doc.confirmDiff(data["rid"])
+                                    break
+                                case "reject_diff":
+                                    this.mod.collab.doc.rejectDiff(data["rid"])
+                                    break
+                                case "patch_error":
+                                    showSystemMessage(
+                                        gettext(
+                                            "Your document was out of sync and has been reset."
+                                        )
+                                    )
+                                    break
+                                case "access_right":
+                                    if (
+                                        data.access_right !==
+                                        this.docInfo.access_rights
+                                    ) {
+                                        if (
+                                            sendableSteps(this.view.state) &&
+                                            !WRITE_ROLES.includes(
+                                                data.access_right
                                             )
-                                        }
-                                    },
-                                    {
-                                        text: gettext("Proceed to Login page"),
-                                        classes: "fw-dark",
-                                        click: () => {
-                                            window.location.href = "/"
+                                        ) {
+                                            // If the user's new rights does not allow him to update document , then download a copy of the
+                                            // same and ask him to re-open the document.
+                                            this.handleAccessRightModification()
+                                        } else {
+                                            addAlert(
+                                                "info",
+                                                interpolate(
+                                                    gettext(
+                                                        "Your Access rights have been modified. You now have %(accessRight)s access to this document."
+                                                    ),
+                                                    {
+                                                        accessRight:
+                                                            data.access_right
+                                                    },
+                                                    true
+                                                )
+                                            )
+                                            this.docInfo.access_rights =
+                                                data.access_right
                                         }
                                     }
-                                ],
-                                canClose: false
-                            })
-                            sessionDialog.open()
-                        } else {
-                            window.location.href = "/"
+                                    break
+                                case "request_snapshot":
+                                    // Server is asking a write-capable client to
+                                    // send an encrypted snapshot for persistence.
+                                    if (
+                                        this.e2ee &&
+                                        this.e2ee.snapshotManager
+                                    ) {
+                                        this.e2ee.snapshotManager.handleRequestSnapshot(
+                                            data
+                                        )
+                                    }
+                                    break
+                                case "e2ee_snapshot_received":
+                                    // Server confirmed that an encrypted snapshot
+                                    // was saved. Informational — no action needed.
+                                    if (
+                                        this.e2ee &&
+                                        this.e2ee.snapshotManager
+                                    ) {
+                                        this.e2ee.snapshotManager.handleSnapshotReceived(
+                                            data
+                                        )
+                                    }
+                                    break
+                                default:
+                                    break
+                            }
+                        },
+                        failedAuth: () => {
+                            // Clear all E2EE keys on session expiration
+                            E2EEKeyManager.clearAllKeysFromSession()
+                            PassphraseManager.clearKeysFromSession()
+                            if (this.docInfo.token) {
+                                // Token-based access failed
+                                const tokenDialog = new Dialog({
+                                    title: gettext("Invalid Share Link"),
+                                    id: "invalid_token_dialog",
+                                    body: gettext(
+                                        "This share link has expired or is invalid. Please ask the document owner for a new link."
+                                    ),
+                                    buttons: [
+                                        {
+                                            text: gettext("OK"),
+                                            classes: "fw-dark",
+                                            click: () => {
+                                                window.location.href = "/"
+                                            }
+                                        }
+                                    ],
+                                    canClose: false
+                                })
+                                tokenDialog.open()
+                                return
+                            }
+                            if (
+                                this.view.state.plugins.length &&
+                                sendableSteps(this.view.state) &&
+                                this.ws.connectionCount > 0
+                            ) {
+                                this.ws.online = false // To avoid Websocket trying to reconnect.
+                                const sessionDialog = new Dialog({
+                                    title: gettext("Session Expired"),
+                                    id: "session_expiration_dialog",
+                                    body: gettext(
+                                        "Your session expired while you were offline, so we cannot save your work to the server any longer, but you can download it to your computer instead. Please consider importing it as a new document after logging in."
+                                    ),
+                                    buttons: [
+                                        {
+                                            text: gettext("Download Document"),
+                                            click: () => {
+                                                const doc = this.getDoc({
+                                                    use_current_view: true
+                                                })
+                                                new ExportFidusFile(
+                                                    doc,
+                                                    this.mod.db.bibDB,
+                                                    this.mod.db.imageDB,
+                                                    false
+                                                )
+                                            }
+                                        },
+                                        {
+                                            text: gettext(
+                                                "Proceed to Login page"
+                                            ),
+                                            classes: "fw-dark",
+                                            click: () => {
+                                                window.location.href = "/"
+                                            }
+                                        }
+                                    ],
+                                    canClose: false
+                                })
+                                sessionDialog.open()
+                            } else {
+                                window.location.href = "/"
+                            }
                         }
-                    }
-                })
+                    })
+                }
                 this.mod.documentTemplate.setStyles(stylesResult.json)
                 const docIsE2EE = docResult.json.doc_info?.e2ee === true
                 this.mod.collab.doc.receiveDocument(docResult.json)
@@ -647,8 +681,18 @@ export class Editor {
                 // after the password dialog and decryption are complete (see
                 // _decryptAndLoadDoc). This ensures the key is available when
                 // catch-up diffs arrive from the server.
-                if (!docIsE2EE) {
+                if (collaborativeEditing && !docIsE2EE) {
                     this.startWebSocket()
+                } else if (!collaborativeEditing) {
+                    if (!this.noCollabSave) {
+                        this.noCollabSave = new NoCollabSave(this)
+                    }
+                    this.noCollabSave.start()
+                    if (!docIsE2EE) {
+                        // In non-collaborative mode there is no server
+                        // confirm_version message, so mark it locally.
+                        this.mod.collab.doc.confirmVersion(this.docInfo.version)
+                    }
                 }
             })
     }
@@ -872,6 +916,15 @@ export class Editor {
                     }
                 })
                 sessionStorage.setItem(`e2ee_title_${this.docInfo.id}`, title)
+            }
+        }
+        if (this.noCollabSave) {
+            this.noCollabSave.stop()
+            if (this.docInfo.access_rights === "write") {
+                // Fire a final save before closing. For SPA navigation the
+                // promise usually has enough time to complete; for actual page
+                // unload the beforeunload/pagehide handler covers us.
+                this.noCollabSave.save()
             }
         }
         if (this.ws) {

@@ -771,6 +771,90 @@ def import_doc(request):
 @login_required
 @ajax_required
 @require_POST
+def save_document(request):
+    """Save a document directly via REST (non-collaborative mode).
+
+    Used when COLLABORATIVE_EDITING is False to persist document
+    changes without WebSocket-based collaborative editing.
+    """
+    if settings.COLLABORATIVE_EDITING:
+        return JsonResponse(
+            {
+                "error": "Direct document saving is disabled in collaborative mode."
+            },
+            status=403,
+        )
+    response = {}
+    doc_id = request.JSON.get("id")
+    document = Document.objects.filter(id=int(doc_id)).first()
+    if not document:
+        return JsonResponse({}, status=404)
+
+    can_save = False
+    if document.owner == request.user:
+        can_save = True
+    else:
+        access_rights = AccessRight.objects.filter(
+            document=document, user=request.user
+        ).first()
+        if access_rights and access_rights.rights in CAN_UPDATE_DOCUMENT:
+            can_save = True
+
+    if not can_save:
+        return JsonResponse({}, status=403)
+
+    client_version = request.JSON.get("version")
+    if client_version is not None and document.version != client_version:
+        return JsonResponse(
+            {
+                "error": "Document has been modified by another user.",
+                "version": document.version,
+            },
+            status=409,
+        )
+
+    if "content" in request.JSON:
+        document.content = request.JSON["content"]
+    if "comments" in request.JSON:
+        document.comments = request.JSON["comments"]
+    if "bibliography" in request.JSON:
+        document.bibliography = request.JSON["bibliography"]
+    if "title" in request.JSON:
+        document.title = request.JSON["title"]
+
+    if document.e2ee:
+        if "e2ee_salt" in request.JSON:
+            document.e2ee_salt = base64.b64decode(request.JSON["e2ee_salt"])
+        if "e2ee_iterations" in request.JSON:
+            document.e2ee_iterations = request.JSON["e2ee_iterations"]
+        if "e2ee_snapshot_version" in request.JSON:
+            document.e2ee_snapshot_version = request.JSON[
+                "e2ee_snapshot_version"
+            ]
+        # For E2EE documents, clear diffs since they are not used
+        # in non-collaborative mode and old diffs may be encrypted
+        # with a previous key.
+        if document.diffs:
+            document.diffs = []
+
+    document.version += 1
+    document.save()
+
+    image_updates = request.JSON.get("image_updates", [])
+    if image_updates and not document.e2ee:
+        from document.helpers.document_store import update_document_images_sync
+
+        update_document_images_sync(
+            document.id, image_updates, request.user, doc_e2ee=document.e2ee
+        )
+
+    response["version"] = document.version
+    return JsonResponse(response, status=200)
+
+
+@login_required
+@ajax_required
+@require_POST
 def upload_revision(request):
     response = {}
     status = 405

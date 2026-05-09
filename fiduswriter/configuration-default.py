@@ -186,6 +186,11 @@ MEDIA_MAX_SIZE = False
 # 'required'  - Only E2EE documents are allowed.
 E2EE_MODE = "disabled"  # Default: disabled for backward compatibility
 
+# Whether to use WebSocket-based collaborative editing.
+# When set to False, documents are saved directly via REST requests
+# and real-time collaboration is disabled.
+# COLLABORATIVE_EDITING = False
+
 #############################################
 # Security Settings                         #
 #############################################

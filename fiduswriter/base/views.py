@@ -42,6 +42,7 @@ def get_frontend_settings():
         "FOOTER_LINKS": settings.FOOTER_LINKS,
         "LANGUAGES": settings.LANGUAGES,
         "VERSION": get_version(),
+        "COLLABORATIVE_EDITING": settings.COLLABORATIVE_EDITING,
     }
 
 

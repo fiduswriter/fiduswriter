@@ -117,13 +117,25 @@ export const jsonPostBare = (
     url,
     object = {},
     csrfToken = false,
-    files = {}
+    files = {},
+    keepalive = false
 ) => {
     const settings = getSettings()
 
     // post json object rather than form data.
     if (!csrfToken) {
         csrfToken = settings.getCsrfToken() // Won't work in web worker.
+    }
+
+    const fetchOptions = {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            Accept: "application/json",
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        credentials: "include",
+        keepalive
     }
 
     if (Object.keys(files).length) {
@@ -140,42 +152,37 @@ export const jsonPostBare = (
                 body.append(key, value)
             }
         })
-
-        return fetch(settings.apiUrl(url), {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": csrfToken,
-                Accept: "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            },
-            credentials: "include",
-            body
-        })
+        fetchOptions.body = body
+    } else {
+        fetchOptions.headers["Content-Type"] = "application/json"
+        fetchOptions.body = JSON.stringify(object)
     }
 
-    return fetch(settings.apiUrl(url), {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrfToken,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest"
-        },
-        credentials: "include",
-        body: JSON.stringify(object)
-    })
+    return fetch(settings.apiUrl(url), fetchOptions)
 }
 
-export const jsonPost = (url, object = {}, csrfToken = false, files = {}) => {
+export const jsonPost = (
+    url,
+    object = {},
+    csrfToken = false,
+    files = {},
+    keepalive = false
+) => {
     const settings = getSettings()
-    return jsonPostBare(url, object, csrfToken, files)
+    return jsonPostBare(url, object, csrfToken, files, keepalive)
         .then(settings.postResponseHook)
         .then(handleFetchErrors)
 }
 
 // post json object and return json and status
-export const jsonPostJson = (url, object = {}, csrfToken = false, files = {}) =>
-    jsonPost(url, object, csrfToken, files).then(response =>
+export const jsonPostJson = (
+    url,
+    object = {},
+    csrfToken = false,
+    files = {},
+    keepalive = false
+) =>
+    jsonPost(url, object, csrfToken, files, keepalive).then(response =>
         response.json().then(json => ({json, status: response.status}))
     )
 

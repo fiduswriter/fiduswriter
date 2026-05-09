@@ -746,6 +746,12 @@ export class ModCollabDoc {
         // from the server can be decrypted as soon as they arrive.
         if (this.mod.editor.ws && !this.mod.editor.ws.connected) {
             this.mod.editor.startWebSocket()
+        } else if (!this.mod.editor.ws) {
+            // Non-collaborative mode: mark version as confirmed so the editor
+            // finishes loading and periodic saves can begin.
+            this.mod.editor.mod.collab.doc.confirmVersion(
+                this.mod.editor.docInfo.version
+            )
         }
     }
 

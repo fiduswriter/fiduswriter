@@ -46,6 +46,7 @@ urlpatterns = [
         name="delete_e2ee_image",
     ),
     re_path("^import/$", views.import_doc, name="import_doc"),
+    re_path("^save/$", views.save_document, name="save_document"),
     re_path("^upload/$", views.upload_revision, name="upload_revision"),
     re_path(
         "^get_revision/(?P<revision_id>[0-9]+)/$",

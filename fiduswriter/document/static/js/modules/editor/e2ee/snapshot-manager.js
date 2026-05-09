@@ -51,6 +51,51 @@ export class E2EESnapshotManager {
     }
 
     /**
+     * Build an encrypted snapshot payload for the current document state.
+     *
+     * Returns the encrypted data without sending it. Used in
+     * non-collaborative mode where snapshots are sent via REST instead
+     * of WebSocket.
+     *
+     * @returns {Object|null} The encrypted snapshot payload or null if no key.
+     */
+    async getEncryptedSnapshot() {
+        if (!this.key) {
+            return null
+        }
+        const content = this.editor.view.docView.node.toJSON()
+        const comments = this.editor.docInfo.comments || {}
+        const bibliography = this.editor.docInfo.bibliography || {}
+        const {title} = this.editor.getDoc()
+
+        const {E2EEEncryptor} = await import("./encryptor")
+
+        const encryptedContent = await E2EEEncryptor.encryptObject(
+            content,
+            this.key
+        )
+        const encryptedComments = await E2EEEncryptor.encryptObject(
+            comments,
+            this.key
+        )
+        const encryptedBibliography = await E2EEEncryptor.encryptObject(
+            bibliography,
+            this.key
+        )
+        const encryptedTitle = await E2EEEncryptor.encrypt(title, this.key)
+
+        return {
+            content: encryptedContent,
+            comments: encryptedComments,
+            bibliography: encryptedBibliography,
+            title: encryptedTitle,
+            e2ee_salt: this.editor.e2ee.encryptionSalt,
+            e2ee_iterations: this.editor.e2ee.encryptionIterations,
+            v: this.editor.docInfo.version
+        }
+    }
+
+    /**
      * Handle a "request_snapshot" message from the server.
      *
      * The server sends this message when it needs a client to save

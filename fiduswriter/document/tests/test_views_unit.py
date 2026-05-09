@@ -6,6 +6,7 @@ from django.test import TestCase, Client, override_settings
 
 from user.models import User, UserEncryptionKey
 from document.models import (
+    AccessRight,
     Document,
     DocumentTemplate,
     DocumentEncryptionKey,
@@ -356,3 +357,269 @@ class ShareTokenViewTest(TestCase):
         )
         data = response.json()
         self.assertEqual(len(data["tokens"]), 0)
+
+
+@override_settings(COLLABORATIVE_EDITING=False)
+class SaveDocumentViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="savedocuser", password="pass"
+        )
+        self.other = User.objects.create_user(
+            username="othersavedocuser", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.client.force_login(self.owner)
+
+    def test_save_own_document(self):
+        doc = Document.objects.create(
+            owner=self.owner,
+            template=self.template,
+            content={"type": "doc", "content": [{"type": "title"}]},
+            comments={},
+            bibliography={},
+            title="Old Title",
+            version=0,
+        )
+        response = json_post(
+            self.client,
+            "/api/document/save/",
+            {
+                "id": doc.id,
+                "content": {
+                    "type": "doc",
+                    "content": [
+                        {"type": "title", "content": [{"text": "New Title"}]}
+                    ],
+                },
+                "comments": {"1": {"comment": "hello"}},
+                "bibliography": {"1": {"bib_type": "article"}},
+                "title": "New Title",
+                "version": 0,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["version"], 1)
+        doc.refresh_from_db()
+        self.assertEqual(doc.title, "New Title")
+        self.assertEqual(doc.version, 1)
+        self.assertEqual(doc.comments, {"1": {"comment": "hello"}})
+        self.assertEqual(doc.bibliography, {"1": {"bib_type": "article"}})
+
+    def test_save_document_with_write_access(self):
+        from document.models import AccessRight
+
+        doc = Document.objects.create(
+            owner=self.other,
+            template=self.template,
+            content={"type": "doc", "content": [{"type": "title"}]},
+            comments={},
+            bibliography={},
+            title="Old",
+            version=0,
+        )
+        AccessRight.objects.create(
+            document=doc, holder_obj=self.owner, rights="write"
+        )
+        response = json_post(
+            self.client,
+            "/api/document/save/",
+            {
+                "id": doc.id,
+                "content": {"type": "doc", "content": [{"type": "title"}]},
+                "comments": {},
+                "bibliography": {},
+                "title": "Updated",
+                "version": 0,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        doc.refresh_from_db()
+        self.assertEqual(doc.title, "Updated")
+
+    def test_cannot_save_without_access(self):
+        doc = Document.objects.create(
+            owner=self.other,
+            template=self.template,
+            content={"type": "doc", "content": [{"type": "title"}]},
+            title="Old",
+            version=0,
+        )
+        response = json_post(
+            self.client,
+            "/api/document/save/",
+            {
+                "id": doc.id,
+                "content": {"type": "doc", "content": [{"type": "title"}]},
+                "comments": {},
+                "bibliography": {},
+                "title": "Updated",
+                "version": 0,
+            },
+        )
+        self.assertEqual(response.status_code, 403)
+        doc.refresh_from_db()
+        self.assertEqual(doc.title, "Old")
+
+    def test_save_nonexistent_document_returns_404(self):
+        response = json_post(
+            self.client,
+            "/api/document/save/",
+            {
+                "id": 99999,
+                "content": {"type": "doc"},
+                "comments": {},
+                "bibliography": {},
+                "title": "X",
+                "version": 0,
+            },
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_save_with_version_conflict_returns_409(self):
+        doc = Document.objects.create(
+            owner=self.owner,
+            template=self.template,
+            content={"type": "doc", "content": [{"type": "title"}]},
+            title="Test",
+            version=5,
+        )
+        response = json_post(
+            self.client,
+            "/api/document/save/",
+            {
+                "id": doc.id,
+                "content": {"type": "doc"},
+                "comments": {},
+                "bibliography": {},
+                "title": "X",
+                "version": 3,
+            },
+        )
+        self.assertEqual(response.status_code, 409)
+        data = response.json()
+        self.assertEqual(data["version"], 5)
+
+    def test_two_users_editing_same_document_conflict(self):
+        from user.models import User
+
+        user_a = User.objects.create_user(username="user_a", password="pass")
+        user_b = User.objects.create_user(username="user_b", password="pass")
+        doc = Document.objects.create(
+            owner=user_a,
+            template=self.template,
+            content={"type": "doc", "content": [{"type": "title"}]},
+            title="Original",
+            version=0,
+        )
+        AccessRight.objects.create(
+            document=doc, holder_obj=user_b, rights="write"
+        )
+
+        # User A saves first
+        client_a = Client()
+        client_a.force_login(user_a)
+        response_a = json_post(
+            client_a,
+            "/api/document/save/",
+            {
+                "id": doc.id,
+                "content": {
+                    "type": "doc",
+                    "content": [
+                        {"type": "title", "content": [{"text": "User A"}]}
+                    ],
+                },
+                "comments": {},
+                "bibliography": {},
+                "title": "User A Title",
+                "version": 0,
+            },
+        )
+        self.assertEqual(response_a.status_code, 200)
+
+        # User B tries to save with stale version
+        client_b = Client()
+        client_b.force_login(user_b)
+        response_b = json_post(
+            client_b,
+            "/api/document/save/",
+            {
+                "id": doc.id,
+                "content": {
+                    "type": "doc",
+                    "content": [
+                        {"type": "title", "content": [{"text": "User B"}]}
+                    ],
+                },
+                "comments": {},
+                "bibliography": {},
+                "title": "User B Title",
+                "version": 0,
+            },
+        )
+        self.assertEqual(response_b.status_code, 409)
+        data_b = response_b.json()
+        self.assertEqual(data_b["version"], 1)
+
+        # User B can save after fetching the current version
+        response_b2 = json_post(
+            client_b,
+            "/api/document/save/",
+            {
+                "id": doc.id,
+                "content": {
+                    "type": "doc",
+                    "content": [
+                        {
+                            "type": "title",
+                            "content": [{"text": "User B merged"}],
+                        }
+                    ],
+                },
+                "comments": {},
+                "bibliography": {},
+                "title": "User B Title",
+                "version": 1,
+            },
+        )
+        self.assertEqual(response_b2.status_code, 200)
+        doc.refresh_from_db()
+        self.assertEqual(doc.version, 2)
+
+
+class SaveDocumentBlockedInCollaborativeModeTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="collabsaveuser", password="pass"
+        )
+        self.client.force_login(self.owner)
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template, title="Test", version=0
+        )
+
+    @override_settings(COLLABORATIVE_EDITING=True)
+    def test_save_document_blocked_when_collaborative_enabled(self):
+        response = json_post(
+            self.client,
+            "/api/document/save/",
+            {
+                "id": self.doc.id,
+                "content": {"type": "doc"},
+                "comments": {},
+                "bibliography": {},
+                "title": "X",
+                "version": 0,
+            },
+        )
+        self.assertEqual(response.status_code, 403)
+        data = response.json()
+        self.assertIn("error", data)

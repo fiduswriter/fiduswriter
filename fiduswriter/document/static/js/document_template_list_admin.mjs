@@ -1,4 +1,7 @@
+import {initSettings} from "./modules/common/settings.js"
 import {DocumentTemplateListAdmin} from "./modules/document_template/index.js"
+
+initSettings(window.settings)
 
 const theDocumentTemplateListAdmin = new DocumentTemplateListAdmin(
     window.settings

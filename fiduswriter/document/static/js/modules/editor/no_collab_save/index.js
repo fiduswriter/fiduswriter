@@ -5,7 +5,7 @@ import {recreateTransform} from "../collab/merge/recreate_transform"
 
 /**
  * Handles periodic saving and conflict resolution for the editor
- * when COLLABORATIVE_EDITING is disabled (no WebSocket).
+ when EDITOR_SAVE_MODE is "direct" (no WebSocket).
  */
 export class NoCollabSave {
     constructor(editor) {
@@ -36,7 +36,10 @@ export class NoCollabSave {
         // E2EE encryption is async and cannot run reliably in unload handlers.
         if (!this.editor.e2ee?.encrypted) {
             this._beforeUnloadHandler = () => {
-                if (this._hasUnsavedChanges()) {
+                if (
+                    this.editor.docInfo.access_rights === "write" &&
+                    this._hasUnsavedChanges()
+                ) {
                     this._save(true)
                 }
             }
@@ -77,6 +80,9 @@ export class NoCollabSave {
     }
 
     async _save(keepalive = false) {
+        if (this.editor.docInfo.access_rights !== "write") {
+            return
+        }
         const doc = this.editor.getDoc({use_current_view: true})
         let payload = {
             id: this.editor.docInfo.id,
@@ -143,6 +149,9 @@ export class NoCollabSave {
     }
 
     async _handleVersionConflict() {
+        if (this.editor.docInfo.access_rights !== "write") {
+            return
+        }
         const payload = {id: this.editor.docInfo.id}
         if (this.editor.docInfo.token) {
             payload.token = this.editor.docInfo.token

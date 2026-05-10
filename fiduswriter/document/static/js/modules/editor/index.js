@@ -296,8 +296,8 @@ export class Editor {
                 if (this.docInfo.token) {
                     stylesPayload.token = this.docInfo.token
                 }
-                const collaborativeEditing =
-                    this.app.settings.COLLABORATIVE_EDITING !== false
+                const editorSaveMode = this.app.settings.EDITOR_SAVE_MODE
+                const collaborativeEditing = editorSaveMode === "collaborative"
                 const wsBasePromise = collaborativeEditing
                     ? this.docInfo.wsBase
                         ? Promise.resolve({
@@ -354,8 +354,8 @@ export class Editor {
                 let resubScribed = false
                 this.render()
                 this.initEditor()
-                const collaborativeEditing =
-                    this.app.settings.COLLABORATIVE_EDITING !== false
+                const editorSaveMode = this.app.settings.EDITOR_SAVE_MODE
+                const collaborativeEditing = editorSaveMode === "collaborative"
                 if (collaborativeEditing) {
                     // Include token in WebSocket path if present
                     let wsPath = `/document/${this.docInfo.id}/`
@@ -683,16 +683,16 @@ export class Editor {
                 // catch-up diffs arrive from the server.
                 if (collaborativeEditing && !docIsE2EE) {
                     this.startWebSocket()
-                } else if (!collaborativeEditing) {
+                } else if (!docIsE2EE) {
+                    // In non-collaborative modes there is no server
+                    // confirm_version message, so mark it locally.
+                    this.mod.collab.doc.confirmVersion(this.docInfo.version)
+                }
+                if (editorSaveMode === "direct") {
                     if (!this.noCollabSave) {
                         this.noCollabSave = new NoCollabSave(this)
                     }
                     this.noCollabSave.start()
-                    if (!docIsE2EE) {
-                        // In non-collaborative mode there is no server
-                        // confirm_version message, so mark it locally.
-                        this.mod.collab.doc.confirmVersion(this.docInfo.version)
-                    }
                 }
             })
     }

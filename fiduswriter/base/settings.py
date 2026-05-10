@@ -23,10 +23,11 @@ CONTACT_EMAIL = "mail@email.com"
 # Interval between document saves
 DOC_SAVE_INTERVAL = 30
 
-# Whether to use WebSocket-based collaborative editing.
-# When set to False, documents are saved directly via REST requests
-# and real-time collaboration is disabled.
-COLLABORATIVE_EDITING = True
+# EDITOR_SAVE_MODE controls how the editor persists document changes.
+#   "collaborative" - WebSocket-based real-time collaboration (default).
+#   "direct"        - Periodic REST saves without real-time collaboration.
+#   "external"      - No built-in saving; external plugins handle persistence.
+EDITOR_SAVE_MODE = "collaborative"
 
 ADMINS = (("Your Name", "your_email@example.com"),)
 

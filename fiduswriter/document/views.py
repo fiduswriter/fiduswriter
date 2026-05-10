@@ -774,10 +774,10 @@ def import_doc(request):
 def save_document(request):
     """Save a document directly via REST (non-collaborative mode).
 
-    Used when COLLABORATIVE_EDITING is False to persist document
+    Used when EDITOR_SAVE_MODE is "direct" to persist document
     changes without WebSocket-based collaborative editing.
     """
-    if settings.COLLABORATIVE_EDITING:
+    if settings.EDITOR_SAVE_MODE == "collaborative":
         return JsonResponse(
             {
                 "error": "Direct document saving is disabled in collaborative mode."

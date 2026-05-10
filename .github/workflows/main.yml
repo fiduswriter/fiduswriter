@@ -48,7 +48,7 @@ jobs:
                     - document.tests.test_editor.EditorTest.test_track_changes
                     - document.tests.test_offline
                     - document.tests.test_export
-                    - document.tests.test_admin
+                    - "document.tests.test_admin document.tests.test_external_save"
                     #- document.tests.test_message_exchange
                     - document.tests.test_paste_template_filter
                     - document.tests.test_memory_leak

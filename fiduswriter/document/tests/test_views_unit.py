@@ -359,7 +359,7 @@ class ShareTokenViewTest(TestCase):
         self.assertEqual(len(data["tokens"]), 0)
 
 
-@override_settings(COLLABORATIVE_EDITING=False)
+@override_settings(EDITOR_SAVE_MODE="direct")
 class SaveDocumentViewTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -606,7 +606,7 @@ class SaveDocumentBlockedInCollaborativeModeTest(TestCase):
             owner=self.owner, template=self.template, title="Test", version=0
         )
 
-    @override_settings(COLLABORATIVE_EDITING=True)
+    @override_settings(EDITOR_SAVE_MODE="collaborative")
     def test_save_document_blocked_when_collaborative_enabled(self):
         response = json_post(
             self.client,

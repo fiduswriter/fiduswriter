@@ -157,7 +157,7 @@ export class DocumentOverviewActions {
                     `${description} (${extensions.join(", ")})`
             )
             .join("<br>")
-        const supportedFormatsText = `${gettext("Supported formats")}: FIDUS, ${supportedDescriptions}. ${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}`
+        const supportedFormatsText = `${gettext("Supported formats")}:<p>FIDUS<br>${supportedDescriptions}</p><p>${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}</p>`
 
         const importDialog = new Dialog({
             id: "import_document",

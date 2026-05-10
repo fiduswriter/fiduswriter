@@ -1,5 +1,5 @@
 import {BibliographyImporter} from "../../bibliography/import"
-import {escapeText, jsonPostJson} from "../../common"
+import {escapeText, postJson} from "../../common"
 import {NativeImporter} from "../native"
 import {PandocConvert} from "./convert"
 
@@ -33,7 +33,7 @@ export class PandocImporter {
     }
 
     async getTemplate() {
-        const {json} = await jsonPostJson("/api/document/get_template/", {
+        const {json} = await postJson("/api/document/get_template/", {
             import_id: this.importId
         })
         this.template = json.template

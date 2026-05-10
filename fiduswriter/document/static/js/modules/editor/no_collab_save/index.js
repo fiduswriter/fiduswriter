@@ -1,6 +1,6 @@
 import {receiveTransaction} from "prosemirror-collab"
 import {Transform} from "prosemirror-transform"
-import {addAlert, jsonPostJson} from "../../common"
+import {addAlert, postJson} from "../../common"
 import {recreateTransform} from "../collab/merge/recreate_transform"
 
 /**
@@ -117,7 +117,7 @@ export class NoCollabSave {
         }
 
         try {
-            const {json, status} = await jsonPostJson(
+            const {json, status} = await postJson(
                 "/api/document/save/",
                 payload,
                 null,
@@ -157,7 +157,7 @@ export class NoCollabSave {
             payload.token = this.editor.docInfo.token
         }
         try {
-            const {json} = await jsonPostJson(
+            const {json} = await postJson(
                 "/api/document/get_doc_data/",
                 payload
             )

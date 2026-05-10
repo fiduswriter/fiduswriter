@@ -1,7 +1,7 @@
 import {keyName} from "w3c-keyname"
 
 import * as plugins from "../../plugins/menu"
-import {dropdownSelect, jsonPost, whenReady} from "../common"
+import {dropdownSelect, post, whenReady} from "../common"
 import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages
@@ -195,7 +195,7 @@ export class SiteMenu {
                                 sessionStorage.removeItem(key)
                             }
                         }
-                        jsonPost("/api/user/logout/").then(
+                        post("/api/user/logout/").then(
                             () =>
                                 (window.location =
                                     this.app.routes[""].app === "document"

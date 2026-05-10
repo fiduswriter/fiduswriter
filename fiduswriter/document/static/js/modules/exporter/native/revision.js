@@ -1,4 +1,4 @@
-import {addAlert, jsonPost} from "../../common"
+import {addAlert, post} from "../../common"
 import {createSlug} from "../tools/file"
 import {ShrinkFidus} from "./shrink"
 import {ZipFidus} from "./zip"
@@ -52,7 +52,7 @@ export class SaveRevision {
     }
 
     uploadRevision(blob) {
-        jsonPost(
+        post(
             "/api/document/upload/",
             {
                 note: this.note,

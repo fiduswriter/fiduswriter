@@ -9,7 +9,7 @@ import {
     addAlert,
     ensureCSS,
     findTarget,
-    jsonPostJson,
+    postJson,
     showSystemMessage
 } from "../common"
 import {getSettings, initSettings} from "../common/settings"
@@ -447,7 +447,7 @@ export class App {
     }
 
     getConfiguration() {
-        return jsonPostJson("/api/base/configuration/")
+        return postJson("/api/base/configuration/")
             .then(({json}) =>
                 Object.entries(json).forEach(
                     ([key, value]) => (this.config[key] = value)

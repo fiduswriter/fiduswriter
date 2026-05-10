@@ -1,6 +1,6 @@
 import download from "downloadjs"
 
-import {jsonPostJson} from "../common"
+import {postJson} from "../common"
 import {createSlug} from "../exporter/tools/file"
 import {ZipFileCreator} from "../exporter/tools/zip"
 
@@ -26,7 +26,7 @@ export class DocumentTemplateExporter {
         const params = this.token
             ? {id: this.id, token: this.token}
             : {id: this.id}
-        return jsonPostJson(this.getUrl, params).then(({json}) => {
+        return postJson(this.getUrl, params).then(({json}) => {
             this.docVersion = json.doc_version
             this.zipFileName = `${createSlug(json.title)}.fidustemplate`
             this.textFiles.push({

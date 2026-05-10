@@ -1,4 +1,4 @@
-import {escapeText, jsonPostJson} from "../../common"
+import {escapeText, postJson} from "../../common"
 import {NativeImporter} from "../native"
 import {OdtConvert} from "./convert"
 
@@ -26,7 +26,7 @@ export class OdtImporter {
     }
 
     getTemplate() {
-        return jsonPostJson("/api/document/get_template/", {
+        return postJson("/api/document/get_template/", {
             import_id: this.importId
         }).then(({json}) => {
             this.template = json.template

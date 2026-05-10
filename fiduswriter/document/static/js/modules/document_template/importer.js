@@ -1,4 +1,4 @@
-import {escapeText, jsonPostJson} from "../common"
+import {escapeText, postJson} from "../common"
 import {
     MAX_FW_DOCUMENT_VERSION,
     MIN_FW_DOCUMENT_VERSION
@@ -139,7 +139,7 @@ export class DocumentTemplateImporter {
                     ),
                     filetypeVersion
                 )
-            return jsonPostJson(
+            return postJson(
                 this.createUrl,
                 {
                     title,

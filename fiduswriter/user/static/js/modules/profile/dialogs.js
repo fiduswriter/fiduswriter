@@ -4,8 +4,8 @@ import {
     addAlert,
     deactivateWait,
     escapeText,
-    jsonPost,
-    jsonPostJson
+    post,
+    postJson
 } from "../common"
 import {
     changeAvatarDialogTemplate,
@@ -31,7 +31,7 @@ export const changeAvatarDialog = app => {
 
                 const file = avatarUploader.files[0]
 
-                jsonPost("/api/user/avatar/upload/", {}, null, {
+                post("/api/user/avatar/upload/", {}, null, {
                     avatar: {
                         file,
                         filename: file.name
@@ -84,7 +84,7 @@ export const changeAvatarDialog = app => {
 const deleteAvatar = app => {
     activateWait()
 
-    jsonPost("/api/user/avatar/delete/")
+    post("/api/user/avatar/delete/")
         .then(() => deactivateWait())
         .then(() => app.getConfiguration())
         .then(() => app.selectPage())
@@ -152,7 +152,7 @@ export const changePwdDialog = ({username}) => {
 
                 activateWait()
 
-                jsonPostJson("/api/user/passwordchange/", {
+                postJson("/api/user/passwordchange/", {
                     old_password: oldPwd,
                     new_password1: newPwd1,
                     new_password2: newPwd2
@@ -229,7 +229,7 @@ export const addEmailDialog = app => {
 
                 document.getElementById("new-profile-email").value = email
 
-                jsonPostJson("/api/user/email/add/", {
+                postJson("/api/user/email/add/", {
                     email
                 })
                     .then(({json, status}) => {
@@ -285,7 +285,7 @@ export const deleteEmailDialog = (target, app) => {
             click: () => {
                 activateWait()
 
-                jsonPost("/api/user/email/delete/", {
+                post("/api/user/email/delete/", {
                     email
                 })
                     .then(() => {
@@ -334,7 +334,7 @@ export const deleteSocialaccountDialog = (target, app) => {
             click: () => {
                 activateWait()
 
-                jsonPost("/api/user/socialaccountdelete/", {
+                post("/api/user/socialaccountdelete/", {
                     socialaccount
                 })
                     .then(() => {
@@ -387,7 +387,7 @@ export const changePrimaryEmailDialog = app => {
             click: () => {
                 activateWait()
 
-                jsonPost("/api/user/email/primary/", {
+                post("/api/user/email/primary/", {
                     email
                 })
                     .then(() => {

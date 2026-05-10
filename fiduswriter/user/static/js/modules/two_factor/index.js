@@ -4,7 +4,7 @@ import {
     activateWait,
     addAlert,
     deactivateWait,
-    jsonPostJson
+    postJson
 } from "../common"
 
 export const twoFactorSetupDialog = () => {
@@ -13,7 +13,7 @@ export const twoFactorSetupDialog = () => {
 
     // Load setup data
     activateWait()
-    return jsonPostJson("/api/user/two-factor/setup/").then(({json}) => {
+    return postJson("/api/user/two-factor/setup/").then(({json}) => {
         deactivateWait()
 
         if (json.status !== "success") {
@@ -64,7 +64,7 @@ export const twoFactorSetupDialog = () => {
                         return
                     }
 
-                    jsonPostJson("/api/user/two-factor/verify/", {
+                    postJson("/api/user/two-factor/verify/", {
                         code,
                         device_id: deviceId
                     })
@@ -136,7 +136,7 @@ export const twoFactorDisableDialog = () => {
             classes: "fw-orange",
             click: () => {
                 activateWait()
-                jsonPostJson("/api/user/two-factor/disable/", {})
+                postJson("/api/user/two-factor/disable/", {})
                     .then(({json}) => {
                         if (json.status === "success") {
                             addAlert("success", json.message)
@@ -199,7 +199,7 @@ export const twoFactorLoginDialog = ({
                 }
 
                 activateWait()
-                jsonPostJson("/api/user/login/", {
+                postJson("/api/user/login/", {
                     login,
                     password,
                     remember,
@@ -242,7 +242,7 @@ export const twoFactorLoginDialog = ({
 }
 
 export const checkTwoFactorStatus = () => {
-    return jsonPostJson("/api/user/two-factor/status/")
+    return postJson("/api/user/two-factor/status/")
         .then(({json}) => {
             if (json.status === "success") {
                 return json.enabled

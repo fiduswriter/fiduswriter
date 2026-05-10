@@ -1,11 +1,11 @@
-import {jsonPost, jsonPostJson} from "../../common/network"
+import {post, postJson} from "../../common/network"
 
 // class for server calls of BibliographyDB.
 export class BibliographyDBServerConnector {
     constructor() {}
 
     getDB(lastModified, numberOfEntries, localStorageOwnerId) {
-        return jsonPostJson("/api/bibliography/biblist/", {
+        return postJson("/api/bibliography/biblist/", {
             last_modified: lastModified,
             number_of_entries: numberOfEntries,
             user_id: localStorageOwnerId
@@ -33,14 +33,14 @@ export class BibliographyDBServerConnector {
     }
 
     saveBibEntries(tmpDB, isNew) {
-        return jsonPostJson("/api/bibliography/save/", {
+        return postJson("/api/bibliography/save/", {
             is_new: isNew,
             bibs: tmpDB
         }).then(({json}) => json["id_translations"])
     }
 
     saveCategories(cats) {
-        return jsonPostJson("/api/bibliography/save_category/", cats).then(
+        return postJson("/api/bibliography/save_category/", cats).then(
             ({json}) => {
                 return json.entries
             }
@@ -48,10 +48,10 @@ export class BibliographyDBServerConnector {
     }
 
     deleteCategory(ids) {
-        return jsonPost("/api/bibliography/delete_category/", {ids})
+        return post("/api/bibliography/delete_category/", {ids})
     }
 
     deleteBibEntries(ids) {
-        return jsonPost("/api/bibliography/delete/", {ids})
+        return post("/api/bibliography/delete/", {ids})
     }
 }

@@ -1,13 +1,6 @@
 import JSZip from "jszip"
 
-import {
-    addAlert,
-    findTarget,
-    get,
-    jsonPost,
-    jsonPostJson,
-    whenReady
-} from "../common"
+import {addAlert, findTarget, get, post, postJson, whenReady} from "../common"
 import {updateFile} from "../importer/native/update"
 import {FW_DOCUMENT_VERSION} from "../schema"
 import {updateDoc} from "../schema/convert"
@@ -42,7 +35,7 @@ export class DocMaintenance {
 
     getDocBatch() {
         this.batch++
-        jsonPostJson("/api/document/admin/get_all_old/")
+        postJson("/api/document/admin/get_all_old/")
             .then(({json}) => {
                 const docs = window.JSON.parse(json.docs)
                 if (docs.length) {
@@ -87,7 +80,7 @@ export class DocMaintenance {
             // In version 0 - 1.x, the bibliography had to be loaded from
             // the document user.
 
-            p = jsonPostJson("/api/document/admin/get_user_biblist/", {
+            p = postJson("/api/document/admin/get_user_biblist/", {
                 user_id: doc.fields.owner
             }).then(({json}) => {
                 return json.bibList.reduce((db, item) => {
@@ -111,7 +104,7 @@ export class DocMaintenance {
     }
 
     saveDoc(doc) {
-        const p1 = jsonPost("/api/document/admin/save_doc/", {
+        const p1 = post("/api/document/admin/save_doc/", {
                 id: doc.id,
                 content: doc.content,
                 bibliography: doc.bibliography,
@@ -121,7 +114,7 @@ export class DocMaintenance {
             }),
             promises = [p1]
         if (doc.imageIds) {
-            const p2 = jsonPost("/api/document/admin/add_images_to_doc/", {
+            const p2 = post("/api/document/admin/add_images_to_doc/", {
                 doc_id: doc.id,
                 ids: doc.imageIds
             })
@@ -137,26 +130,21 @@ export class DocMaintenance {
 
     updateDocumentTemplates() {
         addAlert("info", gettext("Updating document templates."))
-        jsonPostJson("/api/document/admin/get_all_template_ids/").then(
-            ({json}) => {
-                const count = json.template_ids.length
-                if (count) {
-                    json.template_ids.forEach(templateId =>
-                        this.updateDocumentTemplate(templateId)
-                    )
-                } else {
-                    addAlert(
-                        "info",
-                        gettext("No document templates to update.")
-                    )
-                    this.updateRevisions()
-                }
+        postJson("/api/document/admin/get_all_template_ids/").then(({json}) => {
+            const count = json.template_ids.length
+            if (count) {
+                json.template_ids.forEach(templateId =>
+                    this.updateDocumentTemplate(templateId)
+                )
+            } else {
+                addAlert("info", gettext("No document templates to update."))
+                this.updateRevisions()
             }
-        )
+        })
     }
 
     updateDocumentTemplate(id) {
-        jsonPostJson("/api/document/admin/get_template/base/", {id}).then(
+        postJson("/api/document/admin/get_template/base/", {id}).then(
             // The field 'content' of the document template module has the same
             // structure as the field 'contents' of the document module.
             // Therefore we can use the same update procedure for both of them.
@@ -183,7 +171,7 @@ export class DocMaintenance {
 
     saveDocumentTemplate(doc) {
         this.docTemplatesSavesLeft++
-        jsonPost("/api/document/admin/save_template/", {
+        post("/api/document/admin/save_template/", {
             id: doc.id,
             content: doc.content
         }).then(() => {
@@ -201,22 +189,15 @@ export class DocMaintenance {
 
     updateRevisions() {
         addAlert("info", gettext("Updating saved revisions."))
-        jsonPostJson("/api/document/admin/get_all_revision_ids/").then(
-            ({json}) => {
-                this.revSavesLeft = json.revision_ids.length
-                if (this.revSavesLeft) {
-                    json.revision_ids.forEach(revId =>
-                        this.updateRevision(revId)
-                    )
-                } else {
-                    addAlert(
-                        "info",
-                        gettext("No document revisions to update.")
-                    )
-                    this.done()
-                }
+        postJson("/api/document/admin/get_all_revision_ids/").then(({json}) => {
+            this.revSavesLeft = json.revision_ids.length
+            if (this.revSavesLeft) {
+                json.revision_ids.forEach(revId => this.updateRevision(revId))
+            } else {
+                addAlert("info", gettext("No document revisions to update."))
+                this.done()
             }
-        )
+        })
     }
 
     updateRevision(id) {
@@ -268,7 +249,7 @@ export class DocMaintenance {
         zipfs
             .generateAsync({type: "blob", mimeType: "application/fidus+zip"})
             .then(blob => {
-                jsonPost(
+                post(
                     "/api/document/admin/update_revision/",
                     {
                         id

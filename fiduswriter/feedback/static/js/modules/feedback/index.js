@@ -1,4 +1,4 @@
-import {ensureCSS, jsonPost} from "../common"
+import {ensureCSS, post} from "../common"
 
 // Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
 // a somewhat early stage. It is included in a way so it's easy to remove from all the templates.
@@ -101,7 +101,7 @@ export class FeedbackTab {
         closeFeedbackEl.style.display = "none"
         feedbackFormEl.style.visibility = "hidden"
 
-        jsonPost("/api/feedback/feedback/", {message: messageEl.value})
+        post("/api/feedback/feedback/", {message: messageEl.value})
             .then(() => {
                 messageEl.value = ""
                 closeFeedbackEl.style.display = "block"

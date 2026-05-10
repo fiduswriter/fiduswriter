@@ -1,4 +1,4 @@
-import {Dialog, cancelPromise, escapeText, jsonPostJson} from "../common"
+import {Dialog, cancelPromise, escapeText, postJson} from "../common"
 import {addContactTemplate} from "./templates"
 
 //dialog for adding a user to contacts
@@ -77,7 +77,7 @@ export class AddContactDialog {
             return cancelPromise()
         }
 
-        return jsonPostJson("/api/user/invites/add/", {
+        return postJson("/api/user/invites/add/", {
             user_string: userString
         }).then(({json, status}) => {
             if (status == 201) {

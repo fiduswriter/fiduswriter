@@ -1,5 +1,5 @@
 import JSZip from "jszip"
-import {Dialog, escapeText, findTarget, get, jsonPostJson} from "../common"
+import {Dialog, escapeText, findTarget, get, postJson} from "../common"
 
 export class ExportTemplateDialog {
     constructor(
@@ -142,7 +142,7 @@ export class ExportTemplateDialog {
     }
 
     deleteTemplate() {
-        jsonPostJson("/api/style/delete_export_template/", {id: this.id})
+        postJson("/api/style/delete_export_template/", {id: this.id})
             .then(() => {
                 const oldTemplateIndex = this.allTemplates.findIndex(
                     style => style.pk === this.id
@@ -230,14 +230,9 @@ export class ExportTemplateDialog {
             template_id: this.documentTemplateId,
             added_file_type: this.addedFileType
         }
-        return jsonPostJson(
-            "/api/style/save_export_template/",
-            jsonData,
-            false,
-            {
-                added_file: this.addedFile
-            }
-        )
+        return postJson("/api/style/save_export_template/", jsonData, false, {
+            added_file: this.addedFile
+        })
     }
 
     checkRemoteFile(url) {

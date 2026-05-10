@@ -1,4 +1,4 @@
-import {jsonPostJson} from "../common"
+import {postJson} from "../common"
 
 export class ContactInvite {
     constructor({app}, key) {
@@ -18,11 +18,9 @@ export class ContactInvite {
             return this.app.page.init()
         }
 
-        return jsonPostJson("/api/user/invite/", {key: this.key}).then(
-            ({json}) => {
-                window.history.replaceState({}, "", json.redirect)
-                return this.app.selectPage()
-            }
-        )
+        return postJson("/api/user/invite/", {key: this.key}).then(({json}) => {
+            window.history.replaceState({}, "", json.redirect)
+            return this.app.selectPage()
+        })
     }
 }

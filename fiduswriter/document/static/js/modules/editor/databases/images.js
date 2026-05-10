@@ -9,7 +9,7 @@
  For E2EE documents, images are encrypted client-side and uploaded directly
  via a dedicated endpoint to an EncryptedDocumentImage model.
 */
-import {addAlert, get, jsonPost, jsonPostJson} from "../../common"
+import {addAlert, get, post, postJson} from "../../common"
 export class ModImageDB {
     constructor(mod) {
         mod.imageDB = this
@@ -72,7 +72,7 @@ export class ModImageDB {
             }
         }
 
-        return jsonPostJson("/api/document/e2ee_image/", jsonData, false, files)
+        return postJson("/api/document/e2ee_image/", jsonData, false, files)
             .then(({json}) => {
                 const dbEntry = {
                     id: json.id,
@@ -129,7 +129,7 @@ export class ModImageDB {
     }
 
     deleteE2EEImageFromServer(id) {
-        jsonPost("/api/document/delete_e2ee_image/", {
+        post("/api/document/delete_e2ee_image/", {
             doc_id: this.mod.editor.docInfo.id,
             image_id: id
         }).catch(() => {

@@ -1,4 +1,4 @@
-import {Dialog, escapeText, findTarget, jsonPostJson} from "../common"
+import {Dialog, escapeText, findTarget, postJson} from "../common"
 
 export class DocumentStyleDialog {
     constructor(id, style, documentTemplateId, allStyles, refresh) {
@@ -136,7 +136,7 @@ export class DocumentStyleDialog {
     }
 
     deleteStyle() {
-        jsonPostJson("/api/style/delete_document_style/", {id: this.id})
+        postJson("/api/style/delete_document_style/", {id: this.id})
             .then(() => {
                 const oldStyleIndex = this.allStyles.findIndex(
                     style => style.pk === this.id
@@ -219,7 +219,7 @@ export class DocumentStyleDialog {
     }
 
     save({title, slug, contents}) {
-        return jsonPostJson(
+        return postJson(
             "/api/style/save_document_style/",
             {
                 id: this.id,

@@ -1,9 +1,4 @@
-import {
-    addAlert,
-    deactivateWait,
-    jsonPostJson,
-    shortFileTitle
-} from "../../common"
+import {addAlert, deactivateWait, postJson, shortFileTitle} from "../../common"
 import {extractTemplate} from "../../document_template"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {GetImages} from "./get_images"
@@ -142,7 +137,7 @@ export class NativeImporter {
                             filename: imageEntry.image.split("/").pop()
                         }
                     }
-                    return jsonPostJson(endpoint, jsonData, false, files)
+                    return postJson(endpoint, jsonData, false, files)
                 })
                 .then(
                     ({json}) => (ImageTranslationTable[imageEntry.id] = json.id)
@@ -219,12 +214,7 @@ export class NativeImporter {
 
         // We create the document on the server so that we have an ID for it and
         // can link the images to it.
-        return jsonPostJson(
-            "/api/document/import/create/",
-            jsonData,
-            false,
-            files
-        )
+        return postJson("/api/document/import/create/", jsonData, false, files)
             .then(({json}) => {
                 this.docId = json.id
                 this.path = json.path
@@ -279,7 +269,7 @@ export class NativeImporter {
                 bibliography: this.bibliography
             }
         }
-        return jsonPostJson("/api/document/import/", saveData)
+        return postJson("/api/document/import/", saveData)
             .then(({json}) => {
                 const docInfo = {
                     is_owner: true,

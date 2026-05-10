@@ -1,4 +1,4 @@
-import {ensureCSS, jsonPostJson, whenReady} from "../common"
+import {ensureCSS, postJson, whenReady} from "../common"
 import {PreloginPage} from "../prelogin"
 
 export class FlatPage extends PreloginPage {
@@ -20,7 +20,7 @@ export class FlatPage extends PreloginPage {
     }
 
     getPageData() {
-        return jsonPostJson("/api/base/flatpage/", {url: this.url})
+        return postJson("/api/base/flatpage/", {url: this.url})
             .then(({json}) => {
                 this.title = json.title
                 this.contents = `<div class="fw-flatpage">

@@ -26,9 +26,6 @@ export {isActivationEvent} from "./events"
 export {getFocusIndex, setFocusIndex} from "./focus"
 
 export {
-    jsonPost,
-    jsonPostBare,
-    jsonPostJson,
     get,
     getJson,
     post,

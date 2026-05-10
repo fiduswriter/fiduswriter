@@ -1,4 +1,4 @@
-import {activateWait, addAlert, deactivateWait, jsonPostJson} from "../common"
+import {activateWait, addAlert, deactivateWait, postJson} from "../common"
 
 /* A class that holds information about images uploaded by the user. */
 
@@ -15,7 +15,7 @@ export class ImageDB {
 
         activateWait()
 
-        return jsonPostJson("/api/usermedia/images/").then(({json}) => {
+        return postJson("/api/usermedia/images/").then(({json}) => {
             this.cats = json.imageCategories
             json.images.forEach(image => {
                 this.db[image.id] = image
@@ -29,7 +29,7 @@ export class ImageDB {
         activateWait()
         const {image, ...jsonData} = imageData
 
-        return jsonPostJson(
+        return postJson(
             "/api/usermedia/save/",
             jsonData,
             false,

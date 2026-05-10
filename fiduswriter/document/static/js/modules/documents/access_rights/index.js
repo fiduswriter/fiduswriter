@@ -4,8 +4,8 @@ import {
     addAlert,
     enableDatePicker,
     findTarget,
-    jsonPost,
-    jsonPostJson,
+    post,
+    postJson,
     setCheckableLabel
 } from "../../common"
 import {AddContactDialog} from "../../contacts/add_dialog"
@@ -50,7 +50,7 @@ export class DocumentAccessRightsDialog {
     }
 
     init() {
-        jsonPostJson("/api/document/get_access_rights/", {
+        postJson("/api/document/get_access_rights/", {
             document_ids: this.documentIds
         })
             .catch(error => {
@@ -346,7 +346,7 @@ export class DocumentAccessRightsDialog {
     loadShareTokens() {
         const listEl = this.dialog.dialogEl.querySelector("#share-token-list")
         listEl.innerHTML = `<p class="fw-ar-loading">${gettext("Loading…")}</p>`
-        jsonPostJson("/api/document/share_token/list/", {
+        postJson("/api/document/share_token/list/", {
             document_id: this.singleDocumentId
         })
             .then(({json}) => {
@@ -380,7 +380,7 @@ export class DocumentAccessRightsDialog {
                         const note = createDialog.dialogEl
                             .querySelector("#share-token-note")
                             .value.trim()
-                        jsonPostJson("/api/document/share_token/create/", {
+                        postJson("/api/document/share_token/create/", {
                             document_id: this.singleDocumentId,
                             rights,
                             expires_at: expiresRaw || "",
@@ -441,7 +441,7 @@ export class DocumentAccessRightsDialog {
     }
 
     revokeShareToken(tokenId, rowEl) {
-        jsonPostJson("/api/document/share_token/revoke/", {token_id: tokenId})
+        postJson("/api/document/share_token/revoke/", {token_id: tokenId})
             .then(({json}) => {
                 if (json.success) {
                     rowEl.remove()
@@ -634,7 +634,7 @@ export class DocumentAccessRightsDialog {
     }
 
     submitAccessRight(newAccessRights) {
-        jsonPost("/api/document/save_access_rights/", {
+        post("/api/document/save_access_rights/", {
             document_ids: this.documentIds,
             access_rights: newAccessRights
         })

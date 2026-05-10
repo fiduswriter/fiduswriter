@@ -6,7 +6,7 @@ import {
     dropdownSelect,
     ensureCSS,
     findTarget,
-    jsonPost,
+    post,
     setDocTitle,
     whenReady
 } from "../common"
@@ -295,7 +295,7 @@ export class Profile {
     save() {
         activateWait()
         const newLang = this.dom.querySelector("#language").value
-        return jsonPost("/api/user/save/", {
+        return post("/api/user/save/", {
             form_data: {
                 user: {
                     username: this.dom.querySelector("#username").value,

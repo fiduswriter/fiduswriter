@@ -19,8 +19,9 @@ If you want to create plugins or extensions:
 
 1. **[Developer Installation](../installation/developer-install.md)** - Set up your environment
 2. **[Plugin Development](plugin-development.md)** - Create custom plugins
-3. **[API Documentation](api.md)** - API reference
-4. **[Software Structure](software-structure.md)** - Understand the architecture
+3. **[Upgrade Guide (4.0.x → 4.1.0)](upgrade-4.0-to-4.1.md)** - Migrate an existing plugin to 4.1.0
+4. **[API Documentation](api.md)** - API reference
+5. **[Software Structure](software-structure.md)** - Understand the architecture
 
 ## Development Resources
 
@@ -98,6 +99,8 @@ Create custom plugins:
 - Frontend plugin development
 - Publishing plugins
 - Plugin examples
+
+If you have an existing plugin built against Fidus Writer 4.0.x, see the **[Upgrade Guide (4.0.x → 4.1.0)](upgrade-4.0-to-4.1.md)** for a step-by-step migration walkthrough covering API changes, new settings, and updated frontend module paths.
 
 ## Development Workflow
 
@@ -521,6 +524,6 @@ fiduswriter/
 
 ---
 
-**Last Updated:** December 8, 2025
+**Last Updated:** May 10, 2026
 
 **Questions?** Open an issue or discussion on GitHub!

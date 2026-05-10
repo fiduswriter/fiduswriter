@@ -181,6 +181,9 @@ MEDIA_MAX_SIZE = False
 # BRANDING_LOGO = "svg/logo.svg"
 
 # E2EE_MODE controls whether end-to-end encrypted documents are allowed.
+# EXPERIMENTAL: E2EE_MODE is an experimental mode that is still subject to changes
+# and that has not been independently reviewed by security experts yet.
+#
 # 'disabled'  - No E2EE support. All documents are unencrypted.
 # 'enabled'   - Both E2EE and non-encrypted documents are supported.
 # 'required'  - Only E2EE documents are allowed.

@@ -573,6 +573,108 @@ python manage.py check --deploy
 
 This command checks for common deployment issues.
 
+## End-to-End Encryption
+
+Fidus Writer supports end-to-end encrypted (E2EE) documents, where document content is encrypted in the browser before being transmitted to or stored on the server. The `E2EE_MODE` setting controls whether encrypted documents are permitted on the installation.
+
+> **⚠ Experimental:** E2EE support is still experimental. The implementation has not yet been independently reviewed by security experts and is subject to change in future releases. Do not rely on it for production deployments where strong security guarantees are required.
+
+```python
+# E2EE_MODE controls whether end-to-end encrypted documents are allowed.
+# 'disabled'  - No E2EE support. All documents are unencrypted. (default)
+# 'enabled'   - Both E2EE and non-encrypted documents are supported.
+# 'required'  - Only E2EE documents are allowed.
+E2EE_MODE = "disabled"
+```
+
+| Mode | Description |
+|------|-------------|
+| `"disabled"` | E2EE is turned off. No encrypted documents can be created or opened. All content is stored in plaintext on the server. This is the default for new installations. |
+| `"enabled"` | Users can choose to encrypt individual documents. Encrypted and unencrypted documents coexist on the same installation. Administrators can still read the content of unencrypted documents. |
+| `"required"` | All documents must be encrypted. Users cannot create unencrypted documents, and server-side access to document content by administrators is not possible. Suitable for high-privacy deployments. |
+
+> **Note:** Changing `E2EE_MODE` requires no database migration. It is a purely runtime setting that takes effect immediately on the next server restart.
+
+## Non-Collaborative Editing Mode
+
+The `EDITOR_SAVE_MODE` setting controls how the document editor persists changes. Three modes are available:
+
+```python
+# 'collaborative' - WebSocket-based real-time collaboration (default).
+# 'direct'        - Periodic REST saves without real-time collaboration.
+# 'external'      - No built-in saving; external plugins handle persistence.
+EDITOR_SAVE_MODE = "collaborative"  # default, can be changed
+```
+
+### `"collaborative"` (default)
+
+The default mode, unchanged from prior versions. All connected clients synchronise document changes in real time via WebSockets. This requires Django Channels and a channel layer (e.g. Redis). Most deployments should use this mode.
+
+The `DOC_SAVE_INTERVAL` setting (default `30` seconds) controls how often the server persists the in-memory document state to the database:
+
+```python
+DOC_SAVE_INTERVAL = 30  # seconds; applies in 'collaborative' mode only
+```
+
+### `"direct"`
+
+The editor saves the full document state via REST every 10 seconds whenever there are unsaved changes, and also on page unload for non-E2EE documents. There is no real-time synchronisation between clients — users can still open the same document in multiple tabs or browsers, but changes are not merged in real time. Conflicts are resolved with a last-write-wins strategy backed by optimistic version checking.
+
+This mode is useful for simpler deployments that do not require real-time multi-user collaboration and prefer to avoid a persistent WebSocket layer.
+
+> **Note:** `DOC_SAVE_INTERVAL` is irrelevant in `"direct"` mode; the client-driven 10-second interval takes precedence.
+
+### `"external"`
+
+No built-in saving whatsoever. Intended for plugin authors who control document persistence entirely via an external mechanism. The `/api/document/save/` endpoint returns `403 Forbidden` in this mode, preventing any accidental writes through the default path.
+
+## Two-Factor Authentication
+
+Fidus Writer includes `django-otp` by default, enabling TOTP-based two-factor authentication. 2FA is opt-in for individual users: each user can enable it from their profile page using any standard authenticator app (e.g. Google Authenticator, Aegis, or Authy).
+
+The issuer name shown in authenticator apps is controlled by `OTP_TOTP_ISSUER`:
+
+```python
+# Customise the authenticator app label
+OTP_TOTP_ISSUER = "My Organisation"  # default: "Fidus Writer"
+```
+
+To disable 2FA entirely for your installation, remove `django_otp` via `REMOVED_APPS`:
+
+```python
+# Disable 2FA entirely
+REMOVED_APPS = ['django_otp']
+```
+
+No migration is required when toggling this setting; the underlying OTP tables remain in the database but are simply never consulted.
+
+## Disabling Brute-Force Protection
+
+Fidus Writer ships with `django-axes`, which tracks failed login attempts and temporarily blocks repeated failures from the same IP address. This is enabled by default and requires no extra configuration.
+
+To tune the default thresholds:
+
+```python
+AXES_FAILURE_LIMIT = 10   # failed attempts before lockout (default: 5)
+AXES_COOLOFF_TIME = 1     # lockout duration in hours (default: 1)
+```
+
+To disable brute-force protection entirely, add `'axes'` to `REMOVED_APPS`:
+
+```python
+# Disable brute-force protection
+REMOVED_APPS = ['axes']
+```
+
+Multiple entries can be combined:
+
+```python
+# Disable both brute-force protection and 2FA
+REMOVED_APPS = ['axes', 'django_otp']
+```
+
+> **Warning:** Disabling `axes` is not recommended for public-facing deployments. If the default lockout policy is too aggressive (e.g. behind a corporate NAT where many users share an IP), prefer adjusting `AXES_FAILURE_LIMIT` and `AXES_COOLOFF_TIME` rather than removing the app entirely.
+
 ## Related Documentation
 
 - [Database Configuration](database.md)
@@ -583,4 +685,4 @@ This command checks for common deployment issues.
 
 ---
 
-**Last Updated:** December 8, 2025
+**Last Updated:** May 10, 2026

@@ -256,9 +256,9 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import document (Alt-i)']"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#doc-uploader").send_keys(
             slim_file_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
@@ -319,17 +319,17 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Documents"]'
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import document (Alt-i)']"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#doc-uploader").send_keys(
             fat_file_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
         # Import slim file
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import document (Alt-i)']"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#doc-uploader").send_keys(
             slim_file_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()

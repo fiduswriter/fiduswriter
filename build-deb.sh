@@ -104,6 +104,55 @@ fi
 echo "Build dependencies satisfied."
 echo ""
 
+# ---------------------------------------------------------------------------
+# Sync version from fiduswriter/version.txt -> debian/changelog
+# ---------------------------------------------------------------------------
+echo "Syncing version information from version.txt and pyproject.toml..."
+
+FW_VERSION=$(tr -d '[:space:]' < fiduswriter/version.txt)
+
+# Convert to Debian upstream version: replace the first '-' (pre-release separator)
+# with '~' so it sorts before the release, e.g.
+#   4.1.0-beta.1  ->  4.1.0~beta.1-1
+#   4.1.0         ->  4.1.0-1
+DEB_UPSTREAM=$(echo "$FW_VERSION" | sed 's/-/~/')
+DEB_VERSION="${DEB_UPSTREAM}-1"
+DEB_DATE=$(date -R)
+
+echo "  Upstream version : $FW_VERSION"
+echo "  Debian version   : $DEB_VERSION"
+echo "  Changelog date   : $DEB_DATE"
+
+export FW_VERSION DEB_VERSION DEB_DATE
+python3 - << 'PYEOF'
+import re, os
+fw_version = os.environ['FW_VERSION']
+deb_version = os.environ['DEB_VERSION']
+deb_date    = os.environ['DEB_DATE']
+
+with open("debian/changelog") as fh:
+    content = fh.read()
+
+# 1. Update the package version in the first line
+content = re.sub(r'^fiduswriter \([^)]+\)',
+                 f'fiduswriter ({deb_version})', content)
+
+# 2. Update the "Upstream version" bullet in the entry body
+content = re.sub(r'(?m)^(\s+\* Upstream version ).*$',
+                 rf'\g<1>{fw_version}', content)
+
+# 3. Update the date in the trailer line:  -- Name <email>  DATE
+content = re.sub(r'(?m)^( -- [^<]+<[^>]+>)\s+\S.*$',
+                 rf'\1  {deb_date}', content)
+
+with open("debian/changelog", "w") as fh:
+    fh.write(content)
+PYEOF
+
+echo "Updated debian/changelog."
+echo ""
+# ---------------------------------------------------------------------------
+
 # Build packages
 echo "Building binary packages..."
 dpkg-buildpackage -b -us -uc

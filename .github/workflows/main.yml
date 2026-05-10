@@ -29,8 +29,8 @@ jobs:
     pre-commit:
         runs-on: ubuntu-latest
         steps:
-        - uses: actions/checkout@v4.1.2
-        - uses: actions/setup-python@v5.1.0
+        - uses: actions/checkout@v6
+        - uses: actions/setup-python@v6
           with:
             python-version: "3.14"
         - uses: pre-commit/action@v3.0.1
@@ -62,14 +62,14 @@ jobs:
                     - user_template_manager
         steps:
             - name: Set up Python
-              uses: actions/setup-python@v5.1.0
+              uses: actions/setup-python@v6
               with:
                   python-version: "3.14"
             - name: Set up Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 22
-            - uses: actions/checkout@v4.1.2
+                  node-version: 26
+            - uses: actions/checkout@v6
             - uses: nanasess/setup-chromedriver@master
             - name: Install dependencies
               run: |

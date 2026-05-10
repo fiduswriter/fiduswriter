@@ -1,14 +1,33 @@
 import {escapeText, localizeDate} from "../../common"
 
-/** A template for the Fidus Writer document import dialog */
-export const importFidusTemplate = () =>
-    `<form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">
-            <input type="file" id="fidus-uploader" name="fidus" accept=".fidus" required />
-            <button id="import-fidus-btn" class="fw-button fw-light fw-large">
-                ${gettext("Select a file")}
-            </button>
-            <label id="import-fidus-name" class="ajax-upload-label"></label>
-        </form>`
+/**
+ * Template for the unified document import dialog.
+ *
+ * @param {Object} params
+ * @param {string} params.templateSelector - HTML for template selector (or empty)
+ * @param {string} params.e2eeHtml - HTML for E2EE encryption options (or empty)
+ * @param {string} params.supportedFormatsText - HTML describing supported formats
+ * @returns {string} Dialog body HTML
+ */
+export const importDocumentTemplate = ({
+    templateSelector = "",
+    e2eeHtml = "",
+    supportedFormatsText = ""
+}) =>
+    `<form>
+        ${templateSelector}
+        <div class="fw-select-container">
+            <div class="fw-select-head">
+                <button type="button" class="fw-button fw-light fw-large" id="import-doc-btn">
+                    ${gettext("Select a file")}
+                </button>
+                <label id="import-doc-name" class="ajax-upload-label"></label>
+            </div>
+            <input id="doc-uploader" type="file" accept=".fidus,.docx,.odt,.json,.zip" style="display: none;">
+        </div>
+        ${e2eeHtml}
+    </form>
+    <div class="noteEl">${supportedFormatsText}</div>`
 
 export const deleteFolderCell = ({subdir, ids}) =>
     `<span class="delete-folder fw-link-text" data-ids="${ids.join(",")}"

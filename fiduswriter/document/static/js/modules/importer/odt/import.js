@@ -10,6 +10,7 @@ export class OdtImporter {
         this.importId = importId
 
         this.bibDB = options.bibDB
+        this.e2eeOptions = options.e2eeOptions || null
 
         this.template = null
         this.output = {
@@ -127,7 +128,9 @@ export class OdtImporter {
             })),
             this.user,
             this.importId,
-            this.path + title
+            this.path + title,
+            null,
+            this.e2eeOptions
         )
 
         return nativeImporter

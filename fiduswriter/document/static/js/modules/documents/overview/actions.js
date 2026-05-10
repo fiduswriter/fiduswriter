@@ -17,7 +17,7 @@ import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
-import {importFidusTemplate} from "./templates"
+import {importDocumentTemplate} from "./templates"
 
 export class DocumentOverviewActions {
     constructor(documentOverview) {
@@ -107,80 +107,7 @@ export class DocumentOverviewActions {
         confirmDeletionDialog.open()
     }
 
-    importFidus() {
-        const buttons = [
-            {
-                text: gettext("Import"),
-                classes: "fw-dark",
-                click: () => {
-                    let fidusFile =
-                        document.getElementById("fidus-uploader").files
-                    if (0 === fidusFile.length) {
-                        return false
-                    }
-                    fidusFile = fidusFile[0]
-                    if (104857600 < fidusFile.size) {
-                        //TODO: This is an arbitrary size. What should be done with huge import files?
-                        return false
-                    }
-                    activateWait()
-
-                    const importer = new FidusFileImporter(
-                        fidusFile,
-                        this.documentOverview.user,
-                        this.documentOverview.path,
-                        true,
-                        this.documentOverview.contacts
-                    )
-
-                    importer
-                        .init()
-                        .then(({ok, statusText, doc}) => {
-                            deactivateWait()
-                            if (ok) {
-                                addAlert("info", statusText)
-                            } else {
-                                addAlert("error", statusText)
-                                return
-                            }
-                            this.documentOverview.documentList.push(doc)
-                            this.documentOverview.initTable()
-                            importDialog.close()
-                        })
-                        .catch(() => false)
-                }
-            },
-            {
-                type: "cancel"
-            }
-        ]
-        const importDialog = new Dialog({
-            id: "importfidus",
-            title: gettext("Import a Fidus file"),
-            body: importFidusTemplate(),
-            height: 100,
-            buttons
-        })
-        importDialog.open()
-
-        document
-            .getElementById("fidus-uploader")
-            .addEventListener("change", () => {
-                document.getElementById("import-fidus-name").innerHTML =
-                    document
-                        .getElementById("fidus-uploader")
-                        .value.replace(/C:\\fakepath\\/i, "")
-            })
-
-        document
-            .getElementById("import-fidus-btn")
-            .addEventListener("click", event => {
-                document.getElementById("fidus-uploader").click()
-                event.preventDefault()
-            })
-    }
-
-    importExternal() {
+    importDocument() {
         const importIds = Object.keys(this.documentOverview.documentTemplates)
         let importId = importIds[0] // Default to first template
 
@@ -202,25 +129,108 @@ export class DocumentOverviewActions {
                 </div>`
                 : ""
 
-        const buttons = [
-            {
-                text: gettext("Import"),
-                classes: "fw-dark",
-                click: () => {
-                    let file =
-                        document.getElementById("external-uploader").files
-                    if (0 === file.length) {
-                        return false
-                    }
-                    file = file[0]
-                    if (104857600 < file.size) {
-                        addAlert("error", gettext("File too large"))
-                        return false
-                    }
+        const e2eeMode = this.documentOverview.app.settings.E2EE_MODE
+        let e2eeHtml = ""
+        let forceE2EE = false
+        if (e2eeMode === "required") {
+            forceE2EE = true
+            e2eeHtml = `<div class="e2ee-import-note" style="margin-top: 10px;">
+                <em>${gettext("This document will be saved as encrypted.")}</em>
+            </div>`
+        } else if (e2eeMode === "enabled") {
+            e2eeHtml = `<div class="e2ee-import-choice" style="margin-top: 10px;">
+                <div>
+                    <input type="radio" id="import-nonencrypted" name="import-encryption" value="nonencrypted" checked>
+                    <label for="import-nonencrypted">${gettext("Non-encrypted")}</label>
+                </div>
+                <div>
+                    <input type="radio" id="import-e2ee" name="import-encryption" value="e2ee">
+                    <label for="import-e2ee">${gettext("Encrypted")}</label>
+                </div>
+            </div>`
+        }
 
-                    if (file.type === "application/zip") {
-                        return import("jszip").then(({default: JSZip}) => {
-                            return JSZip.loadAsync(file).then(zip => {
+        const supportedDescriptions = Object.entries(
+            importerRegistry.getAllDescriptions()
+        )
+            .map(
+                ([description, extensions]) =>
+                    `${description} (${extensions.join(", ")})`
+            )
+            .join("<br>")
+        const supportedFormatsText = `${gettext("Supported formats")}: FIDUS, ${supportedDescriptions}. ${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}`
+
+        const importDialog = new Dialog({
+            id: "import_document",
+            title: gettext("Import a document"),
+            body: importDocumentTemplate({
+                templateSelector,
+                e2eeHtml,
+                supportedFormatsText
+            }),
+            height: (importIds.length > 1 ? 260 : 210) + (e2eeHtml ? 60 : 0),
+            buttons: [
+                {
+                    text: gettext("Import"),
+                    classes: "fw-dark",
+                    click: () => {
+                        let file = document.getElementById("doc-uploader").files
+                        if (0 === file.length) {
+                            return false
+                        }
+                        file = file[0]
+                        if (104857600 < file.size) {
+                            addAlert("error", gettext("File too large"))
+                            return false
+                        }
+
+                        // Determine E2EE selection
+                        let targetE2EE = forceE2EE
+                        if (e2eeMode === "enabled") {
+                            targetE2EE =
+                                document.querySelector(
+                                    'input[name="import-encryption"]:checked'
+                                )?.value === "e2ee"
+                        }
+
+                        const doImport = async e2eeOptions => {
+                            const isFidus =
+                                file.name.split(".").pop().toLowerCase() ===
+                                "fidus"
+
+                            if (isFidus) {
+                                const importer = new FidusFileImporter(
+                                    file,
+                                    this.documentOverview.user,
+                                    this.documentOverview.path,
+                                    true,
+                                    this.documentOverview.contacts,
+                                    e2eeOptions
+                                )
+
+                                try {
+                                    const {ok, statusText, doc} =
+                                        await importer.init()
+                                    deactivateWait()
+                                    if (ok) {
+                                        addAlert("info", statusText)
+                                    } else {
+                                        addAlert("error", statusText)
+                                        return
+                                    }
+                                    this.documentOverview.documentList.push(doc)
+                                    this.documentOverview.initTable()
+                                    importDialog.close()
+                                } catch (_error) {
+                                    deactivateWait()
+                                }
+                                return
+                            }
+
+                            // Handle ZIP files for external formats
+                            if (file.type === "application/zip") {
+                                const {default: JSZip} = await import("jszip")
+                                const zip = await JSZip.loadAsync(file)
                                 const importerInfo =
                                     importerRegistry.getZipImporter(zip)
 
@@ -231,88 +241,73 @@ export class DocumentOverviewActions {
                                             "No importable files found in ZIP"
                                         )
                                     )
-                                    return false
+                                    deactivateWait()
+                                    return
                                 }
 
-                                activateWait()
+                                const files = await importerInfo.getContents()
+                                const importer = new importerInfo.importer(
+                                    files.mainContent,
+                                    this.documentOverview.user,
+                                    this.documentOverview.path,
+                                    importId,
+                                    {...files, e2eeOptions}
+                                )
 
-                                return importerInfo
-                                    .getContents()
-                                    .then(files => {
-                                        const importer =
-                                            new importerInfo.importer(
-                                                files.mainContent,
-                                                this.documentOverview.user,
-                                                this.documentOverview.path,
-                                                importId,
-                                                files
-                                            )
+                                const {ok, statusText, doc} =
+                                    await importer.init()
+                                deactivateWait()
+                                if (ok) {
+                                    addAlert("info", statusText)
+                                } else {
+                                    addAlert("error", statusText)
+                                    return
+                                }
+                                this.documentOverview.documentList.push(doc)
+                                this.documentOverview.initTable()
+                                importDialog.close()
+                                return
+                            }
 
-                                        return importer
-                                            .init()
-                                            .then(({ok, statusText, doc}) => {
-                                                deactivateWait()
-                                                if (ok) {
-                                                    addAlert("info", statusText)
-                                                } else {
-                                                    addAlert(
-                                                        "error",
-                                                        statusText
-                                                    )
-                                                    return
-                                                }
-                                                this.documentOverview.documentList.push(
-                                                    doc
-                                                )
-                                                this.documentOverview.initTable()
-                                                importDialog.close()
-                                            })
-                                    })
-                                    .catch(_error => {
-                                        deactivateWait()
-                                    })
-                            })
-                        })
-                    }
+                            // Get file extension for external formats
+                            const fileExtension = file.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase()
+                            const importerInfo =
+                                importerRegistry.getImporter(fileExtension)
 
-                    // Get file extension
-                    const fileExtension = file.name
-                        .split(".")
-                        .pop()
-                        .toLowerCase()
-                    const importerInfo =
-                        importerRegistry.getImporter(fileExtension)
+                            if (!importerInfo) {
+                                addAlert(
+                                    "error",
+                                    gettext("Unsupported file format")
+                                )
+                                deactivateWait()
+                                return
+                            }
 
-                    if (!importerInfo) {
-                        addAlert("error", gettext("Unsupported file format"))
-                        return false
-                    }
+                            // Get selected template if multiple templates exist
+                            if (importIds.length > 1) {
+                                importId = document.getElementById(
+                                    "import-template-selector"
+                                ).value
+                            }
 
-                    // Get selected template if multiple templates exist
-                    if (importIds.length > 1) {
-                        importId = document.getElementById(
-                            "import-template-selector"
-                        ).value
-                    }
+                            const options = {
+                                bibDB: this.documentOverview.app.bibDB,
+                                files: {},
+                                e2eeOptions
+                            }
 
-                    activateWait()
+                            const importer = new importerInfo.importer(
+                                file,
+                                this.documentOverview.user,
+                                this.documentOverview.path,
+                                importId,
+                                options
+                            )
 
-                    const options = {
-                        bibDB: this.documentOverview.app.bibDB,
-                        files: {} // Additional files to import
-                    }
-
-                    const importer = new importerInfo.importer(
-                        file,
-                        this.documentOverview.user,
-                        this.documentOverview.path,
-                        importId,
-                        options
-                    )
-
-                    importer
-                        .init()
-                        .then(({ok, statusText, doc}) => {
+                            const {ok, statusText, doc} = await importer.init()
                             deactivateWait()
                             if (ok) {
                                 addAlert("info", statusText)
@@ -323,63 +318,66 @@ export class DocumentOverviewActions {
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.initTable()
                             importDialog.close()
-                        })
-                        .catch(() => false)
-                }
-            },
-            {
-                type: "cancel"
-            }
-        ]
-        const supportedDescriptions = Object.entries(
-            importerRegistry.getAllDescriptions()
-        )
-            .map(
-                ([description, extensions]) =>
-                    `${description} (${extensions.join(", ")})`
-            )
-            .join("<br>")
-        const supportedFormats = importerRegistry.getAllFormats()
+                        }
 
-        const importDialog = new Dialog({
-            id: "import_external",
-            title: gettext("Import a text document in a different format"),
-            body: `
-            <form>
-                ${templateSelector}
-                <div class="fw-select-container">
-                    <div class="fw-select-head">
-                        <button type="button" class="fw-button fw-light fw-large" id="import-external-btn">
-                            ${gettext("Select a file")}
-                        </button>
-                        <label id="import-external-name" class="ajax-upload-label"></label>
-                    </div>
-                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")},.zip" style="display: none;">
-                </div>
-            </form>
-            <div class="noteEl">${gettext("Supported formats")}:</div>
-            <div class="noteEl">${supportedDescriptions}</div>
-            <div class="noteEl">${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}</div>`,
-            height:
-                (importIds.length > 1 ? 250 : 200) +
-                supportedFormats.length * 12,
-            buttons
+                        if (targetE2EE) {
+                            activateWait()
+                            createPasswordDialog(async password => {
+                                const salt = window.crypto.getRandomValues(
+                                    new Uint8Array(16)
+                                )
+                                const iterations = 600000
+                                try {
+                                    const key = await E2EEKeyManager.deriveKey(
+                                        password,
+                                        salt,
+                                        iterations
+                                    )
+                                    const e2eeOptions = {
+                                        enabled: true,
+                                        key,
+                                        salt: btoa(
+                                            String.fromCharCode(...salt)
+                                        ),
+                                        iterations
+                                    }
+                                    await doImport(e2eeOptions)
+                                } catch (error) {
+                                    deactivateWait()
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "Could not create encrypted document."
+                                        )
+                                    )
+                                    console.error(error)
+                                }
+                            })
+                        } else {
+                            activateWait()
+                            doImport(null)
+                        }
+                    }
+                },
+                {
+                    type: "cancel"
+                }
+            ]
         })
         importDialog.open()
 
         document
-            .getElementById("external-uploader")
+            .getElementById("doc-uploader")
             .addEventListener("change", () => {
-                document.getElementById("import-external-name").innerHTML =
-                    document
-                        .getElementById("external-uploader")
-                        .value.replace(/C:\\fakepath\\/i, "")
+                document.getElementById("import-doc-name").innerHTML = document
+                    .getElementById("doc-uploader")
+                    .value.replace(/C:\\fakepath\\/i, "")
             })
 
         document
-            .getElementById("import-external-btn")
+            .getElementById("import-doc-btn")
             .addEventListener("click", event => {
-                document.getElementById("external-uploader").click()
+                document.getElementById("doc-uploader").click()
                 event.preventDefault()
             })
     }

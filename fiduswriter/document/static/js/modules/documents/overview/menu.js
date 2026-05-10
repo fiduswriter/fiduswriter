@@ -253,18 +253,11 @@ export const menuModel = () => ({
         },
         {
             type: "text",
-            title: gettext("Upload FIDUS document"),
-            keys: "Alt-u",
-            action: overview => overview.mod.actions.importFidus(),
-            order: 3
-        },
-        {
-            type: "text",
-            id: "import_external",
+            id: "import_document",
             title: gettext("Import document"),
             keys: "Alt-i",
-            action: overview => overview.mod.actions.importExternal(),
-            order: 4
+            action: overview => overview.mod.actions.importDocument(),
+            order: 3
         },
         {
             type: "search",

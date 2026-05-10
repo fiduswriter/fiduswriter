@@ -9,6 +9,7 @@ export class DocxImporter {
         this.path = path
         this.importId = importId
         this._options = options.files // Not used in the DOCX importer
+        this.e2eeOptions = options.e2eeOptions || null
 
         this.template = null
         this.output = {
@@ -58,7 +59,9 @@ export class DocxImporter {
                         [], // No additional image files needed
                         this.user,
                         this.importId,
-                        this.path + title
+                        this.path + title,
+                        null,
+                        this.e2eeOptions
                     )
 
                     return nativeImporter

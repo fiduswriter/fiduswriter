@@ -10,6 +10,7 @@ export class PandocImporter {
         this.path = path
         this.importId = importId
         this.additionalFiles = options.files
+        this.e2eeOptions = options.e2eeOptions || null
 
         this.template = null
         this.output = {
@@ -148,7 +149,9 @@ export class PandocImporter {
                 })),
                 this.user,
                 null,
-                this.path + this.title
+                this.path + this.title,
+                null,
+                this.e2eeOptions
             )
 
             return nativeImporter

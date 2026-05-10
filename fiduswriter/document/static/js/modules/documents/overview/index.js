@@ -499,7 +499,7 @@ export class DocumentOverview {
                                         {
                                             nodeName: "i",
                                             attributes: {
-                                                class: "fas fa-folder"
+                                                class: "fa-solid fa-folder"
                                             }
                                         },
                                         {
@@ -723,7 +723,7 @@ export class DocumentOverview {
                 "folder",
                 null,
                 `<a class="fw-data-table-title fw-link-text subdir" href="/documents${encodeURI(this.path + subdir)}/" data-path="${this.path}${subdir}/">
-                    <i class="fas fa-folder"></i>
+                    <i class="fa-solid fa-folder"></i>
                     <span>${escapeText(subdir)}</span>
                 </a>`,
                 "",
@@ -764,7 +764,7 @@ export class DocumentOverview {
             "file",
             false,
             `<a class="fw-data-table-title fw-link-text" href="/document/${doc.id}" data-id="${doc.id}">
-                ${doc.e2ee ? '<i class="fas fa-lock e2ee-doc-indicator" title="' + gettext("End-to-end encrypted document") + '"></i>' : '<i class="far fa-file-alt"></i>'}
+                ${doc.e2ee ? '<i class="fa-solid fa-lock e2ee-doc-indicator" title="' + gettext("End-to-end encrypted document") + '"></i>' : '<i class="fa-regular fa-file-alt"></i>'}
                 <span class="fw-searchable${doc.e2ee && !hasDecryptedTitle ? " e2ee-encrypted-title" : ""}">
                     ${shortFileTitle(displayTitle, doc.path)}
                 </span>
@@ -772,7 +772,7 @@ export class DocumentOverview {
             </a>`,
             doc.revisions.length
                 ? `<span class="revisions" data-id="${doc.id}">
-                <i class="fas fa-history"></i>
+                <i class="fa-solid fa-history"></i>
             </span>`
                 : "",
             dateCell({date: doc.added}),
@@ -788,7 +788,7 @@ export class DocumentOverview {
                     data-title="${escapeText(currentPath)}">
                 ${
                     this.user.id === doc.owner.id
-                        ? '<i class="fa fa-trash-alt"></i>'
+                        ? '<i class="fa-solid fa-trash-alt"></i>'
                         : ""
                 }
             </span>`

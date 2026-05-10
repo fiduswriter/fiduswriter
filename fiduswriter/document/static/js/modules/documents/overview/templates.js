@@ -32,7 +32,7 @@ export const importDocumentTemplate = ({
 export const deleteFolderCell = ({subdir, ids}) =>
     `<span class="delete-folder fw-link-text" data-ids="${ids.join(",")}"
         data-title="${escapeText(subdir)}">
-        '<i class="fa fa-trash-alt"></i>
+        '<i class="fa-solid fa-trash-alt"></i>
 </span>`
 
 export const dateCell = ({date}) => ({

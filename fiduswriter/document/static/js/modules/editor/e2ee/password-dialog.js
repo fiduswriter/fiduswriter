@@ -145,7 +145,7 @@ export function enterPasswordDialog(
                     <input type="password" id="e2ee-password-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show password")}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
                 <div class="e2ee-password-error" id="e2ee-password-error"></div>
@@ -214,11 +214,12 @@ export function enterPasswordDialog(
                 toggleBtn.addEventListener("click", () => {
                     if (input.type === "password") {
                         input.type = "text"
-                        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>'
+                        toggleBtn.innerHTML =
+                            '<i class="fa-solid fa-eye-slash"></i>'
                         toggleBtn.title = gettext("Hide password")
                     } else {
                         input.type = "password"
-                        toggleBtn.innerHTML = '<i class="fas fa-eye"></i>'
+                        toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i>'
                         toggleBtn.title = gettext("Show password")
                     }
                 })
@@ -262,7 +263,7 @@ export function createPasswordDialog(onPassword) {
                     <input type="password" id="e2ee-new-password-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show password")}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
                 <div class="e2ee-strength-meter">
@@ -345,10 +346,11 @@ export function createPasswordDialog(onPassword) {
                     if (input) {
                         if (input.type === "password") {
                             input.type = "text"
-                            btn.innerHTML = '<i class="fas fa-eye-slash"></i>'
+                            btn.innerHTML =
+                                '<i class="fa-solid fa-eye-slash"></i>'
                         } else {
                             input.type = "password"
-                            btn.innerHTML = '<i class="fas fa-eye"></i>'
+                            btn.innerHTML = '<i class="fa-solid fa-eye"></i>'
                         }
                     }
                 })
@@ -449,7 +451,7 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
                         showNewPasswordPlaintext
                             ? ""
                             : `<button type="button" class="e2ee-toggle-visibility" title="${gettext("Show password")}">
-                               <i class="fas fa-eye"></i>
+                               <i class="fa-solid fa-eye"></i>
                            </button>`
                     }
                 </div>
@@ -567,10 +569,11 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
                             if (input.type === "password") {
                                 input.type = "text"
                                 btn.innerHTML =
-                                    '<i class="fas fa-eye-slash"></i>'
+                                    '<i class="fa-solid fa-eye-slash"></i>'
                             } else {
                                 input.type = "password"
-                                btn.innerHTML = '<i class="fas fa-eye"></i>'
+                                btn.innerHTML =
+                                    '<i class="fa-solid fa-eye"></i>'
                             }
                         }
                     })

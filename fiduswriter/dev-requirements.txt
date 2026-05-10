@@ -1,5 +1,5 @@
-setuptools==80.9.0
+setuptools==82.0.1
 twine==6.2.0
-pre-commit==4.5.0
+pre-commit==4.6.0
 deep-translator==1.11.4
 polib==1.2.0

@@ -3,18 +3,18 @@ channels==4.3.2
 daphne==4.2.1
 Twisted[tls,http2] # Version is given by daphne.
 Django==6.0.5
-django-allauth[socialaccount]==65.14.1
-django-axes==8.1.0
-django-avatar==8.0.1
-django-otp==1.3.0
+django-allauth[socialaccount]==65.16.1
+django-axes==8.3.1
+django-avatar==9.0.0
+django-otp==1.7.0
 pyotp==2.9.0
 qrcode==8.2
 django-js-error-hook==1.0
 django-npm-mjs==3.3.0
-django-loginas==0.3.13
+django-loginas==0.3.14
 httpx==0.28.1
-httpx-ws==0.8.2
+httpx-ws==0.9.0
 Pillow==12.2.0
 python-magic==0.4.27
-prosemirror==0.5.2
+prosemirror==0.6.1
 watchdog==6.0.0

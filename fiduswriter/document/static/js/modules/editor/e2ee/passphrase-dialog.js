@@ -30,7 +30,7 @@ export function setupPassphraseDialog(onSetup) {
                     <input type="password" id="e2ee-passphrase-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
                 <div class="e2ee-strength-meter">
@@ -111,10 +111,11 @@ export function setupPassphraseDialog(onSetup) {
                     if (input) {
                         if (input.type === "password") {
                             input.type = "text"
-                            btn.innerHTML = '<i class="fas fa-eye-slash"></i>'
+                            btn.innerHTML =
+                                '<i class="fa-solid fa-eye-slash"></i>'
                         } else {
                             input.type = "password"
-                            btn.innerHTML = '<i class="fas fa-eye"></i>'
+                            btn.innerHTML = '<i class="fa-solid fa-eye"></i>'
                         }
                     }
                 })
@@ -183,7 +184,7 @@ export function enterPassphraseDialog(
                     <input type="password" id="e2ee-passphrase-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
                 <div class="e2ee-password-error" id="e2ee-passphrase-error">${escapeText(errorMessage)}</div>
@@ -257,11 +258,12 @@ export function enterPassphraseDialog(
                 toggleBtn.addEventListener("click", () => {
                     if (input.type === "password") {
                         input.type = "text"
-                        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>'
+                        toggleBtn.innerHTML =
+                            '<i class="fa-solid fa-eye-slash"></i>'
                         toggleBtn.title = gettext("Hide passphrase")
                     } else {
                         input.type = "password"
-                        toggleBtn.innerHTML = '<i class="fas fa-eye"></i>'
+                        toggleBtn.innerHTML = '<i class="fa-solid fa-eye"></i>'
                         toggleBtn.title = gettext("Show passphrase")
                     }
                 })
@@ -298,7 +300,7 @@ export function showRecoveryKeyDialog(recoveryKey, onContinue) {
                 <div class="e2ee-recovery-key-box">
                     <code id="e2ee-recovery-key-value">${recoveryKey}</code>
                     <button type="button" class="fw-button fw-light" id="e2ee-copy-recovery-key">
-                        <i class="fas fa-copy"></i> ${gettext("Copy")}
+                        <i class="fa-solid fa-copy"></i> ${gettext("Copy")}
                     </button>
                 </div>
                 <p class="e2ee-password-hint"><strong>${gettext("Copy it now — it will not be shown again.")}</strong></p>
@@ -335,9 +337,9 @@ export function showRecoveryKeyDialog(recoveryKey, onContinue) {
             if (copyBtn) {
                 copyBtn.addEventListener("click", () => {
                     navigator.clipboard.writeText(recoveryKey).then(() => {
-                        copyBtn.innerHTML = `<i class="fas fa-check"></i> ${gettext("Copied!")}`
+                        copyBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${gettext("Copied!")}`
                         setTimeout(() => {
-                            copyBtn.innerHTML = `<i class="fas fa-copy"></i> ${gettext("Copy")}`
+                            copyBtn.innerHTML = `<i class="fa-solid fa-copy"></i> ${gettext("Copy")}`
                         }, 2000)
                     })
                 })
@@ -369,7 +371,7 @@ export function recoverWithKeyDialog(onRecover) {
                     <input type="password" id="e2ee-new-passphrase-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
                 <div class="e2ee-password-field">
@@ -469,10 +471,11 @@ export function recoverWithKeyDialog(onRecover) {
                     if (input) {
                         if (input.type === "password") {
                             input.type = "text"
-                            btn.innerHTML = '<i class="fas fa-eye-slash"></i>'
+                            btn.innerHTML =
+                                '<i class="fa-solid fa-eye-slash"></i>'
                         } else {
                             input.type = "password"
-                            btn.innerHTML = '<i class="fas fa-eye"></i>'
+                            btn.innerHTML = '<i class="fa-solid fa-eye"></i>'
                         }
                     }
                 })
@@ -511,7 +514,7 @@ export function changePassphraseDialog(onChange) {
                     <input type="password" id="e2ee-old-passphrase-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
                 <div class="e2ee-password-field">
@@ -519,7 +522,7 @@ export function changePassphraseDialog(onChange) {
                     <input type="password" id="e2ee-new-passphrase-input" class="e2ee-password-input"
                            autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
                 <div class="e2ee-password-field">
@@ -616,10 +619,11 @@ export function changePassphraseDialog(onChange) {
                     if (input) {
                         if (input.type === "password") {
                             input.type = "text"
-                            btn.innerHTML = '<i class="fas fa-eye-slash"></i>'
+                            btn.innerHTML =
+                                '<i class="fa-solid fa-eye-slash"></i>'
                         } else {
                             input.type = "password"
-                            btn.innerHTML = '<i class="fas fa-eye"></i>'
+                            btn.innerHTML = '<i class="fa-solid fa-eye"></i>'
                         }
                     }
                 })

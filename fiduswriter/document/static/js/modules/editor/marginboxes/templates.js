@@ -37,7 +37,7 @@ const answerCommentTemplate = ({
                 </div>
            ${
                answer.user === user.id
-                   ? `<span class="show-marginbox-options fa fa-ellipsis-v" data-id="${answer.id}" data-commentId="${commentId}" data-answer=${true}></span>`
+                   ? `<span class="show-marginbox-options fa-solid fa-ellipsis-v" data-id="${answer.id}" data-commentId="${commentId}" data-answer=${true}></span>`
                    : ""
            }`
         }
@@ -187,7 +187,7 @@ ${
             !READ_ONLY_ROLES.includes(docInfo.access_rights)) ||
             docInfo.access_rights === "write") &&
         !editComment
-            ? `<span class="show-marginbox-options comment-option fas fa-ellipsis-v" data-id="${comment.id}" data-commentUser="${comment.user}"
+            ? `<span class="show-marginbox-options comment-option fa-solid fa-ellipsis-v" data-id="${comment.id}" data-commentUser="${comment.user}"
 ></span>`
             : ""
     }
@@ -327,12 +327,12 @@ export const marginboxFilterTemplate = ({
     if (comments || filterOptions.commentsOnlyMajor) {
         filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? "" : " disabled"}">
             <span class="label">${gettext("Comments")}</span>
-            <span class="show-marginbox-options fa fa-ellipsis-v"></span>
+            <span class="show-marginbox-options fa-solid fa-ellipsis-v"></span>
             <div class="marginbox-options fw-pulldown fw-right"><ul>
                 <li>
                     <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext("Author")}">
                         ${gettext("Author")}
-                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                        <span class="fw-icon-right"><i class="fa-solid fa-caret-right"></i></span>
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
@@ -352,7 +352,7 @@ export const marginboxFilterTemplate = ({
                 <li>
                     <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext("Assignee")}">
                         ${gettext("Assignee")}
-                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                        <span class="fw-icon-right"><i class="fa-solid fa-caret-right"></i></span>
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
@@ -386,12 +386,12 @@ export const marginboxFilterTemplate = ({
     }
     if (tracks) {
         filterHTML += `<div id="margin-box-filter-track" class="margin-box-filter-button${filterOptions.track ? "" : " disabled"}">
-            <span class="label">${gettext("Tracking")}</span><span class="show-marginbox-options fa fa-ellipsis-v"></span>
+            <span class="label">${gettext("Tracking")}</span><span class="show-marginbox-options fa-solid fa-ellipsis-v"></span>
             <div class="marginbox-options fw-pulldown fw-right"><ul>
                 <li>
                     <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext("Author")}">
                         ${gettext("Author")}
-                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                        <span class="fw-icon-right"><i class="fa-solid fa-caret-right"></i></span>
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
@@ -414,7 +414,7 @@ export const marginboxFilterTemplate = ({
     if (help || warning) {
         filterHTML += `<div id="margin-box-filter-info" class="margin-box-filter-button${filterOptions.info ? "" : " disabled"}">
             <span class="label">${gettext("Informational")}</span>
-            <span class="show-marginbox-options fa fa-ellipsis-v"></span>
+            <span class="show-marginbox-options fa-solid fa-ellipsis-v"></span>
             <div class="marginbox-options fw-pulldown fw-right"><ul>
                 <li>
                 <span class="fw-pulldown-item margin-box-filter-check">
@@ -503,7 +503,7 @@ export const marginBoxOptions = (comment, user, docInfo) => {
                 <li>
                     <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext("Assign comment to user")}">
                         ${gettext("Assign to")}
-                        <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+                        <span class="fw-icon-right"><i class="fa-solid fa-caret-right"></i></span>
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>

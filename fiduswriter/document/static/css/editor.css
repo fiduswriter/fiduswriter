@@ -754,7 +754,7 @@ ul.drop-up-options li.focused {
 }
 
 .drop-up-options .remove-link::after {
-    font-family: "Font Awesome 5 Free", monospace;
+    font-family: "Font Awesome 7 Free", monospace;
     content: "\f2ed";
     opacity: 0.4;
     float: right;

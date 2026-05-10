@@ -492,11 +492,11 @@ export class ModNavigator {
             <div id="navigator-content" role="dialog" aria-labelledby="navigator-header">
                 <div class="header-container">
                     <button id="navigator-filter-back" class="hide" aria-label="${gettext("Back to navigator")}" tabindex="0">
-                        <i class="fas fa-arrow-left"></i>
+                        <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <h1 id="navigator-header" class="header">${gettext("Document Navigator")}</h1>
                     <button id="navigator-filter-icon" aria-label="${gettext("Navigator settings")}" tabindex="0">
-                        <i class="fas fa-cog"></i>
+                        <i class="fa-solid fa-cog"></i>
                     </button>
                 </div>
                 <div id="navigator-list" role="navigation" aria-label="${gettext("Document headings")}">
@@ -508,7 +508,7 @@ export class ModNavigator {
                 aria-expanded="false"
                 aria-label="${gettext("Toggle document navigator")}"
                 title="${gettext("Document N\u0332avigator")}">
-                <span class="navigator-arrow-icon"><i class="fas fa-scroll"></i></span>
+                <span class="navigator-arrow-icon"><i class="fa-solid fa-scroll"></i></span>
             </button>
             `
     }

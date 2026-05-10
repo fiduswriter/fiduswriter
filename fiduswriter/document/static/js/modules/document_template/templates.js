@@ -641,7 +641,7 @@ export const bibliographyHeaderTemplate = ({
                         <input type="text" value="${escapeText(translation[1])}" >
                     </td>
                     <td class="input-field-list-ctrl">
-                        <span class="fa fa-minus-circle" tabindex="0"></span>&nbsp;<span class="fa fa-plus-circle" tabindex="0"></span>
+                        <span class="fa-solid fa-minus-circle" tabindex="0"></span>&nbsp;<span class="fa-solid fa-plus-circle" tabindex="0"></span>
                     </td>
                 </tr>`
         )
@@ -785,7 +785,7 @@ export const documentStylesTemplate = ({documentStyles}) => `${documentStyles
     )
     .join("")}
 <button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
-    <i class="fas fa-plus-circle"></i>
+    <i class="fa-solid fa-plus-circle"></i>
     ${gettext("Add new document style")}
 </button>`
 
@@ -797,7 +797,7 @@ export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
     )
     .join("")}
 <button class="fw-green fw-small fw-button ui-button export-template" data-id="0">
-    <i class="fas fa-plus-circle"></i>
+    <i class="fa-solid fa-plus-circle"></i>
     ${gettext("Add new export template")}
 </button>`
 

@@ -955,7 +955,7 @@ export class Editor {
         this.dom.classList.add("editor")
         this.dom.classList.add("scrollable")
         this.dom.innerHTML = `<div id="editor">
-            <div id="wait"><i class="fa fa-spinner fa-pulse"></i></div>
+            <div id="wait"><i class="fa-solid fa-spinner fa-pulse"></i></div>
             <header>
                 <nav id="headerbar"><div></div></nav>
                 <nav id="toolbar"><div></div></nav>
@@ -978,7 +978,7 @@ export class Editor {
                 </div>
             </div>
             <div id="chat">
-                <i class="resize-button fa fa-angle-double-down"></i>
+                <i class="resize-button fa-solid fa-angle-double-down"></i>
                 <div id="chat-container"></div>
                 <div id="messageform" contentEditable="true" class="empty"></div>
                 <audio id="chat-notification">

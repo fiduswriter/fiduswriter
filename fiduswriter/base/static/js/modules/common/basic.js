@@ -220,10 +220,10 @@ export const addAlert = (alertType, alertMsg) => {
         return
     }
     const iconNames = {
-        error: "exclamation-circle",
-        warning: "exclamation-circle",
-        info: "info-circle",
-        success: "check-circle"
+        error: "circle-exclamation",
+        warning: "circle-exclamation",
+        info: "circle-info",
+        success: "circle-check"
     }
     if (!document.getElementById("#alerts-outer-wrapper")) {
         document.body.insertAdjacentHTML(
@@ -343,7 +343,7 @@ export const escapeText = text => {
  * @returns {string} HTML for the info tooltip
  */
 export const infoTooltip = html =>
-    `<span class="fw-info-tooltip"><i class="fas fa-info-circle"></i><span class="fw-info-tooltip-text">${html}</span></span>`
+    `<span class="fw-info-tooltip"><i class="fa-solid fa-info-circle"></i><span class="fw-info-tooltip-text">${html}</span></span>`
 
 export const unescapeText = text =>
     text

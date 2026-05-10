@@ -32,7 +32,7 @@ export class FigureDialog {
             `<div><span class="math-field" type="text" name="math" ></span></div>
             <p class="formula-or-figure">${gettext("or")}</p>
             <p><button type="button" id="insert-figure-image" class="fw-button fw-light">
-                ${gettext("Insert image")} <i class="fa fa-image"></i>
+                ${gettext("Insert image")} <i class="fa-solid fa-image"></i>
             </button></p>`
 
         this.mathliveDOM = this.dialog.dialogEl.querySelector(".math-field")
@@ -177,7 +177,7 @@ export class FigureDialog {
             this.dialog.dialogEl.querySelector(
                 ".inner-figure-preview"
             ).innerHTML = `<img src="${imgSrc}" style="max-width: 400px;max-height:220px">
-                <span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>`
+                <span class="dot-menu-icon"><i class="fa-solid fa-ellipsis-v"></i></span>`
 
             this.dialog.dialogEl
                 .querySelector(".dot-menu-icon")

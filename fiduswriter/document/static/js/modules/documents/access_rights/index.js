@@ -231,7 +231,7 @@ export class DocumentAccessRightsDialog {
         // E2EE warning banner body (shown only for E2EE documents)
         const e2eeWarningBanner = this.e2ee
             ? `<div class="e2ee-access-rights-warning">
-                <strong><i class="fas fa-lock"></i> ${gettext("End-to-end encrypted document")}</strong>
+                <strong><i class="fa-solid fa-lock"></i> ${gettext("End-to-end encrypted document")}</strong>
                 <p>${gettext("This document is end-to-end encrypted. Collaborators without a personal passphrase will need the document password shared with them through a secure channel outside of Fidus Writer. Do not send the password through the document chat.")}</p>
             </div>`
             : ""

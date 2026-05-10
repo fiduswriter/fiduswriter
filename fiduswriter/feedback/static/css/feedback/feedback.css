@@ -47,7 +47,7 @@ body.header-closed a.feedback-tab {
 
 a.feedback-tab::before {
     display: block;
-    font-family: "Font Awesome 5 Free", monospace;
+    font-family: "Font Awesome 7 Free", monospace;
     font-size: 16px;
     content: "\f075";
     color: white;

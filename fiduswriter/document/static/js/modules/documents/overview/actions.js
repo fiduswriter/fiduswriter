@@ -108,7 +108,8 @@ export class DocumentOverviewActions {
     }
 
     importDocument() {
-        const importIds = Object.keys(this.documentOverview.documentTemplates)
+        const documentTemplates = this.documentOverview.documentTemplates || {}
+        const importIds = Object.keys(documentTemplates)
         let importId = importIds[0] // Default to first template
 
         const templateSelector =
@@ -116,16 +117,14 @@ export class DocumentOverviewActions {
                 ? `<label for="import-template-selector">${gettext("Import as:")}</label>
                 <div class="fw-select-container">
                     <select class="fw-button fw-light fw-large" id="import-template-selector">
-                        ${Object.entries(
-                            this.documentOverview.documentTemplates
-                        )
+                        ${Object.entries(documentTemplates)
                             .map(
                                 ([key, template]) =>
                                     `<option value="${escapeText(key)}">${escapeText(template.title)}</option>`
                             )
                             .join("")}
                     </select>
-                    <div class="fw-select-arrow fa fa-caret-down"></div>
+                    <div class="fw-select-arrow fa-solid fa-caret-down"></div>
                 </div>`
                 : ""
 

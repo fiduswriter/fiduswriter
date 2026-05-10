@@ -117,12 +117,14 @@ export class CitationDialog {
         return [
             `${db}-${id}`,
             `<span class="fw-data-table-title fw-inline">
-                <i class="fa fa-book"></i>
+                <i class="fa-solid fa-book"></i>
                 <span class="fw-searchable">${bib.fields.title?.length ? escapeText(litToText(bib.fields.title)) : gettext("Untitled")}</span>
             </span>`,
             bibauthors ? escapeText(nameToText(bibauthors)) : "",
             bib.fields.date ? dateToYear(bib.fields.date) : "",
-            checked ? '<i class="fa fa-check" aria-hidden="true"></i>' : ""
+            checked
+                ? '<i class="fa-solid fa-check" aria-hidden="true"></i>'
+                : ""
         ]
     }
 
@@ -289,7 +291,10 @@ export class CitationDialog {
             row.cells[4].data = [
                 {
                     nodeName: "i",
-                    attributes: {class: "fa fa-check", "aria-hidden": "true"}
+                    attributes: {
+                        class: "fa-solid fa-check",
+                        "aria-hidden": "true"
+                    }
                 }
             ]
         }

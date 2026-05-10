@@ -17,7 +17,7 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
             </table>
         </div>
         <span id="add-share-contact" class="fw-button fw-large fw-square fw-light fw-ar-button">
-            <i class="fa fa-caret-right"></i>
+            <i class="fa-solid fa-caret-right"></i>
         </span>
         <div id="share-contact" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
@@ -38,7 +38,7 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
             <p class="fw-ar-loading">${gettext("Loading…")}</p>
         </div>
         <button class="fw-button fw-light" id="create-share-token-btn">
-            <i class="fa fa-plus"></i>&nbsp;${gettext("Create new share link")}
+            <i class="fa-solid fa-plus"></i>&nbsp;${gettext("Create new share link")}
         </button>
     </div>`
 
@@ -65,10 +65,10 @@ export const shareTokenRowTemplate = ({token}) => {
         <div class="share-token-url-row">
             <input class="share-token-url-input" type="text" readonly value="${escapeText(token.share_url)}" />
             <button class="fw-button fw-light copy-share-token-btn" data-url="${escapeText(token.share_url)}" title="${gettext("Copy link")}">
-                <i class="fa fa-copy"></i>
+                <i class="fa-solid fa-copy"></i>
             </button>
             <button class="fw-button fw-light revoke-share-token-btn" data-token-id="${token.id}" title="${gettext("Revoke")}">
-                <i class="fas fa-trash-alt"></i>
+                <i class="fa-solid fa-trash-alt"></i>
             </button>
         </div>
     </div>`
@@ -99,7 +99,7 @@ export const createShareTokenDialogTemplate = (
                                <option value="write-tracked">${gettext("Write tracked")}</option>`
                         }
                     </select>
-                    <div class="fw-select-arrow fa fa-caret-down"></div>
+                    <div class="fw-select-arrow fa-solid fa-caret-down"></div>
                 </td>
             </tr>
             <tr>
@@ -121,7 +121,7 @@ export const createShareTokenDialogTemplate = (
                     <td class="entry-field">
                         <input id="share-token-password" type="text" class="fw-light" value="${escapeText(documentPassword)}" placeholder="${gettext("Enter the document password to include it in the link")}" autocomplete="off" />
                         <p class="e2ee-share-warning">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <i class="fa-solid fa-exclamation-triangle"></i>
                             ${gettext("If you enter the password above, it will be embedded in the link (after #). Anyone with the link can open the document. Only share such links through secure channels.")}
                         </p>
                     </td>
@@ -172,12 +172,12 @@ export const collaboratorsTemplate = ({collaborators}) =>
         <td width="50" align="center">
             <div class="fw-inline edit-right-wrapper">
                 <i class="icon-access-right icon-access-${collaborator.rights}"></i>
-                <i class="fa fa-caret-down edit-right"></i>
+                <i class="fa-solid fa-caret-down edit-right"></i>
             </div>
         </td>
         <td width="50" align="center">
             <span class="delete-collaborator fw-inline" data-rights="delete">
-                <i class="fas fa-trash-alt fw-link-text"></i>
+                <i class="fa-solid fa-trash-alt fw-link-text"></i>
             </span>
         </td>
     </tr>`

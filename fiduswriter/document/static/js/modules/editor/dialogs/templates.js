@@ -29,7 +29,7 @@ export const linkDialogTemplate = ({
                     )
                     .join("")}
             </select>
-            <div class="fw-select-arrow fa fa-caret-down"></div>
+            <div class="fw-select-arrow fa-solid fa-caret-down"></div>
         </div><p></p>`
             : ""
     }${
@@ -52,7 +52,7 @@ export const linkDialogTemplate = ({
                     )
                     .join("")}
             </select>
-            <div class="fw-select-arrow fa fa-caret-down"></div>
+            <div class="fw-select-arrow fa-solid fa-caret-down"></div>
         </div>
         <p></p>
         <div class="fw-radio">
@@ -202,7 +202,7 @@ export const figureImageItemTemplate = ({id, cats, image, thumbnail, title}) =>
         </td>
         <td class="title" style="width:212px;">
             <span class="fw-inline">
-                <span class="edit-image fw-link-text fa fa-image" data-id="${id}">
+                <span class="edit-image fw-link-text fa-solid fa-image" data-id="${id}">
                     ${escapeText(title)}
                 </span>
             </span>
@@ -228,7 +228,7 @@ export const figureImageTemplate = ({imageDB}) =>
         <div class="dialogSubmit">
             <button class="edit-image createNew fw-button fw-light">
                 ${gettext("Upload")}
-                <span class="fa fa-plus-circle"></span>
+                <span class="fa-solid fa-plus-circle"></span>
             </button>
             <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">
                 ${gettext("Insert")}
@@ -261,7 +261,7 @@ export const configureFigureTemplate = ({language}) =>
                     <tr>
                         <th><h4 class="fw-tablerow-title">${gettext("Width")}</h4></th>
                         <td>
-                            <div class="figure-width fw-dropdown fw-large fw-light fw-button"><label></label>&nbsp;<span class="fa fa-caret-down"></span></div>
+                            <div class="figure-width fw-dropdown fw-large fw-light fw-button"><label></label>&nbsp;<span class="fa-solid fa-caret-down"></span></div>
                         </td>
                     </tr>
                     <tr>
@@ -296,7 +296,7 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
     `<div id="my-sources" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My sources")}</h3>
         </div>
-        <span id="add-cite-source" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="fa fa-caret-right"></i></span>
+        <span id="add-cite-source" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="fa-solid fa-caret-right"></i></span>
         <div id="cited-items" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("Citation format")}</h3>
             <div class="fw-select-container">
@@ -304,7 +304,7 @@ export const configureCitationTemplate = ({citedItemsHTML, citeFormat}) =>
                     <option value="autocite" ${citeFormat === "autocite" ? "selected" : ""}>${gettext("(Author, 1998)")}</option>
                     <option value="textcite" ${citeFormat === "textcite" ? "selected" : ""}>${gettext("Author (1998)")}</option>
                 </select>
-                <div class="fw-select-arrow fa fa-caret-down"></div>
+                <div class="fw-select-arrow fa-solid fa-caret-down"></div>
             </div>
             <table id="selected-cite-source-table" class="fw-data-table tablesorter">
                 <thead class="fw-data-table-header"><tr>
@@ -337,7 +337,7 @@ export const selectedCitationTemplate = ({
               <tr>
                   <td width="110">
                       <span class="fw-data-table-title fw-inline">
-                          <i class="fa fa-book"></i>
+                          <i class="fa-solid fa-book"></i>
                           <span data-id="${id}">
                               ${escapeText(title)}
                           </span>
@@ -355,15 +355,15 @@ export const selectedCitationTemplate = ({
                   </td>
                   <td width="50" align="center">
                       <span class="order-down fw-inline fw-link-text" data-id="${id}" data-db="${db}">
-                          <i class="fa fa-sort-down"></i>
+                          <i class="fa-solid fa-sort-down"></i>
                       </span>
                       <span class="order-up fw-inline fw-link-text" data-id="${id}" data-db="${db}">
-                          <i class="fa fa-sort-up"></i>
+                          <i class="fa-solid fa-sort-up"></i>
                       </span>
                   </td>
                   <td width="50" align="center">
                       <span class="delete fw-inline fw-link-text" data-id="${id}" data-db="${db}">
-                          <i class="fa fa-trash-alt"></i>
+                          <i class="fa-solid fa-trash-alt"></i>
                       </span>
                   </td>
               </tr>

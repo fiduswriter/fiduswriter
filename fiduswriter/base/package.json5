@@ -20,14 +20,14 @@
         "file-loader": "^6.2.0",
         "diff-dom": "5.2.1",
         "downloadjs": "1.4.7",
-        "@fortawesome/fontawesome-free": "^6.1.1",
-        "simple-datatables": "^10.0.0",
-        "@vivliostyle/print": "^2.34.0",
+        "@fortawesome/fontawesome-free": "^7.2.0",
+        "simple-datatables": "^10.2.0",
+        "@vivliostyle/print": "^2.42.0",
         "w3c-keyname": "2.2.8",
-        "source-map-loader": "4.0.1",
+        "source-map-loader": "5.0.0",
         "stacktrace-js": "2.0.2",
-        "regenerator-runtime": "0.14.0",
-        "@aaroon/workbox-rspack-plugin": "0.3.2",
-        "qrcode": "^1.5.3"
+        "regenerator-runtime": "0.14.1",
+        "@aaroon/workbox-rspack-plugin": "0.3.3",
+        "qrcode": "^1.5.4"
     }
 }

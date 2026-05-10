@@ -544,7 +544,7 @@ export class HeaderbarView {
         return `<div>
             <div id="close-document-top" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
                 <a href="${exitUrl}" aria-label="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close document")}" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
-                    <i class="fa fa-times"></i>
+                    <i class="fa-solid fa-times"></i>
                 </a>
             </div>
             <div id="document-top">
@@ -644,7 +644,7 @@ export class HeaderbarView {
         ${menuItem.disabled && menuItem.disabled(this.editor) ? 'aria-disabled="true"' : ""}
         ${menuItem.selected && menuItem.selected(this.editor) ? 'aria-checked="true"' : ""}
         ${menuItem.tooltip ? (typeof menuItem.tooltip === "function" ? `title="${menuItem.tooltip(this.editor)}" aria-label="${menuItem.tooltip(this.editor)}"` : `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"`) : ""}>
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
+            ${menuItem.icon ? `<i class="fa-solid fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
         </span>`
     }
@@ -657,9 +657,9 @@ export class HeaderbarView {
         }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
             menuItem === this.cursorMenuItem ? " cursor" : ""
         }" ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ""}
+            ${menuItem.icon ? `<i class="fa-solid fa-${menuItem.icon}"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
-            <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+            <span class="fw-icon-right"><i class="fa-solid fa-caret-right"></i></span>
         </span>
         ${menuItem.open ? this.getMenuHTML(menuItem) : ""}`
     }

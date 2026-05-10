@@ -23,7 +23,7 @@ class FigureView {
         this.menuButton = document.createElement("button")
         this.menuButton.classList.add("figure-menu-btn")
         this.menuButton.innerHTML =
-            '<span class="dot-menu-icon"><i class="fa fa-ellipsis-v"></i></span>'
+            '<span class="dot-menu-icon"><i class="fa-solid fa-ellipsis-v"></i></span>'
         this.dom.insertBefore(this.menuButton, this.dom.firstChild)
     }
 

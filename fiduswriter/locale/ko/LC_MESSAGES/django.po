@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"POT-Creation-Date: 2026-05-10 07:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,98 +18,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: base/settings.py:273
+#: base/settings.py:280
 msgid "Arabic"
 msgstr "아라비아 말"
 
-#: base/settings.py:274
+#: base/settings.py:281
 msgid "Bulgarian"
 msgstr "불가리아 사람"
 
-#: base/settings.py:275
+#: base/settings.py:282
 msgid "Czech"
 msgstr "체코 사람"
 
-#: base/settings.py:276
-#| msgid "Spanish"
+#: base/settings.py:283
 msgid "Danish"
 msgstr "덴마크 말"
 
-#: base/settings.py:277
+#: base/settings.py:284
 msgid "German"
 msgstr "독일 사람"
 
-#: base/settings.py:278
+#: base/settings.py:285
 msgid "English"
 msgstr "영어"
 
-#: base/settings.py:279
+#: base/settings.py:286
 msgid "Spanish"
 msgstr "스페인 사람"
 
-#: base/settings.py:280
+#: base/settings.py:287
 msgid "French"
 msgstr "프랑스 국민"
 
-#: base/settings.py:281
+#: base/settings.py:288
 msgid "Italian"
 msgstr "이탈리아 사람"
 
-#: base/settings.py:282
+#: base/settings.py:289
 msgid "Japanese"
 msgstr "일본어"
 
-#: base/settings.py:283
+#: base/settings.py:290
 msgid "Korean"
 msgstr "한국인"
 
-#: base/settings.py:284
+#: base/settings.py:291
 msgid "Norwegian Bokmål"
 msgstr "노르웨이어 복몰어"
 
-#: base/settings.py:285
+#: base/settings.py:292
 msgid "Dutch"
 msgstr "네덜란드 사람"
 
-#: base/settings.py:286
-#| msgid "English"
+#: base/settings.py:293
 msgid "Polish"
 msgstr "광택"
 
-#: base/settings.py:287
+#: base/settings.py:294
 msgid "Portuguese (Brazil)"
 msgstr "포르투갈어(브라질)"
 
-#: base/settings.py:288
-#| msgid "Portuguese (Brazil)"
+#: base/settings.py:295
 msgid "Portuguese (Portugal)"
 msgstr "포르투갈어(포르투갈)"
 
-#: base/settings.py:289
+#: base/settings.py:296
 msgid "Russian"
 msgstr "러시아인"
 
-#: base/settings.py:290
+#: base/settings.py:297
 msgid "Swedish"
 msgstr "스웨덴어"
 
-#: base/settings.py:291
+#: base/settings.py:298
 msgid "Turkish"
 msgstr "터키어"
 
-#: base/settings.py:292
+#: base/settings.py:299
 msgid "Chinese (Simplified)"
 msgstr "중국어(간체)"
 
-#: base/settings.py:409
+#: base/settings.py:416
 msgid "Fidus Writer Admin"
 msgstr "Fidus 작가 관리자"
 
-#: base/settings.py:410
+#: base/settings.py:417
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus 작가 관리 사이트"
 
-#: base/settings.py:411
+#: base/settings.py:418
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Fidus Writer 관리 사이트에 오신 것을 환영합니다."
 
@@ -123,28 +120,28 @@ msgid ""
 "issue shortly."
 msgstr "죄송합니다. 서버 오류가 발생했습니다. 우리 팀에서 곧 문제를 조사할 것입니다."
 
-#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:20
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "관리 콘솔"
 
-#: base/templates/admin/console.html:18
+#: base/templates/admin/console.html:22
 msgid "Current number of users:"
 msgstr "현재 사용자 수:"
 
-#: base/templates/admin/console.html:21
+#: base/templates/admin/console.html:25
 msgid "Current number of user sessions:"
 msgstr "현재 사용자 세션 수:"
 
-#: base/templates/admin/console.html:23
+#: base/templates/admin/console.html:27
 msgid "Send a system message to all connected users:"
 msgstr "연결된 모든 사용자에게 시스템 메시지를 보냅니다."
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:31
 msgid "Message"
 msgstr "메시지"
 
-#: base/templates/admin/console.html:29
+#: base/templates/admin/console.html:33
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
@@ -152,7 +149,7 @@ msgstr ""
 "이 시스템은 예약된 유지 관리를 위해 30분 후에 오프라인 상태가 됩니다. 귀하의 모든 작업은 자동으로 저장되며 곧 다시 "
 "연락드리겠습니다."
 
-#: base/templates/admin/console.html:36
+#: base/templates/admin/console.html:40
 msgid "Send to connected users"
 msgstr "연결된 사용자에게 보내기"
 
@@ -161,7 +158,7 @@ msgid "Extras"
 msgstr "엑스트라"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:17
+#: document/templates/admin/document/maintenance.html:22
 msgid "Document Maintenance"
 msgstr "문서 유지관리"
 
@@ -205,11 +202,11 @@ msgstr ""
 "                Chrome/Chromium 또는 Firefox 버전\n"
 "                데스크톱 컴퓨터."
 
-#: document/admin.py:59
+#: document/admin.py:76
 msgid "Duplicate selected document templates"
 msgstr "선택한 문서 템플릿 복제"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:887
+#: document/emails.py:18 document/emails.py:236 document/views.py:968
 msgid "Untitled"
 msgstr "제목 없음"
 
@@ -406,7 +403,7 @@ msgstr "%(name)s 추가"
 msgid "Maintenance"
 msgstr "유지"
 
-#: document/templates/admin/document/maintenance.html:19
+#: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all the documents\n"
@@ -419,7 +416,7 @@ msgstr ""
 "            모든 사용자를 최신 문서 버전으로 업데이트합니다. 그걸 아는 경우에만 이렇게 하세요.\n"
 "            현재 어떤 사용자도 문서를 편집하고 있지 않습니다!"
 
-#: document/templates/admin/document/maintenance.html:27
+#: document/templates/admin/document/maintenance.html:32
 msgid "Update all documents (DANGER!)"
 msgstr "모든 문서 업데이트(위험!)"
 
@@ -581,18 +578,26 @@ msgstr "비밀번호 재설정을 요청하지 않은 경우에는 무시해도 
 msgid "In case you forgot, your username is %(username)s."
 msgstr "잊어버린 경우를 대비해 사용자 이름은 %(username)s입니다."
 
-#: user/views.py:624
+#: user/views.py:66
+msgid "Your old password was entered incorrectly. Please enter it again."
+msgstr "이전 비밀번호가 잘못 입력되었습니다. 다시 입력해 주세요."
+
+#: user/views.py:70
+msgid "The two password fields didn't match."
+msgstr "두 개의 비밀번호 필드가 일치하지 않습니다."
+
+#: user/views.py:645
 msgid "Code is invalid"
 msgstr "코드가 유효하지 않습니다"
 
-#: usermedia/views.py:37
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "지원되지 않는 파일 형식"
 
-#: usermedia/views.py:44
+#: usermedia/views.py:43
 msgid "Image too large"
 msgstr "이미지가 너무 큼"
 
-#: usermedia/views.py:71
+#: usermedia/views.py:70
 msgid "No file uploaded"
 msgstr "업로드된 파일이 없습니다."

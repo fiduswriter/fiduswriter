@@ -3,105 +3,102 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"POT-Creation-Date: 2026-05-10 07:57+0000\n"
 "Language: pt-br\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 
-#: base/settings.py:273
+#: base/settings.py:280
 msgid "Arabic"
 msgstr "árabe"
 
-#: base/settings.py:274
+#: base/settings.py:281
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: base/settings.py:275
+#: base/settings.py:282
 msgid "Czech"
 msgstr "Tcheco"
 
-#: base/settings.py:276
-#| msgid "Spanish"
+#: base/settings.py:283
 msgid "Danish"
 msgstr "dinamarquês"
 
-#: base/settings.py:277
+#: base/settings.py:284
 msgid "German"
 msgstr "Alemão"
 
-#: base/settings.py:278
+#: base/settings.py:285
 msgid "English"
 msgstr "Inglês"
 
-#: base/settings.py:279
+#: base/settings.py:286
 msgid "Spanish"
 msgstr "Espanhol"
 
-#: base/settings.py:280
+#: base/settings.py:287
 msgid "French"
 msgstr "Francês"
 
-#: base/settings.py:281
+#: base/settings.py:288
 msgid "Italian"
 msgstr "Italiano"
 
-#: base/settings.py:282
+#: base/settings.py:289
 msgid "Japanese"
 msgstr "japonês"
 
-#: base/settings.py:283
+#: base/settings.py:290
 msgid "Korean"
 msgstr "coreano"
 
-#: base/settings.py:284
+#: base/settings.py:291
 msgid "Norwegian Bokmål"
 msgstr "Bokmål Norueguês"
 
-#: base/settings.py:285
+#: base/settings.py:292
 msgid "Dutch"
 msgstr "Holandês"
 
-#: base/settings.py:286
-#| msgid "English"
+#: base/settings.py:293
 msgid "Polish"
 msgstr "polonês"
 
-#: base/settings.py:287
+#: base/settings.py:294
 msgid "Portuguese (Brazil)"
 msgstr "Português (Brasil)"
 
-#: base/settings.py:288
-#| msgid "Portuguese (Brazil)"
+#: base/settings.py:295
 msgid "Portuguese (Portugal)"
 msgstr "Português (Portugal)"
 
-#: base/settings.py:289
+#: base/settings.py:296
 msgid "Russian"
 msgstr "russo"
 
-#: base/settings.py:290
+#: base/settings.py:297
 msgid "Swedish"
 msgstr "sueco"
 
-#: base/settings.py:291
+#: base/settings.py:298
 msgid "Turkish"
 msgstr "turco"
 
-#: base/settings.py:292
+#: base/settings.py:299
 msgid "Chinese (Simplified)"
 msgstr "Chinês (simplificado)"
 
-#: base/settings.py:409
+#: base/settings.py:416
 msgid "Fidus Writer Admin"
 msgstr "Administração do Fidus Writer"
 
-#: base/settings.py:410
+#: base/settings.py:417
 msgid "Fidus Writer Administration Site"
 msgstr "Site de Administração do Fidus Writer"
 
-#: base/settings.py:411
+#: base/settings.py:418
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bem Vindo ao site de Administração do Fidus Writer"
 
@@ -117,28 +114,28 @@ msgstr ""
 "Lamentamos, mas ocorreu um erro no servidor. Nossa equipe analisará o "
 "problema em breve."
 
-#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:20
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "Console de Administração"
 
-#: base/templates/admin/console.html:18
+#: base/templates/admin/console.html:22
 msgid "Current number of users:"
 msgstr "Número atual de usuários:"
 
-#: base/templates/admin/console.html:21
+#: base/templates/admin/console.html:25
 msgid "Current number of user sessions:"
 msgstr "Número atual de sessões conectadas:"
 
-#: base/templates/admin/console.html:23
+#: base/templates/admin/console.html:27
 msgid "Send a system message to all connected users:"
 msgstr "Enviar uma mensagem para todos usuários conectados:"
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:31
 msgid "Message"
 msgstr "Mensagem"
 
-#: base/templates/admin/console.html:29
+#: base/templates/admin/console.html:33
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
@@ -146,7 +143,7 @@ msgstr ""
 "Em 30 minutos o sistema ira desconectar para fazer manutenção. seu trabalho "
 "será salvo automaticamente e voltará em breve."
 
-#: base/templates/admin/console.html:36
+#: base/templates/admin/console.html:40
 msgid "Send to connected users"
 msgstr "Enviar para usuários conectados"
 
@@ -155,7 +152,7 @@ msgid "Extras"
 msgstr "Extras"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:17
+#: document/templates/admin/document/maintenance.html:22
 msgid "Document Maintenance"
 msgstr "Manutenção de Documentos"
 
@@ -200,11 +197,11 @@ msgstr ""
 "                computador.\n"
 "            "
 
-#: document/admin.py:59
+#: document/admin.py:76
 msgid "Duplicate selected document templates"
 msgstr "Duplicar modelos de documentos selecionados"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:887
+#: document/emails.py:18 document/emails.py:236 document/views.py:968
 msgid "Untitled"
 msgstr "Sem título"
 
@@ -402,7 +399,7 @@ msgstr "Adicionar %(name)s"
 msgid "Maintenance"
 msgstr "Manutenção"
 
-#: document/templates/admin/document/maintenance.html:19
+#: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all the documents\n"
@@ -416,7 +413,7 @@ msgstr ""
 "            não tem nenhum usuário editando documentos!\n"
 "            "
 
-#: document/templates/admin/document/maintenance.html:27
+#: document/templates/admin/document/maintenance.html:32
 msgid "Update all documents (DANGER!)"
 msgstr "Atualizar todos os documentos (PERIGO!)"
 
@@ -589,18 +586,27 @@ msgstr ""
 msgid "In case you forgot, your username is %(username)s."
 msgstr "No caso de ter esquecido, seu nome de usuário é %(username)s."
 
-#: user/views.py:624
+#: user/views.py:66
+msgid "Your old password was entered incorrectly. Please enter it again."
+msgstr ""
+"Sua senha antiga foi digitada incorretamente. Por favor, insira-o novamente."
+
+#: user/views.py:70
+msgid "The two password fields didn't match."
+msgstr "Os dois campos de senha não correspondiam."
+
+#: user/views.py:645
 msgid "Code is invalid"
 msgstr "O código é inválido"
 
-#: usermedia/views.py:37
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "Tipo de arquivo não suportado"
 
-#: usermedia/views.py:44
+#: usermedia/views.py:43
 msgid "Image too large"
 msgstr "Imagem muito grande"
 
-#: usermedia/views.py:71
+#: usermedia/views.py:70
 msgid "No file uploaded"
 msgstr "Nenhum arquivo carregado"

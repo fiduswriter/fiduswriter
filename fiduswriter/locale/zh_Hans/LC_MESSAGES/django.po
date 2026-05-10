@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"POT-Creation-Date: 2026-05-10 07:57+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0800\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -15,98 +15,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Manual\n"
 
-#: base/settings.py:273
+#: base/settings.py:280
 msgid "Arabic"
 msgstr "阿拉伯"
 
-#: base/settings.py:274
+#: base/settings.py:281
 msgid "Bulgarian"
 msgstr "保加利亚语"
 
-#: base/settings.py:275
+#: base/settings.py:282
 msgid "Czech"
 msgstr "捷克语"
 
-#: base/settings.py:276
-#| msgid "Spanish"
+#: base/settings.py:283
 msgid "Danish"
 msgstr "丹麦语"
 
-#: base/settings.py:277
+#: base/settings.py:284
 msgid "German"
 msgstr "德语"
 
-#: base/settings.py:278
+#: base/settings.py:285
 msgid "English"
 msgstr "英语"
 
-#: base/settings.py:279
+#: base/settings.py:286
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: base/settings.py:280
+#: base/settings.py:287
 msgid "French"
 msgstr "法语"
 
-#: base/settings.py:281
+#: base/settings.py:288
 msgid "Italian"
 msgstr "意大利语"
 
-#: base/settings.py:282
+#: base/settings.py:289
 msgid "Japanese"
 msgstr "日本人"
 
-#: base/settings.py:283
+#: base/settings.py:290
 msgid "Korean"
 msgstr "韩国人"
 
-#: base/settings.py:284
+#: base/settings.py:291
 msgid "Norwegian Bokmål"
 msgstr "挪威博克马尔语"
 
-#: base/settings.py:285
+#: base/settings.py:292
 msgid "Dutch"
 msgstr "荷兰语"
 
-#: base/settings.py:286
-#| msgid "English"
+#: base/settings.py:293
 msgid "Polish"
 msgstr "抛光"
 
-#: base/settings.py:287
+#: base/settings.py:294
 msgid "Portuguese (Brazil)"
 msgstr "葡萄牙语（巴西）"
 
-#: base/settings.py:288
-#| msgid "Portuguese (Brazil)"
+#: base/settings.py:295
 msgid "Portuguese (Portugal)"
 msgstr "葡萄牙语（葡萄牙）"
 
-#: base/settings.py:289
+#: base/settings.py:296
 msgid "Russian"
 msgstr "俄语"
 
-#: base/settings.py:290
+#: base/settings.py:297
 msgid "Swedish"
 msgstr "瑞典"
 
-#: base/settings.py:291
+#: base/settings.py:298
 msgid "Turkish"
 msgstr "土耳其"
 
-#: base/settings.py:292
+#: base/settings.py:299
 msgid "Chinese (Simplified)"
 msgstr "中文（简体）"
 
-#: base/settings.py:409
+#: base/settings.py:416
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer 管理"
 
-#: base/settings.py:410
+#: base/settings.py:417
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer 管理站点"
 
-#: base/settings.py:411
+#: base/settings.py:418
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "欢迎访问 Fidus Writer 管理站点"
 
@@ -120,34 +117,34 @@ msgid ""
 "issue shortly."
 msgstr "抱歉，服务器发生错误。我们的团队将很快调查此问题。"
 
-#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:20
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "管理控制台"
 
-#: base/templates/admin/console.html:18
+#: base/templates/admin/console.html:22
 msgid "Current number of users:"
 msgstr "当前用户数量："
 
-#: base/templates/admin/console.html:21
+#: base/templates/admin/console.html:25
 msgid "Current number of user sessions:"
 msgstr "当前用户会话数量："
 
-#: base/templates/admin/console.html:23
+#: base/templates/admin/console.html:27
 msgid "Send a system message to all connected users:"
 msgstr "向所有连接的用户发送系统消息："
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:31
 msgid "Message"
 msgstr "消息"
 
-#: base/templates/admin/console.html:29
+#: base/templates/admin/console.html:33
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
 msgstr "系统将在 30 分钟后离线进行计划维护。您的所有工作将自动保存，我们很快会回来。"
 
-#: base/templates/admin/console.html:36
+#: base/templates/admin/console.html:40
 msgid "Send to connected users"
 msgstr "发送给已连接的用户"
 
@@ -156,7 +153,7 @@ msgid "Extras"
 msgstr "附加功能"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:17
+#: document/templates/admin/document/maintenance.html:22
 msgid "Document Maintenance"
 msgstr "文件维护"
 
@@ -200,11 +197,11 @@ msgstr ""
 "                Chrome/Chromium 或 Firefox 版本\n"
 "                台式电脑。"
 
-#: document/admin.py:59
+#: document/admin.py:76
 msgid "Duplicate selected document templates"
 msgstr "复制选定的文档模板"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:887
+#: document/emails.py:18 document/emails.py:236 document/views.py:968
 msgid "Untitled"
 msgstr "无题"
 
@@ -400,7 +397,7 @@ msgstr "添加 %(name)s"
 msgid "Maintenance"
 msgstr "维护"
 
-#: document/templates/admin/document/maintenance.html:19
+#: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all the documents\n"
@@ -413,7 +410,7 @@ msgstr ""
 "            所有用户更新到最新的文档版本。仅当您知道这一点时才执行此操作\n"
 "            当前没有用户正在编辑任何文档！"
 
-#: document/templates/admin/document/maintenance.html:27
+#: document/templates/admin/document/maintenance.html:32
 msgid "Update all documents (DANGER!)"
 msgstr "更新所有文档（危险！）"
 
@@ -573,19 +570,27 @@ msgstr "如果您没有请求重置密码，则可以安全地忽略它。单击
 msgid "In case you forgot, your username is %(username)s."
 msgstr "如果您忘记了，您的用户名是 %(username)s。"
 
-#: user/views.py:624
+#: user/views.py:66
+msgid "Your old password was entered incorrectly. Please enter it again."
+msgstr "您的旧密码输入不正确。请再次输入。"
+
+#: user/views.py:70
+msgid "The two password fields didn't match."
+msgstr "两个密码字段不匹配。"
+
+#: user/views.py:645
 msgid "Code is invalid"
 msgstr "代码无效"
 
-#: usermedia/views.py:37
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "不支持的文件类型"
 
-#: usermedia/views.py:44
+#: usermedia/views.py:43
 msgid "Image too large"
 msgstr "图片太大"
 
-#: usermedia/views.py:71
+#: usermedia/views.py:70
 msgid "No file uploaded"
 msgstr "没有上传文件"
 

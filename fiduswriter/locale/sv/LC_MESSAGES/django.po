@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-04 11:44+0000\n"
+"POT-Creation-Date: 2026-05-10 07:57+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -15,98 +15,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Manual\n"
 
-#: base/settings.py:273
+#: base/settings.py:280
 msgid "Arabic"
 msgstr "arabiska"
 
-#: base/settings.py:274
+#: base/settings.py:281
 msgid "Bulgarian"
 msgstr "Bulgariska"
 
-#: base/settings.py:275
+#: base/settings.py:282
 msgid "Czech"
 msgstr "tjeckiska"
 
-#: base/settings.py:276
-#| msgid "Spanish"
+#: base/settings.py:283
 msgid "Danish"
 msgstr "danska"
 
-#: base/settings.py:277
+#: base/settings.py:284
 msgid "German"
 msgstr "Tyska"
 
-#: base/settings.py:278
+#: base/settings.py:285
 msgid "English"
 msgstr "Engelska"
 
-#: base/settings.py:279
+#: base/settings.py:286
 msgid "Spanish"
 msgstr "Spanska"
 
-#: base/settings.py:280
+#: base/settings.py:287
 msgid "French"
 msgstr "Franska"
 
-#: base/settings.py:281
+#: base/settings.py:288
 msgid "Italian"
 msgstr "Italienska"
 
-#: base/settings.py:282
+#: base/settings.py:289
 msgid "Japanese"
 msgstr "japanska"
 
-#: base/settings.py:283
+#: base/settings.py:290
 msgid "Korean"
 msgstr "koreanska"
 
-#: base/settings.py:284
+#: base/settings.py:291
 msgid "Norwegian Bokmål"
 msgstr "norskt bokmål"
 
-#: base/settings.py:285
+#: base/settings.py:292
 msgid "Dutch"
 msgstr "holländska"
 
-#: base/settings.py:286
-#| msgid "English"
+#: base/settings.py:293
 msgid "Polish"
 msgstr "polska"
 
-#: base/settings.py:287
+#: base/settings.py:294
 msgid "Portuguese (Brazil)"
 msgstr "Portugisiska (Brasilien)"
 
-#: base/settings.py:288
-#| msgid "Portuguese (Brazil)"
+#: base/settings.py:295
 msgid "Portuguese (Portugal)"
 msgstr "Portugisiska (Portugal)"
 
-#: base/settings.py:289
+#: base/settings.py:296
 msgid "Russian"
 msgstr "ryska"
 
-#: base/settings.py:290
+#: base/settings.py:297
 msgid "Swedish"
 msgstr "svenska"
 
-#: base/settings.py:291
+#: base/settings.py:298
 msgid "Turkish"
 msgstr "turkiska"
 
-#: base/settings.py:292
+#: base/settings.py:299
 msgid "Chinese (Simplified)"
 msgstr "kinesiska (förenklad)"
 
-#: base/settings.py:409
+#: base/settings.py:416
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:410
+#: base/settings.py:417
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer Administrationswebbplats"
 
-#: base/settings.py:411
+#: base/settings.py:418
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Välkommen till Fidus Writer Administrationswebbplats"
 
@@ -122,28 +119,28 @@ msgstr ""
 "Vi ber om ursäkt, men ett serverfel uppstod. Vårt team kommer att titta på "
 "problemet inom kort."
 
-#: base/templates/admin/console.html:4 base/templates/admin/console.html:16
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:20
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "Admin-konsol"
 
-#: base/templates/admin/console.html:18
+#: base/templates/admin/console.html:22
 msgid "Current number of users:"
 msgstr "Nuvarande antal användare:"
 
-#: base/templates/admin/console.html:21
+#: base/templates/admin/console.html:25
 msgid "Current number of user sessions:"
 msgstr "Nuvarande antal användarsessioner:"
 
-#: base/templates/admin/console.html:23
+#: base/templates/admin/console.html:27
 msgid "Send a system message to all connected users:"
 msgstr "Skicka ett systemmeddelande till alla anslutna användare:"
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:31
 msgid "Message"
 msgstr "Meddelande"
 
-#: base/templates/admin/console.html:29
+#: base/templates/admin/console.html:33
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
@@ -151,7 +148,7 @@ msgstr ""
 "Detta system kommer att gå offline för schemalagt underhåll om 30 minuter. "
 "Allt ditt arbete sparas automatiskt och vi är tillbaka snart."
 
-#: base/templates/admin/console.html:36
+#: base/templates/admin/console.html:40
 msgid "Send to connected users"
 msgstr "Skicka till anslutna användare"
 
@@ -160,7 +157,7 @@ msgid "Extras"
 msgstr "Extrafunktioner"
 
 #: base/templates/admin/overview.html:17
-#: document/templates/admin/document/maintenance.html:17
+#: document/templates/admin/document/maintenance.html:22
 msgid "Document Maintenance"
 msgstr "Dokumentunderhåll"
 
@@ -204,11 +201,11 @@ msgstr ""
 "                version av Chrome/Chromium eller Firefox på en\n"
 "                stationär dator."
 
-#: document/admin.py:59
+#: document/admin.py:76
 msgid "Duplicate selected document templates"
 msgstr "Duplicera valda dokumentmallar"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:887
+#: document/emails.py:18 document/emails.py:236 document/views.py:968
 msgid "Untitled"
 msgstr "Ofrälse"
 
@@ -406,7 +403,7 @@ msgstr "Lägg till %(name)s"
 msgid "Maintenance"
 msgstr "Underhåll"
 
-#: document/templates/admin/document/maintenance.html:19
+#: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
 "            Before and after upgrading Fidus Writer, you should update all the documents\n"
@@ -419,7 +416,7 @@ msgstr ""
 "            av alla användare till den senaste dokumentversionen. Gör bara detta om du vet det\n"
 "            ingen användare redigerar för närvarande något dokument!"
 
-#: document/templates/admin/document/maintenance.html:27
+#: document/templates/admin/document/maintenance.html:32
 msgid "Update all documents (DANGER!)"
 msgstr "Uppdatera alla dokument (FARA!)"
 
@@ -590,19 +587,27 @@ msgstr ""
 msgid "In case you forgot, your username is %(username)s."
 msgstr "Om du har glömt, är ditt användarnamn %(username)s."
 
-#: user/views.py:624
+#: user/views.py:66
+msgid "Your old password was entered incorrectly. Please enter it again."
+msgstr "Ditt gamla lösenord har angetts felaktigt. Vänligen ange den igen."
+
+#: user/views.py:70
+msgid "The two password fields didn't match."
+msgstr "De två lösenordsfälten matchade inte."
+
+#: user/views.py:645
 msgid "Code is invalid"
 msgstr "Koden är ogiltig"
 
-#: usermedia/views.py:37
+#: usermedia/views.py:36
 msgid "Filetype not supported"
 msgstr "Filtyp stöds inte"
 
-#: usermedia/views.py:44
+#: usermedia/views.py:43
 msgid "Image too large"
 msgstr "Bilden är för stor"
 
-#: usermedia/views.py:71
+#: usermedia/views.py:70
 msgid "No file uploaded"
 msgstr "Ingen fil laddad upp"
 

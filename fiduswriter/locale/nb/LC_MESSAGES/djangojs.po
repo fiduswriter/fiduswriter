@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer frontend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-03 10:20+0000\n"
+"POT-Creation-Date: 2026-05-10 07:57+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -42,11 +42,11 @@ msgstr "Meldingen ble levert!"
 msgid "Message delivered"
 msgstr "Melding levert"
 
-#: base/static/js/modules/app/index.js:201
+#: base/static/js/modules/app/index.js:203
 msgid "You are viewing a cached version of this page."
 msgstr "Du ser på en bufret versjon av denne siden."
 
-#: base/static/js/modules/app/index.js:349
+#: base/static/js/modules/app/index.js:351
 msgid ""
 "Other users have requested to connect with you. Go to the contacts page to "
 "accept their invites."
@@ -54,7 +54,7 @@ msgstr ""
 "Andre brukere har bedt om å få kontakt med deg. Gå til kontaktsiden for å "
 "godta invitasjonene deres."
 
-#: base/static/js/modules/app/index.js:353
+#: base/static/js/modules/app/index.js:355
 msgid "Go to contacts"
 msgstr "Gå til kontakter"
 
@@ -71,15 +71,15 @@ msgstr "Hjelp"
 #: base/static/js/modules/common/dialog.js:41
 #: base/static/js/modules/common/dialog.js:79
 #: document/static/js/modules/editor/menus/headerbar/model.js:158
-#: document/static/js/modules/editor/menus/headerbar/model.js:190
+#: document/static/js/modules/editor/menus/headerbar/model.js:191
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:92
 msgid "Close"
 msgstr "Lukke"
 
 #: base/static/js/modules/common/dialog.js:84
-#: document/static/js/modules/documents/overview/index.js:915
+#: document/static/js/modules/documents/overview/index.js:920
 #: document/static/js/modules/editor/collab/doc.js:371
-#: document/static/js/modules/editor/collab/doc.js:577
+#: document/static/js/modules/editor/collab/doc.js:573
 #: document/static/js/modules/editor/comments/editors/answer.js:22
 #: document/static/js/modules/editor/comments/editors/comment.js:103
 #: document/static/js/modules/editor/dialogs/templates.js:237
@@ -91,8 +91,8 @@ msgid "Cancel"
 msgstr "Kansellere"
 
 #: base/static/js/modules/common/dialog.js:89
-#: document/static/js/modules/editor/index.js:330
-#: document/static/js/modules/editor/index.js:588
+#: document/static/js/modules/editor/index.js:337
+#: document/static/js/modules/editor/index.js:616
 msgid "OK"
 msgstr "OK"
 
@@ -103,17 +103,17 @@ msgstr "OK"
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
 #: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:172
-#: document/static/js/modules/editor/menus/headerbar/view.js:503
+#: document/static/js/modules/editor/dialogs/citation.js:173
+#: document/static/js/modules/editor/menus/headerbar/view.js:505
 #: document/static/js/modules/exporter/tools/file.js:3
 #: document/static/js/modules/importer/docx/convert.js:84
 #: document/static/js/modules/importer/docx/convert.js:92
 #: document/static/js/modules/importer/docx/convert.js:520
-#: document/static/js/modules/importer/docx/import.js:48
+#: document/static/js/modules/importer/docx/import.js:49
 #: document/static/js/modules/importer/odt/convert.js:460
 #: document/static/js/modules/importer/odt/convert.js:471
-#: document/static/js/modules/importer/odt/import.js:113
-#: document/static/js/modules/importer/pandoc/import.js:21
+#: document/static/js/modules/importer/odt/import.js:114
+#: document/static/js/modules/importer/pandoc/import.js:22
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:224
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
 #: usermedia/static/js/modules/images/overview/index.js:175
@@ -128,14 +128,14 @@ msgstr "Ny mappe"
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
 #: bibliography/static/js/modules/bibliography/overview/index.js:320
-#: document/static/js/modules/documents/access_rights/index.js:292
+#: document/static/js/modules/documents/access_rights/index.js:296
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
-#: user/static/js/modules/contacts/add_dialog.js:12
+#: user/static/js/modules/contacts/add_dialog.js:14
 #: user/static/js/modules/profile/dialogs.js:124
 #: user/static/js/modules/profile/dialogs.js:215
 #: user/static/js/modules/profile/dialogs.js:385
-#: user/static/js/modules/profile/templates.js:259
+#: user/static/js/modules/profile/templates.js:265
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
 msgstr "Send inn"
@@ -165,7 +165,7 @@ msgid "Type to search"
 msgstr "Skriv for å søke"
 
 #: base/static/js/modules/common/templates.js:16
-#: base/static/js/modules/prelogin/templates.js:15
+#: base/static/js/modules/prelogin/templates.js:16
 msgid "Site navigation"
 msgstr "Nettstednavigering"
 
@@ -184,7 +184,7 @@ msgid "Warning! Some data is unsaved"
 msgstr "Advarsel! Noen data er ikke lagret"
 
 #: base/static/js/modules/common/ws.js:14
-#: document/static/js/modules/editor/index.js:393
+#: document/static/js/modules/editor/index.js:403
 msgid "Disconnected. Attempting to reconnect..."
 msgstr "Koblet fra. Forsøker å koble til igjen..."
 
@@ -299,12 +299,12 @@ msgid "Editing with ProseMirror"
 msgstr "Redigering med ProseMirror"
 
 #: base/static/js/modules/prelogin/index.js:44
-#: user/static/js/modules/login/index.js:30
-#: user/static/js/modules/login/index.js:69
+#: user/static/js/modules/login/index.js:31
+#: user/static/js/modules/login/index.js:70
 msgid "Log in"
 msgstr "Logg inn"
 
-#: base/static/js/modules/prelogin/templates.js:56
+#: base/static/js/modules/prelogin/templates.js:57
 msgid "Select language"
 msgstr "Velg språk"
 
@@ -346,7 +346,7 @@ msgstr "Bibliografien kunne ikke oppdateres"
 #: bibliography/static/js/modules/bibliography/overview/index.js:313
 #: bibliography/static/js/modules/bibliography/overview/index.js:341
 #: document/static/js/modules/exporter/native/revision.js:45
-#: document/static/js/modules/exporter/native/revision.js:73
+#: document/static/js/modules/exporter/native/revision.js:79
 #: usermedia/static/js/modules/images/overview/index.js:94
 #: usermedia/static/js/modules/images/overview/index.js:108
 msgid "You are currently offline. Please try again when you are back online."
@@ -522,8 +522,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Det var et problem med importen av bibliografi"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:113
-#: document/static/js/modules/documents/overview/actions.js:207
+#: document/static/js/modules/documents/overview/actions.js:174
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Import"
@@ -533,8 +532,7 @@ msgid "Import a bibliography"
 msgstr "Importer en bibliografi"
 
 #: bibliography/static/js/modules/bibliography/import/templates.js:6
-#: document/static/js/modules/documents/overview/actions.js:353
-#: document/static/js/modules/documents/overview/templates.js:8
+#: document/static/js/modules/documents/overview/templates.js:22
 #: user/static/js/modules/profile/templates.js:10
 #: user_template_manager/static/js/modules/user_template_manager/templates.js:6
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:43
@@ -555,12 +553,12 @@ msgid "Bibliography Manager"
 msgstr "Bibliografisjef"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:236
+#: document/static/js/modules/editor/dialogs/citation.js:239
 msgid "No sources registered"
 msgstr "Ingen kilder registrert"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:237
+#: document/static/js/modules/editor/dialogs/citation.js:240
 msgid "No sources found"
 msgstr "Ingen kilder funnet"
 
@@ -574,8 +572,8 @@ msgstr "Ingen kilder funnet"
 #: document/static/js/modules/document_template/templates.js:527
 #: document/static/js/modules/document_template/templates.js:813
 #: document/static/js/modules/document_template/templates.js:836
-#: document/static/js/modules/documents/overview/index.js:556
-#: document/static/js/modules/editor/dialogs/citation.js:247
+#: document/static/js/modules/documents/overview/index.js:560
+#: document/static/js/modules/editor/dialogs/citation.js:252
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
@@ -592,7 +590,7 @@ msgid "Sourcetype"
 msgstr "Kildetype"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:247
+#: document/static/js/modules/editor/dialogs/citation.js:253
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -618,7 +616,7 @@ msgstr "Rediger kategorier"
 #: document/static/js/modules/document_template/templates.js:821
 #: document/static/js/modules/documents/access_rights/templates.js:28
 #: document/static/js/modules/documents/overview/actions.js:89
-#: document/static/js/modules/documents/overview/index.js:149
+#: document/static/js/modules/documents/overview/index.js:153
 #: document/static/js/modules/documents/revisions/index.js:133
 #: document/static/js/modules/documents/revisions/templates.js:11
 #: document/static/js/modules/editor/marginboxes/templates.js:531
@@ -636,7 +634,7 @@ msgstr "Slett"
 #: document/static/js/modules/document_template/document_style_dialog.js:186
 #: document/static/js/modules/document_template/export_template_dialog.js:192
 #: document/static/js/modules/documents/overview/actions.js:70
-#: document/static/js/modules/documents/overview/index.js:141
+#: document/static/js/modules/documents/overview/index.js:145
 #: document/static/js/modules/documents/revisions/index.js:151
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:40
@@ -651,7 +649,7 @@ msgid "Delete the bibliography item(s)"
 msgstr "Slett bibliografielementet(e)"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:7
-#: document/static/js/modules/documents/overview/menu.js:192
+#: document/static/js/modules/documents/overview/menu.js:195
 #: user/static/js/modules/contacts/menu.js:7
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:27
 #: usermedia/static/js/modules/images/overview/menu.js:4
@@ -693,11 +691,11 @@ msgstr "Importer bibliografi"
 msgid "Search bibliography"
 msgstr "Søk i bibliografi"
 
-#: bibliography/static/js/modules/bibliography/tools.js:36
+#: bibliography/static/js/modules/bibliography/tools.js:48
 msgid "and"
 msgstr "og"
 
-#: bibliography/static/js/modules/bibliography/tools.js:41
+#: bibliography/static/js/modules/bibliography/tools.js:53
 msgid "and others"
 msgstr "og andre"
 
@@ -773,7 +771,7 @@ msgstr ""
 msgid "The slug has to be unique."
 msgstr "Sneglen må være unik."
 
-#: document/static/js/modules/document_template/document_style_dialog.js:286
+#: document/static/js/modules/document_template/document_style_dialog.js:292
 msgid "A file with the same name exists already."
 msgstr "Det finnes allerede en fil med samme navn."
 
@@ -815,11 +813,11 @@ msgstr "Du må laste opp en malfil i ODT- eller DOCX-format."
 msgid "Another export file with the same filename exists already."
 msgstr "En annen eksportfil med samme filnavn finnes allerede."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:256
+#: document/static/js/modules/document_template/export_template_dialog.js:257
 msgid "Unknown filetype"
 msgstr "Ukjent filtype"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:373
+#: document/static/js/modules/document_template/export_template_dialog.js:374
 msgid "Selected file not supported."
 msgstr "Den valgte filen støttes ikke."
 
@@ -828,32 +826,32 @@ msgid "The uploaded file does not appear to be a Fidus Writer Template file."
 msgstr "Den opplastede filen ser ikke ut til å være en Fidus Writer-malfil."
 
 #: document/static/js/modules/document_template/importer.js:70
-#: document/static/js/modules/importer/native/file.js:57
-#: document/static/js/modules/importer/native/file.js:85
+#: document/static/js/modules/importer/native/file.js:65
+#: document/static/js/modules/importer/native/file.js:93
 msgid "The uploaded file does not appear to be a Fidus Writer file."
 msgstr "Den opplastede filen ser ikke ut til å være en Fidus Writer-fil."
 
-#: document/static/js/modules/document_template/importer.js:159
-#: document/static/js/modules/importer/docx/import.js:70
-#: document/static/js/modules/importer/native/file.js:204
-#: document/static/js/modules/importer/odt/import.js:139
-#: document/static/js/modules/importer/pandoc/import.js:160
+#: document/static/js/modules/document_template/importer.js:165
+#: document/static/js/modules/importer/docx/import.js:73
+#: document/static/js/modules/importer/native/file.js:213
+#: document/static/js/modules/importer/odt/import.js:142
+#: document/static/js/modules/importer/pandoc/import.js:163
 msgid "successfully imported."
 msgstr "vellykket importert."
 
-#: document/static/js/modules/document_template/importer.js:166
-#: document/static/js/modules/importer/native/file.js:211
+#: document/static/js/modules/document_template/importer.js:172
+#: document/static/js/modules/importer/native/file.js:220
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
 msgstr ""
 "Den opplastede filen ser ikke ut til å være av versjonen som brukes på denne"
 " serveren:"
 
-#: document/static/js/modules/document_template/list_admin.js:37
+#: document/static/js/modules/document_template/list_admin.js:38
 msgid "Upload FIDUSTEMPLATE"
 msgstr "Last opp FIDUSTEMPLATE"
 
-#: document/static/js/modules/document_template/list_admin.js:42
+#: document/static/js/modules/document_template/list_admin.js:43
 msgid "Download selected as FIDUSTEMPLATE"
 msgstr "Nedlasting valgt som FIDUSTEMPLATE"
 
@@ -1199,7 +1197,7 @@ msgstr "Tillatte overskrifter"
 #: document/static/js/modules/document_template/templates.js:355
 #: document/static/js/modules/document_template/templates.js:496
 #: document/static/js/modules/editor/dialogs/code_block.js:202
-#: user/static/js/modules/profile/templates.js:201
+#: user/static/js/modules/profile/templates.js:209
 msgid "Language"
 msgstr "Språk"
 
@@ -1345,7 +1343,7 @@ msgid "Available languages"
 msgstr "Tilgjengelige språk"
 
 #: document/static/js/modules/document_template/templates.js:870
-#: user/static/js/modules/profile/templates.js:203
+#: user/static/js/modules/profile/templates.js:211
 msgid "Default language"
 msgstr "Standardspråk"
 
@@ -1381,86 +1379,86 @@ msgstr "Dokumentstiler"
 msgid "Export templates"
 msgstr "Eksporter maler"
 
-#: document/static/js/modules/documents/access_rights/index.js:54
+#: document/static/js/modules/documents/access_rights/index.js:57
 msgid "Cannot load document access data."
 msgstr "Kan ikke laste dokumenttilgangsdata."
 
-#: document/static/js/modules/documents/access_rights/index.js:72
+#: document/static/js/modules/documents/access_rights/index.js:75
 msgid "Basic"
 msgstr "Grunnleggende"
 
-#: document/static/js/modules/documents/access_rights/index.js:73
+#: document/static/js/modules/documents/access_rights/index.js:76
 msgid "Basic access rights"
 msgstr "Grunnleggende tilgangsrettigheter"
 
-#: document/static/js/modules/documents/access_rights/index.js:77
-#: document/static/js/modules/documents/access_rights/index.js:79
+#: document/static/js/modules/documents/access_rights/index.js:80
+#: document/static/js/modules/documents/access_rights/index.js:82
 #: document/static/js/modules/documents/access_rights/templates.js:92
 #: document/static/js/modules/documents/access_rights/templates.js:98
 msgid "Write"
 msgstr "Skrive"
 
-#: document/static/js/modules/documents/access_rights/index.js:88
+#: document/static/js/modules/documents/access_rights/index.js:91
 #: document/static/js/modules/documents/access_rights/templates.js:99
 msgid "Write tracked"
 msgstr "Skriv sporet"
 
-#: document/static/js/modules/documents/access_rights/index.js:90
+#: document/static/js/modules/documents/access_rights/index.js:93
 msgid "Write with changes tracked"
 msgstr "Skriv med endringer sporet"
 
-#: document/static/js/modules/documents/access_rights/index.js:99
-#: document/static/js/modules/documents/access_rights/index.js:101
+#: document/static/js/modules/documents/access_rights/index.js:102
+#: document/static/js/modules/documents/access_rights/index.js:104
 #: document/static/js/modules/documents/access_rights/templates.js:97
 #: document/static/js/modules/editor/menus/selection/model.js:43
 msgid "Comment"
 msgstr "Kommentar"
 
-#: document/static/js/modules/documents/access_rights/index.js:110
-#: document/static/js/modules/documents/access_rights/index.js:112
+#: document/static/js/modules/documents/access_rights/index.js:113
+#: document/static/js/modules/documents/access_rights/index.js:115
 #: document/static/js/modules/documents/access_rights/templates.js:90
 #: document/static/js/modules/documents/access_rights/templates.js:93
 msgid "Read"
 msgstr "Lese"
 
-#: document/static/js/modules/documents/access_rights/index.js:121
-#: document/static/js/modules/documents/access_rights/index.js:139
+#: document/static/js/modules/documents/access_rights/index.js:124
+#: document/static/js/modules/documents/access_rights/index.js:142
 #: document/static/js/modules/documents/access_rights/templates.js:95
 msgid "Review"
 msgstr "Gjennomgå"
 
-#: document/static/js/modules/documents/access_rights/index.js:122
+#: document/static/js/modules/documents/access_rights/index.js:125
 msgid "Access rights used within document review"
 msgstr "Tilgangsrettigheter brukt i dokumentgjennomgang"
 
-#: document/static/js/modules/documents/access_rights/index.js:126
+#: document/static/js/modules/documents/access_rights/index.js:129
 msgid "No comments"
 msgstr "Ingen kommentarer"
 
-#: document/static/js/modules/documents/access_rights/index.js:129
+#: document/static/js/modules/documents/access_rights/index.js:132
 msgid "Read document but not see comments and chats of others"
 msgstr "Les dokumentet, men ikke se kommentarer og chatter fra andre"
 
-#: document/static/js/modules/documents/access_rights/index.js:142
+#: document/static/js/modules/documents/access_rights/index.js:145
 msgid "Comment, but not see comments and chats of others"
 msgstr "Kommenter, men ikke se kommentarer og chatter fra andre"
 
-#: document/static/js/modules/documents/access_rights/index.js:152
+#: document/static/js/modules/documents/access_rights/index.js:155
 #: document/static/js/modules/documents/access_rights/templates.js:96
 msgid "Review tracked"
 msgstr "Anmeldelse spores"
 
-#: document/static/js/modules/documents/access_rights/index.js:155
+#: document/static/js/modules/documents/access_rights/index.js:158
 msgid "Write with tracked changes, but not see comments and chats of others"
 msgstr ""
 "Skriv med sporede endringer, men ikke se kommentarer og chatter fra andre"
 
-#: document/static/js/modules/documents/access_rights/index.js:231
-#: document/static/js/modules/documents/overview/index.js:763
+#: document/static/js/modules/documents/access_rights/index.js:234
+#: document/static/js/modules/documents/overview/index.js:767
 msgid "End-to-end encrypted document"
 msgstr "End-to-end kryptert dokument"
 
-#: document/static/js/modules/documents/access_rights/index.js:232
+#: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
 "passphrase will need the document password shared with them through a secure"
@@ -1472,68 +1470,68 @@ msgstr ""
 "sikker kanal utenfor Fidus Writer. Ikke send passordet gjennom "
 "dokumentchatten."
 
-#: document/static/js/modules/documents/access_rights/index.js:240
-#: user/static/js/modules/contacts/add_dialog.js:51
+#: document/static/js/modules/documents/access_rights/index.js:244
+#: user/static/js/modules/contacts/add_dialog.js:54
 msgid "Add contact or invite new user"
 msgstr "Legg til kontakt eller inviter ny bruker"
 
-#: document/static/js/modules/documents/access_rights/index.js:241
-#: user/static/js/modules/contacts/add_dialog.js:52
+#: document/static/js/modules/documents/access_rights/index.js:245
+#: user/static/js/modules/contacts/add_dialog.js:55
 msgid "Add contact"
 msgstr "Legg til kontakt"
 
-#: document/static/js/modules/documents/access_rights/index.js:317
+#: document/static/js/modules/documents/access_rights/index.js:321
 msgid "Share your document with others"
 msgstr "Del dokumentet ditt med andre"
 
-#: document/static/js/modules/documents/access_rights/index.js:344
+#: document/static/js/modules/documents/access_rights/index.js:348
 #: document/static/js/modules/documents/access_rights/templates.js:38
 msgid "Loading…"
 msgstr "Laster inn …"
 
-#: document/static/js/modules/documents/access_rights/index.js:352
+#: document/static/js/modules/documents/access_rights/index.js:356
 msgid "Could not load share links."
 msgstr "Kunne ikke laste delingslenker."
 
-#: document/static/js/modules/documents/access_rights/index.js:358
+#: document/static/js/modules/documents/access_rights/index.js:362
 msgid "Create share link"
 msgstr "Opprett delingslenke"
 
-#: document/static/js/modules/documents/access_rights/index.js:367
-#: document/static/js/modules/documents/overview/index.js:919
+#: document/static/js/modules/documents/access_rights/index.js:371
+#: document/static/js/modules/documents/overview/index.js:924
 msgid "Create"
 msgstr "Skape"
 
-#: document/static/js/modules/documents/access_rights/index.js:417
+#: document/static/js/modules/documents/access_rights/index.js:421
 msgid "Share link created."
 msgstr "Delkobling opprettet."
 
-#: document/static/js/modules/documents/access_rights/index.js:423
+#: document/static/js/modules/documents/access_rights/index.js:427
 msgid "Could not create share link."
 msgstr "Kunne ikke opprette delelink."
 
-#: document/static/js/modules/documents/access_rights/index.js:449
+#: document/static/js/modules/documents/access_rights/index.js:453
 msgid "Share link revoked."
 msgstr "Delingslenken er opphevet."
 
-#: document/static/js/modules/documents/access_rights/index.js:451
 #: document/static/js/modules/documents/access_rights/index.js:455
+#: document/static/js/modules/documents/access_rights/index.js:459
 msgid "Could not revoke share link."
 msgstr "Kunne ikke tilbakekalle delingslinken."
 
-#: document/static/js/modules/documents/access_rights/index.js:571
+#: document/static/js/modules/documents/access_rights/index.js:575
 msgid "Link copied to clipboard."
 msgstr "Linken er kopiert til utklippstavlen."
 
-#: document/static/js/modules/documents/access_rights/index.js:573
+#: document/static/js/modules/documents/access_rights/index.js:577
 msgid "Could not copy link."
 msgstr "Kunne ikke kopiere linken."
 
-#: document/static/js/modules/documents/access_rights/index.js:638
+#: document/static/js/modules/documents/access_rights/index.js:642
 msgid "Access rights have been saved"
 msgstr "Tilgangsrettigheter er lagret"
 
-#: document/static/js/modules/documents/access_rights/index.js:644
+#: document/static/js/modules/documents/access_rights/index.js:648
 msgid "Access rights could not be saved"
 msgstr "Tilgangsrettigheter kunne ikke lagres"
 
@@ -1559,7 +1557,7 @@ msgstr "Samarbeidspartnere"
 
 #: document/static/js/modules/documents/access_rights/templates.js:27
 #: document/static/js/modules/documents/access_rights/templates.js:85
-#: document/static/js/modules/documents/overview/index.js:561
+#: document/static/js/modules/documents/overview/index.js:565
 msgid "Rights"
 msgstr "Rettigheter"
 
@@ -1653,35 +1651,30 @@ msgstr "Vil du virkelig slette følgende dokumenter?"
 msgid "Do you really want to delete the following document?"
 msgstr "Vil du virkelig slette følgende dokument?"
 
-#: document/static/js/modules/documents/overview/actions.js:159
-msgid "Import a Fidus file"
-msgstr "Importer en Fidus-fil"
-
-#: document/static/js/modules/documents/overview/actions.js:189
+#: document/static/js/modules/documents/overview/actions.js:116
 msgid "Import as:"
 msgstr "Importer som:"
 
-#: document/static/js/modules/documents/overview/actions.js:217
-msgid "File too large"
-msgstr "Filen er for stor"
+#: document/static/js/modules/documents/overview/actions.js:138
+#| msgid "The document template has been updated"
+msgid "This document will be saved as encrypted."
+msgstr "Dette dokumentet vil bli lagret som kryptert."
 
-#: document/static/js/modules/documents/overview/actions.js:231
-msgid "No importable files found in ZIP"
-msgstr "Ingen importerbare filer funnet i ZIP"
+#: document/static/js/modules/documents/overview/actions.js:144
+#: document/static/js/modules/documents/overview/index.js:904
+msgid "Non-encrypted"
+msgstr "Ikke-kryptert"
 
-#: document/static/js/modules/documents/overview/actions.js:287
-msgid "Unsupported file format"
-msgstr "Ustøttet filformat"
+#: document/static/js/modules/documents/overview/actions.js:148
+#: document/static/js/modules/documents/overview/index.js:909
+msgid "Encrypted"
+msgstr "Kryptert"
 
-#: document/static/js/modules/documents/overview/actions.js:346
-msgid "Import a text document in a different format"
-msgstr "Importer et tekstdokument i et annet format"
-
-#: document/static/js/modules/documents/overview/actions.js:360
+#: document/static/js/modules/documents/overview/actions.js:161
 msgid "Supported formats"
 msgstr "Støttede formater"
 
-#: document/static/js/modules/documents/overview/actions.js:362
+#: document/static/js/modules/documents/overview/actions.js:161
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1689,26 +1682,48 @@ msgstr ""
 "Du kan også laste opp en ZIP-fil som inneholder én fil i hvilket som helst "
 "av disse formatene, samt bilder og/eller bibtex-fil."
 
-#: document/static/js/modules/documents/overview/actions.js:443
+#: document/static/js/modules/documents/overview/actions.js:165
+#| msgid "Import document"
+msgid "Import a document"
+msgstr "Importer et dokument"
+
+#: document/static/js/modules/documents/overview/actions.js:183
+msgid "File too large"
+msgstr "Filen er for stor"
+
+#: document/static/js/modules/documents/overview/actions.js:241
+msgid "No importable files found in ZIP"
+msgstr "Ingen importerbare filer funnet i ZIP"
+
+#: document/static/js/modules/documents/overview/actions.js:283
+msgid "Unsupported file format"
+msgstr "Ustøttet filformat"
+
+#: document/static/js/modules/documents/overview/actions.js:350
+#| msgid "Could not create document"
+msgid "Could not create encrypted document."
+msgstr "Kunne ikke opprette kryptert dokument."
+
+#: document/static/js/modules/documents/overview/actions.js:441
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
 msgstr "Krypter kopien"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:448
 #: document/static/js/modules/editor/document_template/index.js:136
 msgid "Choose document template"
 msgstr "Velg dokumentmal"
 
-#: document/static/js/modules/documents/overview/actions.js:452
+#: document/static/js/modules/documents/overview/actions.js:450
 msgid "Select document template for copies"
 msgstr "Velg dokumentmal for kopier"
 
-#: document/static/js/modules/documents/overview/actions.js:452
+#: document/static/js/modules/documents/overview/actions.js:450
 #: document/static/js/modules/editor/document_template/index.js:138
 msgid "Select document template for copy."
 msgstr "Velg dokumentmal for kopi."
 
-#: document/static/js/modules/documents/overview/actions.js:465
+#: document/static/js/modules/documents/overview/actions.js:463
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
 #: document/static/js/modules/editor/document_template/index.js:151
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:301
@@ -1716,18 +1731,18 @@ msgstr "Velg dokumentmal for kopi."
 msgid "Copy"
 msgstr "Kopiere"
 
-#: document/static/js/modules/documents/overview/actions.js:514
+#: document/static/js/modules/documents/overview/actions.js:512
 msgid "Could not copy document."
 msgstr "Kunne ikke kopiere dokumentet."
 
-#: document/static/js/modules/documents/overview/actions.js:544
-#: document/static/js/modules/documents/overview/actions.js:576
+#: document/static/js/modules/documents/overview/actions.js:542
+#: document/static/js/modules/documents/overview/actions.js:574
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
 msgid "Incorrect password."
 msgstr "Feil passord."
 
-#: document/static/js/modules/documents/overview/actions.js:798
+#: document/static/js/modules/documents/overview/actions.js:796
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr "Du kan ikke se revisjonsloggen til et dokument mens du er frakoblet."
@@ -1742,7 +1757,7 @@ msgstr ""
 "Du kan ikke få tilgang til rettighetsdata for et dokument mens du er "
 "frakoblet."
 
-#: document/static/js/modules/documents/overview/index.js:143
+#: document/static/js/modules/documents/overview/index.js:147
 msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
@@ -1750,58 +1765,58 @@ msgstr ""
 "Hvis du forlater en tom mappe, slettes den. Vil du virkelig slette denne "
 "mappen?"
 
-#: document/static/js/modules/documents/overview/index.js:189
+#: document/static/js/modules/documents/overview/index.js:193
 msgid "You cannot open a document while you are offline."
 msgstr "Du kan ikke åpne et dokument mens du er frakoblet."
 
-#: document/static/js/modules/documents/overview/index.js:233
+#: document/static/js/modules/documents/overview/index.js:237
 msgid "Document data loading failed."
 msgstr "Innlasting av dokumentdata mislyktes."
 
-#: document/static/js/modules/documents/overview/index.js:546
+#: document/static/js/modules/documents/overview/index.js:550
 msgid "No documents available"
 msgstr "Ingen dokumenter tilgjengelig"
 
-#: document/static/js/modules/documents/overview/index.js:547
+#: document/static/js/modules/documents/overview/index.js:551
 msgid "No documents found"
 msgstr "Ingen dokumenter funnet"
 
-#: document/static/js/modules/documents/overview/index.js:557
+#: document/static/js/modules/documents/overview/index.js:561
 msgid "Revisions"
 msgstr "Revisjoner"
 
-#: document/static/js/modules/documents/overview/index.js:558
+#: document/static/js/modules/documents/overview/index.js:562
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:112
 msgid "Created"
 msgstr "Opprettet"
 
-#: document/static/js/modules/documents/overview/index.js:559
+#: document/static/js/modules/documents/overview/index.js:563
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:113
 msgid "Last changed"
 msgstr "Sist endret"
 
-#: document/static/js/modules/documents/overview/index.js:560
+#: document/static/js/modules/documents/overview/index.js:564
 msgid "Owner"
 msgstr "Eier"
 
-#: document/static/js/modules/documents/overview/index.js:753
+#: document/static/js/modules/documents/overview/index.js:757
 #: document/static/js/modules/editor/e2ee/password-dialog.js:196
 msgid "Encrypted Document"
 msgstr "Kryptert dokument"
 
-#: document/static/js/modules/documents/overview/index.js:800
+#: document/static/js/modules/documents/overview/index.js:805
 msgid "Undefined"
 msgstr "Udefinert"
 
-#: document/static/js/modules/documents/overview/index.js:813
+#: document/static/js/modules/documents/overview/index.js:818
 msgid "Copy selected as..."
 msgstr "Kopi valgt som..."
 
-#: document/static/js/modules/documents/overview/index.js:815
+#: document/static/js/modules/documents/overview/index.js:820
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Kopier dokumentene og tilordne dem til en bestemt mal."
 
-#: document/static/js/modules/documents/overview/index.js:866
+#: document/static/js/modules/documents/overview/index.js:871
 msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
@@ -1809,31 +1824,31 @@ msgstr ""
 "Krypterte dokumenter beskytter innholdet ditt slik at bare personer med "
 "passord kan lese det."
 
-#: document/static/js/modules/documents/overview/index.js:867
-#: document/static/js/modules/documents/overview/index.js:881
+#: document/static/js/modules/documents/overview/index.js:872
+#: document/static/js/modules/documents/overview/index.js:886
 msgid "Advantages"
 msgstr "Fordeler"
 
-#: document/static/js/modules/documents/overview/index.js:869
+#: document/static/js/modules/documents/overview/index.js:874
 msgid "Only people with the password can read the document."
 msgstr "Bare personer med passord kan lese dokumentet."
 
-#: document/static/js/modules/documents/overview/index.js:870
+#: document/static/js/modules/documents/overview/index.js:875
 msgid "The server cannot access the document contents."
 msgstr "Serveren kan ikke få tilgang til dokumentinnholdet."
 
-#: document/static/js/modules/documents/overview/index.js:872
-#: document/static/js/modules/documents/overview/index.js:887
+#: document/static/js/modules/documents/overview/index.js:877
+#: document/static/js/modules/documents/overview/index.js:892
 msgid "Disadvantages"
 msgstr "Ulemper"
 
-#: document/static/js/modules/documents/overview/index.js:874
+#: document/static/js/modules/documents/overview/index.js:879
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr ""
 "Alternativer for begrensede tilgangsrettigheter (ingen sporede endringer "
 "eller gjennomgangsmoduser)."
 
-#: document/static/js/modules/documents/overview/index.js:875
+#: document/static/js/modules/documents/overview/index.js:880
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
@@ -1841,7 +1856,7 @@ msgstr ""
 "Hvis du mister passordet eller passordfrasen, er det ingen måte å "
 "gjenopprette dokumentet på."
 
-#: document/static/js/modules/documents/overview/index.js:876
+#: document/static/js/modules/documents/overview/index.js:881
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
@@ -1849,50 +1864,42 @@ msgstr ""
 "Du må dele passordet med samarbeidspartnere manuelt (med mindre de bruker en"
 " personlig passordfrase)."
 
-#: document/static/js/modules/documents/overview/index.js:880
+#: document/static/js/modules/documents/overview/index.js:885
 msgid "Regular documents are the default and work well for most users."
 msgstr "Vanlige dokumenter er standard og fungerer bra for de fleste brukere."
 
-#: document/static/js/modules/documents/overview/index.js:883
+#: document/static/js/modules/documents/overview/index.js:888
 msgid "Full access rights options including tracked changes and review modes."
 msgstr ""
 "Alternativer for fulle tilgangsrettigheter, inkludert sporede endringer og "
 "gjennomgangsmoduser."
 
-#: document/static/js/modules/documents/overview/index.js:884
+#: document/static/js/modules/documents/overview/index.js:889
 msgid "No risk of losing access if you forget a password."
 msgstr "Ingen risiko for å miste tilgang hvis du glemmer et passord."
 
-#: document/static/js/modules/documents/overview/index.js:885
+#: document/static/js/modules/documents/overview/index.js:890
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr ""
 "Enklere samarbeid – du trenger ikke å dele passord med samarbeidspartnere."
 
-#: document/static/js/modules/documents/overview/index.js:889
+#: document/static/js/modules/documents/overview/index.js:894
 msgid "The server can technically access the document contents."
 msgstr "Serveren har teknisk tilgang til dokumentinnholdet."
 
-#: document/static/js/modules/documents/overview/index.js:890
+#: document/static/js/modules/documents/overview/index.js:895
 msgid "No additional protection beyond your account password."
 msgstr "Ingen ekstra beskyttelse utover kontopassordet ditt."
 
-#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:899
 msgid "Choose encryption type of new document."
 msgstr "Velg krypteringstype for nytt dokument."
 
-#: document/static/js/modules/documents/overview/index.js:899
-msgid "Non-encrypted"
-msgstr "Ikke-kryptert"
-
-#: document/static/js/modules/documents/overview/index.js:904
-msgid "Encrypted"
-msgstr "Kryptert"
-
-#: document/static/js/modules/documents/overview/index.js:948
+#: document/static/js/modules/documents/overview/index.js:953
 msgid "Set Up Personal Encryption (Optional)"
 msgstr "Konfigurer personlig kryptering (valgfritt)"
 
-#: document/static/js/modules/documents/overview/index.js:950
+#: document/static/js/modules/documents/overview/index.js:955
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
@@ -1900,25 +1907,25 @@ msgstr ""
 "Vil du sette opp en personlig passordfrase nå? Dette lar deg låse opp alle "
 "de krypterte dokumentene dine med en enkelt passordfrase."
 
-#: document/static/js/modules/documents/overview/index.js:951
+#: document/static/js/modules/documents/overview/index.js:956
 msgid "Note:"
 msgstr "Note:"
 
-#: document/static/js/modules/documents/overview/index.js:951
+#: document/static/js/modules/documents/overview/index.js:956
 msgid "This is optional. You can also use a per-document password instead."
 msgstr ""
 "Dette er valgfritt. Du kan også bruke et passord per dokument i stedet."
 
-#: document/static/js/modules/documents/overview/index.js:955
+#: document/static/js/modules/documents/overview/index.js:960
 msgid "Skip for Now"
 msgstr "Hopp over nå"
 
-#: document/static/js/modules/documents/overview/index.js:966
+#: document/static/js/modules/documents/overview/index.js:971
 msgid "Set Up Passphrase"
 msgstr "Sett opp passordfrase"
 
-#: document/static/js/modules/documents/overview/index.js:1001
-#: user/static/js/modules/profile/index.js:219
+#: document/static/js/modules/documents/overview/index.js:1006
+#: user/static/js/modules/profile/index.js:232
 msgid "Failed to set up passphrase: "
 msgstr "Kunne ikke konfigurere passordfrase:"
 
@@ -1958,100 +1965,96 @@ msgstr "Del dokumentene som er valgt."
 msgid "You cannot share documents of other users"
 msgstr "Du kan ikke dele dokumenter fra andre brukere"
 
-#: document/static/js/modules/documents/overview/menu.js:74
+#: document/static/js/modules/documents/overview/menu.js:77
 msgid "Copy selected"
 msgstr "Kopier valgt"
 
-#: document/static/js/modules/documents/overview/menu.js:75
+#: document/static/js/modules/documents/overview/menu.js:78
 msgid "Copy the documents that have been selected."
 msgstr "Kopier dokumentene som er valgt."
 
-#: document/static/js/modules/documents/overview/menu.js:87
+#: document/static/js/modules/documents/overview/menu.js:90
 msgid "Export selected as Epub"
 msgstr "Eksporter valgt som Epub"
 
-#: document/static/js/modules/documents/overview/menu.js:89
+#: document/static/js/modules/documents/overview/menu.js:92
 msgid "Export the documents that have been selected as Epub files."
 msgstr "Eksporter dokumentene som er valgt som Epub-filer."
 
-#: document/static/js/modules/documents/overview/menu.js:102
+#: document/static/js/modules/documents/overview/menu.js:105
 msgid "Export selected as HTML"
 msgstr "Eksporter valgt som HTML"
 
-#: document/static/js/modules/documents/overview/menu.js:104
+#: document/static/js/modules/documents/overview/menu.js:107
 msgid "Export the documents that have been selected as HTML files."
 msgstr "Eksporter dokumentene som er valgt som HTML-filer."
 
-#: document/static/js/modules/documents/overview/menu.js:117
+#: document/static/js/modules/documents/overview/menu.js:120
 msgid "Export selected as LaTeX"
 msgstr "Eksporter valgt som LaTeX"
 
-#: document/static/js/modules/documents/overview/menu.js:119
+#: document/static/js/modules/documents/overview/menu.js:122
 msgid "Export the documents that have been selected as LaTeX files."
 msgstr "Eksporter dokumentene som er valgt som LaTeX-filer."
 
-#: document/static/js/modules/documents/overview/menu.js:132
+#: document/static/js/modules/documents/overview/menu.js:135
 msgid "Export selected as JATS"
 msgstr "Eksporter valgt som JATS"
 
-#: document/static/js/modules/documents/overview/menu.js:134
+#: document/static/js/modules/documents/overview/menu.js:137
 msgid "Export the documents that have been selected as JATS files."
 msgstr "Eksporter dokumentene som er valgt som JATS-filer."
 
-#: document/static/js/modules/documents/overview/menu.js:147
+#: document/static/js/modules/documents/overview/menu.js:150
 msgid "Export selected as BITS"
 msgstr "Eksporter valgt som BITS"
 
-#: document/static/js/modules/documents/overview/menu.js:149
+#: document/static/js/modules/documents/overview/menu.js:152
 msgid "Export the documents that have been selected as BITS files."
 msgstr "Eksporter dokumentene som er valgt som BITS-filer."
 
-#: document/static/js/modules/documents/overview/menu.js:162
+#: document/static/js/modules/documents/overview/menu.js:165
 msgid "Export selected as FIDUS"
 msgstr "Eksport valgt som FIDUS"
 
-#: document/static/js/modules/documents/overview/menu.js:164
+#: document/static/js/modules/documents/overview/menu.js:167
 msgid ""
 "Export the documents that have been selected as FIDUS files including their "
 "templates."
 msgstr ""
 "Eksporter dokumentene som er valgt som FIDUS-filer, inkludert deres maler."
 
-#: document/static/js/modules/documents/overview/menu.js:177
+#: document/static/js/modules/documents/overview/menu.js:180
 msgid "Export selected as Slim FIDUS"
 msgstr "Eksport valgt som Slim FIDUS"
 
-#: document/static/js/modules/documents/overview/menu.js:179
+#: document/static/js/modules/documents/overview/menu.js:182
 msgid ""
 "Export the documents that have been selected as FIDUS files without their "
 "templates."
 msgstr "Eksporter dokumentene som er valgt som FIDUS-filer uten deres maler."
 
-#: document/static/js/modules/documents/overview/menu.js:193
+#: document/static/js/modules/documents/overview/menu.js:196
 msgid "Delete the documents that have been selected."
 msgstr "Slett dokumentene som er valgt."
 
-#: document/static/js/modules/documents/overview/menu.js:204
+#: document/static/js/modules/documents/overview/menu.js:207
 msgid "You cannot delete documents of other users"
 msgstr "Du kan ikke slette dokumenter fra andre brukere"
 
-#: document/static/js/modules/documents/overview/menu.js:228
+#: document/static/js/modules/documents/overview/menu.js:231
 msgid "Create new document"
 msgstr "Opprett nytt dokument"
 
-#: document/static/js/modules/documents/overview/menu.js:235
+#: document/static/js/modules/documents/overview/menu.js:238
 msgid "Create new folder"
 msgstr "Opprett ny mappe"
 
-#: document/static/js/modules/documents/overview/menu.js:253
-msgid "Upload FIDUS document"
-msgstr "Last opp FIDUS-dokument"
-
-#: document/static/js/modules/documents/overview/menu.js:261
+#: document/static/js/modules/documents/overview/menu.js:257
 msgid "Import document"
 msgstr "Importer dokument"
 
-#: document/static/js/modules/documents/overview/menu.js:269
+#: document/static/js/modules/documents/overview/menu.js:265
 msgid "Search documents"
 msgstr "Søk i dokumenter"
 
@@ -2089,7 +2092,7 @@ msgid "Recreate"
 msgstr "Gjenskape"
 
 #: document/static/js/modules/documents/revisions/templates.js:10
-#: document/static/js/modules/editor/menus/headerbar/model.js:280
+#: document/static/js/modules/editor/menus/headerbar/model.js:281
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:89
 msgid "Download"
 msgstr "Last ned"
@@ -2140,23 +2143,23 @@ msgstr ""
 " mislyktes. Vennligst prøv igjen."
 
 #: document/static/js/modules/editor/collab/doc.js:358
-#: document/static/js/modules/editor/collab/doc.js:563
+#: document/static/js/modules/editor/collab/doc.js:559
 msgid "Retry"
 msgstr "Prøv på nytt"
 
-#: document/static/js/modules/editor/collab/doc.js:556
+#: document/static/js/modules/editor/collab/doc.js:552
 msgid "Decryption Failed"
 msgstr "Dekryptering mislyktes"
 
-#: document/static/js/modules/editor/collab/doc.js:559
+#: document/static/js/modules/editor/collab/doc.js:555
 msgid "That password didn't work. Please try again."
 msgstr "Det passordet fungerte ikke. Vennligst prøv igjen."
 
-#: document/static/js/modules/editor/collab/doc.js:818
+#: document/static/js/modules/editor/collab/doc.js:820
 msgid "Updating document. Please wait..."
 msgstr "Oppdaterer dokument. Vennligst vent..."
 
-#: document/static/js/modules/editor/collab/doc.js:823
+#: document/static/js/modules/editor/collab/doc.js:825
 msgid ""
 "It's taking a bit longer than usual, but it should be ready soon. Please "
 "wait..."
@@ -2439,7 +2442,7 @@ msgstr ""
 "stedet. Vennligst vurder å importere den til et nytt dokument."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
-#: document/static/js/modules/editor/index.js:688
+#: document/static/js/modules/editor/index.js:729
 msgid "Leave editor"
 msgstr "Gå ut av redaktøren"
 
@@ -2549,7 +2552,7 @@ msgstr "Sett inn"
 #: document/static/js/modules/editor/dialogs/citation.js:39
 #: document/static/js/modules/editor/dialogs/code_block.js:120
 #: document/static/js/modules/editor/dialogs/figure.js:374
-#: document/static/js/modules/editor/dialogs/templates.js:314
+#: document/static/js/modules/editor/dialogs/templates.js:315
 #: document/static/js/modules/editor/menus/code_block/model.js:40
 #: document/static/js/modules/editor/state_plugins/links.js:273
 #: document/static/js/modules/editor/state_plugins/links.js:297
@@ -2563,12 +2566,17 @@ msgstr "Fjerne"
 msgid "Configure Citation"
 msgstr "Konfigurer sitering"
 
-#: document/static/js/modules/editor/dialogs/citation.js:238
+#: document/static/js/modules/editor/dialogs/citation.js:241
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "Søk..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:410
+#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/editor/dialogs/templates.js:313
+msgid "Year"
+msgstr "År"
+
+#: document/static/js/modules/editor/dialogs/citation.js:420
 msgid "Please select at least one citation source!"
 msgstr "Vennligst velg minst én sitatkilde!"
 
@@ -2819,33 +2827,33 @@ msgstr "(Forfatter, 1998)"
 msgid "Author (1998)"
 msgstr "Forfatter (1998)"
 
-#: document/static/js/modules/editor/dialogs/templates.js:313
+#: document/static/js/modules/editor/dialogs/templates.js:314
 msgid "Order"
 msgstr "Bestille"
 
-#: document/static/js/modules/editor/dialogs/templates.js:366
+#: document/static/js/modules/editor/dialogs/templates.js:373
 msgid "Page"
 msgstr "Side"
 
-#: document/static/js/modules/editor/dialogs/templates.js:370
+#: document/static/js/modules/editor/dialogs/templates.js:377
 msgid "Text before"
 msgstr "Tekst før"
 
-#: document/static/js/modules/editor/dialogs/templates.js:380
+#: document/static/js/modules/editor/dialogs/templates.js:387
 msgid "Firstname"
 msgstr "Fornavn"
 
-#: document/static/js/modules/editor/dialogs/templates.js:381
+#: document/static/js/modules/editor/dialogs/templates.js:388
 msgid "Lastname"
 msgstr "Etternavn"
 
-#: document/static/js/modules/editor/dialogs/templates.js:382
+#: document/static/js/modules/editor/dialogs/templates.js:389
 #: document/static/js/modules/schema/document/content.js:47
-#: user/static/js/modules/profile/templates.js:155
+#: user/static/js/modules/profile/templates.js:163
 msgid "Email"
 msgstr "E-post"
 
-#: document/static/js/modules/editor/dialogs/templates.js:383
+#: document/static/js/modules/editor/dialogs/templates.js:390
 msgid "Institution"
 msgstr "Institusjon"
 
@@ -3079,8 +3087,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
 #: document/static/js/modules/editor/e2ee/password-dialog.js:261
-#: user/static/js/modules/login/index.js:64
 #: user/static/js/modules/login/index.js:65
+#: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
 #: user/static/js/modules/profile/templates.js:30
 #: user/static/js/modules/profile/templates.js:100
@@ -3179,7 +3187,7 @@ msgstr "Nytt passord må være forskjellig fra gjeldende passord."
 msgid "Change Document Password"
 msgstr "Endre dokumentpassord"
 
-#: document/static/js/modules/editor/e2ee/snapshot-manager.js:148
+#: document/static/js/modules/editor/e2ee/snapshot-manager.js:193
 msgid ""
 "The document password was changed by another user. You will need to enter "
 "the new password to continue editing."
@@ -3187,13 +3195,13 @@ msgstr ""
 "Dokumentpassordet ble endret av en annen bruker. Du må skrive inn det nye "
 "passordet for å fortsette å redigere."
 
-#: document/static/js/modules/editor/index.js:323
-#: document/static/js/modules/editor/index.js:581
+#: document/static/js/modules/editor/index.js:330
+#: document/static/js/modules/editor/index.js:609
 msgid "Invalid Share Link"
 msgstr "Ugyldig delingslink"
 
-#: document/static/js/modules/editor/index.js:326
-#: document/static/js/modules/editor/index.js:584
+#: document/static/js/modules/editor/index.js:333
+#: document/static/js/modules/editor/index.js:612
 msgid ""
 "This share link has expired or is invalid. Please ask the document owner for"
 " a new link."
@@ -3201,7 +3209,7 @@ msgstr ""
 "Denne delingslenken er utløpt eller er ugyldig. Spør dokumenteieren om en ny"
 " lenke."
 
-#: document/static/js/modules/editor/index.js:390
+#: document/static/js/modules/editor/index.js:400
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
@@ -3209,11 +3217,11 @@ msgstr ""
 "Advarsel! Ikke alle endringene dine er lagret! Du kan lide tap av data. "
 "Forsøker å koble til igjen..."
 
-#: document/static/js/modules/editor/index.js:517
+#: document/static/js/modules/editor/index.js:537
 msgid "Your document was out of sync and has been reset."
 msgstr "Dokumentet ditt var ikke synkronisert og har blitt tilbakestilt."
 
-#: document/static/js/modules/editor/index.js:538
+#: document/static/js/modules/editor/index.js:560
 msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
@@ -3221,11 +3229,11 @@ msgstr ""
 "Dine tilgangsrettigheter er endret. Du har nå %(accessRight)s tilgang til "
 "dette dokumentet."
 
-#: document/static/js/modules/editor/index.js:607
+#: document/static/js/modules/editor/index.js:635
 msgid "Session Expired"
 msgstr "Økt utløpt"
 
-#: document/static/js/modules/editor/index.js:610
+#: document/static/js/modules/editor/index.js:638
 msgid ""
 "Your session expired while you were offline, so we cannot save your work to "
 "the server any longer, but you can download it to your computer instead. "
@@ -3235,19 +3243,19 @@ msgstr ""
 " serveren lenger, men du kan laste det ned til datamaskinen din i stedet. "
 "Vennligst vurder å importere det som et nytt dokument etter pålogging."
 
-#: document/static/js/modules/editor/index.js:614
+#: document/static/js/modules/editor/index.js:642
 msgid "Download Document"
 msgstr "Last ned dokument"
 
-#: document/static/js/modules/editor/index.js:628
+#: document/static/js/modules/editor/index.js:657
 msgid "Proceed to Login page"
 msgstr "Fortsett til påloggingssiden"
 
-#: document/static/js/modules/editor/index.js:681
+#: document/static/js/modules/editor/index.js:722
 msgid "Access rights modified"
 msgstr "Tilgangsrettigheter endret"
 
-#: document/static/js/modules/editor/index.js:684
+#: document/static/js/modules/editor/index.js:725
 msgid ""
 "Your access rights were modified while you were offline, so we cannot save "
 "your work to the server any longer, and it is downloaded to your computer "
@@ -3257,20 +3265,20 @@ msgstr ""
 "lenger lagre arbeidet ditt på serveren, og det lastes ned til datamaskinen "
 "din i stedet. Vennligst vurder å importere den til et nytt dokument."
 
-#: document/static/js/modules/editor/index.js:733
+#: document/static/js/modules/editor/index.js:774
 msgid "Incorrect passphrase."
 msgstr "Feil passordfrase."
 
-#: document/static/js/modules/editor/index.js:759
-#: user/static/js/modules/profile/index.js:250
+#: document/static/js/modules/editor/index.js:800
+#: user/static/js/modules/profile/index.js:263
 msgid "Recovery failed: "
 msgstr "Gjenoppretting mislyktes:"
 
-#: document/static/js/modules/editor/index.js:804
+#: document/static/js/modules/editor/index.js:845
 msgid "E2EE is not enabled on this server."
 msgstr "E2EE er ikke aktivert på denne serveren."
 
-#: document/static/js/modules/editor/index.js:958
+#: document/static/js/modules/editor/index.js:1008
 msgid ""
 "Changes you made to the document since going offline will be lost, if you "
 "choose to close/refresh the tab or close the browser."
@@ -3583,64 +3591,64 @@ msgstr ""
 "Følgende brukere har ikke passordfrasekryptering. Vennligst del "
 "dokumentpassordet med dem direkte."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:191
+#: document/static/js/modules/editor/menus/headerbar/model.js:192
 msgid "Sign up / Log in"
 msgstr "Registrer deg / Logg inn"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:197
-#: document/static/js/modules/editor/menus/headerbar/view.js:542
-#: document/static/js/modules/editor/menus/headerbar/view.js:543
+#: document/static/js/modules/editor/menus/headerbar/model.js:198
+#: document/static/js/modules/editor/menus/headerbar/view.js:545
+#: document/static/js/modules/editor/menus/headerbar/view.js:546
 msgid "Close the document and return to the document overview menu."
 msgstr "Lukk dokumentet og gå tilbake til dokumentoversiktsmenyen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:199
+#: document/static/js/modules/editor/menus/headerbar/model.js:200
 msgid "Sign up for an account or log in."
 msgstr "Registrer deg for en konto eller logg inn."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:230
+#: document/static/js/modules/editor/menus/headerbar/model.js:231
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:10
 msgid "Save revision"
 msgstr "Lagre revisjon"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:233
+#: document/static/js/modules/editor/menus/headerbar/model.js:234
 msgid "Save a revision of the document."
 msgstr "Lagre en revisjon av dokumentet."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:255
+#: document/static/js/modules/editor/menus/headerbar/model.js:256
 msgid "Create copy"
 msgstr "Lag kopi"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:258
+#: document/static/js/modules/editor/menus/headerbar/model.js:259
 msgid "Create a copy of the document."
 msgstr "Lag en kopi av dokumentet."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:284
+#: document/static/js/modules/editor/menus/headerbar/model.js:285
 msgid "Export the document as a FIDUS file including its template."
 msgstr "Eksporter dokumentet som en FIDUS-fil inkludert malen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:299
+#: document/static/js/modules/editor/menus/headerbar/model.js:300
 msgid "Print/PDF"
 msgstr "Print/PDF"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:303
+#: document/static/js/modules/editor/menus/headerbar/model.js:304
 msgid "Either print or create a PDF using your browser print dialog."
 msgstr ""
 "Skriv ut eller lag en PDF ved hjelp av utskriftsdialogen i nettleseren."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:326
+#: document/static/js/modules/editor/menus/headerbar/model.js:327
 #: user/static/js/modules/password_reset/change_password.js:14
 msgid "Change password"
 msgstr "Endre passord"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:329
+#: document/static/js/modules/editor/menus/headerbar/model.js:330
 msgid "Change the password of this encrypted document."
 msgstr "Endre passordet til dette krypterte dokumentet."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:337
+#: document/static/js/modules/editor/menus/headerbar/model.js:338
 msgid "Document key is not available. Please reload the document."
 msgstr "Dokumentnøkkel er ikke tilgjengelig. Last inn dokumentet på nytt."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:364
+#: document/static/js/modules/editor/menus/headerbar/model.js:365
 msgid ""
 "Your personal passphrase will still unlock this document. A new random "
 "password is generated automatically. Other passphrase users will receive it "
@@ -3652,7 +3660,7 @@ msgstr ""
 "motta det automatisk; Samarbeidspartnere som ikke bruker passord, må deles "
 "med dem manuelt."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:471
+#: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
 "Document encryption key rotated. Other passphrase users will receive the new"
 " key automatically."
@@ -3660,7 +3668,7 @@ msgstr ""
 "Dokumentkrypteringsnøkkel rotert. Andre brukere av passordfrase vil motta "
 "den nye nøkkelen automatisk."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:478
+#: document/static/js/modules/editor/menus/headerbar/model.js:479
 msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
@@ -3668,47 +3676,47 @@ msgstr ""
 "Dokumentpassord endret. Husk å dele det nye passordet med dine "
 "samarbeidspartnere."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:486
+#: document/static/js/modules/editor/menus/headerbar/model.js:487
 msgid "The current password is incorrect."
 msgstr "Gjeldende passord er feil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:502
+#: document/static/js/modules/editor/menus/headerbar/model.js:503
 msgid "Export"
 msgstr "Eksport"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:503
+#: document/static/js/modules/editor/menus/headerbar/model.js:504
 msgid "Export of the document contents"
 msgstr "Eksport av dokumentinnholdet"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:509
+#: document/static/js/modules/editor/menus/headerbar/model.js:510
 msgid "HTML"
 msgstr "HTML"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:511
+#: document/static/js/modules/editor/menus/headerbar/model.js:512
 msgid "Export the document to an HTML file."
 msgstr "Eksporter dokumentet til en HTML-fil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:532
+#: document/static/js/modules/editor/menus/headerbar/model.js:533
 msgid "Epub"
 msgstr "Epub"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:535
+#: document/static/js/modules/editor/menus/headerbar/model.js:536
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Eksporter dokumentet til en Epub elektronisk leserfil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:558
+#: document/static/js/modules/editor/menus/headerbar/model.js:559
 msgid "LaTeX"
 msgstr "LaTeX"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:560
+#: document/static/js/modules/editor/menus/headerbar/model.js:561
 msgid "Export the document to an LaTeX file."
 msgstr "Eksporter dokumentet til en LaTeX-fil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:580
+#: document/static/js/modules/editor/menus/headerbar/model.js:581
 msgid "JATS"
 msgstr "JATS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:583
+#: document/static/js/modules/editor/menus/headerbar/model.js:584
 msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
@@ -3716,205 +3724,205 @@ msgstr ""
 "Eksporter dokumentet til en Journal Archiving and Interchange Tag Library "
 "NISO JATS versjon 1.2-fil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:606
+#: document/static/js/modules/editor/menus/headerbar/model.js:607
 msgid "BITS"
 msgstr "BITS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:609
+#: document/static/js/modules/editor/menus/headerbar/model.js:610
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr ""
 "Eksporter dokumentet til en Book Interchange Tag Set BITS versjon 2.1-fil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:632
+#: document/static/js/modules/editor/menus/headerbar/model.js:633
 msgid "Pandoc JSON"
 msgstr "Pandoc JSON"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:635
+#: document/static/js/modules/editor/menus/headerbar/model.js:636
 msgid "Export the document to a Pandoc JSON file."
 msgstr "Eksporter dokumentet til en Pandoc JSON-fil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:657
+#: document/static/js/modules/editor/menus/headerbar/model.js:658
 msgid "Slim FIDUS"
 msgstr "Slank FIDUS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:660
+#: document/static/js/modules/editor/menus/headerbar/model.js:661
 msgid "Export the document to a FIDUS file without its template."
 msgstr "Eksporter dokumentet til en FIDUS-fil uten mal."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:676
+#: document/static/js/modules/editor/menus/headerbar/model.js:677
 msgid "Settings"
 msgstr "Innstillinger"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:677
+#: document/static/js/modules/editor/menus/headerbar/model.js:678
 msgid "Configure settings of this document."
 msgstr "Konfigurer innstillingene for dette dokumentet."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:684
+#: document/static/js/modules/editor/menus/headerbar/model.js:685
 msgid "Citation Style"
 msgstr "Sitasjonsstil"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:686
+#: document/static/js/modules/editor/menus/headerbar/model.js:687
 msgid "Choose your preferred citation style."
 msgstr "Velg din foretrukne sitatstil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:695
+#: document/static/js/modules/editor/menus/headerbar/model.js:696
 msgid "Document Style"
 msgstr "Dokumentstil"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:697
+#: document/static/js/modules/editor/menus/headerbar/model.js:698
 msgid "Choose your preferred document style."
 msgstr "Velg ønsket dokumentstil."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:709
+#: document/static/js/modules/editor/menus/headerbar/model.js:710
 msgid "Text Language"
 msgstr "Tekstspråk"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:711
+#: document/static/js/modules/editor/menus/headerbar/model.js:712
 msgid "Choose the language of the document."
 msgstr "Velg språket for dokumentet."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:719
+#: document/static/js/modules/editor/menus/headerbar/model.js:720
 #: document/static/js/modules/schema/const.js:19
 msgid "English (United States)"
 msgstr "Engelsk (USA)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:724
+#: document/static/js/modules/editor/menus/headerbar/model.js:725
 #: document/static/js/modules/schema/const.js:18
 msgid "English (United Kingdom)"
 msgstr "Engelsk (Storbritannia)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:727
+#: document/static/js/modules/editor/menus/headerbar/model.js:728
 #: document/static/js/modules/schema/const.js:23
 msgid "German (Germany)"
 msgstr "tysk (Tyskland)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:730
+#: document/static/js/modules/editor/menus/headerbar/model.js:731
 #: document/static/js/modules/schema/const.js:11
 msgid "Chinese (Simplified)"
 msgstr "kinesisk (forenklet)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:733
+#: document/static/js/modules/editor/menus/headerbar/model.js:734
 #: document/static/js/modules/schema/const.js:47
 msgid "Spanish"
 msgstr "spansk"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/editor/menus/headerbar/model.js:735
 #: document/static/js/modules/schema/const.js:21
 msgid "French"
 msgstr "fransk"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:735
+#: document/static/js/modules/editor/menus/headerbar/model.js:736
 #: document/static/js/modules/schema/const.js:30
 msgid "Japanese"
 msgstr "japansk"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:736
+#: document/static/js/modules/editor/menus/headerbar/model.js:737
 #: document/static/js/modules/schema/const.js:29
 msgid "Italian"
 msgstr "italiensk"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:740
+#: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:38
 msgid "Portuguese (Brazil)"
 msgstr "Portugisisk (Brasil)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:790
+#: document/static/js/modules/editor/menus/headerbar/model.js:791
 msgid "Other"
 msgstr "Annen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:841
+#: document/static/js/modules/editor/menus/headerbar/model.js:842
 msgid "Paper Size"
 msgstr "Papirstørrelse"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:844
+#: document/static/js/modules/editor/menus/headerbar/model.js:845
 msgid "Choose a papersize for print and PDF generation."
 msgstr "Velg en papirstørrelse for utskrift og PDF-generering."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:852
+#: document/static/js/modules/editor/menus/headerbar/model.js:853
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:855
+#: document/static/js/modules/editor/menus/headerbar/model.js:856
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) som brukes i det meste av verden."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:878
+#: document/static/js/modules/editor/menus/headerbar/model.js:879
 msgid "US Letter"
 msgstr "US Letter"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:881
+#: document/static/js/modules/editor/menus/headerbar/model.js:882
 msgid "The format used by the USA and some other American countries."
 msgstr "Formatet som brukes av USA og noen andre amerikanske land."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:909
+#: document/static/js/modules/editor/menus/headerbar/model.js:910
 msgid "Copyright Information"
 msgstr "Informasjon om opphavsrett"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:933
+#: document/static/js/modules/editor/menus/headerbar/model.js:934
 msgid "Tools"
 msgstr "Verktøy"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:934
+#: document/static/js/modules/editor/menus/headerbar/model.js:935
 msgid "Select document editing tool."
 msgstr "Velg dokumentredigeringsverktøy."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:940
+#: document/static/js/modules/editor/menus/headerbar/model.js:941
 #: document/static/js/modules/editor/tools/word_count/index.js:13
 msgid "Word counter"
 msgstr "Ordteller"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:942
+#: document/static/js/modules/editor/menus/headerbar/model.js:943
 msgid "See document statistics."
 msgstr "Se dokumentstatistikk."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:950
+#: document/static/js/modules/editor/menus/headerbar/model.js:951
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:34
 #: document/static/js/modules/editor/tools/search_replace/index.js:265
 msgid "Search and replace"
 msgstr "Søk og erstatt"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:952
+#: document/static/js/modules/editor/menus/headerbar/model.js:953
 msgid "Show a search and replace dialog."
 msgstr "Vis en dialogboks for søk og erstatt."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:961
+#: document/static/js/modules/editor/menus/headerbar/model.js:962
 msgid "Keyboard shortcuts"
 msgstr "Tastatursnarveier"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:964
+#: document/static/js/modules/editor/menus/headerbar/model.js:965
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Vis en oversikt over tilgjengelige hurtigtaster."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:976
+#: document/static/js/modules/editor/menus/headerbar/model.js:977
 msgid "Track changes"
 msgstr "Spor endringer"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:978
+#: document/static/js/modules/editor/menus/headerbar/model.js:979
 msgid "Tracking changes to the document"
 msgstr "Spore endringer i dokumentet"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:984
+#: document/static/js/modules/editor/menus/headerbar/model.js:985
 msgid "Record"
 msgstr "Rekord"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:986
+#: document/static/js/modules/editor/menus/headerbar/model.js:987
 msgid "Record document changes"
 msgstr "Registrer dokumentendringer"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1004
+#: document/static/js/modules/editor/menus/headerbar/model.js:1005
 msgid "Accept all"
 msgstr "Godta alle"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1006
+#: document/static/js/modules/editor/menus/headerbar/model.js:1007
 msgid "Accept all tracked changes."
 msgstr "Godta alle sporede endringer."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1013
+#: document/static/js/modules/editor/menus/headerbar/model.js:1014
 msgid "Reject all"
 msgstr "Avvis alle"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1015
+#: document/static/js/modules/editor/menus/headerbar/model.js:1016
 msgid "Reject all tracked changes."
 msgstr "Avvis alle sporede endringer."
 
@@ -3922,12 +3930,12 @@ msgstr "Avvis alle sporede endringer."
 msgid "You cannot close a document when you're offline."
 msgstr "Du kan ikke lukke et dokument når du er frakoblet."
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:542
-#: document/static/js/modules/editor/menus/headerbar/view.js:543
+#: document/static/js/modules/editor/menus/headerbar/view.js:545
+#: document/static/js/modules/editor/menus/headerbar/view.js:546
 msgid "Sign up or log in"
 msgstr "Registrer deg eller logg inn"
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:543
+#: document/static/js/modules/editor/menus/headerbar/view.js:546
 msgid "Close document"
 msgstr "Lukk dokumentet"
 
@@ -4144,6 +4152,17 @@ msgstr "Slå på dokumentnavigator"
 msgid "Document N̲avigator"
 msgstr "Dokument N̲avigator"
 
+#: document/static/js/modules/editor/no_collab_save/index.js:146
+#| msgid "Could not move document"
+msgid "Could not save document."
+msgstr "Kunne ikke lagre dokumentet."
+
+#: document/static/js/modules/editor/no_collab_save/index.js:205
+#| msgid "Document key is not available. Please reload the document."
+msgid "Document has been modified by another user. Please reload the page."
+msgstr ""
+"Dokumentet har blitt endret av en annen bruker. Last inn siden på nytt."
+
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
 msgstr "Linken er kopiert til utklippstavlen"
@@ -4307,11 +4326,11 @@ msgstr "vellykket kopiert."
 msgid "Revision file could not be generated."
 msgstr "Revisjonsfilen kunne ikke genereres."
 
-#: document/static/js/modules/exporter/native/revision.js:65
+#: document/static/js/modules/exporter/native/revision.js:71
 msgid "Revision saved"
 msgstr "Revisjon lagret"
 
-#: document/static/js/modules/exporter/native/revision.js:68
+#: document/static/js/modules/exporter/native/revision.js:74
 msgid "Revision could not be saved."
 msgstr "Revisjon kunne ikke lagres."
 
@@ -4331,15 +4350,15 @@ msgstr "Kunne ikke opprette dokumentet. Manglende bildefil:"
 msgid "Could not save Image"
 msgstr "Kunne ikke lagre bildet"
 
-#: document/static/js/modules/importer/native/import.js:221
+#: document/static/js/modules/importer/native/import.js:224
 msgid "Could not create document"
 msgstr "Kunne ikke opprette dokumentet"
 
-#: document/static/js/modules/importer/native/import.js:309
+#: document/static/js/modules/importer/native/import.js:312
 msgid "Could not save "
 msgstr "Kunne ikke lagre"
 
-#: document/static/js/modules/importer/odt/import.js:46
+#: document/static/js/modules/importer/odt/import.js:47
 msgid "File does not contain content.xml"
 msgstr "Filen inneholder ikke content.xml"
 
@@ -4395,11 +4414,11 @@ msgstr "Oppdaterer lagrede revisjoner."
 msgid "No document revisions to update."
 msgstr "Ingen dokumentrevisjoner å oppdatere."
 
-#: document/static/js/modules/maintenance/index.js:261
+#: document/static/js/modules/maintenance/index.js:267
 msgid "The document revision has been updated: "
 msgstr "Dokumentrevisjonen er oppdatert:"
 
-#: document/static/js/modules/maintenance/index.js:273
+#: document/static/js/modules/maintenance/index.js:279
 msgid "All documents, document templates and document revisions updated!"
 msgstr "Alle dokumenter, dokumentmaler og dokumentrevisjoner oppdatert!"
 
@@ -4624,15 +4643,15 @@ msgstr "Bilder"
 msgid "manage image files"
 msgstr "administrere bildefiler"
 
-#: user/static/js/modules/contacts/add_dialog.js:88
+#: user/static/js/modules/contacts/add_dialog.js:91
 msgid "You cannot add yourself to your contacts!"
 msgstr "Du kan ikke legge deg selv til kontaktene dine!"
 
-#: user/static/js/modules/contacts/add_dialog.js:92
+#: user/static/js/modules/contacts/add_dialog.js:95
 msgid "This person is already in your contacts!"
 msgstr "Denne personen er allerede i kontaktene dine!"
 
-#: user/static/js/modules/contacts/add_dialog.js:95
+#: user/static/js/modules/contacts/add_dialog.js:98
 msgid "Invalid email!"
 msgstr "Ugyldig e-post!"
 
@@ -4802,42 +4821,42 @@ msgstr "Du kan nå logge inn."
 msgid "Login"
 msgstr "Logg inn"
 
-#: user/static/js/modules/login/index.js:17
+#: user/static/js/modules/login/index.js:18
 msgid "New here?"
 msgstr "Ny her?"
 
-#: user/static/js/modules/login/index.js:21
+#: user/static/js/modules/login/index.js:22
 #: user/static/js/modules/signup/index.js:10
 #: user/static/js/modules/signup/index.js:41
 msgid "Sign up"
 msgstr "Registrer deg"
 
-#: user/static/js/modules/login/index.js:42
+#: user/static/js/modules/login/index.js:43
 msgid "Login with"
 msgstr "Logg inn med"
 
-#: user/static/js/modules/login/index.js:59
+#: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
 #: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:220
+#: user/static/js/modules/profile/templates.js:226
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "Brukernavn"
 
-#: user/static/js/modules/login/index.js:60
+#: user/static/js/modules/login/index.js:61
 msgid "Username or e-mail"
 msgstr "Brukernavn eller e-post"
 
-#: user/static/js/modules/login/index.js:72
+#: user/static/js/modules/login/index.js:73
 msgid "Remember me"
 msgstr "Husk meg"
 
-#: user/static/js/modules/login/index.js:74
+#: user/static/js/modules/login/index.js:75
 msgid "Forgot Password?"
 msgstr "Glemt passord?"
 
-#: user/static/js/modules/login/index.js:136
-#: user/static/js/modules/login/index.js:140
+#: user/static/js/modules/login/index.js:137
+#: user/static/js/modules/login/index.js:141
 #: user/static/js/modules/password_reset/change_password.js:62
 #: user/static/js/modules/password_reset/change_password.js:67
 #: user/static/js/modules/password_reset/request_email.js:63
@@ -4848,12 +4867,12 @@ msgstr "Glemt passord?"
 msgid "This field is required."
 msgstr "Dette feltet er obligatorisk."
 
-#: user/static/js/modules/login/index.js:208
+#: user/static/js/modules/login/index.js:209
 #: user/static/js/modules/signup/index.js:144
 msgid "Verify Your E-mail Address"
 msgstr "Bekreft e-postadressen din"
 
-#: user/static/js/modules/login/index.js:211
+#: user/static/js/modules/login/index.js:212
 msgid ""
 "We have sent an e-mail to your email address for verification. Follow the "
 "link provided to finalize the signup process."
@@ -4861,7 +4880,7 @@ msgstr ""
 "Vi har sendt en e-post til din e-postadresse for bekreftelse. Følg koblingen"
 " for å fullføre registreringsprosessen."
 
-#: user/static/js/modules/login/index.js:215
+#: user/static/js/modules/login/index.js:216
 #: user/static/js/modules/password_reset/request_email.js:87
 #: user/static/js/modules/signup/index.js:155
 msgid "Please contact us if you do not receive it within a few minutes."
@@ -5063,19 +5082,19 @@ msgstr "Bekreft angitt primær"
 msgid "Set this email as the address primary"
 msgstr "Angi denne e-postadressen som primær adresse"
 
-#: user/static/js/modules/profile/index.js:131
+#: user/static/js/modules/profile/index.js:144
 msgid "Configure profile"
 msgstr "Konfigurer profil"
 
-#: user/static/js/modules/profile/index.js:273
+#: user/static/js/modules/profile/index.js:286
 msgid "Passphrase changed successfully."
 msgstr "Passordet ble endret."
 
-#: user/static/js/modules/profile/index.js:277
+#: user/static/js/modules/profile/index.js:290
 msgid "Failed to change passphrase: "
 msgstr "Kunne ikke endre passordfrase:"
 
-#: user/static/js/modules/profile/index.js:296
+#: user/static/js/modules/profile/index.js:309
 msgid "Could not save profile data"
 msgstr "Kunne ikke lagre profildata"
 
@@ -5132,69 +5151,69 @@ msgstr "Bytt bilde"
 msgid "Delete picture"
 msgstr "Slett bildet"
 
-#: user/static/js/modules/profile/templates.js:106
+#: user/static/js/modules/profile/templates.js:108
 #: user/static/js/modules/two_factor/index.js:223
 msgid "Two-Factor Authentication"
 msgstr "Tofaktorautentisering"
 
-#: user/static/js/modules/profile/templates.js:110
+#: user/static/js/modules/profile/templates.js:112
 msgid "Enabled"
 msgstr "Aktivert"
 
-#: user/static/js/modules/profile/templates.js:114
+#: user/static/js/modules/profile/templates.js:116
 msgid "Disabled"
 msgstr "Funksjonshemmet"
 
-#: user/static/js/modules/profile/templates.js:119
+#: user/static/js/modules/profile/templates.js:121
 msgid "Enable 2FA"
 msgstr "Aktiver 2FA"
 
-#: user/static/js/modules/profile/templates.js:123
+#: user/static/js/modules/profile/templates.js:125
 #: user/static/js/modules/two_factor/index.js:135
 msgid "Disable 2FA"
 msgstr "Deaktiver 2FA"
 
-#: user/static/js/modules/profile/templates.js:127
+#: user/static/js/modules/profile/templates.js:133
 msgid "End-to-End Encryption"
 msgstr "Ende-til-ende-kryptering"
 
-#: user/static/js/modules/profile/templates.js:131
+#: user/static/js/modules/profile/templates.js:137
 msgid "Personal passphrase set up"
 msgstr "Personlig passordfrase satt opp"
 
-#: user/static/js/modules/profile/templates.js:135
+#: user/static/js/modules/profile/templates.js:141
 msgid "Not set up"
 msgstr "Ikke satt opp"
 
-#: user/static/js/modules/profile/templates.js:140
+#: user/static/js/modules/profile/templates.js:146
 msgid "Set up encryption passphrase"
 msgstr "Sett opp krypteringspassord"
 
-#: user/static/js/modules/profile/templates.js:144
+#: user/static/js/modules/profile/templates.js:150
 msgid "Change passphrase"
 msgstr "Endre passordfrase"
 
-#: user/static/js/modules/profile/templates.js:148
+#: user/static/js/modules/profile/templates.js:154
 msgid "Recover with recovery key"
 msgstr "Gjenopprett med gjenopprettingsnøkkel"
 
-#: user/static/js/modules/profile/templates.js:156
+#: user/static/js/modules/profile/templates.js:164
 msgid "Primary address"
 msgstr "Primær adresse"
 
-#: user/static/js/modules/profile/templates.js:157
+#: user/static/js/modules/profile/templates.js:165
 msgid "Verified"
 msgstr "Verifisert"
 
-#: user/static/js/modules/profile/templates.js:219
+#: user/static/js/modules/profile/templates.js:225
 msgid "Social Account Provider"
 msgstr "Leverandør av sosiale kontoer"
 
-#: user/static/js/modules/profile/templates.js:247
+#: user/static/js/modules/profile/templates.js:253
 msgid "Connect"
 msgstr "Koble til"
 
-#: user/static/js/modules/profile/templates.js:262
+#: user/static/js/modules/profile/templates.js:268
 msgid "Delete account"
 msgstr "Slett konto"
 
@@ -5386,7 +5405,7 @@ msgstr "Dokumentmaler"
 msgid "Templates"
 msgstr "Maler"
 
-#: usermedia/static/js/modules/images/database.js:47
+#: usermedia/static/js/modules/images/database.js:51
 msgid "Image is larger than the maximum permitted size"
 msgstr "Bildet er større enn maksimalt tillatt størrelse"
 
@@ -5501,3 +5520,12 @@ msgstr "Legg til nytt bilde"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:70
 msgid "Use image"
 msgstr "Bruk bilde"
+
+#~ msgid "Import a Fidus file"
+#~ msgstr "Importer en Fidus-fil"
+
+#~ msgid "Import a text document in a different format"
+#~ msgstr "Importer et tekstdokument i et annet format"
+
+#~ msgid "Upload FIDUS document"
+#~ msgstr "Last opp FIDUS-dokument"

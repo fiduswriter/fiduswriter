@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-04 06:33+0000\n"
+"POT-Creation-Date: 2026-05-10 07:57+0000\n"
 "PO-Revision-Date: 2025-04-17 18:59+0200\n"
 "Last-Translator: Ana Carolina Vera Resquin <ani.tavr77@gmail.com>\n"
 "Language-Team: Español <ani.tavr77@gmail.com>\n"
@@ -41,11 +41,11 @@ msgstr "¡Mensaje entregado con éxito!"
 msgid "Message delivered"
 msgstr "Mensaje enviado"
 
-#: base/static/js/modules/app/index.js:201
+#: base/static/js/modules/app/index.js:203
 msgid "You are viewing a cached version of this page."
 msgstr "Estás viendo una versión en caché de esta página."
 
-#: base/static/js/modules/app/index.js:349
+#: base/static/js/modules/app/index.js:351
 msgid ""
 "Other users have requested to connect with you. Go to the contacts page to "
 "accept their invites."
@@ -53,7 +53,7 @@ msgstr ""
 "Otros usuarios han solicitado conectarse contigo. Vaya a la página de "
 "contactos para aceptar sus invitaciones."
 
-#: base/static/js/modules/app/index.js:353
+#: base/static/js/modules/app/index.js:355
 msgid "Go to contacts"
 msgstr "Ir a contactos"
 
@@ -70,15 +70,15 @@ msgstr "Ayuda"
 #: base/static/js/modules/common/dialog.js:41
 #: base/static/js/modules/common/dialog.js:79
 #: document/static/js/modules/editor/menus/headerbar/model.js:158
-#: document/static/js/modules/editor/menus/headerbar/model.js:190
+#: document/static/js/modules/editor/menus/headerbar/model.js:191
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:92
 msgid "Close"
 msgstr "Cerrar"
 
 #: base/static/js/modules/common/dialog.js:84
-#: document/static/js/modules/documents/overview/index.js:915
+#: document/static/js/modules/documents/overview/index.js:920
 #: document/static/js/modules/editor/collab/doc.js:371
-#: document/static/js/modules/editor/collab/doc.js:577
+#: document/static/js/modules/editor/collab/doc.js:573
 #: document/static/js/modules/editor/comments/editors/answer.js:22
 #: document/static/js/modules/editor/comments/editors/comment.js:103
 #: document/static/js/modules/editor/dialogs/templates.js:237
@@ -90,8 +90,8 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: base/static/js/modules/common/dialog.js:89
-#: document/static/js/modules/editor/index.js:330
-#: document/static/js/modules/editor/index.js:588
+#: document/static/js/modules/editor/index.js:337
+#: document/static/js/modules/editor/index.js:616
 msgid "OK"
 msgstr "OK"
 
@@ -102,17 +102,17 @@ msgstr "OK"
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
 #: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:172
-#: document/static/js/modules/editor/menus/headerbar/view.js:503
+#: document/static/js/modules/editor/dialogs/citation.js:173
+#: document/static/js/modules/editor/menus/headerbar/view.js:505
 #: document/static/js/modules/exporter/tools/file.js:3
 #: document/static/js/modules/importer/docx/convert.js:84
 #: document/static/js/modules/importer/docx/convert.js:92
 #: document/static/js/modules/importer/docx/convert.js:520
-#: document/static/js/modules/importer/docx/import.js:48
+#: document/static/js/modules/importer/docx/import.js:49
 #: document/static/js/modules/importer/odt/convert.js:460
 #: document/static/js/modules/importer/odt/convert.js:471
-#: document/static/js/modules/importer/odt/import.js:113
-#: document/static/js/modules/importer/pandoc/import.js:21
+#: document/static/js/modules/importer/odt/import.js:114
+#: document/static/js/modules/importer/pandoc/import.js:22
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:224
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
 #: usermedia/static/js/modules/images/overview/index.js:175
@@ -127,14 +127,14 @@ msgstr "Nueva carpeta"
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
 #: bibliography/static/js/modules/bibliography/overview/index.js:320
-#: document/static/js/modules/documents/access_rights/index.js:292
+#: document/static/js/modules/documents/access_rights/index.js:296
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
-#: user/static/js/modules/contacts/add_dialog.js:12
+#: user/static/js/modules/contacts/add_dialog.js:14
 #: user/static/js/modules/profile/dialogs.js:124
 #: user/static/js/modules/profile/dialogs.js:215
 #: user/static/js/modules/profile/dialogs.js:385
-#: user/static/js/modules/profile/templates.js:259
+#: user/static/js/modules/profile/templates.js:265
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
 msgstr "Enviar"
@@ -164,7 +164,7 @@ msgid "Type to search"
 msgstr "Escribe para buscar"
 
 #: base/static/js/modules/common/templates.js:16
-#: base/static/js/modules/prelogin/templates.js:15
+#: base/static/js/modules/prelogin/templates.js:16
 msgid "Site navigation"
 msgstr "Navegación del sitio"
 
@@ -183,7 +183,7 @@ msgid "Warning! Some data is unsaved"
 msgstr "¡Advertencia! Algunos datos no están guardados"
 
 #: base/static/js/modules/common/ws.js:14
-#: document/static/js/modules/editor/index.js:393
+#: document/static/js/modules/editor/index.js:403
 msgid "Disconnected. Attempting to reconnect..."
 msgstr "Desconectado. Intentando reconectar..."
 
@@ -297,12 +297,12 @@ msgid "Editing with ProseMirror"
 msgstr "Ediciones con ProseMirror"
 
 #: base/static/js/modules/prelogin/index.js:44
-#: user/static/js/modules/login/index.js:30
-#: user/static/js/modules/login/index.js:69
+#: user/static/js/modules/login/index.js:31
+#: user/static/js/modules/login/index.js:70
 msgid "Log in"
 msgstr "Iniciar sesión"
 
-#: base/static/js/modules/prelogin/templates.js:56
+#: base/static/js/modules/prelogin/templates.js:57
 msgid "Select language"
 msgstr "Seleccionar idioma"
 
@@ -344,7 +344,7 @@ msgstr "No se pudo actualizar la bibliografía"
 #: bibliography/static/js/modules/bibliography/overview/index.js:313
 #: bibliography/static/js/modules/bibliography/overview/index.js:341
 #: document/static/js/modules/exporter/native/revision.js:45
-#: document/static/js/modules/exporter/native/revision.js:73
+#: document/static/js/modules/exporter/native/revision.js:79
 #: usermedia/static/js/modules/images/overview/index.js:94
 #: usermedia/static/js/modules/images/overview/index.js:108
 msgid "You are currently offline. Please try again when you are back online."
@@ -524,8 +524,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Hubo un problema con la importación de bibliografía."
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:113
-#: document/static/js/modules/documents/overview/actions.js:207
+#: document/static/js/modules/documents/overview/actions.js:174
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Importar"
@@ -535,8 +534,7 @@ msgid "Import a bibliography"
 msgstr "Importar una bibliografía"
 
 #: bibliography/static/js/modules/bibliography/import/templates.js:6
-#: document/static/js/modules/documents/overview/actions.js:353
-#: document/static/js/modules/documents/overview/templates.js:8
+#: document/static/js/modules/documents/overview/templates.js:22
 #: user/static/js/modules/profile/templates.js:10
 #: user_template_manager/static/js/modules/user_template_manager/templates.js:6
 #: usermedia/static/js/modules/images/edit_dialog/templates.js:43
@@ -556,12 +554,12 @@ msgid "Bibliography Manager"
 msgstr "Administrador de Bibliografía"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:236
+#: document/static/js/modules/editor/dialogs/citation.js:239
 msgid "No sources registered"
 msgstr "No hay fuentes registradas"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:237
+#: document/static/js/modules/editor/dialogs/citation.js:240
 msgid "No sources found"
 msgstr "No se encontraron fuentes"
 
@@ -575,8 +573,8 @@ msgstr "No se encontraron fuentes"
 #: document/static/js/modules/document_template/templates.js:527
 #: document/static/js/modules/document_template/templates.js:813
 #: document/static/js/modules/document_template/templates.js:836
-#: document/static/js/modules/documents/overview/index.js:556
-#: document/static/js/modules/editor/dialogs/citation.js:247
+#: document/static/js/modules/documents/overview/index.js:560
+#: document/static/js/modules/editor/dialogs/citation.js:252
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
@@ -593,7 +591,7 @@ msgid "Sourcetype"
 msgstr "Tipo de fuente"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:247
+#: document/static/js/modules/editor/dialogs/citation.js:253
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -619,7 +617,7 @@ msgstr "Editar Categorías"
 #: document/static/js/modules/document_template/templates.js:821
 #: document/static/js/modules/documents/access_rights/templates.js:28
 #: document/static/js/modules/documents/overview/actions.js:89
-#: document/static/js/modules/documents/overview/index.js:149
+#: document/static/js/modules/documents/overview/index.js:153
 #: document/static/js/modules/documents/revisions/index.js:133
 #: document/static/js/modules/documents/revisions/templates.js:11
 #: document/static/js/modules/editor/marginboxes/templates.js:531
@@ -637,7 +635,7 @@ msgstr "Eliminar"
 #: document/static/js/modules/document_template/document_style_dialog.js:186
 #: document/static/js/modules/document_template/export_template_dialog.js:192
 #: document/static/js/modules/documents/overview/actions.js:70
-#: document/static/js/modules/documents/overview/index.js:141
+#: document/static/js/modules/documents/overview/index.js:145
 #: document/static/js/modules/documents/revisions/index.js:151
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:40
@@ -652,7 +650,7 @@ msgid "Delete the bibliography item(s)"
 msgstr "Eliminar el/los elemento(s) de la bibliografía"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:7
-#: document/static/js/modules/documents/overview/menu.js:192
+#: document/static/js/modules/documents/overview/menu.js:195
 #: user/static/js/modules/contacts/menu.js:7
 #: user_template_manager/static/js/modules/user_template_manager/menu.js:27
 #: usermedia/static/js/modules/images/overview/menu.js:4
@@ -694,11 +692,11 @@ msgstr "Importar bibliografía"
 msgid "Search bibliography"
 msgstr "Buscar bibliografía"
 
-#: bibliography/static/js/modules/bibliography/tools.js:36
+#: bibliography/static/js/modules/bibliography/tools.js:48
 msgid "and"
 msgstr "y"
 
-#: bibliography/static/js/modules/bibliography/tools.js:41
+#: bibliography/static/js/modules/bibliography/tools.js:53
 msgid "and others"
 msgstr "y otros"
 
@@ -773,7 +771,7 @@ msgstr "El slug solo puede contener letras, números, guiones y guiones bajos."
 msgid "The slug has to be unique."
 msgstr "El slug tiene que ser único."
 
-#: document/static/js/modules/document_template/document_style_dialog.js:286
+#: document/static/js/modules/document_template/document_style_dialog.js:292
 msgid "A file with the same name exists already."
 msgstr "Ya existe un archivo con el mismo nombre."
 
@@ -815,11 +813,11 @@ msgstr "Debe cargar un archivo de plantilla en formato ODT o DOCX."
 msgid "Another export file with the same filename exists already."
 msgstr "Ya existe otro archivo de exportación con el mismo nombre."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:256
+#: document/static/js/modules/document_template/export_template_dialog.js:257
 msgid "Unknown filetype"
 msgstr "Tipo de archivo desconocido"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:373
+#: document/static/js/modules/document_template/export_template_dialog.js:374
 msgid "Selected file not supported."
 msgstr "El archivo seleccionado no es compatible."
 
@@ -829,31 +827,31 @@ msgstr ""
 "El archivo subido no parece ser un archivo de plantilla de Fidus Writer."
 
 #: document/static/js/modules/document_template/importer.js:70
-#: document/static/js/modules/importer/native/file.js:57
-#: document/static/js/modules/importer/native/file.js:85
+#: document/static/js/modules/importer/native/file.js:65
+#: document/static/js/modules/importer/native/file.js:93
 msgid "The uploaded file does not appear to be a Fidus Writer file."
 msgstr "El archivo cargado no parece ser un archivo de Fidus Writer."
 
-#: document/static/js/modules/document_template/importer.js:159
-#: document/static/js/modules/importer/docx/import.js:70
-#: document/static/js/modules/importer/native/file.js:204
-#: document/static/js/modules/importer/odt/import.js:139
-#: document/static/js/modules/importer/pandoc/import.js:160
+#: document/static/js/modules/document_template/importer.js:165
+#: document/static/js/modules/importer/docx/import.js:73
+#: document/static/js/modules/importer/native/file.js:213
+#: document/static/js/modules/importer/odt/import.js:142
+#: document/static/js/modules/importer/pandoc/import.js:163
 msgid "successfully imported."
 msgstr " importado con exito."
 
-#: document/static/js/modules/document_template/importer.js:166
-#: document/static/js/modules/importer/native/file.js:211
+#: document/static/js/modules/document_template/importer.js:172
+#: document/static/js/modules/importer/native/file.js:220
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
 msgstr ""
 "El archivo cargado no parece ser de la versión utilizada en este servidor: "
 
-#: document/static/js/modules/document_template/list_admin.js:37
+#: document/static/js/modules/document_template/list_admin.js:38
 msgid "Upload FIDUSTEMPLATE"
 msgstr "Subir FIDUSTEMPLATE"
 
-#: document/static/js/modules/document_template/list_admin.js:42
+#: document/static/js/modules/document_template/list_admin.js:43
 msgid "Download selected as FIDUSTEMPLATE"
 msgstr "Descarga seleccionada como FIDUSTEMPLATE"
 
@@ -1199,7 +1197,7 @@ msgstr "Títulos permitidos"
 #: document/static/js/modules/document_template/templates.js:355
 #: document/static/js/modules/document_template/templates.js:496
 #: document/static/js/modules/editor/dialogs/code_block.js:202
-#: user/static/js/modules/profile/templates.js:201
+#: user/static/js/modules/profile/templates.js:209
 msgid "Language"
 msgstr "Idioma"
 
@@ -1345,7 +1343,7 @@ msgid "Available languages"
 msgstr "Idiomas Disponibles"
 
 #: document/static/js/modules/document_template/templates.js:870
-#: user/static/js/modules/profile/templates.js:203
+#: user/static/js/modules/profile/templates.js:211
 msgid "Default language"
 msgstr "Idioma predeterminado"
 
@@ -1381,88 +1379,88 @@ msgstr "Estilos de documentos"
 msgid "Export templates"
 msgstr "Exportar plantillas"
 
-#: document/static/js/modules/documents/access_rights/index.js:54
+#: document/static/js/modules/documents/access_rights/index.js:57
 msgid "Cannot load document access data."
 msgstr "No se pueden cargar los datos de acceso al documento."
 
-#: document/static/js/modules/documents/access_rights/index.js:72
+#: document/static/js/modules/documents/access_rights/index.js:75
 msgid "Basic"
 msgstr "Básico"
 
-#: document/static/js/modules/documents/access_rights/index.js:73
+#: document/static/js/modules/documents/access_rights/index.js:76
 msgid "Basic access rights"
 msgstr "Derechos de acceso básicos"
 
-#: document/static/js/modules/documents/access_rights/index.js:77
-#: document/static/js/modules/documents/access_rights/index.js:79
+#: document/static/js/modules/documents/access_rights/index.js:80
+#: document/static/js/modules/documents/access_rights/index.js:82
 #: document/static/js/modules/documents/access_rights/templates.js:92
 #: document/static/js/modules/documents/access_rights/templates.js:98
 msgid "Write"
 msgstr "Escribir"
 
-#: document/static/js/modules/documents/access_rights/index.js:88
+#: document/static/js/modules/documents/access_rights/index.js:91
 #: document/static/js/modules/documents/access_rights/templates.js:99
 msgid "Write tracked"
 msgstr "Escribir rastreado"
 
-#: document/static/js/modules/documents/access_rights/index.js:90
+#: document/static/js/modules/documents/access_rights/index.js:93
 msgid "Write with changes tracked"
 msgstr "Escribir con cambios rastreados"
 
-#: document/static/js/modules/documents/access_rights/index.js:99
-#: document/static/js/modules/documents/access_rights/index.js:101
+#: document/static/js/modules/documents/access_rights/index.js:102
+#: document/static/js/modules/documents/access_rights/index.js:104
 #: document/static/js/modules/documents/access_rights/templates.js:97
 #: document/static/js/modules/editor/menus/selection/model.js:43
 msgid "Comment"
 msgstr "Comentario"
 
-#: document/static/js/modules/documents/access_rights/index.js:110
-#: document/static/js/modules/documents/access_rights/index.js:112
+#: document/static/js/modules/documents/access_rights/index.js:113
+#: document/static/js/modules/documents/access_rights/index.js:115
 #: document/static/js/modules/documents/access_rights/templates.js:90
 #: document/static/js/modules/documents/access_rights/templates.js:93
 msgid "Read"
 msgstr "Leer"
 
-#: document/static/js/modules/documents/access_rights/index.js:121
-#: document/static/js/modules/documents/access_rights/index.js:139
+#: document/static/js/modules/documents/access_rights/index.js:124
+#: document/static/js/modules/documents/access_rights/index.js:142
 #: document/static/js/modules/documents/access_rights/templates.js:95
 msgid "Review"
 msgstr "Revisar"
 
-#: document/static/js/modules/documents/access_rights/index.js:122
+#: document/static/js/modules/documents/access_rights/index.js:125
 msgid "Access rights used within document review"
 msgstr "Derechos de acceso utilizados en la revisión de documentos"
 
-#: document/static/js/modules/documents/access_rights/index.js:126
+#: document/static/js/modules/documents/access_rights/index.js:129
 msgid "No comments"
 msgstr "Sin comentarios"
 
-#: document/static/js/modules/documents/access_rights/index.js:129
+#: document/static/js/modules/documents/access_rights/index.js:132
 msgid "Read document but not see comments and chats of others"
 msgstr ""
 "Leer el documento pero no mostrar comentarios ni chats de otros usuarios"
 
-#: document/static/js/modules/documents/access_rights/index.js:142
+#: document/static/js/modules/documents/access_rights/index.js:145
 msgid "Comment, but not see comments and chats of others"
 msgstr "Comentar, pero no ver comentarios ni chats de otros"
 
-#: document/static/js/modules/documents/access_rights/index.js:152
+#: document/static/js/modules/documents/access_rights/index.js:155
 #: document/static/js/modules/documents/access_rights/templates.js:96
 msgid "Review tracked"
 msgstr "Revisión rastreada"
 
-#: document/static/js/modules/documents/access_rights/index.js:155
+#: document/static/js/modules/documents/access_rights/index.js:158
 msgid "Write with tracked changes, but not see comments and chats of others"
 msgstr ""
 "Escribir con cambios rastreados, pero no ver comentarios ni chats de otras "
 "personas."
 
-#: document/static/js/modules/documents/access_rights/index.js:231
-#: document/static/js/modules/documents/overview/index.js:763
+#: document/static/js/modules/documents/access_rights/index.js:234
+#: document/static/js/modules/documents/overview/index.js:767
 msgid "End-to-end encrypted document"
 msgstr "Documento cifrado de extremo a extremo"
 
-#: document/static/js/modules/documents/access_rights/index.js:232
+#: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
 "passphrase will need the document password shared with them through a secure"
@@ -1474,68 +1472,68 @@ msgstr ""
 "documento con ellos a través de un canal seguro fuera de Fidus Writer. No "
 "envíe la contraseña a través del chat de documentos."
 
-#: document/static/js/modules/documents/access_rights/index.js:240
-#: user/static/js/modules/contacts/add_dialog.js:51
+#: document/static/js/modules/documents/access_rights/index.js:244
+#: user/static/js/modules/contacts/add_dialog.js:54
 msgid "Add contact or invite new user"
 msgstr "Agregar contacto o invitar a un nuevo usuario"
 
-#: document/static/js/modules/documents/access_rights/index.js:241
-#: user/static/js/modules/contacts/add_dialog.js:52
+#: document/static/js/modules/documents/access_rights/index.js:245
+#: user/static/js/modules/contacts/add_dialog.js:55
 msgid "Add contact"
 msgstr "Añadir contacto"
 
-#: document/static/js/modules/documents/access_rights/index.js:317
+#: document/static/js/modules/documents/access_rights/index.js:321
 msgid "Share your document with others"
 msgstr "Compartir tus documentos con otros"
 
-#: document/static/js/modules/documents/access_rights/index.js:344
+#: document/static/js/modules/documents/access_rights/index.js:348
 #: document/static/js/modules/documents/access_rights/templates.js:38
 msgid "Loading…"
 msgstr "Cargando…"
 
-#: document/static/js/modules/documents/access_rights/index.js:352
+#: document/static/js/modules/documents/access_rights/index.js:356
 msgid "Could not load share links."
 msgstr "No se pudieron cargar los enlaces para compartir."
 
-#: document/static/js/modules/documents/access_rights/index.js:358
+#: document/static/js/modules/documents/access_rights/index.js:362
 msgid "Create share link"
 msgstr "Crear enlace para compartir"
 
-#: document/static/js/modules/documents/access_rights/index.js:367
-#: document/static/js/modules/documents/overview/index.js:919
+#: document/static/js/modules/documents/access_rights/index.js:371
+#: document/static/js/modules/documents/overview/index.js:924
 msgid "Create"
 msgstr "Crear"
 
-#: document/static/js/modules/documents/access_rights/index.js:417
+#: document/static/js/modules/documents/access_rights/index.js:421
 msgid "Share link created."
 msgstr "Enlace compartido creado."
 
-#: document/static/js/modules/documents/access_rights/index.js:423
+#: document/static/js/modules/documents/access_rights/index.js:427
 msgid "Could not create share link."
 msgstr "No se pudo crear el enlace para compartir."
 
-#: document/static/js/modules/documents/access_rights/index.js:449
+#: document/static/js/modules/documents/access_rights/index.js:453
 msgid "Share link revoked."
 msgstr "Enlace compartido revocado."
 
-#: document/static/js/modules/documents/access_rights/index.js:451
 #: document/static/js/modules/documents/access_rights/index.js:455
+#: document/static/js/modules/documents/access_rights/index.js:459
 msgid "Could not revoke share link."
 msgstr "No se pudo revocar el enlace para compartir."
 
-#: document/static/js/modules/documents/access_rights/index.js:571
+#: document/static/js/modules/documents/access_rights/index.js:575
 msgid "Link copied to clipboard."
 msgstr "Enlace copiado al portapapeles."
 
-#: document/static/js/modules/documents/access_rights/index.js:573
+#: document/static/js/modules/documents/access_rights/index.js:577
 msgid "Could not copy link."
 msgstr "No se pudo copiar el enlace."
 
-#: document/static/js/modules/documents/access_rights/index.js:638
+#: document/static/js/modules/documents/access_rights/index.js:642
 msgid "Access rights have been saved"
 msgstr "Los derechos de acceso han sido guardados"
 
-#: document/static/js/modules/documents/access_rights/index.js:644
+#: document/static/js/modules/documents/access_rights/index.js:648
 msgid "Access rights could not be saved"
 msgstr "Los derechos de acceso no se pudieron guardar"
 
@@ -1561,7 +1559,7 @@ msgstr "Colaboradores"
 
 #: document/static/js/modules/documents/access_rights/templates.js:27
 #: document/static/js/modules/documents/access_rights/templates.js:85
-#: document/static/js/modules/documents/overview/index.js:561
+#: document/static/js/modules/documents/overview/index.js:565
 msgid "Rights"
 msgstr "Derechos"
 
@@ -1655,35 +1653,30 @@ msgstr "¿Realmente desea eliminar los siguientes documentos?"
 msgid "Do you really want to delete the following document?"
 msgstr "¿Realmente desea eliminar el siguiente documento?"
 
-#: document/static/js/modules/documents/overview/actions.js:159
-msgid "Import a Fidus file"
-msgstr "Importar un archivo de Fidus"
-
-#: document/static/js/modules/documents/overview/actions.js:189
+#: document/static/js/modules/documents/overview/actions.js:116
 msgid "Import as:"
 msgstr "Importar como:"
 
-#: document/static/js/modules/documents/overview/actions.js:217
-msgid "File too large"
-msgstr "Archivo demasiado grande"
+#: document/static/js/modules/documents/overview/actions.js:138
+#| msgid "The document template has been updated"
+msgid "This document will be saved as encrypted."
+msgstr "Este documento se guardará como cifrado."
 
-#: document/static/js/modules/documents/overview/actions.js:231
-msgid "No importable files found in ZIP"
-msgstr "No se encontraron archivos importables en el ZIP"
+#: document/static/js/modules/documents/overview/actions.js:144
+#: document/static/js/modules/documents/overview/index.js:904
+msgid "Non-encrypted"
+msgstr "No cifrado"
 
-#: document/static/js/modules/documents/overview/actions.js:287
-msgid "Unsupported file format"
-msgstr "Formato de archivo no compatible"
+#: document/static/js/modules/documents/overview/actions.js:148
+#: document/static/js/modules/documents/overview/index.js:909
+msgid "Encrypted"
+msgstr "cifrado"
 
-#: document/static/js/modules/documents/overview/actions.js:346
-msgid "Import a text document in a different format"
-msgstr "Importar un documento de texto en un formato diferente"
-
-#: document/static/js/modules/documents/overview/actions.js:360
+#: document/static/js/modules/documents/overview/actions.js:161
 msgid "Supported formats"
 msgstr "Formatos compatibles"
 
-#: document/static/js/modules/documents/overview/actions.js:362
+#: document/static/js/modules/documents/overview/actions.js:161
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1691,26 +1684,48 @@ msgstr ""
 "También se puede cargar un archivo ZIP que contenga un archivo en cualquiera"
 " de estos formatos, así como imágenes y/o archivos bibtex."
 
-#: document/static/js/modules/documents/overview/actions.js:443
+#: document/static/js/modules/documents/overview/actions.js:165
+#| msgid "Import document"
+msgid "Import a document"
+msgstr "Importar un documento"
+
+#: document/static/js/modules/documents/overview/actions.js:183
+msgid "File too large"
+msgstr "Archivo demasiado grande"
+
+#: document/static/js/modules/documents/overview/actions.js:241
+msgid "No importable files found in ZIP"
+msgstr "No se encontraron archivos importables en el ZIP"
+
+#: document/static/js/modules/documents/overview/actions.js:283
+msgid "Unsupported file format"
+msgstr "Formato de archivo no compatible"
+
+#: document/static/js/modules/documents/overview/actions.js:350
+#| msgid "Could not create document"
+msgid "Could not create encrypted document."
+msgstr "No se pudo crear el documento cifrado."
+
+#: document/static/js/modules/documents/overview/actions.js:441
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
 msgstr "Cifrar la copia"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:448
 #: document/static/js/modules/editor/document_template/index.js:136
 msgid "Choose document template"
 msgstr "Seleccionar una plantilla de documento"
 
-#: document/static/js/modules/documents/overview/actions.js:452
+#: document/static/js/modules/documents/overview/actions.js:450
 msgid "Select document template for copies"
 msgstr "Seleccionar plantillas de documentos para copias"
 
-#: document/static/js/modules/documents/overview/actions.js:452
+#: document/static/js/modules/documents/overview/actions.js:450
 #: document/static/js/modules/editor/document_template/index.js:138
 msgid "Select document template for copy."
 msgstr "Seleccionar plantilla de documento para copia"
 
-#: document/static/js/modules/documents/overview/actions.js:465
+#: document/static/js/modules/documents/overview/actions.js:463
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
 #: document/static/js/modules/editor/document_template/index.js:151
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:301
@@ -1718,18 +1733,18 @@ msgstr "Seleccionar plantilla de documento para copia"
 msgid "Copy"
 msgstr "Copiar"
 
-#: document/static/js/modules/documents/overview/actions.js:514
+#: document/static/js/modules/documents/overview/actions.js:512
 msgid "Could not copy document."
 msgstr "No se pudo copiar el documento."
 
-#: document/static/js/modules/documents/overview/actions.js:544
-#: document/static/js/modules/documents/overview/actions.js:576
+#: document/static/js/modules/documents/overview/actions.js:542
+#: document/static/js/modules/documents/overview/actions.js:574
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
 msgid "Incorrect password."
 msgstr "Contraseña incorrecta."
 
-#: document/static/js/modules/documents/overview/actions.js:798
+#: document/static/js/modules/documents/overview/actions.js:796
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
@@ -1746,7 +1761,7 @@ msgstr ""
 "No puede acceder a los datos de derechos de un documento mientras está "
 "desconectado."
 
-#: document/static/js/modules/documents/overview/index.js:143
+#: document/static/js/modules/documents/overview/index.js:147
 msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
@@ -1754,58 +1769,58 @@ msgstr ""
 "Si sale de una carpeta vacía, se eliminará. ¿Realmente desea eliminar esta "
 "carpeta?"
 
-#: document/static/js/modules/documents/overview/index.js:189
+#: document/static/js/modules/documents/overview/index.js:193
 msgid "You cannot open a document while you are offline."
 msgstr "No puede abrir un documento mientras está desconectado."
 
-#: document/static/js/modules/documents/overview/index.js:233
+#: document/static/js/modules/documents/overview/index.js:237
 msgid "Document data loading failed."
 msgstr "Error al cargar los datos del documento."
 
-#: document/static/js/modules/documents/overview/index.js:546
+#: document/static/js/modules/documents/overview/index.js:550
 msgid "No documents available"
 msgstr "No hay documentos disponibles"
 
-#: document/static/js/modules/documents/overview/index.js:547
+#: document/static/js/modules/documents/overview/index.js:551
 msgid "No documents found"
 msgstr "No se encontraron documentos"
 
-#: document/static/js/modules/documents/overview/index.js:557
+#: document/static/js/modules/documents/overview/index.js:561
 msgid "Revisions"
 msgstr "Revisiones"
 
-#: document/static/js/modules/documents/overview/index.js:558
+#: document/static/js/modules/documents/overview/index.js:562
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:112
 msgid "Created"
 msgstr "Creado"
 
-#: document/static/js/modules/documents/overview/index.js:559
+#: document/static/js/modules/documents/overview/index.js:563
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:113
 msgid "Last changed"
 msgstr "Último cambio"
 
-#: document/static/js/modules/documents/overview/index.js:560
+#: document/static/js/modules/documents/overview/index.js:564
 msgid "Owner"
 msgstr "Propietario"
 
-#: document/static/js/modules/documents/overview/index.js:753
+#: document/static/js/modules/documents/overview/index.js:757
 #: document/static/js/modules/editor/e2ee/password-dialog.js:196
 msgid "Encrypted Document"
 msgstr "Documento cifrado"
 
-#: document/static/js/modules/documents/overview/index.js:800
+#: document/static/js/modules/documents/overview/index.js:805
 msgid "Undefined"
 msgstr "Indefinido"
 
-#: document/static/js/modules/documents/overview/index.js:813
+#: document/static/js/modules/documents/overview/index.js:818
 msgid "Copy selected as..."
 msgstr "Copia seleccionada como..."
 
-#: document/static/js/modules/documents/overview/index.js:815
+#: document/static/js/modules/documents/overview/index.js:820
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Copie los documentos y asígnelos a una plantilla específica."
 
-#: document/static/js/modules/documents/overview/index.js:866
+#: document/static/js/modules/documents/overview/index.js:871
 msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
@@ -1813,31 +1828,31 @@ msgstr ""
 "Los documentos cifrados protegen su contenido para que sólo las personas con"
 " la contraseña puedan leerlo."
 
-#: document/static/js/modules/documents/overview/index.js:867
-#: document/static/js/modules/documents/overview/index.js:881
+#: document/static/js/modules/documents/overview/index.js:872
+#: document/static/js/modules/documents/overview/index.js:886
 msgid "Advantages"
 msgstr "Ventajas"
 
-#: document/static/js/modules/documents/overview/index.js:869
+#: document/static/js/modules/documents/overview/index.js:874
 msgid "Only people with the password can read the document."
 msgstr "Sólo las personas con la contraseña pueden leer el documento."
 
-#: document/static/js/modules/documents/overview/index.js:870
+#: document/static/js/modules/documents/overview/index.js:875
 msgid "The server cannot access the document contents."
 msgstr "El servidor no puede acceder al contenido del documento."
 
-#: document/static/js/modules/documents/overview/index.js:872
-#: document/static/js/modules/documents/overview/index.js:887
+#: document/static/js/modules/documents/overview/index.js:877
+#: document/static/js/modules/documents/overview/index.js:892
 msgid "Disadvantages"
 msgstr "Desventajas"
 
-#: document/static/js/modules/documents/overview/index.js:874
+#: document/static/js/modules/documents/overview/index.js:879
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr ""
 "Opciones de derechos de acceso limitados (sin seguimiento de cambios ni "
 "modos de revisión)."
 
-#: document/static/js/modules/documents/overview/index.js:875
+#: document/static/js/modules/documents/overview/index.js:880
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
@@ -1845,7 +1860,7 @@ msgstr ""
 "Si pierde la contraseña o la frase de contraseña, no hay forma de recuperar "
 "el documento."
 
-#: document/static/js/modules/documents/overview/index.js:876
+#: document/static/js/modules/documents/overview/index.js:881
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
@@ -1853,53 +1868,45 @@ msgstr ""
 "Debes compartir la contraseña con los colaboradores manualmente (a menos que"
 " utilicen una frase de contraseña personal)."
 
-#: document/static/js/modules/documents/overview/index.js:880
+#: document/static/js/modules/documents/overview/index.js:885
 msgid "Regular documents are the default and work well for most users."
 msgstr ""
 "Los documentos normales son los predeterminados y funcionan bien para la "
 "mayoría de los usuarios."
 
-#: document/static/js/modules/documents/overview/index.js:883
+#: document/static/js/modules/documents/overview/index.js:888
 msgid "Full access rights options including tracked changes and review modes."
 msgstr ""
 "Opciones de derechos de acceso completo, incluidos cambios rastreados y "
 "modos de revisión."
 
-#: document/static/js/modules/documents/overview/index.js:884
+#: document/static/js/modules/documents/overview/index.js:889
 msgid "No risk of losing access if you forget a password."
 msgstr "No hay riesgo de perder el acceso si olvida una contraseña."
 
-#: document/static/js/modules/documents/overview/index.js:885
+#: document/static/js/modules/documents/overview/index.js:890
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr ""
 "Colaboración más sencilla: no es necesario compartir contraseñas con los "
 "colaboradores."
 
-#: document/static/js/modules/documents/overview/index.js:889
+#: document/static/js/modules/documents/overview/index.js:894
 msgid "The server can technically access the document contents."
 msgstr "Técnicamente, el servidor puede acceder al contenido del documento."
 
-#: document/static/js/modules/documents/overview/index.js:890
+#: document/static/js/modules/documents/overview/index.js:895
 msgid "No additional protection beyond your account password."
 msgstr "No hay protección adicional más allá de la contraseña de su cuenta."
 
-#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:899
 msgid "Choose encryption type of new document."
 msgstr "Elija el tipo de cifrado del nuevo documento."
 
-#: document/static/js/modules/documents/overview/index.js:899
-msgid "Non-encrypted"
-msgstr "No cifrado"
-
-#: document/static/js/modules/documents/overview/index.js:904
-msgid "Encrypted"
-msgstr "cifrado"
-
-#: document/static/js/modules/documents/overview/index.js:948
+#: document/static/js/modules/documents/overview/index.js:953
 msgid "Set Up Personal Encryption (Optional)"
 msgstr "Configurar cifrado personal (opcional)"
 
-#: document/static/js/modules/documents/overview/index.js:950
+#: document/static/js/modules/documents/overview/index.js:955
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
@@ -1908,25 +1915,25 @@ msgstr ""
 "permitirá desbloquear todos sus documentos cifrados con una única frase de "
 "contraseña."
 
-#: document/static/js/modules/documents/overview/index.js:951
+#: document/static/js/modules/documents/overview/index.js:956
 msgid "Note:"
 msgstr "Nota:"
 
-#: document/static/js/modules/documents/overview/index.js:951
+#: document/static/js/modules/documents/overview/index.js:956
 msgid "This is optional. You can also use a per-document password instead."
 msgstr ""
 "Esto es opcional. También puede utilizar una contraseña por documento."
 
-#: document/static/js/modules/documents/overview/index.js:955
+#: document/static/js/modules/documents/overview/index.js:960
 msgid "Skip for Now"
 msgstr "Saltar por ahora"
 
-#: document/static/js/modules/documents/overview/index.js:966
+#: document/static/js/modules/documents/overview/index.js:971
 msgid "Set Up Passphrase"
 msgstr "Configurar frase de contraseña"
 
-#: document/static/js/modules/documents/overview/index.js:1001
-#: user/static/js/modules/profile/index.js:219
+#: document/static/js/modules/documents/overview/index.js:1006
+#: user/static/js/modules/profile/index.js:232
 msgid "Failed to set up passphrase: "
 msgstr "No se pudo configurar la frase de contraseña:"
 
@@ -1966,64 +1973,64 @@ msgstr "Compartir los documentos que han sido seleccionados."
 msgid "You cannot share documents of other users"
 msgstr "No puedes compartir documentos de otros usuarios"
 
-#: document/static/js/modules/documents/overview/menu.js:74
+#: document/static/js/modules/documents/overview/menu.js:77
 msgid "Copy selected"
 msgstr "Copiar lo seleccionado"
 
-#: document/static/js/modules/documents/overview/menu.js:75
+#: document/static/js/modules/documents/overview/menu.js:78
 msgid "Copy the documents that have been selected."
 msgstr "Copiar los documentos que han sido seleccionados."
 
-#: document/static/js/modules/documents/overview/menu.js:87
+#: document/static/js/modules/documents/overview/menu.js:90
 msgid "Export selected as Epub"
 msgstr "Exportar lo seleccionado a Epub"
 
-#: document/static/js/modules/documents/overview/menu.js:89
+#: document/static/js/modules/documents/overview/menu.js:92
 msgid "Export the documents that have been selected as Epub files."
 msgstr ""
 "Exportar los documentos que han sido seleccionados como archivos Epub."
 
-#: document/static/js/modules/documents/overview/menu.js:102
+#: document/static/js/modules/documents/overview/menu.js:105
 msgid "Export selected as HTML"
 msgstr "Exportar lo seleccionado a HTML"
 
-#: document/static/js/modules/documents/overview/menu.js:104
+#: document/static/js/modules/documents/overview/menu.js:107
 msgid "Export the documents that have been selected as HTML files."
 msgstr ""
 "Exportar los documentos que han sido seleccionados como archivos HTML."
 
-#: document/static/js/modules/documents/overview/menu.js:117
+#: document/static/js/modules/documents/overview/menu.js:120
 msgid "Export selected as LaTeX"
 msgstr "Exportar lo seleccionado a LaTeX"
 
-#: document/static/js/modules/documents/overview/menu.js:119
+#: document/static/js/modules/documents/overview/menu.js:122
 msgid "Export the documents that have been selected as LaTeX files."
 msgstr ""
 "Exportar los documentos que han sido seleccionados como archivos LaTeX."
 
-#: document/static/js/modules/documents/overview/menu.js:132
+#: document/static/js/modules/documents/overview/menu.js:135
 msgid "Export selected as JATS"
 msgstr "Exportar lo seleccionado como JATS"
 
-#: document/static/js/modules/documents/overview/menu.js:134
+#: document/static/js/modules/documents/overview/menu.js:137
 msgid "Export the documents that have been selected as JATS files."
 msgstr ""
 "Exportar los documentos que han sido seleccionados como archivos JATS."
 
-#: document/static/js/modules/documents/overview/menu.js:147
+#: document/static/js/modules/documents/overview/menu.js:150
 msgid "Export selected as BITS"
 msgstr "Exportar lo seleccionado como BITS"
 
-#: document/static/js/modules/documents/overview/menu.js:149
+#: document/static/js/modules/documents/overview/menu.js:152
 msgid "Export the documents that have been selected as BITS files."
 msgstr ""
 "Exportar los documentos que han sido seleccionados como archivos BITS."
 
-#: document/static/js/modules/documents/overview/menu.js:162
+#: document/static/js/modules/documents/overview/menu.js:165
 msgid "Export selected as FIDUS"
 msgstr "Exportar seleccionado como FIDUS"
 
-#: document/static/js/modules/documents/overview/menu.js:164
+#: document/static/js/modules/documents/overview/menu.js:167
 msgid ""
 "Export the documents that have been selected as FIDUS files including their "
 "templates."
@@ -2031,11 +2038,11 @@ msgstr ""
 "Exporte los documentos que se han seleccionado como archivos FIDUS, "
 "incluidas sus plantillas."
 
-#: document/static/js/modules/documents/overview/menu.js:177
+#: document/static/js/modules/documents/overview/menu.js:180
 msgid "Export selected as Slim FIDUS"
 msgstr "Exportación seleccionada como Slim FIDUS"
 
-#: document/static/js/modules/documents/overview/menu.js:179
+#: document/static/js/modules/documents/overview/menu.js:182
 msgid ""
 "Export the documents that have been selected as FIDUS files without their "
 "templates."
@@ -2043,31 +2050,27 @@ msgstr ""
 "Exporta los documentos que se han seleccionado como archivos FIDUS sin sus "
 "plantillas."
 
-#: document/static/js/modules/documents/overview/menu.js:193
+#: document/static/js/modules/documents/overview/menu.js:196
 msgid "Delete the documents that have been selected."
 msgstr "Eliminar los documentos que han sido seleccionados."
 
-#: document/static/js/modules/documents/overview/menu.js:204
+#: document/static/js/modules/documents/overview/menu.js:207
 msgid "You cannot delete documents of other users"
 msgstr "No puedes eliminar documentos de otros usuarios"
 
-#: document/static/js/modules/documents/overview/menu.js:228
+#: document/static/js/modules/documents/overview/menu.js:231
 msgid "Create new document"
 msgstr "Crear nuevo documento"
 
-#: document/static/js/modules/documents/overview/menu.js:235
+#: document/static/js/modules/documents/overview/menu.js:238
 msgid "Create new folder"
 msgstr "Crear nueva carpeta"
 
-#: document/static/js/modules/documents/overview/menu.js:253
-msgid "Upload FIDUS document"
-msgstr "Subir documento FIDUS"
-
-#: document/static/js/modules/documents/overview/menu.js:261
+#: document/static/js/modules/documents/overview/menu.js:257
 msgid "Import document"
 msgstr "Importar documento"
 
-#: document/static/js/modules/documents/overview/menu.js:269
+#: document/static/js/modules/documents/overview/menu.js:265
 msgid "Search documents"
 msgstr "Buscar documentos"
 
@@ -2105,7 +2108,7 @@ msgid "Recreate"
 msgstr "Rehacer"
 
 #: document/static/js/modules/documents/revisions/templates.js:10
-#: document/static/js/modules/editor/menus/headerbar/model.js:280
+#: document/static/js/modules/editor/menus/headerbar/model.js:281
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:89
 msgid "Download"
 msgstr "Descargar"
@@ -2156,23 +2159,23 @@ msgstr ""
 "recuperación falló. Por favor inténtalo de nuevo."
 
 #: document/static/js/modules/editor/collab/doc.js:358
-#: document/static/js/modules/editor/collab/doc.js:563
+#: document/static/js/modules/editor/collab/doc.js:559
 msgid "Retry"
 msgstr "Rever"
 
-#: document/static/js/modules/editor/collab/doc.js:556
+#: document/static/js/modules/editor/collab/doc.js:552
 msgid "Decryption Failed"
 msgstr "Error de descifrado"
 
-#: document/static/js/modules/editor/collab/doc.js:559
+#: document/static/js/modules/editor/collab/doc.js:555
 msgid "That password didn't work. Please try again."
 msgstr "Esa contraseña no funcionó. Por favor inténtalo de nuevo."
 
-#: document/static/js/modules/editor/collab/doc.js:818
+#: document/static/js/modules/editor/collab/doc.js:820
 msgid "Updating document. Please wait..."
 msgstr "Actualizando documento. Por favor espera..."
 
-#: document/static/js/modules/editor/collab/doc.js:823
+#: document/static/js/modules/editor/collab/doc.js:825
 msgid ""
 "It's taking a bit longer than usual, but it should be ready soon. Please "
 "wait..."
@@ -2452,7 +2455,7 @@ msgstr ""
 "su computadora. Considere importarlo a un nuevo documento."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
-#: document/static/js/modules/editor/index.js:688
+#: document/static/js/modules/editor/index.js:729
 msgid "Leave editor"
 msgstr "Salir del editor"
 
@@ -2562,7 +2565,7 @@ msgstr "Insertar"
 #: document/static/js/modules/editor/dialogs/citation.js:39
 #: document/static/js/modules/editor/dialogs/code_block.js:120
 #: document/static/js/modules/editor/dialogs/figure.js:374
-#: document/static/js/modules/editor/dialogs/templates.js:314
+#: document/static/js/modules/editor/dialogs/templates.js:315
 #: document/static/js/modules/editor/menus/code_block/model.js:40
 #: document/static/js/modules/editor/state_plugins/links.js:273
 #: document/static/js/modules/editor/state_plugins/links.js:297
@@ -2576,12 +2579,17 @@ msgstr "Eliminar"
 msgid "Configure Citation"
 msgstr "Configurar Cita"
 
-#: document/static/js/modules/editor/dialogs/citation.js:238
+#: document/static/js/modules/editor/dialogs/citation.js:241
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "Buscar..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:410
+#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/editor/dialogs/templates.js:313
+msgid "Year"
+msgstr "Año"
+
+#: document/static/js/modules/editor/dialogs/citation.js:420
 msgid "Please select at least one citation source!"
 msgstr "¡Por favor, selecciona al menos una fuente de cita!"
 
@@ -2832,33 +2840,33 @@ msgstr "(Autor, 1998)"
 msgid "Author (1998)"
 msgstr "Autor (1998)"
 
-#: document/static/js/modules/editor/dialogs/templates.js:313
+#: document/static/js/modules/editor/dialogs/templates.js:314
 msgid "Order"
 msgstr "Orden"
 
-#: document/static/js/modules/editor/dialogs/templates.js:366
+#: document/static/js/modules/editor/dialogs/templates.js:373
 msgid "Page"
 msgstr "Página"
 
-#: document/static/js/modules/editor/dialogs/templates.js:370
+#: document/static/js/modules/editor/dialogs/templates.js:377
 msgid "Text before"
 msgstr "Texto anterior"
 
-#: document/static/js/modules/editor/dialogs/templates.js:380
+#: document/static/js/modules/editor/dialogs/templates.js:387
 msgid "Firstname"
 msgstr "Nombre"
 
-#: document/static/js/modules/editor/dialogs/templates.js:381
+#: document/static/js/modules/editor/dialogs/templates.js:388
 msgid "Lastname"
 msgstr "Apellido"
 
-#: document/static/js/modules/editor/dialogs/templates.js:382
+#: document/static/js/modules/editor/dialogs/templates.js:389
 #: document/static/js/modules/schema/document/content.js:47
-#: user/static/js/modules/profile/templates.js:155
+#: user/static/js/modules/profile/templates.js:163
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: document/static/js/modules/editor/dialogs/templates.js:383
+#: document/static/js/modules/editor/dialogs/templates.js:390
 msgid "Institution"
 msgstr "Institución"
 
@@ -3092,8 +3100,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
 #: document/static/js/modules/editor/e2ee/password-dialog.js:261
-#: user/static/js/modules/login/index.js:64
 #: user/static/js/modules/login/index.js:65
+#: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
 #: user/static/js/modules/profile/templates.js:30
 #: user/static/js/modules/profile/templates.js:100
@@ -3192,7 +3200,7 @@ msgstr "La nueva contraseña debe ser diferente de la contraseña actual."
 msgid "Change Document Password"
 msgstr "Cambiar contraseña del documento"
 
-#: document/static/js/modules/editor/e2ee/snapshot-manager.js:148
+#: document/static/js/modules/editor/e2ee/snapshot-manager.js:193
 msgid ""
 "The document password was changed by another user. You will need to enter "
 "the new password to continue editing."
@@ -3200,13 +3208,13 @@ msgstr ""
 "La contraseña del documento fue cambiada por otro usuario. Deberá ingresar "
 "la nueva contraseña para continuar editando."
 
-#: document/static/js/modules/editor/index.js:323
-#: document/static/js/modules/editor/index.js:581
+#: document/static/js/modules/editor/index.js:330
+#: document/static/js/modules/editor/index.js:609
 msgid "Invalid Share Link"
 msgstr "Enlace para compartir no válido"
 
-#: document/static/js/modules/editor/index.js:326
-#: document/static/js/modules/editor/index.js:584
+#: document/static/js/modules/editor/index.js:333
+#: document/static/js/modules/editor/index.js:612
 msgid ""
 "This share link has expired or is invalid. Please ask the document owner for"
 " a new link."
@@ -3214,7 +3222,7 @@ msgstr ""
 "Este enlace para compartir ha caducado o no es válido. Solicite al "
 "propietario del documento un nuevo enlace."
 
-#: document/static/js/modules/editor/index.js:390
+#: document/static/js/modules/editor/index.js:400
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
@@ -3222,11 +3230,11 @@ msgstr ""
 "¡Advertencia! ¡No se han guardado todos sus cambios! Podría sufrir pérdida "
 "de datos. Intentando reconectar..."
 
-#: document/static/js/modules/editor/index.js:517
+#: document/static/js/modules/editor/index.js:537
 msgid "Your document was out of sync and has been reset."
 msgstr "Tu documento no estaba sincronizado y se ha reiniciado."
 
-#: document/static/js/modules/editor/index.js:538
+#: document/static/js/modules/editor/index.js:560
 msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
@@ -3234,11 +3242,11 @@ msgstr ""
 "Se han modificado sus derechos de acceso. Ahora tiene el siguiente nivel de "
 "acceso a este documento: %(accessRight)s."
 
-#: document/static/js/modules/editor/index.js:607
+#: document/static/js/modules/editor/index.js:635
 msgid "Session Expired"
 msgstr "Sesión expirada"
 
-#: document/static/js/modules/editor/index.js:610
+#: document/static/js/modules/editor/index.js:638
 msgid ""
 "Your session expired while you were offline, so we cannot save your work to "
 "the server any longer, but you can download it to your computer instead. "
@@ -3249,19 +3257,19 @@ msgstr ""
 "Considera importarlo como un nuevo documento después de iniciar una nueva "
 "sesión."
 
-#: document/static/js/modules/editor/index.js:614
+#: document/static/js/modules/editor/index.js:642
 msgid "Download Document"
 msgstr "Descargar documento"
 
-#: document/static/js/modules/editor/index.js:628
+#: document/static/js/modules/editor/index.js:657
 msgid "Proceed to Login page"
 msgstr "Vaya a la página de inicio de sesión"
 
-#: document/static/js/modules/editor/index.js:681
+#: document/static/js/modules/editor/index.js:722
 msgid "Access rights modified"
 msgstr "Derechos de acceso modificados"
 
-#: document/static/js/modules/editor/index.js:684
+#: document/static/js/modules/editor/index.js:725
 msgid ""
 "Your access rights were modified while you were offline, so we cannot save "
 "your work to the server any longer, and it is downloaded to your computer "
@@ -3271,20 +3279,20 @@ msgstr ""
 "que ya no podemos guardar su trabajo en el servidor. En su lugar, se "
 "descargará en su computadora. Considere importarlo a un nuevo documento."
 
-#: document/static/js/modules/editor/index.js:733
+#: document/static/js/modules/editor/index.js:774
 msgid "Incorrect passphrase."
 msgstr "Frase de contraseña incorrecta."
 
-#: document/static/js/modules/editor/index.js:759
-#: user/static/js/modules/profile/index.js:250
+#: document/static/js/modules/editor/index.js:800
+#: user/static/js/modules/profile/index.js:263
 msgid "Recovery failed: "
 msgstr "La recuperación falló:"
 
-#: document/static/js/modules/editor/index.js:804
+#: document/static/js/modules/editor/index.js:845
 msgid "E2EE is not enabled on this server."
 msgstr "E2EE no está habilitado en este servidor."
 
-#: document/static/js/modules/editor/index.js:958
+#: document/static/js/modules/editor/index.js:1008
 msgid ""
 "Changes you made to the document since going offline will be lost, if you "
 "choose to close/refresh the tab or close the browser."
@@ -3597,66 +3605,66 @@ msgstr ""
 "Los siguientes usuarios no tienen cifrado de contraseña. Comparta la "
 "contraseña del documento directamente con ellos."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:191
+#: document/static/js/modules/editor/menus/headerbar/model.js:192
 msgid "Sign up / Log in"
 msgstr "Registrarse / Iniciar sesión"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:197
-#: document/static/js/modules/editor/menus/headerbar/view.js:542
-#: document/static/js/modules/editor/menus/headerbar/view.js:543
+#: document/static/js/modules/editor/menus/headerbar/model.js:198
+#: document/static/js/modules/editor/menus/headerbar/view.js:545
+#: document/static/js/modules/editor/menus/headerbar/view.js:546
 msgid "Close the document and return to the document overview menu."
 msgstr ""
 "Cierre el documento y regrese al menú de descripción general del documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:199
+#: document/static/js/modules/editor/menus/headerbar/model.js:200
 msgid "Sign up for an account or log in."
 msgstr "Regístrese para obtener una cuenta o inicie sesión."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:230
+#: document/static/js/modules/editor/menus/headerbar/model.js:231
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:10
 msgid "Save revision"
 msgstr "Guardar revisión"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:233
+#: document/static/js/modules/editor/menus/headerbar/model.js:234
 msgid "Save a revision of the document."
 msgstr "Guarde una revisión del documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:255
+#: document/static/js/modules/editor/menus/headerbar/model.js:256
 msgid "Create copy"
 msgstr "Crear copia"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:258
+#: document/static/js/modules/editor/menus/headerbar/model.js:259
 msgid "Create a copy of the document."
 msgstr "Crea una copia del documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:284
+#: document/static/js/modules/editor/menus/headerbar/model.js:285
 msgid "Export the document as a FIDUS file including its template."
 msgstr "Exporte el documento como un archivo FIDUS, incluida su plantilla."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:299
+#: document/static/js/modules/editor/menus/headerbar/model.js:300
 msgid "Print/PDF"
 msgstr "Imprimir PDF"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:303
+#: document/static/js/modules/editor/menus/headerbar/model.js:304
 msgid "Either print or create a PDF using your browser print dialog."
 msgstr ""
 "Imprima o cree un PDF utilizando el diálogo de impresión de su navegador."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:326
+#: document/static/js/modules/editor/menus/headerbar/model.js:327
 #: user/static/js/modules/password_reset/change_password.js:14
 msgid "Change password"
 msgstr "Cambiar contraseña"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:329
+#: document/static/js/modules/editor/menus/headerbar/model.js:330
 msgid "Change the password of this encrypted document."
 msgstr "Cambie la contraseña de este documento cifrado."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:337
+#: document/static/js/modules/editor/menus/headerbar/model.js:338
 msgid "Document key is not available. Please reload the document."
 msgstr ""
 "La clave del documento no está disponible. Por favor recarga el documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:364
+#: document/static/js/modules/editor/menus/headerbar/model.js:365
 msgid ""
 "Your personal passphrase will still unlock this document. A new random "
 "password is generated automatically. Other passphrase users will receive it "
@@ -3668,7 +3676,7 @@ msgstr ""
 " la recibirán automáticamente; los colaboradores sin contraseña necesitan "
 "compartirla con ellos manualmente."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:471
+#: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
 "Document encryption key rotated. Other passphrase users will receive the new"
 " key automatically."
@@ -3676,7 +3684,7 @@ msgstr ""
 "Clave de cifrado de documentos rotada. Otros usuarios de contraseña "
 "recibirán la nueva clave automáticamente."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:478
+#: document/static/js/modules/editor/menus/headerbar/model.js:479
 msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
@@ -3684,47 +3692,47 @@ msgstr ""
 "Se cambió la contraseña del documento. Recuerda compartir la nueva "
 "contraseña con tus colaboradores."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:486
+#: document/static/js/modules/editor/menus/headerbar/model.js:487
 msgid "The current password is incorrect."
 msgstr "La contraseña actual es incorrecta."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:502
+#: document/static/js/modules/editor/menus/headerbar/model.js:503
 msgid "Export"
 msgstr "Exportar"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:503
+#: document/static/js/modules/editor/menus/headerbar/model.js:504
 msgid "Export of the document contents"
 msgstr "Exportar el contenido del documento"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:509
+#: document/static/js/modules/editor/menus/headerbar/model.js:510
 msgid "HTML"
 msgstr "HTML"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:511
+#: document/static/js/modules/editor/menus/headerbar/model.js:512
 msgid "Export the document to an HTML file."
 msgstr "Exportar el documento a un archivo HTML."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:532
+#: document/static/js/modules/editor/menus/headerbar/model.js:533
 msgid "Epub"
 msgstr "Epub"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:535
+#: document/static/js/modules/editor/menus/headerbar/model.js:536
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Exportar el documento a un archivo de lectura electrónica Epub."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:558
+#: document/static/js/modules/editor/menus/headerbar/model.js:559
 msgid "LaTeX"
 msgstr "LaTeX"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:560
+#: document/static/js/modules/editor/menus/headerbar/model.js:561
 msgid "Export the document to an LaTeX file."
 msgstr "Exporte el documento a un archivo LaTeX."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:580
+#: document/static/js/modules/editor/menus/headerbar/model.js:581
 msgid "JATS"
 msgstr "JATS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:583
+#: document/static/js/modules/editor/menus/headerbar/model.js:584
 msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
@@ -3732,206 +3740,206 @@ msgstr ""
 "Exporte el documento a un Journal Archiving y NISO JATS Versión 1.2 de la "
 "Biblioteca de Etiquetas de Intercambio y Archivado de Diario."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:606
+#: document/static/js/modules/editor/menus/headerbar/model.js:607
 msgid "BITS"
 msgstr "BITS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:609
+#: document/static/js/modules/editor/menus/headerbar/model.js:610
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr ""
 "Exporte el documento a un archivo BITS (Book Interchange Tag Set Version "
 "2.1)."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:632
+#: document/static/js/modules/editor/menus/headerbar/model.js:633
 msgid "Pandoc JSON"
 msgstr "Pandoc JSON"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:635
+#: document/static/js/modules/editor/menus/headerbar/model.js:636
 msgid "Export the document to a Pandoc JSON file."
 msgstr "Exportar el documento a un archivo Pandoc JSON."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:657
+#: document/static/js/modules/editor/menus/headerbar/model.js:658
 msgid "Slim FIDUS"
 msgstr "Slim FIDUS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:660
+#: document/static/js/modules/editor/menus/headerbar/model.js:661
 msgid "Export the document to a FIDUS file without its template."
 msgstr "Exporte el documento a un archivo FIDUS sin su plantilla."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:676
+#: document/static/js/modules/editor/menus/headerbar/model.js:677
 msgid "Settings"
 msgstr "Configuraciones"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:677
+#: document/static/js/modules/editor/menus/headerbar/model.js:678
 msgid "Configure settings of this document."
 msgstr "Configurar ajustes del documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:684
+#: document/static/js/modules/editor/menus/headerbar/model.js:685
 msgid "Citation Style"
 msgstr "Estilo de Citas"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:686
+#: document/static/js/modules/editor/menus/headerbar/model.js:687
 msgid "Choose your preferred citation style."
 msgstr "Escoger estilo de citas."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:695
+#: document/static/js/modules/editor/menus/headerbar/model.js:696
 msgid "Document Style"
 msgstr "Estilo del Documento"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:697
+#: document/static/js/modules/editor/menus/headerbar/model.js:698
 msgid "Choose your preferred document style."
 msgstr "Elija su estilo de documento preferido."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:709
+#: document/static/js/modules/editor/menus/headerbar/model.js:710
 msgid "Text Language"
 msgstr "Lenguaje del texto"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:711
+#: document/static/js/modules/editor/menus/headerbar/model.js:712
 msgid "Choose the language of the document."
 msgstr "Elegir el idioma del documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:719
+#: document/static/js/modules/editor/menus/headerbar/model.js:720
 #: document/static/js/modules/schema/const.js:19
 msgid "English (United States)"
 msgstr "Inglés( Estados Unidos)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:724
+#: document/static/js/modules/editor/menus/headerbar/model.js:725
 #: document/static/js/modules/schema/const.js:18
 msgid "English (United Kingdom)"
 msgstr "Inglés (Reino Unido)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:727
+#: document/static/js/modules/editor/menus/headerbar/model.js:728
 #: document/static/js/modules/schema/const.js:23
 msgid "German (Germany)"
 msgstr "Alemán (Alemania)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:730
+#: document/static/js/modules/editor/menus/headerbar/model.js:731
 #: document/static/js/modules/schema/const.js:11
 msgid "Chinese (Simplified)"
 msgstr "Chino (simplificado)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:733
+#: document/static/js/modules/editor/menus/headerbar/model.js:734
 #: document/static/js/modules/schema/const.js:47
 msgid "Spanish"
 msgstr "Español"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/editor/menus/headerbar/model.js:735
 #: document/static/js/modules/schema/const.js:21
 msgid "French"
 msgstr "Francés"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:735
+#: document/static/js/modules/editor/menus/headerbar/model.js:736
 #: document/static/js/modules/schema/const.js:30
 msgid "Japanese"
 msgstr "Japonés"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:736
+#: document/static/js/modules/editor/menus/headerbar/model.js:737
 #: document/static/js/modules/schema/const.js:29
 msgid "Italian"
 msgstr "Italiano"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:740
+#: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:38
 msgid "Portuguese (Brazil)"
 msgstr "Portugués (Brasil)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:790
+#: document/static/js/modules/editor/menus/headerbar/model.js:791
 msgid "Other"
 msgstr "Otro"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:841
+#: document/static/js/modules/editor/menus/headerbar/model.js:842
 msgid "Paper Size"
 msgstr "Tamaño del Papel"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:844
+#: document/static/js/modules/editor/menus/headerbar/model.js:845
 msgid "Choose a papersize for print and PDF generation."
 msgstr "Elija un tamaño de papel para la impresión y la creación de PDF."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:852
+#: document/static/js/modules/editor/menus/headerbar/model.js:853
 msgid "DIN A4"
 msgstr "A4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:855
+#: document/static/js/modules/editor/menus/headerbar/model.js:856
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) tamaño más utilizado a nivel mundial."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:878
+#: document/static/js/modules/editor/menus/headerbar/model.js:879
 msgid "US Letter"
 msgstr "US Letter"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:881
+#: document/static/js/modules/editor/menus/headerbar/model.js:882
 msgid "The format used by the USA and some other American countries."
 msgstr "Formato utilizado por los EEUU y algunos países de América."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:909
+#: document/static/js/modules/editor/menus/headerbar/model.js:910
 msgid "Copyright Information"
 msgstr "Información de Copyright"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:933
+#: document/static/js/modules/editor/menus/headerbar/model.js:934
 msgid "Tools"
 msgstr "Herramientas"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:934
+#: document/static/js/modules/editor/menus/headerbar/model.js:935
 msgid "Select document editing tool."
 msgstr "Seleccione la herramienta de edición de documentos."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:940
+#: document/static/js/modules/editor/menus/headerbar/model.js:941
 #: document/static/js/modules/editor/tools/word_count/index.js:13
 msgid "Word counter"
 msgstr "Contador de palabras"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:942
+#: document/static/js/modules/editor/menus/headerbar/model.js:943
 msgid "See document statistics."
 msgstr "Ver estadísticas del documento."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:950
+#: document/static/js/modules/editor/menus/headerbar/model.js:951
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:34
 #: document/static/js/modules/editor/tools/search_replace/index.js:265
 msgid "Search and replace"
 msgstr "Buscar y reemplazar"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:952
+#: document/static/js/modules/editor/menus/headerbar/model.js:953
 msgid "Show a search and replace dialog."
 msgstr "Mostrar un cuadro de diálogo de búsqueda y reemplazo."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:961
+#: document/static/js/modules/editor/menus/headerbar/model.js:962
 msgid "Keyboard shortcuts"
 msgstr "Atajos de teclado"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:964
+#: document/static/js/modules/editor/menus/headerbar/model.js:965
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Mostrar descripción general de atajos de teclado disponibles."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:976
+#: document/static/js/modules/editor/menus/headerbar/model.js:977
 msgid "Track changes"
 msgstr "Rastreo de cambios"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:978
+#: document/static/js/modules/editor/menus/headerbar/model.js:979
 msgid "Tracking changes to the document"
 msgstr "Seguimiento de cambios en el documento"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:984
+#: document/static/js/modules/editor/menus/headerbar/model.js:985
 msgid "Record"
 msgstr "Grabar"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:986
+#: document/static/js/modules/editor/menus/headerbar/model.js:987
 msgid "Record document changes"
 msgstr "Registrar cambios en el documento"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1004
+#: document/static/js/modules/editor/menus/headerbar/model.js:1005
 msgid "Accept all"
 msgstr "Aceptar todos"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1006
+#: document/static/js/modules/editor/menus/headerbar/model.js:1007
 msgid "Accept all tracked changes."
 msgstr "Aceptar todos los cambios rastreados."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1013
+#: document/static/js/modules/editor/menus/headerbar/model.js:1014
 msgid "Reject all"
 msgstr "Rechazar todos"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1015
+#: document/static/js/modules/editor/menus/headerbar/model.js:1016
 msgid "Reject all tracked changes."
 msgstr "Rechazar todos los cambios rastreados."
 
@@ -3939,12 +3947,12 @@ msgstr "Rechazar todos los cambios rastreados."
 msgid "You cannot close a document when you're offline."
 msgstr "No se puede cerrar un documento cuando ustede no está conectado."
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:542
-#: document/static/js/modules/editor/menus/headerbar/view.js:543
+#: document/static/js/modules/editor/menus/headerbar/view.js:545
+#: document/static/js/modules/editor/menus/headerbar/view.js:546
 msgid "Sign up or log in"
 msgstr "Regístrate o inicia sesión"
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:543
+#: document/static/js/modules/editor/menus/headerbar/view.js:546
 msgid "Close document"
 msgstr "Cerrar documento"
 
@@ -4164,6 +4172,18 @@ msgstr "Activar o desactivar el navegador de documentos"
 msgid "Document N̲avigator"
 msgstr "Navegador de documentos"
 
+#: document/static/js/modules/editor/no_collab_save/index.js:146
+#| msgid "Could not move document"
+msgid "Could not save document."
+msgstr "No se pudo guardar el documento."
+
+#: document/static/js/modules/editor/no_collab_save/index.js:205
+#| msgid "Document key is not available. Please reload the document."
+msgid "Document has been modified by another user. Please reload the page."
+msgstr ""
+"El documento ha sido modificado por otro usuario. Por favor recarga la "
+"página."
+
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
 msgstr "Link copiado al portapapeles"
@@ -4327,11 +4347,11 @@ msgstr "copiado con exito."
 msgid "Revision file could not be generated."
 msgstr "No se pudo generar el archivo de revisión."
 
-#: document/static/js/modules/exporter/native/revision.js:65
+#: document/static/js/modules/exporter/native/revision.js:71
 msgid "Revision saved"
 msgstr "Revisión guardada"
 
-#: document/static/js/modules/exporter/native/revision.js:68
+#: document/static/js/modules/exporter/native/revision.js:74
 msgid "Revision could not be saved."
 msgstr "No se pudo guardar esta revisión del documento"
 
@@ -4351,15 +4371,15 @@ msgstr "No se pudo crear el documento. Falta el imagen:"
 msgid "Could not save Image"
 msgstr "No se pudo guardar la imagen"
 
-#: document/static/js/modules/importer/native/import.js:221
+#: document/static/js/modules/importer/native/import.js:224
 msgid "Could not create document"
 msgstr "No se pudo crear el documento"
 
-#: document/static/js/modules/importer/native/import.js:309
+#: document/static/js/modules/importer/native/import.js:312
 msgid "Could not save "
 msgstr "No se pudo guardar "
 
-#: document/static/js/modules/importer/odt/import.js:46
+#: document/static/js/modules/importer/odt/import.js:47
 msgid "File does not contain content.xml"
 msgstr "El archivo no contiene content.xml."
 
@@ -4415,11 +4435,11 @@ msgstr "Actualizando las versiones guardadas"
 msgid "No document revisions to update."
 msgstr "No hay versiones de documentos para actualizar."
 
-#: document/static/js/modules/maintenance/index.js:261
+#: document/static/js/modules/maintenance/index.js:267
 msgid "The document revision has been updated: "
 msgstr "La revisión del documento ha sido actualizada: "
 
-#: document/static/js/modules/maintenance/index.js:273
+#: document/static/js/modules/maintenance/index.js:279
 msgid "All documents, document templates and document revisions updated!"
 msgstr ""
 "¡Todos los documentos, plantillas de documentos y versiones de documentos "
@@ -4646,15 +4666,15 @@ msgstr "Imágenes"
 msgid "manage image files"
 msgstr "gestionar archivos de imagen"
 
-#: user/static/js/modules/contacts/add_dialog.js:88
+#: user/static/js/modules/contacts/add_dialog.js:91
 msgid "You cannot add yourself to your contacts!"
 msgstr "¡No puedes añadirte a tu lista de contactos!"
 
-#: user/static/js/modules/contacts/add_dialog.js:92
+#: user/static/js/modules/contacts/add_dialog.js:95
 msgid "This person is already in your contacts!"
 msgstr "¡Esta persona ya está entre tus contactos!"
 
-#: user/static/js/modules/contacts/add_dialog.js:95
+#: user/static/js/modules/contacts/add_dialog.js:98
 msgid "Invalid email!"
 msgstr "¡Email inválido!"
 
@@ -4824,42 +4844,42 @@ msgstr "Ahora puede iniciar sesión."
 msgid "Login"
 msgstr "Inicia sesión"
 
-#: user/static/js/modules/login/index.js:17
+#: user/static/js/modules/login/index.js:18
 msgid "New here?"
 msgstr "¿Usuario nuevo?"
 
-#: user/static/js/modules/login/index.js:21
+#: user/static/js/modules/login/index.js:22
 #: user/static/js/modules/signup/index.js:10
 #: user/static/js/modules/signup/index.js:41
 msgid "Sign up"
 msgstr "Registrarse"
 
-#: user/static/js/modules/login/index.js:42
+#: user/static/js/modules/login/index.js:43
 msgid "Login with"
 msgstr "Iniciar sesión con"
 
-#: user/static/js/modules/login/index.js:59
+#: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
 #: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:220
+#: user/static/js/modules/profile/templates.js:226
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "Usuario"
 
-#: user/static/js/modules/login/index.js:60
+#: user/static/js/modules/login/index.js:61
 msgid "Username or e-mail"
 msgstr "Nombre de usuario o correo elctrónico"
 
-#: user/static/js/modules/login/index.js:72
+#: user/static/js/modules/login/index.js:73
 msgid "Remember me"
 msgstr "Recordar contraseña"
 
-#: user/static/js/modules/login/index.js:74
+#: user/static/js/modules/login/index.js:75
 msgid "Forgot Password?"
 msgstr "¿Olvidaste tu contraseña?"
 
-#: user/static/js/modules/login/index.js:136
-#: user/static/js/modules/login/index.js:140
+#: user/static/js/modules/login/index.js:137
+#: user/static/js/modules/login/index.js:141
 #: user/static/js/modules/password_reset/change_password.js:62
 #: user/static/js/modules/password_reset/change_password.js:67
 #: user/static/js/modules/password_reset/request_email.js:63
@@ -4870,12 +4890,12 @@ msgstr "¿Olvidaste tu contraseña?"
 msgid "This field is required."
 msgstr "Este campo es obligatorio."
 
-#: user/static/js/modules/login/index.js:208
+#: user/static/js/modules/login/index.js:209
 #: user/static/js/modules/signup/index.js:144
 msgid "Verify Your E-mail Address"
 msgstr "Verifica tu dirección de correo electrónico"
 
-#: user/static/js/modules/login/index.js:211
+#: user/static/js/modules/login/index.js:212
 msgid ""
 "We have sent an e-mail to your email address for verification. Follow the "
 "link provided to finalize the signup process."
@@ -4884,7 +4904,7 @@ msgstr ""
 "verificación. Siga el enlace proporcionado para finalizar el proceso de "
 "registro."
 
-#: user/static/js/modules/login/index.js:215
+#: user/static/js/modules/login/index.js:216
 #: user/static/js/modules/password_reset/request_email.js:87
 #: user/static/js/modules/signup/index.js:155
 msgid "Please contact us if you do not receive it within a few minutes."
@@ -5093,19 +5113,19 @@ msgstr "Confirmar correo principal"
 msgid "Set this email as the address primary"
 msgstr "Establezca este correo electrónico como la dirección principal"
 
-#: user/static/js/modules/profile/index.js:131
+#: user/static/js/modules/profile/index.js:144
 msgid "Configure profile"
 msgstr "Configurar perfil"
 
-#: user/static/js/modules/profile/index.js:273
+#: user/static/js/modules/profile/index.js:286
 msgid "Passphrase changed successfully."
 msgstr "La frase de contraseña se cambió correctamente."
 
-#: user/static/js/modules/profile/index.js:277
+#: user/static/js/modules/profile/index.js:290
 msgid "Failed to change passphrase: "
 msgstr "No se pudo cambiar la frase de contraseña:"
 
-#: user/static/js/modules/profile/index.js:296
+#: user/static/js/modules/profile/index.js:309
 msgid "Could not save profile data"
 msgstr "No se pudieron guardar los datos del perfil."
 
@@ -5162,69 +5182,69 @@ msgstr "Cambiar imagen"
 msgid "Delete picture"
 msgstr "Eliminar imagen"
 
-#: user/static/js/modules/profile/templates.js:106
+#: user/static/js/modules/profile/templates.js:108
 #: user/static/js/modules/two_factor/index.js:223
 msgid "Two-Factor Authentication"
 msgstr "Autenticación de dos factores"
 
-#: user/static/js/modules/profile/templates.js:110
+#: user/static/js/modules/profile/templates.js:112
 msgid "Enabled"
 msgstr "Activado"
 
-#: user/static/js/modules/profile/templates.js:114
+#: user/static/js/modules/profile/templates.js:116
 msgid "Disabled"
 msgstr "Desactivado"
 
-#: user/static/js/modules/profile/templates.js:119
+#: user/static/js/modules/profile/templates.js:121
 msgid "Enable 2FA"
 msgstr "Habilitar 2FA"
 
-#: user/static/js/modules/profile/templates.js:123
+#: user/static/js/modules/profile/templates.js:125
 #: user/static/js/modules/two_factor/index.js:135
 msgid "Disable 2FA"
 msgstr "Deshabilitar 2FA"
 
-#: user/static/js/modules/profile/templates.js:127
+#: user/static/js/modules/profile/templates.js:133
 msgid "End-to-End Encryption"
 msgstr "Cifrado de extremo a extremo"
 
-#: user/static/js/modules/profile/templates.js:131
+#: user/static/js/modules/profile/templates.js:137
 msgid "Personal passphrase set up"
 msgstr "Configuración de contraseña personal"
 
-#: user/static/js/modules/profile/templates.js:135
+#: user/static/js/modules/profile/templates.js:141
 msgid "Not set up"
 msgstr "No configurado"
 
-#: user/static/js/modules/profile/templates.js:140
+#: user/static/js/modules/profile/templates.js:146
 msgid "Set up encryption passphrase"
 msgstr "Configurar frase de contraseña de cifrado"
 
-#: user/static/js/modules/profile/templates.js:144
+#: user/static/js/modules/profile/templates.js:150
 msgid "Change passphrase"
 msgstr "Cambiar frase de contraseña"
 
-#: user/static/js/modules/profile/templates.js:148
+#: user/static/js/modules/profile/templates.js:154
 msgid "Recover with recovery key"
 msgstr "Recuperar con clave de recuperación"
 
-#: user/static/js/modules/profile/templates.js:156
+#: user/static/js/modules/profile/templates.js:164
 msgid "Primary address"
 msgstr "Dirección principal"
 
-#: user/static/js/modules/profile/templates.js:157
+#: user/static/js/modules/profile/templates.js:165
 msgid "Verified"
 msgstr "Verificado"
 
-#: user/static/js/modules/profile/templates.js:219
+#: user/static/js/modules/profile/templates.js:225
 msgid "Social Account Provider"
 msgstr "Proveedor de cuenta social"
 
-#: user/static/js/modules/profile/templates.js:247
+#: user/static/js/modules/profile/templates.js:253
 msgid "Connect"
 msgstr "Conectarse"
 
-#: user/static/js/modules/profile/templates.js:262
+#: user/static/js/modules/profile/templates.js:268
 msgid "Delete account"
 msgstr "Eliminar cuenta"
 
@@ -5417,7 +5437,7 @@ msgstr "Plantillas de documentos"
 msgid "Templates"
 msgstr "Plantillas"
 
-#: usermedia/static/js/modules/images/database.js:47
+#: usermedia/static/js/modules/images/database.js:51
 msgid "Image is larger than the maximum permitted size"
 msgstr "La imagen es más grande que el tamaño máximo permitido"
 
@@ -5532,6 +5552,15 @@ msgstr "Agregar nueva imagen"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:70
 msgid "Use image"
 msgstr "Usar imagen"
+
+#~ msgid "Import a Fidus file"
+#~ msgstr "Importar un archivo de Fidus"
+
+#~ msgid "Import a text document in a different format"
+#~ msgstr "Importar un documento de texto en un formato diferente"
+
+#~ msgid "Upload FIDUS document"
+#~ msgstr "Subir documento FIDUS"
 
 #~ msgid "Addendum"
 #~ msgstr "Apéndice"

@@ -38,7 +38,7 @@ repository = "https://www.github.com/fiduswriter/fiduswriter"
 #citation-api-import = ["fiduswriter-citation-api-import ~= 4.0.0"]
 #languagetool = ["fiduswriter-languagetool ~= 4.0.0"]
 #ojs = ["fiduswriter-ojs ~= 4.0.0"]
-#pandoc = ["fiduswriter-pandoc ~= 4.0.3"]
+pandoc = ["fiduswriter-pandoc ~= 4.1.0"]
 #phplist = ["fiduswriter-phplist ~= 4.0.0"]
 #gitrepo-export = ["fiduswriter-gitrepo-export ~= 4.0.0"]
 #payment-paddle = ["fiduswriter-payment-paddle ~= 4.0.0"]

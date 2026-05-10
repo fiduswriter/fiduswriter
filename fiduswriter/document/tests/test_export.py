@@ -635,9 +635,9 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # We import the fidus file
         self.driver.find_element(By.CSS_SELECTOR, "a[href='/']").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import document (Alt-i)']"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#doc-uploader").send_keys(
             upload_full_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
@@ -649,9 +649,9 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         os.remove(upload_full_path)
         # Upload slim file
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import document (Alt-i)']"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#doc-uploader").send_keys(
             upload_slim_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()

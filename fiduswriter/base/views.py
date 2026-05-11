@@ -114,6 +114,7 @@ def configuration(request):
             "name": user.readable_name,
             "last_name": user.last_name,
             "language": user.language,
+            "preferences": user.preferences or {},
             "avatar": avatars.get_url(user),
             "emails": [],
             "socialaccounts": [],

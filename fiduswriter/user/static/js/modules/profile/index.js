@@ -295,6 +295,8 @@ export class Profile {
     save() {
         activateWait()
         const newLang = this.dom.querySelector("#language").value
+        const inlineCitations =
+            this.dom.querySelector("#inline-citations").checked
         return post("/api/user/save/", {
             form_data: {
                 user: {
@@ -307,6 +309,14 @@ export class Profile {
         })
             .catch(() =>
                 addAlert("error", gettext("Could not save profile data"))
+            )
+            .then(() =>
+                post("/api/user/preferences/update/", {
+                    inline_citations: inlineCitations
+                })
+            )
+            .catch(() =>
+                addAlert("error", gettext("Could not save preferences"))
             )
             .then(() => {
                 deactivateWait()

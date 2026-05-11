@@ -216,6 +216,13 @@ export const profileContents = (user, socialaccount_providers, settings = {}) =>
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
+            <div class="profile-data-row">
+                <label class="form-label">${gettext("Editor")}</label>
+                <label class="checkable-label">
+                    <input type="checkbox" id="inline-citations" ${user.preferences?.inline_citations ? "checked" : ""} />
+                    ${gettext("Enable inline citation typing (@)")}
+                </label>
+            </div>
             ${
                 socialaccount_providers.length
                     ? `<div class="profile-data-row">

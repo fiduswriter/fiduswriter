@@ -1,0 +1,1 @@
+export {inlineCitationPlugin} from "./plugin"

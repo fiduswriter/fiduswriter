@@ -1283,3 +1283,85 @@ pre[data-language]:not([data-language=""], [data-category])::after {
 pre[data-language] {
     position: relative;
 }
+
+/* Inline citation autocomplete drop-up */
+.citation-drop-up .drop-up-inner {
+    min-width: 280px;
+    max-width: 400px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--cs-white-background);
+    border: 1px solid var(--cs-white-border);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+    padding: 4px 0;
+}
+
+.citation-drop-up-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.citation-drop-up-item {
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.citation-drop-up-item:hover,
+.citation-drop-up-item.selected {
+    background-color: var(--cs-light-background-hover);
+}
+
+.citation-drop-up-key {
+    font-weight: bold;
+    color: var(--cs-light-text);
+    font-size: 12px;
+}
+
+.citation-drop-up-meta {
+    color: var(--cs-light-text-secondary);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.citation-drop-up-empty {
+    padding: 8px 10px;
+    color: var(--cs-light-text-secondary);
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* Inline citation widget */
+.citation-inline-widget {
+    position: relative;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.citation-inline-input {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    border: 1px solid var(--cs-light-border);
+    border-radius: 3px;
+    padding: 0 4px;
+    margin: 0;
+    background: var(--cs-white-background);
+    color: var(--cs-light-text);
+    outline: none;
+    min-width: 120px;
+    max-width: 300px;
+}
+
+.citation-inline-input:focus {
+    border-color: var(--cs-2-background);
+    box-shadow: 0 0 0 1px var(--cs-2-background);
+}

@@ -1,3 +1,4 @@
+import re
 import time
 
 from django.http import JsonResponse
@@ -9,6 +10,13 @@ from django.views.decorators.http import require_POST
 from base.decorators import ajax_required
 
 from bibliography.models import Entry, EntryCategory
+
+
+def sanitize_entry_key(key):
+    """Remove characters that are not allowed in a slug-style entry key."""
+    if not key:
+        return key
+    return re.sub(r"[^a-zA-Z0-9_-]", "", key)
 
 
 class SimpleSerializer(Serializer):
@@ -77,7 +85,7 @@ def save(request):
         if request.JSON["is_new"]:
             inserting_obj = {
                 "entry_owner_id": request.user.id,
-                "entry_key": bib["entry_key"][-64:],
+                "entry_key": sanitize_entry_key(bib["entry_key"])[-64:],
                 "bib_type": bib["bib_type"],
                 "cats": bib["cats"],
                 "fields": bib["fields"],
@@ -92,7 +100,7 @@ def save(request):
 
         else:
             the_entry = Entry.objects.get(id=b_id)
-            the_entry.entry_key = bib["entry_key"][-64:]
+            the_entry.entry_key = sanitize_entry_key(bib["entry_key"])[-64:]
             the_entry.bib_type = bib["bib_type"]
             the_entry.cats = bib["cats"]
             the_entry.fields = bib["fields"]

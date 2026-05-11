@@ -24,6 +24,10 @@ export const bibDialog = ({bib_type, BibTypes}) => {
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             </div>
+            <div class="entry-key-input-container">
+                <input type="text" id="entry-key" class="fw-button fw-light" value="" placeholder="${gettext("Citation key")}" />
+                <div id="entry-key-warning" class="entry-key-warning"></div>
+            </div>
             <ul class="ui-tabs-nav">
                 <li class="tab-link"><a href="#req-fields-tab" class="tab-link-inner">
                     ${gettext("Required Fields")}

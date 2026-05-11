@@ -3,6 +3,7 @@
 import json
 from django.test import TestCase, Client
 from bibliography.models import Entry, EntryCategory
+from bibliography.views import sanitize_entry_key
 from user.models import User
 
 
@@ -16,6 +17,21 @@ def json_post(client, url, data):
         content_type="application/json",
         **AJAX_HEADERS,
     )
+
+
+class SanitizeEntryKeyTest(TestCase):
+    def test_leaves_valid_keys_unchanged(self):
+        self.assertEqual(sanitize_entry_key("Smith2023"), "Smith2023")
+        self.assertEqual(sanitize_entry_key("my-key_1"), "my-key_1")
+
+    def test_removes_spaces_and_special_characters(self):
+        self.assertEqual(sanitize_entry_key("Smith 2023"), "Smith2023")
+        self.assertEqual(sanitize_entry_key("a@b#c$d%"), "abcd")
+        self.assertEqual(sanitize_entry_key("key=val"), "keyval")
+
+    def test_handles_empty_and_none(self):
+        self.assertEqual(sanitize_entry_key(""), "")
+        self.assertEqual(sanitize_entry_key(None), None)
 
 
 class BiblistViewTest(TestCase):

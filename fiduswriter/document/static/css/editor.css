@@ -1339,6 +1339,22 @@ pre[data-language] {
     font-style: italic;
 }
 
+.citation-drop-up-section-header {
+    padding: 4px 10px 2px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--cs-light-text-secondary);
+    border-top: 1px solid var(--cs-light-border);
+    margin-top: 2px;
+}
+
+.citation-drop-up-xref-text {
+    font-size: 12px;
+    color: var(--cs-light-text);
+}
+
 /* Inline citation widget */
 .citation-inline-widget {
     position: relative;

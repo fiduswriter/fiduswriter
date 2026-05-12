@@ -9,11 +9,16 @@ import {COMMENT_ONLY_ROLES, READ_ONLY_ROLES} from "../.."
 import {elementDisabled} from "../../menus/toolbar/model"
 import {
     buildBibliographyList,
+    buildCrossRefList,
     createCitationDropUp,
-    filterBibliography
+    filterBibliography,
+    filterCrossRefs
 } from "./dropup"
 
-export const key = new PluginKey("inlineCitation")
+const key = new PluginKey("inlineReference")
+
+export const getInlineReferenceState = state => key.getState(state)
+export const setInlineReferenceState = (tr, state) => tr.setMeta(key, state)
 
 /**
  * Check if citations can be inserted at the given position.
@@ -21,33 +26,12 @@ export const key = new PluginKey("inlineCitation")
  * (allowed elements per doc part, protected sections) — the same conditions
  * that disable the toolbar citation button.
  */
-function canInsertCitation(state, $pos, editor) {
+function canInsertCitation(_state, _$pos, editor) {
     // Mirror the template-based restriction check used by the toolbar button.
     if (editor && elementDisabled(editor, "citation")) {
         return false
     }
-    const node = $pos.parent
-    const schema = state.schema
-    try {
-        const citationNode = schema.nodes.citation.create({
-            format: "autocite",
-            references: []
-        })
-        // Check at child boundary
-        if (node.canReplace($pos.index(), $pos.index(), citationNode)) {
-            return true
-        }
-        // Fallback: if inside a text node, check after it
-        if (
-            $pos.textOffset > 0 &&
-            node.canReplace($pos.index() + 1, $pos.index() + 1, citationNode)
-        ) {
-            return true
-        }
-        return false
-    } catch (_e) {
-        return false
-    }
+    return true
 }
 
 /**
@@ -55,7 +39,7 @@ function canInsertCitation(state, $pos, editor) {
  * Format: @key[prefix][locator];key2[prefix2][locator2]
  * Returns {references, format} or null if any key cannot be resolved.
  */
-function parseCitationText(text, bibEntries, editor) {
+function parseCitationText(text, bibEntries, bibDB) {
     let format = "autocite"
     let body = text
     if (body.startsWith("@@")) {
@@ -87,8 +71,8 @@ function parseCitationText(text, bibEntries, editor) {
         }
         let id = bibEntry.id
         if (bibEntry.source === "user") {
-            const bib = editor.app.bibDB.db[id]
-            id = editor.mod.db.bibDB.addReference(bib, id)
+            const bib = bibDB.db[id]
+            id = bibDB.addReference(bib, id)
         }
         const ref = {id}
         if (match[2]) {
@@ -214,9 +198,13 @@ function setInputCursorPos(el, pos) {
 /**
  * Create the inline citation widget DOM element.
  */
-function createCitationWidget(view, pluginState, key) {
+function createCitationWidget(editor, pluginState, key) {
+    const view = editor.currentView || editor.view
     const container = document.createElement("span")
     container.className = "citation-inline-widget"
+
+    // Build the cross-reference target list once at widget creation time.
+    const crossRefList = buildCrossRefList(editor)
 
     const input = document.createElement("span")
     input.contentEditable = "plaintext-only"
@@ -235,39 +223,60 @@ function createCitationWidget(view, pluginState, key) {
         const cursorPos = getInputCursorPos(input)
         const activeIndex = getActiveRefIndex(input.textContent, cursorPos)
         const query = getActiveQuery(input.textContent, activeIndex)
-        const matches = filterBibliography(currentState.bibList, query)
+        const citationMatches = filterBibliography(currentState.bibList, query)
+        const xrefMatches = filterCrossRefs(crossRefList, query)
+        const totalMatches = citationMatches.length + xrefMatches.length
         const selectedIndex = currentState.listActive
             ? Math.max(
                   0,
-                  Math.min(currentState.selectedIndex, matches.length - 1)
+                  Math.min(currentState.selectedIndex, totalMatches - 1)
               )
             : -1
         dropUpWrapper.innerHTML = ""
-        const dropUp = createCitationDropUp(matches, selectedIndex, idx => {
-            const entry = matches[idx]
-            if (!entry) {
-                return
-            }
-            const newText = replaceActiveKey(
-                input.textContent,
-                activeIndex,
-                entry.entry_key
-            )
-            input.textContent = newText
-            // Move cursor to end of replaced key
-            const newCursor = newText.indexOf(
-                entry.entry_key,
-                newText.indexOf("@") + 1
-            )
-            setInputCursorPos(input, newCursor + entry.entry_key.length)
-            view.dispatch(
-                view.state.tr.setMeta(key, {
-                    action: "updateQuery",
-                    query: input.textContent
-                })
-            )
-            renderDropUp()
-        })
+        const dropUp = createCitationDropUp(
+            citationMatches,
+            selectedIndex,
+            idx => {
+                if (idx < citationMatches.length) {
+                    const entry = citationMatches[idx]
+                    if (!entry) {
+                        return
+                    }
+                    const newText = replaceActiveKey(
+                        input.textContent,
+                        activeIndex,
+                        entry.entry_key
+                    )
+                    input.textContent = newText
+                    // Move cursor to end of replaced key
+                    const newCursor = newText.indexOf(
+                        entry.entry_key,
+                        newText.indexOf("@") + 1
+                    )
+                    setInputCursorPos(input, newCursor + entry.entry_key.length)
+                    view.dispatch(
+                        view.state.tr.setMeta(key, {
+                            action: "updateQuery",
+                            query: input.textContent
+                        })
+                    )
+                    renderDropUp()
+                } else {
+                    const target = xrefMatches[idx - citationMatches.length]
+                    if (!target) {
+                        return
+                    }
+                    view.dispatch(
+                        view.state.tr.setMeta(key, {
+                            action: "insertCrossRef",
+                            id: target.id,
+                            title: target.text
+                        })
+                    )
+                }
+            },
+            xrefMatches
+        )
         dropUpWrapper.appendChild(dropUp)
         // Scroll selected item into view
         const selectedItem = dropUp.querySelector(
@@ -383,40 +392,62 @@ function createCitationWidget(view, pluginState, key) {
                         cursorPos
                     )
                     const query = getActiveQuery(input.textContent, activeIndex)
-                    const matches = filterBibliography(
+                    const citMatches = filterBibliography(
                         currentState.bibList,
                         query
                     )
+                    const xrefMatchesEnter = filterCrossRefs(
+                        crossRefList,
+                        query
+                    )
+                    const totalEnter =
+                        citMatches.length + xrefMatchesEnter.length
                     const selectedIndex = Math.max(
                         0,
-                        Math.min(currentState.selectedIndex, matches.length - 1)
+                        Math.min(currentState.selectedIndex, totalEnter - 1)
                     )
                     if (
                         currentState.listActive &&
-                        matches.length > 0 &&
+                        totalEnter > 0 &&
                         currentState.selectedIndex >= 0
                     ) {
-                        // Insert selected key into input
-                        const entry = matches[selectedIndex]
-                        const newText = replaceActiveKey(
-                            input.textContent,
-                            activeIndex,
-                            entry.entry_key
-                        )
-                        input.textContent = newText
-                        const newCursor =
-                            newText.indexOf(
-                                entry.entry_key,
-                                newText.indexOf("@") + 1
-                            ) + entry.entry_key.length
-                        setInputCursorPos(input, newCursor)
-                        view.dispatch(
-                            view.state.tr.setMeta(key, {
-                                action: "updateQuery",
-                                query: input.textContent
-                            })
-                        )
-                        renderDropUp()
+                        if (selectedIndex < citMatches.length) {
+                            // Insert selected citation key into input
+                            const entry = citMatches[selectedIndex]
+                            const newText = replaceActiveKey(
+                                input.textContent,
+                                activeIndex,
+                                entry.entry_key
+                            )
+                            input.textContent = newText
+                            const newCursor =
+                                newText.indexOf(
+                                    entry.entry_key,
+                                    newText.indexOf("@") + 1
+                                ) + entry.entry_key.length
+                            setInputCursorPos(input, newCursor)
+                            view.dispatch(
+                                view.state.tr.setMeta(key, {
+                                    action: "updateQuery",
+                                    query: input.textContent
+                                })
+                            )
+                            renderDropUp()
+                        } else {
+                            // Insert selected cross-reference immediately
+                            const target =
+                                xrefMatchesEnter[
+                                    selectedIndex - citMatches.length
+                                ]
+                            view.dispatch(
+                                view.state.tr.setMeta(key, {
+                                    action: "insertCrossRef",
+                                    id: target.id,
+                                    title: target.text
+                                })
+                            )
+                            view.focus()
+                        }
                     } else {
                         // Not in list mode or no matches: commit what we have
                         view.dispatch(
@@ -492,8 +523,10 @@ function createCitationWidget(view, pluginState, key) {
     return container
 }
 
-export const inlineCitationPlugin = options => {
+export const inlineReferencePlugin = options => {
     const editor = options.editor
+    const bibDB = editor.mod.db.bibDB
+    console.log({bibDB: bibDB})
 
     const enabled =
         editor.app.config.user?.preferences?.inline_citations === true &&
@@ -581,11 +614,7 @@ export const inlineCitationPlugin = options => {
                         const deco = Decoration.widget(
                             next.from,
                             () => {
-                                return createCitationWidget(
-                                    editor.currentView || editor.view,
-                                    next,
-                                    key
-                                )
+                                return createCitationWidget(editor, next, key)
                             },
                             {
                                 key: "inline-citation-widget",
@@ -631,7 +660,7 @@ export const inlineCitationPlugin = options => {
                 const parsed = parseCitationText(
                     oldPluginState.query,
                     oldPluginState.bibList,
-                    editor
+                    bibDB
                 )
                 if (!parsed) {
                     if (oldPluginState.isEdit) {
@@ -747,6 +776,48 @@ export const inlineCitationPlugin = options => {
                 return null
             }
 
+            if (meta?.action === "insertCrossRef") {
+                if (!oldPluginState.active) {
+                    return null
+                }
+                const crossRefNode =
+                    newState.schema.nodes.cross_reference.create({
+                        id: meta.id,
+                        title: meta.title
+                    })
+                if (oldPluginState.isEdit) {
+                    // Replace the existing citation node with a cross_reference.
+                    const existingNode = newState.doc.nodeAt(
+                        oldPluginState.citationPos
+                    )
+                    const tr = newState.tr.replaceWith(
+                        oldPluginState.citationPos,
+                        oldPluginState.citationPos +
+                            (existingNode?.nodeSize || 1),
+                        crossRefNode
+                    )
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            oldPluginState.citationPos + crossRefNode.nodeSize
+                        )
+                    )
+                    return tr.setMeta(key, {action: "deactivate"})
+                } else {
+                    const tr = newState.tr.insert(
+                        oldPluginState.from,
+                        crossRefNode
+                    )
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            oldPluginState.from + crossRefNode.nodeSize
+                        )
+                    )
+                    return tr.setMeta(key, {action: "deactivate"})
+                }
+            }
+
             if (oldPluginState.active) {
                 // If selection moved away from the widget, commit
                 if (
@@ -757,7 +828,7 @@ export const inlineCitationPlugin = options => {
                     const parsed = parseCitationText(
                         oldPluginState.query,
                         oldPluginState.bibList,
-                        editor
+                        bibDB
                     )
                     if (parsed) {
                         const citationNode =

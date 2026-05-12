@@ -3,21 +3,21 @@ import {escapeText} from "../../../common"
 import {getInternalTargets} from "../links"
 
 /**
- * Create a drop-up widget for inline citation autocomplete.
+ * Create a drop-up widget for the inline reference editor.
  * @param {Array} citationMatches - Array of {id, entry_key, author, title, year} objects
  * @param {number} selectedIndex - Currently selected index
  * @param {Function} onSelect - Callback when an item is selected
  * @param {Array} crossRefMatches - Array of {id, text} cross-reference objects
  * @returns {HTMLElement} The drop-up DOM element
  */
-export function createCitationDropUp(
+export function createInlineReferenceDropUp(
     citationMatches,
     selectedIndex,
     onSelect,
     crossRefMatches = []
 ) {
     const container = document.createElement("span")
-    container.classList.add("drop-up-outer", "citation-drop-up")
+    container.classList.add("drop-up-outer", "inline-reference-drop-up")
 
     const inner = document.createElement("div")
     inner.classList.add("drop-up-inner")
@@ -25,14 +25,14 @@ export function createCitationDropUp(
     const hasAnything = citationMatches.length > 0 || crossRefMatches.length > 0
 
     if (!hasAnything) {
-        inner.innerHTML = `<div class="citation-drop-up-empty">${gettext("No matching sources")}</div>`
+        inner.innerHTML = `<div class="inline-reference-drop-up-empty">${gettext("No matching sources")}</div>`
     } else {
         if (citationMatches.length > 0) {
             const citList = document.createElement("ul")
-            citList.classList.add("citation-drop-up-list")
+            citList.classList.add("inline-reference-drop-up-list")
             citationMatches.forEach((match, index) => {
                 const li = document.createElement("li")
-                li.classList.add("citation-drop-up-item")
+                li.classList.add("inline-reference-drop-up-item")
                 if (index === selectedIndex) {
                     li.classList.add("selected")
                 }
@@ -56,20 +56,20 @@ export function createCitationDropUp(
 
         if (crossRefMatches.length > 0) {
             const sep = document.createElement("div")
-            sep.classList.add("citation-drop-up-section-header")
+            sep.classList.add("inline-reference-drop-up-section-header")
             sep.textContent = gettext("Cross-references")
             inner.appendChild(sep)
 
             const xrefList = document.createElement("ul")
-            xrefList.classList.add("citation-drop-up-list")
+            xrefList.classList.add("inline-reference-drop-up-list")
             crossRefMatches.forEach((target, index) => {
                 const combinedIndex = citationMatches.length + index
                 const li = document.createElement("li")
-                li.classList.add("citation-drop-up-item")
+                li.classList.add("inline-reference-drop-up-item")
                 if (combinedIndex === selectedIndex) {
                     li.classList.add("selected")
                 }
-                li.innerHTML = `<span class="citation-drop-up-xref-text">${escapeText(target.text)}</span>`
+                li.innerHTML = `<span class="inline-reference-drop-up-xref-text">${escapeText(target.text)}</span>`
                 li.addEventListener("mousedown", event => {
                     event.preventDefault()
                     event.stopPropagation()

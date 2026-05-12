@@ -10,7 +10,7 @@ import {elementDisabled} from "../../menus/toolbar/model"
 import {
     buildBibliographyList,
     buildCrossRefList,
-    createCitationDropUp,
+    createInlineReferenceDropUp,
     filterBibliography,
     filterCrossRefs
 } from "./dropup"
@@ -26,7 +26,7 @@ export const setInlineReferenceState = (tr, state) => tr.setMeta(key, state)
  * (allowed elements per doc part, protected sections) — the same conditions
  * that disable the toolbar citation button.
  */
-function canInsertCitation(_state, _$pos, editor) {
+function canActivateInlineReference(_state, _$pos, editor) {
     // Mirror the template-based restriction check used by the toolbar button.
     if (editor && elementDisabled(editor, "citation")) {
         return false
@@ -198,10 +198,10 @@ function setInputCursorPos(el, pos) {
 /**
  * Create the inline citation widget DOM element.
  */
-function createCitationWidget(editor, pluginState, key) {
+function createInlineReferenceWidget(editor, pluginState, key) {
     const view = editor.currentView || editor.view
     const container = document.createElement("span")
-    container.className = "citation-inline-widget"
+    container.className = "inline-reference-widget"
 
     // Build the cross-reference target list once at widget creation time.
     const crossRefList = buildCrossRefList(editor)
@@ -209,11 +209,11 @@ function createCitationWidget(editor, pluginState, key) {
     const input = document.createElement("span")
     input.contentEditable = "plaintext-only"
     input.spellcheck = false
-    input.className = "citation-inline-input"
+    input.className = "inline-reference-input"
     input.textContent = pluginState.query
 
     const dropUpWrapper = document.createElement("span")
-    dropUpWrapper.className = "drop-up-outer citation-drop-up"
+    dropUpWrapper.className = "drop-up-outer inline-reference-drop-up"
 
     function renderDropUp() {
         const currentState = key.getState(view.state)
@@ -233,7 +233,7 @@ function createCitationWidget(editor, pluginState, key) {
               )
             : -1
         dropUpWrapper.innerHTML = ""
-        const dropUp = createCitationDropUp(
+        const dropUp = createInlineReferenceDropUp(
             citationMatches,
             selectedIndex,
             idx => {
@@ -280,7 +280,7 @@ function createCitationWidget(editor, pluginState, key) {
         dropUpWrapper.appendChild(dropUp)
         // Scroll selected item into view
         const selectedItem = dropUp.querySelector(
-            ".citation-drop-up-item.selected"
+            ".inline-reference-drop-up-item.selected"
         )
         if (selectedItem) {
             selectedItem.scrollIntoView({block: "nearest"})
@@ -558,7 +558,7 @@ export const inlineReferencePlugin = options => {
                     selectedIndex: -1,
                     listActive: false,
                     isEdit: false,
-                    citationPos: 0,
+                    referenceNodePos: 0,
                     bibList: [],
                     widgetId: undefined,
                     cursorAtStart: undefined,
@@ -577,7 +577,7 @@ export const inlineReferencePlugin = options => {
                         selectedIndex: -1,
                         listActive: false,
                         isEdit: meta.isEdit || false,
-                        citationPos: meta.citationPos || 0,
+                        referenceNodePos: meta.referenceNodePos || 0,
                         bibList: meta.bibList || [],
                         widgetId: Math.random().toString(36).slice(2),
                         cursorAtStart: meta.cursorAtStart,
@@ -591,7 +591,7 @@ export const inlineReferencePlugin = options => {
                         selectedIndex: -1,
                         listActive: false,
                         isEdit: false,
-                        citationPos: 0,
+                        referenceNodePos: 0,
                         bibList: [],
                         widgetId: undefined,
                         cursorAtStart: undefined,
@@ -614,14 +614,18 @@ export const inlineReferencePlugin = options => {
                         const deco = Decoration.widget(
                             next.from,
                             () => {
-                                return createCitationWidget(editor, next, key)
+                                return createInlineReferenceWidget(
+                                    editor,
+                                    next,
+                                    key
+                                )
                             },
                             {
-                                key: "inline-citation-widget",
+                                key: "inline-reference-widget",
                                 side: -1
                             }
                         )
-                        const citationNodeDeco = Decoration.node(
+                        const referenceNodeDeco = Decoration.node(
                             next.from,
                             next.from + 1,
                             {
@@ -630,7 +634,7 @@ export const inlineReferencePlugin = options => {
                         )
                         next.decos = DecorationSet.create(_state.doc, [
                             deco,
-                            citationNodeDeco
+                            referenceNodeDeco
                         ])
                     } else if (tr.docChanged) {
                         // Document changed while active: map old decorations
@@ -665,16 +669,17 @@ export const inlineReferencePlugin = options => {
                 if (!parsed) {
                     if (oldPluginState.isEdit) {
                         const node = newState.doc.nodeAt(
-                            oldPluginState.citationPos
+                            oldPluginState.referenceNodePos
                         )
                         const newPos =
-                            oldPluginState.citationPos + (node?.nodeSize || 1)
+                            oldPluginState.referenceNodePos +
+                            (node?.nodeSize || 1)
                         const tr = newState.tr.setSelection(
                             TextSelection.create(newState.doc, newPos)
                         )
                         return tr.setMeta(key, {action: "deactivate"})
                     }
-                    // Invalid new citation: insert as plain text with caret after
+                    // Invalid reference text: insert as plain text with caret after
                     const tr = newState.tr.insertText(
                         oldPluginState.query,
                         oldPluginState.from
@@ -690,16 +695,16 @@ export const inlineReferencePlugin = options => {
                 })
                 if (oldPluginState.isEdit) {
                     const tr = newState.tr.setNodeMarkup(
-                        oldPluginState.citationPos,
+                        oldPluginState.referenceNodePos,
                         null,
                         {
                             format: parsed.format,
                             references: parsed.references
                         }
                     )
-                    const node = tr.doc.nodeAt(oldPluginState.citationPos)
+                    const node = tr.doc.nodeAt(oldPluginState.referenceNodePos)
                     const newPos =
-                        oldPluginState.citationPos + (node?.nodeSize || 1)
+                        oldPluginState.referenceNodePos + (node?.nodeSize || 1)
                     tr.setSelection(TextSelection.create(tr.doc, newPos))
                     return tr.setMeta(key, {action: "deactivate"})
                 } else {
@@ -715,16 +720,18 @@ export const inlineReferencePlugin = options => {
 
             if (meta?.action === "cancel") {
                 if (oldPluginState.isEdit) {
-                    // Editing: just deactivate, leave citation unchanged
-                    const node = newState.doc.nodeAt(oldPluginState.citationPos)
+                    // Editing: just deactivate, leave reference unchanged
+                    const node = newState.doc.nodeAt(
+                        oldPluginState.referenceNodePos
+                    )
                     const newPos =
-                        oldPluginState.citationPos + (node?.nodeSize || 1)
+                        oldPluginState.referenceNodePos + (node?.nodeSize || 1)
                     const tr = newState.tr.setSelection(
                         TextSelection.create(newState.doc, newPos)
                     )
                     return tr.setMeta(key, {action: "deactivate"})
                 } else {
-                    // New citation: insert query as plain text with caret after
+                    // New reference: insert query as plain text with caret after
                     const tr = newState.tr.insertText(
                         oldPluginState.query,
                         oldPluginState.from
@@ -741,7 +748,7 @@ export const inlineReferencePlugin = options => {
                     const tr = newState.tr.setSelection(
                         TextSelection.create(
                             newState.doc,
-                            oldPluginState.citationPos
+                            oldPluginState.referenceNodePos
                         )
                     )
                     return tr.setMeta(key, {action: "deactivate"})
@@ -761,13 +768,15 @@ export const inlineReferencePlugin = options => {
                 if (oldPluginState.active && oldPluginState.isEdit) {
                     // Deactivate the inline editor and leave a NodeSelection on
                     // the citation so CitationDialog opens with its content.
-                    const node = newState.doc.nodeAt(oldPluginState.citationPos)
+                    const node = newState.doc.nodeAt(
+                        oldPluginState.referenceNodePos
+                    )
                     if (node?.type.name === "citation") {
                         return newState.tr
                             .setSelection(
                                 NodeSelection.create(
                                     newState.doc,
-                                    oldPluginState.citationPos
+                                    oldPluginState.referenceNodePos
                                 )
                             )
                             .setMeta(key, {action: "deactivate"})
@@ -788,18 +797,19 @@ export const inlineReferencePlugin = options => {
                 if (oldPluginState.isEdit) {
                     // Replace the existing citation node with a cross_reference.
                     const existingNode = newState.doc.nodeAt(
-                        oldPluginState.citationPos
+                        oldPluginState.referenceNodePos
                     )
                     const tr = newState.tr.replaceWith(
-                        oldPluginState.citationPos,
-                        oldPluginState.citationPos +
+                        oldPluginState.referenceNodePos,
+                        oldPluginState.referenceNodePos +
                             (existingNode?.nodeSize || 1),
                         crossRefNode
                     )
                     tr.setSelection(
                         TextSelection.create(
                             tr.doc,
-                            oldPluginState.citationPos + crossRefNode.nodeSize
+                            oldPluginState.referenceNodePos +
+                                crossRefNode.nodeSize
                         )
                     )
                     return tr.setMeta(key, {action: "deactivate"})
@@ -839,7 +849,7 @@ export const inlineReferencePlugin = options => {
                         if (oldPluginState.isEdit) {
                             return newState.tr
                                 .setNodeMarkup(
-                                    oldPluginState.citationPos,
+                                    oldPluginState.referenceNodePos,
                                     null,
                                     {
                                         format: parsed.format,
@@ -853,7 +863,7 @@ export const inlineReferencePlugin = options => {
                                 .setMeta(key, {action: "deactivate"})
                         }
                     } else if (!oldPluginState.isEdit) {
-                        // Invalid citation on blur/selection-move: insert as plain text
+                        // Invalid reference text on blur/selection-move: insert as plain text
                         const tr = newState.tr.insertText(
                             oldPluginState.query,
                             oldPluginState.from
@@ -884,7 +894,7 @@ export const inlineReferencePlugin = options => {
                         from: from,
                         query: text,
                         isEdit: true,
-                        citationPos: from,
+                        referenceNodePos: from,
                         bibList: bibList
                     })
                 }
@@ -894,7 +904,7 @@ export const inlineReferencePlugin = options => {
                 const tr = trs.find(tr => tr.docChanged)
                 if (tr) {
                     const $pos = newState.selection.$head
-                    if (canInsertCitation(newState, $pos, editor)) {
+                    if (canActivateInlineReference(newState, $pos, editor)) {
                         const beforeText = newState.doc.textBetween(
                             Math.max(0, $pos.pos - 3),
                             $pos.pos,
@@ -941,7 +951,7 @@ export const inlineReferencePlugin = options => {
                         from: nodePos,
                         query: text,
                         isEdit: true,
-                        citationPos: nodePos,
+                        referenceNodePos: nodePos,
                         bibList: bibList
                     })
                     _view.dispatch(tr)
@@ -992,7 +1002,7 @@ export const inlineReferencePlugin = options => {
                         from: pos,
                         query: text,
                         isEdit: true,
-                        citationPos: pos,
+                        referenceNodePos: pos,
                         bibList: bibList
                     })
                     view.dispatch(tr)
@@ -1006,7 +1016,7 @@ export const inlineReferencePlugin = options => {
                     const pluginState = key.getState(view.state)
                     if (pluginState?.active) {
                         const target = event.target.closest(
-                            ".citation-inline-widget"
+                            ".inline-reference-widget"
                         )
                         if (target) {
                             // Click inside widget: let widget handle it
@@ -1048,7 +1058,7 @@ export const inlineReferencePlugin = options => {
                         from: pos,
                         query: text,
                         isEdit: true,
-                        citationPos: pos,
+                        referenceNodePos: pos,
                         bibList: bibList
                     })
                     view.dispatch(tr)
@@ -1060,7 +1070,9 @@ export const inlineReferencePlugin = options => {
                 if (!pluginState?.active) {
                     if (event.key === "@") {
                         const $pos = view.state.selection.$head
-                        if (canInsertCitation(view.state, $pos, editor)) {
+                        if (
+                            canActivateInlineReference(view.state, $pos, editor)
+                        ) {
                             const beforeText = view.state.doc.textBetween(
                                 Math.max(0, $pos.pos - 1),
                                 $pos.pos,
@@ -1102,7 +1114,7 @@ export const inlineReferencePlugin = options => {
                                         from: from,
                                         query: text,
                                         isEdit: true,
-                                        citationPos: from,
+                                        referenceNodePos: from,
                                         bibList: bibList,
                                         cursorAtStart: true
                                     })
@@ -1131,7 +1143,7 @@ export const inlineReferencePlugin = options => {
                                         from: from,
                                         query: text,
                                         isEdit: true,
-                                        citationPos: from,
+                                        referenceNodePos: from,
                                         bibList: bibList,
                                         cursorAtStart: false
                                     })

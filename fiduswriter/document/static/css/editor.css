@@ -1284,8 +1284,8 @@ pre[data-language] {
     position: relative;
 }
 
-/* Inline citation autocomplete drop-up */
-.citation-drop-up .drop-up-inner {
+/* Inline reference drop-up */
+.inline-reference-drop-up .drop-up-inner {
     min-width: 280px;
     max-width: 400px;
     max-height: 200px;
@@ -1297,13 +1297,13 @@ pre[data-language] {
     padding: 4px 0;
 }
 
-.citation-drop-up-list {
+.inline-reference-drop-up-list {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.citation-drop-up-item {
+.inline-reference-drop-up-item {
     padding: 4px 10px;
     cursor: pointer;
     font-size: 12px;
@@ -1313,8 +1313,8 @@ pre[data-language] {
     gap: 1px;
 }
 
-.citation-drop-up-item:hover,
-.citation-drop-up-item.selected {
+.inline-reference-drop-up-item:hover,
+.inline-reference-drop-up-item.selected {
     background-color: var(--cs-light-background-hover);
 }
 
@@ -1332,14 +1332,14 @@ pre[data-language] {
     text-overflow: ellipsis;
 }
 
-.citation-drop-up-empty {
+.inline-reference-drop-up-empty {
     padding: 8px 10px;
     color: var(--cs-light-text-secondary);
     font-size: 12px;
     font-style: italic;
 }
 
-.citation-drop-up-section-header {
+.inline-reference-drop-up-section-header {
     padding: 4px 10px 2px;
     font-size: 10px;
     font-weight: bold;
@@ -1350,19 +1350,19 @@ pre[data-language] {
     margin-top: 2px;
 }
 
-.citation-drop-up-xref-text {
+.inline-reference-drop-up-xref-text {
     font-size: 12px;
     color: var(--cs-light-text);
 }
 
-/* Inline citation widget */
-.citation-inline-widget {
+/* Inline reference widget */
+.inline-reference-widget {
     position: relative;
     display: inline-block;
     vertical-align: bottom;
 }
 
-.citation-inline-input {
+.inline-reference-input {
     display: inline-block;
     font-family: inherit;
     font-size: inherit;
@@ -1379,7 +1379,7 @@ pre[data-language] {
     cursor: text;
 }
 
-.citation-inline-input:focus {
+.inline-reference-input:focus {
     border-color: var(--cs-2-background);
     box-shadow: 0 0 0 1px var(--cs-2-background);
 }

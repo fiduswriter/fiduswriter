@@ -231,16 +231,13 @@ function dropupPlugin(options) {
         const dropUp = document.createElement("span")
         dropUp.classList.add("drop-up-outer")
 
-        const latex = equationNode.attrs.equation || ""
+        const _latex = equationNode.attrs.equation || ""
         const requiredPx = editAccess ? 92 : 50
 
         dropUp.innerHTML = `
-            <div class="link drop-up-inner" style="top: -${requiredPx}px;">
+            <div class="drop-up-inner" style="top: -${requiredPx}px;">
                 <div class="drop-up-head"${editAccess ? "" : ' style="border-radius:6px;"'}>
                     <div class="link-title">${gettext("Equation")}</div>
-                    <div class="link-href">
-                        <span class="inline-math-dropup-latex">${latex.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
-                    </div>
                 </div>
                 ${
                     editAccess

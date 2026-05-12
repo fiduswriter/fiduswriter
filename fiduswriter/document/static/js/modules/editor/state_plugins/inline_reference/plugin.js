@@ -71,8 +71,12 @@ function parseCitationText(text, bibEntries, bibDB) {
         }
         let id = bibEntry.id
         if (bibEntry.source === "user") {
-            const bib = bibDB.db[id]
-            id = bibDB.addReference(bib, id)
+            // bibEntry.entry is the raw entry object from the user's bibDB
+            // (stored by buildBibliographyList).  We must NOT look it up via
+            // bibDB.db[id] because bibDB is the *document* bibDB and the user's
+            // id doesn't exist there yet — that lookup returns undefined, which
+            // addReference then writes into the document DB, corrupting it.
+            id = bibDB.addReference(bibEntry.entry, id)
         }
         const ref = {id}
         if (match[2]) {

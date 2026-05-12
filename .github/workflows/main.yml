@@ -53,7 +53,7 @@ jobs:
                     - document.tests.test_paste_template_filter
                     - document.tests.test_memory_leak
                     - document.tests.test_merge
-                    - document.tests.test_path
+                    - "document.tests.test_path document.tests.test_inline_editors"
                     - document.tests.test_share_link_access
                     - document.tests.test_e2ee
                     - "document.tests.test_views_unit document.tests.test_helpers"

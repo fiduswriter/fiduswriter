@@ -218,14 +218,23 @@ export const profileContents = (user, socialaccount_providers, settings = {}) =>
             </div>
             <div class="profile-data-row">
                 <label class="form-label">${gettext("Editor")}</label>
-                <label class="checkable-label">
-                    <input type="checkbox" id="inline-references" ${user.preferences?.inline_references ? "checked" : ""} />
-                    ${gettext("Enable inline reference typing (@)")}
-                </label>
-                <label class="checkable-label">
-                    <input type="checkbox" id="inline-math" ${user.preferences?.inline_math ? "checked" : ""} />
-                    ${gettext("Enable inline math typing ($)")}
-                </label>
+                <div class="profile-editor-settings">
+                    <label class="checkable-label">
+                        <input type="checkbox" id="inline-references" ${user.preferences?.inline_references ? "checked" : ""} />
+                        ${gettext("Enable inline reference typing (@)")}
+                    </label>
+                    <p class="inline-editor-hint">${gettext("Type @ in the editor to insert a citation or cross-reference:")}</p>
+                    <ul class="inline-editor-hint">
+                        <li>${gettext("Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual citation: @@entry_key. Multiple sources: @key1;key2")}</li>
+                        <li>${gettext("Cross-reference: @#target-id")}</li>
+                    </ul>
+                    <label class="checkable-label">
+                        <input type="checkbox" id="inline-math" ${user.preferences?.inline_math ? "checked" : ""} />
+                        ${gettext("Enable inline math typing ($)")}
+                    </label>
+                    <p class="inline-editor-hint">${gettext("Type $ in the editor followed by LaTeX math to insert an equation inline, e.g. $x^2. Press Enter or Tab to confirm.")}</p>
+
+                </div>
             </div>
             ${
                 socialaccount_providers.length

@@ -92,7 +92,9 @@ export function createInlineReferenceDropUp(
  * Build a flat list of bibliography entries for matching.
  * Searches both document bibDB and user bibDB.
  * @param {Object} editor - The Editor instance
- * @returns {Array} Array of {id, entry_key, author, title, year, source}
+ * @returns {Array} Array of {id, entry_key, author, title, year, source, entry}
+ *   where `entry` is the raw DB object (needed when importing a user entry
+ *   into the document bibDB via addReference).
  */
 export function buildBibliographyList(editor) {
     const entries = []
@@ -103,6 +105,9 @@ export function buildBibliographyList(editor) {
             return
         }
         Object.entries(db).forEach(([id, entry]) => {
+            if (!entry) {
+                return
+            }
             const key = entry.entry_key || ""
             if (seenKeys.has(key)) {
                 return
@@ -116,7 +121,8 @@ export function buildBibliographyList(editor) {
                 author: authors ? nameToText(authors) : "",
                 title: fields.title?.length ? litToText(fields.title) : "",
                 year: fields.date ? dateToYear(fields.date) : "",
-                source
+                source,
+                entry
             })
         })
     }

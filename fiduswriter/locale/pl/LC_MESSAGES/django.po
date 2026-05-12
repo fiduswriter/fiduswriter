@@ -17,7 +17,7 @@ msgstr ""
 
 #: base/settings.py:280
 msgid "Arabic"
-msgstr "arabski"
+msgstr "Arabski"
 
 #: base/settings.py:281
 msgid "Bulgarian"
@@ -25,11 +25,11 @@ msgstr "Bułgarski"
 
 #: base/settings.py:282
 msgid "Czech"
-msgstr "czeski"
+msgstr "Czeski"
 
 #: base/settings.py:283
 msgid "Danish"
-msgstr "duński"
+msgstr "Duński"
 
 #: base/settings.py:284
 msgid "German"
@@ -53,11 +53,11 @@ msgstr "Włoski"
 
 #: base/settings.py:289
 msgid "Japanese"
-msgstr "japoński"
+msgstr "Japoński"
 
 #: base/settings.py:290
 msgid "Korean"
-msgstr "koreański"
+msgstr "Koreański"
 
 #: base/settings.py:291
 msgid "Norwegian Bokmål"
@@ -77,19 +77,19 @@ msgstr "Portugalski (Brazylia)"
 
 #: base/settings.py:295
 msgid "Portuguese (Portugal)"
-msgstr "portugalski (Portugalia)"
+msgstr "Portugalski (Portugalia)"
 
 #: base/settings.py:296
 msgid "Russian"
-msgstr "rosyjski"
+msgstr "Rosyjski"
 
 #: base/settings.py:297
 msgid "Swedish"
-msgstr "szwedzki"
+msgstr "Szwedzki"
 
 #: base/settings.py:298
 msgid "Turkish"
-msgstr "turecki"
+msgstr "Turecki"
 
 #: base/settings.py:299
 msgid "Chinese (Simplified)"

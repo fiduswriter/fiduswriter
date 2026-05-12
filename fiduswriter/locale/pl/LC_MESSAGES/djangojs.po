@@ -97,7 +97,6 @@ msgid "OK"
 msgstr "OK"
 
 #: base/static/js/modules/common/file/dialog.js:39
-#: base/static/js/modules/common/file/selector.js:53
 #: base/static/js/modules/common/file/tools.js:6
 #: base/static/js/modules/common/file/tools.js:16
 #: base/static/js/modules/common/file/tools.js:36
@@ -119,7 +118,7 @@ msgstr "OK"
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
 #: usermedia/static/js/modules/images/overview/index.js:175
 msgid "Untitled"
-msgstr "Nieuprawny"
+msgstr "Bez tytułu"
 
 #: base/static/js/modules/common/file/dialog.js:67
 #: base/static/js/modules/common/file/new_folder_dialog.js:8
@@ -174,7 +173,7 @@ msgstr "Nawigacja witryny"
 #: document/static/js/modules/documents/access_rights/templates.js:13
 #: user/static/js/modules/contacts/index.js:57
 msgid "Contacts"
-msgstr "Łączność"
+msgstr "Kontakty"
 
 #: base/static/js/modules/common/templates.js:32
 msgid "Log out"
@@ -187,7 +186,7 @@ msgstr "Ostrzeżenie! Niektóre dane są niezapisane"
 #: base/static/js/modules/common/ws.js:14
 #: document/static/js/modules/editor/index.js:407
 msgid "Disconnected. Attempting to reconnect..."
-msgstr "Bezładny. Próba ponownego połączenia..."
+msgstr "Rozłączono. Próba ponownego połączenia..."
 
 #: base/static/js/modules/copyright_dialog/index.js:83
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:317
@@ -215,7 +214,7 @@ msgstr "Z listy"
 #: base/static/js/modules/copyright_dialog/templates.js:36
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:31
 msgid "Custom"
-msgstr "Zwyczaj"
+msgstr "Własny"
 
 #: base/static/js/modules/copyright_dialog/templates.js:44
 msgid "License start date (optional)"
@@ -269,7 +268,7 @@ msgstr ""
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
 msgid "Disconnected"
-msgstr "Bezładny"
+msgstr "Rozłączono"
 
 #: base/static/js/modules/offline/index.js:11
 msgid "You are currently disconnected from the %(appName)s server."
@@ -323,7 +322,7 @@ msgstr "Wybierz język"
 #: document/static/js/modules/editor/dialogs/table.js:178
 #: usermedia/static/js/modules/images/edit_dialog/index.js:42
 msgid "Update"
-msgstr "Aktualizacja"
+msgstr "Aktualizuj"
 
 #: base/static/js/modules/setup/index.js:11
 msgid "The %(appName)s server is currently being updated. Please wait."
@@ -379,7 +378,7 @@ msgstr "Pozycje bibliograficzne zostały usunięte"
 #: document/static/js/modules/editor/marginboxes/templates.js:240
 #: document/static/js/modules/editor/menus/toolbar/model.js:375
 msgid "Strong"
-msgstr "Mocny"
+msgstr "Pogrubienie"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:63
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:58
@@ -388,13 +387,13 @@ msgstr "Mocny"
 #: document/static/js/modules/editor/marginboxes/templates.js:239
 #: document/static/js/modules/editor/menus/toolbar/model.js:412
 msgid "Emphasis"
-msgstr "Podkreślenie"
+msgstr "Wyróżnienie"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:67
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:62
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:62
 msgid "Small caps"
-msgstr "Małe czapki"
+msgstr "Kapitaliki"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:71
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:66
@@ -756,7 +755,7 @@ msgstr "Styl dokumentu"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:90
 msgid "Slug"
-msgstr "Ślimak"
+msgstr "Identyfikator"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:96
 msgid "CSS Style"
@@ -957,7 +956,7 @@ msgstr "Dozwolone elementy"
 #: document/static/js/modules/document_template/templates.js:13
 #: document/static/js/modules/editor/marginboxes/templates.js:256
 msgid "Paragraph"
-msgstr "Ustęp"
+msgstr "Akapit"
 
 #: document/static/js/modules/document_template/templates.js:17
 #: document/static/js/modules/document_template/templates.js:186
@@ -1010,12 +1009,12 @@ msgstr "Blok kodu"
 #: document/static/js/modules/editor/menus/toolbar/model.js:29
 #: document/static/js/modules/editor/menus/toolbar/model.js:851
 msgid "Figure"
-msgstr "Postać"
+msgstr "Ilustracja"
 
 #: document/static/js/modules/document_template/templates.js:53
 #: document/static/js/modules/editor/marginboxes/templates.js:264
 msgid "Ordered list"
-msgstr "Zamówiona lista"
+msgstr "Lista uporządkowana"
 
 #: document/static/js/modules/document_template/templates.js:57
 #: document/static/js/modules/editor/marginboxes/templates.js:265
@@ -1051,7 +1050,7 @@ msgstr "Cytat blokowy"
 #: document/static/js/modules/editor/menus/toolbar/model.js:162
 #: document/static/js/modules/editor/menus/toolbar/model.js:737
 msgid "Footnote"
-msgstr "Notatka"
+msgstr "Przypis"
 
 #: document/static/js/modules/document_template/templates.js:98
 msgid "Allowed marks"
@@ -1067,12 +1066,12 @@ msgstr "Podkreślać"
 #: document/static/js/modules/editor/dialogs/link.js:241
 #: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
-msgstr "Połączyć"
+msgstr "Odnośnik"
 
 #: document/static/js/modules/document_template/templates.js:118
 #: document/static/js/modules/editor/menus/toolbar/model.js:481
 msgid "Superscript"
-msgstr "Napisany u góry"
+msgstr "Indeks górny"
 
 #: document/static/js/modules/document_template/templates.js:122
 #: document/static/js/modules/editor/menus/toolbar/model.js:518
@@ -1251,7 +1250,7 @@ msgstr "Tytuł przedmiotu"
 
 #: document/static/js/modules/document_template/templates.js:255
 msgid "Authors"
-msgstr "Autorski"
+msgstr "Autorzy"
 
 #: document/static/js/modules/document_template/templates.js:256
 msgid "Editors"
@@ -1264,7 +1263,7 @@ msgstr "Tekst sformatowany"
 #: document/static/js/modules/document_template/templates.js:327
 #: document/static/js/modules/importer/pandoc/convert.js:147
 msgid "Abstract"
-msgstr "Abstrakcyjny"
+msgstr "Streszczenie"
 
 #: document/static/js/modules/document_template/templates.js:328
 msgid "Cases/Case Reports"
@@ -1284,7 +1283,7 @@ msgstr "Wprowadzenie/streszczenie"
 
 #: document/static/js/modules/document_template/templates.js:332
 msgid "Materials"
-msgstr "Przybory"
+msgstr "Materiały"
 
 #: document/static/js/modules/document_template/templates.js:333
 msgid "Methods/Methodology/Procedures"
@@ -1412,7 +1411,7 @@ msgstr "Podstawowe prawa dostępu"
 #: document/static/js/modules/documents/access_rights/templates.js:92
 #: document/static/js/modules/documents/access_rights/templates.js:98
 msgid "Write"
-msgstr "Pisać"
+msgstr "Zapis"
 
 #: document/static/js/modules/documents/access_rights/index.js:91
 #: document/static/js/modules/documents/access_rights/templates.js:99
@@ -1435,7 +1434,7 @@ msgstr "Komentarz"
 #: document/static/js/modules/documents/access_rights/templates.js:90
 #: document/static/js/modules/documents/access_rights/templates.js:93
 msgid "Read"
-msgstr "Czytać"
+msgstr "Odczyt"
 
 #: document/static/js/modules/documents/access_rights/index.js:124
 #: document/static/js/modules/documents/access_rights/index.js:142
@@ -2561,7 +2560,7 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/table.js:46
 #: document/static/js/modules/editor/dialogs/templates.js:234
 msgid "Insert"
-msgstr "Wstawić"
+msgstr "Wstaw"
 
 #: document/static/js/modules/editor/dialogs/citation.js:39
 #: document/static/js/modules/editor/dialogs/code_block.js:120
@@ -3815,27 +3814,27 @@ msgstr "niemiecki (Niemcy)"
 #: document/static/js/modules/editor/menus/headerbar/model.js:731
 #: document/static/js/modules/schema/const.js:11
 msgid "Chinese (Simplified)"
-msgstr "chiński (uproszczony)"
+msgstr "Chiński (uproszczony)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/editor/menus/headerbar/model.js:735
 #: document/static/js/modules/schema/const.js:47
 msgid "Spanish"
-msgstr "hiszpański"
+msgstr "Hiszpański"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:735
 #: document/static/js/modules/schema/const.js:21
 msgid "French"
-msgstr "francuski"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:736
-#: document/static/js/modules/schema/const.js:30
-msgid "Japanese"
-msgstr "japoński"
+msgstr "Francuski"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:737
+#: document/static/js/modules/schema/const.js:30
+msgid "Japanese"
+msgstr "Japoński"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:29
 msgid "Italian"
-msgstr "włoski"
+msgstr "Włoski"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:38
@@ -4291,7 +4290,7 @@ msgstr "Następny"
 
 #: document/static/js/modules/editor/tools/search_replace/index.js:136
 msgid "Replace"
-msgstr "Zastępować"
+msgstr "Zamień"
 
 #: document/static/js/modules/editor/tools/search_replace/index.js:154
 #: document/static/js/modules/editor/tools/search_replace/index.js:179
@@ -4597,15 +4596,15 @@ msgstr "portugalski (Portugalia)"
 
 #: document/static/js/modules/schema/const.js:40
 msgid "Romanian"
-msgstr "rumuński"
+msgstr "Rumuński"
 
 #: document/static/js/modules/schema/const.js:41
 msgid "Russian"
-msgstr "rosyjski"
+msgstr "Rosyjski"
 
 #: document/static/js/modules/schema/const.js:42
 msgid "Turkish"
-msgstr "turecki"
+msgstr "Turecki"
 
 #: document/static/js/modules/schema/const.js:43
 msgid "Serbian (Cyrillic)"
@@ -4653,7 +4652,7 @@ msgstr "Podaj krótki opis tego, co się wydarzyło."
 
 #: feedback/static/js/modules/feedback/index.js:28
 msgid "submit"
-msgstr "składać"
+msgstr "Wyślij"
 
 #: feedback/static/js/modules/feedback/index.js:32
 msgid "Thank you for your report!"
@@ -4875,7 +4874,7 @@ msgstr "Nowy tutaj?"
 #: user/static/js/modules/signup/index.js:10
 #: user/static/js/modules/signup/index.js:41
 msgid "Sign up"
-msgstr "Zapisać się"
+msgstr "Zarejestruj się"
 
 #: user/static/js/modules/login/index.js:43
 msgid "Login with"
@@ -5311,7 +5310,7 @@ msgstr "Usuń konto"
 
 #: user/static/js/modules/signup/index.js:7
 msgid "Signup"
-msgstr "Zapisać się"
+msgstr "Rejestracja"
 
 #: user/static/js/modules/signup/index.js:13
 msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."

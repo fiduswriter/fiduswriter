@@ -26,9 +26,13 @@ export const setInlineReferenceState = (tr, state) => tr.setMeta(key, state)
  * (allowed elements per doc part, protected sections) — the same conditions
  * that disable the toolbar citation button.
  */
-function canActivateInlineReference(_state, _$pos, editor) {
+function canActivateInlineReference(editor) {
     // Mirror the template-based restriction check used by the toolbar button.
-    if (editor && elementDisabled(editor, "citation")) {
+    if (
+        editor &&
+        elementDisabled(editor, "citation") &&
+        elementDisabled(editor, "cross_reference")
+    ) {
         return false
     }
     return true
@@ -225,7 +229,9 @@ function createInlineReferenceWidget(editor, pluginState, key) {
             return
         }
         const rawText = input.textContent || ""
-        const isXrefMode = rawText.startsWith("@#")
+        const citDisabled = elementDisabled(editor, "citation")
+        const xrefDisabled = elementDisabled(editor, "cross_reference")
+        const isXrefMode = !xrefDisabled && rawText.startsWith("@#")
         let citationMatches, xrefMatches, activeCitIndex
         if (isXrefMode) {
             // Cross-reference mode: only show cross-refs, filter by id/text
@@ -236,8 +242,12 @@ function createInlineReferenceWidget(editor, pluginState, key) {
             const cursorPos = getInputCursorPos(input)
             activeCitIndex = getActiveRefIndex(rawText, cursorPos)
             const query = getActiveQuery(rawText, activeCitIndex)
-            citationMatches = filterBibliography(currentState.bibList, query)
-            xrefMatches = filterCrossRefs(crossRefList, query)
+            citationMatches = citDisabled
+                ? []
+                : filterBibliography(currentState.bibList, query)
+            xrefMatches = xrefDisabled
+                ? []
+                : filterCrossRefs(crossRefList, query)
         }
         const totalMatches = citationMatches.length + xrefMatches.length
         const selectedIndex = currentState.listActive
@@ -417,7 +427,13 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                 {
                     const currentState = key.getState(view.state)
                     const rawText = input.textContent || ""
-                    const isXrefMode = rawText.startsWith("@#")
+                    const citDisabledEnter = elementDisabled(editor, "citation")
+                    const xrefDisabledEnter = elementDisabled(
+                        editor,
+                        "cross_reference"
+                    )
+                    const isXrefMode =
+                        !xrefDisabledEnter && rawText.startsWith("@#")
                     let citMatches, xrefMatchesEnter, activeIndexEnter
                     if (isXrefMode) {
                         citMatches = []
@@ -430,11 +446,12 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                         const cursorPos = getInputCursorPos(input)
                         activeIndexEnter = getActiveRefIndex(rawText, cursorPos)
                         const query = getActiveQuery(rawText, activeIndexEnter)
-                        citMatches = filterBibliography(
-                            currentState.bibList,
-                            query
-                        )
-                        xrefMatchesEnter = filterCrossRefs(crossRefList, query)
+                        citMatches = citDisabledEnter
+                            ? []
+                            : filterBibliography(currentState.bibList, query)
+                        xrefMatchesEnter = xrefDisabledEnter
+                            ? []
+                            : filterCrossRefs(crossRefList, query)
                     }
                     const totalEnter =
                         citMatches.length + xrefMatchesEnter.length
@@ -711,7 +728,10 @@ export const inlineReferencePlugin = options => {
                 }
                 const query = oldPluginState.query
                 // Cross-reference mode: query starts with '@#'
-                if (query.startsWith("@#")) {
+                if (
+                    query.startsWith("@#") &&
+                    !elementDisabled(editor, "cross_reference")
+                ) {
                     const xrefId = query.slice(2)
                     const crossRefList = buildCrossRefList(editor)
                     const target = crossRefList.find(t => t.id === xrefId)
@@ -749,11 +769,9 @@ export const inlineReferencePlugin = options => {
                         return tr.setMeta(key, {action: "deactivate"})
                     }
                 }
-                const parsed = parseCitationText(
-                    query,
-                    oldPluginState.bibList,
-                    bibDB
-                )
+                const parsed = !elementDisabled(editor, "citation")
+                    ? parseCitationText(query, oldPluginState.bibList, bibDB)
+                    : null
                 if (!parsed) {
                     if (oldPluginState.isEdit) {
                         const node = newState.doc.nodeAt(
@@ -948,7 +966,10 @@ export const inlineReferencePlugin = options => {
                 ) {
                     const query = oldPluginState.query
                     // Cross-reference mode
-                    if (query.startsWith("@#")) {
+                    if (
+                        query.startsWith("@#") &&
+                        !elementDisabled(editor, "cross_reference")
+                    ) {
                         const xrefId = query.slice(2)
                         if (xrefId && oldPluginState.isEdit) {
                             const crossRefList = buildCrossRefList(editor)
@@ -990,11 +1011,13 @@ export const inlineReferencePlugin = options => {
                             })
                         }
                     }
-                    const parsed = parseCitationText(
-                        query,
-                        oldPluginState.bibList,
-                        bibDB
-                    )
+                    const parsed = !elementDisabled(editor, "citation")
+                        ? parseCitationText(
+                              query,
+                              oldPluginState.bibList,
+                              bibDB
+                          )
+                        : null
                     if (parsed) {
                         const citationNode =
                             newState.schema.nodes.citation.create({
@@ -1076,7 +1099,7 @@ export const inlineReferencePlugin = options => {
                 const tr = trs.find(tr => tr.docChanged)
                 if (tr) {
                     const $pos = newState.selection.$head
-                    if (canActivateInlineReference(newState, $pos, editor)) {
+                    if (canActivateInlineReference(editor)) {
                         const beforeText = newState.doc.textBetween(
                             Math.max(0, $pos.pos - 3),
                             $pos.pos,
@@ -1277,9 +1300,7 @@ export const inlineReferencePlugin = options => {
                 if (!pluginState?.active) {
                     if (event.key === "@") {
                         const $pos = view.state.selection.$head
-                        if (
-                            canActivateInlineReference(view.state, $pos, editor)
-                        ) {
+                        if (canActivateInlineReference(editor)) {
                             const beforeText = view.state.doc.textBetween(
                                 Math.max(0, $pos.pos - 1),
                                 $pos.pos,

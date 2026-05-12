@@ -146,7 +146,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
         case 3.4: // Fidus Writer 3.10
             doc = convertDocV34(doc)
             break
-        case 3.5: // Fidus Writer 3.12
+        case 3.5: // Fidus Writer 4.0
             break
     }
     return doc

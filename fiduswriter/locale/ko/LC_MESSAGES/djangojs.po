@@ -4137,7 +4137,7 @@ msgstr "콘텐츠 감지로 붙여넣기"
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:22
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:30
 msgid "Paste without content detection"
-msgstr "내용 감지 없이 ​​붙여넣기"
+msgstr "내용 감지 없이 붙여넣기"
 
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:40
 msgid "Bold"

@@ -299,14 +299,10 @@ export class Profile {
             this.dom.querySelector("#inline-references").checked
         const inlineMath = this.dom.querySelector("#inline-math").checked
         return post("/api/user/save/", {
-            form_data: {
-                user: {
-                    username: this.dom.querySelector("#username").value,
-                    first_name: this.dom.querySelector("#first_name").value,
-                    last_name: this.dom.querySelector("#last_name").value,
-                    language: newLang
-                }
-            }
+            username: this.dom.querySelector("#username").value,
+            first_name: this.dom.querySelector("#first_name").value,
+            last_name: this.dom.querySelector("#last_name").value,
+            language: newLang
         })
             .catch(() =>
                 addAlert("error", gettext("Could not save profile data"))

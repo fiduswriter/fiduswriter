@@ -274,22 +274,22 @@ def save_profile(request):
     Save user profile information
     """
     response = {}
-    form_data = request.JSON["form_data"]
     User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
-    user_form = UserForm(form_data["user"], instance=user_object)
+    user_form = UserForm(request.JSON, instance=user_object)
+    print(user_form.is_valid())
+    user_form.save()
     if user_form.is_valid():
-        user_form.save()
+        # user_form.save()
         # Set the language if it has been updated
         if (
-            "language" in form_data["user"]
-            and user_object.language != form_data["user"]["language"]
+            "language" in request.JSON
+            and user_object.language != request.JSON["language"]
         ):
             user_object.language = (
-                form_data["user"]["language"]
-                if form_data["user"]["language"]
-                else None
+                request.JSON["language"] if request.JSON["language"] else None
             )
+            print(user_object.language)
             user_object.save(update_fields=["language"])
             # Update session language
             request.session["django_language"] = user_object.language

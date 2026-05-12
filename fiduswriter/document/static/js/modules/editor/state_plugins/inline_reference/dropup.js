@@ -69,7 +69,10 @@ export function createInlineReferenceDropUp(
                 if (combinedIndex === selectedIndex) {
                     li.classList.add("selected")
                 }
-                li.innerHTML = `<span class="inline-reference-drop-up-xref-text">${escapeText(target.text)}</span>`
+                li.innerHTML = `
+                    <span class="citation-drop-up-key">#${escapeText(target.id)}</span>
+                    <span class="citation-drop-up-meta">${escapeText(target.text)}</span>
+                `
                 li.addEventListener("mousedown", event => {
                     event.preventDefault()
                     event.stopPropagation()
@@ -189,5 +192,11 @@ export function filterCrossRefs(targets, query) {
         return targets.slice(0, 50)
     }
     const lq = query.toLowerCase()
-    return targets.filter(t => t.text.toLowerCase().includes(lq)).slice(0, 50)
+    return targets
+        .filter(
+            t =>
+                t.text.toLowerCase().includes(lq) ||
+                t.id.toLowerCase().includes(lq)
+        )
+        .slice(0, 50)
 }

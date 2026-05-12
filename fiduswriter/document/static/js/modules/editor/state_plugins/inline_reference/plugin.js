@@ -220,11 +220,21 @@ function createInlineReferenceWidget(editor, pluginState, key) {
         if (!currentState?.active) {
             return
         }
-        const cursorPos = getInputCursorPos(input)
-        const activeIndex = getActiveRefIndex(input.textContent, cursorPos)
-        const query = getActiveQuery(input.textContent, activeIndex)
-        const citationMatches = filterBibliography(currentState.bibList, query)
-        const xrefMatches = filterCrossRefs(crossRefList, query)
+        const rawText = input.textContent || ""
+        const isXrefMode = rawText.startsWith("@#")
+        let citationMatches, xrefMatches, activeCitIndex
+        if (isXrefMode) {
+            // Cross-reference mode: only show cross-refs, filter by id/text
+            citationMatches = []
+            xrefMatches = filterCrossRefs(crossRefList, rawText.slice(2))
+            activeCitIndex = -1
+        } else {
+            const cursorPos = getInputCursorPos(input)
+            activeCitIndex = getActiveRefIndex(rawText, cursorPos)
+            const query = getActiveQuery(rawText, activeCitIndex)
+            citationMatches = filterBibliography(currentState.bibList, query)
+            xrefMatches = filterCrossRefs(crossRefList, query)
+        }
         const totalMatches = citationMatches.length + xrefMatches.length
         const selectedIndex = currentState.listActive
             ? Math.max(
@@ -243,8 +253,8 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                         return
                     }
                     const newText = replaceActiveKey(
-                        input.textContent,
-                        activeIndex,
+                        rawText,
+                        activeCitIndex,
                         entry.entry_key
                     )
                     input.textContent = newText
@@ -262,17 +272,20 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                     )
                     renderDropUp()
                 } else {
+                    // Cross-reference selected: fill input with @#id, stay open
                     const target = xrefMatches[idx - citationMatches.length]
                     if (!target) {
                         return
                     }
+                    input.textContent = `@#${target.id}`
+                    setInputCursorPos(input, input.textContent.length)
                     view.dispatch(
                         view.state.tr.setMeta(key, {
-                            action: "insertCrossRef",
-                            id: target.id,
-                            title: target.text
+                            action: "updateQuery",
+                            query: input.textContent
                         })
                     )
+                    renderDropUp()
                 }
             },
             xrefMatches
@@ -386,20 +399,26 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                 event.preventDefault()
                 {
                     const currentState = key.getState(view.state)
-                    const cursorPos = getInputCursorPos(input)
-                    const activeIndex = getActiveRefIndex(
-                        input.textContent,
-                        cursorPos
-                    )
-                    const query = getActiveQuery(input.textContent, activeIndex)
-                    const citMatches = filterBibliography(
-                        currentState.bibList,
-                        query
-                    )
-                    const xrefMatchesEnter = filterCrossRefs(
-                        crossRefList,
-                        query
-                    )
+                    const rawText = input.textContent || ""
+                    const isXrefMode = rawText.startsWith("@#")
+                    let citMatches, xrefMatchesEnter, activeIndexEnter
+                    if (isXrefMode) {
+                        citMatches = []
+                        xrefMatchesEnter = filterCrossRefs(
+                            crossRefList,
+                            rawText.slice(2)
+                        )
+                        activeIndexEnter = -1
+                    } else {
+                        const cursorPos = getInputCursorPos(input)
+                        activeIndexEnter = getActiveRefIndex(rawText, cursorPos)
+                        const query = getActiveQuery(rawText, activeIndexEnter)
+                        citMatches = filterBibliography(
+                            currentState.bibList,
+                            query
+                        )
+                        xrefMatchesEnter = filterCrossRefs(crossRefList, query)
+                    }
                     const totalEnter =
                         citMatches.length + xrefMatchesEnter.length
                     const selectedIndex = Math.max(
@@ -415,8 +434,8 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                             // Insert selected citation key into input
                             const entry = citMatches[selectedIndex]
                             const newText = replaceActiveKey(
-                                input.textContent,
-                                activeIndex,
+                                rawText,
+                                activeIndexEnter,
                                 entry.entry_key
                             )
                             input.textContent = newText
@@ -434,19 +453,20 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                             )
                             renderDropUp()
                         } else {
-                            // Insert selected cross-reference immediately
+                            // Cross-reference selected: fill input with @#id, stay open
                             const target =
                                 xrefMatchesEnter[
                                     selectedIndex - citMatches.length
                                 ]
+                            input.textContent = `@#${target.id}`
+                            setInputCursorPos(input, input.textContent.length)
                             view.dispatch(
                                 view.state.tr.setMeta(key, {
-                                    action: "insertCrossRef",
-                                    id: target.id,
-                                    title: target.text
+                                    action: "updateQuery",
+                                    query: input.textContent
                                 })
                             )
-                            view.focus()
+                            renderDropUp()
                         }
                     } else {
                         // Not in list mode or no matches: commit what we have
@@ -526,10 +546,9 @@ function createInlineReferenceWidget(editor, pluginState, key) {
 export const inlineReferencePlugin = options => {
     const editor = options.editor
     const bibDB = editor.mod.db.bibDB
-    console.log({bibDB: bibDB})
 
     const enabled =
-        editor.app.config.user?.preferences?.inline_citations === true &&
+        editor.app.config.user?.preferences?.inline_references === true &&
         !READ_ONLY_ROLES.includes(editor.docInfo.access_rights) &&
         !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
 
@@ -661,8 +680,48 @@ export const inlineReferencePlugin = options => {
                 if (!oldPluginState.active) {
                     return null
                 }
+                const query = oldPluginState.query
+                // Cross-reference mode: query starts with '@#'
+                if (query.startsWith("@#")) {
+                    const xrefId = query.slice(2)
+                    const crossRefList = buildCrossRefList(editor)
+                    const target = crossRefList.find(t => t.id === xrefId)
+                    const crossRefNode =
+                        newState.schema.nodes.cross_reference.create({
+                            id: xrefId || false,
+                            title: target ? target.text : null
+                        })
+                    if (oldPluginState.isEdit) {
+                        const existingNode = newState.doc.nodeAt(
+                            oldPluginState.referenceNodePos
+                        )
+                        const tr = newState.tr.replaceWith(
+                            oldPluginState.referenceNodePos,
+                            oldPluginState.referenceNodePos +
+                                (existingNode?.nodeSize || 1),
+                            crossRefNode
+                        )
+                        tr.setSelection(
+                            TextSelection.create(
+                                tr.doc,
+                                oldPluginState.referenceNodePos +
+                                    crossRefNode.nodeSize
+                            )
+                        )
+                        return tr.setMeta(key, {action: "deactivate"})
+                    } else {
+                        const tr = newState.tr.insert(
+                            oldPluginState.from,
+                            crossRefNode
+                        )
+                        const newPos =
+                            oldPluginState.from + crossRefNode.nodeSize
+                        tr.setSelection(TextSelection.create(tr.doc, newPos))
+                        return tr.setMeta(key, {action: "deactivate"})
+                    }
+                }
                 const parsed = parseCitationText(
-                    oldPluginState.query,
+                    query,
                     oldPluginState.bibList,
                     bibDB
                 )
@@ -681,11 +740,10 @@ export const inlineReferencePlugin = options => {
                     }
                     // Invalid reference text: insert as plain text with caret after
                     const tr = newState.tr.insertText(
-                        oldPluginState.query,
+                        query,
                         oldPluginState.from
                     )
-                    const newPos =
-                        oldPluginState.from + oldPluginState.query.length
+                    const newPos = oldPluginState.from + query.length
                     tr.setSelection(TextSelection.create(tr.doc, newPos))
                     return tr.setMeta(key, {action: "deactivate"})
                 }
@@ -694,17 +752,17 @@ export const inlineReferencePlugin = options => {
                     references: parsed.references
                 })
                 if (oldPluginState.isEdit) {
-                    const tr = newState.tr.setNodeMarkup(
-                        oldPluginState.referenceNodePos,
-                        null,
-                        {
-                            format: parsed.format,
-                            references: parsed.references
-                        }
+                    const existingNode = newState.doc.nodeAt(
+                        oldPluginState.referenceNodePos
                     )
-                    const node = tr.doc.nodeAt(oldPluginState.referenceNodePos)
+                    const tr = newState.tr.replaceWith(
+                        oldPluginState.referenceNodePos,
+                        oldPluginState.referenceNodePos +
+                            (existingNode?.nodeSize || 1),
+                        citationNode
+                    )
                     const newPos =
-                        oldPluginState.referenceNodePos + (node?.nodeSize || 1)
+                        oldPluginState.referenceNodePos + citationNode.nodeSize
                     tr.setSelection(TextSelection.create(tr.doc, newPos))
                     return tr.setMeta(key, {action: "deactivate"})
                 } else {
@@ -835,8 +893,52 @@ export const inlineReferencePlugin = options => {
                     (newState.selection.from !== oldPluginState.from ||
                         newState.selection.to !== oldPluginState.from)
                 ) {
+                    const query = oldPluginState.query
+                    // Cross-reference mode
+                    if (query.startsWith("@#")) {
+                        const xrefId = query.slice(2)
+                        if (xrefId && oldPluginState.isEdit) {
+                            const crossRefList = buildCrossRefList(editor)
+                            const target = crossRefList.find(
+                                t => t.id === xrefId
+                            )
+                            const crossRefNode =
+                                newState.schema.nodes.cross_reference.create({
+                                    id: xrefId,
+                                    title: target ? target.text : null
+                                })
+                            const existingNode = newState.doc.nodeAt(
+                                oldPluginState.referenceNodePos
+                            )
+                            return newState.tr
+                                .replaceWith(
+                                    oldPluginState.referenceNodePos,
+                                    oldPluginState.referenceNodePos +
+                                        (existingNode?.nodeSize || 1),
+                                    crossRefNode
+                                )
+                                .setMeta(key, {action: "deactivate"})
+                        } else if (xrefId && !oldPluginState.isEdit) {
+                            const crossRefList = buildCrossRefList(editor)
+                            const target = crossRefList.find(
+                                t => t.id === xrefId
+                            )
+                            const crossRefNode =
+                                newState.schema.nodes.cross_reference.create({
+                                    id: xrefId,
+                                    title: target ? target.text : null
+                                })
+                            return newState.tr
+                                .insert(oldPluginState.from, crossRefNode)
+                                .setMeta(key, {action: "deactivate"})
+                        } else {
+                            return newState.tr.setMeta(key, {
+                                action: "deactivate"
+                            })
+                        }
+                    }
                     const parsed = parseCitationText(
-                        oldPluginState.query,
+                        query,
                         oldPluginState.bibList,
                         bibDB
                     )
@@ -847,14 +949,15 @@ export const inlineReferencePlugin = options => {
                                 references: parsed.references
                             })
                         if (oldPluginState.isEdit) {
+                            const existingNode = newState.doc.nodeAt(
+                                oldPluginState.referenceNodePos
+                            )
                             return newState.tr
-                                .setNodeMarkup(
+                                .replaceWith(
                                     oldPluginState.referenceNodePos,
-                                    null,
-                                    {
-                                        format: parsed.format,
-                                        references: parsed.references
-                                    }
+                                    oldPluginState.referenceNodePos +
+                                        (existingNode?.nodeSize || 1),
+                                    citationNode
                                 )
                                 .setMeta(key, {action: "deactivate"})
                         } else {
@@ -865,11 +968,10 @@ export const inlineReferencePlugin = options => {
                     } else if (!oldPluginState.isEdit) {
                         // Invalid reference text on blur/selection-move: insert as plain text
                         const tr = newState.tr.insertText(
-                            oldPluginState.query,
+                            query,
                             oldPluginState.from
                         )
-                        const newPos =
-                            oldPluginState.from + oldPluginState.query.length
+                        const newPos = oldPluginState.from + query.length
                         tr.setSelection(TextSelection.create(tr.doc, newPos))
                         return tr.setMeta(key, {action: "deactivate"})
                     } else {
@@ -896,6 +998,23 @@ export const inlineReferencePlugin = options => {
                         isEdit: true,
                         referenceNodePos: from,
                         bibList: bibList
+                    })
+                }
+
+                // Check if a cross_reference node is selected for re-editing (keyboard)
+                if (
+                    selection instanceof NodeSelection &&
+                    selection.node.type.name === "cross_reference"
+                ) {
+                    const crossNode = selection.node
+                    const from = selection.from
+                    return newState.tr.setMeta(key, {
+                        action: "activate",
+                        from: from,
+                        query: `@#${crossNode.attrs.id || ""}`,
+                        isEdit: true,
+                        referenceNodePos: from,
+                        bibList: buildBibliographyList(editor)
                     })
                 }
 
@@ -957,6 +1076,24 @@ export const inlineReferencePlugin = options => {
                     _view.dispatch(tr)
                     return true
                 }
+                if (node.type.name === "cross_reference") {
+                    const tr = _view.state.tr.setSelection(
+                        TextSelection.create(
+                            _view.state.doc,
+                            nodePos + node.nodeSize
+                        )
+                    )
+                    tr.setMeta(key, {
+                        action: "activate",
+                        from: nodePos,
+                        query: `@#${node.attrs.id || ""}`,
+                        isEdit: true,
+                        referenceNodePos: nodePos,
+                        bibList: buildBibliographyList(editor)
+                    })
+                    _view.dispatch(tr)
+                    return true
+                }
                 return false
             },
             handleDOMEvents: {
@@ -967,30 +1104,47 @@ export const inlineReferencePlugin = options => {
                     if (event.button !== 0) {
                         return false
                     }
-                    const target = event.target.closest(".citation")
+                    const citTarget = event.target.closest(".citation")
+                    const xrefTarget =
+                        !citTarget && event.target.closest(".cross-reference")
+                    const target = citTarget || xrefTarget
                     if (!target) {
                         return false
                     }
                     let pos = view.posAtDOM(target, 0)
                     let node = view.state.doc.nodeAt(pos)
-                    if (!node || node.type.name !== "citation") {
+                    if (
+                        !node ||
+                        (node.type.name !== "citation" &&
+                            node.type.name !== "cross_reference")
+                    ) {
                         return false
                     }
                     const pluginState = key.getState(view.state)
                     if (pluginState?.active) {
-                        // Commit current widget first, then activate new citation
+                        // Commit current widget first
                         const commitTr = view.state.tr.setMeta(key, {
                             action: "commit"
                         })
                         view.dispatch(commitTr)
                         pos = commitTr.mapping.map(pos)
                         node = view.state.doc.nodeAt(pos)
-                        if (!node || node.type.name !== "citation") {
+                        if (
+                            !node ||
+                            (node.type.name !== "citation" &&
+                                node.type.name !== "cross_reference")
+                        ) {
                             return false
                         }
                     }
-                    const bibList = buildBibliographyList(editor)
-                    const text = citationToText(node, bibList)
+                    let query, bibList
+                    if (node.type.name === "citation") {
+                        bibList = buildBibliographyList(editor)
+                        query = citationToText(node, bibList)
+                    } else {
+                        bibList = buildBibliographyList(editor)
+                        query = `@#${node.attrs.id || ""}`
+                    }
                     const tr = view.state.tr.setSelection(
                         TextSelection.create(
                             view.state.doc,
@@ -1000,10 +1154,10 @@ export const inlineReferencePlugin = options => {
                     tr.setMeta(key, {
                         action: "activate",
                         from: pos,
-                        query: text,
+                        query,
                         isEdit: true,
                         referenceNodePos: pos,
-                        bibList: bibList
+                        bibList
                     })
                     view.dispatch(tr)
                     event.stopPropagation()
@@ -1094,7 +1248,7 @@ export const inlineReferencePlugin = options => {
                             }
                         }
                     }
-                    // ArrowRight into citation from the left
+                    // ArrowRight into citation or cross_reference from the left
                     if (event.key === "ArrowRight") {
                         const sel = view.state.selection
                         if (sel.empty) {
@@ -1121,9 +1275,28 @@ export const inlineReferencePlugin = options => {
                                 )
                                 return true
                             }
+                            if (
+                                nodeAfter &&
+                                nodeAfter.type.name === "cross_reference"
+                            ) {
+                                event.preventDefault()
+                                const from = $pos.pos
+                                view.dispatch(
+                                    view.state.tr.setMeta(key, {
+                                        action: "activate",
+                                        from: from,
+                                        query: `@#${nodeAfter.attrs.id || ""}`,
+                                        isEdit: true,
+                                        referenceNodePos: from,
+                                        bibList: buildBibliographyList(editor),
+                                        cursorAtStart: true
+                                    })
+                                )
+                                return true
+                            }
                         }
                     }
-                    // ArrowLeft into citation from the right
+                    // ArrowLeft into citation or cross_reference from the right
                     if (event.key === "ArrowLeft") {
                         const sel = view.state.selection
                         if (sel.empty) {
@@ -1145,6 +1318,25 @@ export const inlineReferencePlugin = options => {
                                         isEdit: true,
                                         referenceNodePos: from,
                                         bibList: bibList,
+                                        cursorAtStart: false
+                                    })
+                                )
+                                return true
+                            }
+                            if (
+                                nodeBefore &&
+                                nodeBefore.type.name === "cross_reference"
+                            ) {
+                                event.preventDefault()
+                                const from = $pos.pos - nodeBefore.nodeSize
+                                view.dispatch(
+                                    view.state.tr.setMeta(key, {
+                                        action: "activate",
+                                        from: from,
+                                        query: `@#${nodeBefore.attrs.id || ""}`,
+                                        isEdit: true,
+                                        referenceNodePos: from,
+                                        bibList: buildBibliographyList(editor),
                                         cursorAtStart: false
                                     })
                                 )

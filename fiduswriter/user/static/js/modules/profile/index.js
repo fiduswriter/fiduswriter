@@ -295,8 +295,8 @@ export class Profile {
     save() {
         activateWait()
         const newLang = this.dom.querySelector("#language").value
-        const inlineCitations =
-            this.dom.querySelector("#inline-citations").checked
+        const inlineReferences =
+            this.dom.querySelector("#inline-references").checked
         return post("/api/user/save/", {
             form_data: {
                 user: {
@@ -312,7 +312,7 @@ export class Profile {
             )
             .then(() =>
                 post("/api/user/preferences/update/", {
-                    inline_citations: inlineCitations
+                    inline_references: inlineReferences
                 })
             )
             .catch(() =>

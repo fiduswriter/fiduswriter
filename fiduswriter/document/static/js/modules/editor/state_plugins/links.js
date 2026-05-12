@@ -10,7 +10,7 @@ import {
     randomTableId
 } from "../../schema/common"
 import {CATS} from "../../schema/i18n"
-import {LinkDialog} from "../dialogs"
+import {CitationDialog, LinkDialog} from "../dialogs"
 
 const key = new PluginKey("links")
 
@@ -157,8 +157,32 @@ export const linksPlugin = options => {
     }
 
     function getCrossReference(state) {
+        // When inline_references is enabled the inline reference editor
+        // handles cross-references; don't show the links dropup for them.
+        if (
+            options.editor?.app?.config?.user?.preferences
+                ?.inline_references === true
+        ) {
+            return undefined
+        }
         return state.selection instanceof NodeSelection
             ? state.selection.node.type.name == "cross_reference"
+                ? state.selection.node
+                : undefined
+            : undefined
+    }
+
+    function getCitation(state) {
+        // Only surface a citation in the links dropup when inline_references
+        // is disabled (otherwise the inline reference editor handles it).
+        if (
+            options.editor?.app?.config?.user?.preferences
+                ?.inline_references === true
+        ) {
+            return undefined
+        }
+        return state.selection instanceof NodeSelection
+            ? state.selection.node.type.name === "citation"
                 ? state.selection.node
                 : undefined
             : undefined
@@ -169,12 +193,8 @@ export const linksPlugin = options => {
         const currentMarks = [],
             linkMark = $head.marks().find(mark => mark.type.name === "link"),
             anchorMark = $head.marks().find(mark => mark.type.name === "anchor")
-        const crossRef =
-            state.selection instanceof NodeSelection
-                ? state.selection.node.type.name == "cross_reference"
-                    ? state.selection.node
-                    : undefined
-                : undefined
+        const crossRef = getCrossReference(state)
+        const citation = getCitation(state)
 
         if (linkMark) {
             currentMarks.push(linkMark)
@@ -185,14 +205,17 @@ export const linksPlugin = options => {
         if (crossRef) {
             currentMarks.push(crossRef)
         }
+        if (citation) {
+            currentMarks.push(citation)
+        }
         if (!currentMarks.length) {
             return DecorationSet.empty
         }
 
         let startPos = $head.start() // position of block start.
-        if (crossRef) {
-            // For cross ref , take the end pos of the node
-            startPos = state.selection.from + crossRef.nodeSize
+        if (crossRef || citation) {
+            // For inline nodes, place dropup after the node
+            startPos = state.selection.from + (crossRef || citation).nodeSize
         } else {
             let index = $head.index()
             while (
@@ -207,12 +230,24 @@ export const linksPlugin = options => {
                 startPos += $head.parent.child(i).nodeSize
             }
         }
-        const dom = createDropUp(linkMark, anchorMark, crossRef, $head),
+        const dom = createDropUp(
+                linkMark,
+                anchorMark,
+                crossRef,
+                $head,
+                citation
+            ),
             deco = Decoration.widget(startPos, dom)
         return DecorationSet.create(state.doc, [deco])
     }
 
-    function createDropUp(linkMark, anchorMark, crossRef, $head) {
+    function createDropUp(
+        linkMark,
+        anchorMark,
+        crossRef,
+        $head,
+        citation = null
+    ) {
         const dropUp = document.createElement("span"),
             editor = options.editor,
             writeAccess =
@@ -239,6 +274,10 @@ export const linksPlugin = options => {
         if (anchorMark) {
             anchorHref =
                 window.location.href.split("#")[0] + "#" + anchorMark.attrs.id
+            requiredPx += 92
+        }
+
+        if (citation) {
             requiredPx += 92
         }
 
@@ -318,6 +357,29 @@ ${
                                 ${gettext("Edit")}
                             </li>
                             <li class="remove-crossRef" title="${gettext("Remove cross reference")}">
+                                ${gettext("Remove")}
+                            </li>
+                            </ul>`
+                                : ""
+                        }
+                    `
+        : ""
+}
+${
+    citation
+        ? `<div class="drop-up-head" ${editAccess ? "" : 'style="border-radius:6px;"'}>
+                        <div class="link-title">${gettext("Citation")}</div>
+                        <div class="link-href">
+                        <span>${citation.attrs.format}</span>
+                        </div>
+                    </div>
+                        ${
+                            editAccess
+                                ? `<ul class="drop-up-options">
+                            <li class="edit-citation" title="${gettext("Edit citation")}">
+                                ${gettext("Edit")}
+                            </li>
+                            <li class="remove-citation" title="${gettext("Remove citation")}">
                                 ${gettext("Remove")}
                             </li>
                             </ul>`
@@ -414,6 +476,27 @@ ${
                 )
             })
         }
+
+        const editCitation = dropUp.querySelector(".edit-citation")
+        if (editCitation) {
+            editCitation.addEventListener("mousedown", event => {
+                event.preventDefault()
+                event.stopImmediatePropagation()
+                const dialog = new CitationDialog(editor)
+                dialog.init()
+            })
+        }
+
+        const removeCitation = dropUp.querySelector(".remove-citation")
+        if (removeCitation) {
+            removeCitation.addEventListener("mousedown", event => {
+                event.preventDefault()
+                event.stopImmediatePropagation()
+                editor.view.dispatch(
+                    editor.view.state.tr.delete($head.pos - 1, $head.pos)
+                )
+            })
+        }
         return dropUp
     }
 
@@ -424,20 +507,29 @@ ${
                 return {
                     url: window.location.href,
                     decos: DecorationSet.empty,
-                    linkMark: false
+                    linkMark: false,
+                    citation: undefined
                 }
             },
             apply(tr, _prev, oldState, state) {
-                let {url, decos, linkMark, anchorMark, crossReference} =
-                    this.getState(oldState)
+                let {
+                    url,
+                    decos,
+                    linkMark,
+                    anchorMark,
+                    crossReference,
+                    citation
+                } = this.getState(oldState)
                 url = getUrl(state, oldState, url)
                 const newLinkMark = getLinkMark(state)
                 const newAnchorMark = getAnchorMark(state)
                 const newCrossReference = getCrossReference(state)
+                const newCitation = getCitation(state)
                 if (
                     newLinkMark === linkMark &&
                     newAnchorMark === anchorMark &&
-                    newCrossReference === crossReference
+                    newCrossReference === crossReference &&
+                    newCitation === citation
                 ) {
                     decos = decos.map(tr.mapping, tr.doc)
                 } else {
@@ -445,6 +537,7 @@ ${
                     linkMark = newLinkMark
                     anchorMark = newAnchorMark
                     crossReference = newCrossReference
+                    citation = newCitation
                 }
                 if (!tr.getMeta("remote")) {
                     // We look for changes to figures or headings.
@@ -517,7 +610,8 @@ ${
                     decos,
                     linkMark,
                     anchorMark,
-                    crossReference
+                    crossReference,
+                    citation
                 }
             }
         },

@@ -4197,10 +4197,9 @@ msgstr ""
 "pagina."
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:245
-#, fuzzy
 #| msgid "Equation"
 msgid "Edit equation"
-msgstr "Equazione"
+msgstr "Modifica l'equazione"
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:248
 #| msgid "Remove link"

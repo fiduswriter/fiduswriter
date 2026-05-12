@@ -4192,10 +4192,9 @@ msgid "Edit equation"
 msgstr "Редактиране на уравнението"
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:248
-#, fuzzy
 #| msgid "Remove link"
 msgid "Remove equation"
-msgstr "Премахване на връзката"
+msgstr "Премахване на уравнението"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:28
 msgid "No matching sources"

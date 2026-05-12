@@ -229,7 +229,8 @@ msgstr "Detentor dos direitos autorais"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder is."
+"If the work is not in the public domain, specify who the copyright holder "
+"is."
 msgstr ""
 "Se a obra não for de domínio público, especifique quem é o detentor dos "
 "direitos autorais."
@@ -264,8 +265,8 @@ msgid ""
 "\"2012-10-15\")."
 msgstr ""
 "Liste todas as licenças sob as quais o trabalho está disponível. Se a "
-"licença for aplicável apenas a partir de uma determinada data, especifique a "
-"data no formato ISO8601 (como \"2012-10-15\")."
+"licença for aplicável apenas a partir de uma determinada data, especifique a"
+" data no formato ISO8601 (como \"2012-10-15\")."
 
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
@@ -473,14 +474,14 @@ msgid "Register New Source"
 msgstr "Cadastrar Nova Fonte"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:386
-#, fuzzy
-#| msgid "A slug can only contain letters, numbers, hyphens and underscores."
+#| msgid ""
+#| "A slug can only contain letters, numbers, hyphens and underscores."
 msgid "Only letters, numbers, hyphens and underscores are allowed."
-msgstr "Um slug só pode conter letras, números, hifens e sublinhados."
+msgstr "Somente letras, números, hifens e sublinhados são permitidos."
 
 #: bibliography/static/js/modules/bibliography/form/index.js:398
 msgid "Warning: this key is already used in your library."
-msgstr ""
+msgstr "Atenção: esta chave já está em uso na sua biblioteca."
 
 #: bibliography/static/js/modules/bibliography/form/index.js:451
 msgid "Error in form, check highlighted values!"
@@ -491,10 +492,9 @@ msgid "Select source type"
 msgstr "Selecione o tipo de fonte"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:28
-#, fuzzy
 #| msgid "Citation"
 msgid "Citation key"
-msgstr "Citação"
+msgstr "Chave de citação"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:33
 msgid "Required Fields"
@@ -511,7 +511,8 @@ msgstr "Categorias"
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:6
 msgid "No bibliography entries could be found in import file."
-msgstr "Nenhuma entrada bibliográfica foi encontrada no arquivo de importação."
+msgstr ""
+"Nenhuma entrada bibliográfica foi encontrada no arquivo de importação."
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:8
 msgid "An error occured while reading a bibliography entry"
@@ -1473,8 +1474,8 @@ msgstr "Revisão rastreada"
 #: document/static/js/modules/documents/access_rights/index.js:158
 msgid "Write with tracked changes, but not see comments and chats of others"
 msgstr ""
-"Escreva com alterações controladas, mas não veja comentários e bate-papos de "
-"outras pessoas"
+"Escreva com alterações controladas, mas não veja comentários e bate-papos de"
+" outras pessoas"
 
 #: document/static/js/modules/documents/access_rights/index.js:234
 #: document/static/js/modules/documents/overview/index.js:767
@@ -1484,8 +1485,8 @@ msgstr "Documento criptografado de ponta a ponta"
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure "
-"channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure"
+" channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "Este documento é criptografado de ponta a ponta. Colaboradores sem senha "
@@ -1843,8 +1844,8 @@ msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
 msgstr ""
-"Documentos criptografados protegem seu conteúdo para que somente pessoas com "
-"senha possam lê-lo."
+"Documentos criptografados protegem seu conteúdo para que somente pessoas com"
+" senha possam lê-lo."
 
 #: document/static/js/modules/documents/overview/index.js:872
 #: document/static/js/modules/documents/overview/index.js:886
@@ -1883,8 +1884,8 @@ msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
 msgstr ""
-"Você deve compartilhar a senha com os colaboradores manualmente (a menos que "
-"eles usem uma senha pessoal)."
+"Você deve compartilhar a senha com os colaboradores manualmente (a menos que"
+" eles usem uma senha pessoal)."
 
 #: document/static/js/modules/documents/overview/index.js:885
 msgid "Regular documents are the default and work well for most users."
@@ -2246,8 +2247,8 @@ msgid ""
 "edits in automatically."
 msgstr ""
 "Você está vendo esta caixa de diálogo de mesclagem porque esteve off-line "
-"por muito tempo e as alterações feitas no documento enquanto você estava off-"
-"line entraram em conflito com as alterações feitas por outros usuários. "
+"por muito tempo e as alterações feitas no documento enquanto você estava "
+"off-line entraram em conflito com as alterações feitas por outros usuários. "
 "Portanto, não foi possível mesclar suas edições automaticamente."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:200
@@ -2267,7 +2268,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am merging?"
+"What if my collaborators continue working on the document while I am "
+"merging?"
 msgstr ""
 "E se meus colaboradores continuarem trabalhando no documento enquanto eu "
 "estiver mesclando?"
@@ -2286,17 +2288,17 @@ msgstr "Por que estou vendo três editores?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It "
-"is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It"
+" is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
 msgstr ""
 "O editor à esquerda mostrará a última versão comum do documento. É mostrado "
 "apenas para referência. O editor do meio é o editor de mesclagem e "
-"inicialmente contém o documento resultante das edições de outros usuários. O "
-"editor à direita é o editor offline e contém o documento resultante de suas "
-"alterações enquanto você estava offline."
+"inicialmente contém o documento resultante das edições de outros usuários. O"
+" editor à direita é o editor offline e contém o documento resultante de suas"
+" alterações enquanto você estava offline."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:221
 msgid "What are the green and red highlights in the editors?"
@@ -2305,10 +2307,10 @@ msgstr "Quais são os destaques verdes e vermelhos nos editores?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The "
-"text marked in green corresponds to the text that was edited (added) by you "
-"or other users. The text marked in red corresponds to text that was deleted "
-"by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The"
+" text marked in green corresponds to the text that was edited (added) by you"
+" or other users. The text marked in red corresponds to text that was deleted"
+" by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2341,12 +2343,12 @@ msgstr ""
 "editor off-line à direita causa uma alteração no editor de mesclagem. Você "
 "pode aceitar uma alteração clicando diretamente no texto destacado. Um menu "
 "suspenso aparecerá e você poderá aceitar ou rejeitar a alteração. Ao clicar "
-"no texto destacado, ele também destaca as alterações que serão aceitas. %"
-"(mergeImage)s Conforme mostrado na imagem acima, pode-se clicar em uma "
+"no texto destacado, ele também destaca as alterações que serão aceitas. "
+"%(mergeImage)s Conforme mostrado na imagem acima, pode-se clicar em uma "
 "alteração destacada e clicar em aceitar a alteração. Ao aceitar uma "
 "alteração, ela será refletida no editor de documentos mesclados no meio. "
-"Rejeitar uma alteração funciona da mesma maneira, exceto que ao rejeitar uma "
-"alteração o destaque da alteração será perdido, com isso a capacidade de "
+"Rejeitar uma alteração funciona da mesma maneira, exceto que ao rejeitar uma"
+" alteração o destaque da alteração será perdido, com isso a capacidade de "
 "aceitar, rejeitar ou copiar uma alteração."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:242
@@ -2400,8 +2402,8 @@ msgstr ""
 "Após a conclusão da mesclagem, você pode clicar no botão 'Mesclagem "
 "concluída' que, por sua vez, moverá suas alterações do editor de mesclagem "
 "central para o editor principal. Observe que se outros usuários fizeram "
-"alterações significativas no documento enquanto você o mesclava, talvez seja "
-"necessário mesclar os documentos novamente."
+"alterações significativas no documento enquanto você o mesclava, talvez seja"
+" necessário mesclar os documentos novamente."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:270
 msgid ""
@@ -2457,12 +2459,12 @@ msgstr "Falha na mesclagem"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please "
-"consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please"
+" consider importing it into a new document."
 msgstr ""
 "Ocorreu um erro durante o processo de mesclagem, por isso não podemos mais "
-"salvar seu trabalho no servidor e, em vez disso, ele será baixado para o seu "
-"computador. Considere importá-lo para um novo documento."
+"salvar seu trabalho no servidor e, em vez disso, ele será baixado para o seu"
+" computador. Considere importá-lo para um novo documento."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
 #: document/static/js/modules/editor/index.js:733
@@ -2485,8 +2487,8 @@ msgid ""
 "The change could not be applied automatically. Please consider using the "
 "copy option to copy the changes."
 msgstr ""
-"A alteração não pôde ser aplicada automaticamente. Considere usar a opção de "
-"cópia para copiar as alterações."
+"A alteração não pôde ser aplicada automaticamente. Considere usar a opção de"
+" cópia para copiar as alterações."
 
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:292
 msgid "Format Change"
@@ -3007,8 +3009,8 @@ msgid ""
 "forget your passphrase, this is the ONLY way to recover your encrypted "
 "documents. We cannot recover it for you."
 msgstr ""
-"Guarde-o em algum lugar seguro (por exemplo, um gerenciador de senhas, cópia "
-"impressa). Se você esquecer sua senha, esta é a ÚNICA maneira de recuperar "
+"Guarde-o em algum lugar seguro (por exemplo, um gerenciador de senhas, cópia"
+" impressa). Se você esquecer sua senha, esta é a ÚNICA maneira de recuperar "
 "seus documentos criptografados. Não podemos recuperá-lo para você."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
@@ -3032,8 +3034,8 @@ msgid ""
 "Enter your recovery key and a new passphrase to regain access to your "
 "encrypted documents."
 msgstr ""
-"Digite sua chave de recuperação e uma nova senha para recuperar o acesso aos "
-"seus documentos criptografados."
+"Digite sua chave de recuperação e uma nova senha para recuperar o acesso aos"
+" seus documentos criptografados."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:365
 msgid "Recovery key"
@@ -3063,8 +3065,8 @@ msgstr "Recuperar criptografia"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption "
-"password."
+"Enter your current passphrase and a new passphrase to change your encryption"
+" password."
 msgstr ""
 "Digite sua senha atual e uma nova senha para alterar sua senha de "
 "criptografia."
@@ -3144,8 +3146,8 @@ msgstr "Ocultar senha"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open "
-"the document in the future."
+"Set a password to encrypt this document. You will need this password to open"
+" the document in the future."
 msgstr ""
 "Defina uma senha para criptografar este documento. Você precisará dessa "
 "senha para abrir o documento no futuro."
@@ -3155,8 +3157,8 @@ msgid ""
 "Tip: Use a passphrase with multiple words, e.g. \"correct-horse-battery-"
 "staple\". This is both secure and easy to remember."
 msgstr ""
-"Dica: Use uma senha com várias palavras, por exemplo. \"grampo de bateria de "
-"cavalo correto\" . Isso é seguro e fácil de lembrar."
+"Dica: Use uma senha com várias palavras, por exemplo. \"grampo de bateria de"
+" cavalo correto\" . Isso é seguro e fácil de lembrar."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:274
 msgid "Confirm password"
@@ -3230,8 +3232,8 @@ msgstr "Link de compartilhamento inválido"
 #: document/static/js/modules/editor/index.js:337
 #: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for "
-"a new link."
+"This share link has expired or is invalid. Please ask the document owner for"
+" a new link."
 msgstr ""
 "Este link de compartilhamento expirou ou é inválido. Por favor, peça ao "
 "proprietário do documento um novo link."
@@ -3253,8 +3255,8 @@ msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
 msgstr ""
-"Seus direitos de acesso foram modificados. Agora você tem acesso de %"
-"(accessRight)s a este documento."
+"Seus direitos de acesso foram modificados. Agora você tem acesso de "
+"%(accessRight)s a este documento."
 
 #: document/static/js/modules/editor/index.js:639
 msgid "Session Expired"
@@ -3288,8 +3290,8 @@ msgid ""
 "your work to the server any longer, and it is downloaded to your computer "
 "instead. Please consider importing it into a new document."
 msgstr ""
-"Seus direitos de acesso foram modificados enquanto você estava off-line, por "
-"isso não podemos mais salvar seu trabalho no servidor e, em vez disso, ele "
+"Seus direitos de acesso foram modificados enquanto você estava off-line, por"
+" isso não podemos mais salvar seu trabalho no servidor e, em vez disso, ele "
 "será baixado para o seu computador. Considere importá-lo para um novo "
 "documento."
 
@@ -3616,8 +3618,8 @@ msgid ""
 "The following users don't have passphrase encryption. Please share the "
 "document password with them directly."
 msgstr ""
-"Os seguintes usuários não possuem criptografia de senha. Compartilhe a senha "
-"do documento diretamente com eles."
+"Os seguintes usuários não possuem criptografia de senha. Compartilhe a senha"
+" do documento diretamente com eles."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:192
 msgid "Sign up / Log in"
@@ -3686,13 +3688,13 @@ msgid ""
 msgstr ""
 "Sua senha pessoal ainda desbloqueará este documento. Uma nova senha "
 "aleatória é gerada automaticamente. Outros usuários da senha a receberão "
-"automaticamente; colaboradores sem senha precisam que ela seja compartilhada "
-"com eles manualmente."
+"automaticamente; colaboradores sem senha precisam que ela seja compartilhada"
+" com eles manualmente."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new "
-"key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new"
+" key automatically."
 msgstr ""
 "Chave de criptografia de documento girada. Outros usuários da senha "
 "receberão a nova chave automaticamente."
@@ -3702,8 +3704,8 @@ msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
 msgstr ""
-"Senha do documento alterada. Lembre-se de compartilhar a nova senha com seus "
-"colaboradores."
+"Senha do documento alterada. Lembre-se de compartilhar a nova senha com seus"
+" colaboradores."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:487
 msgid "The current password is incorrect."
@@ -3761,7 +3763,8 @@ msgstr "BITS"
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr ""
-"Exporte o documento para um arquivo Book Interchange Tag Set BITS versão 2.1."
+"Exporte o documento para um arquivo Book Interchange Tag Set BITS versão "
+"2.1."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:633
 msgid "Pandoc JSON"
@@ -3988,7 +3991,8 @@ msgstr "Remova a imagem que está visualizada"
 
 #: document/static/js/modules/editor/menus/ordered_list/model.js:9
 msgid "Specify the number from which this list is to start counting"
-msgstr "Especifique o número a partir do qual esta lista deve começar a contar"
+msgstr ""
+"Especifique o número a partir do qual esta lista deve começar a contar"
 
 #: document/static/js/modules/editor/menus/selection/model.js:68
 #: document/static/js/modules/editor/state_plugins/links.js:329
@@ -4188,29 +4192,27 @@ msgstr "Não foi possível salvar o documento."
 #: document/static/js/modules/editor/no_collab_save/index.js:205
 msgid "Document has been modified by another user. Please reload the page."
 msgstr ""
-"O documento foi modificado por outro usuário. Por favor, recarregue a página."
+"O documento foi modificado por outro usuário. Por favor, recarregue a "
+"página."
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:245
-#, fuzzy
 #| msgid "Equation"
 msgid "Edit equation"
-msgstr "Equação"
+msgstr "Editar equação"
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:248
-#, fuzzy
 #| msgid "Remove link"
 msgid "Remove equation"
-msgstr "Remover link"
+msgstr "Remover equação"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:28
 msgid "No matching sources"
-msgstr ""
+msgstr "Nenhuma fonte correspondente"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
-#, fuzzy
 #| msgid "Cross reference"
 msgid "Cross-references"
-msgstr "Referência cruzada"
+msgstr "Referências cruzadas"
 
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
@@ -4246,16 +4248,14 @@ msgid "Remove cross reference"
 msgstr "Remover referência cruzada"
 
 #: document/static/js/modules/editor/state_plugins/links.js:386
-#, fuzzy
 #| msgid "Deleted citation"
 msgid "Edit citation"
-msgstr "Citação excluída"
+msgstr "Editar citação"
 
 #: document/static/js/modules/editor/state_plugins/links.js:389
-#, fuzzy
 #| msgid "Deleted citation"
 msgid "Remove citation"
-msgstr "Citação excluída"
+msgstr "Remover citação"
 
 #: document/static/js/modules/editor/tools/key_bindings/index.js:14
 msgid "Keyboard Shortcuts"
@@ -4329,8 +4329,8 @@ msgstr "Procurar"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace "
-"all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace"
+" all'"
 msgstr ""
 "Observe que há correspondência(s) em partes não editáveis ​​do documento. "
 "Essas correspondências não serão substituídas ao usar 'substituir' ou "
@@ -4824,25 +4824,25 @@ msgstr "Confirme o endereço de e-mail e concorde com os termos e condições"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 msgstr ""
-"Confirme que você é o proprietário do e-mail <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Confirme que você é o proprietário do e-mail <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
+"%(username)s, and that you have read and agree to our <a "
+"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
+"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
 msgstr ""
-"Confirme que você é o proprietário do e-mail <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, que se inscreveu no nome de usuário %(username)s e que leu e "
-"concorda com nossos <a href=\"/pages/terms/\" target=\"_blank\">Termos e "
-"Condições</a> e <a href=\"/pages/privacy/\" target=\"_blank\">Política de "
-"Privacidade</a>."
+"Confirme que você é o proprietário do e-mail <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, que se inscreveu no nome de usuário"
+" %(username)s e que leu e concorda com nossos <a href=\"/pages/terms/\" "
+"target=\"_blank\">Termos e Condições</a> e <a href=\"/pages/privacy/\" "
+"target=\"_blank\">Política de Privacidade</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4941,8 +4941,8 @@ msgid ""
 "We have sent an e-mail to your email address for verification. Follow the "
 "link provided to finalize the signup process."
 msgstr ""
-"Enviamos um e-mail para seu endereço de e-mail para verificação. Siga o link "
-"fornecido para finalizar o processo de inscrição."
+"Enviamos um e-mail para seu endereço de e-mail para verificação. Siga o link"
+" fornecido para finalizar o processo de inscrição."
 
 #: user/static/js/modules/login/index.js:216
 #: user/static/js/modules/password_reset/request_email.js:87
@@ -5002,16 +5002,16 @@ msgid ""
 "Forgotten your password? Enter your e-mail address in the form, and we'll "
 "send you an e-mail allowing you to reset it."
 msgstr ""
-"Esqueceu sua senha? Digite seu endereço de e-mail no formulário e enviaremos "
-"um e-mail permitindo que você o redefina."
+"Esqueceu sua senha? Digite seu endereço de e-mail no formulário e enviaremos"
+" um e-mail permitindo que você o redefina."
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a href=\"mailto:%"
-"(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a "
+"href=\"mailto:%(contactEmail)s\">contact us</a>."
 msgstr ""
-"Se você tiver algum problema para redefinir sua senha, <a href=\"mailto:%"
-"(contactEmail)s\">entre em contato conosco</a>."
+"Se você tiver algum problema para redefinir sua senha, <a "
+"href=\"mailto:%(contactEmail)s\">entre em contato conosco</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -5165,10 +5165,9 @@ msgid "Could not save profile data"
 msgstr "Não foi possível salvar os dados do perfil"
 
 #: user/static/js/modules/profile/index.js:317
-#, fuzzy
 #| msgid "Could not save "
 msgid "Could not save preferences"
-msgstr "Não foi possível salvar"
+msgstr "Não foi possível salvar as preferências"
 
 #: user/static/js/modules/profile/templates.js:5
 msgid "Delete the avatar?"
@@ -5195,8 +5194,9 @@ msgid ""
 "Some copies of your files may temporarily be kept in our backup system, but "
 "also these will disappear automatically in due time."
 msgstr ""
-"Algumas cópias dos seus arquivos podem ser mantidas temporariamente em nosso "
-"sistema de backup, mas também desaparecerão automaticamente no devido tempo."
+"Algumas cópias dos seus arquivos podem ser mantidas temporariamente em nosso"
+" sistema de backup, mas também desaparecerão automaticamente no devido "
+"tempo."
 
 #: user/static/js/modules/profile/templates.js:40
 msgid "Enter the new E-mail address"
@@ -5277,40 +5277,42 @@ msgid "Verified"
 msgstr "Verificado"
 
 #: user/static/js/modules/profile/templates.js:220
-#, fuzzy
 #| msgid "Editors"
 msgid "Editor"
-msgstr "Editores"
+msgstr "Editor"
 
 #: user/static/js/modules/profile/templates.js:224
 msgid "Enable inline reference typing (@)"
-msgstr ""
+msgstr "Ativar digitação de referência embutida (@)"
 
 #: user/static/js/modules/profile/templates.js:226
 msgid "Type @ in the editor to insert a citation or cross-reference:"
-msgstr ""
+msgstr "Digite @ no editor para inserir uma citação ou referência cruzada:"
 
 #: user/static/js/modules/profile/templates.js:228
 msgid ""
-"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
-"citation: @@entry_key. Multiple sources: @key1;key2"
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
+" citation: @@entry_key. Multiple sources: @key1;key2"
 msgstr ""
+"Citação: @entry_key – sufixo opcional: @entry_key[prefix][locator]. Citação "
+"textual: @@entry_key. Fontes múltiplas: @key1;key2"
 
 #: user/static/js/modules/profile/templates.js:229
-#, fuzzy
 #| msgid "Cross reference"
 msgid "Cross-reference: @#target-id"
-msgstr "Referência cruzada"
+msgstr "Referência cruzada: @#target-id"
 
 #: user/static/js/modules/profile/templates.js:233
 msgid "Enable inline math typing ($)"
-msgstr ""
+msgstr "Ativar digitação matemática embutida ($)"
 
 #: user/static/js/modules/profile/templates.js:235
 msgid ""
 "Type $ in the editor followed by LaTeX math to insert an equation inline, "
 "e.g. $x^2. Press Enter or Tab to confirm."
 msgstr ""
+"Digite $ no editor seguido de matemática LaTeX para inserir uma equação "
+"embutida, por exemplo. $x^2. Pressione Enter ou Tab para confirmar."
 
 #: user/static/js/modules/profile/templates.js:245
 msgid "Social Account Provider"
@@ -5329,8 +5331,7 @@ msgid "Signup"
 msgstr "Inscrever-se"
 
 #: user/static/js/modules/signup/index.js:13
-msgid ""
-"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
 msgstr "Já tem uma conta? Então <a href=\"/\" title=\"Login\">faça login</a>."
 
 #: user/static/js/modules/signup/index.js:21
@@ -5404,8 +5405,8 @@ msgstr "Desative a autenticação de dois fatores"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce "
-"the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce"
+" the security of your account."
 msgstr ""
 "Tem certeza de que deseja desativar a autenticação de dois fatores? Isso "
 "reduzirá a segurança da sua conta."

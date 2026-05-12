@@ -470,12 +470,10 @@ msgid "Register New Source"
 msgstr "Registrer ny kilde"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:386
-#, fuzzy
 #| msgid ""
 #| "A slug can only contain letters, numbers, hyphens and underscores."
 msgid "Only letters, numbers, hyphens and underscores are allowed."
-msgstr ""
-"En snegle kan bare inneholde bokstaver, tall, bindestreker og understreker."
+msgstr "Bare bokstaver, tall, bindestreker og understrek er tillatt."
 
 #: bibliography/static/js/modules/bibliography/form/index.js:398
 msgid "Warning: this key is already used in your library."

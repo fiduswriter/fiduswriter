@@ -5,6 +5,8 @@ import {
     TextSelection
 } from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
+import {COMMENT_ONLY_ROLES, READ_ONLY_ROLES} from "../.."
+import {elementDisabled} from "../../menus/toolbar/model"
 import {
     buildBibliographyList,
     createCitationDropUp,
@@ -15,8 +17,15 @@ const key = new PluginKey("inlineCitation")
 
 /**
  * Check if citations can be inserted at the given position.
+ * Checks both the ProseMirror schema and document-template restrictions
+ * (allowed elements per doc part, protected sections) — the same conditions
+ * that disable the toolbar citation button.
  */
-function canInsertCitation(state, $pos) {
+function canInsertCitation(state, $pos, editor) {
+    // Mirror the template-based restriction check used by the toolbar button.
+    if (editor && elementDisabled(editor, "citation")) {
+        return false
+    }
     const node = $pos.parent
     const schema = state.schema
     try {
@@ -456,7 +465,9 @@ export const inlineCitationPlugin = options => {
     const editor = options.editor
 
     const enabled =
-        editor.app.config.user?.preferences?.inline_citations === true
+        editor.app.config.user?.preferences?.inline_citations === true &&
+        !READ_ONLY_ROLES.includes(editor.docInfo.access_rights) &&
+        !COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights)
 
     if (!enabled) {
         return new Plugin({
@@ -762,7 +773,7 @@ export const inlineCitationPlugin = options => {
                 const tr = trs.find(tr => tr.docChanged)
                 if (tr) {
                     const $pos = newState.selection.$head
-                    if (canInsertCitation(newState, $pos)) {
+                    if (canInsertCitation(newState, $pos, editor)) {
                         const beforeText = newState.doc.textBetween(
                             Math.max(0, $pos.pos - 3),
                             $pos.pos,
@@ -928,7 +939,7 @@ export const inlineCitationPlugin = options => {
                 if (!pluginState?.active) {
                     if (event.key === "@") {
                         const $pos = view.state.selection.$head
-                        if (canInsertCitation(view.state, $pos)) {
+                        if (canInsertCitation(view.state, $pos, editor)) {
                             const beforeText = view.state.doc.textBetween(
                                 Math.max(0, $pos.pos - 1),
                                 $pos.pos,

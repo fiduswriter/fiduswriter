@@ -69,8 +69,26 @@
     border-bottom: 0 none;
 }
 
+.inline-editor-hint {
+    font-size: 0.8em;
+    color: var(--cs-light-text-secondary, #6e6e6e);
+    margin: 0 0 8px;
+    padding-left: 12px;
+    line-height: 1.5;
+}
+
+ul.inline-editor-hint {
+    padding-left: 24px;
+    list-style: disc;
+    margin-bottom: 12px;
+}
+
 #profile-submit-wrapper {
     margin-top: 36px;
     text-align: right;
     padding-right: 21px;
+}
+
+div.profile-editor-settings {
+    font-size: 1.5em;
 }

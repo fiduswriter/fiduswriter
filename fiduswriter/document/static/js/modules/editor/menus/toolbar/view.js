@@ -45,13 +45,32 @@ export class ToolbarView {
     bindEvents() {
         this.listeners.onclick = event => this.onclick(event)
         document.body.addEventListener("click", this.listeners.onclick)
+        this.listeners.onmousedown = event => this.onmousedown(event)
+        document.body.addEventListener("mousedown", this.listeners.onmousedown)
     }
 
     destroy() {
         document.body.removeEventListener("click", this.listeners.onclick)
+        document.body.removeEventListener(
+            "mousedown",
+            this.listeners.onmousedown
+        )
         this.editor.menu.toolbarViews = this.editor.menu.toolbarViews.filter(
             view => view !== this
         )
+    }
+
+    onmousedown(event) {
+        // When the citation inline editor is active, a toolbar click causes a DOM
+        // selectionchange event that makes ProseMirror deactivate the plugin via
+        // appendTransaction — before the click event fires. Preventing focus
+        // transfer here (standard content-editable toolbar pattern) stops that.
+        if (
+            event.target.closest(".editor-toolbar") &&
+            document.activeElement?.classList.contains("citation-inline-input")
+        ) {
+            event.preventDefault()
+        }
     }
 
     onResize() {

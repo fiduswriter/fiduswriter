@@ -277,6 +277,7 @@ export class BibliographyOverview {
                 <span class="edit-bib fw-link-text fw-searchable" data-id="${id}">
                     ${bibInfo.fields.title?.length ? escapeText(litToText(bibInfo.fields.title)) : gettext("Untitled")}
                 </span>
+                ${bibInfo.entry_key ? `<small class="bib-entry-key">${escapeText(bibInfo.entry_key)}</small>` : ""}
             </span>`, // title
             getBibTypeTitle(bibInfo.bib_type), // sourcetype
             bibauthors ? nameToText(bibauthors) : "", // author

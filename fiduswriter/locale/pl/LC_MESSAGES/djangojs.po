@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer frontend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -74,7 +74,7 @@ msgstr "Pomoc"
 #: document/static/js/modules/editor/menus/headerbar/model.js:191
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:92
 msgid "Close"
-msgstr "Zamknąć"
+msgstr "Zamknij"
 
 #: base/static/js/modules/common/dialog.js:84
 #: document/static/js/modules/documents/overview/index.js:920
@@ -83,28 +83,28 @@ msgstr "Zamknąć"
 #: document/static/js/modules/editor/comments/editors/answer.js:22
 #: document/static/js/modules/editor/comments/editors/comment.js:103
 #: document/static/js/modules/editor/dialogs/templates.js:237
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:219
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:442
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:589
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:220
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:444
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:592
 #: document/static/js/modules/editor/e2ee/password-dialog.js:183
 msgid "Cancel"
-msgstr "Anulować"
+msgstr "Anuluj"
 
 #: base/static/js/modules/common/dialog.js:89
-#: document/static/js/modules/editor/index.js:337
-#: document/static/js/modules/editor/index.js:616
+#: document/static/js/modules/editor/index.js:341
+#: document/static/js/modules/editor/index.js:620
 msgid "OK"
 msgstr "OK"
 
 #: base/static/js/modules/common/file/dialog.js:39
-#: base/static/js/modules/common/file/selector.js:53
 #: base/static/js/modules/common/file/tools.js:6
 #: base/static/js/modules/common/file/tools.js:16
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
 #: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:173
+#: document/static/js/modules/editor/dialogs/citation.js:175
 #: document/static/js/modules/editor/menus/headerbar/view.js:505
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
 #: document/static/js/modules/importer/docx/convert.js:84
 #: document/static/js/modules/importer/docx/convert.js:92
@@ -118,7 +118,7 @@ msgstr "OK"
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
 #: usermedia/static/js/modules/images/overview/index.js:175
 msgid "Untitled"
-msgstr "Nieuprawny"
+msgstr "Bez tytułu"
 
 #: base/static/js/modules/common/file/dialog.js:67
 #: base/static/js/modules/common/file/new_folder_dialog.js:8
@@ -127,7 +127,7 @@ msgstr "Nowy folder"
 
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
-#: bibliography/static/js/modules/bibliography/overview/index.js:320
+#: bibliography/static/js/modules/bibliography/overview/index.js:321
 #: document/static/js/modules/documents/access_rights/index.js:296
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
@@ -135,10 +135,10 @@ msgstr "Nowy folder"
 #: user/static/js/modules/profile/dialogs.js:124
 #: user/static/js/modules/profile/dialogs.js:215
 #: user/static/js/modules/profile/dialogs.js:385
-#: user/static/js/modules/profile/templates.js:265
+#: user/static/js/modules/profile/templates.js:285
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
-msgstr "Składać"
+msgstr "Wyślij"
 
 #: base/static/js/modules/common/file/new_folder_dialog.js:16
 msgid "Create folder"
@@ -173,7 +173,7 @@ msgstr "Nawigacja witryny"
 #: document/static/js/modules/documents/access_rights/templates.js:13
 #: user/static/js/modules/contacts/index.js:57
 msgid "Contacts"
-msgstr "Łączność"
+msgstr "Kontakty"
 
 #: base/static/js/modules/common/templates.js:32
 msgid "Log out"
@@ -184,9 +184,9 @@ msgid "Warning! Some data is unsaved"
 msgstr "Ostrzeżenie! Niektóre dane są niezapisane"
 
 #: base/static/js/modules/common/ws.js:14
-#: document/static/js/modules/editor/index.js:403
+#: document/static/js/modules/editor/index.js:407
 msgid "Disconnected. Attempting to reconnect..."
-msgstr "Bezładny. Próba ponownego połączenia..."
+msgstr "Rozłączono. Próba ponownego połączenia..."
 
 #: base/static/js/modules/copyright_dialog/index.js:83
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:317
@@ -214,7 +214,7 @@ msgstr "Z listy"
 #: base/static/js/modules/copyright_dialog/templates.js:36
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:31
 msgid "Custom"
-msgstr "Zwyczaj"
+msgstr "Własny"
 
 #: base/static/js/modules/copyright_dialog/templates.js:44
 msgid "License start date (optional)"
@@ -268,7 +268,7 @@ msgstr ""
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
 msgid "Disconnected"
-msgstr "Bezładny"
+msgstr "Rozłączono"
 
 #: base/static/js/modules/offline/index.js:11
 msgid "You are currently disconnected from the %(appName)s server."
@@ -322,7 +322,7 @@ msgstr "Wybierz język"
 #: document/static/js/modules/editor/dialogs/table.js:178
 #: usermedia/static/js/modules/images/edit_dialog/index.js:42
 msgid "Update"
-msgstr "Aktualizacja"
+msgstr "Aktualizuj"
 
 #: base/static/js/modules/setup/index.js:11
 msgid "The %(appName)s server is currently being updated. Please wait."
@@ -343,8 +343,8 @@ msgstr "Nie udało się zaktualizować bibliografii"
 #: bibliography/static/js/modules/bibliography/form/index.js:56
 #: bibliography/static/js/modules/bibliography/import/dialog.js:20
 #: bibliography/static/js/modules/bibliography/import/dialog.js:42
-#: bibliography/static/js/modules/bibliography/overview/index.js:313
-#: bibliography/static/js/modules/bibliography/overview/index.js:341
+#: bibliography/static/js/modules/bibliography/overview/index.js:314
+#: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
 #: document/static/js/modules/exporter/native/revision.js:79
 #: usermedia/static/js/modules/images/overview/index.js:94
@@ -376,24 +376,24 @@ msgstr "Pozycje bibliograficzne zostały usunięte"
 #: document/static/js/modules/document_template/templates.js:102
 #: document/static/js/modules/editor/e2ee/password-dialog.js:106
 #: document/static/js/modules/editor/marginboxes/templates.js:240
-#: document/static/js/modules/editor/menus/toolbar/model.js:371
+#: document/static/js/modules/editor/menus/toolbar/model.js:375
 msgid "Strong"
-msgstr "Mocny"
+msgstr "Pogrubienie"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:63
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:58
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:58
 #: document/static/js/modules/document_template/templates.js:106
 #: document/static/js/modules/editor/marginboxes/templates.js:239
-#: document/static/js/modules/editor/menus/toolbar/model.js:408
+#: document/static/js/modules/editor/menus/toolbar/model.js:412
 msgid "Emphasis"
-msgstr "Podkreślenie"
+msgstr "Wyróżnienie"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:67
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:62
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:62
 msgid "Small caps"
-msgstr "Małe czapki"
+msgstr "Kapitaliki"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:71
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:66
@@ -469,7 +469,17 @@ msgstr "Edytuj źródło"
 msgid "Register New Source"
 msgstr "Zarejestruj nowe źródło"
 
-#: bibliography/static/js/modules/bibliography/form/index.js:320
+#: bibliography/static/js/modules/bibliography/form/index.js:386
+#| msgid ""
+#| "A slug can only contain letters, numbers, hyphens and underscores."
+msgid "Only letters, numbers, hyphens and underscores are allowed."
+msgstr "Dozwolone są tylko litery, cyfry, łączniki i podkreślenia."
+
+#: bibliography/static/js/modules/bibliography/form/index.js:398
+msgid "Warning: this key is already used in your library."
+msgstr "Ostrzeżenie: ten klucz jest już używany w Twojej bibliotece."
+
+#: bibliography/static/js/modules/bibliography/form/index.js:451
 msgid "Error in form, check highlighted values!"
 msgstr "Błąd w formularzu, sprawdź wyróżnione wartości!"
 
@@ -477,16 +487,21 @@ msgstr "Błąd w formularzu, sprawdź wyróżnione wartości!"
 msgid "Select source type"
 msgstr "Wybierz typ źródła"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:29
+#: bibliography/static/js/modules/bibliography/form/templates.js:28
+#| msgid "Citation"
+msgid "Citation key"
+msgstr "Klucz cytatu"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:33
 msgid "Required Fields"
 msgstr "Wymagane pola"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:32
+#: bibliography/static/js/modules/bibliography/form/templates.js:36
 msgid "Optional Fields"
 msgstr "Pola opcjonalne"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:35
-#: bibliography/static/js/modules/bibliography/form/templates.js:50
+#: bibliography/static/js/modules/bibliography/form/templates.js:39
+#: bibliography/static/js/modules/bibliography/form/templates.js:54
 msgid "Categories"
 msgstr "Kategorie"
 
@@ -523,7 +538,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Wystąpił problem z importem bibliografii"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:174
+#: document/static/js/modules/documents/overview/actions.js:173
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Import"
@@ -553,12 +568,12 @@ msgid "Bibliography Manager"
 msgstr "Menedżer Bibliografii"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:239
+#: document/static/js/modules/editor/dialogs/citation.js:241
 msgid "No sources registered"
 msgstr "Brak zarejestrowanych źródeł"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:240
+#: document/static/js/modules/editor/dialogs/citation.js:242
 msgid "No sources found"
 msgstr "Nie znaleziono żadnych źródeł"
 
@@ -573,12 +588,12 @@ msgstr "Nie znaleziono żadnych źródeł"
 #: document/static/js/modules/document_template/templates.js:813
 #: document/static/js/modules/document_template/templates.js:836
 #: document/static/js/modules/documents/overview/index.js:560
-#: document/static/js/modules/editor/dialogs/citation.js:252
+#: document/static/js/modules/editor/dialogs/citation.js:254
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
-#: document/static/js/modules/editor/menus/toolbar/model.js:166
-#: document/static/js/modules/editor/state_plugins/links.js:254
+#: document/static/js/modules/editor/menus/toolbar/model.js:170
+#: document/static/js/modules/editor/state_plugins/links.js:300
 #: document/static/js/modules/editor/state_plugins/placeholders.js:41
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:111
 #: usermedia/static/js/modules/images/selection_dialog/index.js:124
@@ -590,7 +605,7 @@ msgid "Sourcetype"
 msgstr "Typ źródła"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:253
+#: document/static/js/modules/editor/dialogs/citation.js:255
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -603,12 +618,12 @@ msgstr "Autor"
 msgid "Published"
 msgstr "Opublikowany"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:359
+#: bibliography/static/js/modules/bibliography/overview/index.js:360
 #: usermedia/static/js/modules/images/overview/categories.js:104
 msgid "Edit Categories"
 msgstr "Edytuj kategorie"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:375
+#: bibliography/static/js/modules/bibliography/overview/index.js:376
 #: document/static/js/modules/document_template/document_style_dialog.js:74
 #: document/static/js/modules/document_template/document_style_dialog.js:172
 #: document/static/js/modules/document_template/export_template_dialog.js:82
@@ -628,9 +643,9 @@ msgstr "Edytuj kategorie"
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:60
 #: usermedia/static/js/modules/images/overview/index.js:126
 msgid "Delete"
-msgstr "Usuwać"
+msgstr "Usuń"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:389
+#: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
 #: document/static/js/modules/document_template/export_template_dialog.js:192
 #: document/static/js/modules/documents/overview/actions.js:70
@@ -644,7 +659,7 @@ msgstr "Usuwać"
 msgid "Confirm deletion"
 msgstr "Potwierdź usunięcie"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:390
+#: bibliography/static/js/modules/bibliography/overview/index.js:391
 msgid "Delete the bibliography item(s)"
 msgstr "Usuń pozycje bibliografii"
 
@@ -732,7 +747,7 @@ msgstr "Identyfikatory muszą być unikalne."
 #: document/static/js/modules/editor/dialogs/revision.js:14
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:86
 msgid "Save"
-msgstr "Ratować"
+msgstr "Zapisz"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:81
 msgid "Document style"
@@ -740,7 +755,7 @@ msgstr "Styl dokumentu"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:90
 msgid "Slug"
-msgstr "Ślimak"
+msgstr "Identyfikator"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:96
 msgid "CSS Style"
@@ -786,7 +801,7 @@ msgstr "Plik"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:102
 msgid "Select"
-msgstr "Wybierać"
+msgstr "Wybierz"
 
 #: document/static/js/modules/document_template/export_template_dialog.js:108
 msgid "Filetype"
@@ -874,7 +889,7 @@ msgstr "Wstaw tabelę"
 #: document/static/js/modules/document_template/schema.js:198
 #: document/static/js/modules/document_template/templates.js:92
 #: document/static/js/modules/document_template/templates.js:468
-#: document/static/js/modules/editor/menus/toolbar/model.js:858
+#: document/static/js/modules/editor/menus/toolbar/model.js:872
 msgid "Table"
 msgstr "Tabela"
 
@@ -941,7 +956,7 @@ msgstr "Dozwolone elementy"
 #: document/static/js/modules/document_template/templates.js:13
 #: document/static/js/modules/editor/marginboxes/templates.js:256
 msgid "Paragraph"
-msgstr "Ustęp"
+msgstr "Akapit"
 
 #: document/static/js/modules/document_template/templates.js:17
 #: document/static/js/modules/document_template/templates.js:186
@@ -991,19 +1006,19 @@ msgid "Code block"
 msgstr "Blok kodu"
 
 #: document/static/js/modules/document_template/templates.js:49
-#: document/static/js/modules/editor/menus/toolbar/model.js:25
-#: document/static/js/modules/editor/menus/toolbar/model.js:837
+#: document/static/js/modules/editor/menus/toolbar/model.js:29
+#: document/static/js/modules/editor/menus/toolbar/model.js:851
 msgid "Figure"
-msgstr "Postać"
+msgstr "Ilustracja"
 
 #: document/static/js/modules/document_template/templates.js:53
 #: document/static/js/modules/editor/marginboxes/templates.js:264
 msgid "Ordered list"
-msgstr "Zamówiona lista"
+msgstr "Lista uporządkowana"
 
 #: document/static/js/modules/document_template/templates.js:57
 #: document/static/js/modules/editor/marginboxes/templates.js:265
-#: document/static/js/modules/editor/menus/toolbar/model.js:628
+#: document/static/js/modules/editor/menus/toolbar/model.js:632
 msgid "Bullet list"
 msgstr "Lista punktowana"
 
@@ -1012,10 +1027,12 @@ msgid "Horizontal rule"
 msgstr "Reguła pozioma"
 
 #: document/static/js/modules/document_template/templates.js:65
+#: document/static/js/modules/editor/state_plugins/inline_math.js:240
 msgid "Equation"
 msgstr "Równanie"
 
 #: document/static/js/modules/document_template/templates.js:69
+#: document/static/js/modules/editor/state_plugins/links.js:378
 msgid "Citation"
 msgstr "Cytat"
 
@@ -1025,15 +1042,15 @@ msgid "Cross reference"
 msgstr "Odsyłacz"
 
 #: document/static/js/modules/document_template/templates.js:77
-#: document/static/js/modules/editor/menus/toolbar/model.js:668
+#: document/static/js/modules/editor/menus/toolbar/model.js:672
 msgid "Blockquote"
 msgstr "Cytat blokowy"
 
 #: document/static/js/modules/document_template/templates.js:84
-#: document/static/js/modules/editor/menus/toolbar/model.js:158
-#: document/static/js/modules/editor/menus/toolbar/model.js:733
+#: document/static/js/modules/editor/menus/toolbar/model.js:162
+#: document/static/js/modules/editor/menus/toolbar/model.js:737
 msgid "Footnote"
-msgstr "Notatka"
+msgstr "Przypis"
 
 #: document/static/js/modules/document_template/templates.js:98
 msgid "Allowed marks"
@@ -1041,29 +1058,29 @@ msgstr "Dozwolone znaki"
 
 #: document/static/js/modules/document_template/templates.js:110
 #: document/static/js/modules/editor/marginboxes/templates.js:241
-#: document/static/js/modules/editor/menus/toolbar/model.js:440
+#: document/static/js/modules/editor/menus/toolbar/model.js:444
 msgid "Underline"
 msgstr "Podkreślać"
 
 #: document/static/js/modules/document_template/templates.js:114
 #: document/static/js/modules/editor/dialogs/link.js:241
-#: document/static/js/modules/editor/menus/toolbar/model.js:708
+#: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
-msgstr "Połączyć"
+msgstr "Odnośnik"
 
 #: document/static/js/modules/document_template/templates.js:118
-#: document/static/js/modules/editor/menus/toolbar/model.js:477
+#: document/static/js/modules/editor/menus/toolbar/model.js:481
 msgid "Superscript"
-msgstr "Napisany u góry"
+msgstr "Indeks górny"
 
 #: document/static/js/modules/document_template/templates.js:122
-#: document/static/js/modules/editor/menus/toolbar/model.js:514
+#: document/static/js/modules/editor/menus/toolbar/model.js:518
 msgid "Subscript"
 msgstr "Indeks dolny"
 
 #: document/static/js/modules/document_template/templates.js:126
-#: document/static/js/modules/editor/menus/toolbar/model.js:24
-#: document/static/js/modules/editor/menus/toolbar/model.js:551
+#: document/static/js/modules/editor/menus/toolbar/model.js:28
+#: document/static/js/modules/editor/menus/toolbar/model.js:555
 msgid "Code"
 msgstr "Kod"
 
@@ -1233,7 +1250,7 @@ msgstr "Tytuł przedmiotu"
 
 #: document/static/js/modules/document_template/templates.js:255
 msgid "Authors"
-msgstr "Autorski"
+msgstr "Autorzy"
 
 #: document/static/js/modules/document_template/templates.js:256
 msgid "Editors"
@@ -1246,7 +1263,7 @@ msgstr "Tekst sformatowany"
 #: document/static/js/modules/document_template/templates.js:327
 #: document/static/js/modules/importer/pandoc/convert.js:147
 msgid "Abstract"
-msgstr "Abstrakcyjny"
+msgstr "Streszczenie"
 
 #: document/static/js/modules/document_template/templates.js:328
 msgid "Cases/Case Reports"
@@ -1266,7 +1283,7 @@ msgstr "Wprowadzenie/streszczenie"
 
 #: document/static/js/modules/document_template/templates.js:332
 msgid "Materials"
-msgstr "Przybory"
+msgstr "Materiały"
 
 #: document/static/js/modules/document_template/templates.js:333
 msgid "Methods/Methodology/Procedures"
@@ -1394,7 +1411,7 @@ msgstr "Podstawowe prawa dostępu"
 #: document/static/js/modules/documents/access_rights/templates.js:92
 #: document/static/js/modules/documents/access_rights/templates.js:98
 msgid "Write"
-msgstr "Pisać"
+msgstr "Zapis"
 
 #: document/static/js/modules/documents/access_rights/index.js:91
 #: document/static/js/modules/documents/access_rights/templates.js:99
@@ -1417,7 +1434,7 @@ msgstr "Komentarz"
 #: document/static/js/modules/documents/access_rights/templates.js:90
 #: document/static/js/modules/documents/access_rights/templates.js:93
 msgid "Read"
-msgstr "Czytać"
+msgstr "Odczyt"
 
 #: document/static/js/modules/documents/access_rights/index.js:124
 #: document/static/js/modules/documents/access_rights/index.js:142
@@ -1498,7 +1515,7 @@ msgstr "Utwórz link do udostępniania"
 #: document/static/js/modules/documents/access_rights/index.js:371
 #: document/static/js/modules/documents/overview/index.js:924
 msgid "Create"
-msgstr "Tworzyć"
+msgstr "Utwórz"
 
 #: document/static/js/modules/documents/access_rights/index.js:421
 msgid "Share link created."
@@ -1576,8 +1593,8 @@ msgid "expires"
 msgstr "wygasa"
 
 #: document/static/js/modules/documents/access_rights/templates.js:67
-#: document/static/js/modules/editor/state_plugins/links.js:264
-#: document/static/js/modules/editor/state_plugins/links.js:265
+#: document/static/js/modules/editor/state_plugins/links.js:310
+#: document/static/js/modules/editor/state_plugins/links.js:311
 msgid "Copy link"
 msgstr "Skopiuj link"
 
@@ -1649,30 +1666,29 @@ msgstr "Czy na pewno chcesz usunąć następujące dokumenty?"
 msgid "Do you really want to delete the following document?"
 msgstr "Czy na pewno chcesz usunąć następujący dokument?"
 
-#: document/static/js/modules/documents/overview/actions.js:116
+#: document/static/js/modules/documents/overview/actions.js:117
 msgid "Import as:"
 msgstr "Importuj jako:"
 
-#: document/static/js/modules/documents/overview/actions.js:138
-#| msgid "The document template has been updated"
+#: document/static/js/modules/documents/overview/actions.js:137
 msgid "This document will be saved as encrypted."
 msgstr "Ten dokument zostanie zapisany jako zaszyfrowany."
 
-#: document/static/js/modules/documents/overview/actions.js:144
+#: document/static/js/modules/documents/overview/actions.js:143
 #: document/static/js/modules/documents/overview/index.js:904
 msgid "Non-encrypted"
 msgstr "Nieszyfrowane"
 
-#: document/static/js/modules/documents/overview/actions.js:148
+#: document/static/js/modules/documents/overview/actions.js:147
 #: document/static/js/modules/documents/overview/index.js:909
 msgid "Encrypted"
 msgstr "Zaszyfrowane"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:160
 msgid "Supported formats"
 msgstr "Obsługiwane formaty"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:160
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1680,67 +1696,65 @@ msgstr ""
 "Możesz także przesłać plik ZIP zawierający jeden plik w dowolnym z tych "
 "formatów, a także obrazy i/lub plik bibtex."
 
-#: document/static/js/modules/documents/overview/actions.js:165
-#| msgid "Import document"
+#: document/static/js/modules/documents/overview/actions.js:164
 msgid "Import a document"
 msgstr "Zaimportuj dokument"
 
-#: document/static/js/modules/documents/overview/actions.js:183
+#: document/static/js/modules/documents/overview/actions.js:182
 msgid "File too large"
 msgstr "Plik jest za duży"
 
-#: document/static/js/modules/documents/overview/actions.js:241
+#: document/static/js/modules/documents/overview/actions.js:240
 msgid "No importable files found in ZIP"
 msgstr "W ZIP nie znaleziono plików do zaimportowania"
 
-#: document/static/js/modules/documents/overview/actions.js:283
+#: document/static/js/modules/documents/overview/actions.js:282
 msgid "Unsupported file format"
 msgstr "Nieobsługiwany format pliku"
 
-#: document/static/js/modules/documents/overview/actions.js:350
-#| msgid "Could not create document"
+#: document/static/js/modules/documents/overview/actions.js:349
 msgid "Could not create encrypted document."
 msgstr "Nie można utworzyć zaszyfrowanego dokumentu."
 
-#: document/static/js/modules/documents/overview/actions.js:441
+#: document/static/js/modules/documents/overview/actions.js:440
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
 msgstr "Zaszyfruj kopię"
 
-#: document/static/js/modules/documents/overview/actions.js:448
+#: document/static/js/modules/documents/overview/actions.js:447
 #: document/static/js/modules/editor/document_template/index.js:136
 msgid "Choose document template"
 msgstr "Wybierz szablon dokumentu"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:449
 msgid "Select document template for copies"
 msgstr "Wybierz szablon dokumentu dla kopii"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:449
 #: document/static/js/modules/editor/document_template/index.js:138
 msgid "Select document template for copy."
 msgstr "Wybierz szablon dokumentu do skopiowania."
 
-#: document/static/js/modules/documents/overview/actions.js:463
+#: document/static/js/modules/documents/overview/actions.js:462
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
 #: document/static/js/modules/editor/document_template/index.js:151
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:301
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:340
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:342
 msgid "Copy"
-msgstr "Kopia"
+msgstr "Kopiuj"
 
-#: document/static/js/modules/documents/overview/actions.js:512
+#: document/static/js/modules/documents/overview/actions.js:511
 msgid "Could not copy document."
 msgstr "Nie można skopiować dokumentu."
 
-#: document/static/js/modules/documents/overview/actions.js:542
-#: document/static/js/modules/documents/overview/actions.js:574
+#: document/static/js/modules/documents/overview/actions.js:541
+#: document/static/js/modules/documents/overview/actions.js:573
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
 msgid "Incorrect password."
 msgstr "Nieprawidłowe hasło."
 
-#: document/static/js/modules/documents/overview/actions.js:796
+#: document/static/js/modules/documents/overview/actions.js:795
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr "Nie możesz przeglądać historii wersji dokumentu, gdy jesteś offline."
@@ -2092,7 +2106,7 @@ msgstr "Odtwarzać"
 #: document/static/js/modules/editor/menus/headerbar/model.js:281
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:89
 msgid "Download"
-msgstr "Pobierać"
+msgstr "Pobierz"
 
 #: document/static/js/modules/documents/tools.js:71
 msgid "Could not obtain extra document data"
@@ -2439,7 +2453,7 @@ msgstr ""
 "Rozważ zaimportowanie go do nowego dokumentu."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
-#: document/static/js/modules/editor/index.js:729
+#: document/static/js/modules/editor/index.js:733
 msgid "Leave editor"
 msgstr "Opuść redaktora"
 
@@ -2509,10 +2523,12 @@ msgstr "Skopiuj treść"
 #: document/static/js/modules/editor/marginboxes/templates.js:535
 #: document/static/js/modules/editor/marginboxes/templates.js:536
 #: document/static/js/modules/editor/state_plugins/contributor_input/dropup.js:36
-#: document/static/js/modules/editor/state_plugins/links.js:270
-#: document/static/js/modules/editor/state_plugins/links.js:318
+#: document/static/js/modules/editor/state_plugins/inline_math.js:246
+#: document/static/js/modules/editor/state_plugins/links.js:316
+#: document/static/js/modules/editor/state_plugins/links.js:364
+#: document/static/js/modules/editor/state_plugins/links.js:387
 msgid "Edit"
-msgstr "Redagować"
+msgstr "Edytuj"
 
 #: document/static/js/modules/editor/comments/editors/comment.js:97
 msgid "High priority"
@@ -2544,36 +2560,38 @@ msgstr ""
 #: document/static/js/modules/editor/dialogs/table.js:46
 #: document/static/js/modules/editor/dialogs/templates.js:234
 msgid "Insert"
-msgstr "Wstawić"
+msgstr "Wstaw"
 
 #: document/static/js/modules/editor/dialogs/citation.js:39
 #: document/static/js/modules/editor/dialogs/code_block.js:120
 #: document/static/js/modules/editor/dialogs/figure.js:374
 #: document/static/js/modules/editor/dialogs/templates.js:315
 #: document/static/js/modules/editor/menus/code_block/model.js:40
-#: document/static/js/modules/editor/state_plugins/links.js:273
-#: document/static/js/modules/editor/state_plugins/links.js:297
-#: document/static/js/modules/editor/state_plugins/links.js:321
+#: document/static/js/modules/editor/state_plugins/inline_math.js:249
+#: document/static/js/modules/editor/state_plugins/links.js:319
+#: document/static/js/modules/editor/state_plugins/links.js:343
+#: document/static/js/modules/editor/state_plugins/links.js:367
+#: document/static/js/modules/editor/state_plugins/links.js:390
 #: user/static/js/modules/profile/dialogs.js:283
 #: user/static/js/modules/profile/dialogs.js:332
 msgid "Remove"
-msgstr "Usunąć"
+msgstr "Usuń"
 
 #: document/static/js/modules/editor/dialogs/citation.js:69
 msgid "Configure Citation"
 msgstr "Skonfiguruj cytowanie"
 
-#: document/static/js/modules/editor/dialogs/citation.js:241
+#: document/static/js/modules/editor/dialogs/citation.js:243
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "Szukaj..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/editor/dialogs/citation.js:256
 #: document/static/js/modules/editor/dialogs/templates.js:313
 msgid "Year"
 msgstr "Rok"
 
-#: document/static/js/modules/editor/dialogs/citation.js:420
+#: document/static/js/modules/editor/dialogs/citation.js:425
 msgid "Please select at least one citation source!"
 msgstr "Proszę wybrać co najmniej jedno źródło cytatów!"
 
@@ -2594,7 +2612,7 @@ msgstr "Tytuł opcjonalny"
 #: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:22
 #: document/static/js/modules/editor/state_plugins/tag_input/tag_editor_plugins.js:20
 msgid "Add"
-msgstr "Dodać"
+msgstr "Dodaj"
 
 #: document/static/js/modules/editor/dialogs/contributor.js:53
 msgid "Email is in incorrect format!"
@@ -2640,7 +2658,7 @@ msgstr "Skopiuj do schowka"
 
 #: document/static/js/modules/editor/dialogs/figure.js:54
 #: document/static/js/modules/editor/dialogs/math.js:120
-#: document/static/js/modules/editor/menus/toolbar/model.js:894
+#: document/static/js/modules/editor/menus/toolbar/model.js:908
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:65
 msgid "Redo"
 msgstr "Przerobić"
@@ -2652,7 +2670,7 @@ msgstr "Przełącz klawiaturę wirtualną"
 
 #: document/static/js/modules/editor/dialogs/figure.js:58
 #: document/static/js/modules/editor/dialogs/math.js:124
-#: document/static/js/modules/editor/menus/toolbar/model.js:881
+#: document/static/js/modules/editor/menus/toolbar/model.js:895
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:61
 msgid "Undo"
 msgstr "Anulować"
@@ -2806,7 +2824,7 @@ msgstr "Obraz"
 #: user/static/js/modules/profile/dialogs.js:22
 #: usermedia/static/js/modules/images/edit_dialog/index.js:43
 msgid "Upload"
-msgstr "Wgrywać"
+msgstr "Wgraj"
 
 #: document/static/js/modules/editor/dialogs/templates.js:297
 msgid "My sources"
@@ -2905,16 +2923,16 @@ msgstr ""
 "dokumentów nie będzie można odzyskać."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:29
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:182
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:183
 msgid "Passphrase"
 msgstr "Hasło"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:32
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:185
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:265
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:371
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:186
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:267
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:373
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:516
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:524
 msgid "Show passphrase"
 msgstr "Pokaż hasło"
 
@@ -2927,14 +2945,14 @@ msgid "Set Up Encryption"
 msgstr "Skonfiguruj szyfrowanie"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:71
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:421
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:568
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:423
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:571
 msgid "Passphrase must be at least 8 characters long."
 msgstr "Hasło musi mieć co najmniej 8 znaków."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:80
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:430
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:577
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:432
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:580
 msgid "Passphrases do not match."
 msgstr "Hasła nie pasują."
 
@@ -2942,35 +2960,35 @@ msgstr "Hasła nie pasują."
 msgid "Set Up Personal Encryption"
 msgstr "Skonfiguruj szyfrowanie osobiste"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:180
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:181
 msgid "Enter your personal encryption passphrase to unlock your documents."
 msgstr "Wprowadź swoje osobiste hasło szyfrowania, aby odblokować dokumenty."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:195
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:196
 msgid "Unlock"
 msgstr "Odblokować"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:208
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:209
 msgid "Please enter your passphrase."
 msgstr "Proszę wpisać hasło."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:230
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:231
 msgid "Recover with key"
 msgstr "Odzyskaj za pomocą klucza"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:241
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:242
 msgid "Unlock Encryption"
 msgstr "Odblokuj szyfrowanie"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:261
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:263
 msgid "Hide passphrase"
 msgstr "Ukryj hasło"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:296
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:298
 msgid "This is your recovery key."
 msgstr "To jest Twój klucz odzyskiwania."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:297
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:299
 msgid ""
 "Store it somewhere safe (e.g., a password manager, printed copy). If you "
 "forget your passphrase, this is the ONLY way to recover your encrypted "
@@ -2980,23 +2998,23 @@ msgstr ""
 "drukowanej). Jeśli zapomnisz hasła, jest to JEDYNY sposób na odzyskanie "
 "zaszyfrowanych dokumentów. Nie możemy go dla Ciebie odzyskać."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:304
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
 msgid "Copy it now — it will not be shown again."
 msgstr "Skopiuj go teraz — nie będzie wyświetlany ponownie."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:310
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:312
 msgid "I have saved it"
 msgstr "Zachowałem to"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:323
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:325
 msgid "Recovery Key"
 msgstr "Klucz odzyskiwania"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:338
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:340
 msgid "Copied!"
 msgstr "Skopiowano!"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:361
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
 msgid ""
 "Enter your recovery key and a new passphrase to regain access to your "
 "encrypted documents."
@@ -3004,52 +3022,52 @@ msgstr ""
 "Wprowadź klucz odzyskiwania i nowe hasło, aby odzyskać dostęp do "
 "zaszyfrowanych dokumentów."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:365
 msgid "Recovery key"
 msgstr "Klucz odzyskiwania"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:368
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:518
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:370
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
 msgid "New passphrase"
 msgstr "Nowe hasło"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:376
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:526
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:378
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:529
 msgid "Confirm new passphrase"
 msgstr "Potwierdź nowe hasło"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:386
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:388
 msgid "Recover"
 msgstr "Odzyskiwać"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:412
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:414
 msgid "Please enter your recovery key."
 msgstr "Wprowadź klucz odzyskiwania."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:452
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:454
 msgid "Recover Encryption"
 msgstr "Odzyskaj szyfrowanie"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:508
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
 "Enter your current passphrase and a new passphrase to change your encryption"
 " password."
 msgstr ""
 "Wprowadź swoje obecne hasło i nowe hasło, aby zmienić hasło szyfrowania."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:510
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
 msgid "Current passphrase"
 msgstr "Aktualne hasło"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:536
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:539
 msgid "Change Passphrase"
 msgstr "Zmień hasło"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:559
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:562
 msgid "Please enter your current passphrase."
 msgstr "Proszę wprowadzić aktualne hasło."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:599
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:602
 msgid "Change Encryption Passphrase"
 msgstr "Zmień hasło szyfrowania"
 
@@ -3081,7 +3099,7 @@ msgstr ""
 "odszyfrować."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
-#: document/static/js/modules/editor/e2ee/password-dialog.js:261
+#: document/static/js/modules/editor/e2ee/password-dialog.js:262
 #: user/static/js/modules/login/index.js:65
 #: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
@@ -3092,9 +3110,9 @@ msgid "Password"
 msgstr "Hasło"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:147
-#: document/static/js/modules/editor/e2ee/password-dialog.js:222
-#: document/static/js/modules/editor/e2ee/password-dialog.js:264
-#: document/static/js/modules/editor/e2ee/password-dialog.js:451
+#: document/static/js/modules/editor/e2ee/password-dialog.js:223
+#: document/static/js/modules/editor/e2ee/password-dialog.js:265
+#: document/static/js/modules/editor/e2ee/password-dialog.js:453
 msgid "Show password"
 msgstr "Pokaż hasło"
 
@@ -3106,11 +3124,11 @@ msgstr "Odszyfruj"
 msgid "Please enter the password."
 msgstr "Proszę wpisać hasło."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:218
+#: document/static/js/modules/editor/e2ee/password-dialog.js:219
 msgid "Hide password"
 msgstr "Ukryj hasło"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:258
+#: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
 "Set a password to encrypt this document. You will need this password to open"
 " the document in the future."
@@ -3118,7 +3136,7 @@ msgstr ""
 "Ustaw hasło, aby zaszyfrować ten dokument. Hasło będzie potrzebne do "
 "otwarcia dokumentu w przyszłości."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:259
+#: document/static/js/modules/editor/e2ee/password-dialog.js:260
 msgid ""
 "Tip: Use a passphrase with multiple words, e.g. \"correct-horse-battery-"
 "staple\". This is both secure and easy to remember."
@@ -3126,28 +3144,28 @@ msgstr ""
 "Wskazówka: użyj hasła w przypadku wielu słów, np. „poprawny zszywka-"
 "akumulator-konia”. Jest to bezpieczne i łatwe do zapamiętania."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:273
+#: document/static/js/modules/editor/e2ee/password-dialog.js:274
 msgid "Confirm password"
 msgstr "Potwierdź hasło"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:283
+#: document/static/js/modules/editor/e2ee/password-dialog.js:284
 msgid "Create Encrypted Document"
 msgstr "Utwórz zaszyfrowany dokument"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:313
-#: document/static/js/modules/editor/e2ee/password-dialog.js:520
+#: document/static/js/modules/editor/e2ee/password-dialog.js:314
+#: document/static/js/modules/editor/e2ee/password-dialog.js:522
 msgid "Passwords do not match."
 msgstr "Hasła nie pasują."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:327
+#: document/static/js/modules/editor/e2ee/password-dialog.js:328
 msgid "Set Document Password"
 msgstr "Ustaw hasło dokumentu"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:427
+#: document/static/js/modules/editor/e2ee/password-dialog.js:429
 msgid "Current password"
 msgstr "Aktualne hasło"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:440
+#: document/static/js/modules/editor/e2ee/password-dialog.js:442
 msgid ""
 "Change the document password. After changing, you must share the new "
 "password with all collaborators."
@@ -3155,30 +3173,30 @@ msgstr ""
 "Zmień hasło dokumentu. Po zmianie musisz udostępnić nowe hasło wszystkim "
 "współpracownikom."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:444
+#: document/static/js/modules/editor/e2ee/password-dialog.js:446
 #: user/static/js/modules/profile/templates.js:63
 msgid "New password"
 msgstr "Nowe hasło"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:461
+#: document/static/js/modules/editor/e2ee/password-dialog.js:463
 msgid "Confirm new password"
 msgstr "Potwierdź nowe hasło"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:473
+#: document/static/js/modules/editor/e2ee/password-dialog.js:475
 #: user/static/js/modules/password_reset/change_password.js:7
 #: user/static/js/modules/profile/dialogs.js:204
 msgid "Change Password"
 msgstr "Zmień hasło"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:501
+#: document/static/js/modules/editor/e2ee/password-dialog.js:503
 msgid "Please enter the current password."
 msgstr "Proszę wpisać aktualne hasło."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:530
+#: document/static/js/modules/editor/e2ee/password-dialog.js:532
 msgid "New password must be different from the current password."
 msgstr "Nowe hasło musi różnić się od bieżącego hasła."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:547
+#: document/static/js/modules/editor/e2ee/password-dialog.js:549
 msgid "Change Document Password"
 msgstr "Zmień hasło dokumentu"
 
@@ -3190,13 +3208,13 @@ msgstr ""
 "Hasło do dokumentu zostało zmienione przez innego użytkownika. Aby "
 "kontynuować edycję, konieczne będzie wprowadzenie nowego hasła."
 
-#: document/static/js/modules/editor/index.js:330
-#: document/static/js/modules/editor/index.js:609
+#: document/static/js/modules/editor/index.js:334
+#: document/static/js/modules/editor/index.js:613
 msgid "Invalid Share Link"
 msgstr "Nieprawidłowy link do udostępniania"
 
-#: document/static/js/modules/editor/index.js:333
-#: document/static/js/modules/editor/index.js:612
+#: document/static/js/modules/editor/index.js:337
+#: document/static/js/modules/editor/index.js:616
 msgid ""
 "This share link has expired or is invalid. Please ask the document owner for"
 " a new link."
@@ -3204,7 +3222,7 @@ msgstr ""
 "Ten link do udostępniania wygasł lub jest nieprawidłowy. Poproś właściciela "
 "dokumentu o nowy link."
 
-#: document/static/js/modules/editor/index.js:400
+#: document/static/js/modules/editor/index.js:404
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
@@ -3212,11 +3230,11 @@ msgstr ""
 "Ostrzeżenie! Nie wszystkie zmiany zostały zapisane! Możesz ponieść utratę "
 "danych. Próba ponownego połączenia..."
 
-#: document/static/js/modules/editor/index.js:537
+#: document/static/js/modules/editor/index.js:541
 msgid "Your document was out of sync and has been reset."
 msgstr "Twój dokument nie był zsynchronizowany i został zresetowany."
 
-#: document/static/js/modules/editor/index.js:560
+#: document/static/js/modules/editor/index.js:564
 msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
@@ -3224,11 +3242,11 @@ msgstr ""
 "Twoje prawa dostępu zostały zmodyfikowane. Masz teraz %(accessRight)s dostęp"
 " do tego dokumentu."
 
-#: document/static/js/modules/editor/index.js:635
+#: document/static/js/modules/editor/index.js:639
 msgid "Session Expired"
 msgstr "Sesja wygasła"
 
-#: document/static/js/modules/editor/index.js:638
+#: document/static/js/modules/editor/index.js:642
 msgid ""
 "Your session expired while you were offline, so we cannot save your work to "
 "the server any longer, but you can download it to your computer instead. "
@@ -3238,19 +3256,19 @@ msgstr ""
 " pracy na serwerze, ale możesz zamiast tego pobrać ją na swój komputer. "
 "Proszę rozważyć zaimportowanie go jako nowego dokumentu po zalogowaniu."
 
-#: document/static/js/modules/editor/index.js:642
+#: document/static/js/modules/editor/index.js:646
 msgid "Download Document"
 msgstr "Pobierz dokument"
 
-#: document/static/js/modules/editor/index.js:657
+#: document/static/js/modules/editor/index.js:661
 msgid "Proceed to Login page"
 msgstr "Przejdź do strony logowania"
 
-#: document/static/js/modules/editor/index.js:722
+#: document/static/js/modules/editor/index.js:726
 msgid "Access rights modified"
 msgstr "Zmodyfikowano prawa dostępu"
 
-#: document/static/js/modules/editor/index.js:725
+#: document/static/js/modules/editor/index.js:729
 msgid ""
 "Your access rights were modified while you were offline, so we cannot save "
 "your work to the server any longer, and it is downloaded to your computer "
@@ -3260,20 +3278,20 @@ msgstr ""
 "możemy już zapisywać Twojej pracy na serwerze i zamiast tego jest ona "
 "pobierana na Twój komputer. Rozważ zaimportowanie go do nowego dokumentu."
 
-#: document/static/js/modules/editor/index.js:774
+#: document/static/js/modules/editor/index.js:778
 msgid "Incorrect passphrase."
 msgstr "Nieprawidłowe hasło."
 
-#: document/static/js/modules/editor/index.js:800
+#: document/static/js/modules/editor/index.js:804
 #: user/static/js/modules/profile/index.js:263
 msgid "Recovery failed: "
 msgstr "Odzyskiwanie nie powiodło się:"
 
-#: document/static/js/modules/editor/index.js:845
+#: document/static/js/modules/editor/index.js:849
 msgid "E2EE is not enabled on this server."
 msgstr "E2EE nie jest włączone na tym serwerze."
 
-#: document/static/js/modules/editor/index.js:1008
+#: document/static/js/modules/editor/index.js:1012
 msgid ""
 "Changes you made to the document since going offline will be lost, if you "
 "choose to close/refresh the tab or close the browser."
@@ -3428,7 +3446,7 @@ msgstr "ok."
 
 #: document/static/js/modules/editor/marginboxes/templates.js:304
 msgid "Accept"
-msgstr "Przyjąć"
+msgstr "Akceptuj"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:305
 msgid "Reject"
@@ -3556,7 +3574,7 @@ msgstr "Poproś o dostęp"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:52
 msgid "Share"
-msgstr "Udział"
+msgstr "Udostępnij"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:59
 msgid "Request to be added as a collaborator."
@@ -3677,7 +3695,7 @@ msgstr "Bieżące hasło jest nieprawidłowe."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:503
 msgid "Export"
-msgstr "Eksport"
+msgstr "Eksportuj"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:504
 msgid "Export of the document contents"
@@ -3796,27 +3814,27 @@ msgstr "niemiecki (Niemcy)"
 #: document/static/js/modules/editor/menus/headerbar/model.js:731
 #: document/static/js/modules/schema/const.js:11
 msgid "Chinese (Simplified)"
-msgstr "chiński (uproszczony)"
+msgstr "Chiński (uproszczony)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/editor/menus/headerbar/model.js:735
 #: document/static/js/modules/schema/const.js:47
 msgid "Spanish"
-msgstr "hiszpański"
+msgstr "Hiszpański"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:735
 #: document/static/js/modules/schema/const.js:21
 msgid "French"
-msgstr "francuski"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:736
-#: document/static/js/modules/schema/const.js:30
-msgid "Japanese"
-msgstr "japoński"
+msgstr "Francuski"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:737
+#: document/static/js/modules/schema/const.js:30
+msgid "Japanese"
+msgstr "Japoński"
+
+#: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:29
 msgid "Italian"
-msgstr "włoski"
+msgstr "Włoski"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:38
@@ -3958,7 +3976,7 @@ msgid "Specify the number from which this list is to start counting"
 msgstr "Podaj liczbę, od której ta lista ma zacząć zliczanie"
 
 #: document/static/js/modules/editor/menus/selection/model.js:68
-#: document/static/js/modules/editor/state_plugins/links.js:283
+#: document/static/js/modules/editor/state_plugins/links.js:329
 msgid "Anchor"
 msgstr "Kotwica"
 
@@ -4060,59 +4078,59 @@ msgstr "Skonfiguruj tabelę."
 msgid "Delete currently selected table"
 msgstr "Usuń aktualnie wybraną tabelę"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:17
+#: document/static/js/modules/editor/menus/toolbar/model.js:21
 msgid "Normal Text"
 msgstr "Normalny tekst"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:18
+#: document/static/js/modules/editor/menus/toolbar/model.js:22
 msgid "1st Heading"
 msgstr "1. nagłówek"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:19
+#: document/static/js/modules/editor/menus/toolbar/model.js:23
 msgid "2nd Heading"
 msgstr "2. nagłówek"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:20
+#: document/static/js/modules/editor/menus/toolbar/model.js:24
 msgid "3rd Heading"
 msgstr "Trzeci nagłówek"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:21
+#: document/static/js/modules/editor/menus/toolbar/model.js:25
 msgid "4th Heading"
 msgstr "4. nagłówek"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:22
+#: document/static/js/modules/editor/menus/toolbar/model.js:26
 msgid "5th Heading"
 msgstr "5. nagłówek"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:23
+#: document/static/js/modules/editor/menus/toolbar/model.js:27
 msgid "6th Heading"
 msgstr "6. Nagłówek"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:129
+#: document/static/js/modules/editor/menus/toolbar/model.js:133
 msgid "Open/close header menu"
 msgstr "Otwórz/zamknij menu nagłówka"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:588
+#: document/static/js/modules/editor/menus/toolbar/model.js:592
 msgid "Numbered list"
 msgstr "Lista numerowana"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:759
+#: document/static/js/modules/editor/menus/toolbar/model.js:763
 msgid "Cite"
 msgstr "Cytować"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:786
+#: document/static/js/modules/editor/menus/toolbar/model.js:800
 msgid "Horizontal line"
 msgstr "Linia pozioma"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:811
+#: document/static/js/modules/editor/menus/toolbar/model.js:825
 msgid "Math"
 msgstr "Matematyka"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:859
+#: document/static/js/modules/editor/menus/toolbar/model.js:873
 msgid "Insert a table into the document."
 msgstr "Wstaw tabelę do dokumentu."
 
-#: document/static/js/modules/editor/menus/toolbar/view.js:268
+#: document/static/js/modules/editor/menus/toolbar/view.js:287
 msgid "More"
 msgstr "Więcej"
 
@@ -4149,49 +4167,76 @@ msgid "Document N̲avigator"
 msgstr "Dokument N̲avigator"
 
 #: document/static/js/modules/editor/no_collab_save/index.js:146
-#| msgid "Could not move document"
 msgid "Could not save document."
 msgstr "Nie można zapisać dokumentu."
 
 #: document/static/js/modules/editor/no_collab_save/index.js:205
-#| msgid "Document key is not available. Please reload the document."
 msgid "Document has been modified by another user. Please reload the page."
 msgstr ""
 "Dokument został zmodyfikowany przez innego użytkownika. Załaduj ponownie "
 "stronę."
 
+#: document/static/js/modules/editor/state_plugins/inline_math.js:245
+#| msgid "Equation"
+msgid "Edit equation"
+msgstr "Edytuj równanie"
+
+#: document/static/js/modules/editor/state_plugins/inline_math.js:248
+#| msgid "Remove link"
+msgid "Remove equation"
+msgstr "Usuń równanie"
+
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:28
+msgid "No matching sources"
+msgstr "Brak pasujących źródeł"
+
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
+#| msgid "Cross reference"
+msgid "Cross-references"
+msgstr "Odsyłacze"
+
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
 msgstr "Link skopiowany do schowka"
 
-#: document/static/js/modules/editor/state_plugins/links.js:269
+#: document/static/js/modules/editor/state_plugins/links.js:315
 msgid "Edit link"
 msgstr "Edytuj link"
 
-#: document/static/js/modules/editor/state_plugins/links.js:272
+#: document/static/js/modules/editor/state_plugins/links.js:318
 msgid "Remove link"
 msgstr "Usuń link"
 
-#: document/static/js/modules/editor/state_plugins/links.js:291
-#: document/static/js/modules/editor/state_plugins/links.js:292
+#: document/static/js/modules/editor/state_plugins/links.js:337
+#: document/static/js/modules/editor/state_plugins/links.js:338
 msgid "Copy anchor"
 msgstr "Skopiuj kotwicę"
 
-#: document/static/js/modules/editor/state_plugins/links.js:296
+#: document/static/js/modules/editor/state_plugins/links.js:342
 msgid "Remove anchor"
 msgstr "Usuń kotwicę"
 
-#: document/static/js/modules/editor/state_plugins/links.js:307
+#: document/static/js/modules/editor/state_plugins/links.js:353
 msgid "Cross Reference"
 msgstr "Odsyłacz krzyżowy"
 
-#: document/static/js/modules/editor/state_plugins/links.js:317
+#: document/static/js/modules/editor/state_plugins/links.js:363
 msgid "Edit cross reference"
 msgstr "Edytuj odsyłacz"
 
-#: document/static/js/modules/editor/state_plugins/links.js:320
+#: document/static/js/modules/editor/state_plugins/links.js:366
 msgid "Remove cross reference"
 msgstr "Usuń odsyłacz"
+
+#: document/static/js/modules/editor/state_plugins/links.js:386
+#| msgid "Deleted citation"
+msgid "Edit citation"
+msgstr "Edytuj cytat"
+
+#: document/static/js/modules/editor/state_plugins/links.js:389
+#| msgid "Deleted citation"
+msgid "Remove citation"
+msgstr "Usuń cytat"
 
 #: document/static/js/modules/editor/tools/key_bindings/index.js:14
 msgid "Keyboard Shortcuts"
@@ -4199,7 +4244,7 @@ msgstr "Skróty klawiaturowe"
 
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:6
 msgid "Print"
-msgstr "Wydrukować"
+msgstr "Drukuj"
 
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:14
 msgid "Show keyboard shortcuts"
@@ -4245,7 +4290,7 @@ msgstr "Następny"
 
 #: document/static/js/modules/editor/tools/search_replace/index.js:136
 msgid "Replace"
-msgstr "Zastępować"
+msgstr "Zamień"
 
 #: document/static/js/modules/editor/tools/search_replace/index.js:154
 #: document/static/js/modules/editor/tools/search_replace/index.js:179
@@ -4551,15 +4596,15 @@ msgstr "portugalski (Portugalia)"
 
 #: document/static/js/modules/schema/const.js:40
 msgid "Romanian"
-msgstr "rumuński"
+msgstr "Rumuński"
 
 #: document/static/js/modules/schema/const.js:41
 msgid "Russian"
-msgstr "rosyjski"
+msgstr "Rosyjski"
 
 #: document/static/js/modules/schema/const.js:42
 msgid "Turkish"
-msgstr "turecki"
+msgstr "Turecki"
 
 #: document/static/js/modules/schema/const.js:43
 msgid "Serbian (Cyrillic)"
@@ -4607,7 +4652,7 @@ msgstr "Podaj krótki opis tego, co się wydarzyło."
 
 #: feedback/static/js/modules/feedback/index.js:28
 msgid "submit"
-msgstr "składać"
+msgstr "Wyślij"
 
 #: feedback/static/js/modules/feedback/index.js:32
 msgid "Thank you for your report!"
@@ -4829,7 +4874,7 @@ msgstr "Nowy tutaj?"
 #: user/static/js/modules/signup/index.js:10
 #: user/static/js/modules/signup/index.js:41
 msgid "Sign up"
-msgstr "Zapisać się"
+msgstr "Zarejestruj się"
 
 #: user/static/js/modules/login/index.js:43
 msgid "Login with"
@@ -4838,7 +4883,7 @@ msgstr "Zaloguj się za pomocą"
 #: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
 #: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:226
+#: user/static/js/modules/profile/templates.js:246
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "Nazwa użytkownika"
@@ -5097,9 +5142,14 @@ msgstr "Hasło zostało pomyślnie zmienione."
 msgid "Failed to change passphrase: "
 msgstr "Nie udało się zmienić hasła:"
 
-#: user/static/js/modules/profile/index.js:309
+#: user/static/js/modules/profile/index.js:308
 msgid "Could not save profile data"
 msgstr "Nie można zapisać danych profilu"
+
+#: user/static/js/modules/profile/index.js:317
+#| msgid "Could not save "
+msgid "Could not save preferences"
+msgstr "Nie można zapisać preferencji"
 
 #: user/static/js/modules/profile/templates.js:5
 msgid "Delete the avatar?"
@@ -5208,21 +5258,59 @@ msgstr "Adres podstawowy"
 msgid "Verified"
 msgstr "Zweryfikowano"
 
-#: user/static/js/modules/profile/templates.js:225
+#: user/static/js/modules/profile/templates.js:220
+#| msgid "Editors"
+msgid "Editor"
+msgstr "Redaktor"
+
+#: user/static/js/modules/profile/templates.js:224
+msgid "Enable inline reference typing (@)"
+msgstr "Włącz wpisywanie odwołań wbudowanych (@)"
+
+#: user/static/js/modules/profile/templates.js:226
+msgid "Type @ in the editor to insert a citation or cross-reference:"
+msgstr "Wpisz @ w edytorze, aby wstawić cytat lub odsyłacz:"
+
+#: user/static/js/modules/profile/templates.js:228
+msgid ""
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
+" citation: @@entry_key. Multiple sources: @key1;key2"
+msgstr ""
+"Cytat: @entry_key – opcjonalny przyrostek: @entry_key[prefix][lokator]. "
+"Cytat tekstowy: @@entry_key. Wiele źródeł: @key1;key2"
+
+#: user/static/js/modules/profile/templates.js:229
+#| msgid "Cross reference"
+msgid "Cross-reference: @#target-id"
+msgstr "Odsyłacz: @#ident-target"
+
+#: user/static/js/modules/profile/templates.js:233
+msgid "Enable inline math typing ($)"
+msgstr "Włącz wbudowane pisanie matematyczne ($)"
+
+#: user/static/js/modules/profile/templates.js:235
+msgid ""
+"Type $ in the editor followed by LaTeX math to insert an equation inline, "
+"e.g. $x^2. Press Enter or Tab to confirm."
+msgstr ""
+"Wpisz $ w edytorze, a następnie LaTeX math, aby wstawić równanie w linii, "
+"np. $x^2. Naciśnij Enter lub Tab, aby potwierdzić."
+
+#: user/static/js/modules/profile/templates.js:245
 msgid "Social Account Provider"
 msgstr "Dostawca kont społecznościowych"
 
-#: user/static/js/modules/profile/templates.js:253
+#: user/static/js/modules/profile/templates.js:273
 msgid "Connect"
 msgstr "Łączyć"
 
-#: user/static/js/modules/profile/templates.js:268
+#: user/static/js/modules/profile/templates.js:288
 msgid "Delete account"
 msgstr "Usuń konto"
 
 #: user/static/js/modules/signup/index.js:7
 msgid "Signup"
-msgstr "Zapisać się"
+msgstr "Rejestracja"
 
 #: user/static/js/modules/signup/index.js:13
 msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."

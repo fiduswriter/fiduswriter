@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,23 +20,23 @@ msgstr ""
 
 #: base/settings.py:280
 msgid "Arabic"
-msgstr "아라비아 말"
+msgstr "아랍어"
 
 #: base/settings.py:281
 msgid "Bulgarian"
-msgstr "불가리아 사람"
+msgstr "불가리아어"
 
 #: base/settings.py:282
 msgid "Czech"
-msgstr "체코 사람"
+msgstr "체코어"
 
 #: base/settings.py:283
 msgid "Danish"
-msgstr "덴마크 말"
+msgstr "덴마크어"
 
 #: base/settings.py:284
 msgid "German"
-msgstr "독일 사람"
+msgstr "독일어"
 
 #: base/settings.py:285
 msgid "English"
@@ -44,15 +44,15 @@ msgstr "영어"
 
 #: base/settings.py:286
 msgid "Spanish"
-msgstr "스페인 사람"
+msgstr "스페인어"
 
 #: base/settings.py:287
 msgid "French"
-msgstr "프랑스 국민"
+msgstr "프랑스어"
 
 #: base/settings.py:288
 msgid "Italian"
-msgstr "이탈리아 사람"
+msgstr "이탈리아어"
 
 #: base/settings.py:289
 msgid "Japanese"
@@ -60,7 +60,7 @@ msgstr "일본어"
 
 #: base/settings.py:290
 msgid "Korean"
-msgstr "한국인"
+msgstr "한국어"
 
 #: base/settings.py:291
 msgid "Norwegian Bokmål"
@@ -68,11 +68,11 @@ msgstr "노르웨이어 복몰어"
 
 #: base/settings.py:292
 msgid "Dutch"
-msgstr "네덜란드 사람"
+msgstr "네덜란드어"
 
 #: base/settings.py:293
 msgid "Polish"
-msgstr "광택"
+msgstr "폴란드어"
 
 #: base/settings.py:294
 msgid "Portuguese (Brazil)"
@@ -84,7 +84,7 @@ msgstr "포르투갈어(포르투갈)"
 
 #: base/settings.py:296
 msgid "Russian"
-msgstr "러시아인"
+msgstr "러시아어"
 
 #: base/settings.py:297
 msgid "Swedish"
@@ -98,15 +98,15 @@ msgstr "터키어"
 msgid "Chinese (Simplified)"
 msgstr "중국어(간체)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
-msgstr "Fidus 작가 관리자"
+msgstr "Fidus Writer 관리자"
+
+#: base/settings.py:416
+msgid "Fidus Writer Administration Site"
+msgstr "Fidus Writer 관리 사이트"
 
 #: base/settings.py:417
-msgid "Fidus Writer Administration Site"
-msgstr "Fidus 작가 관리 사이트"
-
-#: base/settings.py:418
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Fidus Writer 관리 사이트에 오신 것을 환영합니다."
 
@@ -198,9 +198,9 @@ msgid ""
 msgstr ""
 "\n"
 "귀하의 브라우저는 Fidus Writer에서 지원되지 않습니다.\n"
-"                업데이트해주세요! 전류를 사용하는 것이 좋습니다.\n"
-"                Chrome/Chromium 또는 Firefox 버전\n"
-"                데스크톱 컴퓨터."
+"                업데이트해주세요! 데스크톱 컴퓨터에서\n"
+"                최신 버전의 Chrome/Chromium 또는 Firefox를\n"
+"                사용하시기를 권장합니다."
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"
@@ -401,7 +401,7 @@ msgstr "%(name)s 추가"
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr "유지"
+msgstr "유지보수"
 
 #: document/templates/admin/document/maintenance.html:24
 msgid ""
@@ -430,7 +430,7 @@ msgstr "템플릿에는 문서 스타일이 1개 이상 필요합니다."
 
 #: user/admin.py:11
 msgid "Connections"
-msgstr "사이"
+msgstr "연결"
 
 #: user/emails.py:10
 #, python-format
@@ -451,7 +451,7 @@ msgstr ""
 
 #: user/emails.py:34
 msgid "Invite for Fidus Writer"
-msgstr "Fidus 작가 초대"
+msgstr "Fidus Writer 초대"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
@@ -489,7 +489,7 @@ msgstr "연락처 목록 보기"
 
 #: user/emails.py:82
 msgid "Fidus Writer invite declined"
-msgstr "Fidus 작가 초대가 거부되었습니다."
+msgstr "Fidus Writer 초대 거부됨"
 
 #: user/emails.py:95
 #, python-format
@@ -515,25 +515,25 @@ msgstr "Fidus Writer 초대가 수락되었습니다."
 
 #: user/emails.py:124
 msgid "Fidus Writer invite accepted"
-msgstr "Fidus 작가 초대가 수락되었습니다."
+msgstr "Fidus Writer 초대 수락됨"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "코드는 정확히 6자리(0-9)여야 합니다."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "인터페이스 언어 기본 설정"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr "사용자 기본 설정(예: 암호화 대화상자 닫기)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "다른 사용자로 로그인 가능"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "이메일 주소"
 

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-04-17 18:53+0200\n"
 "Last-Translator: Ana Carolina Vera Resquin <ani.tavr77@gmail.com>\n"
 "Language-Team: <ani.tavr77@gmail.com>\n"
@@ -94,15 +94,15 @@ msgstr "turco"
 msgid "Chinese (Simplified)"
 msgstr "Chino (simplificado)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Administrar Fidus Writer"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Sitio de Administración de Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bienvenido al Sitio de Administración de Fidus Writer"
 
@@ -522,21 +522,21 @@ msgstr "Invitación para Fidus Writer aceptada"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "El código debe tener exactamente 6 dígitos (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Preferencia de idioma de la interfaz"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
 "Preferencias del usuario (por ejemplo, descartar el cuadro de diálogo de "
 "cifrado)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Puede iniciar sesión como otro usuario"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "dirección de correo electrónico"
 

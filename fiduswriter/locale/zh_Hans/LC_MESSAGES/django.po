@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0800\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -53,11 +53,11 @@ msgstr "意大利语"
 
 #: base/settings.py:289
 msgid "Japanese"
-msgstr "日本人"
+msgstr "日语"
 
 #: base/settings.py:290
 msgid "Korean"
-msgstr "韩国人"
+msgstr "韩语"
 
 #: base/settings.py:291
 msgid "Norwegian Bokmål"
@@ -69,7 +69,7 @@ msgstr "荷兰语"
 
 #: base/settings.py:293
 msgid "Polish"
-msgstr "抛光"
+msgstr "波兰语"
 
 #: base/settings.py:294
 msgid "Portuguese (Brazil)"
@@ -85,31 +85,31 @@ msgstr "俄语"
 
 #: base/settings.py:297
 msgid "Swedish"
-msgstr "瑞典"
+msgstr "瑞典语"
 
 #: base/settings.py:298
 msgid "Turkish"
-msgstr "土耳其"
+msgstr "土耳其语"
 
 #: base/settings.py:299
 msgid "Chinese (Simplified)"
 msgstr "中文（简体）"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer 管理"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer 管理站点"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "欢迎访问 Fidus Writer 管理站点"
 
 #: base/templates/500.html:5 base/templates/500.html:8
 msgid "Error 500"
-msgstr "错误 500"
+msgstr "500 错误"
 
 #: base/templates/500.html:9
 msgid ""
@@ -193,9 +193,9 @@ msgid ""
 msgstr ""
 "\n"
 "Fidus Writer 不支持您的浏览器。\n"
-"                请更新！我们建议使用电流\n"
-"                Chrome/Chromium 或 Firefox 版本\n"
-"                台式电脑。"
+"                请更新！我们建议在台式电脑上使用\n"
+"                最新版本的 Chrome/Chromium 或 Firefox。\n"
+"                "
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"
@@ -444,7 +444,7 @@ msgstr "<p>嘿 %(email)s，<br> %(sender)s 邀请您在 Fidus Writer 上进行�
 
 #: user/emails.py:34
 msgid "Invite for Fidus Writer"
-msgstr "Fidus 作家邀请"
+msgstr "Fidus Writer 邀请"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
@@ -473,7 +473,7 @@ msgstr ""
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
-msgstr "Fidus 作家的邀请被拒绝"
+msgstr "Fidus Writer 的邀请被拒绝"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
@@ -481,7 +481,7 @@ msgstr "查看您的联系人列表"
 
 #: user/emails.py:82
 msgid "Fidus Writer invite declined"
-msgstr "Fidus 作家邀请被拒绝"
+msgstr "Fidus Writer 邀请被拒绝"
 
 #: user/emails.py:95
 #, python-format
@@ -503,29 +503,29 @@ msgstr ""
 
 #: user/emails.py:118
 msgid "Invite for Fidus Writer accepted"
-msgstr "Fidus 作家的邀请已接受"
+msgstr "Fidus Writer 的邀请已接受"
 
 #: user/emails.py:124
 msgid "Fidus Writer invite accepted"
-msgstr "Fidus 作家邀请已接受"
+msgstr "Fidus Writer 邀请已接受"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "代码必须正好是 6 位数字 (0-9)。"
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "界面语言偏好"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr "用户首选项（例如，加密对话框关闭）"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "可以以其他用户身份登录"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "电子邮件"
 

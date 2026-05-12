@@ -11,7 +11,11 @@ import {
     TableDialog
 } from "../../dialogs"
 import {setBlockType} from "../../keymap"
-import {checkProtectedInSelection} from "../../state_plugins"
+import {
+    checkProtectedInSelection,
+    getInlineReferenceState,
+    setInlineReferenceState
+} from "../../state_plugins"
 
 const BLOCK_LABELS = {
     paragraph: gettext("Normal Text"),
@@ -759,6 +763,16 @@ export const toolbarModel = () => ({
             title: gettext("Cite"),
             icon: "book",
             action: editor => {
+                const inlineState = getInlineReferenceState(
+                    editor.currentView.state
+                )
+                if (inlineState?.active && inlineState.isEdit) {
+                    editor.currentView.dispatch(
+                        setInlineReferenceState(editor.currentView.state.tr, {
+                            action: "openDialog"
+                        })
+                    )
+                }
                 const dialog = new CitationDialog(editor)
                 dialog.init()
                 return false

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -90,15 +90,15 @@ msgstr "турски"
 msgid "Chinese (Simplified)"
 msgstr "китайски (опростен)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 
@@ -192,7 +192,7 @@ msgid ""
 msgstr ""
 "\n"
 "                Вашият браузър не се поддържа от Fidus Writer.\n"
-"                Моля обновете! Препоръчваме да използвате ток\n"
+"                Моля обновете! Препоръчваме да използвате актуална\n"
 "                версия на Chrome / Chromium или Firefox на a\n"
 "                настолен компютър.\n"
 "                        "
@@ -478,7 +478,7 @@ msgstr ""
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
-msgstr "Поканата за Fidus Writer отказа"
+msgstr "Поканата за Fidus Writer е отхвърлена"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
@@ -518,21 +518,21 @@ msgstr "Поканата за Fidus Writer е приета"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Кодът трябва да бъде точно 6 цифри (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Предпочитание за език на интерфейса"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
 "Потребителски предпочитания (напр. отхвърляне на диалоговия прозорец за "
 "шифроване)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Може да влезе като друг потребител"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "имейл адрес"
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: base/settings.py:280
 msgid "Arabic"
-msgstr "arabisk"
+msgstr "Arabisk"
 
 #: base/settings.py:281
 msgid "Bulgarian"
@@ -25,11 +25,11 @@ msgstr "Bulgarsk"
 
 #: base/settings.py:282
 msgid "Czech"
-msgstr "tjekkisk"
+msgstr "Tjekkisk"
 
 #: base/settings.py:283
 msgid "Danish"
-msgstr "dansk"
+msgstr "Dansk"
 
 #: base/settings.py:284
 msgid "German"
@@ -53,23 +53,23 @@ msgstr "Italiensk"
 
 #: base/settings.py:289
 msgid "Japanese"
-msgstr "japansk"
+msgstr "Japansk"
 
 #: base/settings.py:290
 msgid "Korean"
-msgstr "koreansk"
+msgstr "Koreansk"
 
 #: base/settings.py:291
 msgid "Norwegian Bokmål"
-msgstr "norsk bokmål"
+msgstr "Norsk bokmål"
 
 #: base/settings.py:292
 msgid "Dutch"
-msgstr "hollandsk"
+msgstr "Hollandsk"
 
 #: base/settings.py:293
 msgid "Polish"
-msgstr "Polere"
+msgstr "Polsk"
 
 #: base/settings.py:294
 msgid "Portuguese (Brazil)"
@@ -81,29 +81,29 @@ msgstr "Portugisisk (Portugal)"
 
 #: base/settings.py:296
 msgid "Russian"
-msgstr "russisk"
+msgstr "Russisk"
 
 #: base/settings.py:297
 msgid "Swedish"
-msgstr "svensk"
+msgstr "Svensk"
 
 #: base/settings.py:298
 msgid "Turkish"
-msgstr "tyrkisk"
+msgstr "Tyrkisk"
 
 #: base/settings.py:299
 msgid "Chinese (Simplified)"
-msgstr "kinesisk (forenklet)"
+msgstr "Kinesisk (forenklet)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer Administrationsside"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Velkommen til Fidus Writer Administrationsside"
 
@@ -197,7 +197,7 @@ msgid ""
 msgstr ""
 "\n"
 "Din browser understøttes ikke af Fidus Writer.\n"
-"                Opdater venligst! Vi anbefaler at bruge en strøm\n"
+"                Opdater venligst! Vi anbefaler at bruge en aktuel\n"
 "                version af Chrome/Chromium eller Firefox på en\n"
 "                stationær computer."
 
@@ -400,7 +400,7 @@ msgstr "Tilføj %(name)s"
 #: document/templates/admin/document/document/change_list_object_tools.html:13
 #: document/templates/admin/document/maintenance.html:4
 msgid "Maintenance"
-msgstr "Opretholdelse"
+msgstr "Vedligeholdelse"
 
 #: document/templates/admin/document/maintenance.html:24
 msgid ""
@@ -421,7 +421,7 @@ msgstr "Opdater alle dokumenter (FARE!)"
 
 #: style/models.py:74
 msgid "Default"
-msgstr "Misligholdelse"
+msgstr "Standard"
 
 #: style/views.py:27
 msgid "The template needs at least 1 document style"
@@ -521,19 +521,19 @@ msgstr "Fidus Writer-invitation accepteret"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Koden skal være nøjagtig 6 cifre (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Præference for grænsefladesprog"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr "Brugerpræferencer (f.eks. afvisning af krypteringsdialog)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Kan logge ind som en anden bruger"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "e-mailadresse"
 

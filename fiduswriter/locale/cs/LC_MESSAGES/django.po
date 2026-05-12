@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,15 +98,15 @@ msgstr "turečtina"
 msgid "Chinese (Simplified)"
 msgstr "čínština (zjednodušená)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Správce Fidus Writer"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Administrační stránka Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Vítejte na stránkách administrace Fidus Writer"
 
@@ -200,7 +200,7 @@ msgid ""
 msgstr ""
 "\n"
 "Váš prohlížeč není podporován aplikací Fidus Writer.\n"
-"                Aktualizujte prosím! Doporučujeme použít proud\n"
+"                Aktualizujte prosím! Doporučujeme použít aktuální\n"
 "                verze Chrome/Chromium nebo Firefox na a\n"
 "                stolní počítač."
 
@@ -524,19 +524,19 @@ msgstr "Pozvánka Fidus Writer přijata"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Kód musí mít přesně 6 číslic (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Předvolba jazyka rozhraní"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr "Uživatelské předvolby (např. odmítnutí dialogového okna šifrování)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Může se přihlásit jako jiný uživatel"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "e-mailová adresa"
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -95,15 +95,15 @@ msgstr "турецкий"
 msgid "Chinese (Simplified)"
 msgstr "Китайский (упрощенный)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт администрации Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добро пожаловать в панель администрации Fidus Writer"
 
@@ -198,9 +198,9 @@ msgid ""
 msgstr ""
 "\n"
 "Ваш браузер не поддерживается Fidus Writer.\n"
-"                Пожалуйста, обновите! Мы рекомендуем использовать ток\n"
+"                Пожалуйста, обновите! Мы рекомендуем использовать актуальную\n"
 "                версию Chrome/Chromium или Firefox на\n"
-"                настольный компьютер."
+"                настольном компьютере."
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"
@@ -419,7 +419,7 @@ msgstr ""
 
 #: document/templates/admin/document/maintenance.html:32
 msgid "Update all documents (DANGER!)"
-msgstr "Обновите все документы (ОПАСНО!)"
+msgstr "Обновите все документы (ВНИМАНИЕ!)"
 
 #: style/models.py:74
 msgid "Default"
@@ -523,20 +523,20 @@ msgstr "Приглашение Fidus Writer принято"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Код должен состоять ровно из 6 цифр (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Предпочтительный язык интерфейса"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
 "Пользовательские настройки (например, закрытие диалогового окна шифрования)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Можно войти как другой пользователь"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "Адрес электронной почты"
 

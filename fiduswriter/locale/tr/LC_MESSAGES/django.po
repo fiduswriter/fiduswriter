@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,15 +98,15 @@ msgstr "Türkçe"
 msgid "Chinese (Simplified)"
 msgstr "Çince (Basitleştirilmiş)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Yazar Yöneticisi"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Yazar Yönetim Sitesi"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Fidus Yazar Yönetim Sitesine Hoş Geldiniz"
 
@@ -201,9 +201,9 @@ msgid ""
 msgstr ""
 "\n"
 "Tarayıcınız Fidus Writer tarafından desteklenmiyor.\n"
-"                Lütfen güncelleyin! Bir akım kullanmanızı öneririz\n"
-"                Chrome/Chromium veya Firefox sürümü\n"
-"                masaüstü bilgisayar."
+"                Lütfen güncelleyin! Güncel bir Chrome/Chromium veya Firefox\n"
+"                sürümü kullanmanızı öneririz,\n"
+"                masaüstü bilgisayarda."
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"
@@ -525,20 +525,20 @@ msgstr "Fidus Yazar daveti kabul edildi"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Kod tam olarak 6 haneli (0-9) olmalıdır."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Arayüz dili tercihi"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
 "Kullanıcı tercihleri ​​(ör. şifreleme iletişim kutusunun reddedilmesi)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Başka bir kullanıcı olarak giriş yapabilir"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "e-posta adresi"
 

@@ -65,3 +65,9 @@ export {
     deselectSearchMatch,
     endSearch
 } from "./search"
+export {
+    inlineReferencePlugin,
+    getInlineReferenceState,
+    setInlineReferenceState
+} from "./inline_reference"
+export {inlineMathPlugin} from "./inline_math"

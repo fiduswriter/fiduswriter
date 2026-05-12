@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,15 +97,15 @@ msgstr "turco"
 msgid "Chinese (Simplified)"
 msgstr "Chinês (simplificado)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Administrador do escritor Fidus"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Site de administração do Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bem-vindo ao site de administração do Fidus Writer"
 
@@ -199,8 +199,8 @@ msgid ""
 msgstr ""
 "\n"
 "Seu navegador não é compatível com Fidus Writer.\n"
-"                Por favor atualize! Recomendamos usar uma corrente\n"
-"                versão do Chrome/Chromium ou Firefox em um\n"
+"                Por favor atualize! Recomendamos usar uma versão atual\n"
+"                do Chrome/Chromium ou Firefox num\n"
 "                computador desktop."
 
 #: document/admin.py:76
@@ -524,21 +524,21 @@ msgstr "Convite do Fidus Writer aceito"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "O código deve ter exatamente 6 dígitos (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Preferência de idioma da interface"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
 "Preferências do usuário (por exemplo, dispensa da caixa de diálogo de "
 "criptografia)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Pode fazer login como outro usuário"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "endereço de email"
 

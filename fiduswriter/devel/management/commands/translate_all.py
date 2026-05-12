@@ -6,8 +6,21 @@ import time
 from collections import Counter
 
 
-# Regex for Django/Python format specifiers like %(name)s
-FORMAT_SPEC_RE = re.compile(r"%\([^)]+\)[sdifFgGeExXroc%]")
+# Bug 4 fix: module-level constant for Google Translate's 5 000-character limit.
+# Using 4 900 rather than 5 000 leaves a safety margin for the XML placeholders
+# that protect_format_specs injects.
+MAX_CHARS = 4900
+
+# Bug 2 fix: expand from "%(name)s only" to a combined alternation that covers
+# all common Python/Django format-specifier styles so they are all hidden from
+# the translator and faithfully round-tripped.
+FORMAT_SPEC_RE = re.compile(
+    r"%\([^)]+\)[sdifFgGeExXroc%]"  # %(name)s  named Django-style  (original)
+    r"|\{\w+(?::[^}]*)?\}"  # {name} / {name:fmt}  brace-style
+    r"|\{\d+(?::[^}]*)?\}"  # {0} / {0:fmt}  positional brace-style
+    r"|(?<!\()%[sdirf]"  # bare %s %d %i %f %r (negative lookbehind
+    #   avoids re-matching the ( of %(name)s)
+)
 
 
 class Command(BaseCommand):
@@ -118,6 +131,8 @@ class Command(BaseCommand):
         mapping = {
             "en_US": "en",
             "pt_BR": "pt",
+            # Bug: "pt" resolves to Brazilian Portuguese on Google
+            # Translate; "pt_PT" explicitly requests European Portuguese (not available).
             "pt_PT": "pt",
             "zh_Hans": "zh-CN",
             "nb": "no",
@@ -125,20 +140,38 @@ class Command(BaseCommand):
         return mapping.get(lang, lang)
 
     def protect_format_specs(self, text):
-        """Replace %(name)s format specifiers with numbered placeholders."""
+        """Replace format specifiers with XML-style placeholder tokens.
+
+        Bug 1 fix: use <ph id="N"/> instead of __VAR_N__.  Google Translate
+        treats XML/HTML tags as opaque markup and preserves them faithfully,
+        whereas it may partially translate the word "VAR" inside __VAR_N__.
+        """
         specs = []
 
         def replacer(match):
             specs.append(match.group(0))
-            return f"__VAR_{len(specs) - 1}__"
+            # XML self-closing tags are kept intact by Google Translate.
+            return f'<ph id="{len(specs) - 1}"/>'
 
         protected = FORMAT_SPEC_RE.sub(replacer, text)
         return protected, specs
 
     def restore_format_specs(self, text, specs):
-        """Replace numbered placeholders back with original format specifiers."""
+        """Replace XML-style placeholder tokens back with original format specifiers.
+
+        Bug 1 fix: use a regex instead of a plain string replace so we can
+        tolerate the minor variations in attribute quoting and whitespace that
+        Google Translate sometimes introduces (e.g. <ph id='0'> or <ph id=0 />).
+        Using a lambda as the replacement prevents re.sub from interpreting
+        backslash sequences that might appear in the original spec string.
+        """
         for i, spec in enumerate(specs):
-            text = text.replace(f"__VAR_{i}__", spec)
+            text = re.sub(
+                rf'<\s*ph\s+id\s*=\s*["\']?{i}["\']?\s*/?\s*>',
+                lambda m, s=spec: s,  # lambda avoids re.sub backslash expansion
+                text,
+                flags=re.IGNORECASE,
+            )
         return text
 
     def translate_file(self, po_file, target_lang, skip_fuzzy, delay):
@@ -174,23 +207,36 @@ class Command(BaseCommand):
             # Protect format specifiers before translation
             protected_text, specs = self.protect_format_specs(msgid_text)
 
-            # Preserve leading/trailing newlines that Google Translate strips
-            leading_newline = ""
-            trailing_newline = ""
-            if protected_text.startswith("\n"):
-                leading_newline = "\n"
-                protected_text = protected_text[1:]
-            if protected_text.endswith("\n"):
-                trailing_newline = "\n"
-                protected_text = protected_text[:-1]
+            # Bug 3 fix: preserve the *full* leading and trailing whitespace
+            # sequence, not just a single '\n'.  Google Translate silently
+            # strips leading/trailing whitespace, so we peel it off before
+            # sending and reattach it afterwards.
+            leading = protected_text[
+                : len(protected_text) - len(protected_text.lstrip("\n "))
+            ]
+            trailing_stripped = protected_text.rstrip("\n ")
+            trailing = protected_text[len(trailing_stripped) :]
+            protected_text = trailing_stripped[len(leading) :]
+
+            # Bug 4 fix: skip strings that exceed Google Translate's ~5 000-
+            # character limit; sending them would cause an API error and waste
+            # retry budget.
+            if len(protected_text) > MAX_CHARS:
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"  Skipping (too long, {len(protected_text)} chars): "
+                        f"{entry.msgid[:50]!r}..."
+                    )
+                )
+                continue
 
             max_retries = 5
             for attempt in range(max_retries):
                 try:
                     result = translator.translate(protected_text)
                     if result:
-                        # Restore newlines first, then format specifiers
-                        result = leading_newline + result + trailing_newline
+                        # Restore whitespace first, then format specifiers
+                        result = leading + result + trailing
                         result = self.restore_format_specs(result, specs)
 
                         # Verify format specifiers were preserved

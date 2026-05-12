@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: base/settings.py:280
 msgid "Arabic"
-msgstr "arabski"
+msgstr "Arabski"
 
 #: base/settings.py:281
 msgid "Bulgarian"
@@ -25,11 +25,11 @@ msgstr "Bułgarski"
 
 #: base/settings.py:282
 msgid "Czech"
-msgstr "czeski"
+msgstr "Czeski"
 
 #: base/settings.py:283
 msgid "Danish"
-msgstr "duński"
+msgstr "Duński"
 
 #: base/settings.py:284
 msgid "German"
@@ -53,11 +53,11 @@ msgstr "Włoski"
 
 #: base/settings.py:289
 msgid "Japanese"
-msgstr "japoński"
+msgstr "Japoński"
 
 #: base/settings.py:290
 msgid "Korean"
-msgstr "koreański"
+msgstr "Koreański"
 
 #: base/settings.py:291
 msgid "Norwegian Bokmål"
@@ -77,33 +77,33 @@ msgstr "Portugalski (Brazylia)"
 
 #: base/settings.py:295
 msgid "Portuguese (Portugal)"
-msgstr "portugalski (Portugalia)"
+msgstr "Portugalski (Portugalia)"
 
 #: base/settings.py:296
 msgid "Russian"
-msgstr "rosyjski"
+msgstr "Rosyjski"
 
 #: base/settings.py:297
 msgid "Swedish"
-msgstr "szwedzki"
+msgstr "Szwedzki"
 
 #: base/settings.py:298
 msgid "Turkish"
-msgstr "turecki"
+msgstr "Turecki"
 
 #: base/settings.py:299
 msgid "Chinese (Simplified)"
 msgstr "chiński (uproszczony)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Strona administracyjna Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Witaj w panelu administracyjnym Fidus Writer"
 
@@ -198,9 +198,9 @@ msgid ""
 msgstr ""
 "\n"
 "Twoja przeglądarka nie jest obsługiwana przez Fidus Writer.\n"
-"                Proszę o aktualizację! Zalecamy użycie prądu\n"
-"                wersja przeglądarki Chrome/Chromium lub Firefox na a\n"
-"                komputer stacjonarny."
+"                Proszę o aktualizację! Zalecamy użycie aktualnej\n"
+"                wersji przeglądarki Chrome/Chromium lub Firefox na\n"
+"                komputerze stacjonarnym."
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"
@@ -208,7 +208,7 @@ msgstr "Duplikuj wybrane szablony dokumentów"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:968
 msgid "Untitled"
-msgstr "Nieuprawny"
+msgstr "Bez tytułu"
 
 #: document/emails.py:21
 #, python-format
@@ -522,19 +522,19 @@ msgstr "Zaproszenie Fidus Writer zostało zaakceptowane"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Kod musi składać się dokładnie z 6 cyfr (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Preferencje językowe interfejsu"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr "Preferencje użytkownika (np. zamknięcie okna dialogowego szyfrowania)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Możliwość zalogowania się jako inny użytkownik"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "adres e-mail"
 

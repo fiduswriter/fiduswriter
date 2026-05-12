@@ -13,7 +13,7 @@ import {
     filterBibliography
 } from "./dropup"
 
-const key = new PluginKey("inlineCitation")
+export const key = new PluginKey("inlineCitation")
 
 /**
  * Check if citations can be inserted at the given position.
@@ -726,6 +726,25 @@ export const inlineCitationPlugin = options => {
                     )
                     return tr.setMeta(key, {action: "deactivate"})
                 }
+            }
+
+            if (meta?.action === "openDialog") {
+                if (oldPluginState.active && oldPluginState.isEdit) {
+                    // Deactivate the inline editor and leave a NodeSelection on
+                    // the citation so CitationDialog opens with its content.
+                    const node = newState.doc.nodeAt(oldPluginState.citationPos)
+                    if (node?.type.name === "citation") {
+                        return newState.tr
+                            .setSelection(
+                                NodeSelection.create(
+                                    newState.doc,
+                                    oldPluginState.citationPos
+                                )
+                            )
+                            .setMeta(key, {action: "deactivate"})
+                    }
+                }
+                return null
             }
 
             if (oldPluginState.active) {

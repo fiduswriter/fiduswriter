@@ -65,4 +65,4 @@ export {
     deselectSearchMatch,
     endSearch
 } from "./search"
-export {inlineCitationPlugin} from "./inline_citation"
+export {inlineCitationPlugin, inlineCitationKey} from "./inline_citation"

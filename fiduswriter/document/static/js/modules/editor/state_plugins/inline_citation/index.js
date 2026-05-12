@@ -1,1 +1,1 @@
-export {inlineCitationPlugin} from "./plugin"
+export {inlineCitationPlugin, key as inlineCitationKey} from "./plugin"

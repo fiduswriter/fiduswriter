@@ -170,11 +170,11 @@ export class Editor {
 
         this.statePlugins = [
             [inlineReferencePlugin, () => ({editor: this})],
+            [linksPlugin, () => ({editor: this})],
             [keymap, () => buildEditorKeymap(this.schema)],
             [keymap, () => buildKeymap(this.schema)],
             [keymap, () => baseKeymap],
             [collab, () => ({clientID: this.client_id})],
-            [linksPlugin, () => ({editor: this})],
             [history],
             [dropCursor],
             [gapCursor],

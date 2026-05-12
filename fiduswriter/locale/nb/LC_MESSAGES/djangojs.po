@@ -227,7 +227,8 @@ msgstr "Opphavsrettsinnehaver"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder is."
+"If the work is not in the public domain, specify who the copyright holder "
+"is."
 msgstr ""
 "Hvis verket ikke er i det offentlige domene, spesifiser hvem "
 "opphavsrettsinnehaveren er."
@@ -262,8 +263,8 @@ msgid ""
 "\"2012-10-15\")."
 msgstr ""
 "List opp eventuelle lisenser verket er tilgjengelig under. Hvis lisensen "
-"bare gjelder fra en gitt dato, vennligst spesifiser datoen i ISO8601-"
-"formatet (som \"2012-10-15\")."
+"bare gjelder fra en gitt dato, vennligst spesifiser datoen i "
+"ISO8601-formatet (som \"2012-10-15\")."
 
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
@@ -470,14 +471,15 @@ msgstr "Registrer ny kilde"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:386
 #, fuzzy
-#| msgid "A slug can only contain letters, numbers, hyphens and underscores."
+#| msgid ""
+#| "A slug can only contain letters, numbers, hyphens and underscores."
 msgid "Only letters, numbers, hyphens and underscores are allowed."
 msgstr ""
 "En snegle kan bare inneholde bokstaver, tall, bindestreker og understreker."
 
 #: bibliography/static/js/modules/bibliography/form/index.js:398
 msgid "Warning: this key is already used in your library."
-msgstr ""
+msgstr "Advarsel: denne nøkkelen er allerede brukt i biblioteket ditt."
 
 #: bibliography/static/js/modules/bibliography/form/index.js:451
 msgid "Error in form, check highlighted values!"
@@ -488,10 +490,9 @@ msgid "Select source type"
 msgstr "Velg kildetype"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:28
-#, fuzzy
 #| msgid "Citation"
 msgid "Citation key"
-msgstr "Sitering"
+msgstr "Sitasjonsnøkkel"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:33
 msgid "Required Fields"
@@ -562,7 +563,8 @@ msgid ""
 "Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT citations, DOCX citations"
 msgstr ""
 "Støttede formater: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote "
-"Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT-siteringer, DOCX-siteringer"
+"Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT-siteringer, DOCX-"
+"siteringer"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:68
 msgid "Bibliography Manager"
@@ -860,8 +862,8 @@ msgstr "vellykket importert."
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
 msgstr ""
-"Den opplastede filen ser ikke ut til å være av versjonen som brukes på denne "
-"serveren:"
+"Den opplastede filen ser ikke ut til å være av versjonen som brukes på denne"
+" serveren:"
 
 #: document/static/js/modules/document_template/list_admin.js:38
 msgid "Upload FIDUSTEMPLATE"
@@ -1479,8 +1481,8 @@ msgstr "End-to-end kryptert dokument"
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure "
-"channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure"
+" channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "Dette dokumentet er ende-til-ende-kryptert. Samarbeidspartnere uten en "
@@ -1641,8 +1643,8 @@ msgid ""
 "secure channels."
 msgstr ""
 "Hvis du skriver inn passordet ovenfor, vil det bli innebygd i lenken (etter "
-"#). Alle med linken kan åpne dokumentet. Del bare slike lenker gjennom sikre "
-"kanaler."
+"#). Alle med linken kan åpne dokumentet. Del bare slike lenker gjennom sikre"
+" kanaler."
 
 #: document/static/js/modules/documents/access_rights/templates.js:145
 #: document/static/js/modules/documents/access_rights/templates.js:168
@@ -1876,8 +1878,8 @@ msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
 msgstr ""
-"Du må dele passordet med samarbeidspartnere manuelt (med mindre de bruker en "
-"personlig passordfrase)."
+"Du må dele passordet med samarbeidspartnere manuelt (med mindre de bruker en"
+" personlig passordfrase)."
 
 #: document/static/js/modules/documents/overview/index.js:885
 msgid "Regular documents are the default and work well for most users."
@@ -2154,8 +2156,8 @@ msgid ""
 "The recovery key you entered is incorrect, or the recovery process failed. "
 "Please try again."
 msgstr ""
-"Gjenopprettingsnøkkelen du skrev inn er feil, eller gjenopprettingsprosessen "
-"mislyktes. Vennligst prøv igjen."
+"Gjenopprettingsnøkkelen du skrev inn er feil, eller gjenopprettingsprosessen"
+" mislyktes. Vennligst prøv igjen."
 
 #: document/static/js/modules/editor/collab/doc.js:358
 #: document/static/js/modules/editor/collab/doc.js:559
@@ -2179,8 +2181,8 @@ msgid ""
 "It's taking a bit longer than usual, but it should be ready soon. Please "
 "wait..."
 msgstr ""
-"Det tar litt lengre tid enn vanlig, men det skal snart være klart. Vennligst "
-"vent..."
+"Det tar litt lengre tid enn vanlig, men det skal snart være klart. Vennligst"
+" vent..."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:155
 msgid "Merge Complete"
@@ -2256,7 +2258,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am merging?"
+"What if my collaborators continue working on the document while I am "
+"merging?"
 msgstr ""
 "Hva om samarbeidspartnerne mine fortsetter å jobbe med dokumentet mens jeg "
 "slår sammen?"
@@ -2275,8 +2278,8 @@ msgstr "Hvorfor ser jeg tre redaktører?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It "
-"is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It"
+" is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
@@ -2295,10 +2298,10 @@ msgstr "Hva er de grønne og røde høydepunktene i redaksjonen?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The "
-"text marked in green corresponds to the text that was edited (added) by you "
-"or other users. The text marked in red corresponds to text that was deleted "
-"by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The"
+" text marked in green corresponds to the text that was edited (added) by you"
+" or other users. The text marked in red corresponds to text that was deleted"
+" by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2327,17 +2330,17 @@ msgid ""
 "change works in the same way except on reject a change the highlight of the "
 "change will be lost, with it the ability to accept, reject or copy a change."
 msgstr ""
-"Å godta eller avvise en endring i fletteredigeringsprogrammet i midten eller "
-"frakoblet editor til høyre fører til en endring i "
-"fletteredigeringsprogrammet. Du kan godta en endring ved å klikke direkte på "
-"den uthevede teksten. En rullegardinmeny vil vises og du kan deretter enten "
-"godta eller avvise endringen. Når du klikker på den uthevede teksten, "
-"fremhever den også endringene som vil bli akseptert. %(mergeImage)s Som vist "
-"i bildet ovenfor kan man klikke på en uthevet endring, og klikke på godta "
+"Å godta eller avvise en endring i fletteredigeringsprogrammet i midten eller"
+" frakoblet editor til høyre fører til en endring i "
+"fletteredigeringsprogrammet. Du kan godta en endring ved å klikke direkte på"
+" den uthevede teksten. En rullegardinmeny vil vises og du kan deretter enten"
+" godta eller avvise endringen. Når du klikker på den uthevede teksten, "
+"fremhever den også endringene som vil bli akseptert. %(mergeImage)s Som vist"
+" i bildet ovenfor kan man klikke på en uthevet endring, og klikke på godta "
 "endring. Når du godtar en endring, vil den gjenspeiles i den sammenslåtte "
 "dokumentredigereren i midten. Å avvise en endring fungerer på samme måte "
-"bortsett fra ved å avvise en endring, vil høydepunktet av endringen gå tapt, "
-"med det muligheten til å akseptere, avvise eller kopiere en endring."
+"bortsett fra ved å avvise en endring, vil høydepunktet av endringen gå tapt,"
+" med det muligheten til å akseptere, avvise eller kopiere en endring."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:242
 msgid "I cannot accept a particular change. What do I do?"
@@ -2352,8 +2355,8 @@ msgid ""
 msgstr ""
 "Hvis du ikke automatisk kan godta en endring i fletteredigeringsprogrammet, "
 "ikke bekymre deg. Du kan velge å kopiere endringen enten ved å klikke på "
-"kopieringsknappen eller manuelt kopiere endringen og deretter lime den inn i "
-"fletteredigeringen i midten. Det er så enkelt som det!"
+"kopieringsknappen eller manuelt kopiere endringen og deretter lime den inn i"
+" fletteredigeringen i midten. Det er så enkelt som det!"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:249
 msgid "Can I edit content in all three editors?"
@@ -2420,8 +2423,8 @@ msgid ""
 "One or more of the image(s) you copied could not be found on the server. "
 "Consider re-uploading them once the document is merged."
 msgstr ""
-"Ett eller flere av bildene du kopierte ble ikke funnet på serveren. Vurder å "
-"laste dem opp på nytt når dokumentet er slått sammen."
+"Ett eller flere av bildene du kopierte ble ikke funnet på serveren. Vurder å"
+" laste dem opp på nytt når dokumentet er slått sammen."
 
 #: document/static/js/modules/editor/collab/merge/index.js:312
 msgid ""
@@ -2448,8 +2451,8 @@ msgstr "Sammenslåing mislyktes"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please "
-"consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please"
+" consider importing it into a new document."
 msgstr ""
 "Det oppstod en feil under sammenslåingsprosessen, så vi kan ikke lagre "
 "arbeidet ditt på serveren lenger, og det lastes ned til datamaskinen din i "
@@ -2552,8 +2555,8 @@ msgid ""
 "One of the Image(s) you copied could not be found on the server. Please try "
 "uploading it again."
 msgstr ""
-"Ett av bildene du kopierte ble ikke funnet på serveren. Prøv å laste den opp "
-"igjen."
+"Ett av bildene du kopierte ble ikke funnet på serveren. Prøv å laste den opp"
+" igjen."
 
 #: document/static/js/modules/editor/dialogs/citation.js:22
 #: document/static/js/modules/editor/dialogs/code_block.js:14
@@ -2998,8 +3001,8 @@ msgid ""
 "forget your passphrase, this is the ONLY way to recover your encrypted "
 "documents. We cannot recover it for you."
 msgstr ""
-"Oppbevar det et trygt sted (f.eks. en passordbehandler, trykt kopi). Hvis du "
-"glemmer passordfrasen, er dette den ENESTE måten å gjenopprette dine "
+"Oppbevar det et trygt sted (f.eks. en passordbehandler, trykt kopi). Hvis du"
+" glemmer passordfrasen, er dette den ENESTE måten å gjenopprette dine "
 "krypterte dokumenter. Vi kan ikke gjenopprette det for deg."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
@@ -3054,8 +3057,8 @@ msgstr "Gjenopprett kryptering"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption "
-"password."
+"Enter your current passphrase and a new passphrase to change your encryption"
+" password."
 msgstr ""
 "Skriv inn din nåværende passordfrase og en ny passordfrase for å endre "
 "krypteringspassordet."
@@ -3135,8 +3138,8 @@ msgstr "Skjul passord"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open "
-"the document in the future."
+"Set a password to encrypt this document. You will need this password to open"
+" the document in the future."
 msgstr ""
 "Angi et passord for å kryptere dette dokumentet. Du trenger dette passordet "
 "for å åpne dokumentet i fremtiden."
@@ -3175,8 +3178,8 @@ msgid ""
 "Change the document password. After changing, you must share the new "
 "password with all collaborators."
 msgstr ""
-"Endre dokumentpassordet. Etter endring må du dele det nye passordet med alle "
-"samarbeidspartnere."
+"Endre dokumentpassordet. Etter endring må du dele det nye passordet med alle"
+" samarbeidspartnere."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:446
 #: user/static/js/modules/profile/templates.js:63
@@ -3221,11 +3224,11 @@ msgstr "Ugyldig delingslink"
 #: document/static/js/modules/editor/index.js:337
 #: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for "
-"a new link."
+"This share link has expired or is invalid. Please ask the document owner for"
+" a new link."
 msgstr ""
-"Denne delingslenken er utløpt eller er ugyldig. Spør dokumenteieren om en ny "
-"lenke."
+"Denne delingslenken er utløpt eller er ugyldig. Spør dokumenteieren om en ny"
+" lenke."
 
 #: document/static/js/modules/editor/index.js:404
 msgid ""
@@ -3257,8 +3260,8 @@ msgid ""
 "the server any longer, but you can download it to your computer instead. "
 "Please consider importing it as a new document after logging in."
 msgstr ""
-"Økten din utløp mens du var frakoblet, så vi kan ikke lagre arbeidet ditt på "
-"serveren lenger, men du kan laste det ned til datamaskinen din i stedet. "
+"Økten din utløp mens du var frakoblet, så vi kan ikke lagre arbeidet ditt på"
+" serveren lenger, men du kan laste det ned til datamaskinen din i stedet. "
 "Vennligst vurder å importere det som et nytt dokument etter pålogging."
 
 #: document/static/js/modules/editor/index.js:646
@@ -3301,8 +3304,8 @@ msgid ""
 "Changes you made to the document since going offline will be lost, if you "
 "choose to close/refresh the tab or close the browser."
 msgstr ""
-"Endringer du har gjort i dokumentet siden du gikk frakoblet vil gå tapt hvis "
-"du velger å lukke/oppdatere fanen eller lukke nettleseren."
+"Endringer du har gjort i dokumentet siden du gikk frakoblet vil gå tapt hvis"
+" du velger å lukke/oppdatere fanen eller lukke nettleseren."
 
 #: document/static/js/modules/editor/marginboxes/index.js:595
 msgid "A cross reference has lost its target."
@@ -3680,8 +3683,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new "
-"key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new"
+" key automatically."
 msgstr ""
 "Dokumentkrypteringsnøkkel rotert. Andre brukere av passordfrase vil motta "
 "den nye nøkkelen automatisk."
@@ -4180,26 +4183,23 @@ msgstr ""
 "Dokumentet har blitt endret av en annen bruker. Last inn siden på nytt."
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:245
-#, fuzzy
 #| msgid "Equation"
 msgid "Edit equation"
-msgstr "Ligning"
+msgstr "Rediger ligningen"
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:248
-#, fuzzy
 #| msgid "Remove link"
 msgid "Remove equation"
-msgstr "Fjern lenken"
+msgstr "Fjern ligningen"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:28
 msgid "No matching sources"
-msgstr ""
+msgstr "Ingen samsvarende kilder"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
-#, fuzzy
 #| msgid "Cross reference"
 msgid "Cross-references"
-msgstr "Kryssreferanse"
+msgstr "Kryssreferanser"
 
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
@@ -4235,16 +4235,14 @@ msgid "Remove cross reference"
 msgstr "Fjern kryssreferanse"
 
 #: document/static/js/modules/editor/state_plugins/links.js:386
-#, fuzzy
 #| msgid "Deleted citation"
 msgid "Edit citation"
-msgstr "Slettet sitat"
+msgstr "Rediger sitat"
 
 #: document/static/js/modules/editor/state_plugins/links.js:389
-#, fuzzy
 #| msgid "Deleted citation"
 msgid "Remove citation"
-msgstr "Slettet sitat"
+msgstr "Fjern sitat"
 
 #: document/static/js/modules/editor/tools/key_bindings/index.js:14
 msgid "Keyboard Shortcuts"
@@ -4318,8 +4316,8 @@ msgstr "Søk"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace "
-"all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace"
+" all'"
 msgstr ""
 "Vær oppmerksom på at det er samsvar i ikke-redigerbare deler av dokumentet, "
 "disse samsvarene vil ikke bli erstattet når du bruker \"erstatt\" eller "
@@ -4811,24 +4809,25 @@ msgstr "Bekreft e-postadresse og godta vilkår og betingelser"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 msgstr ""
-"Vennligst bekreft at du eier e-posten <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Vennligst bekreft at du eier e-posten <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
+"%(username)s, and that you have read and agree to our <a "
+"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
+"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
 msgstr ""
-"Vennligst bekreft at du eier e-postadressen <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, at du søker om brukernavnet %(username)s, og at du har lest og "
-"godtar våre <a href=\"/pages/terms/\" target=\"_blank\">vilkår og "
-"betingelser</a> og <a href=\"/pages_blank\">personvernpolicyer</a>."
+"Vennligst bekreft at du eier e-postadressen <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, at du søker om brukernavnet "
+"%(username)s, og at du har lest og godtar våre <a href=\"/pages/terms/\" "
+"target=\"_blank\">vilkår og betingelser</a> og <a "
+"href=\"/pages_blank\">personvernpolicyer</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4847,8 +4846,8 @@ msgid ""
 "I am aware that I am signing up for a test account and that service may be "
 "ended abruptly and without notice, leaving me without my files."
 msgstr ""
-"Jeg er klar over at jeg registrerer meg for en testkonto og at tjenesten kan "
-"bli avsluttet brått og uten varsel, slik at jeg blir uten filene mine."
+"Jeg er klar over at jeg registrerer meg for en testkonto og at tjenesten kan"
+" bli avsluttet brått og uten varsel, slik at jeg blir uten filene mine."
 
 #: user/static/js/modules/email_confirm/templates.js:60
 msgid ""
@@ -4926,8 +4925,8 @@ msgid ""
 "We have sent an e-mail to your email address for verification. Follow the "
 "link provided to finalize the signup process."
 msgstr ""
-"Vi har sendt en e-post til din e-postadresse for bekreftelse. Følg koblingen "
-"for å fullføre registreringsprosessen."
+"Vi har sendt en e-post til din e-postadresse for bekreftelse. Følg koblingen"
+" for å fullføre registreringsprosessen."
 
 #: user/static/js/modules/login/index.js:216
 #: user/static/js/modules/password_reset/request_email.js:87
@@ -4992,8 +4991,8 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a href=\"mailto:%"
-"(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a "
+"href=\"mailto:%(contactEmail)s\">contact us</a>."
 msgstr ""
 "Hvis du har problemer med å tilbakestille passordet ditt, vennligst <a "
 "href=\"mailto:%(contactEmail)s\">kontakt oss</a>."
@@ -5148,10 +5147,9 @@ msgid "Could not save profile data"
 msgstr "Kunne ikke lagre profildata"
 
 #: user/static/js/modules/profile/index.js:317
-#, fuzzy
 #| msgid "Could not save "
 msgid "Could not save preferences"
-msgstr "Kunne ikke lagre"
+msgstr "Kunne ikke lagre innstillingene"
 
 #: user/static/js/modules/profile/templates.js:5
 msgid "Delete the avatar?"
@@ -5166,8 +5164,8 @@ msgid ""
 "Really delete your account? Type in your username and password below to "
 "confirm deletion."
 msgstr ""
-"Vil du virkelig slette kontoen din? Skriv inn brukernavn og passord nedenfor "
-"for å bekrefte sletting."
+"Vil du virkelig slette kontoen din? Skriv inn brukernavn og passord nedenfor"
+" for å bekrefte sletting."
 
 #: user/static/js/modules/profile/templates.js:23
 msgid "We cannot reverse an account deletion."
@@ -5261,40 +5259,43 @@ msgid "Verified"
 msgstr "Verifisert"
 
 #: user/static/js/modules/profile/templates.js:220
-#, fuzzy
 #| msgid "Editors"
 msgid "Editor"
-msgstr "Redaktører"
+msgstr "Redaktør"
 
 #: user/static/js/modules/profile/templates.js:224
 msgid "Enable inline reference typing (@)"
-msgstr ""
+msgstr "Aktiver innebygd referanseskriving (@)"
 
 #: user/static/js/modules/profile/templates.js:226
 msgid "Type @ in the editor to insert a citation or cross-reference:"
 msgstr ""
+"Skriv @ i editoren for å sette inn en henvisning eller kryssreferanse:"
 
 #: user/static/js/modules/profile/templates.js:228
 msgid ""
-"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
-"citation: @@entry_key. Multiple sources: @key1;key2"
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
+" citation: @@entry_key. Multiple sources: @key1;key2"
 msgstr ""
+"Sitat: @entry_key – valgfritt suffiks: @entry_key[prefiks][locator]. "
+"Teksthenvisning: @@entry_key. Flere kilder: @key1;key2"
 
 #: user/static/js/modules/profile/templates.js:229
-#, fuzzy
 #| msgid "Cross reference"
 msgid "Cross-reference: @#target-id"
-msgstr "Kryssreferanse"
+msgstr "Kryssreferanse: @#target-id"
 
 #: user/static/js/modules/profile/templates.js:233
 msgid "Enable inline math typing ($)"
-msgstr ""
+msgstr "Aktiver innebygd matematisk skriving ($)"
 
 #: user/static/js/modules/profile/templates.js:235
 msgid ""
 "Type $ in the editor followed by LaTeX math to insert an equation inline, "
 "e.g. $x^2. Press Enter or Tab to confirm."
 msgstr ""
+"Skriv $ i editoren etterfulgt av LaTeX-matematikk for å sette inn en ligning"
+" inline, f.eks. $x^2. Trykk Enter eller Tab for å bekrefte."
 
 #: user/static/js/modules/profile/templates.js:245
 msgid "Social Account Provider"
@@ -5313,11 +5314,10 @@ msgid "Signup"
 msgstr "Registrer deg"
 
 #: user/static/js/modules/signup/index.js:13
-msgid ""
-"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
 msgstr ""
-"Har du allerede en konto? Vennligst <a href=\"/\" title=\"Login\">logg på</"
-"a>."
+"Har du allerede en konto? Vennligst <a href=\"/\" title=\"Login\">logg "
+"på</a>."
 
 #: user/static/js/modules/signup/index.js:21
 msgid "Choose your username"
@@ -5390,8 +5390,8 @@ msgstr "Deaktiver tofaktorautentisering"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce "
-"the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce"
+" the security of your account."
 msgstr ""
 "Er du sikker på at du vil deaktivere tofaktorautentisering? Dette vil "
 "redusere sikkerheten til kontoen din."

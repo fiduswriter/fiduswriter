@@ -228,9 +228,11 @@ msgstr "Copyright holder"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder is."
+"If the work is not in the public domain, specify who the copyright holder "
+"is."
 msgstr ""
-"If the work is not in the public domain, specify who the copyright holder is."
+"If the work is not in the public domain, specify who the copyright holder "
+"is."
 
 #: base/static/js/modules/copyright_dialog/templates.js:66
 msgid "Copyright year"
@@ -468,14 +470,14 @@ msgid "Register New Source"
 msgstr "Register New Source"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:386
-#, fuzzy
-#| msgid "A slug can only contain letters, numbers, hyphens and underscores."
+#| msgid ""
+#| "A slug can only contain letters, numbers, hyphens and underscores."
 msgid "Only letters, numbers, hyphens and underscores are allowed."
-msgstr "A slug can only contain letters, numbers, hyphens and underscores."
+msgstr "Only letters, numbers, hyphens and underscores are allowed."
 
 #: bibliography/static/js/modules/bibliography/form/index.js:398
 msgid "Warning: this key is already used in your library."
-msgstr ""
+msgstr "Warning: this key is already used in your library."
 
 #: bibliography/static/js/modules/bibliography/form/index.js:451
 msgid "Error in form, check highlighted values!"
@@ -486,10 +488,9 @@ msgid "Select source type"
 msgstr "Select source type"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:28
-#, fuzzy
 #| msgid "Citation"
 msgid "Citation key"
-msgstr "Citation"
+msgstr "Citation key"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:33
 msgid "Required Fields"
@@ -1474,13 +1475,13 @@ msgstr "End-to-end encrypted document"
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure "
-"channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure"
+" channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure "
-"channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure"
+" channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 
 #: document/static/js/modules/documents/access_rights/index.js:244
@@ -1877,7 +1878,8 @@ msgstr "Regular documents are the default and work well for most users."
 
 #: document/static/js/modules/documents/overview/index.js:888
 msgid "Full access rights options including tracked changes and review modes."
-msgstr "Full access rights options including tracked changes and review modes."
+msgstr ""
+"Full access rights options including tracked changes and review modes."
 
 #: document/static/js/modules/documents/overview/index.js:889
 msgid "No risk of losing access if you forget a password."
@@ -2247,9 +2249,11 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am merging?"
+"What if my collaborators continue working on the document while I am "
+"merging?"
 msgstr ""
-"What if my collaborators continue working on the document while I am merging?"
+"What if my collaborators continue working on the document while I am "
+"merging?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:210
 msgid ""
@@ -2265,14 +2269,14 @@ msgstr "Why am I seeing three editors?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It "
-"is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It"
+" is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
 msgstr ""
-"The editor on the left will show the last common version of the document. It "
-"is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It"
+" is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
@@ -2284,18 +2288,18 @@ msgstr "What are the green and red highlights in the editors?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The "
-"text marked in green corresponds to the text that was edited (added) by you "
-"or other users. The text marked in red corresponds to text that was deleted "
-"by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The"
+" text marked in green corresponds to the text that was edited (added) by you"
+" or other users. The text marked in red corresponds to text that was deleted"
+" by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The "
-"text marked in green corresponds to the text that was edited (added) by you "
-"or other users. The text marked in red corresponds to text that was deleted "
-"by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The"
+" text marked in green corresponds to the text that was edited (added) by you"
+" or other users. The text marked in red corresponds to text that was deleted"
+" by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 
@@ -2434,12 +2438,12 @@ msgstr "Merge failed"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please "
-"consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please"
+" consider importing it into a new document."
 msgstr ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please "
-"consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please"
+" consider importing it into a new document."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
 #: document/static/js/modules/editor/index.js:733
@@ -3039,11 +3043,11 @@ msgstr "Recover Encryption"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption "
-"password."
+"Enter your current passphrase and a new passphrase to change your encryption"
+" password."
 msgstr ""
-"Enter your current passphrase and a new passphrase to change your encryption "
-"password."
+"Enter your current passphrase and a new passphrase to change your encryption"
+" password."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
 msgid "Current passphrase"
@@ -3119,11 +3123,11 @@ msgstr "Hide password"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open "
-"the document in the future."
+"Set a password to encrypt this document. You will need this password to open"
+" the document in the future."
 msgstr ""
-"Set a password to encrypt this document. You will need this password to open "
-"the document in the future."
+"Set a password to encrypt this document. You will need this password to open"
+" the document in the future."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:260
 msgid ""
@@ -3205,11 +3209,11 @@ msgstr "Invalid Share Link"
 #: document/static/js/modules/editor/index.js:337
 #: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for "
-"a new link."
+"This share link has expired or is invalid. Please ask the document owner for"
+" a new link."
 msgstr ""
-"This share link has expired or is invalid. Please ask the document owner for "
-"a new link."
+"This share link has expired or is invalid. Please ask the document owner for"
+" a new link."
 
 #: document/static/js/modules/editor/index.js:404
 msgid ""
@@ -3663,11 +3667,11 @@ msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new "
-"key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new"
+" key automatically."
 msgstr ""
-"Document encryption key rotated. Other passphrase users will receive the new "
-"key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new"
+" key automatically."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:479
 msgid ""
@@ -4162,26 +4166,23 @@ msgid "Document has been modified by another user. Please reload the page."
 msgstr "Document has been modified by another user. Please reload the page."
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:245
-#, fuzzy
 #| msgid "Equation"
 msgid "Edit equation"
-msgstr "Equation"
+msgstr "Edit equation"
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:248
-#, fuzzy
 #| msgid "Remove link"
 msgid "Remove equation"
-msgstr "Remove link"
+msgstr "Remove equation"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:28
 msgid "No matching sources"
-msgstr ""
+msgstr "No matching sources"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
-#, fuzzy
 #| msgid "Cross reference"
 msgid "Cross-references"
-msgstr "Cross reference"
+msgstr "Cross-references"
 
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
@@ -4217,16 +4218,14 @@ msgid "Remove cross reference"
 msgstr "Remove cross reference"
 
 #: document/static/js/modules/editor/state_plugins/links.js:386
-#, fuzzy
 #| msgid "Deleted citation"
 msgid "Edit citation"
-msgstr "Deleted citation"
+msgstr "Edit citation"
 
 #: document/static/js/modules/editor/state_plugins/links.js:389
-#, fuzzy
 #| msgid "Deleted citation"
 msgid "Remove citation"
-msgstr "Deleted citation"
+msgstr "Remove citation"
 
 #: document/static/js/modules/editor/tools/key_bindings/index.js:14
 msgid "Keyboard Shortcuts"
@@ -4300,12 +4299,12 @@ msgstr "Search"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace "
-"all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace"
+" all'"
 msgstr ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace "
-"all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace"
+" all'"
 
 #: document/static/js/modules/editor/tools/search_replace/templates.js:4
 msgid "Find"
@@ -4793,25 +4792,25 @@ msgstr "Confirm E-mail Address and Agree to Terms and Conditions"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 msgstr ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
+"%(username)s, and that you have read and agree to our <a "
+"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
+"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
 msgstr ""
-"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
-"(email)s</a>, that you apply for the username %(username)s, and that you "
-"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
-"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
-"Policy</a>."
+"Please confirm that you own the email <a "
+"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
+"%(username)s, and that you have read and agree to our <a "
+"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
+"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4975,11 +4974,11 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a href=\"mailto:%"
-"(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a "
+"href=\"mailto:%(contactEmail)s\">contact us</a>."
 msgstr ""
-"If you have any trouble resetting your password, please <a href=\"mailto:%"
-"(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a "
+"href=\"mailto:%(contactEmail)s\">contact us</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -5131,10 +5130,9 @@ msgid "Could not save profile data"
 msgstr "Could not save profile data"
 
 #: user/static/js/modules/profile/index.js:317
-#, fuzzy
 #| msgid "Could not save "
 msgid "Could not save preferences"
-msgstr "Could not save"
+msgstr "Could not save preferences"
 
 #: user/static/js/modules/profile/templates.js:5
 msgid "Delete the avatar?"
@@ -5243,40 +5241,42 @@ msgid "Verified"
 msgstr "Verified"
 
 #: user/static/js/modules/profile/templates.js:220
-#, fuzzy
 #| msgid "Editors"
 msgid "Editor"
-msgstr "Editors"
+msgstr "Editor"
 
 #: user/static/js/modules/profile/templates.js:224
 msgid "Enable inline reference typing (@)"
-msgstr ""
+msgstr "Enable inline reference typing (@)"
 
 #: user/static/js/modules/profile/templates.js:226
 msgid "Type @ in the editor to insert a citation or cross-reference:"
-msgstr ""
+msgstr "Type @ in the editor to insert a citation or cross-reference:"
 
 #: user/static/js/modules/profile/templates.js:228
 msgid ""
-"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
-"citation: @@entry_key. Multiple sources: @key1;key2"
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
+" citation: @@entry_key. Multiple sources: @key1;key2"
 msgstr ""
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
+" citation: @@entry_key. Multiple sources: @key1;key2"
 
 #: user/static/js/modules/profile/templates.js:229
-#, fuzzy
 #| msgid "Cross reference"
 msgid "Cross-reference: @#target-id"
-msgstr "Cross reference"
+msgstr "Cross-reference: @#target-id"
 
 #: user/static/js/modules/profile/templates.js:233
 msgid "Enable inline math typing ($)"
-msgstr ""
+msgstr "Enable inline math typing ($)"
 
 #: user/static/js/modules/profile/templates.js:235
 msgid ""
 "Type $ in the editor followed by LaTeX math to insert an equation inline, "
 "e.g. $x^2. Press Enter or Tab to confirm."
 msgstr ""
+"Type $ in the editor followed by LaTeX math to insert an equation inline, "
+"e.g. $x^2. Press Enter or Tab to confirm."
 
 #: user/static/js/modules/profile/templates.js:245
 msgid "Social Account Provider"
@@ -5295,10 +5295,8 @@ msgid "Signup"
 msgstr "Signup"
 
 #: user/static/js/modules/signup/index.js:13
-msgid ""
-"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
-msgstr ""
-"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
 
 #: user/static/js/modules/signup/index.js:21
 msgid "Choose your username"
@@ -5369,11 +5367,11 @@ msgstr "Disable Two-Factor Authentication"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce "
-"the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce"
+" the security of your account."
 msgstr ""
-"Are you sure you want to disable two-factor authentication? This will reduce "
-"the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce"
+" the security of your account."
 
 #: user/static/js/modules/two_factor/index.js:224
 msgid "Enter the 6-digit code from your authenticator app:"

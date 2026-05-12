@@ -214,35 +214,31 @@ msgstr "Без названия"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has changed your access rights to %(rights)s on the document "
-"'%(document_title)s'. \n"
+"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
 "Open the document: %(link)s"
 msgstr ""
 "Привет, %(collaborator_name)s,\n"
-"%(owner)s изменил ваши права доступа на %(rights)s к документу "
-"«%(document_title)s». \n"
+"%(owner)s изменил ваши права доступа на %(rights)s к документу «%(document_title)s». \n"
 "Откройте документ: %(link)s"
 
 #: document/emails.py:32
 #, python-format
 msgid ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to "
-"%(rights)s on the document '%(document_title)s'.</p>"
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
+" %(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
-"<p>Привет, %(collaborator_name)s!<br>%(owner)s изменил ваши права доступа на "
-"%(rights)s к документу «%(document_title)s».</p>"
+"<p>Привет, %(collaborator_name)s!<br>%(owner)s изменил ваши права доступа на"
+" %(rights)s к документу «%(document_title)s».</p>"
 
 #: document/emails.py:43
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document_title)s' with you and given "
-"you %(rights)s access rights. \n"
+"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
 "Open document: %(link)s"
 msgstr ""
 "Привет, %(collaborator_name)s,\n"
-"%(owner)s предоставил вам доступ к документу «%(document_title)s» и "
-"предоставил вам права доступа %(rights)s. \n"
+"%(owner)s предоставил вам доступ к документу «%(document_title)s» и предоставил вам права доступа %(rights)s. \n"
 "Открыть документ: %(link)s"
 
 #: document/emails.py:55
@@ -252,8 +248,8 @@ msgid ""
 "'%(document_title)s' with you and given you %(rights)s access rights.</p>"
 msgstr ""
 "<p>Привет, %(collaborator_name)s!<br>%(owner)s предоставил вам доступ к "
-"документу «%(document_title)s» и предоставил вам права доступа %(rights)s.</"
-"p>"
+"документу «%(document_title)s» и предоставил вам права доступа "
+"%(rights)s.</p>"
 
 #: document/emails.py:89
 msgid "shared"
@@ -284,8 +280,7 @@ msgstr "Доступ к документу: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has mentioned you in a comment in the document "
-"'%(document)s':\n"
+"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -301,11 +296,11 @@ msgstr ""
 #: document/emails.py:136
 #, python-format
 msgid ""
-"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment "
-"in the document '%(document_title)s'."
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
+" in the document '%(document_title)s'."
 msgstr ""
-"Привет, %(collaborator_name)s!<br>%(commentator)s упомянул вас в комментарии "
-"к документу «%(document_title)s»."
+"Привет, %(collaborator_name)s!<br>%(commentator)s упомянул вас в комментарии"
+" к документу «%(document_title)s»."
 
 #: document/emails.py:143
 #, python-format
@@ -316,8 +311,7 @@ msgstr "Комментарий: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has assigned you to a comment in the document "
-"'%(document)s':\n"
+"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -363,20 +357,18 @@ msgstr "Комментарий"
 #, python-format
 msgid ""
 "Hey %(owner_name)s,\n"
-"%(requester_name)s has requested %(rights)s access to the document "
-"'%(document_title)s'. \n"
+"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
 "Open the document to grant access: %(link)s"
 msgstr ""
 "Привет, %(owner_name)s!\n"
-"%(requester_name)s запросил %(rights)s доступ к документу "
-"«%(document_title)s». \n"
+"%(requester_name)s запросил %(rights)s доступ к документу «%(document_title)s». \n"
 "Откройте документ, чтобы предоставить доступ: %(link)s"
 
 #: document/emails.py:251
 #, python-format
 msgid ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access "
-"to the document '%(document_title)s'.</p>"
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
+" to the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>Привет, %(owner_name)s,<br>%(requester_name)s запросил %(rights)s доступ "
 "к документу '%(document_title)s'.</p>"
@@ -415,19 +407,15 @@ msgstr "Обслуживание"
 #: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
-"            Before and after upgrading Fidus Writer, you should update all "
-"the documents\n"
-"            of all users to the newest document version. Only do this if you "
-"know that\n"
+"            Before and after upgrading Fidus Writer, you should update all the documents\n"
+"            of all users to the newest document version. Only do this if you know that\n"
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
 "\n"
 "До и после обновления Fidus Writer следует обновить все документы.\n"
-"            всех пользователей на новейшую версию документа. Делайте это "
-"только в том случае, если вы это знаете\n"
-"            ни один пользователь в настоящее время не редактирует какой-либо "
-"документ!"
+"            всех пользователей на новейшую версию документа. Делайте это только в том случае, если вы это знаете\n"
+"            ни один пользователь в настоящее время не редактирует какой-либо документ!"
 
 #: document/templates/admin/document/maintenance.html:32
 msgid "Update all documents (DANGER!)"
@@ -457,8 +445,8 @@ msgstr ""
 #: user/emails.py:19
 #, python-format
 msgid ""
-"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus Writer."
-"</p>"
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
+"Writer.</p>"
 msgstr ""
 "<p>Привет, %(email)s!<br> %(sender)s пригласил вас подключиться к Fidus "
 "Writer.</p>"
@@ -478,12 +466,10 @@ msgstr "Контактное приглашение Fidus Writer"
 #: user/emails.py:53
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect "
-"on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Привет, %(recipient_name)s, %(sender_name)s отклонил ваше приглашение "
-"подключиться к Fidus Writer. \n"
+"Привет, %(recipient_name)s, %(sender_name)s отклонил ваше приглашение подключиться к Fidus Writer. \n"
 "См. список ваших контактов здесь: %(link)s."
 
 #: user/emails.py:62
@@ -492,8 +478,8 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
-"<p>Привет, %(recipient_name)s!<br> %(sender_name)s отклонил ваше приглашение "
-"подключиться к Fidus Writer.</p>"
+"<p>Привет, %(recipient_name)s!<br> %(sender_name)s отклонил ваше приглашение"
+" подключиться к Fidus Writer.</p>"
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
@@ -510,12 +496,10 @@ msgstr "Приглашение Fidus Writer отклонено"
 #: user/emails.py:95
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect "
-"on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Привет, %(recipient_name)s, %(sender_name)s принял ваше приглашение "
-"подключиться к Fidus Writer. \n"
+"Привет, %(recipient_name)s, %(sender_name)s принял ваше приглашение подключиться к Fidus Writer. \n"
 "См. список ваших контактов здесь: %(link)s."
 
 #: user/emails.py:104
@@ -589,8 +573,8 @@ msgid ""
 "You are receiving this e-mail because you or someone else has requested a "
 "password for your user account."
 msgstr ""
-"Вы получили это электронное письмо, потому что вы или кто-то другой запросил "
-"пароль для вашей учетной записи пользователя."
+"Вы получили это электронное письмо, потому что вы или кто-то другой запросил"
+" пароль для вашей учетной записи пользователя."
 
 #: user/templates/account/email/password_reset_key_message.html:14
 msgid ""
@@ -607,7 +591,8 @@ msgstr "Если вы забыли, ваше имя пользователя —
 
 #: user/views.py:66
 msgid "Your old password was entered incorrectly. Please enter it again."
-msgstr "Ваш старый пароль был введен неверно. Пожалуйста, введите его еще раз."
+msgstr ""
+"Ваш старый пароль был введен неверно. Пожалуйста, введите его еще раз."
 
 #: user/views.py:70
 msgid "The two password fields didn't match."
@@ -676,9 +661,8 @@ msgstr "Ни один файл не загружен"
 #~ "We've emailed you instructions for setting your password, if an account "
 #~ "exists with the email you entered. You should receive them shortly."
 #~ msgstr ""
-#~ "Мы отправили инструкции по установке пароля на Ваш адрес электронной "
-#~ "почты, если аккаунт с таким адресом существует. Вы должны получить их "
-#~ "вскоре."
+#~ "Мы отправили инструкции по установке пароля на Ваш адрес электронной почты, "
+#~ "если аккаунт с таким адресом существует. Вы должны получить их вскоре."
 
 #~ msgid "Enter new password"
 #~ msgstr "Введите новый пароль"

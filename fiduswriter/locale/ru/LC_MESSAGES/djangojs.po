@@ -215,7 +215,7 @@ msgstr "Из списка"
 #: base/static/js/modules/copyright_dialog/templates.js:36
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:31
 msgid "Custom"
-msgstr "Обычай"
+msgstr "Свой"
 
 #: base/static/js/modules/copyright_dialog/templates.js:44
 msgid "License start date (optional)"
@@ -250,7 +250,7 @@ msgstr "Доступно для бесплатного чтения?"
 
 #: base/static/js/modules/copyright_dialog/templates.js:74
 msgid "Specify whether the work can be accessed without paying a fee."
-msgstr "Укажите, можно ли получить доступ к произведению без уплаты комиссии."
+msgstr "Укажите, можно ли получить доступ к работе без уплаты платы."
 
 #: base/static/js/modules/copyright_dialog/templates.js:80
 msgid "License(s)"
@@ -381,7 +381,7 @@ msgstr "Элементы библиографии были удалены."
 #: document/static/js/modules/editor/marginboxes/templates.js:240
 #: document/static/js/modules/editor/menus/toolbar/model.js:375
 msgid "Strong"
-msgstr "Сильный"
+msgstr "Полужирный"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:63
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:58
@@ -390,13 +390,13 @@ msgstr "Сильный"
 #: document/static/js/modules/editor/marginboxes/templates.js:239
 #: document/static/js/modules/editor/menus/toolbar/model.js:412
 msgid "Emphasis"
-msgstr "Акцент"
+msgstr "Курсив"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:67
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:62
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:62
 msgid "Small caps"
-msgstr "Маленькие шапки"
+msgstr "Капитель"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:71
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:66
@@ -3097,11 +3097,11 @@ msgstr "Слабый"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:105
 msgid "Fair"
-msgstr "Справедливый"
+msgstr "Средний"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:107
 msgid "Very strong"
-msgstr "Очень сильный"
+msgstr "Очень надёжный"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:142
 msgid ""
@@ -4655,7 +4655,7 @@ msgstr "Техническая поддержка"
 
 #: feedback/static/js/modules/feedback/index.js:23
 msgid "Did you encounter an error or bug?"
-msgstr "Вы столкнулись с ошибкой или ошибкой?"
+msgstr "Вы столкнулись с ошибкой или сбоем?"
 
 #: feedback/static/js/modules/feedback/index.js:24
 msgid "Give a brief description of what has happened."
@@ -4663,11 +4663,11 @@ msgstr "Дайте краткое описание того, что произо
 
 #: feedback/static/js/modules/feedback/index.js:28
 msgid "submit"
-msgstr "представлять на рассмотрение"
+msgstr "Отправить"
 
 #: feedback/static/js/modules/feedback/index.js:32
 msgid "Thank you for your report!"
-msgstr "Спасибо за ваш отчет!"
+msgstr "Спасибо за ваше сообщение!"
 
 #: feedback/static/js/modules/feedback/index.js:34
 msgid "Close technical support"

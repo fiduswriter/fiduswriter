@@ -87,13 +87,13 @@ msgstr "Затвори"
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:592
 #: document/static/js/modules/editor/e2ee/password-dialog.js:183
 msgid "Cancel"
-msgstr "Отказ"
+msgstr "Отмяна"
 
 #: base/static/js/modules/common/dialog.js:89
 #: document/static/js/modules/editor/index.js:341
 #: document/static/js/modules/editor/index.js:620
 msgid "OK"
-msgstr "добре"
+msgstr "ОК"
 
 #: base/static/js/modules/common/file/dialog.js:39
 #: base/static/js/modules/common/file/selector.js:53

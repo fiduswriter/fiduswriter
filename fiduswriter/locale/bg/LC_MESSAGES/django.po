@@ -478,7 +478,7 @@ msgstr ""
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
-msgstr "Поканата за Fidus Writer отказа"
+msgstr "Поканата за Fidus Writer е отхвърлена"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"

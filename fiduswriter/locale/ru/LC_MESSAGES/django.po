@@ -419,7 +419,7 @@ msgstr ""
 
 #: document/templates/admin/document/maintenance.html:32
 msgid "Update all documents (DANGER!)"
-msgstr "Обновите все документы (ОПАСНО!)"
+msgstr "Обновите все документы (ВНИМАНИЕ!)"
 
 #: style/models.py:74
 msgid "Default"

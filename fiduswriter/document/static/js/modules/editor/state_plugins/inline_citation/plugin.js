@@ -264,6 +264,24 @@ function createCitationWidget(view, pluginState, key) {
         }
 
         switch (event.key) {
+            case "ArrowLeft":
+                if (input.selectionStart === 0) {
+                    event.preventDefault()
+                    view.dispatch(
+                        view.state.tr.setMeta(key, {action: "cancelLeft"})
+                    )
+                    view.focus()
+                }
+                break
+            case "ArrowRight":
+                if (input.selectionEnd === input.value.length) {
+                    event.preventDefault()
+                    view.dispatch(
+                        view.state.tr.setMeta(key, {action: "commitAndRight"})
+                    )
+                    view.focus()
+                }
+                break
             case "ArrowDown":
                 event.preventDefault()
                 {
@@ -373,6 +391,14 @@ function createCitationWidget(view, pluginState, key) {
                 view.dispatch(view.state.tr.setMeta(key, {action: "cancel"}))
                 view.focus()
                 break
+            case "Home":
+                event.preventDefault()
+                input.selectionStart = input.selectionEnd = 0
+                break
+            case "End":
+                event.preventDefault()
+                input.selectionStart = input.selectionEnd = input.value.length
+                break
             case "Backspace":
                 if (input.value.length <= 1) {
                     event.preventDefault()
@@ -392,9 +418,16 @@ function createCitationWidget(view, pluginState, key) {
 
     input.addEventListener("focusout", event => {
         const related = event.relatedTarget
-        if (!container.contains(related)) {
-            view.dispatch(view.state.tr.setMeta(key, {action: "commit"}))
+        if (container.contains(related)) {
+            return
         }
+        const myWidgetId = pluginState.widgetId
+        setTimeout(() => {
+            const currentState = key.getState(view.state)
+            if (currentState?.active && currentState.widgetId === myWidgetId) {
+                view.dispatch(view.state.tr.setMeta(key, {action: "commit"}))
+            }
+        }, 1)
     })
 
     container.addEventListener("mousedown", event => {
@@ -407,8 +440,12 @@ function createCitationWidget(view, pluginState, key) {
     // Focus after mounting
     setTimeout(() => {
         input.focus()
-        // Place cursor at end
-        input.selectionStart = input.selectionEnd = input.value.length
+        // Place cursor based on entry direction
+        if (pluginState.cursorAtStart === true) {
+            input.selectionStart = input.selectionEnd = 0
+        } else {
+            input.selectionStart = input.selectionEnd = input.value.length
+        }
         renderDropUp()
     }, 0)
 
@@ -448,6 +485,8 @@ export const inlineCitationPlugin = options => {
                     isEdit: false,
                     citationPos: 0,
                     bibList: [],
+                    widgetId: undefined,
+                    cursorAtStart: undefined,
                     decos: DecorationSet.empty
                 }
             },
@@ -465,6 +504,8 @@ export const inlineCitationPlugin = options => {
                         isEdit: meta.isEdit || false,
                         citationPos: meta.citationPos || 0,
                         bibList: meta.bibList || [],
+                        widgetId: Math.random().toString(36).slice(2),
+                        cursorAtStart: meta.cursorAtStart,
                         decos: DecorationSet.empty
                     }
                 } else if (meta?.action === "deactivate") {
@@ -477,6 +518,8 @@ export const inlineCitationPlugin = options => {
                         isEdit: false,
                         citationPos: 0,
                         bibList: [],
+                        widgetId: undefined,
+                        cursorAtStart: undefined,
                         decos: DecorationSet.empty
                     }
                 } else if (meta?.action === "select") {
@@ -507,7 +550,17 @@ export const inlineCitationPlugin = options => {
                                 side: -1
                             }
                         )
-                        next.decos = DecorationSet.create(_state.doc, [deco])
+                        const citationNodeDeco = Decoration.node(
+                            next.from,
+                            next.from + 1,
+                            {
+                                class: "hide"
+                            }
+                        )
+                        next.decos = DecorationSet.create(_state.doc, [
+                            deco,
+                            citationNodeDeco
+                        ])
                     } else if (tr.docChanged) {
                         // Document changed while active: map old decorations
                         next.decos = prev.decos.map(tr.mapping, _state.doc)
@@ -526,7 +579,10 @@ export const inlineCitationPlugin = options => {
             const oldPluginState = key.getState(oldState)
             const meta = trs.find(tr => tr.getMeta(key))?.getMeta(key)
 
-            if (meta?.action === "commit") {
+            if (
+                meta?.action === "commit" ||
+                meta?.action === "commitAndRight"
+            ) {
                 if (!oldPluginState.active) {
                     return null
                 }
@@ -537,7 +593,15 @@ export const inlineCitationPlugin = options => {
                 )
                 if (!parsed) {
                     if (oldPluginState.isEdit) {
-                        return newState.tr.setMeta(key, {action: "deactivate"})
+                        const node = newState.doc.nodeAt(
+                            oldPluginState.citationPos
+                        )
+                        const newPos =
+                            oldPluginState.citationPos + (node?.nodeSize || 1)
+                        const tr = newState.tr.setSelection(
+                            TextSelection.create(newState.doc, newPos)
+                        )
+                        return tr.setMeta(key, {action: "deactivate"})
                     }
                     // Invalid new citation: insert as plain text with caret after
                     const tr = newState.tr.insertText(
@@ -601,6 +665,27 @@ export const inlineCitationPlugin = options => {
                 }
             }
 
+            if (meta?.action === "cancelLeft") {
+                if (oldPluginState.isEdit) {
+                    const tr = newState.tr.setSelection(
+                        TextSelection.create(
+                            newState.doc,
+                            oldPluginState.citationPos
+                        )
+                    )
+                    return tr.setMeta(key, {action: "deactivate"})
+                } else {
+                    const tr = newState.tr.insertText(
+                        oldPluginState.query,
+                        oldPluginState.from
+                    )
+                    tr.setSelection(
+                        TextSelection.create(tr.doc, oldPluginState.from)
+                    )
+                    return tr.setMeta(key, {action: "deactivate"})
+                }
+            }
+
             if (oldPluginState.active) {
                 // If selection moved away from the widget, commit
                 if (
@@ -652,7 +737,7 @@ export const inlineCitationPlugin = options => {
                     }
                 }
             } else {
-                // Check if a citation node is selected for re-editing
+                // Check if a citation node is selected for re-editing (keyboard)
                 const selection = newState.selection
                 if (
                     selection instanceof NodeSelection &&
@@ -709,6 +794,135 @@ export const inlineCitationPlugin = options => {
                 const pluginState = key.getState(state)
                 return pluginState?.decos || DecorationSet.empty
             },
+            handleClickOn(_view, _pos, node, nodePos, _event, _direct) {
+                if (node.type.name === "citation") {
+                    const bibList = buildBibliographyList(editor)
+                    const text = citationToText(node, bibList)
+                    const tr = _view.state.tr.setSelection(
+                        TextSelection.create(
+                            _view.state.doc,
+                            nodePos + node.nodeSize
+                        )
+                    )
+                    tr.setMeta(key, {
+                        action: "activate",
+                        from: nodePos,
+                        query: text,
+                        isEdit: true,
+                        citationPos: nodePos,
+                        bibList: bibList
+                    })
+                    _view.dispatch(tr)
+                    return true
+                }
+                return false
+            },
+            handleDOMEvents: {
+                mousedown(view, event) {
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                        return false
+                    }
+                    if (event.button !== 0) {
+                        return false
+                    }
+                    const target = event.target.closest(".citation")
+                    if (!target) {
+                        return false
+                    }
+                    let pos = view.posAtDOM(target, 0)
+                    let node = view.state.doc.nodeAt(pos)
+                    if (!node || node.type.name !== "citation") {
+                        return false
+                    }
+                    const pluginState = key.getState(view.state)
+                    if (pluginState?.active) {
+                        // Commit current widget first, then activate new citation
+                        const commitTr = view.state.tr.setMeta(key, {
+                            action: "commit"
+                        })
+                        view.dispatch(commitTr)
+                        pos = commitTr.mapping.map(pos)
+                        node = view.state.doc.nodeAt(pos)
+                        if (!node || node.type.name !== "citation") {
+                            return false
+                        }
+                    }
+                    const bibList = buildBibliographyList(editor)
+                    const text = citationToText(node, bibList)
+                    const tr = view.state.tr.setSelection(
+                        TextSelection.create(
+                            view.state.doc,
+                            pos + node.nodeSize
+                        )
+                    )
+                    tr.setMeta(key, {
+                        action: "activate",
+                        from: pos,
+                        query: text,
+                        isEdit: true,
+                        citationPos: pos,
+                        bibList: bibList
+                    })
+                    view.dispatch(tr)
+                    event.stopPropagation()
+                    event.preventDefault()
+                    return true
+                },
+                click(view, event) {
+                    // Fallback click handler for touch devices and cases where
+                    // mousedown/handleClickOn did not fire.
+                    const pluginState = key.getState(view.state)
+                    if (pluginState?.active) {
+                        const target = event.target.closest(
+                            ".citation-inline-widget"
+                        )
+                        if (target) {
+                            // Click inside widget: let widget handle it
+                            return false
+                        }
+                        // When widget is active, ignore all other clicks.
+                        // mousedown already handled citation clicks.
+                        // focusout handles clicks outside the editor.
+                        // We must prevent default because the browser may
+                        // retarget click to a parent element after mousedown
+                        // prevented the default.
+                        event.preventDefault()
+                        event.stopPropagation()
+                        return true
+                    }
+                    // Widget inactive: try to activate a clicked citation
+                    if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                        return false
+                    }
+                    const target = event.target.closest(".citation")
+                    if (!target) {
+                        return false
+                    }
+                    const pos = view.posAtDOM(target, 0)
+                    const node = view.state.doc.nodeAt(pos)
+                    if (!node || node.type.name !== "citation") {
+                        return false
+                    }
+                    const bibList = buildBibliographyList(editor)
+                    const text = citationToText(node, bibList)
+                    const tr = view.state.tr.setSelection(
+                        TextSelection.create(
+                            view.state.doc,
+                            pos + node.nodeSize
+                        )
+                    )
+                    tr.setMeta(key, {
+                        action: "activate",
+                        from: pos,
+                        query: text,
+                        isEdit: true,
+                        citationPos: pos,
+                        bibList: bibList
+                    })
+                    view.dispatch(tr)
+                    return true
+                }
+            },
             handleKeyDown(view, event) {
                 const pluginState = key.getState(view.state)
                 if (!pluginState?.active) {
@@ -730,6 +944,64 @@ export const inlineCitationPlugin = options => {
                                         query: "@",
                                         isEdit: false,
                                         bibList: buildBibliographyList(editor)
+                                    })
+                                )
+                                return true
+                            }
+                        }
+                    }
+                    // ArrowRight into citation from the left
+                    if (event.key === "ArrowRight") {
+                        const sel = view.state.selection
+                        if (sel.empty) {
+                            const $pos = sel.$head
+                            const nodeAfter = $pos.nodeAfter
+                            if (
+                                nodeAfter &&
+                                nodeAfter.type.name === "citation"
+                            ) {
+                                event.preventDefault()
+                                const from = $pos.pos
+                                const bibList = buildBibliographyList(editor)
+                                const text = citationToText(nodeAfter, bibList)
+                                view.dispatch(
+                                    view.state.tr.setMeta(key, {
+                                        action: "activate",
+                                        from: from,
+                                        query: text,
+                                        isEdit: true,
+                                        citationPos: from,
+                                        bibList: bibList,
+                                        cursorAtStart: true
+                                    })
+                                )
+                                return true
+                            }
+                        }
+                    }
+                    // ArrowLeft into citation from the right
+                    if (event.key === "ArrowLeft") {
+                        const sel = view.state.selection
+                        if (sel.empty) {
+                            const $pos = sel.$head
+                            const nodeBefore = $pos.nodeBefore
+                            if (
+                                nodeBefore &&
+                                nodeBefore.type.name === "citation"
+                            ) {
+                                event.preventDefault()
+                                const from = $pos.pos - nodeBefore.nodeSize
+                                const bibList = buildBibliographyList(editor)
+                                const text = citationToText(nodeBefore, bibList)
+                                view.dispatch(
+                                    view.state.tr.setMeta(key, {
+                                        action: "activate",
+                                        from: from,
+                                        query: text,
+                                        isEdit: true,
+                                        citationPos: from,
+                                        bibList: bibList,
+                                        cursorAtStart: false
                                     })
                                 )
                                 return true

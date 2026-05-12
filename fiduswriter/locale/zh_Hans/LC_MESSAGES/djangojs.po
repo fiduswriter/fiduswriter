@@ -23,7 +23,7 @@ msgstr "找不到页面"
 #: base/static/js/modules/404/index.js:8
 #: base/static/js/modules/flatpage/index.js:34
 msgid "Error 404"
-msgstr "错误404"
+msgstr "404 错误"
 
 #: base/static/js/modules/404/index.js:9
 #: base/static/js/modules/flatpage/index.js:35
@@ -145,7 +145,7 @@ msgstr "创建文件夹"
 
 #: base/static/js/modules/common/file/templates.js:5
 msgid "Path"
-msgstr "小路"
+msgstr "路径"
 
 #: base/static/js/modules/common/file/templates.js:6
 msgid "Insert path"
@@ -400,11 +400,11 @@ msgstr "上标²"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:40
 msgid "Person"
-msgstr "人"
+msgstr "个人"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:41
 msgid "Organization"
-msgstr "组织"
+msgstr "机构"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:86
 msgid "Prefix used"
@@ -430,7 +430,7 @@ msgstr "后缀"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:124
 msgid "Organization name"
-msgstr "组织名称"
+msgstr "机构名称"
 
 #: bibliography/static/js/modules/bibliography/form/fields/range.js:30
 msgid "Single value"
@@ -450,15 +450,15 @@ msgstr "到"
 
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:74
 msgid "CasE ProTecT"
-msgstr "案例保护"
+msgstr "大小写保护"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:62
 msgid "Edit Source"
-msgstr "编辑来源"
+msgstr "编辑文献"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:66
 msgid "Register New Source"
-msgstr "注册新来源"
+msgstr "注册新文献"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:386
 #| msgid ""
@@ -685,7 +685,7 @@ msgstr "编辑类别"
 #: bibliography/static/js/modules/bibliography/overview/menu.js:67
 #: document/static/js/modules/editor/dialogs/citation.js:32
 msgid "Register new source"
-msgstr "注册新源"
+msgstr "注册新文献"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:85
 msgid "Import bibliography"
@@ -744,7 +744,7 @@ msgstr "文档样式"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:90
 msgid "Slug"
-msgstr "蛞蝓"
+msgstr "别名"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:96
 msgid "CSS Style"
@@ -772,7 +772,7 @@ msgstr "slug 只能包含字母、数字、连字符和下划线。"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:216
 msgid "The slug has to be unique."
-msgstr "蛞蝓必须是独一无二的。"
+msgstr "别名必须是唯一的。"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:292
 msgid "A file with the same name exists already."

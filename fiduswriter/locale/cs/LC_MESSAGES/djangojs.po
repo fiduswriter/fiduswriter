@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
+"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
 #: base/static/js/modules/404/index.js:6
 #: base/static/js/modules/flatpage/index.js:32
@@ -77,7 +78,7 @@ msgstr "Pomoc"
 #: document/static/js/modules/editor/menus/headerbar/model.js:191
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:92
 msgid "Close"
-msgstr "Blízko"
+msgstr "Zavřít"
 
 #: base/static/js/modules/common/dialog.js:84
 #: document/static/js/modules/documents/overview/index.js:920
@@ -86,16 +87,16 @@ msgstr "Blízko"
 #: document/static/js/modules/editor/comments/editors/answer.js:22
 #: document/static/js/modules/editor/comments/editors/comment.js:103
 #: document/static/js/modules/editor/dialogs/templates.js:237
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:219
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:442
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:589
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:220
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:444
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:592
 #: document/static/js/modules/editor/e2ee/password-dialog.js:183
 msgid "Cancel"
 msgstr "Zrušit"
 
 #: base/static/js/modules/common/dialog.js:89
-#: document/static/js/modules/editor/index.js:337
-#: document/static/js/modules/editor/index.js:616
+#: document/static/js/modules/editor/index.js:341
+#: document/static/js/modules/editor/index.js:620
 msgid "OK"
 msgstr "OK"
 
@@ -106,8 +107,9 @@ msgstr "OK"
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
 #: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:173
+#: document/static/js/modules/editor/dialogs/citation.js:175
 #: document/static/js/modules/editor/menus/headerbar/view.js:505
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
 #: document/static/js/modules/importer/docx/convert.js:84
 #: document/static/js/modules/importer/docx/convert.js:92
@@ -130,7 +132,7 @@ msgstr "Nová složka"
 
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
-#: bibliography/static/js/modules/bibliography/overview/index.js:320
+#: bibliography/static/js/modules/bibliography/overview/index.js:321
 #: document/static/js/modules/documents/access_rights/index.js:296
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
@@ -138,7 +140,7 @@ msgstr "Nová složka"
 #: user/static/js/modules/profile/dialogs.js:124
 #: user/static/js/modules/profile/dialogs.js:215
 #: user/static/js/modules/profile/dialogs.js:385
-#: user/static/js/modules/profile/templates.js:265
+#: user/static/js/modules/profile/templates.js:285
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
 msgstr "Předložit"
@@ -187,7 +189,7 @@ msgid "Warning! Some data is unsaved"
 msgstr "Varování! Některá data nejsou uložena"
 
 #: base/static/js/modules/common/ws.js:14
-#: document/static/js/modules/editor/index.js:403
+#: document/static/js/modules/editor/index.js:407
 msgid "Disconnected. Attempting to reconnect..."
 msgstr "Odpojeno. Pokus o opětovné připojení..."
 
@@ -229,8 +231,7 @@ msgstr "Držitel autorských práv"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder "
-"is."
+"If the work is not in the public domain, specify who the copyright holder is."
 msgstr "Pokud dílo není volné dílo, uveďte, kdo je držitelem autorských práv."
 
 #: base/static/js/modules/copyright_dialog/templates.js:66
@@ -341,8 +342,8 @@ msgstr "Bibliografii se nepodařilo aktualizovat"
 #: bibliography/static/js/modules/bibliography/form/index.js:56
 #: bibliography/static/js/modules/bibliography/import/dialog.js:20
 #: bibliography/static/js/modules/bibliography/import/dialog.js:42
-#: bibliography/static/js/modules/bibliography/overview/index.js:313
-#: bibliography/static/js/modules/bibliography/overview/index.js:341
+#: bibliography/static/js/modules/bibliography/overview/index.js:314
+#: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
 #: document/static/js/modules/exporter/native/revision.js:79
 #: usermedia/static/js/modules/images/overview/index.js:94
@@ -373,7 +374,7 @@ msgstr "Položky bibliografie byly smazány"
 #: document/static/js/modules/document_template/templates.js:102
 #: document/static/js/modules/editor/e2ee/password-dialog.js:106
 #: document/static/js/modules/editor/marginboxes/templates.js:240
-#: document/static/js/modules/editor/menus/toolbar/model.js:371
+#: document/static/js/modules/editor/menus/toolbar/model.js:375
 msgid "Strong"
 msgstr "Silný"
 
@@ -382,7 +383,7 @@ msgstr "Silný"
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:58
 #: document/static/js/modules/document_template/templates.js:106
 #: document/static/js/modules/editor/marginboxes/templates.js:239
-#: document/static/js/modules/editor/menus/toolbar/model.js:408
+#: document/static/js/modules/editor/menus/toolbar/model.js:412
 msgid "Emphasis"
 msgstr "Důraz"
 
@@ -466,7 +467,17 @@ msgstr "Upravit zdroj"
 msgid "Register New Source"
 msgstr "Zaregistrujte nový zdroj"
 
-#: bibliography/static/js/modules/bibliography/form/index.js:320
+#: bibliography/static/js/modules/bibliography/form/index.js:386
+#, fuzzy
+#| msgid "A slug can only contain letters, numbers, hyphens and underscores."
+msgid "Only letters, numbers, hyphens and underscores are allowed."
+msgstr "Slimák může obsahovat pouze písmena, čísla, pomlčky a podtržítka."
+
+#: bibliography/static/js/modules/bibliography/form/index.js:398
+msgid "Warning: this key is already used in your library."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/index.js:451
 msgid "Error in form, check highlighted values!"
 msgstr "Chyba ve formuláři, zkontrolujte zvýrazněné hodnoty!"
 
@@ -474,16 +485,22 @@ msgstr "Chyba ve formuláři, zkontrolujte zvýrazněné hodnoty!"
 msgid "Select source type"
 msgstr "Vyberte typ zdroje"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:29
+#: bibliography/static/js/modules/bibliography/form/templates.js:28
+#, fuzzy
+#| msgid "Citation"
+msgid "Citation key"
+msgstr "Citace"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:33
 msgid "Required Fields"
 msgstr "Povinná pole"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:32
+#: bibliography/static/js/modules/bibliography/form/templates.js:36
 msgid "Optional Fields"
 msgstr "Nepovinná pole"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:35
-#: bibliography/static/js/modules/bibliography/form/templates.js:50
+#: bibliography/static/js/modules/bibliography/form/templates.js:39
+#: bibliography/static/js/modules/bibliography/form/templates.js:54
 msgid "Categories"
 msgstr "Kategorie"
 
@@ -518,7 +535,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Vyskytl se problém s importem bibliografie"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:174
+#: document/static/js/modules/documents/overview/actions.js:173
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Importovat"
@@ -548,12 +565,12 @@ msgid "Bibliography Manager"
 msgstr "Správce bibliografie"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:239
+#: document/static/js/modules/editor/dialogs/citation.js:241
 msgid "No sources registered"
 msgstr "Nejsou registrovány žádné zdroje"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:240
+#: document/static/js/modules/editor/dialogs/citation.js:242
 msgid "No sources found"
 msgstr "Nebyly nalezeny žádné zdroje"
 
@@ -568,12 +585,12 @@ msgstr "Nebyly nalezeny žádné zdroje"
 #: document/static/js/modules/document_template/templates.js:813
 #: document/static/js/modules/document_template/templates.js:836
 #: document/static/js/modules/documents/overview/index.js:560
-#: document/static/js/modules/editor/dialogs/citation.js:252
+#: document/static/js/modules/editor/dialogs/citation.js:254
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
-#: document/static/js/modules/editor/menus/toolbar/model.js:166
-#: document/static/js/modules/editor/state_plugins/links.js:254
+#: document/static/js/modules/editor/menus/toolbar/model.js:170
+#: document/static/js/modules/editor/state_plugins/links.js:300
 #: document/static/js/modules/editor/state_plugins/placeholders.js:41
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:111
 #: usermedia/static/js/modules/images/selection_dialog/index.js:124
@@ -585,7 +602,7 @@ msgid "Sourcetype"
 msgstr "Zdrojový typ"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:253
+#: document/static/js/modules/editor/dialogs/citation.js:255
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -598,12 +615,12 @@ msgstr "Autor"
 msgid "Published"
 msgstr "Publikováno"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:359
+#: bibliography/static/js/modules/bibliography/overview/index.js:360
 #: usermedia/static/js/modules/images/overview/categories.js:104
 msgid "Edit Categories"
 msgstr "Upravit kategorie"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:375
+#: bibliography/static/js/modules/bibliography/overview/index.js:376
 #: document/static/js/modules/document_template/document_style_dialog.js:74
 #: document/static/js/modules/document_template/document_style_dialog.js:172
 #: document/static/js/modules/document_template/export_template_dialog.js:82
@@ -625,7 +642,7 @@ msgstr "Upravit kategorie"
 msgid "Delete"
 msgstr "Vymazat"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:389
+#: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
 #: document/static/js/modules/document_template/export_template_dialog.js:192
 #: document/static/js/modules/documents/overview/actions.js:70
@@ -639,7 +656,7 @@ msgstr "Vymazat"
 msgid "Confirm deletion"
 msgstr "Potvrďte smazání"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:390
+#: bibliography/static/js/modules/bibliography/overview/index.js:391
 msgid "Delete the bibliography item(s)"
 msgstr "Smazat položku(y) bibliografie"
 
@@ -868,7 +885,7 @@ msgstr "Vložit tabulku"
 #: document/static/js/modules/document_template/schema.js:198
 #: document/static/js/modules/document_template/templates.js:92
 #: document/static/js/modules/document_template/templates.js:468
-#: document/static/js/modules/editor/menus/toolbar/model.js:858
+#: document/static/js/modules/editor/menus/toolbar/model.js:872
 msgid "Table"
 msgstr "Tabulka"
 
@@ -985,8 +1002,8 @@ msgid "Code block"
 msgstr "Blok kódu"
 
 #: document/static/js/modules/document_template/templates.js:49
-#: document/static/js/modules/editor/menus/toolbar/model.js:25
-#: document/static/js/modules/editor/menus/toolbar/model.js:837
+#: document/static/js/modules/editor/menus/toolbar/model.js:29
+#: document/static/js/modules/editor/menus/toolbar/model.js:851
 msgid "Figure"
 msgstr "Postava"
 
@@ -997,7 +1014,7 @@ msgstr "Objednaný seznam"
 
 #: document/static/js/modules/document_template/templates.js:57
 #: document/static/js/modules/editor/marginboxes/templates.js:265
-#: document/static/js/modules/editor/menus/toolbar/model.js:628
+#: document/static/js/modules/editor/menus/toolbar/model.js:632
 msgid "Bullet list"
 msgstr "Seznam odrážek"
 
@@ -1006,10 +1023,12 @@ msgid "Horizontal rule"
 msgstr "Horizontální pravidlo"
 
 #: document/static/js/modules/document_template/templates.js:65
+#: document/static/js/modules/editor/state_plugins/inline_math.js:240
 msgid "Equation"
 msgstr "Rovnice"
 
 #: document/static/js/modules/document_template/templates.js:69
+#: document/static/js/modules/editor/state_plugins/links.js:378
 msgid "Citation"
 msgstr "Citace"
 
@@ -1019,13 +1038,13 @@ msgid "Cross reference"
 msgstr "Křížový odkaz"
 
 #: document/static/js/modules/document_template/templates.js:77
-#: document/static/js/modules/editor/menus/toolbar/model.js:668
+#: document/static/js/modules/editor/menus/toolbar/model.js:672
 msgid "Blockquote"
 msgstr "Blockquote"
 
 #: document/static/js/modules/document_template/templates.js:84
-#: document/static/js/modules/editor/menus/toolbar/model.js:158
-#: document/static/js/modules/editor/menus/toolbar/model.js:733
+#: document/static/js/modules/editor/menus/toolbar/model.js:162
+#: document/static/js/modules/editor/menus/toolbar/model.js:737
 msgid "Footnote"
 msgstr "Poznámka pod čarou"
 
@@ -1035,29 +1054,29 @@ msgstr "Povolené známky"
 
 #: document/static/js/modules/document_template/templates.js:110
 #: document/static/js/modules/editor/marginboxes/templates.js:241
-#: document/static/js/modules/editor/menus/toolbar/model.js:440
+#: document/static/js/modules/editor/menus/toolbar/model.js:444
 msgid "Underline"
 msgstr "Zdůraznit"
 
 #: document/static/js/modules/document_template/templates.js:114
 #: document/static/js/modules/editor/dialogs/link.js:241
-#: document/static/js/modules/editor/menus/toolbar/model.js:708
+#: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
 msgstr "Odkaz"
 
 #: document/static/js/modules/document_template/templates.js:118
-#: document/static/js/modules/editor/menus/toolbar/model.js:477
+#: document/static/js/modules/editor/menus/toolbar/model.js:481
 msgid "Superscript"
 msgstr "Horní index"
 
 #: document/static/js/modules/document_template/templates.js:122
-#: document/static/js/modules/editor/menus/toolbar/model.js:514
+#: document/static/js/modules/editor/menus/toolbar/model.js:518
 msgid "Subscript"
 msgstr "Dolní index"
 
 #: document/static/js/modules/document_template/templates.js:126
-#: document/static/js/modules/editor/menus/toolbar/model.js:24
-#: document/static/js/modules/editor/menus/toolbar/model.js:551
+#: document/static/js/modules/editor/menus/toolbar/model.js:28
+#: document/static/js/modules/editor/menus/toolbar/model.js:555
 msgid "Code"
 msgstr "Kód"
 
@@ -1453,12 +1472,12 @@ msgstr "End-to-end šifrovaný dokument"
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure"
-" channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure "
+"channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
-"Tento dokument je šifrován end-to-end. Spolupracovníci bez osobní přístupové"
-" fráze budou potřebovat heslo dokumentu sdílené s nimi prostřednictvím "
+"Tento dokument je šifrován end-to-end. Spolupracovníci bez osobní přístupové "
+"fráze budou potřebovat heslo dokumentu sdílené s nimi prostřednictvím "
 "zabezpečeného kanálu mimo Fidus Writer. Neposílejte heslo přes dokumentový "
 "chat."
 
@@ -1570,8 +1589,8 @@ msgid "expires"
 msgstr "vyprší"
 
 #: document/static/js/modules/documents/access_rights/templates.js:67
-#: document/static/js/modules/editor/state_plugins/links.js:264
-#: document/static/js/modules/editor/state_plugins/links.js:265
+#: document/static/js/modules/editor/state_plugins/links.js:310
+#: document/static/js/modules/editor/state_plugins/links.js:311
 msgid "Copy link"
 msgstr "Zkopírujte odkaz"
 
@@ -1643,30 +1662,29 @@ msgstr "Opravdu chcete smazat následující dokumenty?"
 msgid "Do you really want to delete the following document?"
 msgstr "Opravdu chcete smazat následující dokument?"
 
-#: document/static/js/modules/documents/overview/actions.js:116
+#: document/static/js/modules/documents/overview/actions.js:117
 msgid "Import as:"
 msgstr "Importovat jako:"
 
-#: document/static/js/modules/documents/overview/actions.js:138
-#| msgid "The document template has been updated"
+#: document/static/js/modules/documents/overview/actions.js:137
 msgid "This document will be saved as encrypted."
 msgstr "Tento dokument bude uložen jako zašifrovaný."
 
-#: document/static/js/modules/documents/overview/actions.js:144
+#: document/static/js/modules/documents/overview/actions.js:143
 #: document/static/js/modules/documents/overview/index.js:904
 msgid "Non-encrypted"
 msgstr "Nešifrované"
 
-#: document/static/js/modules/documents/overview/actions.js:148
+#: document/static/js/modules/documents/overview/actions.js:147
 #: document/static/js/modules/documents/overview/index.js:909
 msgid "Encrypted"
 msgstr "Zašifrováno"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:160
 msgid "Supported formats"
 msgstr "Podporované formáty"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:160
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1674,67 +1692,65 @@ msgstr ""
 "Můžete také nahrát soubor ZIP, který obsahuje jeden soubor v kterémkoli z "
 "těchto formátů a také obrázky a/nebo soubor bibtex."
 
-#: document/static/js/modules/documents/overview/actions.js:165
-#| msgid "Import document"
+#: document/static/js/modules/documents/overview/actions.js:164
 msgid "Import a document"
 msgstr "Importujte dokument"
 
-#: document/static/js/modules/documents/overview/actions.js:183
+#: document/static/js/modules/documents/overview/actions.js:182
 msgid "File too large"
 msgstr "Soubor je příliš velký"
 
-#: document/static/js/modules/documents/overview/actions.js:241
+#: document/static/js/modules/documents/overview/actions.js:240
 msgid "No importable files found in ZIP"
 msgstr "V ZIPu nebyly nalezeny žádné importovatelné soubory"
 
-#: document/static/js/modules/documents/overview/actions.js:283
+#: document/static/js/modules/documents/overview/actions.js:282
 msgid "Unsupported file format"
 msgstr "Nepodporovaný formát souboru"
 
-#: document/static/js/modules/documents/overview/actions.js:350
-#| msgid "Could not create document"
+#: document/static/js/modules/documents/overview/actions.js:349
 msgid "Could not create encrypted document."
 msgstr "Nelze vytvořit šifrovaný dokument."
 
-#: document/static/js/modules/documents/overview/actions.js:441
+#: document/static/js/modules/documents/overview/actions.js:440
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
 msgstr "Zašifrujte kopii"
 
-#: document/static/js/modules/documents/overview/actions.js:448
+#: document/static/js/modules/documents/overview/actions.js:447
 #: document/static/js/modules/editor/document_template/index.js:136
 msgid "Choose document template"
 msgstr "Vyberte šablonu dokumentu"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:449
 msgid "Select document template for copies"
 msgstr "Vyberte šablonu dokumentu pro kopie"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:449
 #: document/static/js/modules/editor/document_template/index.js:138
 msgid "Select document template for copy."
 msgstr "Vyberte šablonu dokumentu pro kopírování."
 
-#: document/static/js/modules/documents/overview/actions.js:463
+#: document/static/js/modules/documents/overview/actions.js:462
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
 #: document/static/js/modules/editor/document_template/index.js:151
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:301
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:340
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:342
 msgid "Copy"
 msgstr "Kopie"
 
-#: document/static/js/modules/documents/overview/actions.js:512
+#: document/static/js/modules/documents/overview/actions.js:511
 msgid "Could not copy document."
 msgstr "Dokument nelze zkopírovat."
 
-#: document/static/js/modules/documents/overview/actions.js:542
-#: document/static/js/modules/documents/overview/actions.js:574
+#: document/static/js/modules/documents/overview/actions.js:541
+#: document/static/js/modules/documents/overview/actions.js:573
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
 msgid "Incorrect password."
 msgstr "Nesprávné heslo."
 
-#: document/static/js/modules/documents/overview/actions.js:796
+#: document/static/js/modules/documents/overview/actions.js:795
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr "Když jste offline, nemůžete zobrazit historii revizí dokumentu."
@@ -1752,8 +1768,7 @@ msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
 msgstr ""
-"Pokud ponecháte prázdnou složku, smaže se. Opravdu chcete smazat tuto "
-"složku?"
+"Pokud ponecháte prázdnou složku, smaže se. Opravdu chcete smazat tuto složku?"
 
 #: document/static/js/modules/documents/overview/index.js:193
 msgid "You cannot open a document while you are offline."
@@ -1843,8 +1858,8 @@ msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
 msgstr ""
-"Pokud ztratíte heslo nebo přístupovou frázi, neexistuje způsob, jak dokument"
-" obnovit."
+"Pokud ztratíte heslo nebo přístupovou frázi, neexistuje způsob, jak dokument "
+"obnovit."
 
 #: document/static/js/modules/documents/overview/index.js:881
 msgid ""
@@ -2232,8 +2247,7 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am "
-"merging?"
+"What if my collaborators continue working on the document while I am merging?"
 msgstr ""
 "Co když moji spolupracovníci budou během slučování pokračovat v práci na "
 "dokumentu?"
@@ -2252,16 +2266,16 @@ msgstr "Proč vidím tři redaktory?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It"
-" is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It "
+"is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
 msgstr ""
 "Editor vlevo zobrazí poslední běžnou verzi dokumentu. Je zobrazen pouze pro "
-"informaci. Editor uprostřed je slučovací editor a zpočátku obsahuje dokument"
-" vyplývající z úprav ostatních uživatelů. Editor napravo je offline editor a"
-" obsahuje dokument vyplývající z vašich změn, když jste byli offline."
+"informaci. Editor uprostřed je slučovací editor a zpočátku obsahuje dokument "
+"vyplývající z úprav ostatních uživatelů. Editor napravo je offline editor a "
+"obsahuje dokument vyplývající z vašich změn, když jste byli offline."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:221
 msgid "What are the green and red highlights in the editors?"
@@ -2270,10 +2284,10 @@ msgstr "Jaké jsou zelené a červené zvýraznění v editorech?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The"
-" text marked in green corresponds to the text that was edited (added) by you"
-" or other users. The text marked in red corresponds to text that was deleted"
-" by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The "
+"text marked in green corresponds to the text that was edited (added) by you "
+"or other users. The text marked in red corresponds to text that was deleted "
+"by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2309,8 +2323,8 @@ msgstr ""
 "zvýrazní se také změny, které budou přijaty. %(mergeImage)s Jak je "
 "znázorněno na obrázku výše, můžete kliknout na zvýrazněnou změnu a kliknout "
 "na přijmout změnu. Po přijetí změny se projeví v editoru sloučených "
-"dokumentů uprostřed. Odmítnutí změny funguje stejným způsobem kromě toho, že"
-" při odmítnutí změny dojde ke ztrátě zvýraznění změny, s možností změny "
+"dokumentů uprostřed. Odmítnutí změny funguje stejným způsobem kromě toho, že "
+"při odmítnutí změny dojde ke ztrátě zvýraznění změny, s možností změny "
 "přijmout, odmítnout nebo zkopírovat."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:242
@@ -2326,8 +2340,8 @@ msgid ""
 msgstr ""
 "Pokud nemůžete automaticky přijmout změnu do editoru sloučení, nemějte "
 "obavy. Změnu můžete zkopírovat buď kliknutím na tlačítko kopírovat, nebo "
-"ručně zkopírovat změnu a poté ji vložit do slučovacího editoru uprostřed. Je"
-" to tak jednoduché!"
+"ručně zkopírovat změnu a poté ji vložit do slučovacího editoru uprostřed. Je "
+"to tak jednoduché!"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:249
 msgid "Can I edit content in all three editors?"
@@ -2400,8 +2414,8 @@ msgid ""
 "One of the image(s) you copied could not be found on the server. Please try "
 "uploading it again."
 msgstr ""
-"Jeden z obrázků, které jste zkopírovali, nebyl na serveru nalezen. Zkuste to"
-" prosím nahrát znovu."
+"Jeden z obrázků, které jste zkopírovali, nebyl na serveru nalezen. Zkuste to "
+"prosím nahrát znovu."
 
 #: document/static/js/modules/editor/collab/merge/index.js:328
 msgid ""
@@ -2410,8 +2424,8 @@ msgid ""
 "verify that your edits still make sense."
 msgstr ""
 "Když jste byli offline, dokument byl podstatně upraven jinými uživateli. "
-"Vaše změny jsme sloučili jako sledované změny. Měli byste si ověřit, že vaše"
-" úpravy stále dávají smysl."
+"Vaše změny jsme sloučili jako sledované změny. Měli byste si ověřit, že vaše "
+"úpravy stále dávají smysl."
 
 #: document/static/js/modules/editor/collab/merge/index.js:377
 msgid "Merge failed"
@@ -2420,15 +2434,15 @@ msgstr "Sloučení se nezdařilo"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please"
-" consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please "
+"consider importing it into a new document."
 msgstr ""
 "Během procesu sloučení došlo k chybě, takže vaši práci již nemůžeme ukládat "
-"na server a místo toho se stáhne do vašeho počítače. Zvažte import do nového"
-" dokumentu."
+"na server a místo toho se stáhne do vašeho počítače. Zvažte import do nového "
+"dokumentu."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
-#: document/static/js/modules/editor/index.js:729
+#: document/static/js/modules/editor/index.js:733
 msgid "Leave editor"
 msgstr "Opusťte editor"
 
@@ -2448,8 +2462,8 @@ msgid ""
 "The change could not be applied automatically. Please consider using the "
 "copy option to copy the changes."
 msgstr ""
-"Změnu nebylo možné použít automaticky. Zvažte použití možnosti kopírování ke"
-" zkopírování změn."
+"Změnu nebylo možné použít automaticky. Zvažte použití možnosti kopírování ke "
+"zkopírování změn."
 
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:292
 msgid "Format Change"
@@ -2498,8 +2512,10 @@ msgstr "Zkopírujte obsah"
 #: document/static/js/modules/editor/marginboxes/templates.js:535
 #: document/static/js/modules/editor/marginboxes/templates.js:536
 #: document/static/js/modules/editor/state_plugins/contributor_input/dropup.js:36
-#: document/static/js/modules/editor/state_plugins/links.js:270
-#: document/static/js/modules/editor/state_plugins/links.js:318
+#: document/static/js/modules/editor/state_plugins/inline_math.js:246
+#: document/static/js/modules/editor/state_plugins/links.js:316
+#: document/static/js/modules/editor/state_plugins/links.js:364
+#: document/static/js/modules/editor/state_plugins/links.js:387
 msgid "Edit"
 msgstr "Upravit"
 
@@ -2522,8 +2538,8 @@ msgid ""
 "One of the Image(s) you copied could not be found on the server. Please try "
 "uploading it again."
 msgstr ""
-"Jeden z obrázků, které jste zkopírovali, nebyl nalezen na serveru. Zkuste to"
-" prosím nahrát znovu."
+"Jeden z obrázků, které jste zkopírovali, nebyl nalezen na serveru. Zkuste to "
+"prosím nahrát znovu."
 
 #: document/static/js/modules/editor/dialogs/citation.js:22
 #: document/static/js/modules/editor/dialogs/code_block.js:14
@@ -2540,9 +2556,11 @@ msgstr "Vložit"
 #: document/static/js/modules/editor/dialogs/figure.js:374
 #: document/static/js/modules/editor/dialogs/templates.js:315
 #: document/static/js/modules/editor/menus/code_block/model.js:40
-#: document/static/js/modules/editor/state_plugins/links.js:273
-#: document/static/js/modules/editor/state_plugins/links.js:297
-#: document/static/js/modules/editor/state_plugins/links.js:321
+#: document/static/js/modules/editor/state_plugins/inline_math.js:249
+#: document/static/js/modules/editor/state_plugins/links.js:319
+#: document/static/js/modules/editor/state_plugins/links.js:343
+#: document/static/js/modules/editor/state_plugins/links.js:367
+#: document/static/js/modules/editor/state_plugins/links.js:390
 #: user/static/js/modules/profile/dialogs.js:283
 #: user/static/js/modules/profile/dialogs.js:332
 msgid "Remove"
@@ -2552,17 +2570,17 @@ msgstr "Odstranit"
 msgid "Configure Citation"
 msgstr "Konfigurace citace"
 
-#: document/static/js/modules/editor/dialogs/citation.js:241
+#: document/static/js/modules/editor/dialogs/citation.js:243
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "Vyhledávání..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/editor/dialogs/citation.js:256
 #: document/static/js/modules/editor/dialogs/templates.js:313
 msgid "Year"
 msgstr "Rok"
 
-#: document/static/js/modules/editor/dialogs/citation.js:420
+#: document/static/js/modules/editor/dialogs/citation.js:425
 msgid "Please select at least one citation source!"
 msgstr "Vyberte prosím alespoň jeden zdroj citací!"
 
@@ -2629,7 +2647,7 @@ msgstr "Kopírovat do schránky"
 
 #: document/static/js/modules/editor/dialogs/figure.js:54
 #: document/static/js/modules/editor/dialogs/math.js:120
-#: document/static/js/modules/editor/menus/toolbar/model.js:894
+#: document/static/js/modules/editor/menus/toolbar/model.js:908
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:65
 msgid "Redo"
 msgstr "Předělat"
@@ -2641,7 +2659,7 @@ msgstr "Přepnout virtuální klávesnici"
 
 #: document/static/js/modules/editor/dialogs/figure.js:58
 #: document/static/js/modules/editor/dialogs/math.js:124
-#: document/static/js/modules/editor/menus/toolbar/model.js:881
+#: document/static/js/modules/editor/menus/toolbar/model.js:895
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:61
 msgid "Undo"
 msgstr "Vrátit zpět"
@@ -2894,16 +2912,16 @@ msgstr ""
 "ztratíte, vaše zašifrované dokumenty nelze obnovit."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:29
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:182
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:183
 msgid "Passphrase"
 msgstr "Přístupová fráze"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:32
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:185
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:265
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:371
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:186
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:267
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:373
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:516
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:524
 msgid "Show passphrase"
 msgstr "Zobrazit přístupovou frázi"
 
@@ -2916,14 +2934,14 @@ msgid "Set Up Encryption"
 msgstr "Nastavit šifrování"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:71
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:421
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:568
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:423
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:571
 msgid "Passphrase must be at least 8 characters long."
 msgstr "Heslo musí mít alespoň 8 znaků."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:80
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:430
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:577
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:432
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:580
 msgid "Passphrases do not match."
 msgstr "Přístupové fráze se neshodují."
 
@@ -2931,36 +2949,35 @@ msgstr "Přístupové fráze se neshodují."
 msgid "Set Up Personal Encryption"
 msgstr "Nastavte osobní šifrování"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:180
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:181
 msgid "Enter your personal encryption passphrase to unlock your documents."
-msgstr ""
-"Chcete-li odemknout své dokumenty, zadejte své osobní šifrovací heslo."
+msgstr "Chcete-li odemknout své dokumenty, zadejte své osobní šifrovací heslo."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:195
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:196
 msgid "Unlock"
 msgstr "Odemknout"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:208
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:209
 msgid "Please enter your passphrase."
 msgstr "Zadejte své přístupové heslo."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:230
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:231
 msgid "Recover with key"
 msgstr "Obnovit pomocí klíče"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:241
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:242
 msgid "Unlock Encryption"
 msgstr "Odemknout šifrování"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:261
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:263
 msgid "Hide passphrase"
 msgstr "Skrýt přístupovou frázi"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:296
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:298
 msgid "This is your recovery key."
 msgstr "Toto je váš klíč pro obnovení."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:297
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:299
 msgid ""
 "Store it somewhere safe (e.g., a password manager, printed copy). If you "
 "forget your passphrase, this is the ONLY way to recover your encrypted "
@@ -2970,77 +2987,77 @@ msgstr ""
 "zapomenete svou přístupovou frázi, je to JEDINÝ způsob, jak obnovit "
 "zašifrované dokumenty. Nemůžeme to pro vás obnovit."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:304
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
 msgid "Copy it now — it will not be shown again."
 msgstr "Zkopírujte jej nyní – již se nebude zobrazovat."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:310
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:312
 msgid "I have saved it"
 msgstr "Uložil jsem to"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:323
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:325
 msgid "Recovery Key"
 msgstr "Obnovovací klíč"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:338
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:340
 msgid "Copied!"
 msgstr "Zkopírováno!"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:361
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
 msgid ""
 "Enter your recovery key and a new passphrase to regain access to your "
 "encrypted documents."
 msgstr ""
-"Zadejte svůj obnovovací klíč a novou přístupovou frázi, abyste znovu získali"
-" přístup k zašifrovaným dokumentům."
+"Zadejte svůj obnovovací klíč a novou přístupovou frázi, abyste znovu získali "
+"přístup k zašifrovaným dokumentům."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:365
 msgid "Recovery key"
 msgstr "Obnovovací klíč"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:368
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:518
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:370
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
 msgid "New passphrase"
 msgstr "Nová přístupová fráze"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:376
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:526
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:378
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:529
 msgid "Confirm new passphrase"
 msgstr "Potvrďte novou přístupovou frázi"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:386
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:388
 msgid "Recover"
 msgstr "Obnovit se"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:412
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:414
 msgid "Please enter your recovery key."
 msgstr "Zadejte svůj obnovovací klíč."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:452
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:454
 msgid "Recover Encryption"
 msgstr "Obnovit šifrování"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:508
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption"
-" password."
+"Enter your current passphrase and a new passphrase to change your encryption "
+"password."
 msgstr ""
 "Zadejte své aktuální přístupové heslo a nové heslo pro změnu šifrovacího "
 "hesla."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:510
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
 msgid "Current passphrase"
 msgstr "Aktuální přístupová fráze"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:536
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:539
 msgid "Change Passphrase"
 msgstr "Změnit přístupovou frázi"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:559
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:562
 msgid "Please enter your current passphrase."
 msgstr "Zadejte své aktuální přístupové heslo."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:599
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:602
 msgid "Change Encryption Passphrase"
 msgstr "Změnit heslo pro šifrování"
 
@@ -3070,7 +3087,7 @@ msgid ""
 msgstr "Tento dokument je šifrován end-to-end. Pro dešifrování zadejte heslo."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
-#: document/static/js/modules/editor/e2ee/password-dialog.js:261
+#: document/static/js/modules/editor/e2ee/password-dialog.js:262
 #: user/static/js/modules/login/index.js:65
 #: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
@@ -3081,9 +3098,9 @@ msgid "Password"
 msgstr "Heslo"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:147
-#: document/static/js/modules/editor/e2ee/password-dialog.js:222
-#: document/static/js/modules/editor/e2ee/password-dialog.js:264
-#: document/static/js/modules/editor/e2ee/password-dialog.js:451
+#: document/static/js/modules/editor/e2ee/password-dialog.js:223
+#: document/static/js/modules/editor/e2ee/password-dialog.js:265
+#: document/static/js/modules/editor/e2ee/password-dialog.js:453
 msgid "Show password"
 msgstr "Zobrazit heslo"
 
@@ -3095,48 +3112,48 @@ msgstr "Dešifrovat"
 msgid "Please enter the password."
 msgstr "Zadejte heslo."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:218
+#: document/static/js/modules/editor/e2ee/password-dialog.js:219
 msgid "Hide password"
 msgstr "Skrýt heslo"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:258
+#: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open"
-" the document in the future."
+"Set a password to encrypt this document. You will need this password to open "
+"the document in the future."
 msgstr ""
 "Nastavte heslo pro zašifrování tohoto dokumentu. Toto heslo budete "
 "potřebovat k otevření dokumentu v budoucnu."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:259
+#: document/static/js/modules/editor/e2ee/password-dialog.js:260
 msgid ""
 "Tip: Use a passphrase with multiple words, e.g. \"correct-horse-battery-"
 "staple\". This is both secure and easy to remember."
 msgstr ""
-"Tip: Použijte přístupovou frázi s více slovy, např. \"správná-koňská-"
-"baterie-svorka\". To je bezpečné a snadno zapamatovatelné."
+"Tip: Použijte přístupovou frázi s více slovy, např. \"správná-koňská-baterie-"
+"svorka\". To je bezpečné a snadno zapamatovatelné."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:273
+#: document/static/js/modules/editor/e2ee/password-dialog.js:274
 msgid "Confirm password"
 msgstr "Potvrďte heslo"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:283
+#: document/static/js/modules/editor/e2ee/password-dialog.js:284
 msgid "Create Encrypted Document"
 msgstr "Vytvořte šifrovaný dokument"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:313
-#: document/static/js/modules/editor/e2ee/password-dialog.js:520
+#: document/static/js/modules/editor/e2ee/password-dialog.js:314
+#: document/static/js/modules/editor/e2ee/password-dialog.js:522
 msgid "Passwords do not match."
 msgstr "Hesla se neshodují."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:327
+#: document/static/js/modules/editor/e2ee/password-dialog.js:328
 msgid "Set Document Password"
 msgstr "Nastavte heslo dokumentu"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:427
+#: document/static/js/modules/editor/e2ee/password-dialog.js:429
 msgid "Current password"
 msgstr "Aktuální heslo"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:440
+#: document/static/js/modules/editor/e2ee/password-dialog.js:442
 msgid ""
 "Change the document password. After changing, you must share the new "
 "password with all collaborators."
@@ -3144,30 +3161,30 @@ msgstr ""
 "Změňte heslo dokumentu. Po změně musíte nové heslo sdílet se všemi "
 "spolupracovníky."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:444
+#: document/static/js/modules/editor/e2ee/password-dialog.js:446
 #: user/static/js/modules/profile/templates.js:63
 msgid "New password"
 msgstr "Nové heslo"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:461
+#: document/static/js/modules/editor/e2ee/password-dialog.js:463
 msgid "Confirm new password"
 msgstr "Potvrďte nové heslo"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:473
+#: document/static/js/modules/editor/e2ee/password-dialog.js:475
 #: user/static/js/modules/password_reset/change_password.js:7
 #: user/static/js/modules/profile/dialogs.js:204
 msgid "Change Password"
 msgstr "Změnit heslo"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:501
+#: document/static/js/modules/editor/e2ee/password-dialog.js:503
 msgid "Please enter the current password."
 msgstr "Zadejte prosím aktuální heslo."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:530
+#: document/static/js/modules/editor/e2ee/password-dialog.js:532
 msgid "New password must be different from the current password."
 msgstr "Nové heslo se musí lišit od aktuálního hesla."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:547
+#: document/static/js/modules/editor/e2ee/password-dialog.js:549
 msgid "Change Document Password"
 msgstr "Změnit heslo dokumentu"
 
@@ -3179,33 +3196,33 @@ msgstr ""
 "Heslo dokumentu bylo změněno jiným uživatelem. Chcete-li pokračovat v "
 "úpravách, budete muset zadat nové heslo."
 
-#: document/static/js/modules/editor/index.js:330
-#: document/static/js/modules/editor/index.js:609
+#: document/static/js/modules/editor/index.js:334
+#: document/static/js/modules/editor/index.js:613
 msgid "Invalid Share Link"
 msgstr "Neplatný odkaz na sdílení"
 
-#: document/static/js/modules/editor/index.js:333
-#: document/static/js/modules/editor/index.js:612
+#: document/static/js/modules/editor/index.js:337
+#: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for"
-" a new link."
+"This share link has expired or is invalid. Please ask the document owner for "
+"a new link."
 msgstr ""
 "Tento odkaz na sdílení vypršel nebo je neplatný. Požádejte vlastníka "
 "dokumentu o nový odkaz."
 
-#: document/static/js/modules/editor/index.js:400
+#: document/static/js/modules/editor/index.js:404
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
 msgstr ""
-"Varování! Ne všechny vaše změny byly uloženy! Mohli byste utrpět ztrátu dat."
-" Pokus o opětovné připojení..."
+"Varování! Ne všechny vaše změny byly uloženy! Mohli byste utrpět ztrátu dat. "
+"Pokus o opětovné připojení..."
 
-#: document/static/js/modules/editor/index.js:537
+#: document/static/js/modules/editor/index.js:541
 msgid "Your document was out of sync and has been reset."
 msgstr "Váš dokument nebyl synchronizován a byl resetován."
 
-#: document/static/js/modules/editor/index.js:560
+#: document/static/js/modules/editor/index.js:564
 msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
@@ -3213,11 +3230,11 @@ msgstr ""
 "Vaše přístupová práva byla změněna. Nyní máte %(accessRight)s přístup k "
 "tomuto dokumentu."
 
-#: document/static/js/modules/editor/index.js:635
+#: document/static/js/modules/editor/index.js:639
 msgid "Session Expired"
 msgstr "Platnost relace vypršela"
 
-#: document/static/js/modules/editor/index.js:638
+#: document/static/js/modules/editor/index.js:642
 msgid ""
 "Your session expired while you were offline, so we cannot save your work to "
 "the server any longer, but you can download it to your computer instead. "
@@ -3227,42 +3244,42 @@ msgstr ""
 "ukládat na server, ale můžete si ji stáhnout do svého počítače. Po "
 "přihlášení zvažte jeho import jako nového dokumentu."
 
-#: document/static/js/modules/editor/index.js:642
+#: document/static/js/modules/editor/index.js:646
 msgid "Download Document"
 msgstr "Stáhnout dokument"
 
-#: document/static/js/modules/editor/index.js:657
+#: document/static/js/modules/editor/index.js:661
 msgid "Proceed to Login page"
 msgstr "Pokračujte na přihlašovací stránku"
 
-#: document/static/js/modules/editor/index.js:722
+#: document/static/js/modules/editor/index.js:726
 msgid "Access rights modified"
 msgstr "Přístupová práva upravena"
 
-#: document/static/js/modules/editor/index.js:725
+#: document/static/js/modules/editor/index.js:729
 msgid ""
 "Your access rights were modified while you were offline, so we cannot save "
 "your work to the server any longer, and it is downloaded to your computer "
 "instead. Please consider importing it into a new document."
 msgstr ""
-"Vaše přístupová práva byla změněna, když jste byli offline, takže vaši práci"
-" již nemůžeme ukládat na server a místo toho je stažena do vašeho počítače. "
+"Vaše přístupová práva byla změněna, když jste byli offline, takže vaši práci "
+"již nemůžeme ukládat na server a místo toho je stažena do vašeho počítače. "
 "Zvažte import do nového dokumentu."
 
-#: document/static/js/modules/editor/index.js:774
+#: document/static/js/modules/editor/index.js:778
 msgid "Incorrect passphrase."
 msgstr "Nesprávná přístupová fráze."
 
-#: document/static/js/modules/editor/index.js:800
+#: document/static/js/modules/editor/index.js:804
 #: user/static/js/modules/profile/index.js:263
 msgid "Recovery failed: "
 msgstr "Obnovení se nezdařilo:"
 
-#: document/static/js/modules/editor/index.js:845
+#: document/static/js/modules/editor/index.js:849
 msgid "E2EE is not enabled on this server."
 msgstr "E2EE není na tomto serveru povoleno."
 
-#: document/static/js/modules/editor/index.js:1008
+#: document/static/js/modules/editor/index.js:1012
 msgid ""
 "Changes you made to the document since going offline will be lost, if you "
 "choose to close/refresh the tab or close the browser."
@@ -3544,7 +3561,7 @@ msgstr "Žádost o přístup"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:52
 msgid "Share"
-msgstr "Podíl"
+msgstr "Sdílet"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:59
 msgid "Request to be added as a collaborator."
@@ -3646,8 +3663,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new"
-" key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new "
+"key automatically."
 msgstr ""
 "Šifrovací klíč dokumentu byl otočen. Ostatní uživatelé s přístupovou frází "
 "obdrží nový klíč automaticky."
@@ -3666,7 +3683,7 @@ msgstr "Aktuální heslo je nesprávné."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:503
 msgid "Export"
-msgstr "Vývozní"
+msgstr "Exportovat"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:504
 msgid "Export of the document contents"
@@ -3705,8 +3722,8 @@ msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
 msgstr ""
-"Exportujte dokument do souboru Journal Archiving and Interchange Tag Library"
-" NISO JATS verze 1.2."
+"Exportujte dokument do souboru Journal Archiving and Interchange Tag Library "
+"NISO JATS verze 1.2."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:607
 msgid "BITS"
@@ -3946,7 +3963,7 @@ msgid "Specify the number from which this list is to start counting"
 msgstr "Zadejte číslo, od kterého se má tento seznam začít počítat"
 
 #: document/static/js/modules/editor/menus/selection/model.js:68
-#: document/static/js/modules/editor/state_plugins/links.js:283
+#: document/static/js/modules/editor/state_plugins/links.js:329
 msgid "Anchor"
 msgstr "Kotva"
 
@@ -4048,59 +4065,59 @@ msgstr "Nakonfigurujte tabulku."
 msgid "Delete currently selected table"
 msgstr "Smazat aktuálně vybranou tabulku"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:17
+#: document/static/js/modules/editor/menus/toolbar/model.js:21
 msgid "Normal Text"
 msgstr "Normální text"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:18
+#: document/static/js/modules/editor/menus/toolbar/model.js:22
 msgid "1st Heading"
 msgstr "1. nadpis"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:19
+#: document/static/js/modules/editor/menus/toolbar/model.js:23
 msgid "2nd Heading"
 msgstr "2. nadpis"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:20
+#: document/static/js/modules/editor/menus/toolbar/model.js:24
 msgid "3rd Heading"
 msgstr "3. nadpis"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:21
+#: document/static/js/modules/editor/menus/toolbar/model.js:25
 msgid "4th Heading"
 msgstr "4. nadpis"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:22
+#: document/static/js/modules/editor/menus/toolbar/model.js:26
 msgid "5th Heading"
 msgstr "5. nadpis"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:23
+#: document/static/js/modules/editor/menus/toolbar/model.js:27
 msgid "6th Heading"
 msgstr "6. nadpis"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:129
+#: document/static/js/modules/editor/menus/toolbar/model.js:133
 msgid "Open/close header menu"
 msgstr "Otevřít/zavřít nabídku záhlaví"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:588
+#: document/static/js/modules/editor/menus/toolbar/model.js:592
 msgid "Numbered list"
 msgstr "Číslovaný seznam"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:759
+#: document/static/js/modules/editor/menus/toolbar/model.js:763
 msgid "Cite"
 msgstr "Uvést"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:786
+#: document/static/js/modules/editor/menus/toolbar/model.js:800
 msgid "Horizontal line"
 msgstr "Vodorovná čára"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:811
+#: document/static/js/modules/editor/menus/toolbar/model.js:825
 msgid "Math"
 msgstr "Matematika"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:859
+#: document/static/js/modules/editor/menus/toolbar/model.js:873
 msgid "Insert a table into the document."
 msgstr "Vložte do dokumentu tabulku."
 
-#: document/static/js/modules/editor/menus/toolbar/view.js:268
+#: document/static/js/modules/editor/menus/toolbar/view.js:287
 msgid "More"
 msgstr "Více"
 
@@ -4137,47 +4154,79 @@ msgid "Document N̲avigator"
 msgstr "Navigátor dokumentů"
 
 #: document/static/js/modules/editor/no_collab_save/index.js:146
-#| msgid "Could not move document"
 msgid "Could not save document."
 msgstr "Dokument nelze uložit."
 
 #: document/static/js/modules/editor/no_collab_save/index.js:205
-#| msgid "Document key is not available. Please reload the document."
 msgid "Document has been modified by another user. Please reload the page."
 msgstr "Dokument byl změněn jiným uživatelem. Načtěte stránku znovu."
+
+#: document/static/js/modules/editor/state_plugins/inline_math.js:245
+#, fuzzy
+#| msgid "Equation"
+msgid "Edit equation"
+msgstr "Rovnice"
+
+#: document/static/js/modules/editor/state_plugins/inline_math.js:248
+#, fuzzy
+#| msgid "Remove link"
+msgid "Remove equation"
+msgstr "Odebrat odkaz"
+
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:28
+msgid "No matching sources"
+msgstr ""
+
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
+#, fuzzy
+#| msgid "Cross reference"
+msgid "Cross-references"
+msgstr "Křížový odkaz"
 
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
 msgstr "Odkaz zkopírován do schránky"
 
-#: document/static/js/modules/editor/state_plugins/links.js:269
+#: document/static/js/modules/editor/state_plugins/links.js:315
 msgid "Edit link"
 msgstr "Upravit odkaz"
 
-#: document/static/js/modules/editor/state_plugins/links.js:272
+#: document/static/js/modules/editor/state_plugins/links.js:318
 msgid "Remove link"
 msgstr "Odebrat odkaz"
 
-#: document/static/js/modules/editor/state_plugins/links.js:291
-#: document/static/js/modules/editor/state_plugins/links.js:292
+#: document/static/js/modules/editor/state_plugins/links.js:337
+#: document/static/js/modules/editor/state_plugins/links.js:338
 msgid "Copy anchor"
 msgstr "Kopírovat kotvu"
 
-#: document/static/js/modules/editor/state_plugins/links.js:296
+#: document/static/js/modules/editor/state_plugins/links.js:342
 msgid "Remove anchor"
 msgstr "Odstraňte kotvu"
 
-#: document/static/js/modules/editor/state_plugins/links.js:307
+#: document/static/js/modules/editor/state_plugins/links.js:353
 msgid "Cross Reference"
 msgstr "Křížový odkaz"
 
-#: document/static/js/modules/editor/state_plugins/links.js:317
+#: document/static/js/modules/editor/state_plugins/links.js:363
 msgid "Edit cross reference"
 msgstr "Upravit křížový odkaz"
 
-#: document/static/js/modules/editor/state_plugins/links.js:320
+#: document/static/js/modules/editor/state_plugins/links.js:366
 msgid "Remove cross reference"
 msgstr "Odstraňte křížový odkaz"
+
+#: document/static/js/modules/editor/state_plugins/links.js:386
+#, fuzzy
+#| msgid "Deleted citation"
+msgid "Edit citation"
+msgstr "Smazaná citace"
+
+#: document/static/js/modules/editor/state_plugins/links.js:389
+#, fuzzy
+#| msgid "Deleted citation"
+msgid "Remove citation"
+msgstr "Smazaná citace"
 
 #: document/static/js/modules/editor/tools/key_bindings/index.js:14
 msgid "Keyboard Shortcuts"
@@ -4251,11 +4300,11 @@ msgstr "Vyhledávání"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace"
-" all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace "
+"all'"
 msgstr ""
-"Vezměte prosím na vědomí, že v neupravitelných částech dokumentu jsou shody,"
-" tyto shody nebudou nahrazeny při použití „nahradit“ nebo „nahradit vše“"
+"Vezměte prosím na vědomí, že v neupravitelných částech dokumentu jsou shody, "
+"tyto shody nebudou nahrazeny při použití „nahradit“ nebo „nahradit vše“"
 
 #: document/static/js/modules/editor/tools/search_replace/templates.js:4
 msgid "Find"
@@ -4744,25 +4793,25 @@ msgstr "Potvrďte e-mailovou adresu a potvrďte souhlas s podmínkami"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>."
 msgstr ""
-"Potvrďte prosím, že vlastníte e-mail <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Potvrďte prosím, že vlastníte e-mail <a href=\"mailto:%(email)s\">%(email)s</"
+"a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
-"%(username)s, and that you have read and agree to our <a "
-"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
-"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
 msgstr ""
-"Potvrďte prosím, že vlastníte e-mail <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, že žádáte o uživatelské jméno "
-"%(username)s a že jste si přečetli naše <a href=\"/pages/terms/\" "
-"target=\"_blank\">Smluvní podmínky</a> a <a href=\"/pages/privacy/\" "
-"target=\"_blank\">Zásady ochrany osobních údajů a souhlasíte s nimi."
+"Potvrďte prosím, že vlastníte e-mail <a href=\"mailto:%(email)s\">%(email)s</"
+"a>, že žádáte o uživatelské jméno %(username)s a že jste si přečetli naše <a "
+"href=\"/pages/terms/\" target=\"_blank\">Smluvní podmínky</a> a <a href=\"/"
+"pages/privacy/\" target=\"_blank\">Zásady ochrany osobních údajů a "
+"souhlasíte s nimi."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4821,7 +4870,7 @@ msgstr "Přihlaste se pomocí"
 #: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
 #: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:226
+#: user/static/js/modules/profile/templates.js:246
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "Uživatelské jméno"
@@ -4926,11 +4975,11 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a "
-"href=\"mailto:%(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a href=\"mailto:%"
+"(contactEmail)s\">contact us</a>."
 msgstr ""
-"Pokud máte nějaké potíže s resetováním hesla, <a "
-"href=\"mailto:%(contactEmail)s\">kontaktujte nás</a>."
+"Pokud máte nějaké potíže s resetováním hesla, <a href=\"mailto:%"
+"(contactEmail)s\">kontaktujte nás</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -4963,8 +5012,7 @@ msgstr ""
 #: user/static/js/modules/profile/delete_user.js:61
 msgid "Staff accounts have to be deleted through the admin interface."
 msgstr ""
-"Účty zaměstnanců je nutné smazat prostřednictvím administrátorského "
-"rozhraní."
+"Účty zaměstnanců je nutné smazat prostřednictvím administrátorského rozhraní."
 
 #: user/static/js/modules/profile/delete_user.js:66
 msgid "Password incorrect."
@@ -5079,9 +5127,15 @@ msgstr "Přístupová fráze byla úspěšně změněna."
 msgid "Failed to change passphrase: "
 msgstr "Nepodařilo se změnit přístupovou frázi:"
 
-#: user/static/js/modules/profile/index.js:309
+#: user/static/js/modules/profile/index.js:308
 msgid "Could not save profile data"
 msgstr "Údaje profilu nelze uložit"
+
+#: user/static/js/modules/profile/index.js:317
+#, fuzzy
+#| msgid "Could not save "
+msgid "Could not save preferences"
+msgstr "Nepodařilo se uložit"
 
 #: user/static/js/modules/profile/templates.js:5
 msgid "Delete the avatar?"
@@ -5096,8 +5150,8 @@ msgid ""
 "Really delete your account? Type in your username and password below to "
 "confirm deletion."
 msgstr ""
-"Opravdu smazat svůj účet? Pro potvrzení smazání zadejte níže své uživatelské"
-" jméno a heslo."
+"Opravdu smazat svůj účet? Pro potvrzení smazání zadejte níže své uživatelské "
+"jméno a heslo."
 
 #: user/static/js/modules/profile/templates.js:23
 msgid "We cannot reverse an account deletion."
@@ -5189,15 +5243,51 @@ msgstr "Primární adresa"
 msgid "Verified"
 msgstr "Ověřeno"
 
-#: user/static/js/modules/profile/templates.js:225
+#: user/static/js/modules/profile/templates.js:220
+#, fuzzy
+#| msgid "Editors"
+msgid "Editor"
+msgstr "redaktoři"
+
+#: user/static/js/modules/profile/templates.js:224
+msgid "Enable inline reference typing (@)"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:226
+msgid "Type @ in the editor to insert a citation or cross-reference:"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:228
+msgid ""
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
+"citation: @@entry_key. Multiple sources: @key1;key2"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:229
+#, fuzzy
+#| msgid "Cross reference"
+msgid "Cross-reference: @#target-id"
+msgstr "Křížový odkaz"
+
+#: user/static/js/modules/profile/templates.js:233
+msgid "Enable inline math typing ($)"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:235
+msgid ""
+"Type $ in the editor followed by LaTeX math to insert an equation inline, "
+"e.g. $x^2. Press Enter or Tab to confirm."
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:245
 msgid "Social Account Provider"
 msgstr "Poskytovatel sociálního účtu"
 
-#: user/static/js/modules/profile/templates.js:253
+#: user/static/js/modules/profile/templates.js:273
 msgid "Connect"
 msgstr "Připojit"
 
-#: user/static/js/modules/profile/templates.js:268
+#: user/static/js/modules/profile/templates.js:288
 msgid "Delete account"
 msgstr "Smazat účet"
 
@@ -5206,8 +5296,10 @@ msgid "Signup"
 msgstr "Registrace"
 
 #: user/static/js/modules/signup/index.js:13
-msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
-msgstr "Už máte účet? Poté se prosím <a href=\"/\" title=\"Login\">přihlaste</a>."
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr ""
+"Už máte účet? Poté se prosím <a href=\"/\" title=\"Login\">přihlaste</a>."
 
 #: user/static/js/modules/signup/index.js:21
 msgid "Choose your username"
@@ -5279,8 +5371,8 @@ msgstr "Zakázat dvoufaktorové ověřování"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce"
-" the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce "
+"the security of your account."
 msgstr ""
 "Opravdu chcete zakázat dvoufaktorové ověřování? To sníží zabezpečení vašeho "
 "účtu."

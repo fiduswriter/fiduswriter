@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer frontend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -83,16 +83,16 @@ msgstr "Stäng"
 #: document/static/js/modules/editor/comments/editors/answer.js:22
 #: document/static/js/modules/editor/comments/editors/comment.js:103
 #: document/static/js/modules/editor/dialogs/templates.js:237
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:219
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:442
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:589
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:220
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:444
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:592
 #: document/static/js/modules/editor/e2ee/password-dialog.js:183
 msgid "Cancel"
 msgstr "Avbryt"
 
 #: base/static/js/modules/common/dialog.js:89
-#: document/static/js/modules/editor/index.js:337
-#: document/static/js/modules/editor/index.js:616
+#: document/static/js/modules/editor/index.js:341
+#: document/static/js/modules/editor/index.js:620
 msgid "OK"
 msgstr "OK"
 
@@ -103,8 +103,9 @@ msgstr "OK"
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
 #: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:173
+#: document/static/js/modules/editor/dialogs/citation.js:175
 #: document/static/js/modules/editor/menus/headerbar/view.js:505
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
 #: document/static/js/modules/importer/docx/convert.js:84
 #: document/static/js/modules/importer/docx/convert.js:92
@@ -127,7 +128,7 @@ msgstr "Ny mapp"
 
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
-#: bibliography/static/js/modules/bibliography/overview/index.js:320
+#: bibliography/static/js/modules/bibliography/overview/index.js:321
 #: document/static/js/modules/documents/access_rights/index.js:296
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
@@ -135,7 +136,7 @@ msgstr "Ny mapp"
 #: user/static/js/modules/profile/dialogs.js:124
 #: user/static/js/modules/profile/dialogs.js:215
 #: user/static/js/modules/profile/dialogs.js:385
-#: user/static/js/modules/profile/templates.js:265
+#: user/static/js/modules/profile/templates.js:285
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
 msgstr "Överlämna"
@@ -184,7 +185,7 @@ msgid "Warning! Some data is unsaved"
 msgstr "Varning! Vissa data har inte sparats"
 
 #: base/static/js/modules/common/ws.js:14
-#: document/static/js/modules/editor/index.js:403
+#: document/static/js/modules/editor/index.js:407
 msgid "Disconnected. Attempting to reconnect..."
 msgstr "Osammanhängande. Försöker återansluta..."
 
@@ -226,8 +227,7 @@ msgstr "Upphovsrättsinnehavare"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder "
-"is."
+"If the work is not in the public domain, specify who the copyright holder is."
 msgstr ""
 "Om verket inte är allmän egendom, ange vem som är upphovsrättsinnehavaren."
 
@@ -259,8 +259,8 @@ msgid ""
 "\"2012-10-15\")."
 msgstr ""
 "Lista eventuella licenser som verket är tillgängligt under. Om licensen "
-"endast gäller från ett givet datum, vänligen ange datumet i ISO8601-formatet"
-" (som \\\"2012-10-15\\\")."
+"endast gäller från ett givet datum, vänligen ange datumet i ISO8601-formatet "
+"(som \\\"2012-10-15\\\")."
 
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
@@ -340,8 +340,8 @@ msgstr "Bibliografin kunde inte uppdateras"
 #: bibliography/static/js/modules/bibliography/form/index.js:56
 #: bibliography/static/js/modules/bibliography/import/dialog.js:20
 #: bibliography/static/js/modules/bibliography/import/dialog.js:42
-#: bibliography/static/js/modules/bibliography/overview/index.js:313
-#: bibliography/static/js/modules/bibliography/overview/index.js:341
+#: bibliography/static/js/modules/bibliography/overview/index.js:314
+#: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
 #: document/static/js/modules/exporter/native/revision.js:79
 #: usermedia/static/js/modules/images/overview/index.js:94
@@ -372,7 +372,7 @@ msgstr "Bibliografiobjektet/-erna har tagits bort"
 #: document/static/js/modules/document_template/templates.js:102
 #: document/static/js/modules/editor/e2ee/password-dialog.js:106
 #: document/static/js/modules/editor/marginboxes/templates.js:240
-#: document/static/js/modules/editor/menus/toolbar/model.js:371
+#: document/static/js/modules/editor/menus/toolbar/model.js:375
 msgid "Strong"
 msgstr "Stark"
 
@@ -381,7 +381,7 @@ msgstr "Stark"
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:58
 #: document/static/js/modules/document_template/templates.js:106
 #: document/static/js/modules/editor/marginboxes/templates.js:239
-#: document/static/js/modules/editor/menus/toolbar/model.js:408
+#: document/static/js/modules/editor/menus/toolbar/model.js:412
 msgid "Emphasis"
 msgstr "Betoning"
 
@@ -465,7 +465,18 @@ msgstr "Redigera källa"
 msgid "Register New Source"
 msgstr "Registrera ny källa"
 
-#: bibliography/static/js/modules/bibliography/form/index.js:320
+#: bibliography/static/js/modules/bibliography/form/index.js:386
+#, fuzzy
+#| msgid "A slug can only contain letters, numbers, hyphens and underscores."
+msgid "Only letters, numbers, hyphens and underscores are allowed."
+msgstr ""
+"En snigel kan bara innehålla bokstäver, siffror, bindestreck och understreck."
+
+#: bibliography/static/js/modules/bibliography/form/index.js:398
+msgid "Warning: this key is already used in your library."
+msgstr ""
+
+#: bibliography/static/js/modules/bibliography/form/index.js:451
 msgid "Error in form, check highlighted values!"
 msgstr "Fel i formuläret, kontrollera markerade värden!"
 
@@ -473,16 +484,22 @@ msgstr "Fel i formuläret, kontrollera markerade värden!"
 msgid "Select source type"
 msgstr "Välj källtyp"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:29
+#: bibliography/static/js/modules/bibliography/form/templates.js:28
+#, fuzzy
+#| msgid "Citation"
+msgid "Citation key"
+msgstr "Citat"
+
+#: bibliography/static/js/modules/bibliography/form/templates.js:33
 msgid "Required Fields"
 msgstr "Obligatoriska fält"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:32
+#: bibliography/static/js/modules/bibliography/form/templates.js:36
 msgid "Optional Fields"
 msgstr "Valfria fält"
 
-#: bibliography/static/js/modules/bibliography/form/templates.js:35
-#: bibliography/static/js/modules/bibliography/form/templates.js:50
+#: bibliography/static/js/modules/bibliography/form/templates.js:39
+#: bibliography/static/js/modules/bibliography/form/templates.js:54
 msgid "Categories"
 msgstr "Kategorier"
 
@@ -519,7 +536,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Det uppstod ett problem med bibliografiimporten"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:174
+#: document/static/js/modules/documents/overview/actions.js:173
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Importera"
@@ -549,12 +566,12 @@ msgid "Bibliography Manager"
 msgstr "Bibliografiansvarig"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:239
+#: document/static/js/modules/editor/dialogs/citation.js:241
 msgid "No sources registered"
 msgstr "Inga källor registrerade"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:240
+#: document/static/js/modules/editor/dialogs/citation.js:242
 msgid "No sources found"
 msgstr "Inga källor hittades"
 
@@ -569,12 +586,12 @@ msgstr "Inga källor hittades"
 #: document/static/js/modules/document_template/templates.js:813
 #: document/static/js/modules/document_template/templates.js:836
 #: document/static/js/modules/documents/overview/index.js:560
-#: document/static/js/modules/editor/dialogs/citation.js:252
+#: document/static/js/modules/editor/dialogs/citation.js:254
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
-#: document/static/js/modules/editor/menus/toolbar/model.js:166
-#: document/static/js/modules/editor/state_plugins/links.js:254
+#: document/static/js/modules/editor/menus/toolbar/model.js:170
+#: document/static/js/modules/editor/state_plugins/links.js:300
 #: document/static/js/modules/editor/state_plugins/placeholders.js:41
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:111
 #: usermedia/static/js/modules/images/selection_dialog/index.js:124
@@ -586,7 +603,7 @@ msgid "Sourcetype"
 msgstr "Källtyp"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:253
+#: document/static/js/modules/editor/dialogs/citation.js:255
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -599,12 +616,12 @@ msgstr "Författare"
 msgid "Published"
 msgstr "Publicerad"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:359
+#: bibliography/static/js/modules/bibliography/overview/index.js:360
 #: usermedia/static/js/modules/images/overview/categories.js:104
 msgid "Edit Categories"
 msgstr "Redigera kategorier"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:375
+#: bibliography/static/js/modules/bibliography/overview/index.js:376
 #: document/static/js/modules/document_template/document_style_dialog.js:74
 #: document/static/js/modules/document_template/document_style_dialog.js:172
 #: document/static/js/modules/document_template/export_template_dialog.js:82
@@ -626,7 +643,7 @@ msgstr "Redigera kategorier"
 msgid "Delete"
 msgstr "Radera"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:389
+#: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
 #: document/static/js/modules/document_template/export_template_dialog.js:192
 #: document/static/js/modules/documents/overview/actions.js:70
@@ -640,7 +657,7 @@ msgstr "Radera"
 msgid "Confirm deletion"
 msgstr "Bekräfta borttagning"
 
-#: bibliography/static/js/modules/bibliography/overview/index.js:390
+#: bibliography/static/js/modules/bibliography/overview/index.js:391
 msgid "Delete the bibliography item(s)"
 msgstr "Ta bort bibliografiobjektet(erna)"
 
@@ -761,8 +778,7 @@ msgstr "Alla fält måste fyllas i."
 #: document/static/js/modules/document_template/document_style_dialog.js:207
 msgid "A slug can only contain letters, numbers, hyphens and underscores."
 msgstr ""
-"En snigel kan bara innehålla bokstäver, siffror, bindestreck och "
-"understreck."
+"En snigel kan bara innehålla bokstäver, siffror, bindestreck och understreck."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:216
 msgid "The slug has to be unique."
@@ -873,7 +889,7 @@ msgstr "Sätt in tabell"
 #: document/static/js/modules/document_template/schema.js:198
 #: document/static/js/modules/document_template/templates.js:92
 #: document/static/js/modules/document_template/templates.js:468
-#: document/static/js/modules/editor/menus/toolbar/model.js:858
+#: document/static/js/modules/editor/menus/toolbar/model.js:872
 msgid "Table"
 msgstr "Tabell"
 
@@ -990,8 +1006,8 @@ msgid "Code block"
 msgstr "Kodblock"
 
 #: document/static/js/modules/document_template/templates.js:49
-#: document/static/js/modules/editor/menus/toolbar/model.js:25
-#: document/static/js/modules/editor/menus/toolbar/model.js:837
+#: document/static/js/modules/editor/menus/toolbar/model.js:29
+#: document/static/js/modules/editor/menus/toolbar/model.js:851
 msgid "Figure"
 msgstr "Figur"
 
@@ -1002,7 +1018,7 @@ msgstr "Beställd lista"
 
 #: document/static/js/modules/document_template/templates.js:57
 #: document/static/js/modules/editor/marginboxes/templates.js:265
-#: document/static/js/modules/editor/menus/toolbar/model.js:628
+#: document/static/js/modules/editor/menus/toolbar/model.js:632
 msgid "Bullet list"
 msgstr "Kullista"
 
@@ -1011,10 +1027,12 @@ msgid "Horizontal rule"
 msgstr "Horisontell regel"
 
 #: document/static/js/modules/document_template/templates.js:65
+#: document/static/js/modules/editor/state_plugins/inline_math.js:240
 msgid "Equation"
 msgstr "Ekvation"
 
 #: document/static/js/modules/document_template/templates.js:69
+#: document/static/js/modules/editor/state_plugins/links.js:378
 msgid "Citation"
 msgstr "Citat"
 
@@ -1024,13 +1042,13 @@ msgid "Cross reference"
 msgstr "Korsreferens"
 
 #: document/static/js/modules/document_template/templates.js:77
-#: document/static/js/modules/editor/menus/toolbar/model.js:668
+#: document/static/js/modules/editor/menus/toolbar/model.js:672
 msgid "Blockquote"
 msgstr "Blockcitat"
 
 #: document/static/js/modules/document_template/templates.js:84
-#: document/static/js/modules/editor/menus/toolbar/model.js:158
-#: document/static/js/modules/editor/menus/toolbar/model.js:733
+#: document/static/js/modules/editor/menus/toolbar/model.js:162
+#: document/static/js/modules/editor/menus/toolbar/model.js:737
 msgid "Footnote"
 msgstr "Fotnot"
 
@@ -1040,29 +1058,29 @@ msgstr "Tillåtna märken"
 
 #: document/static/js/modules/document_template/templates.js:110
 #: document/static/js/modules/editor/marginboxes/templates.js:241
-#: document/static/js/modules/editor/menus/toolbar/model.js:440
+#: document/static/js/modules/editor/menus/toolbar/model.js:444
 msgid "Underline"
 msgstr "Betona"
 
 #: document/static/js/modules/document_template/templates.js:114
 #: document/static/js/modules/editor/dialogs/link.js:241
-#: document/static/js/modules/editor/menus/toolbar/model.js:708
+#: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
 msgstr "Länk"
 
 #: document/static/js/modules/document_template/templates.js:118
-#: document/static/js/modules/editor/menus/toolbar/model.js:477
+#: document/static/js/modules/editor/menus/toolbar/model.js:481
 msgid "Superscript"
 msgstr "Exponent"
 
 #: document/static/js/modules/document_template/templates.js:122
-#: document/static/js/modules/editor/menus/toolbar/model.js:514
+#: document/static/js/modules/editor/menus/toolbar/model.js:518
 msgid "Subscript"
 msgstr "Index"
 
 #: document/static/js/modules/document_template/templates.js:126
-#: document/static/js/modules/editor/menus/toolbar/model.js:24
-#: document/static/js/modules/editor/menus/toolbar/model.js:551
+#: document/static/js/modules/editor/menus/toolbar/model.js:28
+#: document/static/js/modules/editor/menus/toolbar/model.js:555
 msgid "Code"
 msgstr "Koda"
 
@@ -1458,8 +1476,8 @@ msgstr "End-to-end-krypterade dokument"
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure"
-" channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure "
+"channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "Detta dokument är krypterat från början till slut. Samarbetspartner utan "
@@ -1575,8 +1593,8 @@ msgid "expires"
 msgstr "löper ut"
 
 #: document/static/js/modules/documents/access_rights/templates.js:67
-#: document/static/js/modules/editor/state_plugins/links.js:264
-#: document/static/js/modules/editor/state_plugins/links.js:265
+#: document/static/js/modules/editor/state_plugins/links.js:310
+#: document/static/js/modules/editor/state_plugins/links.js:311
 msgid "Copy link"
 msgstr "Kopiera länk"
 
@@ -1648,30 +1666,29 @@ msgstr "Vill du verkligen ta bort följande dokument?"
 msgid "Do you really want to delete the following document?"
 msgstr "Vill du verkligen ta bort följande dokument?"
 
-#: document/static/js/modules/documents/overview/actions.js:116
+#: document/static/js/modules/documents/overview/actions.js:117
 msgid "Import as:"
 msgstr "Importera som:"
 
-#: document/static/js/modules/documents/overview/actions.js:138
-#| msgid "The document template has been updated"
+#: document/static/js/modules/documents/overview/actions.js:137
 msgid "This document will be saved as encrypted."
 msgstr "Detta dokument kommer att sparas som krypterat."
 
-#: document/static/js/modules/documents/overview/actions.js:144
+#: document/static/js/modules/documents/overview/actions.js:143
 #: document/static/js/modules/documents/overview/index.js:904
 msgid "Non-encrypted"
 msgstr "Icke-krypterad"
 
-#: document/static/js/modules/documents/overview/actions.js:148
+#: document/static/js/modules/documents/overview/actions.js:147
 #: document/static/js/modules/documents/overview/index.js:909
 msgid "Encrypted"
 msgstr "Krypterad"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:160
 msgid "Supported formats"
 msgstr "Format som stöds"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:160
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1679,71 +1696,68 @@ msgstr ""
 "Du kan också ladda upp en ZIP-fil som innehåller en fil i något av dessa "
 "format samt bilder och/eller bibtex-fil."
 
-#: document/static/js/modules/documents/overview/actions.js:165
-#| msgid "Import document"
+#: document/static/js/modules/documents/overview/actions.js:164
 msgid "Import a document"
 msgstr "Importera ett dokument"
 
-#: document/static/js/modules/documents/overview/actions.js:183
+#: document/static/js/modules/documents/overview/actions.js:182
 msgid "File too large"
 msgstr "Filen är för stor"
 
-#: document/static/js/modules/documents/overview/actions.js:241
+#: document/static/js/modules/documents/overview/actions.js:240
 msgid "No importable files found in ZIP"
 msgstr "Inga importerbara filer hittades i ZIP"
 
-#: document/static/js/modules/documents/overview/actions.js:283
+#: document/static/js/modules/documents/overview/actions.js:282
 msgid "Unsupported file format"
 msgstr "Filformat som inte stöds"
 
-#: document/static/js/modules/documents/overview/actions.js:350
-#| msgid "Could not create document"
+#: document/static/js/modules/documents/overview/actions.js:349
 msgid "Could not create encrypted document."
 msgstr "Det gick inte att skapa krypterade dokument."
 
-#: document/static/js/modules/documents/overview/actions.js:441
+#: document/static/js/modules/documents/overview/actions.js:440
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
 msgstr "Kryptera kopian"
 
-#: document/static/js/modules/documents/overview/actions.js:448
+#: document/static/js/modules/documents/overview/actions.js:447
 #: document/static/js/modules/editor/document_template/index.js:136
 msgid "Choose document template"
 msgstr "Välj dokumentmall"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:449
 msgid "Select document template for copies"
 msgstr "Välj dokumentmall för kopior"
 
-#: document/static/js/modules/documents/overview/actions.js:450
+#: document/static/js/modules/documents/overview/actions.js:449
 #: document/static/js/modules/editor/document_template/index.js:138
 msgid "Select document template for copy."
 msgstr "Välj dokumentmall för kopia."
 
-#: document/static/js/modules/documents/overview/actions.js:463
+#: document/static/js/modules/documents/overview/actions.js:462
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
 #: document/static/js/modules/editor/document_template/index.js:151
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:301
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:340
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:342
 msgid "Copy"
 msgstr "Kopiera"
 
-#: document/static/js/modules/documents/overview/actions.js:512
+#: document/static/js/modules/documents/overview/actions.js:511
 msgid "Could not copy document."
 msgstr "Det gick inte att kopiera dokumentet."
 
-#: document/static/js/modules/documents/overview/actions.js:542
-#: document/static/js/modules/documents/overview/actions.js:574
+#: document/static/js/modules/documents/overview/actions.js:541
+#: document/static/js/modules/documents/overview/actions.js:573
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
 msgid "Incorrect password."
 msgstr "Felaktigt lösenord."
 
-#: document/static/js/modules/documents/overview/actions.js:796
+#: document/static/js/modules/documents/overview/actions.js:795
 msgid ""
 "You cannot view the revision history of a document while you are offline."
-msgstr ""
-"Du kan inte se revisionshistoriken för ett dokument när du är offline."
+msgstr "Du kan inte se revisionshistoriken för ett dokument när du är offline."
 
 #: document/static/js/modules/documents/overview/index.js:84
 msgid "Document Overview"
@@ -1863,8 +1877,7 @@ msgstr ""
 
 #: document/static/js/modules/documents/overview/index.js:885
 msgid "Regular documents are the default and work well for most users."
-msgstr ""
-"Vanliga dokument är standard och fungerar bra för de flesta användare."
+msgstr "Vanliga dokument är standard och fungerar bra för de flesta användare."
 
 #: document/static/js/modules/documents/overview/index.js:888
 msgid "Full access rights options including tracked changes and review modes."
@@ -2029,8 +2042,7 @@ msgstr "Export valt som Slim FIDUS"
 msgid ""
 "Export the documents that have been selected as FIDUS files without their "
 "templates."
-msgstr ""
-"Exportera de dokument som har valts som FIDUS-filer utan deras mallar."
+msgstr "Exportera de dokument som har valts som FIDUS-filer utan deras mallar."
 
 #: document/static/js/modules/documents/overview/menu.js:196
 msgid "Delete the documents that have been selected."
@@ -2162,8 +2174,8 @@ msgid ""
 "It's taking a bit longer than usual, but it should be ready soon. Please "
 "wait..."
 msgstr ""
-"Det tar lite längre tid än vanligt, men det borde vara klart snart. Vänligen"
-" vänta..."
+"Det tar lite längre tid än vanligt, men det borde vara klart snart. Vänligen "
+"vänta..."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:155
 msgid "Merge Complete"
@@ -2217,9 +2229,9 @@ msgid ""
 "edits in automatically."
 msgstr ""
 "Du ser den här sammanslagningsdialogrutan eftersom du var offline under en "
-"lång tid, och ändringarna du gjorde i dokumentet medan du var offline stod i"
-" konflikt med ändringarna som gjorts av andra användare. Så det gick inte "
-"att slå ihop dina redigeringar automatiskt."
+"lång tid, och ändringarna du gjorde i dokumentet medan du var offline stod i "
+"konflikt med ändringarna som gjorts av andra användare. Så det gick inte att "
+"slå ihop dina redigeringar automatiskt."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:200
 msgid "Am I the only one seeing this dialog?"
@@ -2239,8 +2251,7 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am "
-"merging?"
+"What if my collaborators continue working on the document while I am merging?"
 msgstr ""
 "Vad händer om mina medarbetare fortsätter att arbeta med dokumentet medan "
 "jag slår samman?"
@@ -2259,8 +2270,8 @@ msgstr "Varför ser jag tre redaktörer?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It"
-" is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It "
+"is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
@@ -2279,10 +2290,10 @@ msgstr "Vilka är de gröna och röda höjdpunkterna i redaktionen?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The"
-" text marked in green corresponds to the text that was edited (added) by you"
-" or other users. The text marked in red corresponds to text that was deleted"
-" by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The "
+"text marked in green corresponds to the text that was edited (added) by you "
+"or other users. The text marked in red corresponds to text that was deleted "
+"by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2317,13 +2328,13 @@ msgstr ""
 "sammanslagningsredigeraren. Du kan acceptera en ändring genom att direkt "
 "klicka på den markerade texten. En rullgardinsmeny visas och du kan sedan "
 "antingen acceptera eller avvisa ändringen. När du klickar på den markerade "
-"texten, markerar den också de ändringar som kommer att accepteras. "
-"%(mergeImage)s Som visas i bilden ovan kan man klicka på en markerad ändring"
-" och klicka på acceptera ändring. När du accepterar en ändring kommer den "
-"att återspeglas i den sammanslagna dokumentredigeraren i mitten. Att avvisa "
-"en ändring fungerar på samma sätt förutom vid avvisande av en ändring kommer"
-" höjdpunkten i ändringen att gå förlorad, med det möjligheten att acceptera,"
-" avvisa eller kopiera en ändring."
+"texten, markerar den också de ändringar som kommer att accepteras. %"
+"(mergeImage)s Som visas i bilden ovan kan man klicka på en markerad ändring "
+"och klicka på acceptera ändring. När du accepterar en ändring kommer den att "
+"återspeglas i den sammanslagna dokumentredigeraren i mitten. Att avvisa en "
+"ändring fungerar på samma sätt förutom vid avvisande av en ändring kommer "
+"höjdpunkten i ändringen att gå förlorad, med det möjligheten att acceptera, "
+"avvisa eller kopiera en ändring."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:242
 msgid "I cannot accept a particular change. What do I do?"
@@ -2380,8 +2391,8 @@ msgstr ""
 "Efter att sammanfogningen är klar kan du klicka på knappen \"Slutför "
 "sammanfogning\" som i sin tur flyttar dina ändringar från "
 "sammanslagningsredigeraren i mitten till huvudredigeraren. Observera att om "
-"andra användare gjorde betydande ändringar i dokumentet medan du slog samman"
-" dokumentet, kanske du måste slå samman dokumenten igen."
+"andra användare gjorde betydande ändringar i dokumentet medan du slog samman "
+"dokumentet, kanske du måste slå samman dokumenten igen."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:270
 msgid ""
@@ -2438,15 +2449,15 @@ msgstr "Sammanfogningen misslyckades"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please"
-" consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please "
+"consider importing it into a new document."
 msgstr ""
 "Ett fel uppstod under sammanslagningsprocessen, så vi kan inte spara ditt "
 "arbete på servern längre, utan det laddas ner till din dator istället. "
 "Överväg att importera det till ett nytt dokument."
 
 #: document/static/js/modules/editor/collab/merge/index.js:384
-#: document/static/js/modules/editor/index.js:729
+#: document/static/js/modules/editor/index.js:733
 msgid "Leave editor"
 msgstr "Lämna redaktören"
 
@@ -2516,8 +2527,10 @@ msgstr "Kopiera innehåll"
 #: document/static/js/modules/editor/marginboxes/templates.js:535
 #: document/static/js/modules/editor/marginboxes/templates.js:536
 #: document/static/js/modules/editor/state_plugins/contributor_input/dropup.js:36
-#: document/static/js/modules/editor/state_plugins/links.js:270
-#: document/static/js/modules/editor/state_plugins/links.js:318
+#: document/static/js/modules/editor/state_plugins/inline_math.js:246
+#: document/static/js/modules/editor/state_plugins/links.js:316
+#: document/static/js/modules/editor/state_plugins/links.js:364
+#: document/static/js/modules/editor/state_plugins/links.js:387
 msgid "Edit"
 msgstr "Redigera"
 
@@ -2558,9 +2571,11 @@ msgstr "Infoga"
 #: document/static/js/modules/editor/dialogs/figure.js:374
 #: document/static/js/modules/editor/dialogs/templates.js:315
 #: document/static/js/modules/editor/menus/code_block/model.js:40
-#: document/static/js/modules/editor/state_plugins/links.js:273
-#: document/static/js/modules/editor/state_plugins/links.js:297
-#: document/static/js/modules/editor/state_plugins/links.js:321
+#: document/static/js/modules/editor/state_plugins/inline_math.js:249
+#: document/static/js/modules/editor/state_plugins/links.js:319
+#: document/static/js/modules/editor/state_plugins/links.js:343
+#: document/static/js/modules/editor/state_plugins/links.js:367
+#: document/static/js/modules/editor/state_plugins/links.js:390
 #: user/static/js/modules/profile/dialogs.js:283
 #: user/static/js/modules/profile/dialogs.js:332
 msgid "Remove"
@@ -2570,17 +2585,17 @@ msgstr "Ta bort"
 msgid "Configure Citation"
 msgstr "Konfigurera Citation"
 
-#: document/static/js/modules/editor/dialogs/citation.js:241
+#: document/static/js/modules/editor/dialogs/citation.js:243
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "Söka..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/editor/dialogs/citation.js:256
 #: document/static/js/modules/editor/dialogs/templates.js:313
 msgid "Year"
 msgstr "År"
 
-#: document/static/js/modules/editor/dialogs/citation.js:420
+#: document/static/js/modules/editor/dialogs/citation.js:425
 msgid "Please select at least one citation source!"
 msgstr "Välj minst en citatkälla!"
 
@@ -2647,7 +2662,7 @@ msgstr "Kopiera till Urklipp"
 
 #: document/static/js/modules/editor/dialogs/figure.js:54
 #: document/static/js/modules/editor/dialogs/math.js:120
-#: document/static/js/modules/editor/menus/toolbar/model.js:894
+#: document/static/js/modules/editor/menus/toolbar/model.js:908
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:65
 msgid "Redo"
 msgstr "Göra om"
@@ -2659,7 +2674,7 @@ msgstr "Växla virtuellt tangentbord"
 
 #: document/static/js/modules/editor/dialogs/figure.js:58
 #: document/static/js/modules/editor/dialogs/math.js:124
-#: document/static/js/modules/editor/menus/toolbar/model.js:881
+#: document/static/js/modules/editor/menus/toolbar/model.js:895
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:61
 msgid "Undo"
 msgstr "Ångra"
@@ -2912,16 +2927,16 @@ msgstr ""
 "det kan dina krypterade dokument inte återställas."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:29
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:182
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:183
 msgid "Passphrase"
 msgstr "Lösenfras"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:32
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:185
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:265
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:371
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:186
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:267
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:373
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:516
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:524
 msgid "Show passphrase"
 msgstr "Visa lösenordsfras"
 
@@ -2934,14 +2949,14 @@ msgid "Set Up Encryption"
 msgstr "Ställ in kryptering"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:71
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:421
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:568
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:423
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:571
 msgid "Passphrase must be at least 8 characters long."
 msgstr "Lösenfrasen måste vara minst 8 tecken lång."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:80
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:430
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:577
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:432
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:580
 msgid "Passphrases do not match."
 msgstr "Lösenfraser matchar inte."
 
@@ -2949,36 +2964,36 @@ msgstr "Lösenfraser matchar inte."
 msgid "Set Up Personal Encryption"
 msgstr "Ställ in personlig kryptering"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:180
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:181
 msgid "Enter your personal encryption passphrase to unlock your documents."
 msgstr ""
 "Ange din personliga krypteringslösenfras för att låsa upp dina dokument."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:195
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:196
 msgid "Unlock"
 msgstr "Låsa upp"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:208
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:209
 msgid "Please enter your passphrase."
 msgstr "Vänligen ange din lösenfras."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:230
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:231
 msgid "Recover with key"
 msgstr "Återställ med nyckel"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:241
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:242
 msgid "Unlock Encryption"
 msgstr "Lås upp kryptering"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:261
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:263
 msgid "Hide passphrase"
 msgstr "Dölj lösenfras"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:296
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:298
 msgid "This is your recovery key."
 msgstr "Det här är din återställningsnyckel."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:297
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:299
 msgid ""
 "Store it somewhere safe (e.g., a password manager, printed copy). If you "
 "forget your passphrase, this is the ONLY way to recover your encrypted "
@@ -2988,23 +3003,23 @@ msgstr ""
 "kopia). Om du glömmer din lösenordsfras är detta det ENDA sättet att "
 "återställa dina krypterade dokument. Vi kan inte återställa det åt dig."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:304
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
 msgid "Copy it now — it will not be shown again."
 msgstr "Kopiera den nu – den kommer inte att visas igen."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:310
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:312
 msgid "I have saved it"
 msgstr "Jag har sparat den"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:323
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:325
 msgid "Recovery Key"
 msgstr "Återställningsnyckel"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:338
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:340
 msgid "Copied!"
 msgstr "Kopierade!"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:361
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
 msgid ""
 "Enter your recovery key and a new passphrase to regain access to your "
 "encrypted documents."
@@ -3012,53 +3027,53 @@ msgstr ""
 "Ange din återställningsnyckel och en ny lösenfras för att återfå åtkomst "
 "till dina krypterade dokument."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:363
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:365
 msgid "Recovery key"
 msgstr "Återställningsnyckel"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:368
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:518
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:370
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
 msgid "New passphrase"
 msgstr "Ny lösenfras"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:376
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:526
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:378
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:529
 msgid "Confirm new passphrase"
 msgstr "Bekräfta ny lösenordsfras"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:386
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:388
 msgid "Recover"
 msgstr "Återvinna"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:412
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:414
 msgid "Please enter your recovery key."
 msgstr "Ange din återställningsnyckel."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:452
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:454
 msgid "Recover Encryption"
 msgstr "Återställ kryptering"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:508
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption"
-" password."
+"Enter your current passphrase and a new passphrase to change your encryption "
+"password."
 msgstr ""
 "Ange din nuvarande lösenfras och en ny lösenfras för att ändra ditt "
 "krypteringslösenord."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:510
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
 msgid "Current passphrase"
 msgstr "Aktuell lösenfras"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:536
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:539
 msgid "Change Passphrase"
 msgstr "Ändra lösenordsfras"
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:559
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:562
 msgid "Please enter your current passphrase."
 msgstr "Vänligen ange din nuvarande lösenfras."
 
-#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:599
+#: document/static/js/modules/editor/e2ee/passphrase-dialog.js:602
 msgid "Change Encryption Passphrase"
 msgstr "Ändra krypteringslösenord"
 
@@ -3090,7 +3105,7 @@ msgstr ""
 "dekryptera det."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
-#: document/static/js/modules/editor/e2ee/password-dialog.js:261
+#: document/static/js/modules/editor/e2ee/password-dialog.js:262
 #: user/static/js/modules/login/index.js:65
 #: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
@@ -3101,9 +3116,9 @@ msgid "Password"
 msgstr "Lösenord"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:147
-#: document/static/js/modules/editor/e2ee/password-dialog.js:222
-#: document/static/js/modules/editor/e2ee/password-dialog.js:264
-#: document/static/js/modules/editor/e2ee/password-dialog.js:451
+#: document/static/js/modules/editor/e2ee/password-dialog.js:223
+#: document/static/js/modules/editor/e2ee/password-dialog.js:265
+#: document/static/js/modules/editor/e2ee/password-dialog.js:453
 msgid "Show password"
 msgstr "Visa lösenord"
 
@@ -3115,19 +3130,19 @@ msgstr "Dekryptera"
 msgid "Please enter the password."
 msgstr "Vänligen ange lösenordet."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:218
+#: document/static/js/modules/editor/e2ee/password-dialog.js:219
 msgid "Hide password"
 msgstr "Dölj lösenord"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:258
-msgid ""
-"Set a password to encrypt this document. You will need this password to open"
-" the document in the future."
-msgstr ""
-"Ange ett lösenord för att kryptera detta dokument. Du behöver detta lösenord"
-" för att öppna dokumentet i framtiden."
-
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
+msgid ""
+"Set a password to encrypt this document. You will need this password to open "
+"the document in the future."
+msgstr ""
+"Ange ett lösenord för att kryptera detta dokument. Du behöver detta lösenord "
+"för att öppna dokumentet i framtiden."
+
+#: document/static/js/modules/editor/e2ee/password-dialog.js:260
 msgid ""
 "Tip: Use a passphrase with multiple words, e.g. \"correct-horse-battery-"
 "staple\". This is both secure and easy to remember."
@@ -3135,59 +3150,59 @@ msgstr ""
 "Tips: Använd en lösenfras med flera ord, t.ex. \\\"rätt-häst-batteri-"
 "häftklammer\\\". Detta är både säkert och lätt att komma ihåg."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:273
+#: document/static/js/modules/editor/e2ee/password-dialog.js:274
 msgid "Confirm password"
 msgstr "Bekräfta lösenord"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:283
+#: document/static/js/modules/editor/e2ee/password-dialog.js:284
 msgid "Create Encrypted Document"
 msgstr "Skapa krypterade dokument"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:313
-#: document/static/js/modules/editor/e2ee/password-dialog.js:520
+#: document/static/js/modules/editor/e2ee/password-dialog.js:314
+#: document/static/js/modules/editor/e2ee/password-dialog.js:522
 msgid "Passwords do not match."
 msgstr "Lösenord stämmer inte överens."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:327
+#: document/static/js/modules/editor/e2ee/password-dialog.js:328
 msgid "Set Document Password"
 msgstr "Ange dokumentlösenord"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:427
+#: document/static/js/modules/editor/e2ee/password-dialog.js:429
 msgid "Current password"
 msgstr "Aktuellt lösenord"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:440
+#: document/static/js/modules/editor/e2ee/password-dialog.js:442
 msgid ""
 "Change the document password. After changing, you must share the new "
 "password with all collaborators."
 msgstr ""
-"Ändra dokumentlösenordet. Efter ändring måste du dela det nya lösenordet med"
-" alla medarbetare."
+"Ändra dokumentlösenordet. Efter ändring måste du dela det nya lösenordet med "
+"alla medarbetare."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:444
+#: document/static/js/modules/editor/e2ee/password-dialog.js:446
 #: user/static/js/modules/profile/templates.js:63
 msgid "New password"
 msgstr "Nytt lösenord"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:461
+#: document/static/js/modules/editor/e2ee/password-dialog.js:463
 msgid "Confirm new password"
 msgstr "Bekräfta nytt lösenord"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:473
+#: document/static/js/modules/editor/e2ee/password-dialog.js:475
 #: user/static/js/modules/password_reset/change_password.js:7
 #: user/static/js/modules/profile/dialogs.js:204
 msgid "Change Password"
 msgstr "Ändra lösenord"
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:501
+#: document/static/js/modules/editor/e2ee/password-dialog.js:503
 msgid "Please enter the current password."
 msgstr "Vänligen ange det aktuella lösenordet."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:530
+#: document/static/js/modules/editor/e2ee/password-dialog.js:532
 msgid "New password must be different from the current password."
 msgstr "Det nya lösenordet måste skilja sig från det nuvarande lösenordet."
 
-#: document/static/js/modules/editor/e2ee/password-dialog.js:547
+#: document/static/js/modules/editor/e2ee/password-dialog.js:549
 msgid "Change Document Password"
 msgstr "Ändra dokumentlösenord"
 
@@ -3199,21 +3214,21 @@ msgstr ""
 "Dokumentlösenordet ändrades av en annan användare. Du måste ange det nya "
 "lösenordet för att fortsätta redigera."
 
-#: document/static/js/modules/editor/index.js:330
-#: document/static/js/modules/editor/index.js:609
+#: document/static/js/modules/editor/index.js:334
+#: document/static/js/modules/editor/index.js:613
 msgid "Invalid Share Link"
 msgstr "Ogiltig delningslänk"
 
-#: document/static/js/modules/editor/index.js:333
-#: document/static/js/modules/editor/index.js:612
+#: document/static/js/modules/editor/index.js:337
+#: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for"
-" a new link."
+"This share link has expired or is invalid. Please ask the document owner for "
+"a new link."
 msgstr ""
 "Denna delningslänk har upphört att gälla eller är ogiltig. Fråga "
 "dokumentägaren om en ny länk."
 
-#: document/static/js/modules/editor/index.js:400
+#: document/static/js/modules/editor/index.js:404
 msgid ""
 "Warning! Not all your changes have been saved! You could suffer data loss. "
 "Attempting to reconnect..."
@@ -3221,11 +3236,11 @@ msgstr ""
 "Varning! Inte alla dina ändringar har sparats! Du kan drabbas av "
 "dataförlust. Försöker återansluta..."
 
-#: document/static/js/modules/editor/index.js:537
+#: document/static/js/modules/editor/index.js:541
 msgid "Your document was out of sync and has been reset."
 msgstr "Ditt dokument var inte synkroniserat och har återställts."
 
-#: document/static/js/modules/editor/index.js:560
+#: document/static/js/modules/editor/index.js:564
 msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
@@ -3233,11 +3248,11 @@ msgstr ""
 "Dina åtkomsträttigheter har ändrats. Du har nu %(accessRight)s åtkomst till "
 "detta dokument."
 
-#: document/static/js/modules/editor/index.js:635
+#: document/static/js/modules/editor/index.js:639
 msgid "Session Expired"
 msgstr "Session har löpt ut"
 
-#: document/static/js/modules/editor/index.js:638
+#: document/static/js/modules/editor/index.js:642
 msgid ""
 "Your session expired while you were offline, so we cannot save your work to "
 "the server any longer, but you can download it to your computer instead. "
@@ -3248,42 +3263,42 @@ msgstr ""
 "Vänligen överväg att importera det som ett nytt dokument efter att du har "
 "loggat in."
 
-#: document/static/js/modules/editor/index.js:642
+#: document/static/js/modules/editor/index.js:646
 msgid "Download Document"
 msgstr "Ladda ner dokument"
 
-#: document/static/js/modules/editor/index.js:657
+#: document/static/js/modules/editor/index.js:661
 msgid "Proceed to Login page"
 msgstr "Fortsätt till inloggningssidan"
 
-#: document/static/js/modules/editor/index.js:722
+#: document/static/js/modules/editor/index.js:726
 msgid "Access rights modified"
 msgstr "Åtkomsträttigheter har ändrats"
 
-#: document/static/js/modules/editor/index.js:725
+#: document/static/js/modules/editor/index.js:729
 msgid ""
 "Your access rights were modified while you were offline, so we cannot save "
 "your work to the server any longer, and it is downloaded to your computer "
 "instead. Please consider importing it into a new document."
 msgstr ""
-"Dina åtkomsträttigheter ändrades medan du var offline, så vi kan inte längre"
-" spara ditt arbete på servern och det laddas ner till din dator istället. "
+"Dina åtkomsträttigheter ändrades medan du var offline, så vi kan inte längre "
+"spara ditt arbete på servern och det laddas ner till din dator istället. "
 "Överväg att importera det till ett nytt dokument."
 
-#: document/static/js/modules/editor/index.js:774
+#: document/static/js/modules/editor/index.js:778
 msgid "Incorrect passphrase."
 msgstr "Felaktig lösenfras."
 
-#: document/static/js/modules/editor/index.js:800
+#: document/static/js/modules/editor/index.js:804
 #: user/static/js/modules/profile/index.js:263
 msgid "Recovery failed: "
 msgstr "Återställning misslyckades:"
 
-#: document/static/js/modules/editor/index.js:845
+#: document/static/js/modules/editor/index.js:849
 msgid "E2EE is not enabled on this server."
 msgstr "E2EE är inte aktiverat på denna server."
 
-#: document/static/js/modules/editor/index.js:1008
+#: document/static/js/modules/editor/index.js:1012
 msgid ""
 "Changes you made to the document since going offline will be lost, if you "
 "choose to close/refresh the tab or close the browser."
@@ -3667,8 +3682,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new"
-" key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new "
+"key automatically."
 msgstr ""
 "Dokumentkrypteringsnyckeln roterad. Andra lösenordsfrasanvändare kommer att "
 "få den nya nyckeln automatiskt."
@@ -3726,8 +3741,8 @@ msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
 msgstr ""
-"Exportera dokumentet till en NISO JATS version 1.2-fil för Journal Archiving"
-" and Interchange Tag Library."
+"Exportera dokumentet till en NISO JATS version 1.2-fil för Journal Archiving "
+"and Interchange Tag Library."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:607
 msgid "BITS"
@@ -3967,7 +3982,7 @@ msgid "Specify the number from which this list is to start counting"
 msgstr "Ange numret från vilket denna lista ska börja räknas"
 
 #: document/static/js/modules/editor/menus/selection/model.js:68
-#: document/static/js/modules/editor/state_plugins/links.js:283
+#: document/static/js/modules/editor/state_plugins/links.js:329
 msgid "Anchor"
 msgstr "Förankra"
 
@@ -4069,59 +4084,59 @@ msgstr "Konfigurera tabellen."
 msgid "Delete currently selected table"
 msgstr "Ta bort för närvarande vald tabell"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:17
+#: document/static/js/modules/editor/menus/toolbar/model.js:21
 msgid "Normal Text"
 msgstr "Normal text"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:18
+#: document/static/js/modules/editor/menus/toolbar/model.js:22
 msgid "1st Heading"
 msgstr "1:a rubriken"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:19
+#: document/static/js/modules/editor/menus/toolbar/model.js:23
 msgid "2nd Heading"
 msgstr "2:a rubriken"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:20
+#: document/static/js/modules/editor/menus/toolbar/model.js:24
 msgid "3rd Heading"
 msgstr "3:e rubriken"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:21
+#: document/static/js/modules/editor/menus/toolbar/model.js:25
 msgid "4th Heading"
 msgstr "4:e rubriken"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:22
+#: document/static/js/modules/editor/menus/toolbar/model.js:26
 msgid "5th Heading"
 msgstr "5:e rubriken"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:23
+#: document/static/js/modules/editor/menus/toolbar/model.js:27
 msgid "6th Heading"
 msgstr "6:e rubriken"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:129
+#: document/static/js/modules/editor/menus/toolbar/model.js:133
 msgid "Open/close header menu"
 msgstr "Öppna/stäng huvudmenyn"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:588
+#: document/static/js/modules/editor/menus/toolbar/model.js:592
 msgid "Numbered list"
 msgstr "Numrerad lista"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:759
+#: document/static/js/modules/editor/menus/toolbar/model.js:763
 msgid "Cite"
 msgstr "Citera"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:786
+#: document/static/js/modules/editor/menus/toolbar/model.js:800
 msgid "Horizontal line"
 msgstr "Horisontell linje"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:811
+#: document/static/js/modules/editor/menus/toolbar/model.js:825
 msgid "Math"
 msgstr "Matematik"
 
-#: document/static/js/modules/editor/menus/toolbar/model.js:859
+#: document/static/js/modules/editor/menus/toolbar/model.js:873
 msgid "Insert a table into the document."
 msgstr "Infoga en tabell i dokumentet."
 
-#: document/static/js/modules/editor/menus/toolbar/view.js:268
+#: document/static/js/modules/editor/menus/toolbar/view.js:287
 msgid "More"
 msgstr "Mer"
 
@@ -4158,48 +4173,79 @@ msgid "Document N̲avigator"
 msgstr "Dokument N̲avigator"
 
 #: document/static/js/modules/editor/no_collab_save/index.js:146
-#| msgid "Could not move document"
 msgid "Could not save document."
 msgstr "Det gick inte att spara dokumentet."
 
 #: document/static/js/modules/editor/no_collab_save/index.js:205
-#| msgid "Document key is not available. Please reload the document."
 msgid "Document has been modified by another user. Please reload the page."
+msgstr "Dokumentet har ändrats av en annan användare. Vänligen ladda om sidan."
+
+#: document/static/js/modules/editor/state_plugins/inline_math.js:245
+#, fuzzy
+#| msgid "Equation"
+msgid "Edit equation"
+msgstr "Ekvation"
+
+#: document/static/js/modules/editor/state_plugins/inline_math.js:248
+#, fuzzy
+#| msgid "Remove link"
+msgid "Remove equation"
+msgstr "Ta bort länken"
+
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:28
+msgid "No matching sources"
 msgstr ""
-"Dokumentet har ändrats av en annan användare. Vänligen ladda om sidan."
+
+#: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
+#, fuzzy
+#| msgid "Cross reference"
+msgid "Cross-references"
+msgstr "Korsreferens"
 
 #: document/static/js/modules/editor/state_plugins/links.js:26
 msgid "Link copied to clipboard"
 msgstr "Länken har kopierats till urklipp"
 
-#: document/static/js/modules/editor/state_plugins/links.js:269
+#: document/static/js/modules/editor/state_plugins/links.js:315
 msgid "Edit link"
 msgstr "Redigera länk"
 
-#: document/static/js/modules/editor/state_plugins/links.js:272
+#: document/static/js/modules/editor/state_plugins/links.js:318
 msgid "Remove link"
 msgstr "Ta bort länken"
 
-#: document/static/js/modules/editor/state_plugins/links.js:291
-#: document/static/js/modules/editor/state_plugins/links.js:292
+#: document/static/js/modules/editor/state_plugins/links.js:337
+#: document/static/js/modules/editor/state_plugins/links.js:338
 msgid "Copy anchor"
 msgstr "Kopiera ankare"
 
-#: document/static/js/modules/editor/state_plugins/links.js:296
+#: document/static/js/modules/editor/state_plugins/links.js:342
 msgid "Remove anchor"
 msgstr "Ta bort ankaret"
 
-#: document/static/js/modules/editor/state_plugins/links.js:307
+#: document/static/js/modules/editor/state_plugins/links.js:353
 msgid "Cross Reference"
 msgstr "Korsreferens"
 
-#: document/static/js/modules/editor/state_plugins/links.js:317
+#: document/static/js/modules/editor/state_plugins/links.js:363
 msgid "Edit cross reference"
 msgstr "Redigera korsreferens"
 
-#: document/static/js/modules/editor/state_plugins/links.js:320
+#: document/static/js/modules/editor/state_plugins/links.js:366
 msgid "Remove cross reference"
 msgstr "Ta bort korsreferens"
+
+#: document/static/js/modules/editor/state_plugins/links.js:386
+#, fuzzy
+#| msgid "Deleted citation"
+msgid "Edit citation"
+msgstr "Raderat citat"
+
+#: document/static/js/modules/editor/state_plugins/links.js:389
+#, fuzzy
+#| msgid "Deleted citation"
+msgid "Remove citation"
+msgstr "Raderat citat"
 
 #: document/static/js/modules/editor/tools/key_bindings/index.js:14
 msgid "Keyboard Shortcuts"
@@ -4273,8 +4319,8 @@ msgstr "Söka"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace"
-" all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace "
+"all'"
 msgstr ""
 "Observera att det finns matchningar inom icke redigerbara delar av "
 "dokumentet, dessa matchningar kommer inte att ersättas när du använder "
@@ -4766,25 +4812,24 @@ msgstr "Bekräfta e-postadress och godkänn villkoren"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>."
 msgstr ""
-"Bekräfta att du äger e-postadressen <a "
-"href=\\\"mailto:%(email)s\\\">%(email)s</a>."
+"Bekräfta att du äger e-postadressen <a href=\\\"mailto:%(email)s\\\">%"
+"(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
-"%(username)s, and that you have read and agree to our <a "
-"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
-"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
 msgstr ""
-"Bekräfta att du äger e-postadressen <a "
-"href=\\\"mailto:%(email)s\\\">%(email)s</a>, att du ansöker om "
-"användarnamnet %(username)s och att du har läst och godkänner våra <a "
-"href=\\\"/pages/terms/\\\" target=\\\"_blank\\\">Användarvillkor</a> och <a "
-"href=\\privacy\"/\\pages\" href=\\privacy "
+"Bekräfta att du äger e-postadressen <a href=\\\"mailto:%(email)s\\\">%"
+"(email)s</a>, att du ansöker om användarnamnet %(username)s och att du har "
+"läst och godkänner våra <a href=\\\"/pages/terms/\\\" target=\\\"_blank\\"
+"\">Användarvillkor</a> och <a href=\\privacy\"/\\pages\" href=\\privacy "
 "target=\\\"_blank\\\">Sekretesspolicy</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:40
@@ -4796,8 +4841,8 @@ msgid ""
 "I have read and agree to the <a href=\"/pages/terms/\" "
 "target=\"_blank\">Terms and Conditions</a>."
 msgstr ""
-"Jag har läst och godkänner <a href=\\\"/pages/terms/\\\" "
-"target=\\\"_blank\\\">användarvillkoren</a>."
+"Jag har läst och godkänner <a href=\\\"/pages/terms/\\\" target=\\\"_blank\\"
+"\">användarvillkoren</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:55
 msgid ""
@@ -4826,7 +4871,7 @@ msgstr "Du kan nu logga in."
 
 #: user/static/js/modules/login/index.js:10
 msgid "Login"
-msgstr "Inloggning"
+msgstr "Logga in"
 
 #: user/static/js/modules/login/index.js:18
 msgid "New here?"
@@ -4845,7 +4890,7 @@ msgstr "Logga in med"
 #: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
 #: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:226
+#: user/static/js/modules/profile/templates.js:246
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "Användarnamn"
@@ -4945,16 +4990,16 @@ msgid ""
 "Forgotten your password? Enter your e-mail address in the form, and we'll "
 "send you an e-mail allowing you to reset it."
 msgstr ""
-"Glömt ditt lösenord? Ange din e-postadress i formuläret så skickar vi ett "
-"e-postmeddelande som låter dig återställa den."
+"Glömt ditt lösenord? Ange din e-postadress i formuläret så skickar vi ett e-"
+"postmeddelande som låter dig återställa den."
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a "
-"href=\"mailto:%(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a href=\"mailto:%"
+"(contactEmail)s\">contact us</a>."
 msgstr ""
-"Om du har problem med att återställa ditt lösenord, vänligen <a "
-"href=\\\"mailto:%(contactEmail)s\\\">kontakta oss</a>."
+"Om du har problem med att återställa ditt lösenord, vänligen <a href=\\"
+"\"mailto:%(contactEmail)s\\\">kontakta oss</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -4981,9 +5026,8 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with "
 "instructions on how to reset your password."
 msgstr ""
-"Vi har skickat ett e-postmeddelande till <a "
-"href=\\\"mailto:%(email)s\\\">%(email)s</a> med instruktioner om hur du "
-"återställer ditt lösenord."
+"Vi har skickat ett e-postmeddelande till <a href=\\\"mailto:%(email)s\\\">%"
+"(email)s</a> med instruktioner om hur du återställer ditt lösenord."
 
 #: user/static/js/modules/profile/delete_user.js:61
 msgid "Staff accounts have to be deleted through the admin interface."
@@ -5102,9 +5146,15 @@ msgstr "Lösenfrasen har ändrats."
 msgid "Failed to change passphrase: "
 msgstr "Det gick inte att ändra lösenfrasen:"
 
-#: user/static/js/modules/profile/index.js:309
+#: user/static/js/modules/profile/index.js:308
 msgid "Could not save profile data"
 msgstr "Kunde inte spara profildata"
+
+#: user/static/js/modules/profile/index.js:317
+#, fuzzy
+#| msgid "Could not save "
+msgid "Could not save preferences"
+msgstr "Kunde inte spara"
 
 #: user/static/js/modules/profile/templates.js:5
 msgid "Delete the avatar?"
@@ -5212,15 +5262,51 @@ msgstr "Primär adress"
 msgid "Verified"
 msgstr "Verifierad"
 
-#: user/static/js/modules/profile/templates.js:225
+#: user/static/js/modules/profile/templates.js:220
+#, fuzzy
+#| msgid "Editors"
+msgid "Editor"
+msgstr "Redaktörer"
+
+#: user/static/js/modules/profile/templates.js:224
+msgid "Enable inline reference typing (@)"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:226
+msgid "Type @ in the editor to insert a citation or cross-reference:"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:228
+msgid ""
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
+"citation: @@entry_key. Multiple sources: @key1;key2"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:229
+#, fuzzy
+#| msgid "Cross reference"
+msgid "Cross-reference: @#target-id"
+msgstr "Korsreferens"
+
+#: user/static/js/modules/profile/templates.js:233
+msgid "Enable inline math typing ($)"
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:235
+msgid ""
+"Type $ in the editor followed by LaTeX math to insert an equation inline, "
+"e.g. $x^2. Press Enter or Tab to confirm."
+msgstr ""
+
+#: user/static/js/modules/profile/templates.js:245
 msgid "Social Account Provider"
 msgstr "Leverantör av sociala konton"
 
-#: user/static/js/modules/profile/templates.js:253
+#: user/static/js/modules/profile/templates.js:273
 msgid "Connect"
 msgstr "Ansluta"
 
-#: user/static/js/modules/profile/templates.js:268
+#: user/static/js/modules/profile/templates.js:288
 msgid "Delete account"
 msgstr "Ta bort konto"
 
@@ -5229,8 +5315,11 @@ msgid "Signup"
 msgstr "Registrera dig"
 
 #: user/static/js/modules/signup/index.js:13
-msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
-msgstr "Har du redan ett konto? Sedan <a href=\\\"/\\\" title=\\\"Logga in\\\">logga in</a>."
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr ""
+"Har du redan ett konto? Sedan <a href=\\\"/\\\" title=\\\"Logga in\\\">logga "
+"in</a>."
 
 #: user/static/js/modules/signup/index.js:21
 msgid "Choose your username"
@@ -5249,9 +5338,9 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
 "verification. Follow the link provided to finalize the signup process."
 msgstr ""
-"Vi har skickat ett e-postmeddelande till <a "
-"href=\\\"mailto:%(email)s\\\">%(email)s</a> för verifiering. Följ länken för"
-" att slutföra registreringsprocessen."
+"Vi har skickat ett e-postmeddelande till <a href=\\\"mailto:%(email)s\\\">%"
+"(email)s</a> för verifiering. Följ länken för att slutföra "
+"registreringsprocessen."
 
 #: user/static/js/modules/two_factor/index.js:44
 msgid "Could not generate QR code. Please use the secret key below."
@@ -5303,8 +5392,8 @@ msgstr "Inaktivera tvåfaktorsautentisering"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce"
-" the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce "
+"the security of your account."
 msgstr ""
 "Är du säker på att du vill inaktivera tvåfaktorsautentisering? Detta kommer "
 "att minska säkerheten för ditt konto."

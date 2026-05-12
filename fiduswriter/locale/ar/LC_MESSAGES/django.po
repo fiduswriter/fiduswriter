@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: base/settings.py:280
 msgid "Arabic"
@@ -98,15 +99,15 @@ msgstr "تركي"
 msgid "Chinese (Simplified)"
 msgstr "الصينية (المبسطة)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "مشرف الكاتب فيدوس"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "موقع إدارة الكاتب Fidus"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "مرحبًا بك في موقع إدارة Fidus Writer"
 
@@ -118,8 +119,7 @@ msgstr "خطأ 500"
 msgid ""
 "We are sorry, but a server error occured. Our team will be looking into the "
 "issue shortly."
-msgstr ""
-"نحن آسفون، ولكن حدث خطأ في الخادم. وسيبحث فريقنا في هذه المشكلة قريبًا."
+msgstr "نحن آسفون، ولكن حدث خطأ في الخادم. وسيبحث فريقنا في هذه المشكلة قريبًا."
 
 #: base/templates/admin/console.html:4 base/templates/admin/console.html:20
 #: base/templates/admin/overview.html:14
@@ -215,18 +215,20 @@ msgstr "بدون عنوان"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"%(owner)s has changed your access rights to %(rights)s on the document "
+"'%(document_title)s'. \n"
 "Open the document: %(link)s"
 msgstr ""
 "مرحبًا %(collaborator_name)s،\n"
-"قام %(owner)s بتغيير حقوق الوصول الخاصة بك إلى %(rights)s في المستند '%(document_title)s'. \n"
+"قام %(owner)s بتغيير حقوق الوصول الخاصة بك إلى %(rights)s في المستند "
+"'%(document_title)s'. \n"
 "افتح المستند: %(link)s"
 
 #: document/emails.py:32
 #, python-format
 msgid ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
-" %(rights)s on the document '%(document_title)s'.</p>"
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to "
+"%(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>مرحبًا %(collaborator_name)s،<br>قام %(owner)s بتغيير حقوق الوصول الخاصة "
 "بك إلى %(rights)s في المستند '%(document_title)s'.</p>"
@@ -235,11 +237,13 @@ msgstr ""
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"%(owner)s has shared the document '%(document_title)s' with you and given "
+"you %(rights)s access rights. \n"
 "Open document: %(link)s"
 msgstr ""
 "مرحبًا %(collaborator_name)s،\n"
-"لقد قام %(owner)s بمشاركة المستند '%(document_title)s' معك ومنحك %(rights)s حقوق الوصول. \n"
+"لقد قام %(owner)s بمشاركة المستند '%(document_title)s' معك ومنحك %(rights)s "
+"حقوق الوصول. \n"
 "فتح المستند: %(link)s"
 
 #: document/emails.py:55
@@ -280,7 +284,8 @@ msgstr "تمت مشاركة المستند: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"%(commentator)s has mentioned you in a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -296,8 +301,8 @@ msgstr ""
 #: document/emails.py:136
 #, python-format
 msgid ""
-"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
-" in the document '%(document_title)s'."
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment "
+"in the document '%(document_title)s'."
 msgstr ""
 "مرحبًا %(collaborator_name)s،<br>%(commentator)s ذكرك في تعليق في المستند "
 "'%(document_title)s'."
@@ -311,7 +316,8 @@ msgstr "التعليق على : %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"%(commentator)s has assigned you to a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -357,18 +363,20 @@ msgstr "تعليق"
 #, python-format
 msgid ""
 "Hey %(owner_name)s,\n"
-"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"%(requester_name)s has requested %(rights)s access to the document "
+"'%(document_title)s'. \n"
 "Open the document to grant access: %(link)s"
 msgstr ""
 "مرحبًا %(owner_name)s،\n"
-"لقد طلب %(requester_name)s وصول %(rights)s إلى المستند '%(document_title)s'. \n"
+"لقد طلب %(requester_name)s وصول %(rights)s إلى المستند "
+"'%(document_title)s'. \n"
 "افتح المستند لمنح حق الوصول: %(link)s"
 
 #: document/emails.py:251
 #, python-format
 msgid ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
-" to the document '%(document_title)s'.</p>"
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access "
+"to the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>مرحبًا %(owner_name)s،<br>%(requester_name)s طلب وصول %(rights)s إلى "
 "المستند '%(document_title)s'.</p>"
@@ -407,14 +415,17 @@ msgstr "صيانة"
 #: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
-"            Before and after upgrading Fidus Writer, you should update all the documents\n"
-"            of all users to the newest document version. Only do this if you know that\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
 "\n"
 "قبل وبعد ترقية Fidus Writer، يجب عليك تحديث جميع المستندات\n"
-"            كافة المستخدمين إلى الإصدار الأحدث من المستند. افعل هذا فقط إذا كنت تعرف ذلك\n"
+"            كافة المستخدمين إلى الإصدار الأحدث من المستند. افعل هذا فقط إذا "
+"كنت تعرف ذلك\n"
 "            لا يوجد مستخدم يقوم حاليًا بتحرير أي مستند!"
 
 #: document/templates/admin/document/maintenance.html:32
@@ -445,8 +456,8 @@ msgstr ""
 #: user/emails.py:19
 #, python-format
 msgid ""
-"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
-"Writer.</p>"
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus Writer."
+"</p>"
 msgstr ""
 "<p>مرحبًا %(email)s،<br> لقد دعاك %(sender)s للتواصل على Fidus Writer.</p>"
 
@@ -465,10 +476,12 @@ msgstr "دعوة للاتصال بكاتب Fidus"
 #: user/emails.py:53
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"مرحبًا %(recipient_name)s، لقد رفض %(sender_name)s دعوتك للتواصل على Fidus Writer. \n"
+"مرحبًا %(recipient_name)s، لقد رفض %(sender_name)s دعوتك للتواصل على Fidus "
+"Writer. \n"
 "راجع قائمة جهات الاتصال الخاصة بك هنا: %(link)s"
 
 #: user/emails.py:62
@@ -477,8 +490,8 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
-"<p>مرحبًا %(recipient_name)s،<br> %(sender_name)s رفض دعوتك للتواصل على "
-"Fidus Writer.</p>"
+"<p>مرحبًا %(recipient_name)s،<br> %(sender_name)s رفض دعوتك للتواصل على Fidus "
+"Writer.</p>"
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
@@ -495,10 +508,12 @@ msgstr "تم رفض دعوة Fidus Writer"
 #: user/emails.py:95
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"مرحبًا %(recipient_name)s، لقد قبل %(sender_name)s دعوتك للتواصل على Fidus Writer. \n"
+"مرحبًا %(recipient_name)s، لقد قبل %(sender_name)s دعوتك للتواصل على Fidus "
+"Writer. \n"
 "راجع قائمة جهات الاتصال الخاصة بك هنا: %(link)s"
 
 #: user/emails.py:104
@@ -522,19 +537,19 @@ msgstr "تم قبول دعوة Fidus Writer"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "يجب أن يتكون الرمز من 6 أرقام بالضبط (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "تفضيل لغة الواجهة"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr "تفضيلات المستخدم (على سبيل المثال، استبعاد مربع حوار التشفير)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "يمكن تسجيل الدخول كمستخدم آخر"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "عنوان البريد الإلكتروني"
 
@@ -550,8 +565,8 @@ msgid ""
 "You are receiving this e-mail because user %(user_display)s has given yours "
 "as an e-mail address to connect their account."
 msgstr ""
-"أنت تتلقى هذا البريد الإلكتروني لأن المستخدم %(user_display)s قد أعطاك عنوان"
-" بريد إلكتروني للاتصال بحسابه."
+"أنت تتلقى هذا البريد الإلكتروني لأن المستخدم %(user_display)s قد أعطاك عنوان "
+"بريد إلكتروني للاتصال بحسابه."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 #, python-format
@@ -577,8 +592,8 @@ msgid ""
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
-"يمكن تجاهله بأمان إذا لم تطلب إعادة تعيين كلمة المرور. انقر على الرابط أدناه"
-" لإعادة تعيين كلمة المرور الخاصة بك."
+"يمكن تجاهله بأمان إذا لم تطلب إعادة تعيين كلمة المرور. انقر على الرابط أدناه "
+"لإعادة تعيين كلمة المرور الخاصة بك."
 
 #: user/templates/account/email/password_reset_key_message.html:21
 #, python-format

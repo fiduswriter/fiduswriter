@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -95,15 +95,15 @@ msgstr "turkiska"
 msgid "Chinese (Simplified)"
 msgstr "kinesiska (förenklad)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer Administrationswebbplats"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Välkommen till Fidus Writer Administrationswebbplats"
 
@@ -213,18 +213,20 @@ msgstr "Ofrälse"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"%(owner)s has changed your access rights to %(rights)s on the document "
+"'%(document_title)s'. \n"
 "Open the document: %(link)s"
 msgstr ""
 "Hej %(collaborator_name)s,\n"
-"%(owner)s har ändrat dina åtkomsträttigheter till %(rights)s på dokumentet '%(document_title)s'. \n"
+"%(owner)s har ändrat dina åtkomsträttigheter till %(rights)s på dokumentet "
+"'%(document_title)s'. \n"
 "Öppna dokumentet: %(link)s"
 
 #: document/emails.py:32
 #, python-format
 msgid ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
-" %(rights)s on the document '%(document_title)s'.</p>"
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to "
+"%(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>Hej %(collaborator_name)s,<br>%(owner)s har ändrat dina "
 "åtkomsträttigheter till %(rights)s på dokumentet \"%(document_title)s\".</p>"
@@ -233,11 +235,13 @@ msgstr ""
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"%(owner)s has shared the document '%(document_title)s' with you and given "
+"you %(rights)s access rights. \n"
 "Open document: %(link)s"
 msgstr ""
 "Hej %(collaborator_name)s,\n"
-"%(owner)s har delat dokumentet '%(document_title)s' med dig och gett dig %(rights)s åtkomsträttigheter. \n"
+"%(owner)s har delat dokumentet '%(document_title)s' med dig och gett dig "
+"%(rights)s åtkomsträttigheter. \n"
 "Öppna dokument: %(link)s"
 
 #: document/emails.py:55
@@ -247,8 +251,8 @@ msgid ""
 "'%(document_title)s' with you and given you %(rights)s access rights.</p>"
 msgstr ""
 "<p>Hej %(collaborator_name)s,<br>%(owner)s har delat dokumentet "
-"\"%(document_title)s\" med dig och gett dig %(rights)s "
-"åtkomsträttigheter.</p>"
+"\"%(document_title)s\" med dig och gett dig %(rights)s åtkomsträttigheter.</"
+"p>"
 
 #: document/emails.py:89
 msgid "shared"
@@ -279,7 +283,8 @@ msgstr "Dokument delat: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"%(commentator)s has mentioned you in a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -295,11 +300,11 @@ msgstr ""
 #: document/emails.py:136
 #, python-format
 msgid ""
-"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
-" in the document '%(document_title)s'."
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment "
+"in the document '%(document_title)s'."
 msgstr ""
-"Hej %(collaborator_name)s,<br>%(commentator)s har nämnt dig i en kommentar i"
-" dokumentet \"%(document_title)s\"."
+"Hej %(collaborator_name)s,<br>%(commentator)s har nämnt dig i en kommentar i "
+"dokumentet \"%(document_title)s\"."
 
 #: document/emails.py:143
 #, python-format
@@ -310,14 +315,16 @@ msgstr "Kommentar till : %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"%(commentator)s has assigned you to a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
 "Go to the document here: %(link)s"
 msgstr ""
 "Hej %(collaborator_name)s,\n"
-"%(commentator)s har tilldelat dig en kommentar i dokumentet \"%(document)s\":\n"
+"%(commentator)s har tilldelat dig en kommentar i dokumentet "
+"\"%(document)s\":\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -329,8 +336,8 @@ msgid ""
 "Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
 "in the document '%(document_title)s'."
 msgstr ""
-"Hej %(collaborator_name)s,<br>%(commentator)s har tilldelat dig en kommentar"
-" i dokumentet \"%(document_title)s\"."
+"Hej %(collaborator_name)s,<br>%(commentator)s har tilldelat dig en kommentar "
+"i dokumentet \"%(document_title)s\"."
 
 #: document/emails.py:166
 #, python-format
@@ -356,18 +363,20 @@ msgstr "Kommentar"
 #, python-format
 msgid ""
 "Hey %(owner_name)s,\n"
-"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"%(requester_name)s has requested %(rights)s access to the document "
+"'%(document_title)s'. \n"
 "Open the document to grant access: %(link)s"
 msgstr ""
 "Hej %(owner_name)s,\n"
-"%(requester_name)s har begärt %(rights)s tillgång till dokumentet '%(document_title)s'. \n"
+"%(requester_name)s har begärt %(rights)s tillgång till dokumentet "
+"'%(document_title)s'. \n"
 "Öppna dokumentet för att ge åtkomst: %(link)s"
 
 #: document/emails.py:251
 #, python-format
 msgid ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
-" to the document '%(document_title)s'.</p>"
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access "
+"to the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>Hej %(owner_name)s,<br>%(requester_name)s har begärt %(rights)s åtkomst "
 "till dokumentet \"%(document_title)s\".</p>"
@@ -406,14 +415,17 @@ msgstr "Underhåll"
 #: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
-"            Before and after upgrading Fidus Writer, you should update all the documents\n"
-"            of all users to the newest document version. Only do this if you know that\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
 "\n"
 "Innan och efter uppgradering av Fidus Writer bör du uppdatera alla dokument\n"
-"            av alla användare till den senaste dokumentversionen. Gör bara detta om du vet det\n"
+"            av alla användare till den senaste dokumentversionen. Gör bara "
+"detta om du vet det\n"
 "            ingen användare redigerar för närvarande något dokument!"
 
 #: document/templates/admin/document/maintenance.html:32
@@ -444,8 +456,8 @@ msgstr ""
 #: user/emails.py:19
 #, python-format
 msgid ""
-"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
-"Writer.</p>"
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus Writer."
+"</p>"
 msgstr ""
 "<p>Hej %(email)s,<br> %(sender)s har bjudit in dig att ansluta till Fidus "
 "Writer.</p>"
@@ -465,10 +477,12 @@ msgstr "Fidus Writer kontaktinbjudan"
 #: user/emails.py:53
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Hej %(recipient_name)s, %(sender_name)s har tackat nej till din inbjudan att ansluta till Fidus Writer. \n"
+"Hej %(recipient_name)s, %(sender_name)s har tackat nej till din inbjudan att "
+"ansluta till Fidus Writer. \n"
 "Se din lista över kontakter här: %(link)s"
 
 #: user/emails.py:62
@@ -495,10 +509,12 @@ msgstr "Fidus Writer-inbjudan avvisades"
 #: user/emails.py:95
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Hej %(recipient_name)s, %(sender_name)s har accepterat din inbjudan att ansluta på Fidus Writer. \n"
+"Hej %(recipient_name)s, %(sender_name)s har accepterat din inbjudan att "
+"ansluta på Fidus Writer. \n"
 "Se din lista över kontakter här: %(link)s"
 
 #: user/emails.py:104
@@ -522,19 +538,19 @@ msgstr "Fidus Writer-inbjudan accepteras"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Koden måste vara exakt 6 siffror (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Gränssnittsspråk"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr "Användarinställningar (t.ex. avvisande av krypteringsdialogruta)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Kan logga in som en annan användare"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "e-postadress"
 
@@ -557,8 +573,8 @@ msgstr ""
 #, python-format
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
 msgstr ""
-"För att bekräfta att detta är korrekt, gå till <a "
-"href=\"%(url)s\">%(url)s</a>."
+"För att bekräfta att detta är korrekt, gå till <a href=\"%(url)s\">%(url)s</"
+"a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
@@ -645,8 +661,8 @@ msgstr "Ingen fil laddad upp"
 #~ "Forgotten your password? Enter your email address below, and we'll email "
 #~ "instructions for setting a new one."
 #~ msgstr ""
-#~ "Glömt ditt lösenord? Ange din e-postadress nedan så skickar vi instruktioner"
-#~ " för att skapa ett nytt."
+#~ "Glömt ditt lösenord? Ange din e-postadress nedan så skickar vi "
+#~ "instruktioner för att skapa ett nytt."
 
 #~ msgid "Reset my password"
 #~ msgstr "Återställ mitt lösenord"
@@ -658,8 +674,8 @@ msgstr "Ingen fil laddad upp"
 #~ "We've emailed you instructions for setting your password, if an account "
 #~ "exists with the email you entered. You should receive them shortly."
 #~ msgstr ""
-#~ "Vi har skickat instruktioner för att skapa ditt lösenord via e-post, om det "
-#~ "finns ett konto med den e-post du angav. Du bör få dem inom kort."
+#~ "Vi har skickat instruktioner för att skapa ditt lösenord via e-post, om "
+#~ "det finns ett konto med den e-post du angav. Du bör få dem inom kort."
 
 #~ msgid "Enter new password"
 #~ msgstr "Ange nytt lösenord"
@@ -668,8 +684,8 @@ msgstr "Ingen fil laddad upp"
 #~ "Please enter your new password twice so we can verify you typed it in "
 #~ "correctly."
 #~ msgstr ""
-#~ "Ange ditt nya lösenord två gånger så att vi kan bekräfta att du har angett "
-#~ "det korrekt."
+#~ "Ange ditt nya lösenord två gånger så att vi kan bekräfta att du har "
+#~ "angett det korrekt."
 
 #~ msgid "New password:"
 #~ msgstr "Nytt lösenord:"

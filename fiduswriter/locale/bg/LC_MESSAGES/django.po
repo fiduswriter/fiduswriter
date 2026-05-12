@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -90,15 +90,15 @@ msgstr "турски"
 msgid "Chinese (Simplified)"
 msgstr "китайски (опростен)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 
@@ -140,8 +140,8 @@ msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
 msgstr ""
-"Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата"
-" ви работа ще бъде запазена автоматично и скоро ще се върнем."
+"Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата "
+"ви работа ще бъде запазена автоматично и скоро ще се върнем."
 
 #: base/templates/admin/console.html:40
 msgid "Send to connected users"
@@ -209,18 +209,20 @@ msgstr "неозаглавен"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"%(owner)s has changed your access rights to %(rights)s on the document "
+"'%(document_title)s'. \n"
 "Open the document: %(link)s"
 msgstr ""
 "Здравей, %(collaborator_name)s,\n"
-"%(owner)s промени вашите права за достъп на %(rights)s върху документа „%(document_title)s“. \n"
+"%(owner)s промени вашите права за достъп на %(rights)s върху документа "
+"„%(document_title)s“. \n"
 "Отворете документа: %(link)s"
 
 #: document/emails.py:32
 #, python-format
 msgid ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
-" %(rights)s on the document '%(document_title)s'.</p>"
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to "
+"%(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>Здравейте, %(collaborator_name)s,<br>%(owner)s промени вашите права за "
 "достъп на %(rights)s до документа „%(document_title)s“.</p>"
@@ -229,11 +231,13 @@ msgstr ""
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"%(owner)s has shared the document '%(document_title)s' with you and given "
+"you %(rights)s access rights. \n"
 "Open document: %(link)s"
 msgstr ""
 "Здравей, %(collaborator_name)s,\n"
-"%(owner)s сподели документа „%(document_title)s“ с вас и ви даде права за достъп %(rights)s. \n"
+"%(owner)s сподели документа „%(document_title)s“ с вас и ви даде права за "
+"достъп %(rights)s. \n"
 "Отворете документ: %(link)s"
 
 #: document/emails.py:55
@@ -274,7 +278,8 @@ msgstr "Споделен документ: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"%(commentator)s has mentioned you in a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -290,8 +295,8 @@ msgstr ""
 #: document/emails.py:136
 #, python-format
 msgid ""
-"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
-" in the document '%(document_title)s'."
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment "
+"in the document '%(document_title)s'."
 msgstr ""
 "Здравей, %(collaborator_name)s,<br>%(commentator)s те спомена в коментар в "
 "документа „%(document_title)s“."
@@ -305,7 +310,8 @@ msgstr "Коментар за: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"%(commentator)s has assigned you to a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -351,18 +357,20 @@ msgstr "коментар"
 #, python-format
 msgid ""
 "Hey %(owner_name)s,\n"
-"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"%(requester_name)s has requested %(rights)s access to the document "
+"'%(document_title)s'. \n"
 "Open the document to grant access: %(link)s"
 msgstr ""
 "Здравей %(owner_name)s,\n"
-"%(requester_name)s е поискал %(rights)s достъп до документа „%(document_title)s“. \n"
+"%(requester_name)s е поискал %(rights)s достъп до документа "
+"„%(document_title)s“. \n"
 "Отворете документа, за да предоставите достъп: %(link)s"
 
 #: document/emails.py:251
 #, python-format
 msgid ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
-" to the document '%(document_title)s'.</p>"
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access "
+"to the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>Здравейте, %(owner_name)s,<br>%(requester_name)s е поискал %(rights)s "
 "достъп до документа „%(document_title)s“.</p>"
@@ -401,14 +409,18 @@ msgstr "Поддръжка"
 #: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
-"            Before and after upgrading Fidus Writer, you should update all the documents\n"
-"            of all users to the newest document version. Only do this if you know that\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
 "\n"
-"            Преди и след надграждането на Fidus Writer трябва да актуализирате всички документи\n"
-"            на всички потребители до най-новата версия на документа. Правете това само ако знаете това\n"
+"            Преди и след надграждането на Fidus Writer трябва да "
+"актуализирате всички документи\n"
+"            на всички потребители до най-новата версия на документа. Правете "
+"това само ако знаете това\n"
 "            в момента никой потребител не редактира никакъв документ!\n"
 "                        "
 
@@ -440,8 +452,8 @@ msgstr ""
 #: user/emails.py:19
 #, python-format
 msgid ""
-"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
-"Writer.</p>"
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus Writer."
+"</p>"
 msgstr ""
 "<p>Здравейте, %(email)s,<br> %(sender)s ви покани да се свържете с Fidus "
 "Writer.</p>"
@@ -461,10 +473,12 @@ msgstr "Покана за контакт на Fidus Writer"
 #: user/emails.py:53
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Здравейте, %(recipient_name)s, %(sender_name)s отхвърли поканата ви за свързване с Fidus Writer. \n"
+"Здравейте, %(recipient_name)s, %(sender_name)s отхвърли поканата ви за "
+"свързване с Fidus Writer. \n"
 "Вижте списъка си с контакти тук: %(link)s"
 
 #: user/emails.py:62
@@ -491,10 +505,12 @@ msgstr "Поканата за Fidus Writer е отхвърлена"
 #: user/emails.py:95
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Здравейте, %(recipient_name)s, %(sender_name)s прие вашата покана за свързване с Fidus Writer. \n"
+"Здравейте, %(recipient_name)s, %(sender_name)s прие вашата покана за "
+"свързване с Fidus Writer. \n"
 "Вижте списъка си с контакти тук: %(link)s"
 
 #: user/emails.py:104
@@ -518,21 +534,21 @@ msgstr "Поканата за Fidus Writer е приета"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "Кодът трябва да бъде точно 6 цифри (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Предпочитание за език на интерфейса"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
 "Потребителски предпочитания (напр. отхвърляне на диалоговия прозорец за "
 "шифроване)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Може да влезе като друг потребител"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "имейл адрес"
 
@@ -548,8 +564,8 @@ msgid ""
 "You are receiving this e-mail because user %(user_display)s has given yours "
 "as an e-mail address to connect their account."
 msgstr ""
-"Получавате този имейл, защото потребителят %(user_display)s е дал вашия като"
-" имейл адрес, за да свърже своя акаунт."
+"Получавате този имейл, защото потребителят %(user_display)s е дал вашия като "
+"имейл адрес, за да свърже своя акаунт."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 #, python-format

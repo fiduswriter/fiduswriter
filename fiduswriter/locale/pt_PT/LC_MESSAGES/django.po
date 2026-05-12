@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 07:57+0000\n"
+"POT-Creation-Date: 2026-05-12 18:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,15 +97,15 @@ msgstr "turco"
 msgid "Chinese (Simplified)"
 msgstr "Chinês (simplificado)"
 
-#: base/settings.py:416
+#: base/settings.py:415
 msgid "Fidus Writer Admin"
 msgstr "Administrador do escritor Fidus"
 
-#: base/settings.py:417
+#: base/settings.py:416
 msgid "Fidus Writer Administration Site"
 msgstr "Site de administração do Fidus Writer"
 
-#: base/settings.py:418
+#: base/settings.py:417
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Bem-vindo ao site de administração do Fidus Writer"
 
@@ -147,8 +147,8 @@ msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
 msgstr ""
-"Este sistema ficará offline para manutenção programada em 30 minutos. Todo o"
-" seu trabalho será salvo automaticamente e retornaremos em breve."
+"Este sistema ficará offline para manutenção programada em 30 minutos. Todo o "
+"seu trabalho será salvo automaticamente e retornaremos em breve."
 
 #: base/templates/admin/console.html:40
 msgid "Send to connected users"
@@ -215,18 +215,20 @@ msgstr "Sem título"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has changed your access rights to %(rights)s on the document '%(document_title)s'. \n"
+"%(owner)s has changed your access rights to %(rights)s on the document "
+"'%(document_title)s'. \n"
 "Open the document: %(link)s"
 msgstr ""
 "Olá %(collaborator_name)s,\n"
-"%(owner)s alterou seus direitos de acesso para %(rights)s no documento '%(document_title)s'. \n"
+"%(owner)s alterou seus direitos de acesso para %(rights)s no documento "
+"'%(document_title)s'. \n"
 "Abra o documento: %(link)s"
 
 #: document/emails.py:32
 #, python-format
 msgid ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
-" %(rights)s on the document '%(document_title)s'.</p>"
+"<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to "
+"%(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
 "<p>Olá, %(collaborator_name)s,<br>%(owner)s alterou seus direitos de acesso "
 "para %(rights)s no documento '%(document_title)s'.</p>"
@@ -235,11 +237,13 @@ msgstr ""
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document_title)s' with you and given you %(rights)s access rights. \n"
+"%(owner)s has shared the document '%(document_title)s' with you and given "
+"you %(rights)s access rights. \n"
 "Open document: %(link)s"
 msgstr ""
 "Olá %(collaborator_name)s,\n"
-"%(owner)s compartilhou o documento '%(document_title)s' com você e lhe concedeu direitos de acesso a %(rights)s. \n"
+"%(owner)s compartilhou o documento '%(document_title)s' com você e lhe "
+"concedeu direitos de acesso a %(rights)s. \n"
 "Abrir documento: %(link)s"
 
 #: document/emails.py:55
@@ -281,14 +285,16 @@ msgstr "Documento compartilhado: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has mentioned you in a comment in the document '%(document)s':\n"
+"%(commentator)s has mentioned you in a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
 "Go to the document here: %(link)s"
 msgstr ""
 "Olá %(collaborator_name)s,\n"
-"%(commentator)s mencionou você em um comentário no documento '%(document)s':\n"
+"%(commentator)s mencionou você em um comentário no documento "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -297,8 +303,8 @@ msgstr ""
 #: document/emails.py:136
 #, python-format
 msgid ""
-"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
-" in the document '%(document_title)s'."
+"Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment "
+"in the document '%(document_title)s'."
 msgstr ""
 "Olá %(collaborator_name)s,<br>%(commentator)s mencionou você em um "
 "comentário no documento '%(document_title)s'."
@@ -312,7 +318,8 @@ msgstr "Comente em: %(document_title)s"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(commentator)s has assigned you to a comment in the document '%(document)s':\n"
+"%(commentator)s has assigned you to a comment in the document "
+"'%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -358,21 +365,23 @@ msgstr "Comentário"
 #, python-format
 msgid ""
 "Hey %(owner_name)s,\n"
-"%(requester_name)s has requested %(rights)s access to the document '%(document_title)s'. \n"
+"%(requester_name)s has requested %(rights)s access to the document "
+"'%(document_title)s'. \n"
 "Open the document to grant access: %(link)s"
 msgstr ""
 "Olá %(owner_name)s,\n"
-"%(requester_name)s solicitou acesso de %(rights)s ao documento '%(document_title)s'. \n"
+"%(requester_name)s solicitou acesso de %(rights)s ao documento "
+"'%(document_title)s'. \n"
 "Abra o documento para conceder acesso: %(link)s"
 
 #: document/emails.py:251
 #, python-format
 msgid ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
-" to the document '%(document_title)s'.</p>"
+"<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access "
+"to the document '%(document_title)s'.</p>"
 msgstr ""
-"<p>Olá, %(owner_name)s,<br>%(requester_name)s solicitou acesso de %(rights)s"
-" ao documento '%(document_title)s'.</p>"
+"<p>Olá, %(owner_name)s,<br>%(requester_name)s solicitou acesso de %(rights)s "
+"ao documento '%(document_title)s'.</p>"
 
 #: document/emails.py:284
 msgid "access request"
@@ -408,14 +417,18 @@ msgstr "Manutenção"
 #: document/templates/admin/document/maintenance.html:24
 msgid ""
 "\n"
-"            Before and after upgrading Fidus Writer, you should update all the documents\n"
-"            of all users to the newest document version. Only do this if you know that\n"
+"            Before and after upgrading Fidus Writer, you should update all "
+"the documents\n"
+"            of all users to the newest document version. Only do this if you "
+"know that\n"
 "            no user is currently editing any document!\n"
 "            "
 msgstr ""
 "\n"
-"Antes e depois de atualizar o Fidus Writer, você deve atualizar todos os documentos\n"
-"            de todos os usuários para a versão mais recente do documento. Só faça isso se você souber disso\n"
+"Antes e depois de atualizar o Fidus Writer, você deve atualizar todos os "
+"documentos\n"
+"            de todos os usuários para a versão mais recente do documento. Só "
+"faça isso se você souber disso\n"
 "            nenhum usuário está editando nenhum documento no momento!"
 
 #: document/templates/admin/document/maintenance.html:32
@@ -446,8 +459,8 @@ msgstr ""
 #: user/emails.py:19
 #, python-format
 msgid ""
-"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
-"Writer.</p>"
+"<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus Writer."
+"</p>"
 msgstr ""
 "<p>Olá, %(email)s,<br> %(sender)s convidou você para se conectar no Fidus "
 "Writer.</p>"
@@ -467,10 +480,12 @@ msgstr "Convite de contato do Fidus Writer"
 #: user/emails.py:53
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Olá %(recipient_name)s, %(sender_name)s recusou seu convite para se conectar no Fidus Writer. \n"
+"Olá %(recipient_name)s, %(sender_name)s recusou seu convite para se conectar "
+"no Fidus Writer. \n"
 "Veja sua lista de contatos aqui: %(link)s"
 
 #: user/emails.py:62
@@ -497,10 +512,12 @@ msgstr "Convite do Fidus Writer recusado"
 #: user/emails.py:95
 #, python-format
 msgid ""
-"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
+"Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect "
+"on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Olá %(recipient_name)s, %(sender_name)s aceitou seu convite para se conectar no Fidus Writer. \n"
+"Olá %(recipient_name)s, %(sender_name)s aceitou seu convite para se conectar "
+"no Fidus Writer. \n"
 "Veja sua lista de contatos aqui: %(link)s"
 
 #: user/emails.py:104
@@ -524,21 +541,21 @@ msgstr "Convite do Fidus Writer aceito"
 msgid "Code must be exactly 6 digits (0-9)."
 msgstr "O código deve ter exatamente 6 dígitos (0-9)."
 
-#: user/models.py:55
+#: user/models.py:68
 msgid "Interface language preference"
 msgstr "Preferência de idioma da interface"
 
-#: user/models.py:62
+#: user/models.py:75
 msgid "User preferences (e.g., encryption dialog dismissal)"
 msgstr ""
 "Preferências do usuário (por exemplo, dispensa da caixa de diálogo de "
 "criptografia)"
 
-#: user/models.py:73
+#: user/models.py:86
 msgid "Can login as another user"
 msgstr "Pode fazer login como outro usuário"
 
-#: user/models.py:102
+#: user/models.py:115
 msgid "email address"
 msgstr "endereço de email"
 
@@ -554,15 +571,15 @@ msgid ""
 "You are receiving this e-mail because user %(user_display)s has given yours "
 "as an e-mail address to connect their account."
 msgstr ""
-"Você está recebendo este e-mail porque o usuário %(user_display)s forneceu o"
-" seu endereço de e-mail para conectar sua conta."
+"Você está recebendo este e-mail porque o usuário %(user_display)s forneceu o "
+"seu endereço de e-mail para conectar sua conta."
 
 #: user/templates/account/email/email_confirmation_message.html:16
 #, python-format
 msgid "To confirm this is correct, go to <a href=\"%(url)s\">%(url)s</a>."
 msgstr ""
-"Para confirmar que isso está correto, vá para <a "
-"href=\"%(url)s\">%(url)s</a>."
+"Para confirmar que isso está correto, vá para <a href=\"%(url)s\">%(url)s</"
+"a>."
 
 #: user/templates/account/email/email_confirmation_message.html:20
 #: user/templates/account/email/password_reset_key_message.html:26
@@ -583,8 +600,8 @@ msgid ""
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
-"Ele pode ser ignorado com segurança se você não solicitou uma redefinição de"
-" senha. Clique no link abaixo para redefinir sua senha."
+"Ele pode ser ignorado com segurança se você não solicitou uma redefinição de "
+"senha. Clique no link abaixo para redefinir sua senha."
 
 #: user/templates/account/email/password_reset_key_message.html:21
 #, python-format

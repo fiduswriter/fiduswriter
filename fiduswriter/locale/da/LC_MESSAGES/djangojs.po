@@ -76,7 +76,7 @@ msgstr "Hjælp"
 #: document/static/js/modules/editor/menus/headerbar/model.js:191
 #: user_template_manager/static/js/modules/user_template_manager/editor.js:92
 msgid "Close"
-msgstr "Tæt"
+msgstr "Luk"
 
 #: base/static/js/modules/common/dialog.js:84
 #: document/static/js/modules/documents/overview/index.js:920
@@ -90,7 +90,7 @@ msgstr "Tæt"
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:589
 #: document/static/js/modules/editor/e2ee/password-dialog.js:183
 msgid "Cancel"
-msgstr "Ophæve"
+msgstr "Luk"
 
 #: base/static/js/modules/common/dialog.js:89
 #: document/static/js/modules/editor/index.js:337

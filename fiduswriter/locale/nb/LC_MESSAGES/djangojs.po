@@ -1069,7 +1069,7 @@ msgstr "Understrek"
 #: document/static/js/modules/editor/dialogs/link.js:241
 #: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
-msgstr "Link"
+msgstr "Lenke"
 
 #: document/static/js/modules/document_template/templates.js:118
 #: document/static/js/modules/editor/menus/toolbar/model.js:481

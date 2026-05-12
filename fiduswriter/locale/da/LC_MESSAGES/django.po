@@ -197,7 +197,7 @@ msgid ""
 msgstr ""
 "\n"
 "Din browser understøttes ikke af Fidus Writer.\n"
-"                Opdater venligst! Vi anbefaler at bruge en strøm\n"
+"                Opdater venligst! Vi anbefaler at bruge en aktuel\n"
 "                version af Chrome/Chromium eller Firefox på en\n"
 "                stationær computer."
 

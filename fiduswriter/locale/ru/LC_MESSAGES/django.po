@@ -198,9 +198,9 @@ msgid ""
 msgstr ""
 "\n"
 "Ваш браузер не поддерживается Fidus Writer.\n"
-"                Пожалуйста, обновите! Мы рекомендуем использовать ток\n"
+"                Пожалуйста, обновите! Мы рекомендуем использовать актуальную\n"
 "                версию Chrome/Chromium или Firefox на\n"
-"                настольный компьютер."
+"                настольном компьютере."
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"

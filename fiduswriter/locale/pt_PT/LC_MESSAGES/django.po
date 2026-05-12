@@ -199,8 +199,8 @@ msgid ""
 msgstr ""
 "\n"
 "Seu navegador não é compatível com Fidus Writer.\n"
-"                Por favor atualize! Recomendamos usar uma corrente\n"
-"                versão do Chrome/Chromium ou Firefox em um\n"
+"                Por favor atualize! Recomendamos usar uma versão atual\n"
+"                do Chrome/Chromium ou Firefox num\n"
 "                computador desktop."
 
 #: document/admin.py:76

@@ -199,9 +199,9 @@ msgid ""
 msgstr ""
 "\n"
 "귀하의 브라우저는 Fidus Writer에서 지원되지 않습니다.\n"
-"                업데이트해주세요! 전류를 사용하는 것이 좋습니다.\n"
-"                Chrome/Chromium 또는 Firefox 버전\n"
-"                데스크톱 컴퓨터."
+"                업데이트해주세요! 데스크톱 컴퓨터에서\n"
+"                최신 버전의 Chrome/Chromium 또는 Firefox를\n"
+"                사용하시기를 권장합니다."
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"

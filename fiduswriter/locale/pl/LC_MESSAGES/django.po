@@ -198,9 +198,9 @@ msgid ""
 msgstr ""
 "\n"
 "Twoja przeglądarka nie jest obsługiwana przez Fidus Writer.\n"
-"                Proszę o aktualizację! Zalecamy użycie prądu\n"
-"                wersja przeglądarki Chrome/Chromium lub Firefox na a\n"
-"                komputer stacjonarny."
+"                Proszę o aktualizację! Zalecamy użycie aktualnej\n"
+"                wersji przeglądarki Chrome/Chromium lub Firefox na\n"
+"                komputerze stacjonarnym."
 
 #: document/admin.py:76
 msgid "Duplicate selected document templates"
@@ -208,7 +208,7 @@ msgstr "Duplikuj wybrane szablony dokumentów"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:968
 msgid "Untitled"
-msgstr "Nieuprawny"
+msgstr "Bez tytułu"
 
 #: document/emails.py:21
 #, python-format

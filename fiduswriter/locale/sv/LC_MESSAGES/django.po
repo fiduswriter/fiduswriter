@@ -197,7 +197,7 @@ msgid ""
 msgstr ""
 "\n"
 "Din webbläsare stöds inte av Fidus Writer.\n"
-"                Uppdatera gärna! Vi rekommenderar att du använder en ström\n"
+"                Uppdatera gärna! Vi rekommenderar att du använder en aktuell\n"
 "                version av Chrome/Chromium eller Firefox på en\n"
 "                stationär dator."
 
@@ -207,7 +207,7 @@ msgstr "Duplicera valda dokumentmallar"
 
 #: document/emails.py:18 document/emails.py:236 document/views.py:968
 msgid "Untitled"
-msgstr "Ofrälse"
+msgstr "Namnlöst"
 
 #: document/emails.py:21
 #, python-format

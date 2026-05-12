@@ -201,7 +201,7 @@ msgid ""
 msgstr ""
 "\n"
 "Váš prohlížeč není podporován aplikací Fidus Writer.\n"
-"                Aktualizujte prosím! Doporučujeme použít proud\n"
+"                Aktualizujte prosím! Doporučujeme použít aktuální\n"
 "                verze Chrome/Chromium nebo Firefox na a\n"
 "                stolní počítač."
 

@@ -183,6 +183,34 @@ function citationToText(node, bibEntries) {
     return "@" + body
 }
 
+function getInputCursorPos(el) {
+    const sel = window.getSelection()
+    if (!sel || !sel.rangeCount) {
+        return (el.textContent || "").length
+    }
+    const range = sel.getRangeAt(0)
+    if (!el.contains(range.startContainer)) {
+        return (el.textContent || "").length
+    }
+    return range.startOffset
+}
+
+function setInputCursorPos(el, pos) {
+    const textNode = el.firstChild
+    if (!textNode) {
+        return
+    }
+    const range = document.createRange()
+    const safePos = Math.max(0, Math.min(pos, textNode.length))
+    range.setStart(textNode, safePos)
+    range.collapse(true)
+    const sel = window.getSelection()
+    if (sel) {
+        sel.removeAllRanges()
+        sel.addRange(range)
+    }
+}
+
 /**
  * Create the inline citation widget DOM element.
  */
@@ -190,10 +218,11 @@ function createCitationWidget(view, pluginState, key) {
     const container = document.createElement("span")
     container.className = "citation-inline-widget"
 
-    const input = document.createElement("input")
-    input.type = "text"
+    const input = document.createElement("span")
+    input.contentEditable = "plaintext-only"
+    input.spellcheck = false
     input.className = "citation-inline-input"
-    input.value = pluginState.query
+    input.textContent = pluginState.query
 
     const dropUpWrapper = document.createElement("span")
     dropUpWrapper.className = "drop-up-outer citation-drop-up"
@@ -203,9 +232,9 @@ function createCitationWidget(view, pluginState, key) {
         if (!currentState?.active) {
             return
         }
-        const cursorPos = input.selectionStart || 0
-        const activeIndex = getActiveRefIndex(input.value, cursorPos)
-        const query = getActiveQuery(input.value, activeIndex)
+        const cursorPos = getInputCursorPos(input)
+        const activeIndex = getActiveRefIndex(input.textContent, cursorPos)
+        const query = getActiveQuery(input.textContent, activeIndex)
         const matches = filterBibliography(currentState.bibList, query)
         const selectedIndex = currentState.listActive
             ? Math.max(
@@ -220,22 +249,21 @@ function createCitationWidget(view, pluginState, key) {
                 return
             }
             const newText = replaceActiveKey(
-                input.value,
+                input.textContent,
                 activeIndex,
                 entry.entry_key
             )
-            input.value = newText
+            input.textContent = newText
             // Move cursor to end of replaced key
             const newCursor = newText.indexOf(
                 entry.entry_key,
-                input.value.indexOf("@") + 1
+                newText.indexOf("@") + 1
             )
-            input.selectionStart = input.selectionEnd =
-                newCursor + entry.entry_key.length
+            setInputCursorPos(input, newCursor + entry.entry_key.length)
             view.dispatch(
                 view.state.tr.setMeta(key, {
                     action: "updateQuery",
-                    query: input.value
+                    query: input.textContent
                 })
             )
             renderDropUp()
@@ -255,7 +283,7 @@ function createCitationWidget(view, pluginState, key) {
         view.dispatch(
             view.state.tr.setMeta(key, {
                 action: "updateQuery",
-                query: input.value
+                query: input.textContent
             })
         )
         renderDropUp()
@@ -274,7 +302,7 @@ function createCitationWidget(view, pluginState, key) {
 
         switch (event.key) {
             case "ArrowLeft":
-                if (input.selectionStart === 0) {
+                if (getInputCursorPos(input) === 0) {
                     event.preventDefault()
                     view.dispatch(
                         view.state.tr.setMeta(key, {action: "cancelLeft"})
@@ -283,7 +311,10 @@ function createCitationWidget(view, pluginState, key) {
                 }
                 break
             case "ArrowRight":
-                if (input.selectionEnd === input.value.length) {
+                if (
+                    getInputCursorPos(input) ===
+                    (input.textContent || "").length
+                ) {
                     event.preventDefault()
                     view.dispatch(
                         view.state.tr.setMeta(key, {action: "commitAndRight"})
@@ -346,12 +377,12 @@ function createCitationWidget(view, pluginState, key) {
                 event.preventDefault()
                 {
                     const currentState = key.getState(view.state)
-                    const cursorPos = input.selectionStart || 0
+                    const cursorPos = getInputCursorPos(input)
                     const activeIndex = getActiveRefIndex(
-                        input.value,
+                        input.textContent,
                         cursorPos
                     )
-                    const query = getActiveQuery(input.value, activeIndex)
+                    const query = getActiveQuery(input.textContent, activeIndex)
                     const matches = filterBibliography(
                         currentState.bibList,
                         query
@@ -368,21 +399,21 @@ function createCitationWidget(view, pluginState, key) {
                         // Insert selected key into input
                         const entry = matches[selectedIndex]
                         const newText = replaceActiveKey(
-                            input.value,
+                            input.textContent,
                             activeIndex,
                             entry.entry_key
                         )
-                        input.value = newText
+                        input.textContent = newText
                         const newCursor =
                             newText.indexOf(
                                 entry.entry_key,
-                                input.value.indexOf("@") + 1
+                                newText.indexOf("@") + 1
                             ) + entry.entry_key.length
-                        input.selectionStart = input.selectionEnd = newCursor
+                        setInputCursorPos(input, newCursor)
                         view.dispatch(
                             view.state.tr.setMeta(key, {
                                 action: "updateQuery",
-                                query: input.value
+                                query: input.textContent
                             })
                         )
                         renderDropUp()
@@ -402,14 +433,14 @@ function createCitationWidget(view, pluginState, key) {
                 break
             case "Home":
                 event.preventDefault()
-                input.selectionStart = input.selectionEnd = 0
+                setInputCursorPos(input, 0)
                 break
             case "End":
                 event.preventDefault()
-                input.selectionStart = input.selectionEnd = input.value.length
+                setInputCursorPos(input, (input.textContent || "").length)
                 break
             case "Backspace":
-                if (input.value.length <= 1) {
+                if ((input.textContent || "").length <= 1) {
                     event.preventDefault()
                     view.dispatch(
                         view.state.tr.setMeta(key, {action: "cancel"})
@@ -451,9 +482,9 @@ function createCitationWidget(view, pluginState, key) {
         input.focus()
         // Place cursor based on entry direction
         if (pluginState.cursorAtStart === true) {
-            input.selectionStart = input.selectionEnd = 0
+            setInputCursorPos(input, 0)
         } else {
-            input.selectionStart = input.selectionEnd = input.value.length
+            setInputCursorPos(input, (input.textContent || "").length)
         }
         renderDropUp()
     }, 0)

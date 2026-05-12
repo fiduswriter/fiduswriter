@@ -1347,6 +1347,7 @@ pre[data-language] {
 }
 
 .citation-inline-input {
+    display: inline-block;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
@@ -1358,7 +1359,8 @@ pre[data-language] {
     color: var(--cs-light-text);
     outline: none;
     min-width: 120px;
-    max-width: 300px;
+    white-space: nowrap;
+    cursor: text;
 }
 
 .citation-inline-input:focus {

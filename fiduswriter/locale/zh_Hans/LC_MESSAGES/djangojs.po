@@ -172,7 +172,7 @@ msgstr "站点导航"
 #: document/static/js/modules/documents/access_rights/templates.js:13
 #: user/static/js/modules/contacts/index.js:57
 msgid "Contacts"
-msgstr "联系方式"
+msgstr "联系人"
 
 #: base/static/js/modules/common/templates.js:32
 msgid "Log out"
@@ -191,7 +191,7 @@ msgstr "已断开连接。正在尝试重新连接..."
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:317
 #: document/static/js/modules/editor/dialogs/language.js:16
 msgid "Change"
-msgstr "改变"
+msgstr "更改"
 
 #: base/static/js/modules/copyright_dialog/index.js:104
 msgid "Set copyright information"
@@ -199,7 +199,7 @@ msgstr "设置版权信息"
 
 #: base/static/js/modules/copyright_dialog/templates.js:16
 msgid "License URL"
-msgstr "许可证网址"
+msgstr "许可证URL"
 
 #: base/static/js/modules/copyright_dialog/templates.js:19
 msgid "License Title"
@@ -213,7 +213,7 @@ msgstr "来自列表"
 #: base/static/js/modules/copyright_dialog/templates.js:36
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:31
 msgid "Custom"
-msgstr "风俗"
+msgstr "自定义"
 
 #: base/static/js/modules/copyright_dialog/templates.js:44
 msgid "License start date (optional)"
@@ -369,7 +369,7 @@ msgstr "参考书目项目已被删除"
 #: document/static/js/modules/editor/marginboxes/templates.js:240
 #: document/static/js/modules/editor/menus/toolbar/model.js:375
 msgid "Strong"
-msgstr "强的"
+msgstr "加粗"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:63
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:58
@@ -481,7 +481,7 @@ msgstr "选择来源类型"
 #: bibliography/static/js/modules/bibliography/form/templates.js:28
 #| msgid "Citation"
 msgid "Citation key"
-msgstr "引文关键词"
+msgstr "引文键"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:33
 msgid "Required Fields"
@@ -554,7 +554,7 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:68
 msgid "Bibliography Manager"
-msgstr "书目经理"
+msgstr "参考文献管理器"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
 #: document/static/js/modules/editor/dialogs/citation.js:241
@@ -879,7 +879,7 @@ msgstr "插入表"
 #: document/static/js/modules/document_template/templates.js:468
 #: document/static/js/modules/editor/menus/toolbar/model.js:872
 msgid "Table"
-msgstr "桌子"
+msgstr "表格"
 
 #: document/static/js/modules/document_template/schema.js:162
 #: document/static/js/modules/document_template/schema.js:164
@@ -997,7 +997,7 @@ msgstr "代码块"
 #: document/static/js/modules/editor/menus/toolbar/model.js:29
 #: document/static/js/modules/editor/menus/toolbar/model.js:851
 msgid "Figure"
-msgstr "数字"
+msgstr "图"
 
 #: document/static/js/modules/document_template/templates.js:53
 #: document/static/js/modules/editor/marginboxes/templates.js:264
@@ -1048,13 +1048,13 @@ msgstr "允许的标记"
 #: document/static/js/modules/editor/marginboxes/templates.js:241
 #: document/static/js/modules/editor/menus/toolbar/model.js:444
 msgid "Underline"
-msgstr "强调"
+msgstr "下划线"
 
 #: document/static/js/modules/document_template/templates.js:114
 #: document/static/js/modules/editor/dialogs/link.js:241
 #: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
-msgstr "关联"
+msgstr "链接"
 
 #: document/static/js/modules/document_template/templates.js:118
 #: document/static/js/modules/editor/menus/toolbar/model.js:481
@@ -1789,7 +1789,7 @@ msgstr "所有者"
 #: document/static/js/modules/documents/overview/index.js:757
 #: document/static/js/modules/editor/e2ee/password-dialog.js:196
 msgid "Encrypted Document"
-msgstr "加密文件"
+msgstr "加密文档"
 
 #: document/static/js/modules/documents/overview/index.js:805
 msgid "Undefined"
@@ -1894,8 +1894,8 @@ msgid "Skip for Now"
 msgstr "暂时跳过"
 
 #: document/static/js/modules/documents/overview/index.js:971
-msgid "Set Up Passphrase"
-msgstr "设置密码"
+msgid "Set up passphrase"
+msgstr "设置密码短语"
 
 #: document/static/js/modules/documents/overview/index.js:1006
 #: user/static/js/modules/profile/index.js:232
@@ -2639,17 +2639,17 @@ msgstr "结盟"
 #: document/static/js/modules/editor/dialogs/templates.js:137
 #: document/static/js/modules/editor/dialogs/templates.js:255
 msgid "Left"
-msgstr "左边"
+msgstr "左对齐"
 
 #: document/static/js/modules/editor/dialogs/templates.js:138
 #: document/static/js/modules/editor/dialogs/templates.js:256
 msgid "Center"
-msgstr "中心"
+msgstr "居中"
 
 #: document/static/js/modules/editor/dialogs/templates.js:139
 #: document/static/js/modules/editor/dialogs/templates.js:257
 msgid "Right"
-msgstr "正确的"
+msgstr "右对齐"
 
 #: document/static/js/modules/editor/dialogs/templates.js:144
 #: document/static/js/modules/editor/dialogs/templates.js:262
@@ -2814,7 +2814,7 @@ msgstr "该密码与您的登录密码是分开的。如果丢失，您的加密
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:29
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:183
 msgid "Passphrase"
-msgstr "密码"
+msgstr "密码短语"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:32
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:186
@@ -2855,7 +2855,7 @@ msgstr "输入您的个人加密密码以解锁您的文档。"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:196
 msgid "Unlock"
-msgstr "开锁"
+msgstr "解锁"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:209
 msgid "Please enter your passphrase."
@@ -2913,7 +2913,7 @@ msgstr "恢复密钥"
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:370
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:521
 msgid "New passphrase"
-msgstr "新密码"
+msgstr "新密码短语"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:378
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:529
@@ -2940,11 +2940,11 @@ msgstr "输入您当前的密码和新密码以更改您的加密密码。"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:513
 msgid "Current passphrase"
-msgstr "当前密码"
+msgstr "当前密码短语"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:539
 msgid "Change Passphrase"
-msgstr "更改密码"
+msgstr "更改密码短语"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:562
 msgid "Please enter your current passphrase."
@@ -2960,24 +2960,24 @@ msgstr "密码长度必须至少为 5 个字符。"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:103
 msgid "Very weak"
-msgstr "很弱"
+msgstr "非常弱"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:104
 msgid "Weak"
-msgstr "虚弱的"
+msgstr "弱"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:105
 msgid "Fair"
-msgstr "公平的"
+msgstr "一般"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:107
 msgid "Very strong"
-msgstr "很强"
+msgstr "非常强"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:142
 msgid ""
 "This document is end-to-end encrypted. Enter the password to decrypt it."
-msgstr "该文档是端到端加密的。输入密码进行解密。"
+msgstr "该文档采用端到端加密。输入密码以解密。"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
 #: document/static/js/modules/editor/e2ee/password-dialog.js:262
@@ -3013,7 +3013,7 @@ msgstr "隐藏密码"
 msgid ""
 "Set a password to encrypt this document. You will need this password to open"
 " the document in the future."
-msgstr "设置密码来加密该文档。您将来将需要此密码才能打开该文档。"
+msgstr "设置密码以加密该文档。您将来将需要此密码才能打开该文档。"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:260
 msgid ""
@@ -3582,11 +3582,11 @@ msgstr "JATS"
 msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
-msgstr "将文档导出到日记存档和交换标签库 NISO JATS 版本 1.2 文件。"
+msgstr "将文档导出到期刊存档和交换标签库 NISO JATS 版本 1.2 文件。"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:607
 msgid "BITS"
-msgstr "比特币"
+msgstr "BITS"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:610
 msgid ""
@@ -4105,7 +4105,7 @@ msgstr "粘贴时不检测内容"
 
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:40
 msgid "Bold"
-msgstr "大胆的"
+msgstr "粗体"
 
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:44
 msgid "Italics"
@@ -5054,7 +5054,7 @@ msgstr "设置加密密码"
 
 #: user/static/js/modules/profile/templates.js:150
 msgid "Change passphrase"
-msgstr "更改密码"
+msgstr "更改密码短语"
 
 #: user/static/js/modules/profile/templates.js:154
 msgid "Recover with recovery key"

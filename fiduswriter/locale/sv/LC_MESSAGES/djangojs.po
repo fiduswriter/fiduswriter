@@ -32,7 +32,7 @@ msgstr "Sidan du letar efter kan inte hittas."
 
 #: base/static/js/modules/admin_console/index.js:36
 msgid "Sending..."
-msgstr "Sändning..."
+msgstr "Skickar..."
 
 #: base/static/js/modules/admin_console/index.js:49
 msgid "Message delivered successfully!"
@@ -119,7 +119,7 @@ msgstr "OK"
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
 #: usermedia/static/js/modules/images/overview/index.js:175
 msgid "Untitled"
-msgstr "Ofrälse"
+msgstr "Namnlös"
 
 #: base/static/js/modules/common/file/dialog.js:67
 #: base/static/js/modules/common/file/new_folder_dialog.js:8
@@ -139,7 +139,7 @@ msgstr "Ny mapp"
 #: user/static/js/modules/profile/templates.js:285
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
-msgstr "Överlämna"
+msgstr "Skicka"
 
 #: base/static/js/modules/common/file/new_folder_dialog.js:16
 msgid "Create folder"
@@ -147,7 +147,7 @@ msgstr "Skapa mapp"
 
 #: base/static/js/modules/common/file/templates.js:5
 msgid "Path"
-msgstr "Väg"
+msgstr "Sökväg"
 
 #: base/static/js/modules/common/file/templates.js:6
 msgid "Insert path"
@@ -187,7 +187,7 @@ msgstr "Varning! Vissa data har inte sparats"
 #: base/static/js/modules/common/ws.js:14
 #: document/static/js/modules/editor/index.js:407
 msgid "Disconnected. Attempting to reconnect..."
-msgstr "Osammanhängande. Försöker återansluta..."
+msgstr "Frånkopplad. Försöker återansluta..."
 
 #: base/static/js/modules/copyright_dialog/index.js:83
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:317
@@ -215,7 +215,7 @@ msgstr "Från listan"
 #: base/static/js/modules/copyright_dialog/templates.js:36
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:31
 msgid "Custom"
-msgstr "Beställnings"
+msgstr "Anpassad"
 
 #: base/static/js/modules/copyright_dialog/templates.js:44
 msgid "License start date (optional)"
@@ -266,7 +266,7 @@ msgstr ""
 #: base/static/js/modules/offline/index.js:6
 #: base/static/js/modules/offline/index.js:8
 msgid "Disconnected"
-msgstr "Osammanhängande"
+msgstr "Frånkopplad"
 
 #: base/static/js/modules/offline/index.js:11
 msgid "You are currently disconnected from the %(appName)s server."

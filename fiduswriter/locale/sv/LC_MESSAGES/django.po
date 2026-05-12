@@ -17,7 +17,7 @@ msgstr ""
 
 #: base/settings.py:280
 msgid "Arabic"
-msgstr "arabiska"
+msgstr "Arabiska"
 
 #: base/settings.py:281
 msgid "Bulgarian"
@@ -25,11 +25,11 @@ msgstr "Bulgariska"
 
 #: base/settings.py:282
 msgid "Czech"
-msgstr "tjeckiska"
+msgstr "Tjeckiska"
 
 #: base/settings.py:283
 msgid "Danish"
-msgstr "danska"
+msgstr "Danska"
 
 #: base/settings.py:284
 msgid "German"
@@ -53,23 +53,23 @@ msgstr "Italienska"
 
 #: base/settings.py:289
 msgid "Japanese"
-msgstr "japanska"
+msgstr "Japanska"
 
 #: base/settings.py:290
 msgid "Korean"
-msgstr "koreanska"
+msgstr "Koreanska"
 
 #: base/settings.py:291
 msgid "Norwegian Bokmål"
-msgstr "norskt bokmål"
+msgstr "Norskt bokmål"
 
 #: base/settings.py:292
 msgid "Dutch"
-msgstr "holländska"
+msgstr "Holländska"
 
 #: base/settings.py:293
 msgid "Polish"
-msgstr "polska"
+msgstr "Polska"
 
 #: base/settings.py:294
 msgid "Portuguese (Brazil)"
@@ -81,19 +81,19 @@ msgstr "Portugisiska (Portugal)"
 
 #: base/settings.py:296
 msgid "Russian"
-msgstr "ryska"
+msgstr "Ryska"
 
 #: base/settings.py:297
 msgid "Swedish"
-msgstr "svenska"
+msgstr "Svenska"
 
 #: base/settings.py:298
 msgid "Turkish"
-msgstr "turkiska"
+msgstr "Turkiska"
 
 #: base/settings.py:299
 msgid "Chinese (Simplified)"
-msgstr "kinesiska (förenklad)"
+msgstr "Kinesiska (förenklad)"
 
 #: base/settings.py:415
 msgid "Fidus Writer Admin"

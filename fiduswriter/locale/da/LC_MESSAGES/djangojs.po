@@ -5,16 +5,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Fidus Writer frontend\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-05-12 18:00+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2025-05-12 10:00+0200\n"
+"Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
+"Language-Team: <johannes@fiduswriter.org>\n"
+"Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Manual\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: base/static/js/modules/404/index.js:6
@@ -170,7 +171,7 @@ msgstr "Skriv for at søge"
 #: base/static/js/modules/common/templates.js:16
 #: base/static/js/modules/prelogin/templates.js:16
 msgid "Site navigation"
-msgstr "Site navigation"
+msgstr "Navigation"
 
 #: base/static/js/modules/common/templates.js:31
 #: document/static/js/modules/documents/access_rights/templates.js:13
@@ -195,7 +196,7 @@ msgstr "Afbrudt. Forsøger at oprette forbindelse igen..."
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:317
 #: document/static/js/modules/editor/dialogs/language.js:16
 msgid "Change"
-msgstr "Forandring"
+msgstr "Ændring"
 
 #: base/static/js/modules/copyright_dialog/index.js:104
 msgid "Set copyright information"
@@ -217,7 +218,7 @@ msgstr "Fra listen"
 #: base/static/js/modules/copyright_dialog/templates.js:36
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:31
 msgid "Custom"
-msgstr "Skik"
+msgstr "Brugerdefineret"
 
 #: base/static/js/modules/copyright_dialog/templates.js:44
 msgid "License start date (optional)"
@@ -325,7 +326,7 @@ msgstr "Vælg sprog"
 #: document/static/js/modules/editor/dialogs/table.js:178
 #: usermedia/static/js/modules/images/edit_dialog/index.js:42
 msgid "Update"
-msgstr "Opdatering"
+msgstr "Opdater"
 
 #: base/static/js/modules/setup/index.js:11
 msgid "The %(appName)s server is currently being updated. Please wait."
@@ -390,13 +391,13 @@ msgstr "Stærk"
 #: document/static/js/modules/editor/marginboxes/templates.js:239
 #: document/static/js/modules/editor/menus/toolbar/model.js:412
 msgid "Emphasis"
-msgstr "Vægt"
+msgstr "Fremhævning"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:67
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:62
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:62
 msgid "Small caps"
-msgstr "Små kasketter"
+msgstr "Kapitæler"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:71
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:66

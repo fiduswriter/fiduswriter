@@ -69,7 +69,7 @@ msgstr "nederlandsk"
 
 #: base/settings.py:293
 msgid "Polish"
-msgstr "Pusse"
+msgstr "Polsk"
 
 #: base/settings.py:294
 msgid "Portuguese (Brazil)"
@@ -421,7 +421,7 @@ msgstr "Oppdater alle dokumenter (FARE!)"
 
 #: style/models.py:74
 msgid "Default"
-msgstr "Misligholde"
+msgstr "Standard"
 
 #: style/views.py:27
 msgid "The template needs at least 1 document style"

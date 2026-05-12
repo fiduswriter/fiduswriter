@@ -215,7 +215,7 @@ msgstr "Fra listen"
 #: base/static/js/modules/copyright_dialog/templates.js:36
 #: bibliography/static/js/modules/bibliography/form/fields/key.js:31
 msgid "Custom"
-msgstr "Skikk"
+msgstr "Egendefinert"
 
 #: base/static/js/modules/copyright_dialog/templates.js:44
 msgid "License start date (optional)"
@@ -397,15 +397,15 @@ msgstr "Små capser"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:71
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:66
-#: bibliography/static/js/modules/bibliography/form/fields/title.js:66
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:70
 msgid "Subscript₊"
-msgstr "Abonner₊"
+msgstr "Senket skrift₊"
 
 #: bibliography/static/js/modules/bibliography/form/fields/literal.js:75
 #: bibliography/static/js/modules/bibliography/form/fields/literal_long.js:70
-#: bibliography/static/js/modules/bibliography/form/fields/title.js:70
+#: bibliography/static/js/modules/bibliography/form/fields/title.js:74
 msgid "Supscript²"
-msgstr "Supscript²"
+msgstr "Hevet skrift²"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:40
 msgid "Person"
@@ -459,7 +459,7 @@ msgstr "Til"
 
 #: bibliography/static/js/modules/bibliography/form/fields/title.js:74
 msgid "CasE ProTecT"
-msgstr "Case ProTecT"
+msgstr "Bevar store/små bokstaver"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:62
 msgid "Edit Source"
@@ -566,7 +566,7 @@ msgstr ""
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:68
 msgid "Bibliography Manager"
-msgstr "Bibliografisjef"
+msgstr "Bibliografihåndtering"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
 #: document/static/js/modules/editor/dialogs/citation.js:241
@@ -756,7 +756,7 @@ msgstr "Dokumentstil"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:90
 msgid "Slug"
-msgstr "Snegl"
+msgstr "URL-nøkkel"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:96
 msgid "CSS Style"
@@ -781,11 +781,11 @@ msgstr "Alle feltene må fylles ut."
 #: document/static/js/modules/document_template/document_style_dialog.js:207
 msgid "A slug can only contain letters, numbers, hyphens and underscores."
 msgstr ""
-"En snegle kan bare inneholde bokstaver, tall, bindestreker og understreker."
+"En URL-nøkkel kan bare inneholde bokstaver, tall, bindestreker og understreker."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:216
 msgid "The slug has to be unique."
-msgstr "Sneglen må være unik."
+msgstr "URL-nøkkelen må være unik."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:292
 msgid "A file with the same name exists already."
@@ -1306,7 +1306,7 @@ msgstr "Tilleggsmateriell"
 
 #: document/static/js/modules/document_template/templates.js:378
 msgid "Separator"
-msgstr "Separator"
+msgstr "Skilletegn"
 
 #: document/static/js/modules/document_template/templates.js:395
 msgid "Tags"
@@ -1518,7 +1518,7 @@ msgstr "Opprett delingslenke"
 #: document/static/js/modules/documents/access_rights/index.js:371
 #: document/static/js/modules/documents/overview/index.js:924
 msgid "Create"
-msgstr "Skape"
+msgstr "Opprett"
 
 #: document/static/js/modules/documents/access_rights/index.js:421
 msgid "Share link created."
@@ -2532,7 +2532,7 @@ msgstr "Kopier innhold"
 #: document/static/js/modules/editor/state_plugins/links.js:364
 #: document/static/js/modules/editor/state_plugins/links.js:387
 msgid "Edit"
-msgstr "Redigere"
+msgstr "Rediger"
 
 #: document/static/js/modules/editor/comments/editors/comment.js:97
 msgid "High priority"
@@ -2616,7 +2616,7 @@ msgstr "Valgfri tittel"
 #: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:22
 #: document/static/js/modules/editor/state_plugins/tag_input/tag_editor_plugins.js:20
 msgid "Add"
-msgstr "Legge til"
+msgstr "Legg til"
 
 #: document/static/js/modules/editor/dialogs/contributor.js:53
 msgid "Email is in incorrect format!"
@@ -2747,9 +2747,10 @@ msgid "Alignment"
 msgstr "Justering"
 
 #: document/static/js/modules/editor/dialogs/templates.js:137
+#: document/static/js/modules/editor/dialogs/templates.js:137
 #: document/static/js/modules/editor/dialogs/templates.js:255
 msgid "Left"
-msgstr "Igjen"
+msgstr "Venstre"
 
 #: document/static/js/modules/editor/dialogs/templates.js:138
 #: document/static/js/modules/editor/dialogs/templates.js:256

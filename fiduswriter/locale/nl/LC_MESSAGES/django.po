@@ -226,7 +226,7 @@ msgid ""
 "<p>Hey %(collaborator_name)s,<br>%(owner)s has changed your access rights to"
 " %(rights)s on the document '%(document_title)s'.</p>"
 msgstr ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s heeft je toegangsrechten "
+"<p>Hallo %(collaborator_name)s,<br>%(owner)s heeft uw toegangsrechten "
 "gewijzigd naar %(rights)s voor het document '%(document_title)s'.</p>"
 
 #: document/emails.py:43
@@ -246,8 +246,8 @@ msgid ""
 "<p>Hey %(collaborator_name)s,<br>%(owner)s has shared the document "
 "'%(document_title)s' with you and given you %(rights)s access rights.</p>"
 msgstr ""
-"<p>Hey %(collaborator_name)s,<br>%(owner)s heeft het document "
-"'%(document_title)s' met je gedeeld en je %(rights)s toegangsrechten "
+"<p>Hallo %(collaborator_name)s,<br>%(owner)s heeft het document "
+"'%(document_title)s' met u gedeeld en u %(rights)s toegangsrechten "
 "gegeven.</p>"
 
 #: document/emails.py:89
@@ -286,7 +286,7 @@ msgid ""
 "Go to the document here: %(link)s"
 msgstr ""
 "Hallo %(collaborator_name)s,\n"
-"%(commentator)s heeft je genoemd in een opmerking in het document '%(document)s':\n"
+"%(commentator)s heeft u genoemd in een opmerking in het document '%(document)s':\n"
 "\n"
 "%(comment_text)s\n"
 "\n"
@@ -298,7 +298,7 @@ msgid ""
 "Hey %(collaborator_name)s,<br>%(commentator)s has mentioned you in a comment"
 " in the document '%(document_title)s'."
 msgstr ""
-"Hallo %(collaborator_name)s,<br>%(commentator)s heeft je genoemd in een "
+"Hallo %(collaborator_name)s,<br>%(commentator)s heeft u genoemd in een "
 "opmerking in het document '%(document_title)s'."
 
 #: document/emails.py:143
@@ -329,7 +329,7 @@ msgid ""
 "Hey %(collaborator_name)s,<br>%(commentator)s has assigned you to a comment "
 "in the document '%(document_title)s'."
 msgstr ""
-"Hallo %(collaborator_name)s,<br>%(commentator)s heeft je toegewezen aan een "
+"Hallo %(collaborator_name)s,<br>%(commentator)s heeft u toegewezen aan een "
 "opmerking in het document '%(document_title)s'."
 
 #: document/emails.py:166
@@ -344,8 +344,8 @@ msgid ""
 "comment in the document '%(document)s':</p>%(comment_html)s<p>Go to the "
 "document <a href=\"%(link)s\">here</a>.</p>"
 msgstr ""
-"<p>Hey %(collaborator_name)s,<br>%(commentator)s heeft je toegewezen aan een"
-" opmerking in het document '%(document)s':</p>%(comment_html)s<p>Ga <a "
+"<p>Hallo %(collaborator_name)s,<br>%(commentator)s heeft u toegewezen aan een "
+"opmerking in het document '%(document)s':</p>%(comment_html)s<p>Ga <a "
 "href=\"%(link)s\">hier</a> naar het document.</p>"
 
 #: document/emails.py:211
@@ -369,7 +369,7 @@ msgid ""
 "<p>Hey %(owner_name)s,<br>%(requester_name)s has requested %(rights)s access"
 " to the document '%(document_title)s'.</p>"
 msgstr ""
-"<p>Hey %(owner_name)s,<br>%(requester_name)s heeft %(rights)s toegang "
+"<p>Hallo %(owner_name)s,<br>%(requester_name)s heeft %(rights)s toegang "
 "gevraagd tot het document '%(document_title)s'.</p>"
 
 #: document/emails.py:284
@@ -438,7 +438,7 @@ msgid ""
 "Hey %(email)s,%(sender)s has invited you to connect on Fidus Writer. \n"
 "Accept or reject the invite through this link: %(link)s"
 msgstr ""
-"Hallo %(email)s,%(sender)s heeft je uitgenodigd om verbinding te maken met Fidus Writer. \n"
+"Hallo %(email)s,%(sender)s heeft u uitgenodigd om verbinding te maken met Fidus Writer. \n"
 "Accepteer of wijs de uitnodiging af via deze link: %(link)s"
 
 #: user/emails.py:19
@@ -447,12 +447,12 @@ msgid ""
 "<p>Hey %(email)s,<br> %(sender)s has invited you to connect on Fidus "
 "Writer.</p>"
 msgstr ""
-"<p>Hey %(email)s,<br> %(sender)s heeft je uitgenodigd om verbinding te maken"
-" met Fidus Writer.</p>"
+"<p>Hallo %(email)s,<br> %(sender)s heeft u uitgenodigd om verbinding te maken "
+"met Fidus Writer.</p>"
 
 #: user/emails.py:34
 msgid "Invite for Fidus Writer"
-msgstr "Uitnodiging voor Fidus Schrijver"
+msgstr "Uitnodiging voor Fidus Writer"
 
 #: user/emails.py:37
 msgid "Sign up/log in and accept/reject the invite"
@@ -460,7 +460,7 @@ msgstr "Meld u aan/log in en accepteer/weiger de uitnodiging"
 
 #: user/emails.py:40
 msgid "Fidus Writer contact invite"
-msgstr "Fidus Schrijver contactuitnodiging"
+msgstr "Fidus Writer contactuitnodiging"
 
 #: user/emails.py:53
 #, python-format
@@ -468,7 +468,7 @@ msgid ""
 "Hey %(recipient_name)s, %(sender_name)s has declined your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Hallo %(recipient_name)s, %(sender_name)s heeft je uitnodiging om verbinding te maken met Fidus Writer afgewezen. \n"
+"Hallo %(recipient_name)s, %(sender_name)s heeft uw uitnodiging om verbinding te maken met Fidus Writer afgewezen. \n"
 "Bekijk hier uw lijst met contacten: %(link)s"
 
 #: user/emails.py:62
@@ -477,12 +477,12 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has declined your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
-"<p>Hey %(recipient_name)s,<br> %(sender_name)s heeft je uitnodiging om "
+"<p>Hallo %(recipient_name)s,<br> %(sender_name)s heeft uw uitnodiging om "
 "verbinding te maken met Fidus Writer afgewezen.</p>"
 
 #: user/emails.py:76
 msgid "Invite for Fidus Writer declined"
-msgstr "Uitnodiging voor Fidus Schrijver afgewezen"
+msgstr "Uitnodiging voor Fidus Writer afgewezen"
 
 #: user/emails.py:79 user/emails.py:121
 msgid "See your list of contacts"
@@ -490,7 +490,7 @@ msgstr "Bekijk uw lijst met contacten"
 
 #: user/emails.py:82
 msgid "Fidus Writer invite declined"
-msgstr "De uitnodiging voor Fidus Schrijver is afgewezen"
+msgstr "De uitnodiging voor Fidus Writer is afgewezen"
 
 #: user/emails.py:95
 #, python-format
@@ -498,7 +498,7 @@ msgid ""
 "Hey %(recipient_name)s, %(sender_name)s has accepted your invite to connect on Fidus Writer. \n"
 "See your list of contacts here: %(link)s"
 msgstr ""
-"Hallo %(recipient_name)s, %(sender_name)s heeft je uitnodiging geaccepteerd om verbinding te maken met Fidus Writer. \n"
+"Hallo %(recipient_name)s, %(sender_name)s heeft uw uitnodiging geaccepteerd om verbinding te maken met Fidus Writer. \n"
 "Bekijk hier uw lijst met contacten: %(link)s"
 
 #: user/emails.py:104
@@ -507,16 +507,16 @@ msgid ""
 "<p>Hey %(recipient_name)s,<br> %(sender_name)s has accepted your invite to "
 "connect on Fidus Writer.</p>"
 msgstr ""
-"<p>Hey %(recipient_name)s,<br> %(sender_name)s heeft je uitnodiging "
+"<p>Hallo %(recipient_name)s,<br> %(sender_name)s heeft uw uitnodiging "
 "geaccepteerd om verbinding te maken met Fidus Writer.</p>"
 
 #: user/emails.py:118
 msgid "Invite for Fidus Writer accepted"
-msgstr "Uitnodiging voor Fidus Schrijver geaccepteerd"
+msgstr "Uitnodiging voor Fidus Writer geaccepteerd"
 
 #: user/emails.py:124
 msgid "Fidus Writer invite accepted"
-msgstr "Fidus Schrijveruitnodiging geaccepteerd"
+msgstr "Fidus Writeruitnodiging geaccepteerd"
 
 #: user/forms.py:20
 msgid "Code must be exactly 6 digits (0-9)."

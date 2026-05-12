@@ -302,6 +302,19 @@ function createInlineReferenceWidget(editor, pluginState, key) {
 
     input.addEventListener("input", event => {
         event.stopPropagation()
+        const text = input.textContent || ""
+        if (!text) {
+            // Everything including `@` was deleted — remove the node.
+            view.dispatch(view.state.tr.setMeta(key, {action: "cancelDelete"}))
+            view.focus()
+            return
+        }
+        if (!text.startsWith("@")) {
+            // `@` was removed but content remains — restore it.
+            const cursorPos = getInputCursorPos(input)
+            input.textContent = "@" + text
+            setInputCursorPos(input, cursorPos + 1)
+        }
         view.dispatch(
             view.state.tr.setMeta(key, {
                 action: "updateQuery",
@@ -491,11 +504,23 @@ function createInlineReferenceWidget(editor, pluginState, key) {
                 setInputCursorPos(input, (input.textContent || "").length)
                 break
             case "Backspace":
+                // When only `@` remains, delete the whole node.
                 if ((input.textContent || "").length <= 1) {
                     event.preventDefault()
                     view.dispatch(
-                        view.state.tr.setMeta(key, {action: "cancel"})
+                        view.state.tr.setMeta(key, {action: "cancelDelete"})
                     )
+                    view.focus()
+                }
+                break
+            case "Delete":
+                // Same as Backspace when only `@` is left.
+                if ((input.textContent || "").length <= 1) {
+                    event.preventDefault()
+                    view.dispatch(
+                        view.state.tr.setMeta(key, {action: "cancelDelete"})
+                    )
+                    view.focus()
                 }
                 break
             case "Tab":
@@ -798,6 +823,30 @@ export const inlineReferencePlugin = options => {
                         oldPluginState.from + oldPluginState.query.length
                     tr.setSelection(TextSelection.create(tr.doc, newPos))
                     return tr.setMeta(key, {action: "deactivate"})
+                }
+            }
+
+            if (meta?.action === "cancelDelete") {
+                if (oldPluginState.isEdit) {
+                    // Delete the reference node entirely.
+                    const existingNode = newState.doc.nodeAt(
+                        oldPluginState.referenceNodePos
+                    )
+                    const tr = newState.tr.delete(
+                        oldPluginState.referenceNodePos,
+                        oldPluginState.referenceNodePos +
+                            (existingNode?.nodeSize || 1)
+                    )
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            oldPluginState.referenceNodePos
+                        )
+                    )
+                    return tr.setMeta(key, {action: "deactivate"})
+                } else {
+                    // New node: just deactivate — don't insert anything.
+                    return newState.tr.setMeta(key, {action: "deactivate"})
                 }
             }
 

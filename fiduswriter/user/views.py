@@ -917,7 +917,11 @@ def update_preferences(request):
     preferences = user.preferences or {}
 
     # Update allowed preference keys
-    allowed_keys = {"has_dismissed_passphrase_offer", "inline_references"}
+    allowed_keys = {
+        "has_dismissed_passphrase_offer",
+        "inline_references",
+        "inline_math",
+    }
     for key in allowed_keys:
         if key in request.JSON:
             preferences[key] = request.JSON[key]

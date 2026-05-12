@@ -75,6 +75,7 @@ import {
     figurePlugin,
     footnoteMarkersPlugin,
     headerbarPlugin,
+    inlineMathPlugin,
     inlineReferencePlugin,
     jumpHiddenNodesPlugin,
     linksPlugin,
@@ -169,6 +170,7 @@ export class Editor {
         this.pathEditable = true // Set to false through plugin to disable path editing.
 
         this.statePlugins = [
+            [inlineMathPlugin, () => ({editor: this})],
             [inlineReferencePlugin, () => ({editor: this})],
             [linksPlugin, () => ({editor: this})],
             [keymap, () => buildEditorKeymap(this.schema)],

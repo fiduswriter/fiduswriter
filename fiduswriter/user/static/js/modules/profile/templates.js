@@ -222,6 +222,10 @@ export const profileContents = (user, socialaccount_providers, settings = {}) =>
                     <input type="checkbox" id="inline-references" ${user.preferences?.inline_references ? "checked" : ""} />
                     ${gettext("Enable inline reference typing (@)")}
                 </label>
+                <label class="checkable-label">
+                    <input type="checkbox" id="inline-math" ${user.preferences?.inline_math ? "checked" : ""} />
+                    ${gettext("Enable inline math typing ($)")}
+                </label>
             </div>
             ${
                 socialaccount_providers.length

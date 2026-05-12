@@ -70,3 +70,4 @@ export {
     getInlineReferenceState,
     setInlineReferenceState
 } from "./inline_reference"
+export {inlineMathPlugin} from "./inline_math"

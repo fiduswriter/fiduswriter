@@ -297,6 +297,7 @@ export class Profile {
         const newLang = this.dom.querySelector("#language").value
         const inlineReferences =
             this.dom.querySelector("#inline-references").checked
+        const inlineMath = this.dom.querySelector("#inline-math").checked
         return post("/api/user/save/", {
             form_data: {
                 user: {
@@ -312,7 +313,8 @@ export class Profile {
             )
             .then(() =>
                 post("/api/user/preferences/update/", {
-                    inline_references: inlineReferences
+                    inline_references: inlineReferences,
+                    inline_math: inlineMath
                 })
             )
             .catch(() =>

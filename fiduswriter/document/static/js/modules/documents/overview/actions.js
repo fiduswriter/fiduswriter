@@ -19,6 +19,24 @@ import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {importDocumentTemplate} from "./templates"
 
+// Returns the user-facing title for a document. For E2EE documents,
+// `doc.title` holds the encrypted ciphertext; the decrypted title (if any)
+// is cached in sessionStorage under `e2ee_title_<id>` by the overview after
+// successful decryption. Fall back to a localized placeholder when the title
+// is still encrypted.
+const getDisplayTitle = doc => {
+    if (doc.e2ee) {
+        const cached = sessionStorage.getItem(`e2ee_title_${doc.id}`)
+        if (cached !== null) {
+            return cached
+        }
+        if (doc.title) {
+            return gettext("Encrypted Document")
+        }
+    }
+    return doc.title
+}
+
 export class DocumentOverviewActions {
     constructor(documentOverview) {
         documentOverview.mod.actions = this
@@ -32,11 +50,12 @@ export class DocumentOverviewActions {
         if (!doc) {
             return Promise.resolve()
         }
+        const displayTitle = getDisplayTitle(doc)
         return postJson("/api/document/delete/", {id}).then(({json}) => {
             if (json.done) {
                 addAlert(
                     "success",
-                    `${gettext("Document has been deleted")}: '${escapeText(longFilePath(doc.title, doc.path))}'`
+                    `${gettext("Document has been deleted")}: '${escapeText(longFilePath(displayTitle, doc.path))}'`
                 )
                 this.documentOverview.documentList =
                     this.documentOverview.documentList.filter(
@@ -46,7 +65,7 @@ export class DocumentOverviewActions {
             } else {
                 addAlert(
                     "error",
-                    `${gettext("Could not delete document")}: '${escapeText(longFilePath(doc.title, doc.path))}'`
+                    `${gettext("Could not delete document")}: '${escapeText(longFilePath(displayTitle, doc.path))}'`
                 )
             }
         })
@@ -64,7 +83,7 @@ export class DocumentOverviewActions {
             const doc = this.documentOverview.documentList.find(
                 doc => doc.id === id
             )
-            return escapeText(longFilePath(doc.title, doc.path))
+            return escapeText(longFilePath(getDisplayTitle(doc), doc.path))
         })
         const confirmDeletionDialog = new Dialog({
             title: gettext("Confirm deletion"),

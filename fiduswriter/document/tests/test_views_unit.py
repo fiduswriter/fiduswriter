@@ -210,6 +210,33 @@ class DeleteDocViewTest(TestCase):
         # Whether the view raises or returns an error, the doc must still exist
         self.assertTrue(Document.objects.filter(id=doc.id).exists())
 
+    def test_delete_e2ee_document_with_encryption_key(self):
+        """Regression: an E2EE document with at least one
+        DocumentEncryptionKey row must still be deletable."""
+        doc = Document.objects.create(
+            owner=self.owner,
+            template=self.template,
+            e2ee=True,
+            e2ee_salt=b"dummy-salt",
+            e2ee_iterations=100000,
+        )
+        DocumentEncryptionKey.objects.create(
+            document=doc,
+            holder=self.owner,
+            encrypted_key="dummy-ciphertext",
+            encrypted_with_master_key=True,
+        )
+        response = json_post(
+            self.client, "/api/document/delete/", {"id": doc.id}
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data["done"])
+        self.assertFalse(Document.objects.filter(id=doc.id).exists())
+        self.assertFalse(
+            DocumentEncryptionKey.objects.filter(document_id=doc.id).exists()
+        )
+
 
 class ShareTokenViewTest(TestCase):
     def setUp(self):

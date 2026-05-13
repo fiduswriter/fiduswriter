@@ -154,6 +154,9 @@ class Document(models.Model):
                 "accessrightinvite",
                 "documentrevision",
                 "documentimage",
+                "encryption_keys",
+                "sharetoken",
+                "encrypted_images",
             ]
         ]
 

@@ -45,12 +45,21 @@ export class FileSelector {
     }
 
     readDirStructure() {
-        // Read directory structure from existing file paths
+        // Read directory structure from existing file paths.
+        // A file's title is used as the final path segment when the file has
+        // no explicit folder path. We strip any "/" from that segment because
+        // some titles (e.g. E2EE ciphertext encoded in standard base64) contain
+        // "/" characters which would otherwise be mis-interpreted as path
+        // separators, nesting the file inside phantom collapsed folders.
         this.files.forEach(file => {
             let treeWalker = this.root.children
             let path = file.path
             if (!path.length || path.endsWith("/")) {
-                path += file.title || gettext("Untitled")
+                const safeName = (file.title || gettext("Untitled")).replace(
+                    /\//g,
+                    "\u2215" // U+2215 DIVISION SLASH — visually identical, not a path separator
+                )
+                path += safeName
             }
             const pathParts = path.split("/")
             pathParts.forEach((pathPart, pathIndex) => {

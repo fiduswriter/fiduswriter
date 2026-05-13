@@ -13,11 +13,9 @@ import {
 } from "biblatex-csl-converter"
 
 export class BibliographyImportWorker {
-    constructor(fileContents, sendMessage, csrfToken, domain, format = null) {
+    constructor(fileContents, sendMessage, format = null) {
         this.fileContents = fileContents
         this.sendMessage = sendMessage
-        this.csrfToken = csrfToken
-        this.domain = domain
         this.format = format
     }
 

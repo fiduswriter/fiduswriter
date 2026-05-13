@@ -56,7 +56,7 @@ def get_documentlist_extra(request):
             Q(owner=request.user) | Q(accessright__user=request.user)
         )
         .filter(id__in=ids)
-        .prefetch_related("documentimage_set")
+        .prefetch_related("documentimage_set", "encrypted_images")
     )
     response["documents"] = []
     for doc in docs:
@@ -75,6 +75,17 @@ def get_documentlist_extra(request):
             }
             if image.image.thumbnail:
                 images[image.image.id]["thumbnail"] = image.image.thumbnail.url
+        if doc.e2ee:
+            for eimage in doc.encrypted_images.all():
+                images[eimage.id] = {
+                    "id": eimage.id,
+                    "image": eimage.image.url if eimage.image else "",
+                    "title": eimage.title,
+                    "copyright": eimage.copyright,
+                    "file_type": "application/octet-stream",
+                    "checksum": eimage.checksum,
+                    "cats": [],
+                }
         # Initialize document content from template if empty.
         # We only do this when content is a dict — once an
         # e2ee_snapshot is saved, the content becomes a Base64

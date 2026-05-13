@@ -230,7 +230,7 @@ export class ExportTemplateDialog {
             template_id: this.documentTemplateId,
             added_file_type: this.addedFileType
         }
-        return postJson("/api/style/save_export_template/", jsonData, false, {
+        return postJson("/api/style/save_export_template/", jsonData, {
             added_file: this.addedFile
         })
     }

@@ -61,19 +61,11 @@ export const get = (url, params = {}, csrfToken = false) => {
 export const getJson = (url, params = {}, csrfToken = false) =>
     get(url, params, csrfToken).then(response => response.json())
 
-export const postBare = (
-    url,
-    object = {},
-    csrfToken = false,
-    files = {},
-    keepalive = false
-) => {
+export const postBare = (url, object = {}, files = {}, options = {}) => {
     const settings = getSettings()
 
-    // post json object rather than form data.
-    if (!csrfToken) {
-        csrfToken = settings.getCsrfToken() // Won't work in web worker.
-    }
+    const {csrfToken: csrfTokenOpt, keepalive = false} = options
+    const csrfToken = csrfTokenOpt || settings.getCsrfToken() // Won't work in web worker.
 
     const fetchOptions = {
         method: "POST",
@@ -109,28 +101,16 @@ export const postBare = (
     return fetch(settings.apiUrl(url), fetchOptions)
 }
 
-export const post = (
-    url,
-    object = {},
-    csrfToken = false,
-    files = {},
-    keepalive = false
-) => {
+export const post = (url, object = {}, files = {}, options = {}) => {
     const settings = getSettings()
-    return postBare(url, object, csrfToken, files, keepalive)
+    return postBare(url, object, files, options)
         .then(settings.postResponseHook)
         .then(handleFetchErrors)
 }
 
 // post json object and return json and status
-export const postJson = (
-    url,
-    object = {},
-    csrfToken = false,
-    files = {},
-    keepalive = false
-) =>
-    post(url, object, csrfToken, files, keepalive).then(response =>
+export const postJson = (url, object = {}, files = {}, options = {}) =>
+    post(url, object, files, options).then(response =>
         response.json().then(json => ({json, status: response.status}))
     )
 

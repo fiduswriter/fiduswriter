@@ -229,7 +229,6 @@ export class DocumentStyleDialog {
                 template_id: this.documentTemplateId,
                 deleted_files: this.deletedFiles
             },
-            false,
             {
                 added_files: this.addedFiles
             }

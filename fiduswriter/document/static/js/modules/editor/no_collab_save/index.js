@@ -120,9 +120,8 @@ export class NoCollabSave {
             const {json, status} = await postJson(
                 "/api/document/save/",
                 payload,
-                null,
                 {},
-                keepalive
+                {keepalive}
             )
             if (status === 409) {
                 if (!keepalive) {

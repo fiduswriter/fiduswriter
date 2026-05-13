@@ -29,12 +29,7 @@ export class ImageDB {
         activateWait()
         const {image, ...jsonData} = imageData
 
-        return postJson(
-            "/api/usermedia/save/",
-            jsonData,
-            false,
-            image ? {image} : {}
-        )
+        return postJson("/api/usermedia/save/", jsonData, image ? {image} : {})
             .then(({json}) => {
                 deactivateWait()
                 if (Object.keys(json.errormsg).length) {

@@ -137,7 +137,7 @@ export class NativeImporter {
                             filename: imageEntry.image.split("/").pop()
                         }
                     }
-                    return postJson(endpoint, jsonData, false, files)
+                    return postJson(endpoint, jsonData, files)
                 })
                 .then(
                     ({json}) => (ImageTranslationTable[imageEntry.id] = json.id)
@@ -214,7 +214,7 @@ export class NativeImporter {
 
         // We create the document on the server so that we have an ID for it and
         // can link the images to it.
-        return postJson("/api/document/import/create/", jsonData, false, files)
+        return postJson("/api/document/import/create/", jsonData, files)
             .then(({json}) => {
                 this.docId = json.id
                 this.path = json.path

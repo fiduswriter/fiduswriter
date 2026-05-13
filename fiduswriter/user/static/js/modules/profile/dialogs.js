@@ -31,12 +31,16 @@ export const changeAvatarDialog = app => {
 
                 const file = avatarUploader.files[0]
 
-                post("/api/user/avatar/upload/", {}, null, {
-                    avatar: {
-                        file,
-                        filename: file.name
+                post(
+                    "/api/user/avatar/upload/",
+                    {},
+                    {
+                        avatar: {
+                            file,
+                            filename: file.name
+                        }
                     }
-                })
+                )
                     .then(() => deactivateWait())
                     .then(() => app.getConfiguration())
                     .then(() => app.selectPage())

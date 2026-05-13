@@ -10,7 +10,7 @@ has not changed is not repeated here.
 
 | Area | What changed |
 |---|---|
-| **Frontend network functions** | `postBare` / `post` / `postJson` now send `application/json` by default; files are a separate fourth argument |
+| **Frontend network functions** | `postBare` / `post` / `postJson` parameter order changed to `url, object, files, options` where `options` is a dict containing `csrfToken` and `keepalive` |
 | **Backend request data** | `request.POST` is replaced by `request.JSON` (populated by new middleware) |
 | **Frontend settings** | Compile-time `DefinePlugin` globals removed; use `getSettings()` instead |
 | **FontAwesome** | Upgraded to `@fortawesome/fontawesome-free` v7 |
@@ -47,17 +47,19 @@ postJson(url, params = {}, csrfToken = false)
 **New (4.1.0)**
 
 ```/dev/null/new-network.js#L1-3
-postBare(url, object = {}, csrfToken = false, files = {}, keepalive = false)
-post(url, object = {}, csrfToken = false, files = {}, keepalive = false)
-postJson(url, object = {}, csrfToken = false, files = {}, keepalive = false)
+postBare(url, object = {}, files = {}, options = {})
+post(url, object = {}, files = {}, options = {})
+postJson(url, object = {}, files = {}, options = {})
 ```
 
 - Sends `application/json` by default; the entire `object` is serialised as
   the request body, so native types (numbers, booleans, arrays, nested
   objects) arrive on the backend without any manual coercion.
-- Files are passed as a **separate** fourth argument `files`, whose value is
+- `files` is passed as the **third** argument, whose value is
   a plain object mapping field names to `File`, `{file, filename}`, or an
   array of `File` values.
+- `options` is passed as the **fourth** argument, an object that can contain
+  `csrfToken` (string) and `keepalive` (boolean).
 - When `files` is non-empty the request switches to `multipart/form-data`
   automatically and the JSON `object` is embedded as a field named `json`;
   the `JsonToPostMiddleware` middleware extracts it so views can still read
@@ -89,7 +91,7 @@ postBare("/api/my-plugin/upload/", {
 })
 
 // 4.1.0 — file goes in the separate files argument
-postBare("/api/my-plugin/upload/", {id: itemId}, false, {
+postBare("/api/my-plugin/upload/", {id: itemId}, {
     file: {file: someFile, filename: "attachment.pdf"}
 })
 ```
@@ -120,10 +122,22 @@ postBare("/api/my-plugin/save/", {
 // 4.0.x — no standard way; workarounds varied per plugin
 
 // 4.1.0 — pass an array under a single key
-postBare("/api/my-plugin/bulk-upload/", {folderId: 3}, false, {
+postBare("/api/my-plugin/bulk-upload/", {folderId: 3}, {
     images: [file1, file2, file3]
 })
 // Each file is appended as images[] in the resulting FormData.
+```
+
+#### Using options (csrfToken, keepalive)
+
+```/dev/null/migrate-options.js#L1-10
+// 4.1.0 — pass options as the fourth argument
+postJson("/api/my-plugin/save/", {id: 1}, {}, {
+    csrfToken: "manually-provided-token",
+    keepalive: true
+})
+// - csrfToken: Override the automatically detected CSRF token
+// - keepalive: Keep the request alive even when page is unloading
 ```
 
 ---

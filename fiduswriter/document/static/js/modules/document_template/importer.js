@@ -148,7 +148,6 @@ export class DocumentTemplateImporter {
                     export_templates: exportTemplates,
                     document_styles: documentStyles
                 },
-                false,
                 {
                     files: this.otherFiles.map(
                         ({filename, content}) => new File([content], filename)

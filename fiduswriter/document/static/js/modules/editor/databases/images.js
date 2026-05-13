@@ -72,7 +72,7 @@ export class ModImageDB {
             }
         }
 
-        return postJson("/api/document/e2ee_image/", jsonData, false, files)
+        return postJson("/api/document/e2ee_image/", jsonData, files)
             .then(({json}) => {
                 const dbEntry = {
                     id: json.id,

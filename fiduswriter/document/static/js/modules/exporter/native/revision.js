@@ -58,7 +58,6 @@ export class SaveRevision {
                 note: this.note,
                 document_id: this.doc.id
             },
-            false,
             {
                 file: {
                     file: blob,

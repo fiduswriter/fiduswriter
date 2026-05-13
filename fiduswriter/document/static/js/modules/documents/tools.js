@@ -45,6 +45,11 @@ export const getMissingDocumentListData = (
                         }
                         doc.content = extraValues.content
                         doc.settings = {}
+                        // Store salt and iterations so downstream consumers
+                        // (e.g. the books exporter) can decrypt the content.
+                        doc.e2ee_salt = extraValues.e2ee_salt || null
+                        doc.e2ee_iterations =
+                            extraValues.e2ee_iterations || 600000
                     } else {
                         if (rawContent) {
                             doc.rawContent = JSON.parse(

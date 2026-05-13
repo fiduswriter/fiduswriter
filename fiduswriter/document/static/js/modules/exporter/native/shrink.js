@@ -3,10 +3,20 @@ import {docSchema} from "../../schema/document"
 import {toMiniJSON} from "../../schema/mini_json"
 // Generate a copy of the fidus doc, imageDB and bibDB with all clutter removed.
 export class ShrinkFidus {
-    constructor(doc, imageDB, bibDB) {
+    /**
+     * @param {Object}  doc      - Full document object.
+     * @param {Object}  imageDB  - Image database, e.g. {db: {...}}.
+     * @param {Object}  bibDB    - Bibliography database, e.g. {db: {...}}.
+     * @param {boolean} [silent=false] - When true, suppresses the
+     *   "File export has been initiated" info alert.  Pass true when
+     *   shrinking multiple documents in a loop (e.g. one per book chapter)
+     *   and the caller already shows its own progress notification.
+     */
+    constructor(doc, imageDB, bibDB, silent = false) {
         this.doc = doc
         this.imageDB = imageDB
         this.bibDB = bibDB
+        this.silent = silent
         this.imageList = []
         this.citeList = []
     }
@@ -15,7 +25,9 @@ export class ShrinkFidus {
         const shrunkImageDB = {},
             httpIncludes = []
 
-        addAlert("info", gettext("File export has been initiated."))
+        if (!this.silent) {
+            addAlert("info", gettext("File export has been initiated."))
+        }
 
         this.walkTree(this.doc.content)
 

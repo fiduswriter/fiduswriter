@@ -1,0 +1,33 @@
+{
+  "1001": {
+    "user": 1,
+    "username": "Jane Doe",
+    "date": 1700000000000,
+    "comment": [
+      {
+        "type": "paragraph",
+        "content": [
+          { "type": "text", "text": "This is a test comment." }
+        ]
+      }
+    ],
+    "answers": [
+      {
+        "id": "2001",
+        "user": 2,
+        "username": "John Smith",
+        "date": 1700001000000,
+        "answer": [
+          {
+            "type": "paragraph",
+            "content": [
+              { "type": "text", "text": "This is a reply to the comment." }
+            ]
+          }
+        ]
+      }
+    ],
+    "resolved": false,
+    "isMajor": false
+  }
+}

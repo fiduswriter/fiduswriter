@@ -8,6 +8,8 @@ import {
     postJson
 } from "../../common"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
+import {enterPassphraseDialog} from "../../editor/e2ee/passphrase-dialog"
+import {PassphraseManager} from "../../editor/e2ee/passphrase-manager"
 import {
     createPasswordDialog,
     enterPasswordDialog
@@ -126,7 +128,7 @@ export class DocumentOverviewActions {
         confirmDeletionDialog.open()
     }
 
-    importDocument() {
+    async importDocument() {
         const documentTemplates = this.documentOverview.documentTemplates || {}
         const importIds = Object.keys(documentTemplates)
         let importId = importIds[0] // Default to first template
@@ -148,14 +150,31 @@ export class DocumentOverviewActions {
                 : ""
 
         const e2eeMode = this.documentOverview.app.settings.E2EE_MODE
+        const hasPassphrase = this.documentOverview.hasPassphraseSetUp ?? false
+
+        // Safeguard: in "required" mode without a passphrase the button should
+        // not be visible, but guard here as well in case it is somehow reached.
+        if (e2eeMode === "required" && !hasPassphrase) {
+            addAlert(
+                "warning",
+                gettext(
+                    "You need to set up a personal passphrase before you can import documents."
+                )
+            )
+            return
+        }
+
         let e2eeHtml = ""
         let forceE2EE = false
         if (e2eeMode === "required") {
+            // hasPassphrase is guaranteed true here (checked above)
             forceE2EE = true
             e2eeHtml = `<div class="e2ee-import-note" style="margin-top: 10px;">
                 <em>${gettext("This document will be saved as encrypted.")}</em>
             </div>`
-        } else if (e2eeMode === "enabled") {
+        } else if (e2eeMode === "enabled" && hasPassphrase) {
+            // Only offer the E2EE radio buttons when the user has a passphrase.
+            // Without a passphrase, documents are always imported unencrypted.
             e2eeHtml = `<div class="e2ee-import-choice" style="margin-top: 10px;">
                 <div>
                     <input type="radio" id="import-nonencrypted" name="import-encryption" value="nonencrypted" checked>
@@ -191,7 +210,7 @@ export class DocumentOverviewActions {
                 {
                     text: gettext("Import"),
                     classes: "fw-dark",
-                    click: () => {
+                    click: async () => {
                         let file = document.getElementById("doc-uploader").files
                         if (0 === file.length) {
                             return false
@@ -202,9 +221,9 @@ export class DocumentOverviewActions {
                             return false
                         }
 
-                        // Determine E2EE selection
+                        // Determine whether to encrypt
                         let targetE2EE = forceE2EE
-                        if (e2eeMode === "enabled") {
+                        if (e2eeMode === "enabled" && hasPassphrase) {
                             targetE2EE =
                                 document.querySelector(
                                     'input[name="import-encryption"]:checked'
@@ -234,15 +253,16 @@ export class DocumentOverviewActions {
                                         addAlert("info", statusText)
                                     } else {
                                         addAlert("error", statusText)
-                                        return
+                                        return null
                                     }
                                     this.documentOverview.documentList.push(doc)
                                     this.documentOverview.initTable()
                                     importDialog.close()
+                                    return doc
                                 } catch (_error) {
                                     deactivateWait()
+                                    return null
                                 }
-                                return
                             }
 
                             // Handle ZIP files for external formats
@@ -279,12 +299,12 @@ export class DocumentOverviewActions {
                                     addAlert("info", statusText)
                                 } else {
                                     addAlert("error", statusText)
-                                    return
+                                    return null
                                 }
                                 this.documentOverview.documentList.push(doc)
                                 this.documentOverview.initTable()
                                 importDialog.close()
-                                return
+                                return doc
                             }
 
                             // Get file extension for external formats
@@ -331,35 +351,58 @@ export class DocumentOverviewActions {
                                 addAlert("info", statusText)
                             } else {
                                 addAlert("error", statusText)
-                                return
+                                return null
                             }
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.initTable()
                             importDialog.close()
+                            return doc
                         }
 
                         if (targetE2EE) {
                             activateWait()
-                            createPasswordDialog(async password => {
+
+                            // Auto-generate a document password using the
+                            // passphrase system.  No manual password prompt.
+                            const importWithAutoPassword = async () => {
+                                const password =
+                                    await PassphraseManager.generateDocumentPassword()
                                 const salt = window.crypto.getRandomValues(
                                     new Uint8Array(16)
                                 )
                                 const iterations = 600000
-                                try {
-                                    const key = await E2EEKeyManager.deriveKey(
+                                const key =
+                                    await PassphraseManager.resolvePasswordToKey(
                                         password,
                                         salt,
                                         iterations
                                     )
-                                    const e2eeOptions = {
-                                        enabled: true,
-                                        key,
-                                        salt: btoa(
-                                            String.fromCharCode(...salt)
-                                        ),
-                                        iterations
+                                const e2eeOptions = {
+                                    enabled: true,
+                                    key,
+                                    salt: btoa(String.fromCharCode(...salt)),
+                                    iterations
+                                }
+                                const doc = await doImport(e2eeOptions)
+                                if (doc?.id) {
+                                    try {
+                                        await PassphraseManager.saveDocumentPassword(
+                                            doc.id,
+                                            password
+                                        )
+                                    } catch (err) {
+                                        console.error(
+                                            "Failed to save document password for imported document:",
+                                            err
+                                        )
                                     }
-                                    await doImport(e2eeOptions)
+                                }
+                            }
+
+                            if (PassphraseManager.hasKeysInSession()) {
+                                // Passphrase already unlocked — proceed.
+                                try {
+                                    await importWithAutoPassword()
                                 } catch (error) {
                                     deactivateWait()
                                     addAlert(
@@ -370,7 +413,102 @@ export class DocumentOverviewActions {
                                     )
                                     console.error(error)
                                 }
-                            })
+                            } else {
+                                // Passphrase set up but not yet unlocked in
+                                // this session — prompt to unlock first.
+                                deactivateWait()
+                                let errorMessage = ""
+                                let done = false
+                                while (!done) {
+                                    const result = await new Promise(
+                                        resolve => {
+                                            enterPassphraseDialog(
+                                                pwd =>
+                                                    resolve({
+                                                        action: "unlock",
+                                                        passphrase: pwd
+                                                    }),
+                                                () =>
+                                                    resolve({
+                                                        action: "recover"
+                                                    }),
+                                                {errorMessage}
+                                            )
+                                        }
+                                    )
+                                    if (
+                                        result?.action === "unlock" &&
+                                        result.passphrase
+                                    ) {
+                                        activateWait()
+                                        try {
+                                            await PassphraseManager.unlockWithPassphrase(
+                                                result.passphrase
+                                            )
+                                            await importWithAutoPassword()
+                                            done = true
+                                        } catch (err) {
+                                            deactivateWait()
+                                            if (
+                                                err instanceof DOMException ||
+                                                err.name === "OperationError"
+                                            ) {
+                                                errorMessage = gettext(
+                                                    "Incorrect passphrase. Please try again."
+                                                )
+                                            } else {
+                                                addAlert(
+                                                    "error",
+                                                    gettext(
+                                                        "Could not create encrypted document."
+                                                    )
+                                                )
+                                                console.error(err)
+                                                done = true
+                                            }
+                                        }
+                                    } else if (result?.action === "recover") {
+                                        const {
+                                            recoverWithKeyDialog,
+                                            showRecoveryKeyDialog
+                                        } = await import(
+                                            "../../editor/e2ee/passphrase-dialog.js"
+                                        )
+                                        const recoverResult = await new Promise(
+                                            resolve => {
+                                                recoverWithKeyDialog(resolve)
+                                            }
+                                        )
+                                        if (recoverResult) {
+                                            activateWait()
+                                            try {
+                                                const {newRecoveryKey} =
+                                                    await PassphraseManager.recoverWithRecoveryKey(
+                                                        recoverResult.recoveryKey,
+                                                        recoverResult.newPassphrase
+                                                    )
+                                                await new Promise(resolve =>
+                                                    showRecoveryKeyDialog(
+                                                        newRecoveryKey,
+                                                        resolve
+                                                    )
+                                                )
+                                                await importWithAutoPassword()
+                                                done = true
+                                            } catch (_err) {
+                                                deactivateWait()
+                                                errorMessage = gettext(
+                                                    "Recovery failed. Please check your recovery key and try again."
+                                                )
+                                            }
+                                        }
+                                        // If recoverResult is null (cancelled),
+                                        // loop continues with passphrase dialog.
+                                    } else {
+                                        done = true // User cancelled
+                                    }
+                                }
+                            }
                         } else {
                             activateWait()
                             doImport(null)

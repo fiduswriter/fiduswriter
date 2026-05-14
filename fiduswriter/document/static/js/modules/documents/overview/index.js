@@ -43,6 +43,7 @@ export class DocumentOverview {
         this.mod = {}
         this.lastSort = {column: 0, dir: "asc"}
         this.active = false
+        this.hasPassphraseSetUp = false
     }
 
     init() {
@@ -62,6 +63,7 @@ export class DocumentOverview {
             this.bind()
             return this.getDocumentListData()
                 .then(() => this.bulkDecryptDocumentEncryptionKeys())
+                .then(() => this._checkPassphraseAndUpdateMenu())
                 .then(() => deactivateWait())
         })
     }
@@ -308,6 +310,26 @@ export class DocumentOverview {
             }
         } catch (_error) {
             // Silently fail - this is a best-effort operation
+        }
+    }
+
+    async _checkPassphraseAndUpdateMenu() {
+        const e2eeMode = this.app.settings.E2EE_MODE
+        if (e2eeMode === "disabled") {
+            return
+        }
+        const {PassphraseManager} = await import(
+            "../../editor/e2ee/passphrase-manager.js"
+        )
+        this.hasPassphraseSetUp = await PassphraseManager.hasEncryptionKeys()
+        if (e2eeMode === "required" && !this.hasPassphraseSetUp) {
+            const importItemIdx = this.menu.model.content.findIndex(
+                item => item.id === "import_document"
+            )
+            if (importItemIdx !== -1) {
+                this.menu.model.content.splice(importItemIdx, 1)
+                this.menu.update()
+            }
         }
     }
 

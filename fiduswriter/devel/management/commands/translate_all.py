@@ -1,3 +1,4 @@
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 import os
@@ -21,6 +22,18 @@ FORMAT_SPEC_RE = re.compile(
     r"|(?<!\()%[sdirf]"  # bare %s %d %i %f %r (negative lookbehind
     #   avoids re-matching the ( of %(name)s)
 )
+
+
+def _discover_languages(locale_dir):
+    """Return all subdirectory names inside *locale_dir* that look like language
+    codes (i.e. are directories and not hidden)."""
+    if not os.path.isdir(locale_dir):
+        return []
+    return [
+        d
+        for d in os.listdir(locale_dir)
+        if os.path.isdir(os.path.join(locale_dir, d))
+    ]
 
 
 class Command(BaseCommand):
@@ -47,6 +60,27 @@ class Command(BaseCommand):
             default=0.5,
             help="Delay between translations in seconds (default: 0.5)",
         )
+        parser.add_argument(
+            "--plugin",
+            nargs="*",
+            default=None,
+            help=(
+                "Names of plugin directories symlinked into SRC_PATH whose "
+                "locale files should also be translated (e.g. --plugin book). "
+                "If not specified, all symlinked directories with a locale/ "
+                "subdirectory under SRC_PATH are auto-discovered."
+            ),
+        )
+        parser.add_argument(
+            "--no-makemessages",
+            action="store_true",
+            help="Skip running makemessages before and after translation.",
+        )
+        parser.add_argument(
+            "--no-symlinks",
+            action="store_true",
+            help="Do not follow symlinks when running makemessages.",
+        )
 
     def handle(self, *args, **options):
         locale_dir = os.path.join(settings.SRC_PATH, "locale")
@@ -54,14 +88,50 @@ class Command(BaseCommand):
         if not os.path.exists(locale_dir):
             raise CommandError(f"Locale directory not found: {locale_dir}")
 
+        # ---- gather language codes ------------------------------------------------
         if options["locale"]:
             languages = options["locale"]
         else:
-            languages = [
-                d
-                for d in os.listdir(locale_dir)
-                if os.path.isdir(os.path.join(locale_dir, d))
-            ]
+            languages = _discover_languages(locale_dir)
+
+        # ---- gather plugin locale directories -------------------------------------
+        plugin_locale_dirs = []
+        if options["plugin"] is not None:
+            # Explicit plugin list given — use only those.
+            for plugin in options["plugin"]:
+                plugin_locale = os.path.join(
+                    settings.SRC_PATH, plugin, "locale"
+                )
+                if os.path.isdir(plugin_locale):
+                    plugin_locale_dirs.append(plugin_locale)
+                    self.stdout.write(
+                        self.style.NOTICE(
+                            f"Plugin locale directory found: {plugin_locale}"
+                        )
+                    )
+                else:
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"Plugin '{plugin}' has no locale directory "
+                            f"({plugin_locale}) – skipping."
+                        )
+                    )
+        else:
+            # Auto-discover symlinked directories with a locale/ subdirectory.
+            for entry in os.scandir(settings.SRC_PATH):
+                if entry.is_symlink() and entry.is_dir():
+                    plugin_locale = os.path.join(entry.path, "locale")
+                    if os.path.isdir(plugin_locale):
+                        plugin_locale_dirs.append(plugin_locale)
+                        self.stdout.write(
+                            self.style.NOTICE(
+                                f"Auto-discovered plugin locale: {plugin_locale}"
+                            )
+                        )
+            if not plugin_locale_dirs:
+                self.stdout.write(
+                    "No symlinked plugin directories with locale/ found."
+                )
 
         domains = options["domain"]
         skip_fuzzy = options["no_fuzzy"]
@@ -75,48 +145,85 @@ class Command(BaseCommand):
         self.stdout.write(f"Domains: {', '.join(domains)}")
         self.stdout.write(f"Delay: {delay}s between translations")
         self.stdout.write(f"Skip fuzzy: {skip_fuzzy}")
+        if options["plugin"] is not None:
+            plugin_label = ", ".join(options["plugin"])
+        else:
+            plugin_label = (
+                ", ".join(
+                    os.path.basename(os.path.dirname(d))
+                    for d in plugin_locale_dirs
+                )
+                or "(none)"
+            )
+        self.stdout.write(f"Plugins: {plugin_label}")
         self.stdout.write("=" * 60)
+
+        # ---- run makemessages before translation to extract fresh strings ----
+        if not options["no_makemessages"]:
+            makemessages_kwargs = {}
+            if not options["no_symlinks"]:
+                makemessages_kwargs["symlinks"] = True
+            self.stdout.write(
+                self.style.NOTICE(
+                    "\n--- Running makemessages (pre-translation) ---"
+                )
+            )
+            call_command("makemessages", **makemessages_kwargs)
+            self.stdout.write(
+                self.style.SUCCESS("--- makemessages completed ---")
+            )
+        else:
+            self.stdout.write("Skipping makemessages (--no-makemessages)")
 
         total_translated = 0
 
-        for lang in languages:
-            lang_dir = os.path.join(locale_dir, lang, "LC_MESSAGES")
-            if not os.path.exists(lang_dir):
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"Skipping {lang} - LC_MESSAGES not found"
-                    )
+        # Process the main app's locale directory + all plugin locale directories.
+        all_locale_dirs = [locale_dir] + plugin_locale_dirs
+
+        for locale_root in all_locale_dirs:
+            if locale_root == locale_dir:
+                label = "main app"
+            else:
+                # Show relative path from SRC_PATH for readability.
+                rel = os.path.relpath(locale_root, settings.SRC_PATH)
+                label = f"plugin ({rel})"
+
+            self.stdout.write(
+                self.style.NOTICE(
+                    f"\n--- Processing {label} locale: {locale_root} ---"
                 )
-                continue
+            )
 
-            target_lang = self.get_target_lang(lang)
-
-            for domain in domains:
-                po_file = os.path.join(lang_dir, f"{domain}.po")
-                if not os.path.exists(po_file):
-                    self.stdout.write(
-                        self.style.WARNING(
-                            f"Skipping {lang}/{domain}.po - file not found"
-                        )
-                    )
+            for lang in languages:
+                lang_dir = os.path.join(locale_root, lang, "LC_MESSAGES")
+                if not os.path.exists(lang_dir):
                     continue
 
-                self.stdout.write(
-                    self.style.NOTICE(
-                        f"\nTranslating {lang}/{domain}.po to {target_lang}..."
-                    )
-                )
+                target_lang = self.get_target_lang(lang)
 
-                count = self.translate_file(
-                    po_file, target_lang, skip_fuzzy, delay
-                )
-                total_translated += count
+                for domain in domains:
+                    po_file = os.path.join(lang_dir, f"{domain}.po")
+                    if not os.path.exists(po_file):
+                        continue
 
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"  Translated {count} strings in {lang}/{domain}.po"
+                    self.stdout.write(
+                        self.style.NOTICE(
+                            f"\nTranslating {lang}/{domain}.po ({label}) "
+                            f"to {target_lang}..."
+                        )
                     )
-                )
+
+                    count = self.translate_file(
+                        po_file, target_lang, skip_fuzzy, delay
+                    )
+                    total_translated += count
+
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"  Translated {count} strings in "
+                            f"{lang}/{domain}.po ({label})"
+                        )
+                    )
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -125,6 +232,21 @@ class Command(BaseCommand):
                 f"{'=' * 60}"
             )
         )
+
+        # ---- run makemessages after translation to fix formatting ----
+        if not options["no_makemessages"]:
+            makemessages_kwargs = {}
+            if not options["no_symlinks"]:
+                makemessages_kwargs["symlinks"] = True
+            self.stdout.write(
+                self.style.NOTICE(
+                    "\n--- Running makemessages (post-translation) ---"
+                )
+            )
+            call_command("makemessages", **makemessages_kwargs)
+            self.stdout.write(
+                self.style.SUCCESS("--- makemessages completed ---")
+            )
 
     def get_target_lang(self, lang):
         """Map locale code to translator language code."""

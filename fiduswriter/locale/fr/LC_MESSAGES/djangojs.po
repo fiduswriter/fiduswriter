@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-12 18:00+0000\n"
+"POT-Creation-Date: 2026-05-14 10:17+0000\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -72,7 +72,7 @@ msgid "Close"
 msgstr "Fermer"
 
 #: base/static/js/modules/common/dialog.js:84
-#: document/static/js/modules/documents/overview/index.js:920
+#: document/static/js/modules/documents/overview/index.js:942
 #: document/static/js/modules/editor/collab/doc.js:371
 #: document/static/js/modules/editor/collab/doc.js:573
 #: document/static/js/modules/editor/comments/editors/answer.js:22
@@ -92,7 +92,7 @@ msgid "OK"
 msgstr "OK"
 
 #: base/static/js/modules/common/file/dialog.js:39
-#: base/static/js/modules/common/file/selector.js:53
+#: base/static/js/modules/common/file/selector.js:58
 #: base/static/js/modules/common/file/tools.js:6
 #: base/static/js/modules/common/file/tools.js:16
 #: base/static/js/modules/common/file/tools.js:36
@@ -128,9 +128,9 @@ msgstr "Nouveau dossier"
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
 #: user/static/js/modules/contacts/add_dialog.js:14
-#: user/static/js/modules/profile/dialogs.js:124
-#: user/static/js/modules/profile/dialogs.js:215
-#: user/static/js/modules/profile/dialogs.js:385
+#: user/static/js/modules/profile/dialogs.js:128
+#: user/static/js/modules/profile/dialogs.js:219
+#: user/static/js/modules/profile/dialogs.js:389
 #: user/static/js/modules/profile/templates.js:285
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
@@ -222,8 +222,7 @@ msgstr "Détenteur des droits d'auteur"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder "
-"is."
+"If the work is not in the public domain, specify who the copyright holder is."
 msgstr ""
 "Si l'œuvre n'est pas dans le domaine public, spécifiez qui est le titulaire "
 "du droit d'auteur."
@@ -344,7 +343,7 @@ msgstr "La bibliographie n'a pas pu être mise à jour"
 #: bibliography/static/js/modules/bibliography/overview/index.js:314
 #: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
-#: document/static/js/modules/exporter/native/revision.js:79
+#: document/static/js/modules/exporter/native/revision.js:78
 #: usermedia/static/js/modules/images/overview/index.js:94
 #: usermedia/static/js/modules/images/overview/index.js:108
 msgid "You are currently offline. Please try again when you are back online."
@@ -469,8 +468,6 @@ msgid "Register New Source"
 msgstr "Enregistrer une nouvelle source"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:386
-#| msgid ""
-#| "A slug can only contain letters, numbers, hyphens and underscores."
 msgid "Only letters, numbers, hyphens and underscores are allowed."
 msgstr ""
 "Seuls les lettres, chiffres, traits d’union et traits de soulignement sont "
@@ -489,7 +486,6 @@ msgid "Select source type"
 msgstr "Sélectionnez le type de source"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:28
-#| msgid "Citation"
 msgid "Citation key"
 msgstr "Clé de citation"
 
@@ -520,8 +516,8 @@ msgstr ""
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:10
 msgid "Field cannot not be saved. Fidus Writer does not support the field."
 msgstr ""
-"Le champ ne peut pas être enregistré. Fidus Writer ne prend pas en charge le"
-" champ."
+"Le champ ne peut pas être enregistré. Fidus Writer ne prend pas en charge le "
+"champ."
 
 #: bibliography/static/js/modules/bibliography/import/bibliography_import.js:13
 msgid ""
@@ -544,7 +540,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Un problème est survenu lors de l'importation de la bibliographie"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:173
+#: document/static/js/modules/documents/overview/actions.js:211
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Importation"
@@ -594,7 +590,7 @@ msgstr "Aucune source trouvée"
 #: document/static/js/modules/document_template/templates.js:527
 #: document/static/js/modules/document_template/templates.js:813
 #: document/static/js/modules/document_template/templates.js:836
-#: document/static/js/modules/documents/overview/index.js:560
+#: document/static/js/modules/documents/overview/index.js:582
 #: document/static/js/modules/editor/dialogs/citation.js:254
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
@@ -637,8 +633,8 @@ msgstr "Modifier les catégories"
 #: document/static/js/modules/document_template/export_template_dialog.js:178
 #: document/static/js/modules/document_template/templates.js:821
 #: document/static/js/modules/documents/access_rights/templates.js:28
-#: document/static/js/modules/documents/overview/actions.js:89
-#: document/static/js/modules/documents/overview/index.js:153
+#: document/static/js/modules/documents/overview/actions.js:110
+#: document/static/js/modules/documents/overview/index.js:155
 #: document/static/js/modules/documents/revisions/index.js:133
 #: document/static/js/modules/documents/revisions/templates.js:11
 #: document/static/js/modules/editor/marginboxes/templates.js:531
@@ -646,7 +642,7 @@ msgstr "Modifier les catégories"
 #: document/static/js/modules/editor/marginboxes/templates.js:539
 #: user/static/js/modules/contacts/delete_dialog.js:13
 #: user/static/js/modules/profile/delete_user.js:18
-#: user/static/js/modules/profile/dialogs.js:100
+#: user/static/js/modules/profile/dialogs.js:104
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:60
 #: usermedia/static/js/modules/images/overview/index.js:126
 msgid "Delete"
@@ -655,12 +651,12 @@ msgstr "Effacer"
 #: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
 #: document/static/js/modules/document_template/export_template_dialog.js:192
-#: document/static/js/modules/documents/overview/actions.js:70
-#: document/static/js/modules/documents/overview/index.js:145
+#: document/static/js/modules/documents/overview/actions.js:91
+#: document/static/js/modules/documents/overview/index.js:147
 #: document/static/js/modules/documents/revisions/index.js:151
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:40
-#: user/static/js/modules/profile/dialogs.js:112
+#: user/static/js/modules/profile/dialogs.js:116
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:75
 #: usermedia/static/js/modules/images/overview/index.js:140
 msgid "Confirm deletion"
@@ -794,7 +790,7 @@ msgstr ""
 msgid "The slug has to be unique."
 msgstr "Le slug doit être unique."
 
-#: document/static/js/modules/document_template/document_style_dialog.js:292
+#: document/static/js/modules/document_template/document_style_dialog.js:291
 msgid "A file with the same name exists already."
 msgstr "Un fichier du même nom existe déjà."
 
@@ -855,7 +851,7 @@ msgstr ""
 msgid "The uploaded file does not appear to be a Fidus Writer file."
 msgstr "Le fichier téléchargé ne semble pas être un fichier Fidus Writer."
 
-#: document/static/js/modules/document_template/importer.js:165
+#: document/static/js/modules/document_template/importer.js:164
 #: document/static/js/modules/importer/docx/import.js:73
 #: document/static/js/modules/importer/native/file.js:213
 #: document/static/js/modules/importer/odt/import.js:142
@@ -863,7 +859,7 @@ msgstr "Le fichier téléchargé ne semble pas être un fichier Fidus Writer."
 msgid "successfully imported."
 msgstr "importé avec succès."
 
-#: document/static/js/modules/document_template/importer.js:172
+#: document/static/js/modules/document_template/importer.js:171
 #: document/static/js/modules/importer/native/file.js:220
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
@@ -1074,7 +1070,7 @@ msgid "Underline"
 msgstr "Souligner"
 
 #: document/static/js/modules/document_template/templates.js:114
-#: document/static/js/modules/editor/dialogs/link.js:241
+#: document/static/js/modules/editor/dialogs/link.js:248
 #: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
 msgstr "Lien"
@@ -1484,21 +1480,21 @@ msgstr ""
 "et les discussions des autres"
 
 #: document/static/js/modules/documents/access_rights/index.js:234
-#: document/static/js/modules/documents/overview/index.js:767
+#: document/static/js/modules/documents/overview/index.js:789
 msgid "End-to-end encrypted document"
 msgstr "Document chiffré de bout en bout"
 
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure"
-" channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure "
+"channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "Ce document est crypté de bout en bout. Les collaborateurs sans phrase "
 "secrète personnelle auront besoin du mot de passe du document partagé avec "
-"eux via un canal sécurisé en dehors de Fidus Writer. N'envoyez pas le mot de"
-" passe via le chat de documents."
+"eux via un canal sécurisé en dehors de Fidus Writer. N'envoyez pas le mot de "
+"passe via le chat de documents."
 
 #: document/static/js/modules/documents/access_rights/index.js:244
 #: user/static/js/modules/contacts/add_dialog.js:54
@@ -1528,7 +1524,7 @@ msgid "Create share link"
 msgstr "Créer un lien de partage"
 
 #: document/static/js/modules/documents/access_rights/index.js:371
-#: document/static/js/modules/documents/overview/index.js:924
+#: document/static/js/modules/documents/overview/index.js:946
 msgid "Create"
 msgstr "Créer"
 
@@ -1587,7 +1583,7 @@ msgstr "Collaborateurs"
 
 #: document/static/js/modules/documents/access_rights/templates.js:27
 #: document/static/js/modules/documents/access_rights/templates.js:85
-#: document/static/js/modules/documents/overview/index.js:565
+#: document/static/js/modules/documents/overview/index.js:587
 msgid "Rights"
 msgstr "Droits"
 
@@ -1661,50 +1657,62 @@ msgstr ""
 msgid "Invite"
 msgstr "Inviter"
 
-#: document/static/js/modules/documents/overview/actions.js:39
+#: document/static/js/modules/documents/overview/actions.js:36
+#: document/static/js/modules/documents/overview/index.js:779
+#: document/static/js/modules/editor/e2ee/password-dialog.js:196
+msgid "Encrypted Document"
+msgstr "Document crypté"
+
+#: document/static/js/modules/documents/overview/actions.js:60
 msgid "Document has been deleted"
 msgstr "Le document a été supprimé"
 
-#: document/static/js/modules/documents/overview/actions.js:49
+#: document/static/js/modules/documents/overview/actions.js:70
 msgid "Could not delete document"
 msgstr "Impossible de supprimer le document"
 
-#: document/static/js/modules/documents/overview/actions.js:59
+#: document/static/js/modules/documents/overview/actions.js:80
 msgid "You cannot delete a document while you are offline."
-msgstr ""
-"Vous ne pouvez pas supprimer un document lorsque vous êtes hors ligne."
+msgstr "Vous ne pouvez pas supprimer un document lorsque vous êtes hors ligne."
 
-#: document/static/js/modules/documents/overview/actions.js:75
+#: document/static/js/modules/documents/overview/actions.js:96
 msgid "Do you really want to delete the following documents?"
 msgstr "Voulez-vous vraiment supprimer les documents suivants ?"
 
-#: document/static/js/modules/documents/overview/actions.js:78
+#: document/static/js/modules/documents/overview/actions.js:99
 msgid "Do you really want to delete the following document?"
 msgstr "Voulez-vous vraiment supprimer le document suivant ?"
 
-#: document/static/js/modules/documents/overview/actions.js:117
+#: document/static/js/modules/documents/overview/actions.js:138
 msgid "Import as:"
 msgstr "Importer en tant que :"
 
-#: document/static/js/modules/documents/overview/actions.js:137
+#: document/static/js/modules/documents/overview/actions.js:161
+msgid ""
+"You need to set up a personal passphrase before you can import documents."
+msgstr ""
+"Vous devez configurer une phrase secrète personnelle avant de pouvoir "
+"importer des documents."
+
+#: document/static/js/modules/documents/overview/actions.js:173
 msgid "This document will be saved as encrypted."
 msgstr "Ce document sera enregistré sous forme cryptée."
 
-#: document/static/js/modules/documents/overview/actions.js:143
-#: document/static/js/modules/documents/overview/index.js:904
+#: document/static/js/modules/documents/overview/actions.js:181
+#: document/static/js/modules/documents/overview/index.js:926
 msgid "Non-encrypted"
 msgstr "Non crypté"
 
-#: document/static/js/modules/documents/overview/actions.js:147
-#: document/static/js/modules/documents/overview/index.js:909
+#: document/static/js/modules/documents/overview/actions.js:185
+#: document/static/js/modules/documents/overview/index.js:931
 msgid "Encrypted"
 msgstr "Crypté"
 
-#: document/static/js/modules/documents/overview/actions.js:160
+#: document/static/js/modules/documents/overview/actions.js:198
 msgid "Supported formats"
 msgstr "Formats pris en charge"
 
-#: document/static/js/modules/documents/overview/actions.js:160
+#: document/static/js/modules/documents/overview/actions.js:198
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1712,46 +1720,58 @@ msgstr ""
 "Vous pouvez également télécharger un fichier ZIP contenant un fichier dans "
 "l'un de ces formats ainsi que des images et/ou un fichier bibtex."
 
-#: document/static/js/modules/documents/overview/actions.js:164
+#: document/static/js/modules/documents/overview/actions.js:202
 msgid "Import a document"
 msgstr "Importer un document"
 
-#: document/static/js/modules/documents/overview/actions.js:182
+#: document/static/js/modules/documents/overview/actions.js:220
 msgid "File too large"
 msgstr "Fichier trop volumineux"
 
-#: document/static/js/modules/documents/overview/actions.js:240
+#: document/static/js/modules/documents/overview/actions.js:279
 msgid "No importable files found in ZIP"
 msgstr "Aucun fichier importable trouvé dans ZIP"
 
-#: document/static/js/modules/documents/overview/actions.js:282
+#: document/static/js/modules/documents/overview/actions.js:321
 msgid "Unsupported file format"
 msgstr "Format de fichier non pris en charge"
 
-#: document/static/js/modules/documents/overview/actions.js:349
+#: document/static/js/modules/documents/overview/actions.js:411
+#: document/static/js/modules/documents/overview/actions.js:463
 msgid "Could not create encrypted document."
 msgstr "Impossible de créer un document chiffré."
 
-#: document/static/js/modules/documents/overview/actions.js:440
+#: document/static/js/modules/documents/overview/actions.js:457
+#: document/static/js/modules/editor/collab/doc.js:309
+msgid "Incorrect passphrase. Please try again."
+msgstr "Phrase secrète incorrecte. Veuillez réessayer."
+
+#: document/static/js/modules/documents/overview/actions.js:501
+msgid "Recovery failed. Please check your recovery key and try again."
+msgstr ""
+"La récupération a échoué. Veuillez vérifier votre clé de récupération et "
+"réessayer."
+
+#: document/static/js/modules/documents/overview/actions.js:597
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
 msgstr "Chiffrer la copie"
 
-#: document/static/js/modules/documents/overview/actions.js:447
+#: document/static/js/modules/documents/overview/actions.js:604
 #: document/static/js/modules/editor/document_template/index.js:136
 msgid "Choose document template"
 msgstr "Choisissez un modèle de document"
 
-#: document/static/js/modules/documents/overview/actions.js:449
+#: document/static/js/modules/documents/overview/actions.js:606
 msgid "Select document template for copies"
 msgstr "Sélectionnez le modèle de document pour les copies"
 
-#: document/static/js/modules/documents/overview/actions.js:449
+#: document/static/js/modules/documents/overview/actions.js:606
 #: document/static/js/modules/editor/document_template/index.js:138
 msgid "Select document template for copy."
 msgstr "Sélectionnez le modèle de document à copier."
 
-#: document/static/js/modules/documents/overview/actions.js:462
+#: document/static/js/modules/documents/overview/actions.js:619
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
 #: document/static/js/modules/editor/document_template/index.js:151
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
@@ -1759,35 +1779,35 @@ msgstr "Sélectionnez le modèle de document à copier."
 msgid "Copy"
 msgstr "Copier"
 
-#: document/static/js/modules/documents/overview/actions.js:511
+#: document/static/js/modules/documents/overview/actions.js:668
 msgid "Could not copy document."
 msgstr "Impossible de copier le document."
 
-#: document/static/js/modules/documents/overview/actions.js:541
-#: document/static/js/modules/documents/overview/actions.js:573
+#: document/static/js/modules/documents/overview/actions.js:698
+#: document/static/js/modules/documents/overview/actions.js:730
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
 msgid "Incorrect password."
 msgstr "Mot de passe incorrect."
 
-#: document/static/js/modules/documents/overview/actions.js:795
+#: document/static/js/modules/documents/overview/actions.js:952
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
-"Vous ne pouvez pas afficher l'historique des révisions d'un document lorsque"
-" vous êtes hors ligne."
+"Vous ne pouvez pas afficher l'historique des révisions d'un document lorsque "
+"vous êtes hors ligne."
 
-#: document/static/js/modules/documents/overview/index.js:84
+#: document/static/js/modules/documents/overview/index.js:86
 msgid "Document Overview"
 msgstr "Aperçu du document"
 
-#: document/static/js/modules/documents/overview/index.js:115
+#: document/static/js/modules/documents/overview/index.js:117
 msgid "You cannot access rights data of a document while you are offline."
 msgstr ""
 "Vous ne pouvez pas accéder aux données de droits d'un document lorsque vous "
 "êtes hors ligne."
 
-#: document/static/js/modules/documents/overview/index.js:147
+#: document/static/js/modules/documents/overview/index.js:149
 msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
@@ -1795,58 +1815,53 @@ msgstr ""
 "Laisser un dossier vide le supprimera. Voulez-vous vraiment supprimer ce "
 "dossier ?"
 
-#: document/static/js/modules/documents/overview/index.js:193
+#: document/static/js/modules/documents/overview/index.js:195
 msgid "You cannot open a document while you are offline."
 msgstr "Vous ne pouvez pas ouvrir un document lorsque vous êtes hors ligne."
 
-#: document/static/js/modules/documents/overview/index.js:237
+#: document/static/js/modules/documents/overview/index.js:239
 msgid "Document data loading failed."
 msgstr "Le chargement des données du document a échoué."
 
-#: document/static/js/modules/documents/overview/index.js:550
+#: document/static/js/modules/documents/overview/index.js:572
 msgid "No documents available"
 msgstr "Aucun document disponible"
 
-#: document/static/js/modules/documents/overview/index.js:551
+#: document/static/js/modules/documents/overview/index.js:573
 msgid "No documents found"
 msgstr "Aucun document trouvé"
 
-#: document/static/js/modules/documents/overview/index.js:561
+#: document/static/js/modules/documents/overview/index.js:583
 msgid "Revisions"
 msgstr "Révisions"
 
-#: document/static/js/modules/documents/overview/index.js:562
+#: document/static/js/modules/documents/overview/index.js:584
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:112
 msgid "Created"
 msgstr "Créé"
 
-#: document/static/js/modules/documents/overview/index.js:563
+#: document/static/js/modules/documents/overview/index.js:585
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:113
 msgid "Last changed"
 msgstr "Dernière modification"
 
-#: document/static/js/modules/documents/overview/index.js:564
+#: document/static/js/modules/documents/overview/index.js:586
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: document/static/js/modules/documents/overview/index.js:757
-#: document/static/js/modules/editor/e2ee/password-dialog.js:196
-msgid "Encrypted Document"
-msgstr "Document crypté"
-
-#: document/static/js/modules/documents/overview/index.js:805
+#: document/static/js/modules/documents/overview/index.js:827
 msgid "Undefined"
 msgstr "Indéfini"
 
-#: document/static/js/modules/documents/overview/index.js:818
+#: document/static/js/modules/documents/overview/index.js:840
 msgid "Copy selected as..."
 msgstr "Copie sélectionnée comme ..."
 
-#: document/static/js/modules/documents/overview/index.js:820
+#: document/static/js/modules/documents/overview/index.js:842
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Copiez les documents et affectez-les à un modèle spécifique."
 
-#: document/static/js/modules/documents/overview/index.js:871
+#: document/static/js/modules/documents/overview/index.js:893
 msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
@@ -1854,40 +1869,40 @@ msgstr ""
 "Les documents cryptés protègent votre contenu afin que seules les personnes "
 "disposant du mot de passe puissent le lire."
 
-#: document/static/js/modules/documents/overview/index.js:872
-#: document/static/js/modules/documents/overview/index.js:886
+#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:908
 msgid "Advantages"
 msgstr "Avantages"
 
-#: document/static/js/modules/documents/overview/index.js:874
+#: document/static/js/modules/documents/overview/index.js:896
 msgid "Only people with the password can read the document."
 msgstr ""
 "Seules les personnes disposant du mot de passe peuvent lire le document."
 
-#: document/static/js/modules/documents/overview/index.js:875
+#: document/static/js/modules/documents/overview/index.js:897
 msgid "The server cannot access the document contents."
 msgstr "Le serveur ne peut pas accéder au contenu du document."
 
-#: document/static/js/modules/documents/overview/index.js:877
-#: document/static/js/modules/documents/overview/index.js:892
+#: document/static/js/modules/documents/overview/index.js:899
+#: document/static/js/modules/documents/overview/index.js:914
 msgid "Disadvantages"
 msgstr "Inconvénients"
 
-#: document/static/js/modules/documents/overview/index.js:879
+#: document/static/js/modules/documents/overview/index.js:901
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr ""
 "Options de droits d'accès limitées (pas de suivi des modifications ni de "
 "modes de révision)."
 
-#: document/static/js/modules/documents/overview/index.js:880
+#: document/static/js/modules/documents/overview/index.js:902
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
 msgstr ""
-"Si vous perdez le mot de passe ou la phrase secrète, il n'y a aucun moyen de"
-" récupérer le document."
+"Si vous perdez le mot de passe ou la phrase secrète, il n'y a aucun moyen de "
+"récupérer le document."
 
-#: document/static/js/modules/documents/overview/index.js:881
+#: document/static/js/modules/documents/overview/index.js:903
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
@@ -1895,46 +1910,46 @@ msgstr ""
 "Vous devez partager le mot de passe avec les collaborateurs manuellement "
 "(sauf s'ils utilisent une phrase secrète personnelle)."
 
-#: document/static/js/modules/documents/overview/index.js:885
+#: document/static/js/modules/documents/overview/index.js:907
 msgid "Regular documents are the default and work well for most users."
 msgstr ""
-"Les documents ordinaires sont la valeur par défaut et fonctionnent bien pour"
-" la plupart des utilisateurs."
+"Les documents ordinaires sont la valeur par défaut et fonctionnent bien pour "
+"la plupart des utilisateurs."
 
-#: document/static/js/modules/documents/overview/index.js:888
+#: document/static/js/modules/documents/overview/index.js:910
 msgid "Full access rights options including tracked changes and review modes."
 msgstr ""
 "Options de droits d'accès complets, y compris le suivi des modifications et "
 "les modes de révision."
 
-#: document/static/js/modules/documents/overview/index.js:889
+#: document/static/js/modules/documents/overview/index.js:911
 msgid "No risk of losing access if you forget a password."
 msgstr "Aucun risque de perdre l'accès si vous oubliez un mot de passe."
 
-#: document/static/js/modules/documents/overview/index.js:890
+#: document/static/js/modules/documents/overview/index.js:912
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr ""
 "Collaboration plus facile : pas besoin de partager des mots de passe avec "
 "des collaborateurs."
 
-#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:916
 msgid "The server can technically access the document contents."
 msgstr "Le serveur peut techniquement accéder au contenu du document."
 
-#: document/static/js/modules/documents/overview/index.js:895
+#: document/static/js/modules/documents/overview/index.js:917
 msgid "No additional protection beyond your account password."
 msgstr ""
 "Aucune protection supplémentaire au-delà du mot de passe de votre compte."
 
-#: document/static/js/modules/documents/overview/index.js:899
+#: document/static/js/modules/documents/overview/index.js:921
 msgid "Choose encryption type of new document."
 msgstr "Choisissez le type de cryptage du nouveau document."
 
-#: document/static/js/modules/documents/overview/index.js:953
+#: document/static/js/modules/documents/overview/index.js:975
 msgid "Set Up Personal Encryption (Optional)"
 msgstr "Configurer le cryptage personnel (facultatif)"
 
-#: document/static/js/modules/documents/overview/index.js:955
+#: document/static/js/modules/documents/overview/index.js:977
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
@@ -1943,25 +1958,25 @@ msgstr ""
 "vous permettra de déverrouiller tous vos documents cryptés avec une seule "
 "phrase secrète."
 
-#: document/static/js/modules/documents/overview/index.js:956
+#: document/static/js/modules/documents/overview/index.js:978
 msgid "Note:"
 msgstr "Note:"
 
-#: document/static/js/modules/documents/overview/index.js:956
+#: document/static/js/modules/documents/overview/index.js:978
 msgid "This is optional. You can also use a per-document password instead."
 msgstr ""
 "Ceci est facultatif. Vous pouvez également utiliser un mot de passe par "
 "document à la place."
 
-#: document/static/js/modules/documents/overview/index.js:960
+#: document/static/js/modules/documents/overview/index.js:982
 msgid "Skip for Now"
 msgstr "Passer pour l'instant"
 
-#: document/static/js/modules/documents/overview/index.js:971
+#: document/static/js/modules/documents/overview/index.js:993
 msgid "Set Up Passphrase"
 msgstr "Configurer la phrase secrète"
 
-#: document/static/js/modules/documents/overview/index.js:1006
+#: document/static/js/modules/documents/overview/index.js:1028
 #: user/static/js/modules/profile/index.js:232
 msgid "Failed to set up passphrase: "
 msgstr "Échec de la configuration de la phrase secrète :"
@@ -2138,7 +2153,7 @@ msgstr "Recréer"
 msgid "Download"
 msgstr "Télécharger"
 
-#: document/static/js/modules/documents/tools.js:71
+#: document/static/js/modules/documents/tools.js:76
 msgid "Could not obtain extra document data"
 msgstr "Impossible d'obtenir des données de document supplémentaires"
 
@@ -2167,10 +2182,6 @@ msgstr "[Message crypté - entrez le mot de passe pour lire]"
 #: document/static/js/modules/editor/collab/chat.js:144
 msgid "Send a message..."
 msgstr "Envoyer un message..."
-
-#: document/static/js/modules/editor/collab/doc.js:309
-msgid "Incorrect passphrase. Please try again."
-msgstr "Phrase secrète incorrecte. Veuillez réessayer."
 
 #: document/static/js/modules/editor/collab/doc.js:351
 msgid "Recovery Failed"
@@ -2277,15 +2288,14 @@ msgid ""
 "that once you are finished with the merge, it will not lead to more "
 "conflicts."
 msgstr ""
-"Oui, vous êtes le seul à pouvoir voir ce dialogue. Il serait donc formidable"
-" que vous puissiez demander à vos collaborateurs d'arrêter d'éditer le "
+"Oui, vous êtes le seul à pouvoir voir ce dialogue. Il serait donc formidable "
+"que vous puissiez demander à vos collaborateurs d'arrêter d'éditer le "
 "document, afin qu'une fois la fusion terminée, elle ne donne pas lieu à "
 "d'autres conflits."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am "
-"merging?"
+"What if my collaborators continue working on the document while I am merging?"
 msgstr ""
 "Que faire si mes collaborateurs continuent à travailler sur le document "
 "pendant que je fusionne?"
@@ -2304,8 +2314,8 @@ msgstr "Pourquoi est-ce que je vois trois éditeurs?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It"
-" is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It "
+"is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
@@ -2324,10 +2334,10 @@ msgstr "Quels sont les reflets verts et rouges dans les éditeurs?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The"
-" text marked in green corresponds to the text that was edited (added) by you"
-" or other users. The text marked in red corresponds to text that was deleted"
-" by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The "
+"text marked in green corresponds to the text that was edited (added) by you "
+"or other users. The text marked in red corresponds to text that was deleted "
+"by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2359,14 +2369,14 @@ msgid ""
 msgstr ""
 "Accepter ou refuser une modification dans l'éditeur de fusion au milieu ou "
 "dans l'éditeur hors ligne à droite entraîne une modification dans l'éditeur "
-"de fusion. Vous pouvez accepter une modification en cliquant directement sur"
-" le texte en surbrillance. Un menu déroulant apparaîtra et vous pourrez "
-"alors accepter ou refuser la modification. Lorsque vous cliquez sur le texte"
-" en surbrillance, les modifications qui seront acceptées seront également "
-"mises en évidence. %(mergeImage)s Comme le montre l'image ci-dessus, vous "
-"pouvez cliquer sur une modification en surbrillance et cliquer sur accepter "
-"la modification. Si vous acceptez une modification, celle-ci sera reflétée "
-"dans l'éditeur de document fusionné au milieu. Le rejet d'une modification "
+"de fusion. Vous pouvez accepter une modification en cliquant directement sur "
+"le texte en surbrillance. Un menu déroulant apparaîtra et vous pourrez alors "
+"accepter ou refuser la modification. Lorsque vous cliquez sur le texte en "
+"surbrillance, les modifications qui seront acceptées seront également mises "
+"en évidence. %(mergeImage)s Comme le montre l'image ci-dessus, vous pouvez "
+"cliquer sur une modification en surbrillance et cliquer sur accepter la "
+"modification. Si vous acceptez une modification, celle-ci sera reflétée dans "
+"l'éditeur de document fusionné au milieu. Le rejet d'une modification "
 "fonctionne de la même manière, sauf en cas de rejet d'une modification, le "
 "point culminant de la modification sera perdu, avec lui la possibilité "
 "d'accepter, de rejeter ou de copier une modification."
@@ -2435,8 +2445,8 @@ msgstr ""
 msgid ""
 "What happens if I try to complete merge without resolving all the changes?"
 msgstr ""
-"Que se passe-t-il si j'essaie de terminer la fusion sans résoudre toutes les"
-" modifications?"
+"Que se passe-t-il si j'essaie de terminer la fusion sans résoudre toutes les "
+"modifications?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:273
 msgid ""
@@ -2448,8 +2458,8 @@ msgid ""
 msgstr ""
 "Vous recevrez un avertissement lorsque vous tenterez de terminer une fusion "
 "sans accepter ou rejeter toutes les modifications. Vous pouvez toujours "
-"procéder à la fusion du document. Si vous faites cela, toutes les insertions"
-" et suppressions dans l'éditeur de fusion au milieu seront acceptées "
+"procéder à la fusion du document. Si vous faites cela, toutes les insertions "
+"et suppressions dans l'éditeur de fusion au milieu seront acceptées "
 "automatiquement, et toutes les insertions et suppressions dans l'éditeur "
 "hors ligne à droite seront ignorées."
 
@@ -2476,8 +2486,8 @@ msgid ""
 "offline. We have merged your changes in as tracked changes. You should "
 "verify that your edits still make sense."
 msgstr ""
-"Le document a été considérablement modifié par d'autres utilisateurs lorsque"
-" vous étiez hors ligne. Nous avons fusionné vos modifications en tant que "
+"Le document a été considérablement modifié par d'autres utilisateurs lorsque "
+"vous étiez hors ligne. Nous avons fusionné vos modifications en tant que "
 "modifications suivies. Vous devez vérifier que vos modifications ont "
 "toujours un sens."
 
@@ -2488,8 +2498,8 @@ msgstr "Échec de la fusion"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please"
-" consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please "
+"consider importing it into a new document."
 msgstr ""
 "Une erreur s'est produite pendant le processus de fusion, nous ne pouvons "
 "donc plus enregistrer votre travail sur le serveur et il est téléchargé sur "
@@ -2617,8 +2627,8 @@ msgstr "Insérer"
 #: document/static/js/modules/editor/state_plugins/links.js:343
 #: document/static/js/modules/editor/state_plugins/links.js:367
 #: document/static/js/modules/editor/state_plugins/links.js:390
-#: user/static/js/modules/profile/dialogs.js:283
-#: user/static/js/modules/profile/dialogs.js:332
+#: user/static/js/modules/profile/dialogs.js:287
+#: user/static/js/modules/profile/dialogs.js:336
 msgid "Remove"
 msgstr "Retirer"
 
@@ -3098,8 +3108,8 @@ msgstr "Récupérer le cryptage"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption"
-" password."
+"Enter your current passphrase and a new passphrase to change your encryption "
+"password."
 msgstr ""
 "Entrez votre phrase secrète actuelle et une nouvelle phrase secrète pour "
 "modifier votre mot de passe de cryptage."
@@ -3179,11 +3189,11 @@ msgstr "Masquer le mot de passe"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open"
-" the document in the future."
+"Set a password to encrypt this document. You will need this password to open "
+"the document in the future."
 msgstr ""
-"Définissez un mot de passe pour crypter ce document. Vous aurez besoin de ce"
-" mot de passe pour ouvrir le document à l'avenir."
+"Définissez un mot de passe pour crypter ce document. Vous aurez besoin de ce "
+"mot de passe pour ouvrir le document à l'avenir."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:260
 msgid ""
@@ -3220,8 +3230,8 @@ msgid ""
 "Change the document password. After changing, you must share the new "
 "password with all collaborators."
 msgstr ""
-"Changez le mot de passe du document. Après modification, vous devez partager"
-" le nouveau mot de passe avec tous les collaborateurs."
+"Changez le mot de passe du document. Après modification, vous devez partager "
+"le nouveau mot de passe avec tous les collaborateurs."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:446
 #: user/static/js/modules/profile/templates.js:63
@@ -3234,7 +3244,7 @@ msgstr "Confirmer le nouveau mot de passe"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:475
 #: user/static/js/modules/password_reset/change_password.js:7
-#: user/static/js/modules/profile/dialogs.js:204
+#: user/static/js/modules/profile/dialogs.js:208
 msgid "Change Password"
 msgstr "Changer le mot de passe"
 
@@ -3266,8 +3276,8 @@ msgstr "Lien de partage invalide"
 #: document/static/js/modules/editor/index.js:337
 #: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for"
-" a new link."
+"This share link has expired or is invalid. Please ask the document owner for "
+"a new link."
 msgstr ""
 "Ce lien de partage a expiré ou n'est pas valide. Veuillez demander au "
 "propriétaire du document un nouveau lien."
@@ -3289,8 +3299,8 @@ msgid ""
 "Your Access rights have been modified. You now have %(accessRight)s access "
 "to this document."
 msgstr ""
-"Vos droits d'accès ont été modifiés. Vous disposez désormais d'un accès "
-"%(accessRight)s à ce document."
+"Vos droits d'accès ont été modifiés. Vous disposez désormais d'un accès %"
+"(accessRight)s à ce document."
 
 #: document/static/js/modules/editor/index.js:639
 msgid "Session Expired"
@@ -3302,8 +3312,8 @@ msgid ""
 "the server any longer, but you can download it to your computer instead. "
 "Please consider importing it as a new document after logging in."
 msgstr ""
-"Votre session a expiré alors que vous étiez hors ligne. Nous ne pouvons donc"
-" plus enregistrer votre travail sur le serveur, mais vous pouvez le "
+"Votre session a expiré alors que vous étiez hors ligne. Nous ne pouvons donc "
+"plus enregistrer votre travail sur le serveur, mais vous pouvez le "
 "télécharger sur votre ordinateur. Veuillez envisager de l'importer en tant "
 "que nouveau document après vous être connecté."
 
@@ -3327,8 +3337,8 @@ msgid ""
 msgstr ""
 "Vos droits d'accès ont été modifiés lorsque vous étiez hors ligne, nous ne "
 "pouvons donc plus enregistrer votre travail sur le serveur, et il est "
-"téléchargé sur votre ordinateur à la place. Veuillez envisager de l'importer"
-" dans un nouveau document."
+"téléchargé sur votre ordinateur à la place. Veuillez envisager de l'importer "
+"dans un nouveau document."
 
 #: document/static/js/modules/editor/index.js:778
 msgid "Incorrect passphrase."
@@ -3723,15 +3733,15 @@ msgid ""
 "automatically; non-passphrase collaborators need it shared with them "
 "manually."
 msgstr ""
-"Votre phrase secrète personnelle débloquera toujours ce document. Un nouveau"
-" mot de passe aléatoire est généré automatiquement. Les autres utilisateurs "
+"Votre phrase secrète personnelle débloquera toujours ce document. Un nouveau "
+"mot de passe aléatoire est généré automatiquement. Les autres utilisateurs "
 "de la phrase secrète la recevront automatiquement ; les collaborateurs sans "
 "phrase secrète doivent le partager manuellement avec eux."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new"
-" key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new "
+"key automatically."
 msgstr ""
 "Clé de cryptage du document pivotée. Les autres utilisateurs de la phrase "
 "secrète recevront automatiquement la nouvelle clé."
@@ -4224,23 +4234,21 @@ msgstr "Basculer le navigateur de documents"
 msgid "Document N̲avigator"
 msgstr "Navigateur de documents"
 
-#: document/static/js/modules/editor/no_collab_save/index.js:146
+#: document/static/js/modules/editor/no_collab_save/index.js:145
 msgid "Could not save document."
 msgstr "Impossible d'enregistrer le document."
 
-#: document/static/js/modules/editor/no_collab_save/index.js:205
+#: document/static/js/modules/editor/no_collab_save/index.js:204
 msgid "Document has been modified by another user. Please reload the page."
 msgstr ""
 "Le document a été modifié par un autre utilisateur. Veuillez recharger la "
 "page."
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:245
-#| msgid "Equation"
 msgid "Edit equation"
 msgstr "Modifier l'équation"
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:248
-#| msgid "Remove link"
 msgid "Remove equation"
 msgstr "Supprimer l'équation"
 
@@ -4249,7 +4257,6 @@ msgid "No matching sources"
 msgstr "Aucune source correspondante"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
-#| msgid "Cross reference"
 msgid "Cross-references"
 msgstr "Références croisées"
 
@@ -4287,12 +4294,10 @@ msgid "Remove cross reference"
 msgstr "Supprimer la référence croisée"
 
 #: document/static/js/modules/editor/state_plugins/links.js:386
-#| msgid "Edition"
 msgid "Edit citation"
 msgstr "Modifier la citation"
 
 #: document/static/js/modules/editor/state_plugins/links.js:389
-#| msgid "Deleted citation"
 msgid "Remove citation"
 msgstr "Supprimer la citation"
 
@@ -4368,8 +4373,8 @@ msgstr "Chercher"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace"
-" all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace "
+"all'"
 msgstr ""
 "Veuillez noter qu'il y a des correspondances dans les parties non "
 "modifiables du document, ces correspondances ne seront pas remplacées lors "
@@ -4426,15 +4431,15 @@ msgstr " copie réussie."
 msgid "Revision file could not be generated."
 msgstr "Le fichier de révision n'a pas pu être généré."
 
-#: document/static/js/modules/exporter/native/revision.js:71
+#: document/static/js/modules/exporter/native/revision.js:70
 msgid "Revision saved"
 msgstr "Révision enregistrée"
 
-#: document/static/js/modules/exporter/native/revision.js:74
+#: document/static/js/modules/exporter/native/revision.js:73
 msgid "Revision could not be saved."
 msgstr "La révision n'a pas pu être enregistrée."
 
-#: document/static/js/modules/exporter/native/shrink.js:18
+#: document/static/js/modules/exporter/native/shrink.js:29
 msgid "File export has been initiated."
 msgstr "L'exportation de fichier a été initiée."
 
@@ -4514,11 +4519,11 @@ msgstr "Mise à jour des révisions enregistrées."
 msgid "No document revisions to update."
 msgstr "Aucune révision de document à mettre à jour."
 
-#: document/static/js/modules/maintenance/index.js:267
+#: document/static/js/modules/maintenance/index.js:266
 msgid "The document revision has been updated: "
 msgstr "La révision du document a été mise à jour: "
 
-#: document/static/js/modules/maintenance/index.js:279
+#: document/static/js/modules/maintenance/index.js:278
 msgid "All documents, document templates and document revisions updated!"
 msgstr ""
 "Tous les documents, modèles de documents et révisions de documents mis à "
@@ -4745,6 +4750,10 @@ msgstr "Images"
 msgid "manage image files"
 msgstr "gérer les fichiers images"
 
+#: tum/static/js/plugins/menu/impressum.js:11
+msgid "Impressum"
+msgstr "Mentions légales"
+
 #: user/static/js/modules/contacts/add_dialog.js:91
 msgid "You cannot add yourself to your contacts!"
 msgstr "Vous ne pouvez pas vous ajouter à vos contacts!"
@@ -4863,26 +4872,25 @@ msgstr "Confirmer l'Adresse E-mail et Accepter les Termes et Conditions"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>."
 msgstr ""
-"Veuillez confirmer que vous possédez l'e-mail <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Veuillez confirmer que vous possédez l'e-mail <a href=\"mailto:%(email)s\">%"
+"(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
-"%(username)s, and that you have read and agree to our <a "
-"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
-"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
 msgstr ""
-"Veuillez confirmer que vous êtes propriétaire des <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, que vous avez demandé le nom "
-"d'utilisateur %(username)s et que vous avez lu et accepté à nos <a "
-"href=\"/pages/terms/\" target=\"_blank\"> Conditions générales </a> et à la "
-"<a href=\"/pages/privacy/\" target=\"_blank\"> Politique de confidentialité "
-"</a> ."
+"Veuillez confirmer que vous êtes propriétaire des <a href=\"mailto:%"
+"(email)s\">%(email)s</a>, que vous avez demandé le nom d'utilisateur %"
+"(username)s et que vous avez lu et accepté à nos <a href=\"/pages/terms/\" "
+"target=\"_blank\"> Conditions générales </a> et à la <a href=\"/pages/"
+"privacy/\" target=\"_blank\"> Politique de confidentialité </a> ."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4981,8 +4989,8 @@ msgid ""
 "We have sent an e-mail to your email address for verification. Follow the "
 "link provided to finalize the signup process."
 msgstr ""
-"Nous avons envoyé un e-mail à votre adresse e-mail pour vérification. Suivez"
-" le lien fourni pour finaliser le processus d'inscription."
+"Nous avons envoyé un e-mail à votre adresse e-mail pour vérification. Suivez "
+"le lien fourni pour finaliser le processus d'inscription."
 
 #: user/static/js/modules/login/index.js:216
 #: user/static/js/modules/password_reset/request_email.js:87
@@ -5049,8 +5057,8 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a "
-"href=\"mailto:%(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a href=\"mailto:%"
+"(contactEmail)s\">contact us</a>."
 msgstr ""
 "Si vous rencontrez des problèmes pour réinitialiser votre mot de passe, "
 "veuillez <a href=\"mailto:%(contactEmail)s\"> nous contacter </a>."
@@ -5097,96 +5105,96 @@ msgstr "Mot de passe incorrect."
 msgid "Could not delete user account."
 msgstr "Impossible de supprimer le compte utilisateur."
 
-#: user/static/js/modules/profile/dialogs.js:47
+#: user/static/js/modules/profile/dialogs.js:51
 msgid "Could not update profile avatar"
 msgstr "Impossible de mettre à jour l'avatar du profil"
 
-#: user/static/js/modules/profile/dialogs.js:65
+#: user/static/js/modules/profile/dialogs.js:69
 msgid "Upload your profile picture"
 msgstr "Téléchargez votre photo de profil"
 
-#: user/static/js/modules/profile/dialogs.js:93
+#: user/static/js/modules/profile/dialogs.js:97
 msgid "Could not delete avatar"
 msgstr "Impossible de supprimer l'avatar"
 
-#: user/static/js/modules/profile/dialogs.js:142
+#: user/static/js/modules/profile/dialogs.js:146
 msgid "All fields are required!"
 msgstr "Tous les champs sont requis!"
 
-#: user/static/js/modules/profile/dialogs.js:149
+#: user/static/js/modules/profile/dialogs.js:153
 msgid "Please confirm the new password!"
 msgstr "Veuillez confirmer le nouveau mot de passe!"
 
-#: user/static/js/modules/profile/dialogs.js:165
+#: user/static/js/modules/profile/dialogs.js:169
 msgid "The password has been changed."
 msgstr "Le mot de passe a été changé."
 
-#: user/static/js/modules/profile/dialogs.js:181
+#: user/static/js/modules/profile/dialogs.js:185
 msgid "The password could not be changed!"
 msgstr "Le mot de passe n'a pas pu être changé!"
 
-#: user/static/js/modules/profile/dialogs.js:192
+#: user/static/js/modules/profile/dialogs.js:196
 msgid "The password could not be changed"
 msgstr "Le mot de passe n'a pas pu être modifié"
 
-#: user/static/js/modules/profile/dialogs.js:226
+#: user/static/js/modules/profile/dialogs.js:230
 msgid "New email address is required!"
 msgstr "Une nouvelle adresse e-mail est requise!"
 
-#: user/static/js/modules/profile/dialogs.js:245
+#: user/static/js/modules/profile/dialogs.js:249
 msgid "Confirmation e-mail sent to"
 msgstr "E-mail de confirmation envoyé à"
 
-#: user/static/js/modules/profile/dialogs.js:258
+#: user/static/js/modules/profile/dialogs.js:262
 msgid "The email could not be added!"
 msgstr "L'e-mail n'a pas pu être ajouté!"
 
-#: user/static/js/modules/profile/dialogs.js:270
+#: user/static/js/modules/profile/dialogs.js:274
 msgid "Add Email"
 msgstr "Ajouter un e-mail"
 
-#: user/static/js/modules/profile/dialogs.js:298
+#: user/static/js/modules/profile/dialogs.js:302
 msgid "Email successfully deleted!"
 msgstr "E-mail supprimé avec succès!"
 
-#: user/static/js/modules/profile/dialogs.js:304
+#: user/static/js/modules/profile/dialogs.js:308
 msgid "The email could not be deleted!"
 msgstr "L'e-mail n'a pas pu être supprimé!"
 
-#: user/static/js/modules/profile/dialogs.js:316
-#: user/static/js/modules/profile/dialogs.js:368
+#: user/static/js/modules/profile/dialogs.js:320
+#: user/static/js/modules/profile/dialogs.js:372
 msgid "Confirm remove"
 msgstr "Confirmer la suppression"
 
-#: user/static/js/modules/profile/dialogs.js:318
+#: user/static/js/modules/profile/dialogs.js:322
 msgid "Remove the email address"
 msgstr "Supprimer l'adresse e-mail"
 
-#: user/static/js/modules/profile/dialogs.js:349
+#: user/static/js/modules/profile/dialogs.js:353
 msgid "account successfully deleted!"
 msgstr "compte supprimé avec succès!"
 
-#: user/static/js/modules/profile/dialogs.js:356
+#: user/static/js/modules/profile/dialogs.js:360
 msgid "The account could not be deleted!"
 msgstr "Le compte n'a pas pu être supprimé!"
 
-#: user/static/js/modules/profile/dialogs.js:370
+#: user/static/js/modules/profile/dialogs.js:374
 msgid "Remove the link to the account at"
 msgstr "Supprimez le lien vers le compte à"
 
-#: user/static/js/modules/profile/dialogs.js:402
+#: user/static/js/modules/profile/dialogs.js:406
 msgid "The primary email has been updated."
 msgstr "L'e-mail principal a été mis à jour."
 
-#: user/static/js/modules/profile/dialogs.js:410
+#: user/static/js/modules/profile/dialogs.js:414
 msgid "The email could not be set to be primary email."
 msgstr "L'e-mail n'a pas pu être défini comme e-mail principal."
 
-#: user/static/js/modules/profile/dialogs.js:423
+#: user/static/js/modules/profile/dialogs.js:427
 msgid "Confirm set primary"
 msgstr "Confirmer le paramétrage principal"
 
-#: user/static/js/modules/profile/dialogs.js:425
+#: user/static/js/modules/profile/dialogs.js:429
 msgid "Set this email as the address primary"
 msgstr "Définissez cet e-mail comme adresse principale"
 
@@ -5207,7 +5215,6 @@ msgid "Could not save profile data"
 msgstr "Impossible d'enregistrer les données de profil"
 
 #: user/static/js/modules/profile/index.js:317
-#| msgid "Could not save "
 msgid "Could not save preferences"
 msgstr "Impossible d'enregistrer les préférences"
 
@@ -5225,8 +5232,7 @@ msgid ""
 "confirm deletion."
 msgstr ""
 "Voulez-vous vraiment supprimer votre compte? Saisissez votre nom "
-"d'utilisateur et votre mot de passe ci-dessous pour confirmer la "
-"suppression."
+"d'utilisateur et votre mot de passe ci-dessous pour confirmer la suppression."
 
 #: user/static/js/modules/profile/templates.js:23
 msgid "We cannot reverse an account deletion."
@@ -5237,8 +5243,8 @@ msgid ""
 "Some copies of your files may temporarily be kept in our backup system, but "
 "also these will disappear automatically in due time."
 msgstr ""
-"Certaines copies de vos fichiers peuvent être temporairement conservées dans"
-" notre système de sauvegarde, mais elles disparaîtront également "
+"Certaines copies de vos fichiers peuvent être temporairement conservées dans "
+"notre système de sauvegarde, mais elles disparaîtront également "
 "automatiquement en temps voulu."
 
 #: user/static/js/modules/profile/templates.js:40
@@ -5334,14 +5340,13 @@ msgstr ""
 
 #: user/static/js/modules/profile/templates.js:228
 msgid ""
-"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
-" citation: @@entry_key. Multiple sources: @key1;key2"
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
+"citation: @@entry_key. Multiple sources: @key1;key2"
 msgstr ""
 "Citation : @entry_key – suffixe facultatif : @entry_key[prefix][locator]. "
 "Citation textuelle : @@entry_key. Sources multiples : @key1;key2"
 
 #: user/static/js/modules/profile/templates.js:229
-#| msgid "Cross references without targets"
 msgid "Cross-reference: @#target-id"
 msgstr "Référence croisée : @#target-id"
 
@@ -5374,7 +5379,8 @@ msgid "Signup"
 msgstr "S'inscrire"
 
 #: user/static/js/modules/signup/index.js:13
-msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
 msgstr ""
 "Vous avez déjà un compte? Veuillez ensuite <a href=\"/\" title=\"Login\"> "
 "vous connecter </a>."
@@ -5453,8 +5459,8 @@ msgstr "Désactiver l'authentification à deux facteurs"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce"
-" the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce "
+"the security of your account."
 msgstr ""
 "Êtes-vous sûr de vouloir désactiver l'authentification à deux facteurs ? "
 "Cela réduira la sécurité de votre compte."
@@ -5561,7 +5567,7 @@ msgstr "Modèles de documents"
 msgid "Templates"
 msgstr "Modèles"
 
-#: usermedia/static/js/modules/images/database.js:51
+#: usermedia/static/js/modules/images/database.js:46
 msgid "Image is larger than the maximum permitted size"
 msgstr "L'image est plus grande que la taille maximale autorisée"
 
@@ -5677,6 +5683,93 @@ msgstr "Ajouter une nouvelle image"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:70
 msgid "Use image"
 msgstr "Utiliser l'image"
+
+#~ msgid "Could not obtain submission info."
+#~ msgstr "Impossible d'obtenir les informations de soumission."
+
+#~ msgid "Website"
+#~ msgstr "Site web"
+
+#~| msgid "Publisher(s)"
+#~ msgid "Publish to website"
+#~ msgstr "Publier sur le site Web"
+
+#~| msgid "Published"
+#~ msgid "Publish"
+#~ msgstr "Publier"
+
+#~ msgid "Publish, reject or request changes"
+#~ msgstr "Publier, rejeter ou demander des modifications"
+
+#~ msgid "Submit for publishing to website"
+#~ msgstr "Soumettre pour publication sur le site Web"
+
+#~ msgid "View on website"
+#~ msgstr "Voir sur le site Internet"
+
+#~ msgid "Go to the last published version on the website."
+#~ msgstr "Accédez à la dernière version publiée sur le site."
+
+#~ msgid "Submit document to be published on website"
+#~ msgstr "Soumettre le document à publier sur le site Web"
+
+#~| msgid "Subtitle of publication"
+#~ msgid "Submitted document for publication."
+#~ msgstr "Document soumis pour publication."
+
+#~| msgid "Track changes"
+#~ msgid "Ask for changes"
+#~ msgstr "Demander des changements"
+
+#~ msgid "Publish, reject or ask for changes"
+#~ msgstr "Publier, rejeter ou demander des modifications"
+
+#~| msgid "Close document"
+#~ msgid "Published document."
+#~ msgstr "Document publié."
+
+#~| msgid "Document has been deleted"
+#~ msgid "Publication of document has been rejected."
+#~ msgstr "La publication du document a été refusée."
+
+#~ msgid "Document has been reviewed. Request for changes has been sent."
+#~ msgstr ""
+#~ "Le document a été examiné. La demande de modifications a été envoyée."
+
+#~ msgid "Submitted"
+#~ msgstr "Soumis"
+
+#~| msgid "Reviewer"
+#~ msgid "Reviewed"
+#~ msgstr "Révisé"
+
+#~| msgid "Reject"
+#~ msgid "Rejected"
+#~ msgstr "Rejeté"
+
+#~| msgid "Submitted"
+#~ msgid "Unsubmitted"
+#~ msgstr "Non soumis"
+
+#~| msgid "Review submitted"
+#~ msgid "Resubmitted"
+#~ msgstr "Soumis à nouveau"
+
+#~| msgid "Login"
+#~ msgid "Log"
+#~ msgstr "Enregistrer"
+
+#~ msgid "by"
+#~ msgstr "par"
+
+#~ msgid "Status"
+#~ msgstr "Statut"
+
+#~ msgid "Message"
+#~ msgstr "Message"
+
+#~ msgid "Fidus Writer"
+#~ msgstr "Écrivain Fidus"
 
 #~ msgid "Import a Fidus file"
 #~ msgstr "Importer un fichier Fidus"
@@ -5822,9 +5915,6 @@ msgstr "Utiliser l'image"
 #~ msgid "ISWC"
 #~ msgstr "ISWC"
 
-#~ msgid "Subtitle of publication"
-#~ msgstr "Sous-titre de publication"
-
 #~ msgid "Title of publication"
 #~ msgstr "Titre de la publication"
 
@@ -5888,9 +5978,6 @@ msgstr "Utiliser l'image"
 #~ msgid "Number of a partial volume"
 #~ msgstr "Numéro d'un volume partiel"
 
-#~ msgid "Publisher(s)"
-#~ msgstr "Éditeur (s)"
-
 #~ msgid "Publication state of the work"
 #~ msgstr "État de publication de l'œuvre"
 
@@ -5947,17 +6034,17 @@ msgstr "Utiliser l'image"
 
 #~ msgid "In <em>Extended Date Time Format</em> (EDTF) 1.0<br>Level 0 or 1"
 #~ msgstr ""
-#~ "Dans <em> Format de date et d'heure étendu </em> (EDTF) 1.0 <br> Niveau 0 ou"
-#~ " 1"
+#~ "Dans <em> Format de date et d'heure étendu </em> (EDTF) 1.0 <br> Niveau 0 "
+#~ "ou 1"
 
 #~ msgid ""
 #~ "Prefixed is \"used\" when it is used in cases where only the last name is "
-#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so"
-#~ " the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
-#~ "Gogh\", so the prefix \"van\" is used."
+#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", "
+#~ "so the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into "
+#~ "\"van Gogh\", so the prefix \"van\" is used."
 #~ msgstr ""
-#~ "Le préfixe est \"utilisé\" lorsqu'il est utilisé dans les cas où seul le nom"
-#~ " de famille est utilisé. Par exemple: \"Ludwig van Beethoven\" devient "
+#~ "Le préfixe est \"utilisé\" lorsqu'il est utilisé dans les cas où seul le "
+#~ "nom de famille est utilisé. Par exemple: \"Ludwig van Beethoven\" devient "
 #~ "\"Beethoven\", donc le préfixe \"van\" n'est pas utilisé. \"Vincent van "
 #~ "Gogh\" se transforme en \"van Gogh\", donc le préfixe \"van\" est utilisé."
 
@@ -6095,9 +6182,6 @@ msgstr "Utiliser l'image"
 
 #~ msgid "In preparation"
 #~ msgstr "En préparation"
-
-#~ msgid "Submitted"
-#~ msgstr "Soumis"
 
 #~ msgid "Forthcoming"
 #~ msgstr "À venir"
@@ -6246,9 +6330,6 @@ msgstr "Utiliser l'image"
 #~ msgid "Journal saved."
 #~ msgstr "Journal enregistré."
 
-#~ msgid "Could not obtain submission info."
-#~ msgstr "Impossible d'obtenir les informations de soumission."
-
 #~ msgid "Submit revision"
 #~ msgstr "Soumettre la révision"
 
@@ -6257,9 +6338,6 @@ msgstr "Utiliser l'image"
 
 #~ msgid "Review could not be submitted."
 #~ msgstr "L'avis n'a pas pu être soumis."
-
-#~ msgid "Review submitted"
-#~ msgstr "Avis soumis"
 
 #~ msgid "Article submitted"
 #~ msgstr "Article soumis"
@@ -6302,7 +6380,8 @@ msgstr "Utiliser l'image"
 
 #~ msgid "Export the document to an Adobe Indesign ICML file using pandoc."
 #~ msgstr ""
-#~ "Exportez le document vers un fichier Adobe Indesign ICML à l'aide de pandoc."
+#~ "Exportez le document vers un fichier Adobe Indesign ICML à l'aide de "
+#~ "pandoc."
 
 #~ msgid "Export the document to a markdown file using pandoc."
 #~ msgstr "Exportez le document vers un fichier markdown à l'aide de pandoc."
@@ -6328,7 +6407,8 @@ msgstr "Utiliser l'image"
 
 #~ msgid "Export the document to a PHP Markdown Extra file using pandoc."
 #~ msgstr ""
-#~ "Exportez le document vers un fichier PHP Markdown Extra à l'aide de pandoc."
+#~ "Exportez le document vers un fichier PHP Markdown Extra à l'aide de "
+#~ "pandoc."
 
 #~ msgid "Export the document to a richtext file using pandoc."
 #~ msgstr "Exportez le document vers un fichier richtext à l'aide de pandoc."
@@ -6383,9 +6463,6 @@ msgstr "Utiliser l'image"
 
 #~ msgid "Books"
 #~ msgstr "Livres"
-
-#~ msgid "Impressum"
-#~ msgstr "Mentions légales"
 
 #~ msgid "Cannot load book access data."
 #~ msgstr "Impossible de charger les données d'accès au livre."
@@ -6445,7 +6522,8 @@ msgstr "Utiliser l'image"
 #~ msgstr "Aucun livre trouvé"
 
 #~ msgid "You cannot delete books while you are offline."
-#~ msgstr "Vous ne pouvez pas supprimer de livres lorsque vous êtes hors ligne."
+#~ msgstr ""
+#~ "Vous ne pouvez pas supprimer de livres lorsque vous êtes hors ligne."
 
 #~ msgid "Search books"
 #~ msgstr "Rechercher des livres"
@@ -6704,11 +6782,12 @@ msgstr "Utiliser l'image"
 #~ msgstr "Avertissement de bogue de Safari"
 
 #~ msgid ""
-#~ "Unfortunately Safari has a bug which makes it impossible to export to this "
-#~ "format. Please use Chrome or Firefox (on a desktop computer)."
+#~ "Unfortunately Safari has a bug which makes it impossible to export to "
+#~ "this format. Please use Chrome or Firefox (on a desktop computer)."
 #~ msgstr ""
-#~ "Malheureusement, Safari a un bogue qui rend impossible l'exportation vers ce"
-#~ " format. Veuillez utiliser Chrome ou Firefox (sur un ordinateur de bureau)."
+#~ "Malheureusement, Safari a un bogue qui rend impossible l'exportation vers "
+#~ "ce format. Veuillez utiliser Chrome ou Firefox (sur un ordinateur de "
+#~ "bureau)."
 
 #~ msgid "Export selected as HTML (old)"
 #~ msgstr "Exporter sélectionné au format HTML (ancien)"

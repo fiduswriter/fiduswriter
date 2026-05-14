@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-12 18:00+0000\n"
+"POT-Creation-Date: 2026-05-14 10:17+0000\n"
 "PO-Revision-Date: 2025-04-03 09:34+0200\n"
 "Last-Translator: None <>\n"
 "Language-Team: Bulgarian <mail@fiduswriter.org>\n"
@@ -76,7 +76,7 @@ msgid "Close"
 msgstr "Затвори"
 
 #: base/static/js/modules/common/dialog.js:84
-#: document/static/js/modules/documents/overview/index.js:920
+#: document/static/js/modules/documents/overview/index.js:942
 #: document/static/js/modules/editor/collab/doc.js:371
 #: document/static/js/modules/editor/collab/doc.js:573
 #: document/static/js/modules/editor/comments/editors/answer.js:22
@@ -96,7 +96,7 @@ msgid "OK"
 msgstr "ОК"
 
 #: base/static/js/modules/common/file/dialog.js:39
-#: base/static/js/modules/common/file/selector.js:53
+#: base/static/js/modules/common/file/selector.js:58
 #: base/static/js/modules/common/file/tools.js:6
 #: base/static/js/modules/common/file/tools.js:16
 #: base/static/js/modules/common/file/tools.js:36
@@ -132,9 +132,9 @@ msgstr "Нова папка"
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
 #: user/static/js/modules/contacts/add_dialog.js:14
-#: user/static/js/modules/profile/dialogs.js:124
-#: user/static/js/modules/profile/dialogs.js:215
-#: user/static/js/modules/profile/dialogs.js:385
+#: user/static/js/modules/profile/dialogs.js:128
+#: user/static/js/modules/profile/dialogs.js:219
+#: user/static/js/modules/profile/dialogs.js:389
 #: user/static/js/modules/profile/templates.js:285
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
@@ -226,8 +226,7 @@ msgstr "Притежател на авторските права"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder "
-"is."
+"If the work is not in the public domain, specify who the copyright holder is."
 msgstr ""
 "Ако произведението не е публично достояние, посочете кой е носителят на "
 "авторските права."
@@ -346,12 +345,11 @@ msgstr "Библиографията не можа да бъде актуали�
 #: bibliography/static/js/modules/bibliography/overview/index.js:314
 #: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
-#: document/static/js/modules/exporter/native/revision.js:79
+#: document/static/js/modules/exporter/native/revision.js:78
 #: usermedia/static/js/modules/images/overview/index.js:94
 #: usermedia/static/js/modules/images/overview/index.js:108
 msgid "You are currently offline. Please try again when you are back online."
-msgstr ""
-"В момента сте офлайн. Моля, опитайте отново, когато се върнете онлайн."
+msgstr "В момента сте офлайн. Моля, опитайте отново, когато се върнете онлайн."
 
 #: bibliography/static/js/modules/bibliography/database/index.js:131
 msgid "The bibliography has been updated."
@@ -470,8 +468,6 @@ msgid "Register New Source"
 msgstr "Добавяне на нов източник"
 
 #: bibliography/static/js/modules/bibliography/form/index.js:386
-#| msgid ""
-#| "A slug can only contain letters, numbers, hyphens and underscores."
 msgid "Only letters, numbers, hyphens and underscores are allowed."
 msgstr "Разрешени са само букви, цифри, тирета и долни черти."
 
@@ -488,7 +484,6 @@ msgid "Select source type"
 msgstr "Избери тип на източника"
 
 #: bibliography/static/js/modules/bibliography/form/templates.js:28
-#| msgid "Citation"
 msgid "Citation key"
 msgstr "Ключ за цитиране"
 
@@ -538,7 +533,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Имаше проблем с импортирането на библиографията"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:173
+#: document/static/js/modules/documents/overview/actions.js:211
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Импортиране"
@@ -587,7 +582,7 @@ msgstr "Няма намерени източници"
 #: document/static/js/modules/document_template/templates.js:527
 #: document/static/js/modules/document_template/templates.js:813
 #: document/static/js/modules/document_template/templates.js:836
-#: document/static/js/modules/documents/overview/index.js:560
+#: document/static/js/modules/documents/overview/index.js:582
 #: document/static/js/modules/editor/dialogs/citation.js:254
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
@@ -630,8 +625,8 @@ msgstr "Редактирай категории"
 #: document/static/js/modules/document_template/export_template_dialog.js:178
 #: document/static/js/modules/document_template/templates.js:821
 #: document/static/js/modules/documents/access_rights/templates.js:28
-#: document/static/js/modules/documents/overview/actions.js:89
-#: document/static/js/modules/documents/overview/index.js:153
+#: document/static/js/modules/documents/overview/actions.js:110
+#: document/static/js/modules/documents/overview/index.js:155
 #: document/static/js/modules/documents/revisions/index.js:133
 #: document/static/js/modules/documents/revisions/templates.js:11
 #: document/static/js/modules/editor/marginboxes/templates.js:531
@@ -639,7 +634,7 @@ msgstr "Редактирай категории"
 #: document/static/js/modules/editor/marginboxes/templates.js:539
 #: user/static/js/modules/contacts/delete_dialog.js:13
 #: user/static/js/modules/profile/delete_user.js:18
-#: user/static/js/modules/profile/dialogs.js:100
+#: user/static/js/modules/profile/dialogs.js:104
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:60
 #: usermedia/static/js/modules/images/overview/index.js:126
 msgid "Delete"
@@ -648,12 +643,12 @@ msgstr "Изтрий"
 #: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
 #: document/static/js/modules/document_template/export_template_dialog.js:192
-#: document/static/js/modules/documents/overview/actions.js:70
-#: document/static/js/modules/documents/overview/index.js:145
+#: document/static/js/modules/documents/overview/actions.js:91
+#: document/static/js/modules/documents/overview/index.js:147
 #: document/static/js/modules/documents/revisions/index.js:151
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:40
-#: user/static/js/modules/profile/dialogs.js:112
+#: user/static/js/modules/profile/dialogs.js:116
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:75
 #: usermedia/static/js/modules/images/overview/index.js:140
 msgid "Confirm deletion"
@@ -785,7 +780,7 @@ msgstr "Един шал може да съдържа само букви, циф
 msgid "The slug has to be unique."
 msgstr "Шлемът трябва да бъде уникален."
 
-#: document/static/js/modules/document_template/document_style_dialog.js:292
+#: document/static/js/modules/document_template/document_style_dialog.js:291
 msgid "A file with the same name exists already."
 msgstr "Файл със същото име вече съществува."
 
@@ -845,7 +840,7 @@ msgstr "Каченият файл изглежда не е файл на шаб�
 msgid "The uploaded file does not appear to be a Fidus Writer file."
 msgstr "Каченият файл не изглежда да е Fidus Writer."
 
-#: document/static/js/modules/document_template/importer.js:165
+#: document/static/js/modules/document_template/importer.js:164
 #: document/static/js/modules/importer/docx/import.js:73
 #: document/static/js/modules/importer/native/file.js:213
 #: document/static/js/modules/importer/odt/import.js:142
@@ -853,7 +848,7 @@ msgstr "Каченият файл не изглежда да е Fidus Writer."
 msgid "successfully imported."
 msgstr "успешно импортиран."
 
-#: document/static/js/modules/document_template/importer.js:172
+#: document/static/js/modules/document_template/importer.js:171
 #: document/static/js/modules/importer/native/file.js:220
 msgid ""
 "The uploaded file does not appear to be of the version used on this server: "
@@ -1062,7 +1057,7 @@ msgid "Underline"
 msgstr "Подчертан"
 
 #: document/static/js/modules/document_template/templates.js:114
-#: document/static/js/modules/editor/dialogs/link.js:241
+#: document/static/js/modules/editor/dialogs/link.js:248
 #: document/static/js/modules/editor/menus/toolbar/model.js:712
 msgid "Link"
 msgstr "връзка"
@@ -1468,15 +1463,15 @@ msgstr ""
 "Пишете с проследени промени, но не виждайте коментари и чатове на други"
 
 #: document/static/js/modules/documents/access_rights/index.js:234
-#: document/static/js/modules/documents/overview/index.js:767
+#: document/static/js/modules/documents/overview/index.js:789
 msgid "End-to-end encrypted document"
 msgstr "Криптиран от край до край документ"
 
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure"
-" channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure "
+"channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "Този документ е криптиран от край до край. Сътрудниците без лична парола ще "
@@ -1511,7 +1506,7 @@ msgid "Create share link"
 msgstr "Създайте връзка за споделяне"
 
 #: document/static/js/modules/documents/access_rights/index.js:371
-#: document/static/js/modules/documents/overview/index.js:924
+#: document/static/js/modules/documents/overview/index.js:946
 msgid "Create"
 msgstr "Създавайте"
 
@@ -1570,7 +1565,7 @@ msgstr "Сътрудници"
 
 #: document/static/js/modules/documents/access_rights/templates.js:27
 #: document/static/js/modules/documents/access_rights/templates.js:85
-#: document/static/js/modules/documents/overview/index.js:565
+#: document/static/js/modules/documents/overview/index.js:587
 msgid "Rights"
 msgstr "Права"
 
@@ -1644,49 +1639,61 @@ msgstr ""
 msgid "Invite"
 msgstr "каня"
 
-#: document/static/js/modules/documents/overview/actions.js:39
+#: document/static/js/modules/documents/overview/actions.js:36
+#: document/static/js/modules/documents/overview/index.js:779
+#: document/static/js/modules/editor/e2ee/password-dialog.js:196
+msgid "Encrypted Document"
+msgstr "Криптиран документ"
+
+#: document/static/js/modules/documents/overview/actions.js:60
 msgid "Document has been deleted"
 msgstr "Документът е изтрит"
 
-#: document/static/js/modules/documents/overview/actions.js:49
+#: document/static/js/modules/documents/overview/actions.js:70
 msgid "Could not delete document"
 msgstr "Документът не може да бъде изтрит"
 
-#: document/static/js/modules/documents/overview/actions.js:59
+#: document/static/js/modules/documents/overview/actions.js:80
 msgid "You cannot delete a document while you are offline."
 msgstr "Не можете да изтриете документ, докато сте офлайн."
 
-#: document/static/js/modules/documents/overview/actions.js:75
+#: document/static/js/modules/documents/overview/actions.js:96
 msgid "Do you really want to delete the following documents?"
 msgstr "Наистина ли искате да изтриете следните документи?"
 
-#: document/static/js/modules/documents/overview/actions.js:78
+#: document/static/js/modules/documents/overview/actions.js:99
 msgid "Do you really want to delete the following document?"
 msgstr "Наистина ли искате да изтриете следния документ?"
 
-#: document/static/js/modules/documents/overview/actions.js:117
+#: document/static/js/modules/documents/overview/actions.js:138
 msgid "Import as:"
 msgstr "Импортиране като:"
 
-#: document/static/js/modules/documents/overview/actions.js:137
+#: document/static/js/modules/documents/overview/actions.js:161
+msgid ""
+"You need to set up a personal passphrase before you can import documents."
+msgstr ""
+"Трябва да зададете лична парола, преди да можете да импортирате документи."
+
+#: document/static/js/modules/documents/overview/actions.js:173
 msgid "This document will be saved as encrypted."
 msgstr "Този документ ще бъде запазен като шифрован."
 
-#: document/static/js/modules/documents/overview/actions.js:143
-#: document/static/js/modules/documents/overview/index.js:904
+#: document/static/js/modules/documents/overview/actions.js:181
+#: document/static/js/modules/documents/overview/index.js:926
 msgid "Non-encrypted"
 msgstr "Некриптиран"
 
-#: document/static/js/modules/documents/overview/actions.js:147
-#: document/static/js/modules/documents/overview/index.js:909
+#: document/static/js/modules/documents/overview/actions.js:185
+#: document/static/js/modules/documents/overview/index.js:931
 msgid "Encrypted"
 msgstr "Криптиран"
 
-#: document/static/js/modules/documents/overview/actions.js:160
+#: document/static/js/modules/documents/overview/actions.js:198
 msgid "Supported formats"
 msgstr "Поддържани формати"
 
-#: document/static/js/modules/documents/overview/actions.js:160
+#: document/static/js/modules/documents/overview/actions.js:198
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1694,46 +1701,58 @@ msgstr ""
 "Можете също така да качите ZIP файл, който съдържа един файл във всеки от "
 "тези формати, както и изображения и/или bibtex файл."
 
-#: document/static/js/modules/documents/overview/actions.js:164
+#: document/static/js/modules/documents/overview/actions.js:202
 msgid "Import a document"
 msgstr "Импортирайте документ"
 
-#: document/static/js/modules/documents/overview/actions.js:182
+#: document/static/js/modules/documents/overview/actions.js:220
 msgid "File too large"
 msgstr "Файлът е твърде голям"
 
-#: document/static/js/modules/documents/overview/actions.js:240
+#: document/static/js/modules/documents/overview/actions.js:279
 msgid "No importable files found in ZIP"
 msgstr "Няма намерени импортируеми файлове в ZIP"
 
-#: document/static/js/modules/documents/overview/actions.js:282
+#: document/static/js/modules/documents/overview/actions.js:321
 msgid "Unsupported file format"
 msgstr "Неподдържан файлов формат"
 
-#: document/static/js/modules/documents/overview/actions.js:349
+#: document/static/js/modules/documents/overview/actions.js:411
+#: document/static/js/modules/documents/overview/actions.js:463
 msgid "Could not create encrypted document."
 msgstr "Не можа да се създаде шифрован документ."
 
-#: document/static/js/modules/documents/overview/actions.js:440
+#: document/static/js/modules/documents/overview/actions.js:457
+#: document/static/js/modules/editor/collab/doc.js:309
+msgid "Incorrect passphrase. Please try again."
+msgstr "Неправилна парола. Моля, опитайте отново."
+
+#: document/static/js/modules/documents/overview/actions.js:501
+msgid "Recovery failed. Please check your recovery key and try again."
+msgstr ""
+"Неуспешно възстановяване. Моля, проверете ключа си за възстановяване и "
+"опитайте отново."
+
+#: document/static/js/modules/documents/overview/actions.js:597
 #: document/static/js/modules/editor/document_template/index.js:129
 msgid "Encrypt the copy"
 msgstr "Шифровайте копието"
 
-#: document/static/js/modules/documents/overview/actions.js:447
+#: document/static/js/modules/documents/overview/actions.js:604
 #: document/static/js/modules/editor/document_template/index.js:136
 msgid "Choose document template"
 msgstr "Изберете шаблон за документ"
 
-#: document/static/js/modules/documents/overview/actions.js:449
+#: document/static/js/modules/documents/overview/actions.js:606
 msgid "Select document template for copies"
 msgstr "Изберете шаблон за документ за копия"
 
-#: document/static/js/modules/documents/overview/actions.js:449
+#: document/static/js/modules/documents/overview/actions.js:606
 #: document/static/js/modules/editor/document_template/index.js:138
 msgid "Select document template for copy."
 msgstr "Изберете шаблон за документ за копиране."
 
-#: document/static/js/modules/documents/overview/actions.js:462
+#: document/static/js/modules/documents/overview/actions.js:619
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
 #: document/static/js/modules/editor/document_template/index.js:151
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
@@ -1741,33 +1760,33 @@ msgstr "Изберете шаблон за документ за копиран�
 msgid "Copy"
 msgstr "копие"
 
-#: document/static/js/modules/documents/overview/actions.js:511
+#: document/static/js/modules/documents/overview/actions.js:668
 msgid "Could not copy document."
 msgstr "Неуспешно копиране на документа."
 
-#: document/static/js/modules/documents/overview/actions.js:541
-#: document/static/js/modules/documents/overview/actions.js:573
+#: document/static/js/modules/documents/overview/actions.js:698
+#: document/static/js/modules/documents/overview/actions.js:730
 #: document/static/js/modules/editor/document_template/index.js:229
 #: document/static/js/modules/editor/document_template/index.js:283
 msgid "Incorrect password."
 msgstr "Неправилна парола."
 
-#: document/static/js/modules/documents/overview/actions.js:795
+#: document/static/js/modules/documents/overview/actions.js:952
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
 "Не можете да видите хронологията на редакциите на документ, докато сте "
 "офлайн."
 
-#: document/static/js/modules/documents/overview/index.js:84
+#: document/static/js/modules/documents/overview/index.js:86
 msgid "Document Overview"
 msgstr "Преглед на документа"
 
-#: document/static/js/modules/documents/overview/index.js:115
+#: document/static/js/modules/documents/overview/index.js:117
 msgid "You cannot access rights data of a document while you are offline."
 msgstr "Нямате достъп до данните за правата на документ, докато сте офлайн."
 
-#: document/static/js/modules/documents/overview/index.js:147
+#: document/static/js/modules/documents/overview/index.js:149
 msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
@@ -1775,58 +1794,53 @@ msgstr ""
 "Ако оставите празна папка, ще я изтриете. Наистина ли искате да изтриете "
 "тази папка?"
 
-#: document/static/js/modules/documents/overview/index.js:193
+#: document/static/js/modules/documents/overview/index.js:195
 msgid "You cannot open a document while you are offline."
 msgstr "Не можете да отворите документ, докато сте офлайн."
 
-#: document/static/js/modules/documents/overview/index.js:237
+#: document/static/js/modules/documents/overview/index.js:239
 msgid "Document data loading failed."
 msgstr "Зареждането на данните на документа не бе успешно."
 
-#: document/static/js/modules/documents/overview/index.js:550
+#: document/static/js/modules/documents/overview/index.js:572
 msgid "No documents available"
 msgstr "Няма налични документи"
 
-#: document/static/js/modules/documents/overview/index.js:551
+#: document/static/js/modules/documents/overview/index.js:573
 msgid "No documents found"
 msgstr "Няма намерени документи"
 
-#: document/static/js/modules/documents/overview/index.js:561
+#: document/static/js/modules/documents/overview/index.js:583
 msgid "Revisions"
 msgstr "Ревизиите"
 
-#: document/static/js/modules/documents/overview/index.js:562
+#: document/static/js/modules/documents/overview/index.js:584
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:112
 msgid "Created"
 msgstr "Създаден"
 
-#: document/static/js/modules/documents/overview/index.js:563
+#: document/static/js/modules/documents/overview/index.js:585
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:113
 msgid "Last changed"
 msgstr "Последна промяна"
 
-#: document/static/js/modules/documents/overview/index.js:564
+#: document/static/js/modules/documents/overview/index.js:586
 msgid "Owner"
 msgstr "Собственик"
 
-#: document/static/js/modules/documents/overview/index.js:757
-#: document/static/js/modules/editor/e2ee/password-dialog.js:196
-msgid "Encrypted Document"
-msgstr "Криптиран документ"
-
-#: document/static/js/modules/documents/overview/index.js:805
+#: document/static/js/modules/documents/overview/index.js:827
 msgid "Undefined"
 msgstr "неопределен"
 
-#: document/static/js/modules/documents/overview/index.js:818
+#: document/static/js/modules/documents/overview/index.js:840
 msgid "Copy selected as..."
 msgstr "Копирането е избрано като ..."
 
-#: document/static/js/modules/documents/overview/index.js:820
+#: document/static/js/modules/documents/overview/index.js:842
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Копирайте документите и ги присвойте към определен шаблон."
 
-#: document/static/js/modules/documents/overview/index.js:871
+#: document/static/js/modules/documents/overview/index.js:893
 msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
@@ -1834,38 +1848,38 @@ msgstr ""
 "Шифрованите документи защитават вашето съдържание, така че само хората с "
 "паролата да могат да го прочетат."
 
-#: document/static/js/modules/documents/overview/index.js:872
-#: document/static/js/modules/documents/overview/index.js:886
+#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:908
 msgid "Advantages"
 msgstr "Предимства"
 
-#: document/static/js/modules/documents/overview/index.js:874
+#: document/static/js/modules/documents/overview/index.js:896
 msgid "Only people with the password can read the document."
 msgstr "Само хора с паролата могат да четат документа."
 
-#: document/static/js/modules/documents/overview/index.js:875
+#: document/static/js/modules/documents/overview/index.js:897
 msgid "The server cannot access the document contents."
 msgstr "Сървърът няма достъп до съдържанието на документа."
 
-#: document/static/js/modules/documents/overview/index.js:877
-#: document/static/js/modules/documents/overview/index.js:892
+#: document/static/js/modules/documents/overview/index.js:899
+#: document/static/js/modules/documents/overview/index.js:914
 msgid "Disadvantages"
 msgstr "Недостатъци"
 
-#: document/static/js/modules/documents/overview/index.js:879
+#: document/static/js/modules/documents/overview/index.js:901
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr ""
 "Опции за ограничени права за достъп (без проследяване на промени или режими "
 "на преглед)."
 
-#: document/static/js/modules/documents/overview/index.js:880
+#: document/static/js/modules/documents/overview/index.js:902
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
 msgstr ""
 "Ако загубите паролата или паролата, няма начин да възстановите документа."
 
-#: document/static/js/modules/documents/overview/index.js:881
+#: document/static/js/modules/documents/overview/index.js:903
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
@@ -1873,44 +1887,44 @@ msgstr ""
 "Трябва да споделите паролата със сътрудниците ръчно (освен ако не използват "
 "лична парола)."
 
-#: document/static/js/modules/documents/overview/index.js:885
+#: document/static/js/modules/documents/overview/index.js:907
 msgid "Regular documents are the default and work well for most users."
 msgstr ""
 "Редовните документи са по подразбиране и работят добре за повечето "
 "потребители."
 
-#: document/static/js/modules/documents/overview/index.js:888
+#: document/static/js/modules/documents/overview/index.js:910
 msgid "Full access rights options including tracked changes and review modes."
 msgstr ""
-"Опции за пълни права за достъп, включително проследявани промени и режими на"
-" преглед."
+"Опции за пълни права за достъп, включително проследявани промени и режими на "
+"преглед."
 
-#: document/static/js/modules/documents/overview/index.js:889
+#: document/static/js/modules/documents/overview/index.js:911
 msgid "No risk of losing access if you forget a password."
 msgstr "Няма риск от загуба на достъп, ако забравите парола."
 
-#: document/static/js/modules/documents/overview/index.js:890
+#: document/static/js/modules/documents/overview/index.js:912
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr ""
 "По-лесно сътрудничество — няма нужда да споделяте пароли със сътрудници."
 
-#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:916
 msgid "The server can technically access the document contents."
 msgstr "Сървърът има технически достъп до съдържанието на документа."
 
-#: document/static/js/modules/documents/overview/index.js:895
+#: document/static/js/modules/documents/overview/index.js:917
 msgid "No additional protection beyond your account password."
 msgstr "Няма допълнителна защита освен паролата за вашия акаунт."
 
-#: document/static/js/modules/documents/overview/index.js:899
+#: document/static/js/modules/documents/overview/index.js:921
 msgid "Choose encryption type of new document."
 msgstr "Изберете типа криптиране на новия документ."
 
-#: document/static/js/modules/documents/overview/index.js:953
+#: document/static/js/modules/documents/overview/index.js:975
 msgid "Set Up Personal Encryption (Optional)"
 msgstr "Настройте лично криптиране (по избор)"
 
-#: document/static/js/modules/documents/overview/index.js:955
+#: document/static/js/modules/documents/overview/index.js:977
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
@@ -1918,25 +1932,25 @@ msgstr ""
 "Искате ли да зададете лична парола сега? Това ще ви позволи да отключите "
 "всичките си криптирани документи с една единствена парола."
 
-#: document/static/js/modules/documents/overview/index.js:956
+#: document/static/js/modules/documents/overview/index.js:978
 msgid "Note:"
 msgstr "Забележка:"
 
-#: document/static/js/modules/documents/overview/index.js:956
+#: document/static/js/modules/documents/overview/index.js:978
 msgid "This is optional. You can also use a per-document password instead."
 msgstr ""
 "Това не е задължително. Вместо това можете също да използвате парола за "
 "всеки документ."
 
-#: document/static/js/modules/documents/overview/index.js:960
+#: document/static/js/modules/documents/overview/index.js:982
 msgid "Skip for Now"
 msgstr "Пропуснете за сега"
 
-#: document/static/js/modules/documents/overview/index.js:971
+#: document/static/js/modules/documents/overview/index.js:993
 msgid "Set Up Passphrase"
 msgstr "Настройте парола"
 
-#: document/static/js/modules/documents/overview/index.js:1006
+#: document/static/js/modules/documents/overview/index.js:1028
 #: user/static/js/modules/profile/index.js:232
 msgid "Failed to set up passphrase: "
 msgstr "Неуспешно настройване на парола:"
@@ -2112,7 +2126,7 @@ msgstr "Recreate"
 msgid "Download"
 msgstr "Изтегли"
 
-#: document/static/js/modules/documents/tools.js:71
+#: document/static/js/modules/documents/tools.js:76
 msgid "Could not obtain extra document data"
 msgstr "Не можаха да се получат допълнителни данни за документа"
 
@@ -2140,10 +2154,6 @@ msgstr "[Криптирано съобщение - въведете парола
 #: document/static/js/modules/editor/collab/chat.js:144
 msgid "Send a message..."
 msgstr "Изпрати съобщение..."
-
-#: document/static/js/modules/editor/collab/doc.js:309
-msgid "Incorrect passphrase. Please try again."
-msgstr "Неправилна парола. Моля, опитайте отново."
 
 #: document/static/js/modules/editor/collab/doc.js:351
 msgid "Recovery Failed"
@@ -2234,8 +2244,8 @@ msgid ""
 "edits in automatically."
 msgstr ""
 "Виждате този диалогов прозорец за обединяване, защото дълго време сте били "
-"офлайн и промените, които сте направили в документа, докато сте били офлайн,"
-" са в конфликт с промените, направени от други потребители. Така че не беше "
+"офлайн и промените, които сте направили в документа, докато сте били офлайн, "
+"са в конфликт с промените, направени от други потребители. Така че не беше "
 "възможно да обедините редакциите си автоматично."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:200
@@ -2256,8 +2266,7 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am "
-"merging?"
+"What if my collaborators continue working on the document while I am merging?"
 msgstr ""
 "Ами ако моите сътрудници продължат да работят по документа, докато се "
 "обединявам?"
@@ -2276,8 +2285,8 @@ msgstr "Защо виждам трима редактори?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It"
-" is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It "
+"is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
@@ -2295,10 +2304,10 @@ msgstr "Кои са зелените и червените акценти в р�
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The"
-" text marked in green corresponds to the text that was edited (added) by you"
-" or other users. The text marked in red corresponds to text that was deleted"
-" by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The "
+"text marked in green corresponds to the text that was edited (added) by you "
+"or other users. The text marked in red corresponds to text that was deleted "
+"by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2307,8 +2316,8 @@ msgstr ""
 "маркиран в зелено, съответства на текста, който е редактиран (добавен) от "
 "вас или други потребители. Текстът, маркиран в червено, съответства на "
 "текст, който е бил изтрит от вас или от други потребители. Вмъкванията и "
-"изтриванията, направени от други потребители, ще бъдат маркирани в редактора"
-" за обединяване. Вмъкванията и изтриванията, направени от вас, ще бъдат "
+"изтриванията, направени от други потребители, ще бъдат маркирани в редактора "
+"за обединяване. Вмъкванията и изтриванията, направени от вас, ще бъдат "
 "маркирани в офлайн редактора вдясно."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:229
@@ -2330,9 +2339,9 @@ msgid ""
 msgstr ""
 "Приемането или отхвърлянето на промяна в редактора за сливане в средата или "
 "офлайн редактора вдясно води до промяна в редактора за сливане. Можете да "
-"приемете промяна, като щракнете директно върху маркирания текст. Ще се появи"
-" падащо меню и след това можете да приемете или отхвърлите промяната. Когато"
-" щракнете върху маркирания текст, той също така подчертава промените, които "
+"приемете промяна, като щракнете директно върху маркирания текст. Ще се появи "
+"падащо меню и след това можете да приемете или отхвърлите промяната. Когато "
+"щракнете върху маркирания текст, той също така подчертава промените, които "
 "ще бъдат приети. %(mergeImage)s Както е показано на изображението по-горе, "
 "можете да щракнете върху маркирана промяна и да щракнете върху приемане на "
 "промяната. При приемането на промяна тя ще бъде отразена в редактора на "
@@ -2352,10 +2361,10 @@ msgid ""
 "button or manually copy the change and then paste it in the merge editor in "
 "the middle. It is as simple as that!"
 msgstr ""
-"Ако не можете автоматично да приемете промяна в редактора за обединяване, не"
-" се притеснявайте. Можете да изберете да копирате промяната или като "
-"кликнете върху бутона за копиране, или ръчно да копирате промяната и след "
-"това да я поставите в редактора за обединяване в средата. Толкова е просто!"
+"Ако не можете автоматично да приемете промяна в редактора за обединяване, не "
+"се притеснявайте. Можете да изберете да копирате промяната или като кликнете "
+"върху бутона за копиране, или ръчно да копирате промяната и след това да я "
+"поставите в редактора за обединяване в средата. Толкова е просто!"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:249
 msgid "Can I edit content in all three editors?"
@@ -2376,8 +2385,7 @@ msgstr ""
 
 #: document/static/js/modules/editor/collab/merge/editor.js:259
 msgid "It is always better to try to accept the changes in a linear fashion."
-msgstr ""
-"Винаги е по-добре да се опитате да приемете промените по линеен начин."
+msgstr "Винаги е по-добре да се опитате да приемете промените по линеен начин."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:263
 msgid "What do I do after completing the merge?"
@@ -2452,8 +2460,8 @@ msgstr "Обединяването не бе успешно"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please"
-" consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please "
+"consider importing it into a new document."
 msgstr ""
 "По време на процеса на обединяване възникна грешка, така че не можем повече "
 "да запазваме работата ви на сървъра и вместо това тя се изтегля на вашия "
@@ -2480,8 +2488,8 @@ msgid ""
 "The change could not be applied automatically. Please consider using the "
 "copy option to copy the changes."
 msgstr ""
-"Промяната не може да се приложи автоматично. Моля, помислете за използването"
-" на опцията за копиране, за да копирате промените."
+"Промяната не може да се приложи автоматично. Моля, помислете за използването "
+"на опцията за копиране, за да копирате промените."
 
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:292
 msgid "Format Change"
@@ -2579,8 +2587,8 @@ msgstr "Вмъкване"
 #: document/static/js/modules/editor/state_plugins/links.js:343
 #: document/static/js/modules/editor/state_plugins/links.js:367
 #: document/static/js/modules/editor/state_plugins/links.js:390
-#: user/static/js/modules/profile/dialogs.js:283
-#: user/static/js/modules/profile/dialogs.js:332
+#: user/static/js/modules/profile/dialogs.js:287
+#: user/static/js/modules/profile/dialogs.js:336
 msgid "Remove"
 msgstr "Изтриване"
 
@@ -3003,8 +3011,8 @@ msgid ""
 "documents. We cannot recover it for you."
 msgstr ""
 "Съхранявайте го на сигурно място (напр. мениджър на пароли, разпечатано "
-"копие). Ако забравите паролата си, това е ЕДИНСТВЕНИЯТ начин да възстановите"
-" шифрованите си документи. Не можем да го възстановим вместо вас."
+"копие). Ако забравите паролата си, това е ЕДИНСТВЕНИЯТ начин да възстановите "
+"шифрованите си документи. Не можем да го възстановим вместо вас."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
 msgid "Copy it now — it will not be shown again."
@@ -3058,8 +3066,8 @@ msgstr "Възстановяване на криптиране"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption"
-" password."
+"Enter your current passphrase and a new passphrase to change your encryption "
+"password."
 msgstr ""
 "Въведете текущата си парола и нова, за да промените паролата си за "
 "криптиране."
@@ -3139,8 +3147,8 @@ msgstr "Скриване на паролата"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open"
-" the document in the future."
+"Set a password to encrypt this document. You will need this password to open "
+"the document in the future."
 msgstr ""
 "Задайте парола за шифроване на този документ. Ще ви трябва тази парола, за "
 "да отворите документа в бъдеще."
@@ -3193,7 +3201,7 @@ msgstr "Потвърдете новата парола"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:475
 #: user/static/js/modules/password_reset/change_password.js:7
-#: user/static/js/modules/profile/dialogs.js:204
+#: user/static/js/modules/profile/dialogs.js:208
 msgid "Change Password"
 msgstr "Промяна на паролата"
 
@@ -3225,8 +3233,8 @@ msgstr "Невалидна връзка за споделяне"
 #: document/static/js/modules/editor/index.js:337
 #: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for"
-" a new link."
+"This share link has expired or is invalid. Please ask the document owner for "
+"a new link."
 msgstr ""
 "Тази връзка за споделяне е изтекла или е невалидна. Моля, помолете "
 "собственика на документа за нова връзка."
@@ -3686,8 +3694,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new"
-" key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new "
+"key automatically."
 msgstr ""
 "Ключът за шифроване на документа е завъртян. Други потребители на парола ще "
 "получат новия ключ автоматично."
@@ -4177,22 +4185,20 @@ msgstr "Превключване на навигатора на документ
 msgid "Document N̲avigator"
 msgstr "Навигатор на документи"
 
-#: document/static/js/modules/editor/no_collab_save/index.js:146
+#: document/static/js/modules/editor/no_collab_save/index.js:145
 msgid "Could not save document."
 msgstr "Документът не можа да бъде запазен."
 
-#: document/static/js/modules/editor/no_collab_save/index.js:205
+#: document/static/js/modules/editor/no_collab_save/index.js:204
 msgid "Document has been modified by another user. Please reload the page."
 msgstr ""
 "Документът е променен от друг потребител. Моля, презаредете страницата."
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:245
-#| msgid "Equation"
 msgid "Edit equation"
 msgstr "Редактиране на уравнението"
 
 #: document/static/js/modules/editor/state_plugins/inline_math.js:248
-#| msgid "Remove link"
 msgid "Remove equation"
 msgstr "Премахване на уравнението"
 
@@ -4201,7 +4207,6 @@ msgid "No matching sources"
 msgstr "Няма съответстващи източници"
 
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:60
-#| msgid "Cross reference"
 msgid "Cross-references"
 msgstr "Кръстосани препратки"
 
@@ -4239,12 +4244,10 @@ msgid "Remove cross reference"
 msgstr "Премахнете кръстосаната препратка"
 
 #: document/static/js/modules/editor/state_plugins/links.js:386
-#| msgid "Edition"
 msgid "Edit citation"
 msgstr "Редактиране на цитата"
 
 #: document/static/js/modules/editor/state_plugins/links.js:389
-#| msgid "Deleted citation"
 msgid "Remove citation"
 msgstr "Премахване на цитата"
 
@@ -4320,8 +4323,8 @@ msgstr "Търсене"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace"
-" all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace "
+"all'"
 msgstr ""
 "Моля, обърнете внимание, че в нередактируемите части на документа има "
 "съвпадения, те няма да бъдат заменени, когато се използва „замести“ или "
@@ -4378,15 +4381,15 @@ msgstr " успешно копиран"
 msgid "Revision file could not be generated."
 msgstr "Ревизионният файл не можа да бъде генериран."
 
-#: document/static/js/modules/exporter/native/revision.js:71
+#: document/static/js/modules/exporter/native/revision.js:70
 msgid "Revision saved"
 msgstr "Ревизията е запазена"
 
-#: document/static/js/modules/exporter/native/revision.js:74
+#: document/static/js/modules/exporter/native/revision.js:73
 msgid "Revision could not be saved."
 msgstr "Ревизията не можа да бъде запазена."
 
-#: document/static/js/modules/exporter/native/shrink.js:18
+#: document/static/js/modules/exporter/native/shrink.js:29
 msgid "File export has been initiated."
 msgstr "Експортирането беше стартирано."
 
@@ -4466,11 +4469,11 @@ msgstr "Актуализиране на запазените версии."
 msgid "No document revisions to update."
 msgstr "Няма редакции на документи, които да се актуализират."
 
-#: document/static/js/modules/maintenance/index.js:267
+#: document/static/js/modules/maintenance/index.js:266
 msgid "The document revision has been updated: "
 msgstr "Редакцията на документа е актуализирана: "
 
-#: document/static/js/modules/maintenance/index.js:279
+#: document/static/js/modules/maintenance/index.js:278
 msgid "All documents, document templates and document revisions updated!"
 msgstr ""
 "Всички документи, шаблони на документи и ревизии на документи са "
@@ -4697,6 +4700,10 @@ msgstr "Изображени"
 msgid "manage image files"
 msgstr "управление на изображения"
 
+#: tum/static/js/plugins/menu/impressum.js:11
+msgid "Impressum"
+msgstr "Импресум"
+
 #: user/static/js/modules/contacts/add_dialog.js:91
 msgid "You cannot add yourself to your contacts!"
 msgstr "Не можете да добавите себе си към вашите контакти!"
@@ -4815,26 +4822,25 @@ msgstr "Потвърдете вашият имейл и се съгласете 
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>."
 msgstr ""
-"Моля, потвърдете, че притежавате имейл <a "
-"href=\"mailto:%(email)s\">%(email)s </a>."
+"Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">%"
+"(email)s </a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
-"%(username)s, and that you have read and agree to our <a "
-"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
-"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
 msgstr ""
-"Моля, потвърдете, че притежавате имейл <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, че кандидатствате за "
-"потребителското име %(username)s и че сте прочели и се съгласили към нашите "
-"<a href=\"/pages/terms/\" target=\"_blank\"> Общи условия </a> и <a "
-"href=\"/pages/privacy/\" target=\"_blank\"> Декларация за поверителност </a>"
-" ,"
+"Моля, потвърдете, че притежавате имейл <a href=\"mailto:%(email)s\">%"
+"(email)s</a>, че кандидатствате за потребителското име %(username)s и че сте "
+"прочели и се съгласили към нашите <a href=\"/pages/terms/\" "
+"target=\"_blank\"> Общи условия </a> и <a href=\"/pages/privacy/\" "
+"target=\"_blank\"> Декларация за поверителност </a> ,"
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4845,8 +4851,8 @@ msgid ""
 "I have read and agree to the <a href=\"/pages/terms/\" "
 "target=\"_blank\">Terms and Conditions</a>."
 msgstr ""
-"Прочетох и приемам <a href=\"/pages/terms/\" target=\"_blank\"> Общи условия"
-" </a>."
+"Прочетох и приемам <a href=\"/pages/terms/\" target=\"_blank\"> Общи условия "
+"</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:55
 msgid ""
@@ -4993,16 +4999,16 @@ msgid ""
 "Forgotten your password? Enter your e-mail address in the form, and we'll "
 "send you an e-mail allowing you to reset it."
 msgstr ""
-"Забравили сте си паролата? Въведете своя имейл адрес във формата и ние ще ви"
-" изпратим имейл, позволяващ да го нулирате."
+"Забравили сте си паролата? Въведете своя имейл адрес във формата и ние ще ви "
+"изпратим имейл, позволяващ да го нулирате."
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a "
-"href=\"mailto:%(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a href=\"mailto:%"
+"(contactEmail)s\">contact us</a>."
 msgstr ""
-"Ако имате проблеми с нулирането на паролата си, моля <a "
-"href=\"mailto:%(contactEmail)s\"> свържете се с нас </a>."
+"Ако имате проблеми с нулирането на паролата си, моля <a href=\"mailto:%"
+"(contactEmail)s\"> свържете се с нас </a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -5046,96 +5052,96 @@ msgstr "Неправилна парола"
 msgid "Could not delete user account."
 msgstr "Потребителският акаунт не може да бъде изтрит."
 
-#: user/static/js/modules/profile/dialogs.js:47
+#: user/static/js/modules/profile/dialogs.js:51
 msgid "Could not update profile avatar"
 msgstr "Аватарът на потребителския профил не можа да бъде актуализиран"
 
-#: user/static/js/modules/profile/dialogs.js:65
+#: user/static/js/modules/profile/dialogs.js:69
 msgid "Upload your profile picture"
 msgstr "Качи профилна снимка"
 
-#: user/static/js/modules/profile/dialogs.js:93
+#: user/static/js/modules/profile/dialogs.js:97
 msgid "Could not delete avatar"
 msgstr "Аватарът не може да бъде изтрит"
 
-#: user/static/js/modules/profile/dialogs.js:142
+#: user/static/js/modules/profile/dialogs.js:146
 msgid "All fields are required!"
 msgstr "Всички полета са задължителни"
 
-#: user/static/js/modules/profile/dialogs.js:149
+#: user/static/js/modules/profile/dialogs.js:153
 msgid "Please confirm the new password!"
 msgstr "Моля потвърдете новата парола!"
 
-#: user/static/js/modules/profile/dialogs.js:165
+#: user/static/js/modules/profile/dialogs.js:169
 msgid "The password has been changed."
 msgstr "Паролата беше променена."
 
-#: user/static/js/modules/profile/dialogs.js:181
+#: user/static/js/modules/profile/dialogs.js:185
 msgid "The password could not be changed!"
 msgstr "Паролата не можа да бъде променена!"
 
-#: user/static/js/modules/profile/dialogs.js:192
+#: user/static/js/modules/profile/dialogs.js:196
 msgid "The password could not be changed"
 msgstr "Паролата не можа да бъде променена"
 
-#: user/static/js/modules/profile/dialogs.js:226
+#: user/static/js/modules/profile/dialogs.js:230
 msgid "New email address is required!"
 msgstr "Необходим е нов имейл адрес."
 
-#: user/static/js/modules/profile/dialogs.js:245
+#: user/static/js/modules/profile/dialogs.js:249
 msgid "Confirmation e-mail sent to"
 msgstr "Имейл за потвърждение, изпратен до"
 
-#: user/static/js/modules/profile/dialogs.js:258
+#: user/static/js/modules/profile/dialogs.js:262
 msgid "The email could not be added!"
 msgstr "Имейлът не можа да бъде добавен!"
 
-#: user/static/js/modules/profile/dialogs.js:270
+#: user/static/js/modules/profile/dialogs.js:274
 msgid "Add Email"
 msgstr "Добави имейл"
 
-#: user/static/js/modules/profile/dialogs.js:298
+#: user/static/js/modules/profile/dialogs.js:302
 msgid "Email successfully deleted!"
 msgstr "Имейлът е изтрит успешно!"
 
-#: user/static/js/modules/profile/dialogs.js:304
+#: user/static/js/modules/profile/dialogs.js:308
 msgid "The email could not be deleted!"
 msgstr "Имейлът не можа да бъде изтрит!"
 
-#: user/static/js/modules/profile/dialogs.js:316
-#: user/static/js/modules/profile/dialogs.js:368
+#: user/static/js/modules/profile/dialogs.js:320
+#: user/static/js/modules/profile/dialogs.js:372
 msgid "Confirm remove"
 msgstr "Потвърди изтриването"
 
-#: user/static/js/modules/profile/dialogs.js:318
+#: user/static/js/modules/profile/dialogs.js:322
 msgid "Remove the email address"
 msgstr "Изтриване на имейл"
 
-#: user/static/js/modules/profile/dialogs.js:349
+#: user/static/js/modules/profile/dialogs.js:353
 msgid "account successfully deleted!"
 msgstr "акаунтът е изтрит успешно!"
 
-#: user/static/js/modules/profile/dialogs.js:356
+#: user/static/js/modules/profile/dialogs.js:360
 msgid "The account could not be deleted!"
 msgstr "Акаунтът не можа да бъде изтрит!"
 
-#: user/static/js/modules/profile/dialogs.js:370
+#: user/static/js/modules/profile/dialogs.js:374
 msgid "Remove the link to the account at"
 msgstr "Премахнете връзката към акаунта на"
 
-#: user/static/js/modules/profile/dialogs.js:402
+#: user/static/js/modules/profile/dialogs.js:406
 msgid "The primary email has been updated."
 msgstr "Основният имейл е актуализиран."
 
-#: user/static/js/modules/profile/dialogs.js:410
+#: user/static/js/modules/profile/dialogs.js:414
 msgid "The email could not be set to be primary email."
 msgstr "Имейлът не може да бъде зададен като основен имейл."
 
-#: user/static/js/modules/profile/dialogs.js:423
+#: user/static/js/modules/profile/dialogs.js:427
 msgid "Confirm set primary"
 msgstr "Потвърди настройването като основен"
 
-#: user/static/js/modules/profile/dialogs.js:425
+#: user/static/js/modules/profile/dialogs.js:429
 msgid "Set this email as the address primary"
 msgstr "Задайте този имейл като основен адрес"
 
@@ -5156,7 +5162,6 @@ msgid "Could not save profile data"
 msgstr "Данните от потребителския профил не можаха да се запазят"
 
 #: user/static/js/modules/profile/index.js:317
-#| msgid "Could not save "
 msgid "Could not save preferences"
 msgstr "Предпочитанията не можаха да бъдат запазени"
 
@@ -5280,14 +5285,13 @@ msgstr "Въведете @ в редактора, за да вмъкнете ц�
 
 #: user/static/js/modules/profile/templates.js:228
 msgid ""
-"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
-" citation: @@entry_key. Multiple sources: @key1;key2"
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
+"citation: @@entry_key. Multiple sources: @key1;key2"
 msgstr ""
 "Цитиране: @entry_key – незадължителен суфикс: @entry_key[префикс][локатор]. "
 "Текстов цитат: @@entry_key. Множество източници: @key1;key2"
 
 #: user/static/js/modules/profile/templates.js:229
-#| msgid "Cross references without targets"
 msgid "Cross-reference: @#target-id"
 msgstr "Препратка: @#target-id"
 
@@ -5300,8 +5304,8 @@ msgid ""
 "Type $ in the editor followed by LaTeX math to insert an equation inline, "
 "e.g. $x^2. Press Enter or Tab to confirm."
 msgstr ""
-"Въведете $ в редактора, последвано от LaTeX math, за да вмъкнете уравнение в"
-" ред, напр. $x^2. Натиснете Enter или Tab за потвърждение."
+"Въведете $ в редактора, последвано от LaTeX math, за да вмъкнете уравнение в "
+"ред, напр. $x^2. Натиснете Enter или Tab за потвърждение."
 
 #: user/static/js/modules/profile/templates.js:245
 msgid "Social Account Provider"
@@ -5320,8 +5324,10 @@ msgid "Signup"
 msgstr "Регистрирай се"
 
 #: user/static/js/modules/signup/index.js:13
-msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
-msgstr "Вече имате акаунт? След това, моля, <a href=\"/\" title=\"Login\"> вход </a>."
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgstr ""
+"Вече имате акаунт? След това, моля, <a href=\"/\" title=\"Login\"> вход </a>."
 
 #: user/static/js/modules/signup/index.js:21
 msgid "Choose your username"
@@ -5395,11 +5401,11 @@ msgstr "Деактивирайте двуфакторното удостовер
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce"
-" the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce "
+"the security of your account."
 msgstr ""
-"Сигурни ли сте, че искате да деактивирате двуфакторното удостоверяване? Това"
-" ще намали сигурността на вашия акаунт."
+"Сигурни ли сте, че искате да деактивирате двуфакторното удостоверяване? Това "
+"ще намали сигурността на вашия акаунт."
 
 #: user/static/js/modules/two_factor/index.js:224
 msgid "Enter the 6-digit code from your authenticator app:"
@@ -5502,7 +5508,7 @@ msgstr "Шаблони за документи"
 msgid "Templates"
 msgstr "Templates"
 
-#: usermedia/static/js/modules/images/database.js:51
+#: usermedia/static/js/modules/images/database.js:46
 msgid "Image is larger than the maximum permitted size"
 msgstr "Изображението е по-голямо от максимално разрешения размер"
 
@@ -5616,6 +5622,92 @@ msgstr "Добавете ново изображение"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:70
 msgid "Use image"
 msgstr "Използвайте изображение"
+
+#~ msgid "Could not obtain submission info."
+#~ msgstr "Не можа да се получи информация за изпращане."
+
+#~ msgid "Website"
+#~ msgstr "уебсайт"
+
+#~| msgid "Publisher(s)"
+#~ msgid "Publish to website"
+#~ msgstr "Публикуване в уебсайт"
+
+#~| msgid "Published"
+#~ msgid "Publish"
+#~ msgstr "Публикувайте"
+
+#~ msgid "Publish, reject or request changes"
+#~ msgstr "Публикувайте, отхвърляйте или изисквайте промени"
+
+#~ msgid "Submit for publishing to website"
+#~ msgstr "Изпратете за публикуване в уебсайта"
+
+#~ msgid "View on website"
+#~ msgstr "Преглед на уебсайта"
+
+#~ msgid "Go to the last published version on the website."
+#~ msgstr "Отидете до последната публикувана версия на уебсайта."
+
+#~ msgid "Submit document to be published on website"
+#~ msgstr "Изпратете документ за публикуване на уебсайта"
+
+#~| msgid "Subtitle of publication"
+#~ msgid "Submitted document for publication."
+#~ msgstr "Изпратен документ за публикуване."
+
+#~| msgid "Track changes"
+#~ msgid "Ask for changes"
+#~ msgstr "Поискайте промени"
+
+#~ msgid "Publish, reject or ask for changes"
+#~ msgstr "Публикувайте, отхвърляйте или поискайте промени"
+
+#~| msgid "Close document"
+#~ msgid "Published document."
+#~ msgstr "Публикуван документ."
+
+#~| msgid "Document has been deleted"
+#~ msgid "Publication of document has been rejected."
+#~ msgstr "Публикуването на документа е отхвърлено."
+
+#~ msgid "Document has been reviewed. Request for changes has been sent."
+#~ msgstr "Документът е прегледан. Заявката за промени е изпратена."
+
+#~ msgid "Submitted"
+#~ msgstr "Изпратен"
+
+#~| msgid "Reviewer"
+#~ msgid "Reviewed"
+#~ msgstr "Прегледано"
+
+#~| msgid "Reject"
+#~ msgid "Rejected"
+#~ msgstr "Отхвърлено"
+
+#~| msgid "Submitted"
+#~ msgid "Unsubmitted"
+#~ msgstr "Неизпратено"
+
+#~| msgid "Review submitted"
+#~ msgid "Resubmitted"
+#~ msgstr "Изпратено отново"
+
+#~| msgid "Login"
+#~ msgid "Log"
+#~ msgstr "Дневник"
+
+#~ msgid "by"
+#~ msgstr "от"
+
+#~ msgid "Status"
+#~ msgstr "Статус"
+
+#~ msgid "Message"
+#~ msgstr "Съобщение"
+
+#~ msgid "Fidus Writer"
+#~ msgstr "Фидус писател"
 
 #~ msgid "Import a Fidus file"
 #~ msgstr "Импортирайте Fidus файл"
@@ -5761,9 +5853,6 @@ msgstr "Използвайте изображение"
 #~ msgid "ISWC"
 #~ msgstr "ISWC"
 
-#~ msgid "Subtitle of publication"
-#~ msgstr "Подзаглавие на публикация"
-
 #~ msgid "Title of publication"
 #~ msgstr "Заглавие на публикация"
 
@@ -5827,9 +5916,6 @@ msgstr "Използвайте изображение"
 #~ msgid "Number of a partial volume"
 #~ msgstr "Номер от непълен том"
 
-#~ msgid "Publisher(s)"
-#~ msgstr "Издател(и)"
-
 #~ msgid "Publication state of the work"
 #~ msgstr "Състояние на публикуване"
 
@@ -5889,14 +5975,14 @@ msgstr "Използвайте изображение"
 
 #~ msgid ""
 #~ "Prefixed is \"used\" when it is used in cases where only the last name is "
-#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so"
-#~ " the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
-#~ "Gogh\", so the prefix \"van\" is used."
+#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", "
+#~ "so the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into "
+#~ "\"van Gogh\", so the prefix \"van\" is used."
 #~ msgstr ""
-#~ "Префиксът се \"използва\", когато се използва в случаите, когато се използва"
-#~ " само фамилното име. Например: „Лудвиг ван Бетовен“ се превръща в „Бетовен“,"
-#~ " така че префиксът „ван“ не се използва. \"Vincent van Gogh\" се превръща "
-#~ "във \"van Gogh\", така че се използва префиксът \"van\"."
+#~ "Префиксът се \"използва\", когато се използва в случаите, когато се "
+#~ "използва само фамилното име. Например: „Лудвиг ван Бетовен“ се превръща в "
+#~ "„Бетовен“, така че префиксът „ван“ не се използва. \"Vincent van Gogh\" "
+#~ "се превръща във \"van Gogh\", така че се използва префиксът \"van\"."
 
 #~ msgid "Range or single page, column, paragraph, section, line"
 #~ msgstr "Обхват или една страница, колона, параграф, раздел, ред"
@@ -6032,9 +6118,6 @@ msgstr "Използвайте изображение"
 
 #~ msgid "In preparation"
 #~ msgstr "В подготовка"
-
-#~ msgid "Submitted"
-#~ msgstr "Изпратен"
 
 #~ msgid "Forthcoming"
 #~ msgstr "предстоящ"
@@ -6183,9 +6266,6 @@ msgstr "Използвайте изображение"
 #~ msgid "Journal saved."
 #~ msgstr "Журналът е запазен."
 
-#~ msgid "Could not obtain submission info."
-#~ msgstr "Не можа да се получи информация за изпращане."
-
 #~ msgid "Submit revision"
 #~ msgstr "Изпратете редакция"
 
@@ -6194,9 +6274,6 @@ msgstr "Използвайте изображение"
 
 #~ msgid "Review could not be submitted."
 #~ msgstr "Отзивът не можа да бъде изпратен."
-
-#~ msgid "Review submitted"
-#~ msgstr "Прегледът е изпратен"
 
 #~ msgid "Article submitted"
 #~ msgstr "Изпратена статия"
@@ -6249,7 +6326,8 @@ msgstr "Използвайте изображение"
 
 #~ msgid "Export the document to a GitHub-Flavored Markdown file using pandoc."
 #~ msgstr ""
-#~ "Експортирайте документа в GitHub-Flavored Markdown файл с помощта на pandoc."
+#~ "Експортирайте документа в GitHub-Flavored Markdown файл с помощта на "
+#~ "pandoc."
 
 #~ msgid "Export the document to a Markua file using pandoc."
 #~ msgstr "Експортирайте документа във файл Markua с помощта на pandoc."
@@ -6258,7 +6336,8 @@ msgstr "Използвайте изображение"
 #~ msgstr "Експортирайте документа във файл MultiMarkdown с помощта на pandoc."
 
 #~ msgid "Export the document to a Pandoc Markdown file using pandoc."
-#~ msgstr "Експортирайте документа във файл Pandoc Markdown с помощта на pandoc."
+#~ msgstr ""
+#~ "Експортирайте документа във файл Pandoc Markdown с помощта на pandoc."
 
 #~ msgid "Export the document to a PHP Markdown Extra file using pandoc."
 #~ msgstr ""
@@ -6320,9 +6399,6 @@ msgstr "Използвайте изображение"
 
 #~ msgid "Books"
 #~ msgstr "Книги"
-
-#~ msgid "Impressum"
-#~ msgstr "Импресум"
 
 #~ msgid "Import from Database"
 #~ msgstr "Импортиране от база данни"
@@ -6646,11 +6722,11 @@ msgstr "Използвайте изображение"
 #~ msgstr "Предупреждение за грешки в Safari"
 
 #~ msgid ""
-#~ "Unfortunately Safari has a bug which makes it impossible to export to this "
-#~ "format. Please use Chrome or Firefox (on a desktop computer)."
+#~ "Unfortunately Safari has a bug which makes it impossible to export to "
+#~ "this format. Please use Chrome or Firefox (on a desktop computer)."
 #~ msgstr ""
-#~ "За съжаление Safari има грешка, която прави невъзможно експортирането в този"
-#~ " формат. Моля, използвайте Chrome или Firefox (на настолен компютър)."
+#~ "За съжаление Safari има грешка, която прави невъзможно експортирането в "
+#~ "този формат. Моля, използвайте Chrome или Firefox (на настолен компютър)."
 
 #~ msgid "Export selected as HTML (old)"
 #~ msgstr "Експортиране на избрания като HTML (стар)"

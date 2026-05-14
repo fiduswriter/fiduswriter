@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 10:17+0000\n"
+"POT-Creation-Date: 2026-05-14 13:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,9 +110,9 @@ msgstr "TAMAM"
 #: document/static/js/modules/editor/menus/headerbar/view.js:505
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
-#: document/static/js/modules/importer/docx/convert.js:84
-#: document/static/js/modules/importer/docx/convert.js:92
-#: document/static/js/modules/importer/docx/convert.js:520
+#: document/static/js/modules/importer/docx/convert.js:85
+#: document/static/js/modules/importer/docx/convert.js:93
+#: document/static/js/modules/importer/docx/convert.js:521
 #: document/static/js/modules/importer/docx/import.js:49
 #: document/static/js/modules/importer/odt/convert.js:460
 #: document/static/js/modules/importer/odt/convert.js:471
@@ -230,10 +230,8 @@ msgstr "Telif hakkı sahibi"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder "
-"is."
-msgstr ""
-"Çalışma kamu malı değilse telif hakkı sahibinin kim olduğunu belirtin."
+"If the work is not in the public domain, specify who the copyright holder is."
+msgstr "Çalışma kamu malı değilse telif hakkı sahibinin kim olduğunu belirtin."
 
 #: base/static/js/modules/copyright_dialog/templates.js:66
 msgid "Copyright year"
@@ -560,8 +558,7 @@ msgid ""
 "Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT citations, DOCX citations"
 msgstr ""
 "Desteklenen formatlar: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote XML, EndNote "
-"Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT alıntıları, DOCX "
-"alıntıları"
+"Tagged, Citavi XML, Citavi JSON, NBIB/PubMed, ODT alıntıları, DOCX alıntıları"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:68
 msgid "Bibliography Manager"
@@ -1451,8 +1448,7 @@ msgstr "Yorum yok"
 
 #: document/static/js/modules/documents/access_rights/index.js:132
 msgid "Read document but not see comments and chats of others"
-msgstr ""
-"Belgeyi okuyun ancak başkalarının yorumlarını ve sohbetlerini görmeyin"
+msgstr "Belgeyi okuyun ancak başkalarının yorumlarını ve sohbetlerini görmeyin"
 
 #: document/static/js/modules/documents/access_rights/index.js:145
 msgid "Comment, but not see comments and chats of others"
@@ -1466,8 +1462,8 @@ msgstr "İnceleme izlendi"
 #: document/static/js/modules/documents/access_rights/index.js:158
 msgid "Write with tracked changes, but not see comments and chats of others"
 msgstr ""
-"İzlenen değişikliklerle yazın ancak başkalarının yorumlarını ve sohbetlerini"
-" görmeyin"
+"İzlenen değişikliklerle yazın ancak başkalarının yorumlarını ve sohbetlerini "
+"görmeyin"
 
 #: document/static/js/modules/documents/access_rights/index.js:234
 #: document/static/js/modules/documents/overview/index.js:789
@@ -1477,8 +1473,8 @@ msgstr "Uçtan uca şifrelenmiş belge"
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure"
-" channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure "
+"channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "Bu belge uçtan uca şifrelenmiştir. Kişisel parolası olmayan ortak "
@@ -1707,8 +1703,8 @@ msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
 msgstr ""
-"Ayrıca bu formatlardan herhangi birinde bir dosyanın yanı sıra resimler "
-"ve/veya bibtex dosyası içeren bir ZIP dosyası da yükleyebilirsiniz."
+"Ayrıca bu formatlardan herhangi birinde bir dosyanın yanı sıra resimler ve/"
+"veya bibtex dosyası içeren bir ZIP dosyası da yükleyebilirsiniz."
 
 #: document/static/js/modules/documents/overview/actions.js:202
 msgid "Import a document"
@@ -1892,8 +1888,8 @@ msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
 msgstr ""
-"Parolayı ortak çalıştığınız kişilerle manuel olarak paylaşmalısınız (kişisel"
-" bir parola kullanmadıkları sürece)."
+"Parolayı ortak çalıştığınız kişilerle manuel olarak paylaşmalısınız (kişisel "
+"bir parola kullanmadıkları sürece)."
 
 #: document/static/js/modules/documents/overview/index.js:907
 msgid "Regular documents are the default and work well for most users."
@@ -2053,8 +2049,7 @@ msgid ""
 "Export the documents that have been selected as FIDUS files including their "
 "templates."
 msgstr ""
-"Seçilen belgeleri şablonlarıyla birlikte FIDUS dosyaları olarak dışa "
-"aktarın."
+"Seçilen belgeleri şablonlarıyla birlikte FIDUS dosyaları olarak dışa aktarın."
 
 #: document/static/js/modules/documents/overview/menu.js:180
 msgid "Export selected as Slim FIDUS"
@@ -2264,13 +2259,12 @@ msgid ""
 "conflicts."
 msgstr ""
 "Evet, bu diyaloğu görebilen tek kişi sizsiniz. Bu nedenle, ortak "
-"çalışanlarınızdan belgeyi düzenlemeyi bırakmalarını istemeniz harika olurdu,"
-" böylece birleştirme işlemi bittiğinde daha fazla çakışmaya yol açmayacak."
+"çalışanlarınızdan belgeyi düzenlemeyi bırakmalarını istemeniz harika olurdu, "
+"böylece birleştirme işlemi bittiğinde daha fazla çakışmaya yol açmayacak."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am "
-"merging?"
+"What if my collaborators continue working on the document while I am merging?"
 msgstr ""
 "Ben birleştirirken ortak çalışanlarım belge üzerinde çalışmaya devam ederse "
 "ne olur?"
@@ -2280,8 +2274,8 @@ msgid ""
 "Do not worry, we can handle such a situation as we will simply show you "
 "another merge dialog."
 msgstr ""
-"Endişelenmeyin, size başka bir birleştirme iletişim kutusu göstereceğimizden"
-" böyle bir durumun üstesinden gelebiliriz."
+"Endişelenmeyin, size başka bir birleştirme iletişim kutusu göstereceğimizden "
+"böyle bir durumun üstesinden gelebiliriz."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:214
 msgid "Why am I seeing three editors?"
@@ -2289,8 +2283,8 @@ msgstr "Neden üç editör görüyorum?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It"
-" is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It "
+"is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
@@ -2308,15 +2302,15 @@ msgstr "Editörlerdeki yeşil ve kırmızı vurgular nelerdir?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The"
-" text marked in green corresponds to the text that was edited (added) by you"
-" or other users. The text marked in red corresponds to text that was deleted"
-" by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The "
+"text marked in green corresponds to the text that was edited (added) by you "
+"or other users. The text marked in red corresponds to text that was deleted "
+"by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
-"Ortadaki ve sağdaki editörler yeşil renkle vurgulanan içeriği gösterecektir."
-" Ayrıca kırmızıyla vurgulanan metinleri de içerirler. Yeşil renkle "
+"Ortadaki ve sağdaki editörler yeşil renkle vurgulanan içeriği gösterecektir. "
+"Ayrıca kırmızıyla vurgulanan metinleri de içerirler. Yeşil renkle "
 "işaretlenen metin, sizin veya diğer kullanıcıların düzenlediği (eklediği) "
 "metne karşılık gelir. Kırmızıyla işaretlenmiş metin, sizin veya diğer "
 "kullanıcıların sildiği metne karşılık gelir. Diğer kullanıcılar tarafından "
@@ -2344,13 +2338,13 @@ msgstr ""
 "Ortadaki birleştirme düzenleyicisinde veya sağdaki çevrimdışı düzenleyicide "
 "yapılan bir değişikliğin kabul edilmesi veya reddedilmesi, birleştirme "
 "düzenleyicisinde bir değişikliğe neden olur. Vurgulanan metne doğrudan "
-"tıklayarak bir değişikliği kabul edebilirsiniz. Bir açılır menü görünecektir"
-" ve ardından değişikliği kabul edebilir veya reddedebilirsiniz. Vurgulanan "
-"metne tıkladığınızda, kabul edilecek değişiklikler de vurgulanır. "
-"%(mergeImage)s Yukarıdaki resimde gösterildiği gibi, vurgulanan bir "
+"tıklayarak bir değişikliği kabul edebilirsiniz. Bir açılır menü görünecektir "
+"ve ardından değişikliği kabul edebilir veya reddedebilirsiniz. Vurgulanan "
+"metne tıkladığınızda, kabul edilecek değişiklikler de vurgulanır. %"
+"(mergeImage)s Yukarıdaki resimde gösterildiği gibi, vurgulanan bir "
 "değişikliğe tıklanabilir ve değişikliği kabul et seçeneğine tıklanabilir. "
-"Bir değişiklik kabul edildiğinde ortadaki birleştirilmiş belge düzenleyicide"
-" yansıtılacaktır. Bir değişikliği reddetmek aynı şekilde çalışır; ancak bir "
+"Bir değişiklik kabul edildiğinde ortadaki birleştirilmiş belge düzenleyicide "
+"yansıtılacaktır. Bir değişikliği reddetmek aynı şekilde çalışır; ancak bir "
 "değişikliği reddetmek, değişikliğin kabul edilmesi, reddedilmesi veya "
 "kopyalanması yeteneğiyle birlikte değişikliğin öne çıkan özelliğinin "
 "kaybolmasına neden olur."
@@ -2407,8 +2401,8 @@ msgid ""
 msgstr ""
 "Birleştirme tamamlandıktan sonra 'Birleştirme Tamamlandı' düğmesine "
 "tıklayabilirsiniz; bu da değişikliklerinizi ortadaki birleştirme "
-"düzenleyicisinden ana düzenleyiciye taşıyacaktır. Siz belgeyi birleştirirken"
-" diğer kullanıcılar belgede önemli değişiklikler yaptıysa belgeleri tekrar "
+"düzenleyicisinden ana düzenleyiciye taşıyacaktır. Siz belgeyi birleştirirken "
+"diğer kullanıcılar belgede önemli değişiklikler yaptıysa belgeleri tekrar "
 "birleştirmeniz gerekebileceğini unutmayın."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:270
@@ -2438,8 +2432,8 @@ msgid ""
 "One or more of the image(s) you copied could not be found on the server. "
 "Consider re-uploading them once the document is merged."
 msgstr ""
-"Kopyaladığınız görsellerden bir veya daha fazlası sunucuda bulunamadı. Belge"
-" birleştirildikten sonra bunları yeniden yüklemeyi düşünün."
+"Kopyaladığınız görsellerden bir veya daha fazlası sunucuda bulunamadı. Belge "
+"birleştirildikten sonra bunları yeniden yüklemeyi düşünün."
 
 #: document/static/js/modules/editor/collab/merge/index.js:312
 msgid ""
@@ -2466,8 +2460,8 @@ msgstr "Birleştirme başarısız oldu"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please"
-" consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please "
+"consider importing it into a new document."
 msgstr ""
 "Birleştirme işlemi sırasında bir hata oluştu, bu nedenle çalışmanızı artık "
 "sunucuya kaydedemiyoruz ve onun yerine bilgisayarınıza indiriliyor. Lütfen "
@@ -2983,8 +2977,7 @@ msgstr "Kişisel Şifrelemeyi Ayarlayın"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:181
 msgid "Enter your personal encryption passphrase to unlock your documents."
-msgstr ""
-"Belgelerinizin kilidini açmak için kişisel şifreleme parolanızı girin."
+msgstr "Belgelerinizin kilidini açmak için kişisel şifreleme parolanızı girin."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:196
 msgid "Unlock"
@@ -3016,8 +3009,8 @@ msgid ""
 "forget your passphrase, this is the ONLY way to recover your encrypted "
 "documents. We cannot recover it for you."
 msgstr ""
-"Güvenli bir yerde saklayın (örn. şifre yöneticisi, basılı kopya). Parolanızı"
-" unutursanız, şifrelenmiş belgelerinizi kurtarmanın TEK yolu budur. Sizin "
+"Güvenli bir yerde saklayın (örn. şifre yöneticisi, basılı kopya). Parolanızı "
+"unutursanız, şifrelenmiş belgelerinizi kurtarmanın TEK yolu budur. Sizin "
 "için onu kurtaramayız."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
@@ -3041,8 +3034,8 @@ msgid ""
 "Enter your recovery key and a new passphrase to regain access to your "
 "encrypted documents."
 msgstr ""
-"Şifrelenmiş belgelerinize yeniden erişim kazanmak için kurtarma anahtarınızı"
-" ve yeni bir parolayı girin."
+"Şifrelenmiş belgelerinize yeniden erişim kazanmak için kurtarma anahtarınızı "
+"ve yeni bir parolayı girin."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:365
 msgid "Recovery key"
@@ -3072,8 +3065,8 @@ msgstr "Şifrelemeyi Kurtar"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption"
-" password."
+"Enter your current passphrase and a new passphrase to change your encryption "
+"password."
 msgstr ""
 "Şifreleme parolanızı değiştirmek için mevcut parolanızı ve yeni parolanızı "
 "girin."
@@ -3152,8 +3145,8 @@ msgstr "Şifreyi gizle"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open"
-" the document in the future."
+"Set a password to encrypt this document. You will need this password to open "
+"the document in the future."
 msgstr ""
 "Bu belgeyi şifrelemek için bir parola belirleyin. Gelecekte belgeyi açmak "
 "için bu parolaya ihtiyacınız olacak."
@@ -3238,8 +3231,8 @@ msgstr "Geçersiz Paylaşım Bağlantısı"
 #: document/static/js/modules/editor/index.js:337
 #: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for"
-" a new link."
+"This share link has expired or is invalid. Please ask the document owner for "
+"a new link."
 msgstr ""
 "Bu paylaşım bağlantısının süresi dolmuş veya geçersiz. Lütfen belge "
 "sahibinden yeni bir bağlantı isteyin."
@@ -3699,8 +3692,8 @@ msgstr ""
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new"
-" key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new "
+"key automatically."
 msgstr ""
 "Belge şifreleme anahtarı döndürüldü. Diğer parola kullanıcıları yeni "
 "anahtarı otomatik olarak alacaktır."
@@ -4327,12 +4320,12 @@ msgstr "Ara"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace"
-" all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace "
+"all'"
 msgstr ""
 "Lütfen belgenin düzenlenemeyen kısımlarında eşleşme(ler) bulunduğunu "
-"unutmayın; bu eşleşme(ler) 'değiştir' veya 'tümünü değiştir' kullanıldığında"
-" değiştirilmeyecektir."
+"unutmayın; bu eşleşme(ler) 'değiştir' veya 'tümünü değiştir' kullanıldığında "
+"değiştirilmeyecektir."
 
 #: document/static/js/modules/editor/tools/search_replace/templates.js:4
 msgid "Find"
@@ -4369,6 +4362,7 @@ msgstr "Boşluklu karakterler"
 #: document/static/js/modules/exporter/docx/metadata.js:64
 #: document/static/js/modules/exporter/docx/metadata.js:67
 #: document/static/js/modules/exporter/odt/metadata.js:67
+#: document/static/js/modules/importer/docx/parse.js:244
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
@@ -4824,25 +4818,25 @@ msgstr "E-posta Adresini Doğrulayın ve Şartlar ve Koşulları Kabul Edin"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>."
 msgstr ""
 "Lütfen <a href=\\\"mailto:%(email)s\\\">%(email)s</a> e-postasının size ait "
 "olduğunu doğrulayın."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
-"%(username)s, and that you have read and agree to our <a "
-"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
-"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
 msgstr ""
 "Lütfen <a href=\\\"mailto:%(email)s\\\">%(email)s</a> e-postasının sahibi "
-"olduğunuzu, %(username)s kullanıcı adı için başvurduğunuzu ve <a "
-"href=\\\"/pages/terms/\\\" target=\\\"_blank\\\">Şartlar ve "
-"Koşullarımızı</a> ve <a href=\\\"/pages/privacy/\\\" okuyup kabul ettiğinizi"
-" doğrulayın. target=\\\"_blank\\\">Gizlilik Politikası</a>."
+"olduğunuzu, %(username)s kullanıcı adı için başvurduğunuzu ve <a href=\\\"/"
+"pages/terms/\\\" target=\\\"_blank\\\">Şartlar ve Koşullarımızı</a> ve <a "
+"href=\\\"/pages/privacy/\\\" okuyup kabul ettiğinizi doğrulayın. target=\\"
+"\"_blank\\\">Gizlilik Politikası</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4853,8 +4847,8 @@ msgid ""
 "I have read and agree to the <a href=\"/pages/terms/\" "
 "target=\"_blank\">Terms and Conditions</a>."
 msgstr ""
-"<a href=\\\"/pages/terms/\\\" target=\\\"_blank\\\">Şartlar ve "
-"Koşullar</a>'ı okudum ve kabul ediyorum."
+"<a href=\\\"/pages/terms/\\\" target=\\\"_blank\\\">Şartlar ve Koşullar</"
+"a>'ı okudum ve kabul ediyorum."
 
 #: user/static/js/modules/email_confirm/templates.js:55
 msgid ""
@@ -4862,8 +4856,8 @@ msgid ""
 "ended abruptly and without notice, leaving me without my files."
 msgstr ""
 "Bir test hesabına kaydolduğumun ve bu hizmetin aniden ve bildirimde "
-"bulunulmadan sonlandırılabileceğinin ve dosyalarımdan mahrum kalabileceğimin"
-" farkındayım."
+"bulunulmadan sonlandırılabileceğinin ve dosyalarımdan mahrum kalabileceğimin "
+"farkındayım."
 
 #: user/static/js/modules/email_confirm/templates.js:60
 msgid ""
@@ -4948,8 +4942,7 @@ msgstr ""
 #: user/static/js/modules/password_reset/request_email.js:87
 #: user/static/js/modules/signup/index.js:155
 msgid "Please contact us if you do not receive it within a few minutes."
-msgstr ""
-"Birkaç dakika içinde elinize ulaşmazsa lütfen bizimle iletişime geçin."
+msgstr "Birkaç dakika içinde elinize ulaşmazsa lütfen bizimle iletişime geçin."
 
 #: user/static/js/modules/password_reset/change_password.js:15
 msgid ""
@@ -5007,11 +5000,11 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a "
-"href=\"mailto:%(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a href=\"mailto:%"
+"(contactEmail)s\">contact us</a>."
 msgstr ""
-"Şifrenizi sıfırlamada sorun yaşıyorsanız lütfen <a "
-"href=\\\"mailto:%(contactEmail)s\\\">bize ulaşın</a>."
+"Şifrenizi sıfırlamada sorun yaşıyorsanız lütfen <a href=\\\"mailto:%"
+"(contactEmail)s\\\">bize ulaşın</a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -5043,8 +5036,7 @@ msgstr ""
 
 #: user/static/js/modules/profile/delete_user.js:61
 msgid "Staff accounts have to be deleted through the admin interface."
-msgstr ""
-"Personel hesaplarının yönetici arayüzü aracılığıyla silinmesi gerekir."
+msgstr "Personel hesaplarının yönetici arayüzü aracılığıyla silinmesi gerekir."
 
 #: user/static/js/modules/profile/delete_user.js:66
 msgid "Password incorrect."
@@ -5287,8 +5279,8 @@ msgstr "Alıntı veya çapraz referans eklemek için düzenleyiciye @ yazın:"
 
 #: user/static/js/modules/profile/templates.js:228
 msgid ""
-"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
-" citation: @@entry_key. Multiple sources: @key1;key2"
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
+"citation: @@entry_key. Multiple sources: @key1;key2"
 msgstr ""
 "Alıntı: @entry_key – isteğe bağlı son ek: @entry_key[prefix][locator]. "
 "Metinsel alıntı: @@entry_key. Çoklu kaynaklar: @key1;key2"
@@ -5326,10 +5318,11 @@ msgid "Signup"
 msgstr "Üye olmak"
 
 #: user/static/js/modules/signup/index.js:13
-msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
 msgstr ""
-"Zaten bir hesabınız var mı? O zaman lütfen <a href=\\\"/\\\" "
-"title=\\\"Login\\\">giriş yapın</a>."
+"Zaten bir hesabınız var mı? O zaman lütfen <a href=\\\"/\\\" title=\\"
+"\"Login\\\">giriş yapın</a>."
 
 #: user/static/js/modules/signup/index.js:21
 msgid "Choose your username"
@@ -5348,8 +5341,8 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
 "verification. Follow the link provided to finalize the signup process."
 msgstr ""
-"Doğrulama için <a href=\\\"mailto:%(email)s\\\">%(email)s</a> adresine bir "
-"e-posta gönderdik. Kayıt işlemini tamamlamak için verilen bağlantıyı takip "
+"Doğrulama için <a href=\\\"mailto:%(email)s\\\">%(email)s</a> adresine bir e-"
+"posta gönderdik. Kayıt işlemini tamamlamak için verilen bağlantıyı takip "
 "edin."
 
 #: user/static/js/modules/two_factor/index.js:44
@@ -5401,8 +5394,8 @@ msgstr "İki Faktörlü Kimlik Doğrulamayı Devre Dışı Bırak"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce"
-" the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce "
+"the security of your account."
 msgstr ""
 "İki faktörlü kimlik doğrulamayı devre dışı bırakmak istediğinizden emin "
 "misiniz? Bu hesabınızın güvenliğini azaltacaktır."

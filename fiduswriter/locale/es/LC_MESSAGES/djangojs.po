@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 10:17+0000\n"
+"POT-Creation-Date: 2026-05-14 13:28+0000\n"
 "PO-Revision-Date: 2025-04-17 18:59+0200\n"
 "Last-Translator: Ana Carolina Vera Resquin <ani.tavr77@gmail.com>\n"
 "Language-Team: Español <ani.tavr77@gmail.com>\n"
@@ -106,9 +106,9 @@ msgstr "OK"
 #: document/static/js/modules/editor/menus/headerbar/view.js:505
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
-#: document/static/js/modules/importer/docx/convert.js:84
-#: document/static/js/modules/importer/docx/convert.js:92
-#: document/static/js/modules/importer/docx/convert.js:520
+#: document/static/js/modules/importer/docx/convert.js:85
+#: document/static/js/modules/importer/docx/convert.js:93
+#: document/static/js/modules/importer/docx/convert.js:521
 #: document/static/js/modules/importer/docx/import.js:49
 #: document/static/js/modules/importer/odt/convert.js:460
 #: document/static/js/modules/importer/odt/convert.js:471
@@ -226,8 +226,7 @@ msgstr "Titular del copyright"
 
 #: base/static/js/modules/copyright_dialog/templates.js:60
 msgid ""
-"If the work is not in the public domain, specify who the copyright holder "
-"is."
+"If the work is not in the public domain, specify who the copyright holder is."
 msgstr ""
 "Si el trabajo no es de dominio público, especifique quién es el titular del "
 "copyright."
@@ -350,8 +349,8 @@ msgstr "No se pudo actualizar la bibliografía"
 #: usermedia/static/js/modules/images/overview/index.js:108
 msgid "You are currently offline. Please try again when you are back online."
 msgstr ""
-"Actualmente estás desconectado. Vuelva a intentarlo cuando vuelva a estar en"
-" línea."
+"Actualmente estás desconectado. Vuelva a intentarlo cuando vuelva a estar en "
+"línea."
 
 #: bibliography/static/js/modules/bibliography/database/index.js:131
 msgid "The bibliography has been updated."
@@ -1478,8 +1477,8 @@ msgstr "Documento cifrado de extremo a extremo"
 #: document/static/js/modules/documents/access_rights/index.js:235
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
-"passphrase will need the document password shared with them through a secure"
-" channel outside of Fidus Writer. Do not send the password through the "
+"passphrase will need the document password shared with them through a secure "
+"channel outside of Fidus Writer. Do not send the password through the "
 "document chat."
 msgstr ""
 "Este documento está cifrado de extremo a extremo. Los colaboradores sin una "
@@ -1708,8 +1707,8 @@ msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
 msgstr ""
-"También se puede cargar un archivo ZIP que contenga un archivo en cualquiera"
-" de estos formatos, así como imágenes y/o archivos bibtex."
+"También se puede cargar un archivo ZIP que contenga un archivo en cualquiera "
+"de estos formatos, así como imágenes y/o archivos bibtex."
 
 #: document/static/js/modules/documents/overview/actions.js:202
 msgid "Import a document"
@@ -1785,8 +1784,7 @@ msgstr "Contraseña incorrecta."
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
-"No puede acceder a las revisiones de un documento mientras está "
-"desconectado."
+"No puede acceder a las revisiones de un documento mientras está desconectado."
 
 #: document/static/js/modules/documents/overview/index.js:86
 msgid "Document Overview"
@@ -1857,8 +1855,8 @@ msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
 msgstr ""
-"Los documentos cifrados protegen su contenido para que sólo las personas con"
-" la contraseña puedan leerlo."
+"Los documentos cifrados protegen su contenido para que sólo las personas con "
+"la contraseña puedan leerlo."
 
 #: document/static/js/modules/documents/overview/index.js:894
 #: document/static/js/modules/documents/overview/index.js:908
@@ -1897,8 +1895,8 @@ msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
 msgstr ""
-"Debes compartir la contraseña con los colaboradores manualmente (a menos que"
-" utilicen una frase de contraseña personal)."
+"Debes compartir la contraseña con los colaboradores manualmente (a menos que "
+"utilicen una frase de contraseña personal)."
 
 #: document/static/js/modules/documents/overview/index.js:907
 msgid "Regular documents are the default and work well for most users."
@@ -1953,8 +1951,7 @@ msgstr "Nota:"
 
 #: document/static/js/modules/documents/overview/index.js:978
 msgid "This is optional. You can also use a per-document password instead."
-msgstr ""
-"Esto es opcional. También puede utilizar una contraseña por documento."
+msgstr "Esto es opcional. También puede utilizar una contraseña por documento."
 
 #: document/static/js/modules/documents/overview/index.js:982
 msgid "Skip for Now"
@@ -2019,8 +2016,7 @@ msgstr "Exportar lo seleccionado a Epub"
 
 #: document/static/js/modules/documents/overview/menu.js:92
 msgid "Export the documents that have been selected as Epub files."
-msgstr ""
-"Exportar los documentos que han sido seleccionados como archivos Epub."
+msgstr "Exportar los documentos que han sido seleccionados como archivos Epub."
 
 #: document/static/js/modules/documents/overview/menu.js:105
 msgid "Export selected as HTML"
@@ -2028,8 +2024,7 @@ msgstr "Exportar lo seleccionado a HTML"
 
 #: document/static/js/modules/documents/overview/menu.js:107
 msgid "Export the documents that have been selected as HTML files."
-msgstr ""
-"Exportar los documentos que han sido seleccionados como archivos HTML."
+msgstr "Exportar los documentos que han sido seleccionados como archivos HTML."
 
 #: document/static/js/modules/documents/overview/menu.js:120
 msgid "Export selected as LaTeX"
@@ -2046,8 +2041,7 @@ msgstr "Exportar lo seleccionado como JATS"
 
 #: document/static/js/modules/documents/overview/menu.js:137
 msgid "Export the documents that have been selected as JATS files."
-msgstr ""
-"Exportar los documentos que han sido seleccionados como archivos JATS."
+msgstr "Exportar los documentos que han sido seleccionados como archivos JATS."
 
 #: document/static/js/modules/documents/overview/menu.js:150
 msgid "Export selected as BITS"
@@ -2055,8 +2049,7 @@ msgstr "Exportar lo seleccionado como BITS"
 
 #: document/static/js/modules/documents/overview/menu.js:152
 msgid "Export the documents that have been selected as BITS files."
-msgstr ""
-"Exportar los documentos que han sido seleccionados como archivos BITS."
+msgstr "Exportar los documentos que han sido seleccionados como archivos BITS."
 
 #: document/static/js/modules/documents/overview/menu.js:165
 msgid "Export selected as FIDUS"
@@ -2224,8 +2217,8 @@ msgid ""
 "Not all changes have been resolved. Please make sure to review all the "
 "changes to before proceeding."
 msgstr ""
-"No se han resuelto todos los cambios. Asegúrese de revisar todos los cambios"
-" antes de continuar."
+"No se han resuelto todos los cambios. Asegúrese de revisar todos los cambios "
+"antes de continuar."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:169
 msgid "Proceed to Merge"
@@ -2264,8 +2257,8 @@ msgid ""
 msgstr ""
 "Está viendo este diálogo de fusión porque estuvo fuera de línea durante "
 "mucho tiempo y los cambios que hizo en el documento entraron en conflicto "
-"con los cambios realizados por otros usuarios. Por esta razón no fue posible"
-" fusionar sus ediciones de forma automática."
+"con los cambios realizados por otros usuarios. Por esta razón no fue posible "
+"fusionar sus ediciones de forma automática."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:200
 msgid "Am I the only one seeing this dialog?"
@@ -2280,16 +2273,14 @@ msgid ""
 msgstr ""
 "Sí, eres el único que puede ver este diálogo. Por lo tanto, sería estupendo "
 "si pudiera pedir a sus colaboradores que dejen de editar el documento para "
-"que una vez que haya terminado con la fusión, no se produzcan más "
-"conflictos."
+"que una vez que haya terminado con la fusión, no se produzcan más conflictos."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:207
 msgid ""
-"What if my collaborators continue working on the document while I am "
-"merging?"
+"What if my collaborators continue working on the document while I am merging?"
 msgstr ""
-"¿Qué pasa si mis colaboradores continúan trabajando en el documento mientras"
-" yo lo estoy fusionando?"
+"¿Qué pasa si mis colaboradores continúan trabajando en el documento mientras "
+"yo lo estoy fusionando?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:210
 msgid ""
@@ -2305,17 +2296,17 @@ msgstr "¿Por qué veo tres editores?"
 
 #: document/static/js/modules/editor/collab/merge/editor.js:216
 msgid ""
-"The editor on the left will show the last common version of the document. It"
-" is shown for reference only. The editor in the middle is the merge editor "
+"The editor on the left will show the last common version of the document. It "
+"is shown for reference only. The editor in the middle is the merge editor "
 "and it initially contains the document resulting from other users' edits. "
 "The editor on the right is the offline editor and it contains the document "
 "resulting from your changes while you were offline."
 msgstr ""
-"El editor de la izquierda mostrará la última versión común del documento. Se"
-" muestra sólo como referencia. El editor del medio es el editor de fusión y "
+"El editor de la izquierda mostrará la última versión común del documento. Se "
+"muestra sólo como referencia. El editor del medio es el editor de fusión y "
 "contiene inicialmente el documento resultante de las ediciones de otros "
-"usuarios. El editor de la derecha es el editor  fuera de línea y contiene el"
-" documento resultante de sus cambios mientras estaba desconectado."
+"usuarios. El editor de la derecha es el editor  fuera de línea y contiene el "
+"documento resultante de sus cambios mientras estaba desconectado."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:221
 msgid "What are the green and red highlights in the editors?"
@@ -2324,10 +2315,10 @@ msgstr "¿Qué significan los colores verde y rojo en los editores?"
 #: document/static/js/modules/editor/collab/merge/editor.js:224
 msgid ""
 "The editors in the middle and on the right will show content that is "
-"highlighted in green. They also contain text that is highlighted in red. The"
-" text marked in green corresponds to the text that was edited (added) by you"
-" or other users. The text marked in red corresponds to text that was deleted"
-" by either you or other users. The insertions and deletions made by other "
+"highlighted in green. They also contain text that is highlighted in red. The "
+"text marked in green corresponds to the text that was edited (added) by you "
+"or other users. The text marked in red corresponds to text that was deleted "
+"by either you or other users. The insertions and deletions made by other "
 "users will be marked in the merge editor. The insertions and deletions made "
 "by you will be marked in the offline editor on the right."
 msgstr ""
@@ -2362,8 +2353,8 @@ msgstr ""
 "Aparecerá un menú desplegable y podrá aceptar o rechazar el cambio. Cuando "
 "hace clic en el texto resaltado, también resalta los cambios que se "
 "aceptarán. %(mergeImage)s Como se muestra en la imagen de arriba, uno puede "
-"hacer clic en un cambio resaltado y hacer clic en aceptar cambio. Al aceptar"
-" un cambio, se reflejará en el editor de documentos fusionados en el medio. "
+"hacer clic en un cambio resaltado y hacer clic en aceptar cambio. Al aceptar "
+"un cambio, se reflejará en el editor de documentos fusionados en el medio. "
 "Rechazar un cambio funciona de la misma manera, excepto que al rechazar un "
 "cambio, el resaltado del cambio se perderá, con ello la capacidad de "
 "aceptar, rechazar o copiar un cambio."
@@ -2379,8 +2370,8 @@ msgid ""
 "button or manually copy the change and then paste it in the merge editor in "
 "the middle. It is as simple as that!"
 msgstr ""
-"Si no puedes aceptar automáticamente un cambio en el editor de fusión, no se"
-" preocupe. Puede copiar el cambio haciendo clic en el botón de copiar. "
+"Si no puedes aceptar automáticamente un cambio en el editor de fusión, no se "
+"preocupe. Puede copiar el cambio haciendo clic en el botón de copiar. "
 "También puede copiar manualmente el cambio y luego pegarlo en el editor de "
 "fusión que se encuentra en el medio."
 
@@ -2417,10 +2408,10 @@ msgid ""
 "documents together again."
 msgstr ""
 "Una vez que la fusión se haya completado, puedes hacer clic en el botón "
-"\"Fusión completa\" y sus cambios se moverán desde el editor de fusión en el"
-" centro al editor principal. Ten en cuenta que si otros usuarios han "
-"realizado cambios significativos en el documento mientras estabas fusionando"
-" el documento, es posible que tengas que volver a fusionar los documentos."
+"\"Fusión completa\" y sus cambios se moverán desde el editor de fusión en el "
+"centro al editor principal. Ten en cuenta que si otros usuarios han "
+"realizado cambios significativos en el documento mientras estabas fusionando "
+"el documento, es posible que tengas que volver a fusionar los documentos."
 
 #: document/static/js/modules/editor/collab/merge/editor.js:270
 msgid ""
@@ -2475,8 +2466,8 @@ msgstr "La fusión falló"
 #: document/static/js/modules/editor/collab/merge/index.js:380
 msgid ""
 "An error occurred during the merge process, so we cannot save your work to "
-"the server any longer, and it is downloaded to your computer instead. Please"
-" consider importing it into a new document."
+"the server any longer, and it is downloaded to your computer instead. Please "
+"consider importing it into a new document."
 msgstr ""
 "Se produjo un error durante el proceso de fusión, por lo que ya no podemos "
 "guardar su trabajo en el servidor. E su lugar,, el trabajo se descargará en "
@@ -3026,8 +3017,8 @@ msgid ""
 "documents. We cannot recover it for you."
 msgstr ""
 "Guárdelo en un lugar seguro (por ejemplo, un administrador de contraseñas, "
-"una copia impresa). Si olvida su frase de contraseña, esta es la ÚNICA forma"
-" de recuperar sus documentos cifrados. No podemos recuperarlo por usted."
+"una copia impresa). Si olvida su frase de contraseña, esta es la ÚNICA forma "
+"de recuperar sus documentos cifrados. No podemos recuperarlo por usted."
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:306
 msgid "Copy it now — it will not be shown again."
@@ -3081,8 +3072,8 @@ msgstr "Recuperar cifrado"
 
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:511
 msgid ""
-"Enter your current passphrase and a new passphrase to change your encryption"
-" password."
+"Enter your current passphrase and a new passphrase to change your encryption "
+"password."
 msgstr ""
 "Ingrese su frase de contraseña actual y una nueva frase de contraseña para "
 "cambiar su contraseña de cifrado."
@@ -3127,8 +3118,8 @@ msgstr "Acérrimo"
 msgid ""
 "This document is end-to-end encrypted. Enter the password to decrypt it."
 msgstr ""
-"Este documento está cifrado de extremo a extremo. Ingrese la contraseña para"
-" descifrarla."
+"Este documento está cifrado de extremo a extremo. Ingrese la contraseña para "
+"descifrarla."
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:144
 #: document/static/js/modules/editor/e2ee/password-dialog.js:262
@@ -3162,8 +3153,8 @@ msgstr "Ocultar contraseña"
 
 #: document/static/js/modules/editor/e2ee/password-dialog.js:259
 msgid ""
-"Set a password to encrypt this document. You will need this password to open"
-" the document in the future."
+"Set a password to encrypt this document. You will need this password to open "
+"the document in the future."
 msgstr ""
 "Establezca una contraseña para cifrar este documento. Necesitará esta "
 "contraseña para abrir el documento en el futuro."
@@ -3248,8 +3239,8 @@ msgstr "Enlace para compartir no válido"
 #: document/static/js/modules/editor/index.js:337
 #: document/static/js/modules/editor/index.js:616
 msgid ""
-"This share link has expired or is invalid. Please ask the document owner for"
-" a new link."
+"This share link has expired or is invalid. Please ask the document owner for "
+"a new link."
 msgstr ""
 "Este enlace para compartir ha caducado o no es válido. Solicite al "
 "propietario del documento un nuevo enlace."
@@ -3704,14 +3695,14 @@ msgid ""
 "manually."
 msgstr ""
 "Su contraseña personal aún desbloqueará este documento. Se genera "
-"automáticamente una nueva contraseña aleatoria. Otros usuarios de contraseña"
-" la recibirán automáticamente; los colaboradores sin contraseña necesitan "
+"automáticamente una nueva contraseña aleatoria. Otros usuarios de contraseña "
+"la recibirán automáticamente; los colaboradores sin contraseña necesitan "
 "compartirla con ellos manualmente."
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:472
 msgid ""
-"Document encryption key rotated. Other passphrase users will receive the new"
-" key automatically."
+"Document encryption key rotated. Other passphrase users will receive the new "
+"key automatically."
 msgstr ""
 "Clave de cifrado de documentos rotada. Otros usuarios de contraseña "
 "recibirán la nueva clave automáticamente."
@@ -4343,8 +4334,8 @@ msgstr "Buscar"
 #: document/static/js/modules/editor/tools/search_replace/index.js:277
 msgid ""
 "Please note that there are match(es) within non-editable parts of the "
-"document, these match(es) won't be replaced when using 'replace' or 'replace"
-" all'"
+"document, these match(es) won't be replaced when using 'replace' or 'replace "
+"all'"
 msgstr ""
 "Tenga en cuenta que hay coincidencias dentro de las partes no editables del "
 "documento, estas coincidencias no se reemplazarán al usar 'reemplazar' o "
@@ -4385,6 +4376,7 @@ msgstr "Caracteres con espacios"
 #: document/static/js/modules/exporter/docx/metadata.js:64
 #: document/static/js/modules/exporter/docx/metadata.js:67
 #: document/static/js/modules/exporter/odt/metadata.js:67
+#: document/static/js/modules/importer/docx/parse.js:244
 msgid "Unknown"
 msgstr "Desconocido"
 
@@ -4842,24 +4834,24 @@ msgstr "Confirmar Correo Electrónico y aceptar Términos y Condiciones"
 
 #: user/static/js/modules/email_confirm/templates.js:23
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>."
 msgstr ""
-"Confirme que es el propietario del correo electrónico <a "
-"href=\"mailto:%(email)s\">%(email)s</a>."
+"Confirme que es el propietario del correo electrónico <a href=\"mailto:%"
+"(email)s\">%(email)s</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:30
 msgid ""
-"Please confirm that you own the email <a "
-"href=\"mailto:%(email)s\">%(email)s</a>, that you apply for the username "
-"%(username)s, and that you have read and agree to our <a "
-"href=\"/pages/terms/\" target=\"_blank\">Terms and Conditions</a> and <a "
-"href=\"/pages/privacy/\" target=\"_blank\">Privacy Policy</a>."
+"Please confirm that you own the email <a href=\"mailto:%(email)s\">%"
+"(email)s</a>, that you apply for the username %(username)s, and that you "
+"have read and agree to our <a href=\"/pages/terms/\" target=\"_blank\">Terms "
+"and Conditions</a> and <a href=\"/pages/privacy/\" target=\"_blank\">Privacy "
+"Policy</a>."
 msgstr ""
 "Por favor, confirma que <a href=\"mailto:%(email)s\">%(email)s</a> es tu "
 "correo, que quieres obtener el usuario %(username)s y que has leído y "
-"aceptado nuestros <a "
-"href=\"http://www.fiduswriter.com/?page_id=41\">Términos y Condiciones</a>."
+"aceptado nuestros <a href=\"http://www.fiduswriter.com/?"
+"page_id=41\">Términos y Condiciones</a>."
 
 #: user/static/js/modules/email_confirm/templates.js:40
 msgid "Confirm"
@@ -4878,9 +4870,9 @@ msgid ""
 "I am aware that I am signing up for a test account and that service may be "
 "ended abruptly and without notice, leaving me without my files."
 msgstr ""
-"Soy consciente de que me estoy registrando para obtener una cuenta de prueba"
-" y que el servicio puede finalizar abruptamente y sin previo aviso, "
-"dejándome sin mis archivos."
+"Soy consciente de que me estoy registrando para obtener una cuenta de prueba "
+"y que el servicio puede finalizar abruptamente y sin previo aviso, dejándome "
+"sin mis archivos."
 
 #: user/static/js/modules/email_confirm/templates.js:60
 msgid ""
@@ -5028,11 +5020,11 @@ msgstr ""
 
 #: user/static/js/modules/password_reset/request_email.js:17
 msgid ""
-"If you have any trouble resetting your password, please <a "
-"href=\"mailto:%(contactEmail)s\">contact us</a>."
+"If you have any trouble resetting your password, please <a href=\"mailto:%"
+"(contactEmail)s\">contact us</a>."
 msgstr ""
-"Si tiene problemas para restablecer su contraseña, <a "
-"href=\"mailto:%(contactEmail)s\"> contáctenos </a>."
+"Si tiene problemas para restablecer su contraseña, <a href=\"mailto:%"
+"(contactEmail)s\"> contáctenos </a>."
 
 #: user/static/js/modules/password_reset/request_email.js:27
 #: user/static/js/modules/password_reset/request_email.js:28
@@ -5059,8 +5051,8 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> with "
 "instructions on how to reset your password."
 msgstr ""
-"Hemos enviado un correo electrónico a <a href=\"mailto:%(email)s\">%(email)s"
-" </a> con instrucciones sobre cómo restablecer su contraseña."
+"Hemos enviado un correo electrónico a <a href=\"mailto:%(email)s\">%(email)s "
+"</a> con instrucciones sobre cómo restablecer su contraseña."
 
 #: user/static/js/modules/profile/delete_user.js:61
 msgid "Staff accounts have to be deleted through the admin interface."
@@ -5217,8 +5209,8 @@ msgid ""
 "also these will disappear automatically in due time."
 msgstr ""
 "Algunas copias de sus archivos pueden conservarse temporalmente en nuestro "
-"sistema de respaldo, pero también desaparecerán automáticamente a su después"
-" de un  tiempo."
+"sistema de respaldo, pero también desaparecerán automáticamente a su después "
+"de un  tiempo."
 
 #: user/static/js/modules/profile/templates.js:40
 msgid "Enter the new E-mail address"
@@ -5312,8 +5304,8 @@ msgstr "Escriba @ en el editor para insertar una cita o referencia cruzada:"
 
 #: user/static/js/modules/profile/templates.js:228
 msgid ""
-"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual"
-" citation: @@entry_key. Multiple sources: @key1;key2"
+"Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
+"citation: @@entry_key. Multiple sources: @key1;key2"
 msgstr ""
 "Cita: @entry_key – sufijo opcional: @entry_key[prefijo][localizador]. Cita "
 "textual: @@entry_key. Múltiples fuentes: @key1;key2"
@@ -5351,7 +5343,8 @@ msgid "Signup"
 msgstr "Regístrate"
 
 #: user/static/js/modules/signup/index.js:13
-msgid "Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
+msgid ""
+"Already have an account? Then please <a href=\"/\" title=\"Login\">login</a>."
 msgstr ""
 "¿Ya tienes una cuenta? Entonces, por favor <a href=\"/\" title=\"Login\"> "
 "iniciar sesión</a>."
@@ -5373,8 +5366,8 @@ msgid ""
 "We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for "
 "verification. Follow the link provided to finalize the signup process."
 msgstr ""
-"Te hemos enviado un e-mail a <a href=\"mailto:%(email)s\">%(email)s</a> para"
-" verificación. Sigue el enlace para completar el proceso de registro."
+"Te hemos enviado un e-mail a <a href=\"mailto:%(email)s\">%(email)s</a> para "
+"verificación. Sigue el enlace para completar el proceso de registro."
 
 #: user/static/js/modules/two_factor/index.js:44
 msgid "Could not generate QR code. Please use the secret key below."
@@ -5428,8 +5421,8 @@ msgstr "Deshabilitar la autenticación de dos factores"
 
 #: user/static/js/modules/two_factor/index.js:170
 msgid ""
-"Are you sure you want to disable two-factor authentication? This will reduce"
-" the security of your account."
+"Are you sure you want to disable two-factor authentication? This will reduce "
+"the security of your account."
 msgstr ""
 "¿Está seguro de que desea desactivar la autenticación de dos factores? Esto "
 "reducirá la seguridad de su cuenta."
@@ -5694,7 +5687,8 @@ msgstr "Usar imagen"
 #~ msgstr "Se ha rechazado la publicación del documento."
 
 #~ msgid "Document has been reviewed. Request for changes has been sent."
-#~ msgstr "El documento ha sido revisado. Se ha enviado la solicitud de cambios."
+#~ msgstr ""
+#~ "El documento ha sido revisado. Se ha enviado la solicitud de cambios."
 
 #~ msgid "Submitted"
 #~ msgstr "Enviado"
@@ -5993,17 +5987,18 @@ msgstr "Usar imagen"
 
 #~ msgid ""
 #~ "Prefixed is \"used\" when it is used in cases where only the last name is "
-#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", so"
-#~ " the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into \"van "
-#~ "Gogh\", so the prefix \"van\" is used."
+#~ "used.     For example: \"Ludwig van Beethoven\" turns into \"Beethoven\", "
+#~ "so the prefix \"van\"     is not used. \"Vincent van Gogh\" turns into "
+#~ "\"van Gogh\", so the prefix \"van\" is used."
 #~ msgstr ""
 #~ "El prefijo se \"utiliza\" en casos donde solo se usa el apellido.     Por "
-#~ "ejemplo: \"Ludwig van Beethoven\" se convierte en \"Beethoven\", por lo que "
-#~ "\"van\"     no es utilizado. \"Vincent van Gogh\" se conviente en \"van "
-#~ "Gogh\", por lo que \"van\" sí es utilizado."
+#~ "ejemplo: \"Ludwig van Beethoven\" se convierte en \"Beethoven\", por lo "
+#~ "que \"van\"     no es utilizado. \"Vincent van Gogh\" se conviente en "
+#~ "\"van Gogh\", por lo que \"van\" sí es utilizado."
 
 #~ msgid "Range or single page, column, paragraph, section, line"
-#~ msgstr "Intervalo de páginas o página única, columna, párrafo, sección, línea"
+#~ msgstr ""
+#~ "Intervalo de páginas o página única, columna, párrafo, sección, línea"
 
 #~ msgid "Article"
 #~ msgstr "Artículo"
@@ -6344,7 +6339,8 @@ msgstr "Usar imagen"
 
 #~ msgid "Export the document to a GitHub-Flavored Markdown file using pandoc."
 #~ msgstr ""
-#~ "Exporte el documento a un archivo Markdown con sabor a GitHub usando pandoc."
+#~ "Exporte el documento a un archivo Markdown con sabor a GitHub usando "
+#~ "pandoc."
 
 #~ msgid "Export the document to a Markua file using pandoc."
 #~ msgstr "Exporte el documento a un archivo Markua usando pandoc."
@@ -6359,7 +6355,8 @@ msgstr "Usar imagen"
 #~ msgstr "Exporte el documento a un archivo PHP Markdown Extra usando pandoc."
 
 #~ msgid "Export the document to a richtext file using pandoc."
-#~ msgstr "Exporte el documento a un archivo de texto enriquecido usando pandoc."
+#~ msgstr ""
+#~ "Exporte el documento a un archivo de texto enriquecido usando pandoc."
 
 #~ msgid "Export the document to a textile file using pandoc."
 #~ msgstr "Exporte el documento a un archivo textil usando pandoc."
@@ -6737,8 +6734,8 @@ msgstr "Usar imagen"
 #~ msgstr "Advertencia de error de Safari"
 
 #~ msgid ""
-#~ "Unfortunately Safari has a bug which makes it impossible to export to this "
-#~ "format. Please use Chrome or Firefox (on a desktop computer)."
+#~ "Unfortunately Safari has a bug which makes it impossible to export to "
+#~ "this format. Please use Chrome or Firefox (on a desktop computer)."
 #~ msgstr ""
 #~ "Desafortunadamente, Safari tiene un error que hace que sea imposible "
 #~ "exportar a este formato. Utilice Chrome o Firefox (en una computadora)."

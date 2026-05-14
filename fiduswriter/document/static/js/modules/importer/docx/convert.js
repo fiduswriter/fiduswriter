@@ -1,6 +1,10 @@
 import {MathMLToLaTeX} from "mathml-to-latex"
 import {xmlDOM} from "../../exporter/tools/xml"
-import {randomFigureId, randomHeadingId} from "../../schema/common"
+import {
+    randomCommentId,
+    randomFigureId,
+    randomHeadingId
+} from "../../schema/common"
 import {
     isDocxBibliographyField,
     isDocxCitationField,
@@ -24,6 +28,7 @@ export class DocxConvert {
         this.tracks = {}
         this.currentTracks = []
         this.currentFields = []
+        this.currentCommentIds = []
         this.sourcesXml = null
     }
 
@@ -665,10 +670,10 @@ export class DocxConvert {
         const pStyle = node.query("w:pStyle")
         const styleId = pStyle?.getAttribute("w:val")
 
-        // Check if this is a code block (Code style)
+        // Check if this is a code block (Code style or inherited from one)
         if (
             styleId &&
-            (styleId === "Code" || styleId.toLowerCase().includes("code"))
+            (this.parser.isCodeStyle?.(styleId) || styleId === "Code")
         ) {
             return {
                 type: "code_block",
@@ -913,12 +918,29 @@ export class DocxConvert {
                 contentReceiver.push({
                     type: "text",
                     text,
-                    marks: this.createMarksFromFormatting(
-                        formatting,
-                        insertion,
-                        deletion
-                    )
+                    marks: this.getCurrentMarks(formatting, insertion, deletion)
                 })
+            } else if (child.tagName === "w:commentRangeStart") {
+                const commentId = child.getAttribute("w:id")
+                if (commentId && this.parser.comments[commentId]) {
+                    this.currentCommentIds.push(commentId)
+                }
+                return
+            } else if (child.tagName === "w:commentRangeEnd") {
+                const commentId = child.getAttribute("w:id")
+                if (commentId) {
+                    const index = this.currentCommentIds.indexOf(commentId)
+                    if (index !== -1) {
+                        this.currentCommentIds.splice(index, 1)
+                    }
+                }
+                return
+            } else if (
+                child.tagName === "w:r" &&
+                child.query("w:commentReference")
+            ) {
+                // Comment reference - just skip it (we already handle the range)
+                return
             } else if (child.tagName === "w:hyperlink") {
                 // Process hyperlink
                 const rId = child.getAttribute("r:id")
@@ -962,7 +984,7 @@ export class DocxConvert {
                             ? this.parser.extractRunProperties(rPr)
                             : {}
 
-                        const marks = this.createMarksFromFormatting(formatting)
+                        const marks = this.getCurrentMarks(formatting)
                         marks.push({
                             type: "link",
                             attrs: {href, title: text}
@@ -1156,6 +1178,32 @@ export class DocxConvert {
                 return [this.convertCrossReference(target, text)]
             }
         }
+        // Handle SEQ fields (figure/table/equation number cross-references)
+        else if (instr.startsWith("SEQ ")) {
+            // This is a sequence field that generates numbers for figures/tables/equations.
+            // For cross-references, we look for the text in the display part.
+            const seqMatch = instr.match(/^SEQ\s+(\S+)/)
+            if (seqMatch) {
+                const _seqName = seqMatch[1]
+                const text = field.display.reduce((acc, curr) => {
+                    if (curr.type === "text") {
+                        return acc + curr.text
+                    }
+                    return acc
+                }, "")
+                if (text) {
+                    // Return as a plain text node since we can't resolve SEQ references easily
+                    return [
+                        {
+                            type: "text",
+                            text,
+                            marks: []
+                        }
+                    ]
+                }
+                return []
+            }
+        }
         // Handle citation fields
         else if (isDocxCitationField(instr)) {
             return [
@@ -1266,6 +1314,24 @@ export class DocxConvert {
                 }
             })
         }
+        return marks
+    }
+
+    getCurrentMarks(formatting, insertion, deletion) {
+        const marks = this.createMarksFromFormatting(
+            formatting,
+            insertion,
+            deletion
+        )
+        // Add comment marks for any active comment IDs
+        this.currentCommentIds.forEach(commentId => {
+            marks.push({
+                type: "comment",
+                attrs: {
+                    id: Number.parseInt(commentId)
+                }
+            })
+        })
         return marks
     }
 

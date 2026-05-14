@@ -1,4 +1,5 @@
 import {xmlDOM} from "../../exporter/tools/xml"
+import {randomCommentId} from "../../schema/common"
 
 const DEFAULT_STYLES_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
@@ -23,6 +24,7 @@ export class DocxParser {
         return this.parseStyles()
             .then(() => this.parseNumbering())
             .then(() => this.parseComments())
+            .then(() => this.parseCommentsExtended())
             .then(() => this.parseFootnotes())
             .then(() => this.parseEndnotes())
             .then(() => this.parseRelationships())
@@ -64,6 +66,52 @@ export class DocxParser {
         } catch (err) {
             console.warn("Could not parse styles", err)
         }
+    }
+
+    isCodeStyle(styleId) {
+        let current = styleId
+        const visited = new Set()
+        while (current && !visited.has(current)) {
+            visited.add(current)
+            const style = this.styles[current]
+            if (!style) {
+                return false
+            }
+            const name = style.name?.toLowerCase() || ""
+            if (
+                /^code(\s|$)/i.test(style.id) ||
+                name === "code" ||
+                name.includes("code") ||
+                /^html(\s|$)/i.test(style.id) ||
+                /^pre(\s|$)/i.test(style.id)
+            ) {
+                return true
+            }
+            // Check font family on the style
+            if (style.runProps?.fontFamily) {
+                const fontFamily = style.runProps.fontFamily.toLowerCase()
+                const monospacePatterns = [
+                    "courier",
+                    "consolas",
+                    "monaco",
+                    "menlo",
+                    "lucida console",
+                    "liberation mono",
+                    "dejavu sans mono",
+                    "bitstream vera sans mono",
+                    "source code pro",
+                    "fira code",
+                    "ubuntu mono",
+                    "droid sans mono",
+                    "monospace"
+                ]
+                if (monospacePatterns.some(p => fontFamily.includes(p))) {
+                    return true
+                }
+            }
+            current = style.basedOn
+        }
+        return false
     }
 
     extractParagraphProperties(style) {
@@ -194,17 +242,111 @@ export class DocxParser {
             }
             const commentsDoc = xmlDOM(content)
 
-            commentsDoc.queryAll("w:comment").forEach(comment => {
+            const commentList = commentsDoc.queryAll("w:comment")
+
+            // First pass: parse all comments into the expected format
+            commentList.forEach(comment => {
                 const id = comment.getAttribute("w:id")
+                const dateStr = comment.getAttribute("w:date")
                 this.comments[id] = {
-                    id,
-                    author: comment.getAttribute("w:author"),
-                    date: comment.getAttribute("w:date"),
-                    content: this.extractCommentContent(comment)
+                    user: 0,
+                    username:
+                        comment.getAttribute("w:author") || gettext("Unknown"),
+                    date: dateStr ? new Date(dateStr).getTime() : Date.now(),
+                    comment: this.extractCommentContent(comment),
+                    answers: [],
+                    resolved: false,
+                    isMajor: false
                 }
             })
         } catch (err) {
             console.warn("Could not parse comments", err)
+        }
+    }
+
+    async parseCommentsExtended() {
+        try {
+            const content = await this.zip
+                .file("word/commentsExtended.xml")
+                ?.async("string")
+            if (!content) {
+                return
+            }
+            const commentsExDoc = xmlDOM(content)
+            const extendedEntries = commentsExDoc.queryAll("w15:commentEx")
+
+            if (!extendedEntries.length) {
+                return
+            }
+
+            // Parse extended entries into main (no parentParaId) and answer entries
+            const mainEntries = []
+            const answerEntries = []
+
+            extendedEntries.forEach(entry => {
+                const paraId = entry.getAttribute("w15:paraId")
+                const done = entry.getAttribute("w15:done") === "1"
+                const paraIdParent = entry.getAttribute("w15:paraIdParent")
+
+                if (paraId) {
+                    if (paraIdParent) {
+                        answerEntries.push({
+                            paraId,
+                            parentParaId: paraIdParent,
+                            done
+                        })
+                    } else {
+                        mainEntries.push({paraId, done})
+                    }
+                }
+            })
+
+            // Map resolved status to comments by position/order.
+            // Main comments are written first in comments.xml, and their
+            // extended entries appear first in commentsExtended.xml.
+            const commentIds = Object.keys(this.comments)
+                .map(Number)
+                .sort((a, b) => a - b)
+                .map(String)
+
+            // Track which comment IDs are parents vs answers
+            const parentCommentIds = []
+
+            commentIds.forEach((commentId, index) => {
+                if (index < mainEntries.length) {
+                    // This is a main comment - apply resolved status
+                    this.comments[commentId].resolved = mainEntries[index].done
+                    parentCommentIds.push(commentId)
+                } else {
+                    // This is an answer comment - group under nearest parent
+                    const answerComment = this.comments[commentId]
+                    if (answerComment) {
+                        // Find the parent - answers are written right after
+                        // their parent comment in comments.xml
+                        const answerIndex = index - mainEntries.length
+                        const answerEntry = answerEntries[answerIndex]
+                        if (answerEntry) {
+                            // Map answer to its parent comment
+                            const parentId = parentCommentIds.length
+                                ? parentCommentIds[parentCommentIds.length - 1]
+                                : null
+                            if (parentId && this.comments[parentId]) {
+                                this.comments[parentId].answers.push({
+                                    id: randomCommentId(),
+                                    user: 0,
+                                    username: answerComment.username,
+                                    date: answerComment.date,
+                                    answer: answerComment.comment
+                                })
+                                // Remove the answer from top-level
+                                delete this.comments[commentId]
+                            }
+                        }
+                    }
+                }
+            })
+        } catch (err) {
+            console.warn("Could not parse comments extended", err)
         }
     }
 

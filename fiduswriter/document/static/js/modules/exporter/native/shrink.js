@@ -41,7 +41,28 @@ export class ShrinkFidus {
             delete shrunkImageDB[itemId].pk
             delete shrunkImageDB[itemId].added
             const imageUrl = shrunkImageDB[itemId].image
-            const filename = `images/${imageUrl.split("/").pop()}`
+            let filename
+            if (imageUrl.startsWith("blob:")) {
+                // Blob URL produced by decrypting an E2EE image client-side.
+                // The URL itself carries no useful file extension, so derive
+                // one from the image entry's MIME type instead.  Without this
+                // the server rejects the upload because get_encrypted_file_path
+                // requires a recognised extension.
+                const mime = shrunkImageDB[itemId].file_type || "image/png"
+                const mimeExtMap = {
+                    "image/png": "png",
+                    "image/jpeg": "jpg",
+                    "image/jpg": "jpg",
+                    "image/webp": "webp",
+                    "image/svg+xml": "svg",
+                    "image/gif": "gif",
+                    "image/avif": "avif"
+                }
+                const ext = mimeExtMap[mime] || "png"
+                filename = `images/${itemId}.${ext}`
+            } else {
+                filename = `images/${imageUrl.split("/").pop()}`
+            }
             shrunkImageDB[itemId].image = filename
             httpIncludes.push({
                 url: imageUrl,

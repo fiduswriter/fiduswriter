@@ -357,3 +357,21 @@ When `handle_e2ee_snapshot` receives new `e2ee_salt`/`e2ee_iterations`:
 10. **SPA architecture**: The Django backend serves the same HTML shell for all non-API paths. The frontend JavaScript reads the URL and decides what to render. This means you cannot rely on Django URL patterns for page-level access control — use the `requireLogin` flag in the frontend route definition instead.
 
 11. **Editor can receive different identifier types**: The `Editor` class constructor accepts an `id` parameter that can be either a numeric document ID (normal flow) or a UUID string (share-token flow). Code that instantiates the Editor should be aware of both cases.
+
+### Translation: Avoid JavaScript template literals in `gettext()`
+
+Django's `makemessages` (which uses `xgettext` under the hood) **does not support ES6 template literals** (backtick strings). Strings wrapped in template literals inside `gettext()` calls are silently skipped and never appear in `.po` files.
+
+**❌ Wrong** — strings won't be extracted:
+```javascript
+gettext(`Export selected as ${label} (via Pandoc)`)
+```
+
+**✅ Correct** — use regular string literals with `%s` placeholders and `interpolate()`:
+```javascript
+interpolate(gettext('Export selected as %s (via Pandoc)'), [label])
+```
+
+This applies to all JavaScript files across the project and any plugins. The `interpolate()` function is part of Django's JavaScript catalog and is available globally on pages that load JS translations.
+
+See also the `translate_all.py` management command (`fiduswriter/devel/management/commands/translate_all.py`) which automates makemessages + Google Translate for all locale files.

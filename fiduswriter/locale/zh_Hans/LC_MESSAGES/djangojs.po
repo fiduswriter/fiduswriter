@@ -1119,7 +1119,7 @@ msgstr "没有任何"
 
 #: document/static/js/modules/document_template/templates.js:163
 msgid "Subtitle"
-msgstr "字幕"
+msgstr "副标题"
 
 #: document/static/js/modules/document_template/templates.js:164
 msgid "Title (translated)"

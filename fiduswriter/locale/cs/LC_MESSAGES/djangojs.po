@@ -1126,7 +1126,7 @@ msgstr "Žádný"
 
 #: document/static/js/modules/document_template/templates.js:163
 msgid "Subtitle"
-msgstr "Titulky"
+msgstr "Podtitul"
 
 #: document/static/js/modules/document_template/templates.js:164
 msgid "Title (translated)"

@@ -1128,7 +1128,7 @@ msgstr "لا أحد"
 
 #: document/static/js/modules/document_template/templates.js:163
 msgid "Subtitle"
-msgstr "الترجمة"
+msgstr "العنوان الفرعي"
 
 #: document/static/js/modules/document_template/templates.js:164
 msgid "Title (translated)"

@@ -1138,7 +1138,7 @@ msgstr "Ingen"
 
 #: document/static/js/modules/document_template/templates.js:163
 msgid "Subtitle"
-msgstr "Undertekst"
+msgstr "Undertitel"
 
 #: document/static/js/modules/document_template/templates.js:164
 msgid "Title (translated)"

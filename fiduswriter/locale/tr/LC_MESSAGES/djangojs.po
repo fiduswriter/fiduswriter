@@ -1133,7 +1133,7 @@ msgstr "Hiçbiri"
 
 #: document/static/js/modules/document_template/templates.js:163
 msgid "Subtitle"
-msgstr "Altyazı"
+msgstr "Alt başlık"
 
 #: document/static/js/modules/document_template/templates.js:164
 msgid "Title (translated)"

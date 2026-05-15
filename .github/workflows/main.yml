@@ -60,6 +60,7 @@ jobs:
                     - bibliography
                     - usermedia
                     - user_template_manager
+                    - document.tests.test_import_export
         steps:
             - name: Set up Python
               uses: actions/setup-python@v6

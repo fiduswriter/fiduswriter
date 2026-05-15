@@ -203,6 +203,19 @@ class Command(BaseCommand):
         self._add_comment(doc, p, "commented", "Test comment.", "Jane Doe")
         p.add_run(" word.").font.size = Pt(11)
 
+        # ---- Citations ----
+        doc.add_heading("Citations", level=2)
+        p = doc.add_paragraph()
+        p.add_run("This paragraph contains a citation: ").font.size = Pt(11)
+        # Add a citation field code (Zotero-style ADDIN citation)
+        self._add_citation_field(
+            doc,
+            p,
+            "Doe, 2012",
+            "Doe2012",
+            "Doe, John. (2012). My title. In My publication title.",
+        )
+
         doc.save(path)
 
     @staticmethod
@@ -368,6 +381,63 @@ class Command(BaseCommand):
         ce.append(cp)
         comments_part._element.append(ce)
 
+    def _add_citation_field(
+        self, doc, paragraph, display_text, citation_id, bib_entry
+    ):
+        """Add a citation field to a DOCX paragraph.
+
+        This creates a field code that mimics Zotero/Mendeley style citations
+        so that biblatex-csl-converter can parse it.
+        """
+        from docx.oxml import OxmlElement
+        from docx.oxml.ns import qn
+
+        # Create the field code for a citation
+        # Format: ADDIN ZOTERO_ITEM CSL_CITATION{json}
+        # Note: No space between CSL_CITATION and the JSON object
+        json_part = (
+            '{"citationID": "' + citation_id + '", '
+            '"properties": {"formattedCitation": "' + display_text + '", '
+            '"plainCitation": "' + display_text + '", "noteIndex": 0}, '
+            '"citationItems": [{"id": "' + citation_id + '", '
+            '"uris": ["http://zotero.org/items/' + citation_id + '"], '
+            '"itemData": {"title": "My title", '
+            '"author": [{"family": "Doe", "given": "John"}], '
+            '"date": "2012"}}]'
+        )
+        field_code = "ADDIN ZOTERO_ITEM CSL_CITATION" + json_part
+
+        # Create the field structure
+        p = paragraph._p
+
+        # Field begin
+        fldChar_begin = OxmlElement("w:fldChar")
+        fldChar_begin.set(qn("w:fldCharType"), "begin")
+        p.append(fldChar_begin)
+
+        # Field instruction text
+        instrText = OxmlElement("w:instrText")
+        instrText.set(qn("xml:space"), "preserve")
+        instrText.text = field_code
+        p.append(instrText)
+
+        # Field separate
+        fldChar_sep = OxmlElement("w:fldChar")
+        fldChar_sep.set(qn("w:fldCharType"), "separate")
+        p.append(fldChar_sep)
+
+        # Display text (citation text)
+        r = OxmlElement("w:r")
+        t = OxmlElement("w:t")
+        t.text = display_text
+        r.append(t)
+        p.append(r)
+
+        # Field end
+        fldChar_end = OxmlElement("w:fldChar")
+        fldChar_end.set(qn("w:fldCharType"), "end")
+        p.append(fldChar_end)
+
     # ------------------------------------------------------------------
     # ODT generation (manual XML via zipfile)
     # ------------------------------------------------------------------
@@ -487,6 +557,9 @@ class Command(BaseCommand):
 
   <text:h text:outline-level="2">Comments</text:h>
   <text:p>This paragraph has a commented word in it.</text:p>
+
+  <text:h text:outline-level="2">Citations</text:h>
+  <text:p>Paragraph with a <text:reference-mark-start text:name="ZOTERO_ITEM CSL_CITATION {&quot;citationID&quot;: &quot;Doe2012&quot;, &quot;properties&quot;: {&quot;formattedCitation&quot;: &quot;(Doe, 2012)&quot;, &quot;plainCitation&quot;: &quot;(Doe, 2012)&quot;, &quot;noteIndex&quot;: 0}, &quot;citationItems&quot;: [{&quot;id&quot;: &quot;Doe2012&quot;, &quot;uris&quot;: [&quot;http://zotero.org/items/Doe2012&quot;], &quot;itemData&quot;: {&quot;title&quot;: &quot;My title&quot;, &quot;author&quot;: [{&quot;family&quot;: &quot;Doe&quot;, &quot;given&quot;: &quot;John&quot;}], &quot;date&quot;: &quot;2012&quot;}}] RNDjURflxg9F1"/>citation (Doe, 2012)<text:reference-mark-end text:name="ZOTERO_ITEM CSL_CITATION {&quot;citationID&quot;: &quot;Doe2012&quot;, &quot;properties&quot;: {&quot;formattedCitation&quot;: &quot;(Doe, 2012)&quot;, &quot;plainCitation&quot;: &quot;(Doe, 2012)&quot;, &quot;noteIndex&quot;: 0}, &quot;citationItems&quot;: [{&quot;id&quot;: &quot;Doe2012&quot;, &quot;uris&quot;: [&quot;http://zotero.org/items/Doe2012&quot;], &quot;itemData&quot;: {&quot;title&quot;: &quot;My title&quot;, &quot;author&quot;: [{&quot;family&quot;: &quot;Doe&quot;, &quot;given&quot;: &quot;John&quot;}], &quot;date&quot;: &quot;2012&quot;}}] RNDjURflxg9F1"/> in the text.</text:p>
 
 </office:text>
 </office:body>

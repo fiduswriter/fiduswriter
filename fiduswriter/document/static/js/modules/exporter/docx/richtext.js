@@ -232,6 +232,9 @@ export class DOCXExporterRichtext {
             }
         }
         switch (node.type) {
+            case "doc":
+                // We handle the contents directly
+                break
             case "paragraph":
                 if (!options.section) {
                     options.section = "Normal"

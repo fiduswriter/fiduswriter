@@ -455,6 +455,26 @@
             { "type": "equation", "attrs": { "equation": "\\int_{a}^{b} f(x) \\, dx" } },
             { "type": "text", "text": " inline with text." }
           ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This paragraph contains a citation: " },
+            {
+              "type": "citation",
+              "attrs": {
+                "format": "autocite",
+                "references": [
+                  {
+                    "id": 1,
+                    "locator": "45",
+                    "prefix": "see "
+                  }
+                ]
+              }
+            },
+            { "type": "text", "text": "." }
+          ]
         }
       ]
     },

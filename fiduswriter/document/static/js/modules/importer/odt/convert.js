@@ -21,6 +21,7 @@ export class OdtConvert {
     constructor(
         contentXml,
         stylesXml,
+        metaXml,
         manifestXml,
         importId,
         template,
@@ -36,6 +37,7 @@ export class OdtConvert {
 
         this.contentDoc = contentXml ? xmlDOM(contentXml) : null
         this.stylesDoc = stylesXml ? xmlDOM(stylesXml) : null
+        this.metaDoc = metaXml ? xmlDOM(metaXml) : null
         this.manifestDoc = manifestXml ? xmlDOM(manifestXml) : null
 
         this.tracks = {}
@@ -561,13 +563,26 @@ export class OdtConvert {
     extractMetadata() {
         const metadata = []
 
-        // Extract authors if present
-        const authors = this.extractAuthors()
-        if (authors.content.length) {
-            metadata.push({
-                type: "authors",
-                content: authors
-            })
+        // Try structured contributor data from meta.xml first
+        const contributorsByRole = this.extractContributorsFromMeta()
+        if (Object.keys(contributorsByRole).length) {
+            Object.entries(contributorsByRole).forEach(
+                ([role, contributors]) => {
+                    metadata.push({
+                        type: role,
+                        content: {content: contributors, containerNodes: []}
+                    })
+                }
+            )
+        } else {
+            // Fall back to legacy author extraction
+            const authors = this.extractAuthors()
+            if (authors.content.length) {
+                metadata.push({
+                    type: "authors",
+                    content: authors
+                })
+            }
         }
 
         // Extract abstract if present
@@ -589,6 +604,72 @@ export class OdtConvert {
         }
 
         return metadata
+    }
+
+    extractContributorsFromMeta() {
+        if (!this.metaDoc) {
+            return {}
+        }
+
+        const userDefined = this.metaDoc.queryAll("meta:user-defined")
+        const contributors = []
+
+        userDefined.forEach(prop => {
+            const name = prop.getAttribute("meta:name")
+            if (!name || !name.startsWith("fidus_contributor_")) {
+                return
+            }
+            const match = name.match(/^fidus_contributor_(\d+)_(\w+)$/)
+            if (!match) {
+                return
+            }
+            const num = parseInt(match[1])
+            const field = match[2]
+            const value = prop.textContent || ""
+
+            if (!contributors[num - 1]) {
+                contributors[num - 1] = {
+                    type: "contributor",
+                    attrs: {
+                        firstname: "",
+                        lastname: "",
+                        email: "",
+                        institution: "",
+                        id_type: "",
+                        id_value: "",
+                        role: ""
+                    }
+                }
+            }
+            if (field === "role") {
+                contributors[num - 1].attrs.role = value
+            } else if (
+                [
+                    "firstname",
+                    "lastname",
+                    "email",
+                    "institution",
+                    "id_type",
+                    "id_value"
+                ].includes(field)
+            ) {
+                contributors[num - 1].attrs[field] = value
+            }
+        })
+
+        const byRole = {}
+        contributors.forEach(contributor => {
+            if (!contributor) {
+                return
+            }
+            const role = contributor.attrs.role || "authors"
+            if (!byRole[role]) {
+                byRole[role] = []
+            }
+            byRole[role].push(contributor)
+        })
+
+        return byRole
     }
 
     extractAuthors() {

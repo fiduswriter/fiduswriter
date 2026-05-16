@@ -62,7 +62,9 @@ export function adjustDocToTemplate(
             "papersizes",
             "bibliography_header",
             "template",
-            "import_id"
+            "import_id",
+            "code_categories",
+            "id_types"
         ]
     attrs.forEach(attr => (doc.attrs[attr] = template.attrs[attr]))
 

@@ -254,6 +254,9 @@ const contributorsTemplate = ({
                 <option value="false" ${metadata === false ? "selected" : ""}>${gettext("None")}</option>
                 <option value="authors" ${metadata === "authors" ? "selected" : ""}>${gettext("Authors")}</option>
                 <option value="editors" ${metadata === "editors" ? "selected" : ""}>${gettext("Editors")}</option>
+                <option value="translators" ${metadata === "translators" ? "selected" : ""}>${gettext("Translators")}</option>
+                <option value="reviewers" ${metadata === "reviewers" ? "selected" : ""}>${gettext("Reviewers")}</option>
+                <option value="contributors" ${metadata === "contributors" ? "selected" : ""}>${gettext("Contributors")}</option>
             </select>
         </div>
         <div class="label">${gettext("Locking")}
@@ -648,6 +651,26 @@ export const bibliographyHeaderTemplate = ({
         .join("")}</table>`
 }
 
+export const idTypesTemplate = ({id_types = []}) => {
+    const types = id_types.length ? id_types : [{label: "", regex: ""}]
+    return `<table class="fw-dialog-table fw-small input-list-wrapper id-types-value">${types
+        .map(
+            type =>
+                `<tr>
+                    <td>
+                        <input type="text" class="id-type-label" placeholder="${gettext("Label")}" value="${escapeText(type.label)}" >
+                    </td>
+                    <td>
+                        <input type="text" class="id-type-regex" placeholder="${gettext("Regex")}" value="${escapeText(type.regex)}" >
+                    </td>
+                    <td class="input-field-list-ctrl">
+                        <span class="fa-solid fa-minus-circle" tabindex="0"></span>&nbsp;<span class="fa-solid fa-plus-circle" tabindex="0"></span>
+                    </td>
+                </tr>`
+        )
+        .join("")}</table>`
+}
+
 const codeLanguagesTemplate = ({
     code_languages = [
         "javascript",
@@ -903,6 +926,14 @@ export const documentDesignerTemplate = ({
                 </td>
                 <td class="bibliography-header-value">
                     ${bibliographyHeaderTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext("Contributor ID types")}
+                </td>
+                <td class="id-types-value">
+                    ${idTypesTemplate(value.attrs || {})}
                 </td>
             </tr>
             <tr>

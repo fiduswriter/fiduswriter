@@ -190,3 +190,9 @@ table td {
     color: var(--cs-2-text);
     padding: 3px 12px;
 }
+
+.id-types-value input[type="text"] {
+    background-color: var(--cs-white-background);
+    border: 1px solid var(--cs-white-border);
+    padding: 2px 6px;
+}

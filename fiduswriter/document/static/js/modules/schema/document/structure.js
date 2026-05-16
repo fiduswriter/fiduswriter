@@ -192,6 +192,9 @@ export const doc = {
                 "yaml",
                 "markdown"
             ]
+        },
+        id_types: {
+            default: []
         }
     },
     parseDOM: [

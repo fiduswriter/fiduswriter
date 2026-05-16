@@ -33,6 +33,7 @@ import {
     documentDesignerTemplate,
     documentStylesTemplate,
     exportTemplatesTemplate,
+    idTypesTemplate,
     languageTemplate
 } from "./templates"
 import {addHeadingIds, debounced, noTrack} from "./tools"
@@ -116,6 +117,12 @@ export class DocumentTemplateDesigner {
             importIdEl.classList.add("error-element")
             importIdEl.scrollIntoView({block: "center", behavior: "smooth"})
         }
+        // Clear any previous regex error styling
+        this.dom.querySelectorAll(".id-type-regex").forEach(el => {
+            if (el.classList.contains("error-element")) {
+                el.classList.remove("error-element")
+            }
+        })
 
         this.value = {
             type: "doc",
@@ -348,6 +355,35 @@ export class DocumentTemplateDesigner {
                     stringObj[selectEl.value] = inputEl.value
                     return stringObj
                 }, {}),
+                id_types: Array.from(
+                    this.dom.querySelectorAll(".id-types-value tr")
+                ).reduce((types, trEl) => {
+                    const labelInput = trEl.querySelector(".id-type-label")
+                    const regexInput = trEl.querySelector(".id-type-regex")
+                    const label = labelInput?.value.trim()
+                    const regex = regexInput?.value.trim()
+                    if (label) {
+                        // Validate regex only if one is provided
+                        if (regex) {
+                            try {
+                                new RegExp(regex)
+                            } catch (_e) {
+                                valid = false
+                                errors.invalid_regex = gettext(
+                                    "One or more contributor ID regexes are invalid."
+                                )
+                                regexInput.classList.add("error-element")
+                                regexInput.scrollIntoView({
+                                    block: "center",
+                                    behavior: "smooth"
+                                })
+                                return types
+                            }
+                        }
+                        types.push({label, regex})
+                    }
+                    return types
+                }, []),
                 template: this.title
             }
         }
@@ -603,6 +639,26 @@ export class DocumentTemplateDesigner {
                 case findTarget(
                     event,
                     ".bibliography-header-value .fa-minus-circle",
+                    el
+                ): {
+                    event.preventDefault()
+                    const trEl = el.target.closest("tr")
+                    trEl.parentElement.removeChild(trEl)
+                    break
+                }
+                case findTarget(event, ".id-types-value .fa-plus-circle", el):
+                    event.preventDefault()
+                    this.getCurrentValue()
+                    this.dom.querySelector(".id-types-value").innerHTML =
+                        idTypesTemplate({
+                            id_types: (this.value.attrs.id_types || []).concat([
+                                {label: "", regex: ""}
+                            ])
+                        })
+                    break
+                case findTarget(
+                    event,
+                    ".id-types-value .fa-minus-circle",
                     el
                 ): {
                     event.preventDefault()

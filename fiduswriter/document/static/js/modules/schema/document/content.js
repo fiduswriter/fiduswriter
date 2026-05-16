@@ -13,7 +13,10 @@ export const contributor = {
         firstname: {default: false},
         lastname: {default: false},
         email: {default: false},
-        institution: {default: false}
+        institution: {default: false},
+        // Only present if template defines id_types:
+        id_type: {default: false}, // Selected from template's id_types list
+        id_value: {default: false} // Validated against selected id_type's regex
     },
     parseDOM: [
         {
@@ -23,7 +26,9 @@ export const contributor = {
                     firstname: dom.dataset.firstname,
                     lastname: dom.dataset.lastname,
                     email: dom.dataset.email,
-                    institution: dom.dataset.institution
+                    institution: dom.dataset.institution,
+                    id_type: dom.dataset.id_type || false,
+                    id_value: dom.dataset.id_value || false
                 }
             }
         }
@@ -35,6 +40,12 @@ export const contributor = {
         dom.dataset.lastname = node.attrs.lastname
         dom.dataset.email = node.attrs.email
         dom.dataset.institution = node.attrs.institution
+        if (node.attrs.id_type) {
+            dom.dataset.id_type = node.attrs.id_type
+        }
+        if (node.attrs.id_value) {
+            dom.dataset.id_value = node.attrs.id_value
+        }
         const content = []
         if (node.attrs.firstname) {
             content.push(escapeText(node.attrs.firstname))
@@ -49,6 +60,11 @@ export const contributor = {
         }
         if (node.attrs.institution) {
             content.push(`(${escapeText(node.attrs.institution)})`)
+        }
+        if (node.attrs.id_type && node.attrs.id_value) {
+            content.push(
+                `<i>${escapeText(node.attrs.id_type)}: ${escapeText(node.attrs.id_value)}</i>`
+            )
         }
 
         dom.innerHTML = content.join(" ")

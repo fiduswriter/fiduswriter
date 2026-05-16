@@ -102,8 +102,16 @@ export class LatexExporterConvert {
                 break
             case "contributors_part":
                 if (node.content) {
+                    const contributorLabels = {
+                        authors: gettext("Authors"),
+                        editors: gettext("Editors"),
+                        translators: gettext("Translators"),
+                        reviewers: gettext("Reviewers"),
+                        contributors: gettext("Contributors")
+                    }
+                    const roleLabel = contributorLabels[node.attrs.metadata]
+
                     if (node.attrs.metadata === "authors") {
-                        // TODO: deal with node.attrs.metadata === 'editors'
                         const authorsPerAffil = node.content
                             .map(node => {
                                 const author = node.attrs,
@@ -124,7 +132,9 @@ export class LatexExporterConvert {
                                 return {
                                     name: nameParts.join(" "),
                                     affiliation,
-                                    email: author.email
+                                    email: author.email,
+                                    id_type: author.id_type,
+                                    id_value: author.id_value
                                 }
                             })
                             .reduce((affils, author) => {
@@ -136,11 +146,14 @@ export class LatexExporterConvert {
 
                         Object.values(authorsPerAffil).forEach(affil => {
                             affil.forEach(author => {
-                                this.authorsTex += `\n\\author{${escapeLatexText(author.name)}${
-                                    author.email
-                                        ? `\\thanks{${escapeLatexText(author.email)}}`
-                                        : ""
-                                }}`
+                                let thanks = ""
+                                if (author.email) {
+                                    thanks += `\\thanks{${escapeLatexText(author.email)}}`
+                                }
+                                if (author.id_type && author.id_value) {
+                                    thanks += `\\thanks{${escapeLatexText(author.id_type)}: ${escapeLatexText(author.id_value)}}`
+                                }
+                                this.authorsTex += `\n\\author{${escapeLatexText(author.name)}${thanks}}`
                             })
 
                             this.authorsTex += `\n\\affil{${
@@ -156,33 +169,31 @@ export class LatexExporterConvert {
                             start += "\n\n\\maketitle\n"
                             options.madeTitle = true
                         }
-                        // TODO: deal with contributor lists of non-authors properly
-                        content += node.content
+                        const contributorNames = node.content
                             .map(contributorNode => {
+                                const attrs = contributorNode.attrs
                                 const nameParts = []
-                                if (contributorNode.attrs.firstname) {
-                                    nameParts.push(
-                                        contributorNode.attrs.firstname
-                                    )
+                                if (attrs.firstname) {
+                                    nameParts.push(attrs.firstname)
                                 }
-                                if (contributorNode.attrs.lastname) {
-                                    nameParts.push(
-                                        contributorNode.attrs.lastname
-                                    )
+                                if (attrs.lastname) {
+                                    nameParts.push(attrs.lastname)
                                 }
-                                if (
-                                    !nameParts.length &&
-                                    contributorNode.attrs.institution
-                                ) {
+                                if (!nameParts.length && attrs.institution) {
                                     // We have an institution but no names. Use institution as name.
-                                    nameParts.push(
-                                        contributorNode.attrs.institution
-                                    )
+                                    nameParts.push(attrs.institution)
                                 }
-                                return nameParts.join(" ")
+                                let name = nameParts.join(" ")
+                                if (attrs.id_type && attrs.id_value) {
+                                    name += ` (${escapeLatexText(attrs.id_type)}: ${escapeLatexText(attrs.id_value)})`
+                                }
+                                return name
                             })
+                            .filter(name => name.length)
                             .join(", ")
-                        content += "\n\n"
+                        if (contributorNames.length) {
+                            content += `\n\\noindent\\textbf{${roleLabel}:} ${contributorNames}\n\n`
+                        }
                     }
                 }
 

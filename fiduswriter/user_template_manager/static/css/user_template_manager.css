@@ -1,4 +1,5 @@
-.bibliography-header-value input[type="text"] {
+.bibliography-header-value input[type="text"],
+.id-types-value input[type="text"] {
     margin: 10px;
     background-color: var(--cs-white-background);
     border: 1px solid var(--cs-white-border);

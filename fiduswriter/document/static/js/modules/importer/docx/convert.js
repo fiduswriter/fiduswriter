@@ -177,14 +177,29 @@ export class DocxConvert {
 
     extractMetadata(body) {
         const metadata = []
-        // Extract authors if present
-        const authors = this.extractAuthors(body)
-        if (authors.content.length) {
-            metadata.push({
-                type: "authors",
-                content: authors
-            })
+
+        // Try structured contributor data from custom properties first
+        const contributorsByRole = this.extractContributorsFromCustomProps()
+        if (Object.keys(contributorsByRole).length) {
+            Object.entries(contributorsByRole).forEach(
+                ([role, contributors]) => {
+                    metadata.push({
+                        type: role,
+                        content: {content: contributors, containerNodes: []}
+                    })
+                }
+            )
+        } else {
+            // Fall back to legacy author extraction
+            const authors = this.extractAuthors(body)
+            if (authors.content.length) {
+                metadata.push({
+                    type: "authors",
+                    content: authors
+                })
+            }
         }
+
         // Extract abstract if present
         const abstract = this.extractAbstract(body)
         if (abstract.content.length) {
@@ -203,6 +218,73 @@ export class DocxConvert {
             })
         }
         return metadata
+    }
+
+    extractContributorsFromCustomProps() {
+        if (!this.parser.customDoc) {
+            return {}
+        }
+
+        const properties = this.parser.customDoc.queryAll("property")
+        const contributors = []
+
+        properties.forEach(prop => {
+            const name = prop.getAttribute("name")
+            if (!name || !name.startsWith("fidus_contributor_")) {
+                return
+            }
+            const match = name.match(/^fidus_contributor_(\d+)_(\w+)$/)
+            if (!match) {
+                return
+            }
+            const num = parseInt(match[1])
+            const field = match[2]
+            const lpwstr = prop.query("vt:lpwstr")
+            const value = lpwstr ? lpwstr.textContent : ""
+
+            if (!contributors[num - 1]) {
+                contributors[num - 1] = {
+                    type: "contributor",
+                    attrs: {
+                        firstname: "",
+                        lastname: "",
+                        email: "",
+                        institution: "",
+                        id_type: "",
+                        id_value: "",
+                        role: ""
+                    }
+                }
+            }
+            if (field === "role") {
+                contributors[num - 1].attrs.role = value
+            } else if (
+                [
+                    "firstname",
+                    "lastname",
+                    "email",
+                    "institution",
+                    "id_type",
+                    "id_value"
+                ].includes(field)
+            ) {
+                contributors[num - 1].attrs[field] = value
+            }
+        })
+
+        const byRole = {}
+        contributors.forEach(contributor => {
+            if (!contributor) {
+                return
+            }
+            const role = contributor.attrs.role || "authors"
+            if (!byRole[role]) {
+                byRole[role] = []
+            }
+            byRole[role].push(contributor)
+        })
+
+        return byRole
     }
 
     extractAuthors(body) {

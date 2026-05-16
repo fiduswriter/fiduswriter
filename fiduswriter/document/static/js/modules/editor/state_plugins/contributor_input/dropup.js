@@ -270,10 +270,14 @@ class ContributorDropUp {
         // Set flag to prevent blur handler from closing drop-up or deselecting contributor
         this.openingDialog = true
         // Open the dialog - it will take focus from drop-up
+        const idTypes =
+            this.view.editor.mod.documentTemplate?.currentTemplate?.id_types ||
+            []
         const dialog = new ContributorDialog(
             this.parentNode,
             this.view,
-            this.selection.node.attrs
+            this.selection.node.attrs,
+            idTypes
         )
         dialog.init()
     }

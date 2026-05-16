@@ -189,6 +189,9 @@ export class HeaderbarView {
                 this.update()
                 break
             case "menu": {
+                if (menuItem.disabled?.(this.editor)) {
+                    return
+                }
                 let flagCloseAllMenu = true
                 if (!this.parentChain.length) {
                     this.parentChain = [menuItem]

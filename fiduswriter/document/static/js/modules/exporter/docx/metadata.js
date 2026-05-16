@@ -177,6 +177,113 @@ export class DOCXExporterMetadata {
             })
         }
 
+        // Add structured contributor metadata properties
+        await this.addContributorProperties()
+
+        return Promise.resolve()
+    }
+
+    async addContributorProperties() {
+        if (!this.metadata.contributors || !this.metadata.contributors.length) {
+            return Promise.resolve()
+        }
+
+        const propertiesEl = this.customXML.query("Properties")
+
+        // Remove any existing fidus_contributor_ properties
+        const existingContributorProps = this.customXML
+            .queryAll("property")
+            .filter(
+                prop =>
+                    prop.getAttribute("name") &&
+                    prop.getAttribute("name").startsWith("fidus_contributor_")
+            )
+        existingContributorProps.forEach(prop =>
+            prop.parentElement.removeChild(prop)
+        )
+
+        // Find the highest pid
+        const existingProperties = this.customXML.queryAll("property")
+        let maxPid = 0
+        existingProperties.forEach(prop => {
+            const pid = parseInt(prop.getAttribute("pid"))
+            if (pid > maxPid) {
+                maxPid = pid
+            }
+        })
+
+        const contributors = this.metadata.contributors
+
+        // Add contributor count
+        maxPid++
+        const countXML = `<property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="${maxPid}" name="fidus_contributor_count">
+<vt:i4></vt:i4>
+</property>`
+        propertiesEl.appendXML(countXML)
+        const countEl = propertiesEl.lastElementChild.query("vt:i4")
+        if (countEl) {
+            countEl.textContent = String(contributors.length)
+        }
+
+        // Add property for each contributor
+        contributors.forEach((contributor, index) => {
+            const num = index + 1
+            const nameParts = []
+            if (contributor.firstname) {
+                nameParts.push(contributor.firstname)
+            }
+            if (contributor.lastname) {
+                nameParts.push(contributor.lastname)
+            }
+            const fullName =
+                nameParts.join(" ") || contributor.institution || ""
+
+            const fields = [
+                {
+                    name: `fidus_contributor_${num}_role`,
+                    value: contributor.role || ""
+                },
+                {name: `fidus_contributor_${num}_name`, value: fullName},
+                {
+                    name: `fidus_contributor_${num}_firstname`,
+                    value: contributor.firstname || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_lastname`,
+                    value: contributor.lastname || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_institution`,
+                    value: contributor.institution || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_email`,
+                    value: contributor.email || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_id_type`,
+                    value: contributor.id_type || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_id_value`,
+                    value: contributor.id_value || ""
+                }
+            ]
+
+            fields.forEach(field => {
+                maxPid++
+                const propertyXML = `<property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="${maxPid}" name="${field.name}">
+<vt:lpwstr></vt:lpwstr>
+</property>`
+                propertiesEl.appendXML(propertyXML)
+                const lpwstrEl =
+                    propertiesEl.lastElementChild.query("vt:lpwstr")
+                if (lpwstrEl) {
+                    lpwstrEl.textContent = field.value
+                }
+            })
+        })
+
         return Promise.resolve()
     }
 }

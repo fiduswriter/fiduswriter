@@ -406,10 +406,13 @@ export class JATSExporterConverter {
                 if (node.content) {
                     const contributorTypes = {
                         authors: "author",
-                        editors: "editor"
+                        editors: "editor",
+                        translators: "translator",
+                        reviewers: "reviewer",
+                        contributors: "contributor"
                     }
                     const contributorType =
-                        contributorTypes[node.attrs.metadata] || "other" // TODO: Figure out if 'other' is legal
+                        contributorTypes[node.attrs.metadata] || "other"
                     start += `<contrib-group content-type="${contributorType}">`
                     end = "</contrib-group>" + end
                     const contributorTypeId = node.attrs.id
@@ -442,12 +445,24 @@ export class JATSExporterConverter {
                                 }
                                 content += `<xref ref-type="aff" rid="aff${affNumber}" />`
                             }
+                            if (contributor.id_type && contributor.id_value) {
+                                const idType = escapeText(
+                                    contributor.id_type.toLowerCase()
+                                )
+                                content += `<contrib-id contrib-id-type="${idType}">${escapeText(contributor.id_value)}</contrib-id>`
+                            }
                             content += "</contrib>"
                         } else if (contributor.institution) {
                             // There is an affiliation but no first/last name. We take this
                             // as a group collaboration.
                             content += `<contrib id="${contributorTypeId}-${counter++}" contrib-type="group">`
                             content += `<collab><named-content content-type="name">${escapeText(contributor.institution)}</named-content></collab>`
+                            if (contributor.id_type && contributor.id_value) {
+                                const idType = escapeText(
+                                    contributor.id_type.toLowerCase()
+                                )
+                                content += `<contrib-id contrib-id-type="${idType}">${escapeText(contributor.id_value)}</contrib-id>`
+                            }
                             content += "</contrib>"
                         }
                     })

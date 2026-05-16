@@ -357,6 +357,9 @@ export class HTMLExporterConvert {
                                 )
                                 output += `<a class="affiliation" href="#aff-${affNumber}"${this.epub ? ' epub:type="noteref"' : ""}>${affNumberDisplay}</a>`
                             }
+                            if (contributor.id_type && contributor.id_value) {
+                                output += `<span class="contributor-id">${escapeText(contributor.id_type)}: ${escapeText(contributor.id_value)}</span>`
+                            }
                             output += "</span>"
                         } else if (contributor.institution) {
                             // There is an affiliation but no first/last name. We take this

@@ -13,6 +13,7 @@ export class ODTExporterMetadata {
         return this.xml.getXml("meta.xml").then(metaXml => {
             this.metaXml = metaXml
             this.addMetadata()
+            this.addContributorMetadata()
             return this.addZoteroPrefs()
         })
     }
@@ -166,5 +167,85 @@ export class ODTExporterMetadata {
         })
 
         return Promise.resolve()
+    }
+
+    addContributorMetadata() {
+        if (!this.metadata.contributors || !this.metadata.contributors.length) {
+            return
+        }
+
+        const metaEl = this.metaXml.query("office:meta")
+
+        // Remove any existing fidus_contributor_ properties
+        const existingContributorProps = this.metaXml
+            .queryAll("meta:user-defined")
+            .filter(
+                prop =>
+                    prop.getAttribute("meta:name") &&
+                    prop
+                        .getAttribute("meta:name")
+                        .startsWith("fidus_contributor_")
+            )
+        existingContributorProps.forEach(prop =>
+            prop.parentElement.removeChild(prop)
+        )
+
+        const contributors = this.metadata.contributors
+
+        // Add contributor count
+        metaEl.appendXML(
+            `<meta:user-defined meta:name="fidus_contributor_count" meta:value-type="float">${contributors.length}</meta:user-defined>`
+        )
+
+        // Add metadata for each contributor
+        contributors.forEach((contributor, index) => {
+            const num = index + 1
+            const nameParts = []
+            if (contributor.firstname) {
+                nameParts.push(contributor.firstname)
+            }
+            if (contributor.lastname) {
+                nameParts.push(contributor.lastname)
+            }
+            const fullName =
+                nameParts.join(" ") || contributor.institution || ""
+
+            const fields = [
+                {
+                    name: `fidus_contributor_${num}_role`,
+                    value: contributor.role || ""
+                },
+                {name: `fidus_contributor_${num}_name`, value: fullName},
+                {
+                    name: `fidus_contributor_${num}_firstname`,
+                    value: contributor.firstname || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_lastname`,
+                    value: contributor.lastname || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_institution`,
+                    value: contributor.institution || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_email`,
+                    value: contributor.email || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_id_type`,
+                    value: contributor.id_type || ""
+                },
+                {
+                    name: `fidus_contributor_${num}_id_value`,
+                    value: contributor.id_value || ""
+                }
+            ]
+
+            fields.forEach(field => {
+                const userDefinedEl = `<meta:user-defined meta:name="${field.name}">${escapeText(field.value)}</meta:user-defined>`
+                metaEl.appendXML(userDefinedEl)
+            })
+        })
     }
 }

@@ -383,12 +383,35 @@ export const selectedCitationTemplate = ({
       </td>
     </tr>`
 
-export const contributorTemplate = ({contributor}) =>
-    `<input type="text" name="firstname" value="${contributor.firstname ? contributor.firstname : ""}" placeholder="${gettext("Firstname")}"/>
-    <input type="text" name="lastname" value="${contributor.lastname ? contributor.lastname : ""}" placeholder="${gettext("Lastname")}"/>
-    <input type="text" name="email" value="${contributor.email ? contributor.email : ""}" placeholder="${gettext("Email")}"/>
-    <input type="text" name="institution" value="${contributor.institution ? contributor.institution : ""}" placeholder="${gettext("Institution")}"/>
+export const contributorTemplate = ({contributor, idTypes = []}) => {
+    const showIdFields = idTypes && idTypes.length > 0
+    let idTypeField = ""
+    if (showIdFields) {
+        if (idTypes.length === 1) {
+            const type = idTypes[0]
+            idTypeField = `<span class="id-type-label">${escapeText(type.label)}:</span><input type="hidden" name="id_type" value="${escapeText(type.label)}">`
+        } else {
+            idTypeField = `<select name="id_type">
+                <option value="">${gettext("Select ID Type")}</option>
+                ${idTypes.map(t => `<option value="${escapeText(t.label)}" ${contributor.id_type === t.label ? "selected" : ""}>${escapeText(t.label)}</option>`).join("")}
+            </select>`
+        }
+    }
+
+    return `<input type="text" name="firstname" value="${contributor.firstname ? escapeText(contributor.firstname) : ""}" placeholder="${gettext("Firstname")}"/>
+    <input type="text" name="lastname" value="${contributor.lastname ? escapeText(contributor.lastname) : ""}" placeholder="${gettext("Lastname")}"/>
+    <input type="text" name="email" value="${contributor.email ? escapeText(contributor.email) : ""}" placeholder="${gettext("Email")}"/>
+    <input type="text" name="institution" value="${contributor.institution ? escapeText(contributor.institution) : ""}" placeholder="${gettext("Institution")}"/>
+    ${
+        showIdFields
+            ? `<div class="id-fields">
+        ${idTypeField}
+        <input type="text" name="id_value" value="${contributor.id_value ? escapeText(contributor.id_value) : ""}" placeholder="${gettext("ID Value")}" class="id-value-input"/>
+    </div>`
+            : ""
+    }
     `
+}
 
 export const languageTemplate = ({currentLanguage, allowedLanguages}) =>
     `<select class="fw-button fw-light fw-large">

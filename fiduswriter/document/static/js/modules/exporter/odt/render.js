@@ -745,6 +745,9 @@ export class ODTExporterRender {
                             if (item.email) {
                                 parts.push(item.email)
                             }
+                            if (item.id_type && item.id_value) {
+                                parts.push(`${item.id_type}: ${item.id_value}`)
+                            }
                             return parts.join(", ")
                         })
                         .join("; ")

@@ -10,7 +10,6 @@ export class AddButton {
         this.getNode = getNode
         this.getPos = getPos
         this.view = view
-        console.log("AddButton", {dom, getNode, getPos, view, idTypes})
 
         this.idTypes = idTypes
 

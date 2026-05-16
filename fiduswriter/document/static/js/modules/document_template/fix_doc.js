@@ -67,8 +67,6 @@ export function adjustDocToTemplate(
             "id_types"
         ]
     attrs.forEach(attr => (doc.attrs[attr] = template.attrs[attr]))
-    console.log("template id_types")
-    console.log(template.attrs.id_types)
 
     if (!doc.attrs.citationstyles.includes(doc.attrs.citationstyle)) {
         if (!doc.attrs.citationstyles.length) {

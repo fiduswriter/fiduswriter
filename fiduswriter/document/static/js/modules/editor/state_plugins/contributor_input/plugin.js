@@ -221,7 +221,6 @@ export const contributorInputPlugin = options =>
                     const idTypes =
                         view.editor.mod.documentTemplate?.currentTemplate
                             ?.id_types || []
-                    console.log("plugin", {idTypes})
                     const dialog = new ContributorDialog(
                         view.state.selection.$anchor.parent,
                         view,

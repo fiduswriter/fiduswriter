@@ -402,6 +402,7 @@ def get_documentlist(request):
         response["document_templates"][obj.import_id] = {
             "title": obj.title,
             "id": obj.id,
+            "id_types": obj.content.get("attrs", {}).get("id_types", []),
         }
     return JsonResponse(response, status=status)
 
@@ -1138,6 +1139,7 @@ def get_doc_styles(request):
             document_templates[obj.import_id] = {
                 "title": obj.title,
                 "id": obj.id,
+                "id_types": obj.content.get("attrs", {}).get("id_types", []),
             }
 
     response = {

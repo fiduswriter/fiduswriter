@@ -30,6 +30,7 @@ export class DocxParser {
             .then(() => this.parseRelationships())
             .then(() => this.parseImages())
             .then(() => this.parseCoreDoc())
+            .then(() => this.parseCustomDoc())
             .then(() => this.parseDocument())
     }
 
@@ -701,6 +702,20 @@ export class DocxParser {
             this.coreDoc = xmlDOM(content)
         } catch (err) {
             console.warn("Could not parse core doc", err)
+        }
+    }
+
+    async parseCustomDoc() {
+        try {
+            const content = await this.zip
+                .file("docProps/custom.xml")
+                ?.async("string")
+            if (!content) {
+                return
+            }
+            this.customDoc = xmlDOM(content)
+        } catch (err) {
+            console.warn("Could not parse custom doc", err)
         }
     }
 

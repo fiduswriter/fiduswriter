@@ -8,6 +8,12 @@ export class ContributorsPartView {
         this.node = node
         this.view = view
         this.getPos = getPos
+        this.idTypes =
+            (view.state &&
+                view.state.doc &&
+                view.state.doc.attrs &&
+                view.state.doc.attrs.id_types) ||
+            []
         this.dom = document.createElement("div")
         this.dom.classList.add("doc-part")
         this.dom.classList.add(`doc-${this.node.type.name}`)
@@ -25,7 +31,8 @@ export class ContributorsPartView {
                 this.dom,
                 () => this.getNode(),
                 this.getPos,
-                this.view
+                this.view,
+                this.idTypes
             )
             this.addButton.init()
         }

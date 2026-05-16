@@ -12,6 +12,7 @@ export class ModDocumentTemplate {
         this.editor = editor
         this.exportTemplates = []
         this.documentStyles = []
+        this.documentTemplates = {}
     }
 
     setStyles(styles) {

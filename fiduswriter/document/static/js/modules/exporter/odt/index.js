@@ -109,20 +109,28 @@ export class ODTExporter {
     }
 
     getBaseMetadata() {
-        return {
-            authors: this.docContent.content.reduce((authors, part) => {
+        const contributors = this.docContent.content.reduce(
+            (contributors, part) => {
                 if (
                     part.type === "contributors_part" &&
-                    part.attrs.metadata === "authors" &&
+                    part.attrs.metadata &&
                     part.content
                 ) {
-                    return authors.concat(
-                        part.content.map(authorNode => authorNode.attrs)
+                    return contributors.concat(
+                        part.content.map(node => ({
+                            ...node.attrs,
+                            role: part.attrs.metadata
+                        }))
                     )
                 } else {
-                    return authors
+                    return contributors
                 }
-            }, []),
+            },
+            []
+        )
+        return {
+            authors: contributors.filter(c => c.role === "authors"),
+            contributors,
             keywords: this.docContent.content.reduce((keywords, part) => {
                 if (
                     part.type === "tags_part" &&

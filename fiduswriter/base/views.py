@@ -10,6 +10,8 @@ from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.admin.views.decorators import staff_member_required
+from django.urls.exceptions import NoReverseMatch
+from django.core.exceptions import ImproperlyConfigured
 
 from allauth.socialaccount.adapter import get_adapter
 from allauth.socialaccount.models import SocialApp
@@ -87,11 +89,16 @@ def configuration(request):
         ws_url_base = get_url_base(origin, random.choice(settings.PORTS))
     socialaccount_providers = []
     for provider in get_adapter(request).list_providers(request):
+        try:
+            login_url = provider.get_login_url(request)
+        except NoReverseMatch:
+            # Provider is registered but its URLs are not installed.
+            continue
         socialaccount_providers.append(
             {
                 "id": provider.id,
                 "name": provider.name,
-                "login_url": provider.get_login_url(request),
+                "login_url": login_url,
             }
         )
     response = {
@@ -140,7 +147,7 @@ def configuration(request):
                         "name": provider_account.to_str(),
                     }
                 )
-            except (KeyError, SocialApp.DoesNotExist):
+            except (KeyError, SocialApp.DoesNotExist, ImproperlyConfigured):
                 # Social account provider has been removed.
                 pass
         response["user"]["waiting_invites"] = user.invites_to.exists()

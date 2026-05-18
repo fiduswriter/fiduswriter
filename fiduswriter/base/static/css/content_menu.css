@@ -92,3 +92,14 @@
     right: 40px;
     color: var(--cs-white-text);
 }
+
+.content-menu-columns {
+    display: flex;
+    flex-direction: row;
+}
+
+.content-menu-columns .content-menu-list {
+    flex: 1 0 200px;
+    min-width: 200px;
+    padding: 0 0 5px;
+}

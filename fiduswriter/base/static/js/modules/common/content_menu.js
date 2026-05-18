@@ -109,8 +109,144 @@ export class ContentMenu {
         } else {
             this.centerDialog()
         }
+        this.checkAndAddColumns()
         this.bind()
         this.focusFirstMenuItem()
+    }
+
+    renderColumnsHtml(columns) {
+        const itemsPerColumn = Math.ceil(this.menu.content.length / columns)
+        let html = '<div class="content-menu-columns">'
+        for (let col = 0; col < columns; col++) {
+            const start = col * itemsPerColumn
+            const end = Math.min(
+                start + itemsPerColumn,
+                this.menu.content.length
+            )
+            if (start >= this.menu.content.length) {
+                break
+            }
+            html += '<ul class="content-menu-list">'
+            for (let i = start; i < end; i++) {
+                const menuItem = this.menu.content[i]
+                switch (menuItem.type) {
+                    case "header":
+                        html += `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
+                            typeof menuItem.title === "function"
+                                ? menuItem.title(this.page)
+                                : menuItem.title
+                        }</span></li>`
+                        break
+                    case "separator":
+                        html +=
+                            '<li><hr class="content-menu-item-divider"/></li>'
+                        break
+                    default:
+                        html += `<li tabindex="0" data-index="${i}" class="content-menu-item${
+                            menuItem.disabled && menuItem.disabled(this.page)
+                                ? " disabled"
+                                : menuItem.selected
+                                  ? " selected"
+                                  : ""
+                        }" title='${menuItem.tooltip}'>
+                        ${
+                            typeof menuItem.title === "function"
+                                ? menuItem.title(this.page)
+                                : menuItem.title
+                        } ${
+                            menuItem.icon
+                                ? `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>`
+                                : ""
+                        }
+                        </li>`
+                }
+            }
+            html += "</ul>"
+        }
+        html += "</div>"
+        return html
+    }
+
+    checkAndAddColumns() {
+        const dialogRect = this.dialogEl.getBoundingClientRect()
+        const viewportHeight = window.innerHeight
+        const viewportWidth = window.innerWidth
+        const maxHeight = viewportHeight * 0.9
+        const maxWidth = viewportWidth * 0.95
+
+        if (dialogRect.height >= maxHeight) {
+            const contentEl = this.dialogEl.querySelector(
+                ".ui-content-menu-content"
+            )
+            const contentDiv = contentEl.querySelector(":scope > div")
+            let columns = 2
+            while (columns <= 6) {
+                contentDiv.innerHTML = this.renderColumnsHtml(columns)
+                const columnsDiv = contentDiv.querySelector(
+                    ".content-menu-columns"
+                )
+                if (columnsDiv) {
+                    const naturalWidth = columnsDiv.scrollWidth + 20
+                    contentEl.style.width = `${naturalWidth}px`
+                }
+                const newRect = this.dialogEl.getBoundingClientRect()
+                if (newRect.height < maxHeight && newRect.width < maxWidth) {
+                    if (this.menuPos?.X && this.menuPos?.Y) {
+                        this.positionDialog()
+                    } else {
+                        this.centerDialog()
+                    }
+                    return
+                }
+                columns++
+            }
+            // Fallback: restore single column with scrolling
+            contentDiv.innerHTML = `<ul class="content-menu-list">${this.renderSingleColumnHtml()}</ul>`
+            contentEl.style.width = this.width
+            this.dialogEl
+                .querySelector(".ui-content-menu-content")
+                .classList.add("ui-scrollable")
+            if (this.menuPos?.X && this.menuPos?.Y) {
+                this.positionDialog()
+            } else {
+                this.centerDialog()
+            }
+        }
+    }
+
+    renderSingleColumnHtml() {
+        return this.menu.content
+            .map((menuItem, index) => {
+                switch (menuItem.type) {
+                    case "header":
+                        return `<li><span class="content-menu-item-header" title="${menuItem.tooltip}">${
+                            typeof menuItem.title === "function"
+                                ? menuItem.title(this.page)
+                                : menuItem.title
+                        }</span></li>`
+                    case "separator":
+                        return '<li><hr class="content-menu-item-divider"/></li>'
+                    default:
+                        return `<li tabindex="0" data-index="${index}" class="content-menu-item${
+                            menuItem.disabled && menuItem.disabled(this.page)
+                                ? " disabled"
+                                : menuItem.selected
+                                  ? " selected"
+                                  : ""
+                        }" title='${menuItem.tooltip}'>
+                    ${
+                        typeof menuItem.title === "function"
+                            ? menuItem.title(this.page)
+                            : menuItem.title
+                    } ${
+                        menuItem.icon
+                            ? `<span class="content-menu-item-icon"><i class="fa fa-${menuItem.icon}"></i></span>`
+                            : ""
+                    }
+                    </li>`
+                }
+            })
+            .join("")
     }
 
     centerDialog() {
@@ -218,6 +354,15 @@ export class ContentMenu {
             "li.content-menu-item:not(.disabled)"
         )
 
+        const columnsDiv = this.dialogEl.querySelector(".content-menu-columns")
+        const totalColumns = columnsDiv
+            ? columnsDiv.querySelectorAll(".content-menu-list").length
+            : 1
+        const itemsPerColumn =
+            totalColumns > 1
+                ? Math.ceil(menuItems.length / totalColumns)
+                : menuItems.length
+
         switch (key) {
             case "Escape":
                 this.close()
@@ -232,6 +377,68 @@ export class ContentMenu {
             case "ArrowDown":
                 event.preventDefault()
                 this.focusedIndex = (this.focusedIndex + 1) % menuItems.length
+                this.focusMenuItem(this.focusedIndex)
+                break
+            case "ArrowLeft":
+                if (totalColumns <= 1) {
+                    break
+                }
+                event.preventDefault()
+                {
+                    const currentCol = Math.floor(
+                        this.focusedIndex / itemsPerColumn
+                    )
+                    const currentRow = this.focusedIndex % itemsPerColumn
+                    if (currentCol > 0) {
+                        let newIndex =
+                            (currentCol - 1) * itemsPerColumn + currentRow
+                        const prevColEnd = Math.min(
+                            currentCol * itemsPerColumn,
+                            menuItems.length
+                        )
+                        if (newIndex >= prevColEnd) {
+                            newIndex = prevColEnd - 1
+                        }
+                        this.focusedIndex = newIndex
+                        this.focusMenuItem(this.focusedIndex)
+                    }
+                }
+                break
+            case "ArrowRight":
+                if (totalColumns <= 1) {
+                    break
+                }
+                event.preventDefault()
+                {
+                    const currentCol = Math.floor(
+                        this.focusedIndex / itemsPerColumn
+                    )
+                    const currentRow = this.focusedIndex % itemsPerColumn
+                    if (currentCol < totalColumns - 1) {
+                        let newIndex =
+                            (currentCol + 1) * itemsPerColumn + currentRow
+                        const nextColEnd = Math.min(
+                            (currentCol + 2) * itemsPerColumn,
+                            menuItems.length
+                        )
+                        if (newIndex >= nextColEnd) {
+                            newIndex = nextColEnd - 1
+                        }
+                        this.focusedIndex = newIndex
+                        this.focusMenuItem(this.focusedIndex)
+                    }
+                }
+                break
+            case "Tab":
+                event.preventDefault()
+                if (event.shiftKey) {
+                    this.focusedIndex =
+                        (this.focusedIndex - 1 + menuItems.length) %
+                        menuItems.length
+                } else {
+                    this.focusedIndex =
+                        (this.focusedIndex + 1) % menuItems.length
+                }
                 this.focusMenuItem(this.focusedIndex)
                 break
             case "Enter":

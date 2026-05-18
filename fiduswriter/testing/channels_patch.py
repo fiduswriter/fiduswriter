@@ -2,8 +2,16 @@ import asyncio
 from functools import partial
 import multiprocessing
 
+# Python 3.14 changed the Linux default from "fork" to "forkserver".  The
+# Channels live-server test case relies on the child process inheriting the
+# parent's Django configuration, which only happens with "fork".  Restore the
+# old default before any multiprocessing code runs.
+try:
+    multiprocessing.set_start_method("fork", force=True)
+except (RuntimeError, AttributeError):
+    pass
+
 from django.test.utils import modify_settings
-from django.contrib.contenttypes.models import ContentType
 
 from channels.routing import get_default_application
 from channels.testing import (
@@ -17,6 +25,8 @@ _server_command_queue = None
 
 
 def clear_contenttype_cache():
+    from django.contrib.contenttypes.models import ContentType
+
     ContentType.objects.clear_cache()
 
 

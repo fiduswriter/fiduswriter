@@ -93,7 +93,7 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box.track {
-    background-color: rgba(var(--editor-track-background-color));
+    background-color: rgb(var(--editor-track-background-color));
     color: var(--editor-track-text-color);
 }
 
@@ -125,7 +125,7 @@ body.header-closed #margin-box-filter {
 }
 
 .margin-box.warning {
-    background-color: rgba(var(--warning-background-color));
+    background-color: rgb(var(--warning-background-color));
     color: var(--warning-text-color);
 }
 
@@ -247,7 +247,7 @@ body.header-closed #margin-box-filter {
     line-height: 18px;
     max-height: 54px;
     overflow: hidden;
-    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .margin-box .ProseMirror-wrapper {

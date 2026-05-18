@@ -1,8 +1,12 @@
+import {Dialog, addAlert, postJson} from "../../../common"
 import {CopyrightDialog} from "../../../copyright_dialog"
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
 import {LanguageDialog, RevisionDialog} from "../../dialogs"
+import {E2EEKeyManager} from "../../e2ee/key-manager"
+import {PassphraseManager} from "../../e2ee/passphrase-manager"
+import {changePasswordDialog} from "../../e2ee/password-dialog"
 import {
     KeyBindingsDialog,
     SearchReplaceDialog,
@@ -40,48 +44,186 @@ export const headerbarModel = () => ({
             order: 0,
             content: [
                 {
-                    title: gettext("Share"),
+                    title: editor =>
+                        editor.user.is_authenticated &&
+                        editor.docInfo.token &&
+                        !editor.docInfo.is_owner
+                            ? gettext("Request Access")
+                            : gettext("Share"),
                     type: "action",
                     //icon: 'share',
-                    tooltip: gettext("Share the document with other users."),
+                    tooltip: editor =>
+                        editor.user.is_authenticated &&
+                        editor.docInfo.token &&
+                        !editor.docInfo.is_owner
+                            ? gettext("Request to be added as a collaborator.")
+                            : gettext("Share the document with other users."),
                     order: 0,
                     action: editor => {
+                        if (
+                            editor.user.is_authenticated &&
+                            editor.docInfo.token &&
+                            !editor.docInfo.is_owner
+                        ) {
+                            // TokenUser requesting access
+                            postJson("/api/document/request_access/", {
+                                document_id: editor.docInfo.id,
+                                rights: "write"
+                            })
+                                .then(({json}) => {
+                                    if (json.success) {
+                                        addAlert(
+                                            "success",
+                                            gettext(
+                                                "Your access request has been sent to the document owner."
+                                            )
+                                        )
+                                    } else {
+                                        addAlert(
+                                            "error",
+                                            json.error ||
+                                                gettext(
+                                                    "Could not send access request."
+                                                )
+                                        )
+                                    }
+                                })
+                                .catch(() => {
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "Could not send access request."
+                                        )
+                                    )
+                                })
+                            return
+                        }
+                        const onShareSuccess = async newAccessRights => {
+                            // Share the document password with newly-added user recipients.
+                            if (
+                                editor.e2ee?.password &&
+                                PassphraseManager.hasKeysInSession()
+                            ) {
+                                const userRecipients = newAccessRights.filter(
+                                    ar =>
+                                        ar.holder?.type === "user" &&
+                                        ar.rights !== "delete"
+                                )
+                                const noPassphraseUsers = []
+                                for (const ar of userRecipients) {
+                                    try {
+                                        const hasKeys =
+                                            await PassphraseManager.userHasEncryptionKeys(
+                                                ar.holder.id
+                                            )
+                                        if (hasKeys) {
+                                            // Recipient has passphrase keys —
+                                            // encrypt document password with their public key.
+                                            await PassphraseManager.saveDocumentPassword(
+                                                editor.docInfo.id,
+                                                editor.e2ee.password,
+                                                ar.holder.id,
+                                                "user",
+                                                false
+                                            )
+                                        } else {
+                                            noPassphraseUsers.push(
+                                                ar.holder?.name || "user"
+                                            )
+                                        }
+                                    } catch (_e) {
+                                        noPassphraseUsers.push(
+                                            ar.holder?.name || "user"
+                                        )
+                                    }
+                                }
+
+                                if (noPassphraseUsers.length > 0) {
+                                    const dialog = new Dialog({
+                                        title: gettext(
+                                            "Share Document Password"
+                                        ),
+                                        id: "share-password-dialog",
+                                        width: 500,
+                                        body: `<p>${gettext(
+                                            "The following users don't have passphrase encryption. Please share the document password with them directly."
+                                        )}</p><ul>${noPassphraseUsers
+                                            .map(
+                                                name =>
+                                                    `<li><strong>${name}</strong>: <code>${editor.e2ee.password}</code></li>`
+                                            )
+                                            .join("")}</ul>`,
+                                        buttons: [
+                                            {
+                                                text: gettext("Close"),
+                                                classes: "fw-dark",
+                                                click: () => dialog.close()
+                                            }
+                                        ]
+                                    })
+                                    dialog.open()
+                                }
+                            }
+                        }
                         const dialog = new DocumentAccessRightsDialog(
                             [editor.docInfo.id],
                             editor.docInfo.owner.contacts,
                             contactData => {
                                 editor.docInfo.owner.contacts.push(contactData)
-                            }
+                            },
+                            editor.e2ee?.encrypted,
+                            editor.e2ee?.password || "",
+                            onShareSuccess,
+                            editor.app.settings
                         )
                         dialog.init()
                     },
                     disabled: editor => {
                         return (
-                            !editor.docInfo.is_owner || editor.app.isOffline()
+                            editor.app.isOffline() ||
+                            !editor.user.is_authenticated
                         )
                     }
                 },
                 {
-                    title: gettext("Close"),
+                    title: editor =>
+                        editor.user.is_authenticated
+                            ? gettext("Close")
+                            : gettext("Sign up / Log in"),
                     type: "action",
                     //icon: 'times-circle',
-                    tooltip: gettext(
-                        "Close the document and return to the document overview menu."
-                    ),
+                    tooltip: editor =>
+                        editor.user.is_authenticated
+                            ? gettext(
+                                  "Close the document and return to the document overview menu."
+                              )
+                            : gettext("Sign up for an account or log in."),
                     order: 1,
                     action: editor => {
-                        const folderPath = editor.docInfo.path.slice(
-                            0,
-                            editor.docInfo.path.lastIndexOf("/")
-                        )
-                        if (
-                            !folderPath.length &&
-                            editor.app.routes[""].app === "document"
-                        ) {
-                            editor.app.goTo("/")
+                        if (editor.user.is_authenticated) {
+                            const folderPath = editor.docInfo.path.slice(
+                                0,
+                                editor.docInfo.path.lastIndexOf("/")
+                            )
+                            if (
+                                !folderPath.length &&
+                                editor.app.routes[""].app === "document"
+                            ) {
+                                editor.app.goTo("/")
+                            } else {
+                                editor.app.goTo(`/documents${folderPath}/`)
+                            }
                         } else {
-                            editor.app.goTo(`/documents${folderPath}/`)
+                            if (
+                                editor.app.settings?.REGISTRATION_OPEN ||
+                                editor.app.settings?.SOCIALACCOUNT_OPEN
+                            ) {
+                                window.location.href = "/account/sign-up/"
+                            } else {
+                                window.location.href = "/"
+                            }
                         }
+                        return
                     },
                     disabled: editor => editor.app.isOffline()
                 },
@@ -107,7 +249,8 @@ export const headerbarModel = () => ({
                     },
                     disabled: editor =>
                         editor.docInfo.access_rights !== "write" ||
-                        editor.app.isOffline()
+                        editor.app.isOffline() ||
+                        !!editor.docInfo.token
                 },
                 {
                     title: gettext("Create copy"),
@@ -129,7 +272,10 @@ export const headerbarModel = () => ({
                             )
                             .catch(() => false)
                     },
-                    disabled: editor => editor.app.isOffline()
+                    disabled: editor =>
+                        editor.app.isOffline() ||
+                        (!!editor.docInfo.token &&
+                            !editor.user.is_authenticated)
                 },
                 {
                     title: gettext("Download"),
@@ -143,7 +289,9 @@ export const headerbarModel = () => ({
                         new ExportFidusFile(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
-                            editor.mod.db.imageDB
+                            editor.mod.db.imageDB,
+                            true,
+                            editor.docInfo.token
                         )
                     },
                     disabled: editor => editor.app.isOffline()
@@ -174,6 +322,179 @@ export const headerbarModel = () => ({
                             }
                         )
                     }
+                },
+                {
+                    title: gettext("Change password"),
+                    type: "action",
+                    tooltip: gettext(
+                        "Change the password of this encrypted document."
+                    ),
+                    order: 6,
+                    action: async editor => {
+                        if (!editor.e2ee?.key) {
+                            addAlert(
+                                "error",
+                                gettext(
+                                    "Document key is not available. Please reload the document."
+                                )
+                            )
+                            return
+                        }
+                        const isPassphraseUser =
+                            editor.e2ee?.usesPassphrase &&
+                            PassphraseManager.hasKeysInSession()
+                        const suggestedNewPassword = isPassphraseUser
+                            ? await PassphraseManager.generateDocumentPassword()
+                            : ""
+
+                        let changeOptions
+                        if (isPassphraseUser) {
+                            // Passphrase users: current password is known, new password
+                            // is auto-generated and shown in plaintext for sharing.
+                            changeOptions = {
+                                currentPassword:
+                                    editor.e2ee.password ||
+                                    E2EEKeyManager.getPasswordFromSession(
+                                        editor.docInfo.id
+                                    ) ||
+                                    "",
+                                suggestedNewPassword,
+                                hideCurrentPassword: true,
+                                showNewPasswordPlaintext: true,
+                                infoText: gettext(
+                                    "Your personal passphrase will still unlock this document. A new random password is generated automatically. Other passphrase users will receive it automatically; non-passphrase collaborators need it shared with them manually."
+                                )
+                            }
+                        } else {
+                            // Non-passphrase users: prefill current password from
+                            // sessionStorage if available, but keep it visible for
+                            // verification.
+                            const sessionPassword =
+                                E2EEKeyManager.getPasswordFromSession(
+                                    editor.docInfo.id
+                                )
+                            changeOptions = {
+                                currentPassword: sessionPassword || "",
+                                suggestedNewPassword: ""
+                            }
+                        }
+
+                        changePasswordDialog(
+                            async ({currentPassword, newPassword}) => {
+                                try {
+                                    // Verify current password by resolving to key
+                                    const currentSaltBytes = new Uint8Array(
+                                        atob(editor.e2ee.encryptionSalt)
+                                            .split("")
+                                            .map(c => c.charCodeAt(0))
+                                    )
+                                    const currentKey =
+                                        await E2EEKeyManager.resolvePasswordToKey(
+                                            currentPassword,
+                                            currentSaltBytes,
+                                            editor.e2ee.encryptionIterations
+                                        )
+                                    // Test the key by encrypting and decrypting a test value
+                                    const {E2EEEncryptor} = await import(
+                                        "../../e2ee/encryptor"
+                                    )
+                                    const testValue = "test"
+                                    const encryptedTest =
+                                        await E2EEEncryptor.encrypt(
+                                            testValue,
+                                            currentKey
+                                        )
+                                    await E2EEEncryptor.decrypt(
+                                        encryptedTest,
+                                        editor.e2ee.key
+                                    )
+
+                                    // Current password verified — generate new salt and key
+                                    const newSalt =
+                                        E2EEKeyManager.generateSalt()
+                                    const newSaltBase64 = btoa(
+                                        String.fromCharCode(...newSalt)
+                                    )
+                                    const newIterations = 600000
+                                    const newKey =
+                                        await E2EEKeyManager.resolvePasswordToKey(
+                                            newPassword,
+                                            newSalt,
+                                            newIterations
+                                        )
+
+                                    // Re-encrypt the document with the new key
+                                    await editor.e2ee.snapshotManager.reEncryptWithNewKey(
+                                        newKey,
+                                        newSaltBase64,
+                                        newIterations
+                                    )
+
+                                    // Update local E2EE state
+                                    editor.e2ee.encryptionSalt = newSaltBase64
+                                    editor.e2ee.encryptionIterations =
+                                        newIterations
+                                    editor.e2ee.key = newKey
+                                    editor.e2ee.password = newPassword
+
+                                    // Cache password and key in sessionStorage
+                                    E2EEKeyManager.storePasswordInSession(
+                                        editor.docInfo.id,
+                                        newPassword
+                                    )
+                                    await E2EEKeyManager.storeKeyInSession(
+                                        editor.docInfo.id,
+                                        newKey
+                                    )
+
+                                    // If passphrase user, update encrypted password on server
+                                    if (isPassphraseUser) {
+                                        try {
+                                            await PassphraseManager.saveDocumentPassword(
+                                                editor.docInfo.id,
+                                                newPassword,
+                                                null,
+                                                "user",
+                                                true
+                                            )
+                                        } catch (_e) {
+                                            console.error(
+                                                "Failed to update document password on server:",
+                                                _e
+                                            )
+                                        }
+                                    }
+
+                                    if (isPassphraseUser) {
+                                        addAlert(
+                                            "success",
+                                            gettext(
+                                                "Document encryption key rotated. Other passphrase users will receive the new key automatically."
+                                            )
+                                        )
+                                    } else {
+                                        addAlert(
+                                            "success",
+                                            gettext(
+                                                "Document password changed. Remember to share the new password with your collaborators."
+                                            )
+                                        )
+                                    }
+                                } catch (_error) {
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "The current password is incorrect."
+                                        )
+                                    )
+                                }
+                            },
+                            changeOptions
+                        )
+                    },
+                    disabled: editor =>
+                        !editor.e2ee?.encrypted ||
+                        editor.docInfo.access_rights !== "write"
                 }
             ]
         },

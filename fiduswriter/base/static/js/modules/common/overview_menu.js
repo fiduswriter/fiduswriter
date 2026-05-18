@@ -484,7 +484,7 @@ export class OverviewMenuView {
         return `
         <div class="select-action fw-button fw-light fw-large">
             <input type="checkbox" ${menuItem.checked ? "checked" : ""}>
-            <span class="select-action-dropdown"><i class="fa fa-caret-down"></i></span>
+            <span class="select-action-dropdown"><i class="fa-solid fa-caret-down"></i></span>
         </div>
         ${this.getDropdownListHTML(menuItem)}
         `
@@ -510,7 +510,7 @@ export class OverviewMenuView {
                 )}
             </label>
             <span class="dropdown" aria-hidden="true">
-                <i class="fa fa-caret-down"></i>
+                <i class="fa-solid fa-caret-down"></i>
             </span>
         </div>
         ${this.getDropdownListHTML(menuItem)}
@@ -554,7 +554,7 @@ export class OverviewMenuView {
                 tabindex="0"
                 role="menuitem">
             ${menuItem.title}
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
+            ${menuItem.icon ? `<i class="fa-solid fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
         </button>`
     }
 
@@ -591,7 +591,7 @@ export class OverviewMenuView {
                 placeholder="${menuItem.title}"
                 aria-label="${menuItem.title}"
                 >
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
+            ${menuItem.icon ? `<i class="fa-solid fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
         </div>`
     }
 

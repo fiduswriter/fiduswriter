@@ -16,7 +16,7 @@ export class PasswordResetRequest extends PreloginPage {
                 gettext(
                     'If you have any trouble resetting your password, please <a href="mailto:%(contactEmail)s">contact us</a>.'
                 ),
-                {contactEmail: settings_CONTACT_EMAIL},
+                {contactEmail: this.app.settings?.CONTACT_EMAIL},
                 true
             )}</p>
         </div>

@@ -155,9 +155,26 @@ Modal header
     margin: 0;
 }
 
-.bib-dialog-header .ui-tabs-nav {
+.entry-key-input-container {
     display: inline-block;
     vertical-align: middle;
-    margin: 0;
-    height: auto;
+    margin-left: 10px;
+}
+
+#entry-key {
+    width: 200px;
+}
+
+.entry-key-warning {
+    color: var(--cs-1-text);
+    font-size: 0.85em;
+    margin-top: 2px;
+    min-height: 1em;
+}
+
+.fw-data-table-title .bib-entry-key {
+    display: block;
+    font-size: 0.8em;
+    color: var(--cs-light-text-secondary);
+    margin-top: 2px;
 }

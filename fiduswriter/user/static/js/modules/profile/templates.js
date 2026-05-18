@@ -68,7 +68,7 @@ export const changePwdDialogTemplate = ({username}) =>
         <tr><td><span id="fw-password-change-error" class="warning"></span></td></tr>
     </tbody></table>`
 
-export const profileContents = (user, socialaccount_providers) =>
+export const profileContents = (user, socialaccount_providers, settings = {}) =>
     `<div id="profile-wrapper" class="clearfix ui-dialog ui-dialog-fullpage">
         <div id="profile-avatar">
             ${avatarTemplate({user})}
@@ -102,6 +102,60 @@ export const profileContents = (user, socialaccount_providers) =>
                     <span id="fw-edit-profile-pwd" class="fw-link-text"><i class="fa fa-pencil-alt"></i></span>
                 </div>
             </form>
+            ${
+                settings.TWO_FACTOR_ENABLED
+                    ? `<div class="profile-data-row">
+                <label class="form-label">${gettext("Two-Factor Authentication")}</label>
+                <div id="two-factor-status">
+                    <span id="two-factor-enabled-status" style="display: none;">
+                        <i class="fa fa-check"></i>
+                        ${gettext("Enabled")}
+                    </span>
+                    <span id="two-factor-disabled-status" style="display: none;">
+                        <i class="fa fa-times"></i>
+                        ${gettext("Disabled")}
+                    </span>
+                </div>
+                <span id="setup-two-factor" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-shield-alt"></i>
+                    ${gettext("Enable 2FA")}
+                </span>
+                <span id="disable-two-factor" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-shield-alt"></i>
+                    ${gettext("Disable 2FA")}
+                </span>
+            </div>`
+                    : ""
+            }
+            ${
+                settings.E2EE_MODE && settings.E2EE_MODE !== "disabled"
+                    ? `<div class="profile-data-row">
+                <label class="form-label">${gettext("End-to-End Encryption")}</label>
+                <div id="e2ee-passphrase-status">
+                    <span id="e2ee-passphrase-enabled-status" style="display: none;">
+                        <i class="fa fa-check"></i>
+                        ${gettext("Personal passphrase set up")}
+                    </span>
+                    <span id="e2ee-passphrase-disabled-status" style="display: none;">
+                        <i class="fa fa-times"></i>
+                        ${gettext("Not set up")}
+                    </span>
+                </div>
+                <span id="setup-e2ee-passphrase" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-lock"></i>
+                    ${gettext("Set up encryption passphrase")}
+                </span>
+                <span id="change-e2ee-passphrase" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-pencil-alt"></i>
+                    ${gettext("Change passphrase")}
+                </span>
+                <span id="recover-e2ee-passphrase" class="fw-link-text" style="display: none;">
+                    <i class="fa fa-key"></i>
+                    ${gettext("Recover with recovery key")}
+                </span>
+            </div>`
+                    : ""
+            }
             <div class="profile-data-row">
                 <table class="fw-data-table profile-email-table">
                     <thead class="fw-data-table-header">
@@ -155,14 +209,32 @@ export const profileContents = (user, socialaccount_providers) =>
                 <label class="form-label">${gettext("Language")}</label>
                 <select name="language" id="language" class="entry-form dk fw-button fw-large">
                 <option value="">${gettext("Default language")}</option>
-                ${settings_LANGUAGES
-                    .map(
-                        ([code, _name]) =>
-                            `<option value="${code}" ${user.language === code ? "selected" : ""}>${langName(code)}</option>`
-                    )
-                    .join("")}
+                ${settings.LANGUAGES.map(
+                    ([code, _name]) =>
+                        `<option value="${code}" ${user.language === code ? "selected" : ""}>${langName(code)}</option>`
+                ).join("")}
                 </select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
+            </div>
+            <div class="profile-data-row">
+                <label class="form-label">${gettext("Editor")}</label>
+                <div class="profile-editor-settings">
+                    <label class="checkable-label">
+                        <input type="checkbox" id="inline-references" ${user.preferences?.inline_references ? "checked" : ""} />
+                        ${gettext("Enable inline reference typing (@)")}
+                    </label>
+                    <p class="inline-editor-hint">${gettext("Type @ in the editor to insert a citation or cross-reference:")}</p>
+                    <ul class="inline-editor-hint">
+                        <li>${gettext("Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual citation: @@entry_key. Multiple sources: @key1;key2")}</li>
+                        <li>${gettext("Cross-reference: @#target-id")}</li>
+                    </ul>
+                    <label class="checkable-label">
+                        <input type="checkbox" id="inline-math" ${user.preferences?.inline_math ? "checked" : ""} />
+                        ${gettext("Enable inline math typing ($)")}
+                    </label>
+                    <p class="inline-editor-hint">${gettext("Type $ in the editor followed by LaTeX math to insert an equation inline, e.g. $x^2. Press Enter or Tab to confirm.")}</p>
+
+                </div>
             </div>
             ${
                 socialaccount_providers.length

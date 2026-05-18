@@ -12,6 +12,7 @@ import {
     postJson,
     showSystemMessage
 } from "../common"
+import {getSettings, initSettings} from "../common/settings"
 import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
 import {EmailConfirm} from "../email_confirm"
@@ -30,7 +31,9 @@ import {SetupPage} from "../setup"
 import {Signup} from "../signup"
 
 export class App {
-    constructor() {
+    constructor(settings = {}) {
+        initSettings(settings)
+        this.settings = getSettings()
         this.config = {}
         this.name = "Fidus Writer"
         this.config.app = this
@@ -105,6 +108,21 @@ export class App {
                     data: {
                         keyPath: "id"
                     }
+                }
+            },
+            share: {
+                // Document shared via document link
+                app: "document",
+                requireLogin: false,
+                open: pathnameParts => {
+                    let token = pathnameParts.pop()
+                    if (!token.length) {
+                        token = pathnameParts.pop()
+                    }
+                    const path = "/"
+                    return import(
+                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "../editor"
+                    ).then(({Editor}) => new Editor(this.config, path, token))
                 }
             },
             documents: {
@@ -202,8 +220,8 @@ export class App {
 
     init() {
         if (
-            !settings_DEBUG &&
-            settings_USE_SERVICE_WORKER &&
+            !this.settings.DEBUG &&
+            this.settings.USE_SERVICE_WORKER &&
             "serviceWorker" in navigator
         ) {
             navigator.serviceWorker
@@ -241,7 +259,7 @@ export class App {
                         // We show a setup message instead.
                         this.page = this.openSetupPage()
                         this.page.init()
-                    } else if (settings_DEBUG) {
+                    } else if (this.settings.DEBUG) {
                         throw error
                     } else {
                         // We don't know what is going on, but we are in production
@@ -262,13 +280,13 @@ export class App {
     }
 
     setup() {
+        this.csl = new CSL()
         if (!this.config.user.is_authenticated) {
             this.activateFidusPlugins()
             return this.selectPage().then(() => this.bind())
         }
         this.bibDB = new BibliographyDB(this)
-        this.imageDB = new ImageDB()
-        this.csl = new CSL()
+        this.imageDB = new ImageDB(this)
         this.connectWs()
         return Promise.all([this.bibDB.getDB(), this.imageDB.getDB()])
             .then(() => {
@@ -347,6 +365,9 @@ export class App {
     }
 
     connectWs() {
+        if (!this.config.ws_url_base) {
+            return
+        }
         this.ws = new WebSocketConnector({
             base: this.config.ws_url_base,
             path: "/base/",

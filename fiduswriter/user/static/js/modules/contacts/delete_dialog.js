@@ -14,7 +14,7 @@ export class DeleteContactDialog {
                     classes: "fw-dark",
                     click: () => {
                         postJson("/api/user/contacts/delete/", {
-                            contacts: JSON.stringify(this.contacts)
+                            contacts: this.contacts
                         }).then(({status}) => {
                             dialog.close()
                             if (status == 200) {

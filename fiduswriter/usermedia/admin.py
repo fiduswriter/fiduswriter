@@ -1,5 +1,11 @@
 from django.contrib import admin
-from usermedia.models import Image, UserImage, ImageCategory, DocumentImage
+from usermedia.models import (
+    Image,
+    UserImage,
+    ImageCategory,
+    DocumentImage,
+    EncryptedDocumentImage,
+)
 
 
 class ImageAdmin(admin.ModelAdmin):
@@ -21,6 +27,13 @@ class DocumentImageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(DocumentImage, DocumentImageAdmin)
+
+
+class EncryptedDocumentImageAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(EncryptedDocumentImage, EncryptedDocumentImageAdmin)
 
 
 class ImageCategoryAdmin(admin.ModelAdmin):

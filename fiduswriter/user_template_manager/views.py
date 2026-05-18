@@ -1,10 +1,9 @@
-import json
 from copy import deepcopy
 
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from base.decorators import ajax_required
 from document.models import DocumentTemplate, FW_DOCUMENT_VERSION
@@ -16,7 +15,7 @@ from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 @ajax_required
 @require_POST
 def get_template(request):
-    id = int(request.POST["id"])
+    id = request.JSON["id"]
     if id == 0:
         doc_template = DocumentTemplate()
         doc_template.user = request.user
@@ -53,7 +52,7 @@ def get_template(request):
 
 @login_required
 @ajax_required
-@require_POST
+@require_GET
 def list(request):
     response = {}
     status = 200
@@ -78,7 +77,7 @@ def list(request):
 @ajax_required
 @require_POST
 def save(request):
-    id = request.POST["id"]
+    id = request.JSON["id"]
     doc_template = DocumentTemplate.objects.filter(
         id=id, user=request.user
     ).first()
@@ -86,9 +85,9 @@ def save(request):
         return JsonResponse({}, status=405)
     response = {}
     status = 200
-    doc_template.content = json.loads(request.POST["value"])
-    doc_template.title = request.POST["title"]
-    doc_template.import_id = request.POST["import_id"]
+    doc_template.content = request.JSON["value"]
+    doc_template.title = request.JSON["title"]
+    doc_template.import_id = request.JSON["import_id"]
     doc_template.save()
     return JsonResponse(response, status=status)
 
@@ -98,11 +97,11 @@ def save(request):
 @require_POST
 def create(request):
     response = {}
-    title = request.POST.get("title")
-    content = json.loads(request.POST.get("content"))
-    import_id = request.POST.get("import_id")
-    document_styles = json.loads(request.POST.get("document_styles"))
-    export_templates = json.loads(request.POST.get("export_templates"))
+    title = request.JSON.get("title")
+    content = request.JSON.get("content")
+    import_id = request.JSON.get("import_id")
+    document_styles = request.JSON.get("document_styles")
+    export_templates = request.JSON.get("export_templates")
     counter = 0
     base_title = title
     while DocumentTemplate.objects.filter(
@@ -153,8 +152,8 @@ def create(request):
 def copy(request):
     response = {}
     status = 201
-    id = request.POST["id"]
-    title = request.POST["title"]
+    id = request.JSON["id"]
+    title = request.JSON["title"]
     doc_template = DocumentTemplate.objects.filter(
         Q(id=id), Q(user=request.user) | Q(user=None)
     ).first()
@@ -210,7 +209,7 @@ def copy(request):
 def delete(request):
     response = {}
     status = 405
-    id = int(request.POST["id"])
+    id = request.JSON["id"]
     doc_template = DocumentTemplate.objects.filter(
         pk=id, user=request.user
     ).first()

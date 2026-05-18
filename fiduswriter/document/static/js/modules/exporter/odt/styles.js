@@ -107,6 +107,7 @@ export class ODTExporterStyles {
     c = small caps
     p = super
     b = sub
+    t = code (monospace)
     */
     getInlineStyleId(attributes) {
         if (this.inlineStyleIds[attributes]) {
@@ -133,6 +134,10 @@ export class ODTExporterStyles {
             styleProperties += ' style:text-position="super 58%"'
         } else if (attributes.includes("b")) {
             styleProperties += ' style:text-position="sub 58%"'
+        }
+        if (attributes.includes("t")) {
+            styleProperties +=
+                ' style:font-name="Courier New" fo:font-family="Courier New"'
         }
         const styleCounter = ++this.inlineStyleCounter
         this.inlineStyleIds[attributes] = styleCounter
@@ -191,6 +196,28 @@ export class ODTExporterStyles {
         if (!stylesParStyle && !contentParStyle) {
             const stylesEl = this.stylesXml.query("office:styles")
             stylesEl.appendXML(GRAPHIC_STYLES[styleName])
+        }
+    }
+
+    checkSectionStyle(styleName) {
+        const stylesSection = this.stylesXml.query("style:style", {
+            "style:name": styleName,
+            "style:family": "section"
+        })
+        const contentSection = this.contentXml.query("style:style", {
+            "style:name": styleName,
+            "style:family": "section"
+        })
+        if (!stylesSection && !contentSection) {
+            const stylesEl = this.stylesXml.query("office:styles")
+            // Add a basic section style if it doesn't exist
+            stylesEl.appendXML(
+                `<style:style style:name="${styleName}" style:family="section">
+                    <style:section-properties text:dont-balance-text-columns="false" fo:background-color="transparent">
+                        <style:columns fo:column-count="1" fo:column-gap="0in"/>
+                    </style:section-properties>
+                </style:style>`
+            )
         }
     }
 

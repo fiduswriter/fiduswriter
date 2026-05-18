@@ -5,7 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from channels.testing import ChannelsLiveServerTestCase
+from testing.channels_patch import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.common.exceptions import StaleElementReferenceException
 
@@ -39,6 +39,9 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.base_url = self.live_server_url
         self.verificationErrors = []
         self.accept_next_alert = True
+        empty_outbox(
+            MAIL_STORAGE_NAME
+        )  # Clear any emails left from a previous run
         self.user = self.create_user(
             username="Yeti", email="yeti@snowman.com", passtext="otter1"
         )
@@ -52,7 +55,8 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
     def assertInfoAlert(self, message):
         i = 0
         message_found = False
-        while i < 100:
+        max_attempts = max(100, int(self.wait_time / 0.1))
+        while i < max_attempts:
             i = i + 1
             try:
                 if (
@@ -67,7 +71,7 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 else:
                     time.sleep(0.1)
                     continue
-            except StaleElementReferenceException:
+            except (StaleElementReferenceException, NoSuchElementException):
                 time.sleep(0.1)
                 continue
         self.assertTrue(message_found)
@@ -95,14 +99,34 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-password-input2").clear()
         driver.find_element(By.ID, "new-password-input2").send_keys("otter2")
         driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
+        time.sleep(1)
+        self.assertEqual(
+            driver.find_element(By.ID, "fw-password-change-error").text,
+            "This password is too short. It must contain at least 12 characters.",
+        )
+        driver.find_element(By.ID, "new-password-input1").clear()
+        driver.find_element(By.ID, "new-password-input1").send_keys(
+            "otter1234567"
+        )
+        driver.find_element(By.ID, "new-password-input2").clear()
+        driver.find_element(By.ID, "new-password-input2").send_keys(
+            "otter1234567"
+        )
+        driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
         self.assertInfoAlert("The password has been changed.")
         driver.find_element(By.ID, "fw-edit-profile-pwd").click()
         driver.find_element(By.ID, "old-password-input").clear()
-        driver.find_element(By.ID, "old-password-input").send_keys("otter2")
+        driver.find_element(By.ID, "old-password-input").send_keys(
+            "otter1234567"
+        )
         driver.find_element(By.ID, "new-password-input1").clear()
-        driver.find_element(By.ID, "new-password-input1").send_keys("otter1")
+        driver.find_element(By.ID, "new-password-input1").send_keys(
+            "BigPassword123!"
+        )
         driver.find_element(By.ID, "new-password-input2").clear()
-        driver.find_element(By.ID, "new-password-input2").send_keys("otter1")
+        driver.find_element(By.ID, "new-password-input2").send_keys(
+            "BigPassword123!"
+        )
         driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.invisibility_of_element_located(
@@ -414,16 +438,31 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         select = driver.find_element(By.ID, "language")
         select.find_element(By.CSS_SELECTOR, "option[value='es']").click()
-        driver.find_element(By.ID, "submit-profile").click()
+        submit_btn = driver.find_element(By.ID, "submit-profile")
+        submit_btn.click()
 
-        # Wait for the save to complete
-        time.sleep(1)
+        # Wait for the page to fully reload in Spanish
+        # (the save triggers window.location.reload() when language changes)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.staleness_of(submit_btn)
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "preferences-btn"))
+        )
+        # Also wait for the HTML lang attribute to reflect Spanish
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: d.execute_script("return document.documentElement.lang")
+            == "es"
+        )
 
         # Log out to test if language persists on login
         driver.find_element(By.ID, "preferences-btn").click()
-
-        driver.find_element(
-            By.XPATH, '//*[normalize-space()="Cerrar sesión"]'
+        # The preferences dropdown is a ContentMenu that renders li.content-menu-item elements.
+        # The logout option is the last item (profile=0, contacts=1, logout=2).
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "li.content-menu-item[data-index='2']")
+            )
         ).click()
 
         # Wait for login page

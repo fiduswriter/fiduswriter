@@ -1,0 +1,18 @@
+{
+  "language": "en-US",
+  "citationstyle": "apa",
+  "bibliography_header": {
+    "en-US": "References"
+  },
+  "copyright": {
+    "holder": "Jane Doe",
+    "year": 2024,
+    "licenses": [
+      {
+        "title": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/",
+        "start": "2024"
+      }
+    ]
+  }
+}

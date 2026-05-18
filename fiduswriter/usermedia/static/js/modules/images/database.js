@@ -3,7 +3,8 @@ import {activateWait, addAlert, deactivateWait, postJson} from "../common"
 /* A class that holds information about images uploaded by the user. */
 
 export class ImageDB {
-    constructor() {
+    constructor(app) {
+        this.app = app
         this.db = {}
         this.cats = []
     }
@@ -26,11 +27,9 @@ export class ImageDB {
 
     saveImage(imageData) {
         activateWait()
-        const postData = Object.assign({}, imageData, {
-            cats: JSON.stringify(imageData.cats)
-        })
+        const {image, ...jsonData} = imageData
 
-        return postJson("/api/usermedia/save/", postData)
+        return postJson("/api/usermedia/save/", jsonData, image ? {image} : {})
             .then(({json}) => {
                 deactivateWait()
                 if (Object.keys(json.errormsg).length) {
@@ -44,7 +43,7 @@ export class ImageDB {
                 if (error.status === 413) {
                     addAlert(
                         "error",
-                        `${gettext("Image is larger than the maximum permitted size")}${settings_MEDIA_MAX_SIZE ? `: ${Number.parseInt(settings_MEDIA_MAX_SIZE / 1000000)}MB` : "."}`
+                        `${gettext("Image is larger than the maximum permitted size")}${this.app.settings?.MEDIA_MAX_SIZE ? `: ${Number.parseInt(this.app.settings.MEDIA_MAX_SIZE / 1000000)}MB` : "."}`
                     )
                 } else if (error.message) {
                     addAlert("error", gettext(error.message))

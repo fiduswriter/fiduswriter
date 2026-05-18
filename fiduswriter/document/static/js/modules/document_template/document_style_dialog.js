@@ -108,7 +108,7 @@ export class DocumentStyleDialog {
                                           ([url, title]) =>
                                               `<tr>
                                             <td><a href="${url}">${escapeText(title)}</a></td>
-                                            <td><span class="fw-link-text"><i class="fas fa-trash-alt delete-document-style-file" data-filename="${escapeText(title)}"></i></span></td>
+                                            <td><span class="fw-link-text"><i class="fa-solid fa-trash-alt delete-document-style-file" data-filename="${escapeText(title)}"></i></span></td>
                                         </tr>`
                                       )
                                       .join("<br>")}`
@@ -219,15 +219,20 @@ export class DocumentStyleDialog {
     }
 
     save({title, slug, contents}) {
-        return postJson("/api/style/save_document_style/", {
-            id: this.id,
-            title,
-            slug,
-            contents,
-            template_id: this.documentTemplateId,
-            added_files: this.addedFiles,
-            deleted_files: this.deletedFiles
-        })
+        return postJson(
+            "/api/style/save_document_style/",
+            {
+                id: this.id,
+                title,
+                slug,
+                contents,
+                template_id: this.documentTemplateId,
+                deleted_files: this.deletedFiles
+            },
+            {
+                added_files: this.addedFiles
+            }
+        )
     }
 
     bind() {
@@ -293,7 +298,7 @@ export class DocumentStyleDialog {
                 ".document-style-files"
             ).innerHTML += `<tr class="new-document-style-file">
                     <td>${escapeText(mediaInput.name)}</td>
-                    <td><span class="fw-link-text"><i class="fas fa-trash-alt delete-new-document-style-file"></i></span></td>
+                    <td><span class="fw-link-text"><i class="fa-solid fa-trash-alt delete-new-document-style-file"></i></span></td>
                 </tr>`
         })
     }

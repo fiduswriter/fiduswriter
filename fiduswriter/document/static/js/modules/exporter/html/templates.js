@@ -22,7 +22,7 @@ export const htmlExportTemplate = ({
         ${back}
         ${
             settings.copyright && settings.copyright.holder
-                ? `<div>© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${settings.copyright.holder}</div>`
+                ? `<div>© ${settings.copyright.year ? settings.copyright.year : new Date().getFullYear()} ${escapeText(settings.copyright.holder)}</div>`
                 : ""
         }
         ${

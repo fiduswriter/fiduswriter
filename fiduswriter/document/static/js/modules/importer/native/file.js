@@ -1,3 +1,4 @@
+import {escapeText} from "../../common"
 import {updateTemplateFile} from "../../document_template"
 import {FW_DOCUMENT_VERSION} from "../../schema"
 import {NativeImporter} from "./index"
@@ -21,12 +22,20 @@ export class FidusFileImporter {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, path = "", check = false, contacts = []) {
+    constructor(
+        file,
+        user,
+        path = "",
+        check = false,
+        contacts = [],
+        e2eeOptions = null
+    ) {
         this.file = file
         this.user = user
         this.path = path
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format and whether authors of comments/changes are team members of current user.
         this.contacts = contacts
+        this.e2eeOptions = e2eeOptions
 
         this.textFiles = []
         this.otherFiles = []
@@ -194,13 +203,14 @@ export class FidusFileImporter {
                 this.user,
                 null,
                 this.path.endsWith("/") ? this.path + doc.title : this.path,
-                this.template
+                this.template,
+                this.e2eeOptions
             )
             return importer.init().then(({doc, docInfo}) => {
                 this.ok = true
                 this.doc = doc
                 this.docInfo = docInfo
-                this.statusText = `${doc.title} ${gettext("successfully imported.")}`
+                this.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
                 return this
             })
         } else {

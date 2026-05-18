@@ -1,15 +1,16 @@
-import {BibLatexImporter} from "../../bibliography/import"
-import {postJson} from "../../common"
+import {BibliographyImporter} from "../../bibliography/import"
+import {escapeText, postJson} from "../../common"
 import {NativeImporter} from "../native"
 import {PandocConvert} from "./convert"
 
 export class PandocImporter {
-    constructor(file, user, path, importId, additionalFiles) {
+    constructor(file, user, path, importId, options) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
-        this.additionalFiles = additionalFiles
+        this.additionalFiles = options.files
+        this.e2eeOptions = options.e2eeOptions || null
 
         this.template = null
         this.output = {
@@ -78,8 +79,8 @@ export class PandocImporter {
                 // Create a temporary addToList function
                 const tempAddToList = () => {}
 
-                // Use BibLatexImporter to parse the bibliography
-                const importer = new BibLatexImporter(
+                // Use BibliographyImporter to parse the bibliography
+                const importer = new BibliographyImporter(
                     bibString,
                     tempBibDB,
                     tempAddToList,
@@ -148,7 +149,9 @@ export class PandocImporter {
                 })),
                 this.user,
                 null,
-                this.path + this.title
+                this.path + this.title,
+                null,
+                this.e2eeOptions
             )
 
             return nativeImporter
@@ -157,7 +160,7 @@ export class PandocImporter {
                     this.output.ok = true
                     this.output.doc = doc
                     this.output.docInfo = docInfo
-                    this.output.statusText = `${doc.title} ${gettext("successfully imported.")}`
+                    this.output.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
                     return this.output
                 })
                 .catch(error => {

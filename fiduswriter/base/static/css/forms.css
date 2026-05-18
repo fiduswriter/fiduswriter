@@ -74,6 +74,10 @@ textarea:focus {
     display: inline-block;
 }
 
+.entry-field select.fw-large {
+    width: 664px;
+}
+
 .ui-dialog input[type="text"]:not(.fw-inline),
 .ui-dialog input[type="password"]:not(.fw-inline),
 .ui-dialog input[type="search"]:not(.fw-inline),
@@ -173,8 +177,8 @@ tr.fw-checkable.checked > td:last-child::after {
     border-radius: 2px;
     background: linear-gradient(
         to bottom,
-        rgba(var(--overview-checkbox-background-color-from)) 0%,
-        rgba(var(--overview-checkbox-background-color-to)) 100%
+        rgb(var(--overview-checkbox-background-color-from)) 0%,
+        rgb(var(--overview-checkbox-background-color-to)) 100%
     );
 }
 

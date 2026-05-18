@@ -20,7 +20,7 @@
     padding: 20px 20px 20px 60px;
     border: none;
     border-radius: 3px;
-    box-shadow: 0 0 5px rgba(var(--alert-box-shadow-color));
+    box-shadow: 0 0 5px rgb(var(--alert-box-shadow-color));
     margin-bottom: 5px;
     font-size: 15px;
     line-height: 20px;
@@ -47,23 +47,23 @@
 
 #alerts-wrapper .alerts-warning {
     color: var(--warning-text-color);
-    background-color: rgba(var(--warning-background-color));
+    background-color: rgb(var(--warning-background-color));
 }
 
 #alerts-wrapper .alerts-info {
     color: var(--info-text-color);
-    background-color: rgba(var(--info-background-color));
+    background-color: rgb(var(--info-background-color));
 }
 
 #alerts-wrapper .alerts-success {
     color: var(--success-text-color);
-    background-color: rgba(var(--success-background-color));
+    background-color: rgb(var(--success-background-color));
 }
 
 /* A form wasn't filled out correctly and the warning was added to the form. */
 div.warning {
     margin: 0 0 5px;
-    border: 1px solid rgba(var(--warning-border-color));
-    background-color: rgba(var(--warning-background-color));
+    border: 1px solid rgb(var(--warning-border-color));
+    background-color: rgb(var(--warning-background-color));
     padding: 6px;
 }

@@ -236,6 +236,13 @@ export class LinkDialog {
             type: "cancel"
         })
 
+        const initialFocus =
+            this.linkType === "cross_reference"
+                ? "select.cross-reference-selector"
+                : this.linkType === "internal"
+                  ? "select.internal-link-selector"
+                  : "input.link-title"
+
         this.dialog = new Dialog({
             id: "edit-link",
             title: gettext("Link"),
@@ -251,7 +258,8 @@ export class LinkDialog {
             width: 836,
             height: 360,
             onClose: () => this.editor.currentView.focus(),
-            restoreActiveElement: false
+            restoreActiveElement: false,
+            initialFocus
         })
 
         this.dialog.open()
@@ -295,14 +303,14 @@ export class LinkDialog {
                     break
                 case "external":
                     internalEls.forEach(el => el.classList.add("disabled"))
-                    externalEls.forEach(el => el.classList.add("disabled"))
+                    crossReferenceEls.forEach(el =>
+                        el.classList.add("disabled")
+                    )
                     radioExternal.checked = true
                     break
                 case "cross_reference":
                     internalEls.forEach(el => el.classList.add("disabled"))
-                    crossReferenceEls.forEach(el =>
-                        el.classList.add("disabled")
-                    )
+                    externalEls.forEach(el => el.classList.add("disabled"))
                     radioCrossReference.checked = true
                     break
                 default:

@@ -7,7 +7,7 @@ export function convertTexts(nodeList) {
 export function convertText(node) {
     let start = ""
     let end = ""
-    let strong, em, underline, hyperlink, anchor
+    let strong, em, underline, hyperlink, anchor, sup, sub, code
     // Check for hyperlink, bold/strong, italic/em and underline
     if (node.marks) {
         strong = node.marks.find(mark => mark.type === "strong")
@@ -15,6 +15,9 @@ export function convertText(node) {
         underline = node.marks.find(mark => mark.type === "underline")
         hyperlink = node.marks.find(mark => mark.type === "link")
         anchor = node.marks.find(mark => mark.type === "anchor")
+        sup = node.marks.find(mark => mark.type === "sup")
+        sub = node.marks.find(mark => mark.type === "sub")
+        code = node.marks.find(mark => mark.type === "code")
     }
     let attrs = anchor ? ` id="${anchor.attrs.id}"` : ""
     if (em) {
@@ -30,6 +33,21 @@ export function convertText(node) {
     if (underline) {
         start += `<underline${attrs}>`
         end = "</underline>" + end
+        attrs = ""
+    }
+    if (sup) {
+        start += `<sup${attrs}>`
+        end = "</sup>" + end
+        attrs = ""
+    }
+    if (sub) {
+        start += `<sub${attrs}>`
+        end = "</sub>" + end
+        attrs = ""
+    }
+    if (code) {
+        start += `<monospace${attrs}>`
+        end = "</monospace>" + end
         attrs = ""
     }
     if (hyperlink) {

@@ -9,7 +9,7 @@ const faqTemplate = ({escapedQuestions}) =>
             .map(
                 question => `<li class="faq-item">
                 <div>
-                    <div class="faq-question fw-button fw-light"><i class="fas fa-plus-circle"></i>${question[0]}</div>
+                    <div class="faq-question fw-button fw-light"><i class="fa-solid fa-plus-circle"></i>${question[0]}</div>
                     <div class="faq-answer" style="display: none;">${question[1]}</div>
                 </div>
             </li>`

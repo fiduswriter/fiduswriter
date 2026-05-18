@@ -27,8 +27,8 @@ export class DOCXExporterLists {
         this.usedNumberedList = []
         this.styleXML = false
         this.numberingXML = false
-        this.abstractNumIdCounter = -1
-        this.numIdCounter = -1
+        this.abstractNumIdCounter = 0
+        this.numIdCounter = 0
         // We only need one bulletType for all bullet lists, but a new
         // numberedType for each numbered list so that the numbering starts in 1
         // each time.
@@ -206,13 +206,13 @@ export class DOCXExporterLists {
                 <w:lvl w:ilvl="${level}" w:tplc="04090001" w:tentative="1">
                     <w:start w:val="1" />
                     <w:numFmt w:val="bullet" />
-                    <w:lvlText w:val="" />
+                    <w:lvlText w:val="•" />
                     <w:lvlJc w:val="left" />
                     <w:pPr>
                         <w:ind w:left="${(level + 1) * 720}" w:hanging="360" />
                     </w:pPr>
                     <w:rPr>
-                        <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" w:hint="default" />
+                        <w:rFonts w:ascii="Symbol" w:hAnsi="Symbol" />
                     </w:rPr>
                 </w:lvl>
             `)

@@ -12,12 +12,41 @@ urlpatterns = [
         name="get_documentlist_extra",
     ),
     re_path("^get_ws_base/$", views.get_ws_base, name="get_ws_base"),
+    re_path("^get_doc_styles/$", views.get_doc_styles, name="get_doc_styles"),
+    re_path("^get_doc_data/$", views.get_doc_data, name="get_doc_data"),
     re_path("^delete/$", views.delete, name="delete"),
     re_path("^move/$", views.move, name="move"),
     re_path("^create_doc/$", views.create_doc, name="create_doc"),
     re_path("^import/create/$", views.import_create, name="import_create"),
     re_path("^import/image/$", views.import_image, name="import_image"),
+    re_path("^e2ee_image/$", views.e2ee_image, name="e2ee_image"),
+    re_path(
+        "^encryption_key/save/$",
+        views.save_document_encryption_key,
+        name="save_document_encryption_key",
+    ),
+    re_path(
+        "^encryption_key/get/$",
+        views.get_document_encryption_key,
+        name="get_document_encryption_key",
+    ),
+    re_path(
+        "^encryption_key/update/$",
+        views.update_document_encryption_key,
+        name="update_document_encryption_key",
+    ),
+    re_path(
+        "^encryption_key/get_all/$",
+        views.get_user_document_encryption_keys,
+        name="get_user_document_encryption_keys",
+    ),
+    re_path(
+        "^delete_e2ee_image/$",
+        views.delete_e2ee_image,
+        name="delete_e2ee_image",
+    ),
     re_path("^import/$", views.import_doc, name="import_doc"),
+    re_path("^save/$", views.save_document, name="save_document"),
     re_path("^upload/$", views.upload_revision, name="upload_revision"),
     re_path(
         "^get_revision/(?P<revision_id>[0-9]+)/$",
@@ -36,6 +65,31 @@ urlpatterns = [
         "^save_access_rights/$",
         views.save_access_rights,
         name="save_access_rights",
+    ),
+    re_path(
+        "^share_token/create/$",
+        views.create_share_token,
+        name="create_share_token",
+    ),
+    re_path(
+        "^share_token/list/$",
+        views.list_share_tokens,
+        name="list_share_tokens",
+    ),
+    re_path(
+        "^share_token/revoke/$",
+        views.revoke_share_token,
+        name="revoke_share_token",
+    ),
+    re_path(
+        "^share_token/validate/(?P<token>[^/]+)/$",
+        views.validate_share_token,
+        name="validate_share_token",
+    ),
+    re_path(
+        "^request_access/$",
+        views.request_access,
+        name="request_access",
     ),
     re_path("^comment_notify/$", views.comment_notify, name="comment_notify"),
     re_path(

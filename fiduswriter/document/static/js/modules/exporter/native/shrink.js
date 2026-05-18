@@ -3,10 +3,20 @@ import {docSchema} from "../../schema/document"
 import {toMiniJSON} from "../../schema/mini_json"
 // Generate a copy of the fidus doc, imageDB and bibDB with all clutter removed.
 export class ShrinkFidus {
-    constructor(doc, imageDB, bibDB) {
+    /**
+     * @param {Object}  doc      - Full document object.
+     * @param {Object}  imageDB  - Image database, e.g. {db: {...}}.
+     * @param {Object}  bibDB    - Bibliography database, e.g. {db: {...}}.
+     * @param {boolean} [silent=false] - When true, suppresses the
+     *   "File export has been initiated" info alert.  Pass true when
+     *   shrinking multiple documents in a loop (e.g. one per book chapter)
+     *   and the caller already shows its own progress notification.
+     */
+    constructor(doc, imageDB, bibDB, silent = false) {
         this.doc = doc
         this.imageDB = imageDB
         this.bibDB = bibDB
+        this.silent = silent
         this.imageList = []
         this.citeList = []
     }
@@ -15,7 +25,9 @@ export class ShrinkFidus {
         const shrunkImageDB = {},
             httpIncludes = []
 
-        addAlert("info", gettext("File export has been initiated."))
+        if (!this.silent) {
+            addAlert("info", gettext("File export has been initiated."))
+        }
 
         this.walkTree(this.doc.content)
 
@@ -29,7 +41,28 @@ export class ShrinkFidus {
             delete shrunkImageDB[itemId].pk
             delete shrunkImageDB[itemId].added
             const imageUrl = shrunkImageDB[itemId].image
-            const filename = `images/${imageUrl.split("/").pop()}`
+            let filename
+            if (imageUrl.startsWith("blob:")) {
+                // Blob URL produced by decrypting an E2EE image client-side.
+                // The URL itself carries no useful file extension, so derive
+                // one from the image entry's MIME type instead.  Without this
+                // the server rejects the upload because get_encrypted_file_path
+                // requires a recognised extension.
+                const mime = shrunkImageDB[itemId].file_type || "image/png"
+                const mimeExtMap = {
+                    "image/png": "png",
+                    "image/jpeg": "jpg",
+                    "image/jpg": "jpg",
+                    "image/webp": "webp",
+                    "image/svg+xml": "svg",
+                    "image/gif": "gif",
+                    "image/avif": "avif"
+                }
+                const ext = mimeExtMap[mime] || "png"
+                filename = `images/${itemId}.${ext}`
+            } else {
+                filename = `images/${imageUrl.split("/").pop()}`
+            }
             shrunkImageDB[itemId].image = filename
             httpIncludes.push({
                 url: imageUrl,

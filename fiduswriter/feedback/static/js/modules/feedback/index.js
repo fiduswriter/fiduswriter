@@ -58,7 +58,6 @@ export class FeedbackTab {
             "beforeend",
             `<a class="feedback-tab" aria-label="${gettext("Technical support")}" href="#"></a>`
         )
-
         ensureCSS(staticUrl("css/feedback/feedback.css"))
     }
 

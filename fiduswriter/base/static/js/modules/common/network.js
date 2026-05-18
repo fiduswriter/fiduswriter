@@ -1,3 +1,5 @@
+import {getSettings} from "./settings"
+
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
@@ -21,12 +23,6 @@ export const getCookie = name => {
     return null
 }
 
-const deleteCookie = name => {
-    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-}
-
-const getCsrfToken = () => getCookie(settings_CSRF_COOKIE_NAME)
-
 /* from https://www.tjvantoll.com/2015/09/13/fetch-and-errors/ */
 const handleFetchErrors = response => {
     if (!response.ok) {
@@ -35,18 +31,10 @@ const handleFetchErrors = response => {
     return response
 }
 
-// We don't use django messages in the frontend. The only messages that are recording
-//  are "user logged in" and "user logged out". The admin interface does use messages.
-// To prevent it from displaying lots of old login/logout messages, we delete the
-// messages after each post/get.
-const removeDjangoMessages = response => {
-    deleteCookie("messages")
-    return response
-}
-
 export const get = (url, params = {}, csrfToken = false) => {
+    const settings = getSettings()
     if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
+        csrfToken = settings.getCsrfToken() // Won't work in web worker.
     }
     const queryString = Object.keys(params)
         .map(
@@ -57,7 +45,7 @@ export const get = (url, params = {}, csrfToken = false) => {
     if (queryString.length) {
         url = `${url}?${queryString}`
     }
-    return fetch(url, {
+    return fetch(settings.apiUrl(url), {
         method: "GET",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -66,37 +54,20 @@ export const get = (url, params = {}, csrfToken = false) => {
         },
         credentials: "include"
     })
-        .then(removeDjangoMessages)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
 }
 
 export const getJson = (url, params = {}, csrfToken = false) =>
     get(url, params, csrfToken).then(response => response.json())
 
-export const postBare = (url, params = {}, csrfToken = false) => {
-    if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
-    }
-    const body = new FormData()
-    body.append("csrfmiddlewaretoken", csrfToken)
-    Object.keys(params).forEach(key => {
-        const value = params[key]
-        if (typeof value === "object" && value.file && value.filename) {
-            body.append(key, value.file, value.filename)
-        } else if (Array.isArray(value)) {
-            value.forEach(item => body.append(`${key}[]`, item))
-        } else if (
-            typeof value === "object" &&
-            (value.constructor === undefined ||
-                value.constructor.name !== "File")
-        ) {
-            body.append(key, JSON.stringify(value))
-        } else {
-            body.append(key, value)
-        }
-    })
+export const postBare = (url, object = {}, files = {}, options = {}) => {
+    const settings = getSettings()
 
-    return fetch(url, {
+    const {csrfToken: csrfTokenOpt, keepalive = false} = options
+    const csrfToken = csrfTokenOpt || settings.getCsrfToken() // Won't work in web worker.
+
+    const fetchOptions = {
         method: "POST",
         headers: {
             "X-CSRFToken": csrfToken,
@@ -104,40 +75,44 @@ export const postBare = (url, params = {}, csrfToken = false) => {
             "X-Requested-With": "XMLHttpRequest"
         },
         credentials: "include",
-        body
-    })
+        keepalive
+    }
+
+    if (Object.keys(files).length) {
+        const body = new FormData()
+        body.append("csrfmiddlewaretoken", csrfToken)
+        body.append("json", JSON.stringify(object))
+        Object.keys(files).forEach(key => {
+            const value = files[key]
+            if (typeof value === "object" && value.file && value.filename) {
+                body.append(key, value.file, value.filename)
+            } else if (Array.isArray(value)) {
+                value.forEach(item => body.append(`${key}[]`, item))
+            } else {
+                body.append(key, value)
+            }
+        })
+        fetchOptions.body = body
+    } else {
+        fetchOptions.headers["Content-Type"] = "application/json"
+        fetchOptions.body = JSON.stringify(object)
+    }
+
+    return fetch(settings.apiUrl(url), fetchOptions)
 }
 
-export const post = (url, params = {}, csrfToken = false) =>
-    postBare(url, params, csrfToken)
-        .then(removeDjangoMessages)
+export const post = (url, object = {}, files = {}, options = {}) => {
+    const settings = getSettings()
+    return postBare(url, object, files, options)
+        .then(settings.postResponseHook)
         .then(handleFetchErrors)
+}
 
-// post and then return json and status
-export const postJson = (url, params = {}, csrfToken = false) =>
-    post(url, params, csrfToken).then(response =>
+// post json object and return json and status
+export const postJson = (url, object = {}, files = {}, options = {}) =>
+    post(url, object, files, options).then(response =>
         response.json().then(json => ({json, status: response.status}))
     )
-
-export const jsonPost = (url, object, csrfToken = false) => {
-    // post json object rather than form data.
-    if (!csrfToken) {
-        csrfToken = getCsrfToken() // Won't work in web worker.
-    }
-    return fetch(url, {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": csrfToken,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest"
-        },
-        credentials: "include",
-        body: JSON.stringify(object)
-    })
-        .then(removeDjangoMessages)
-        .then(handleFetchErrors)
-}
 
 export const ensureCSS = cssUrl => {
     if (typeof cssUrl === "object") {

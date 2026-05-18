@@ -7,12 +7,37 @@ import {
     longFilePath,
     postJson
 } from "../../common"
+import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
+import {enterPassphraseDialog} from "../../editor/e2ee/passphrase-dialog"
+import {PassphraseManager} from "../../editor/e2ee/passphrase-manager"
+import {
+    createPasswordDialog,
+    enterPasswordDialog
+} from "../../editor/e2ee/password-dialog"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
 import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
-import {importFidusTemplate} from "./templates"
+import {importDocumentTemplate} from "./templates"
+
+// Returns the user-facing title for a document. For E2EE documents,
+// `doc.title` holds the encrypted ciphertext; the decrypted title (if any)
+// is cached in sessionStorage under `e2ee_title_<id>` by the overview after
+// successful decryption. Fall back to a localized placeholder when the title
+// is still encrypted.
+const getDisplayTitle = doc => {
+    if (doc.e2ee) {
+        const cached = sessionStorage.getItem(`e2ee_title_${doc.id}`)
+        if (cached !== null) {
+            return cached
+        }
+        if (doc.title) {
+            return gettext("Encrypted Document")
+        }
+    }
+    return doc.title
+}
 
 export class DocumentOverviewActions {
     constructor(documentOverview) {
@@ -27,11 +52,12 @@ export class DocumentOverviewActions {
         if (!doc) {
             return Promise.resolve()
         }
+        const displayTitle = getDisplayTitle(doc)
         return postJson("/api/document/delete/", {id}).then(({json}) => {
             if (json.done) {
                 addAlert(
                     "success",
-                    `${gettext("Document has been deleted")}: '${longFilePath(doc.title, doc.path)}'`
+                    `${gettext("Document has been deleted")}: '${escapeText(longFilePath(displayTitle, doc.path))}'`
                 )
                 this.documentOverview.documentList =
                     this.documentOverview.documentList.filter(
@@ -41,7 +67,7 @@ export class DocumentOverviewActions {
             } else {
                 addAlert(
                     "error",
-                    `${gettext("Could not delete document")}: '${longFilePath(doc.title, doc.path)}'`
+                    `${gettext("Could not delete document")}: '${escapeText(longFilePath(displayTitle, doc.path))}'`
                 )
             }
         })
@@ -59,7 +85,7 @@ export class DocumentOverviewActions {
             const doc = this.documentOverview.documentList.find(
                 doc => doc.id === id
             )
-            return escapeText(longFilePath(doc.title, doc.path))
+            return escapeText(longFilePath(getDisplayTitle(doc), doc.path))
         })
         const confirmDeletionDialog = new Dialog({
             title: gettext("Confirm deletion"),
@@ -102,81 +128,9 @@ export class DocumentOverviewActions {
         confirmDeletionDialog.open()
     }
 
-    importFidus() {
-        const buttons = [
-            {
-                text: gettext("Import"),
-                classes: "fw-dark",
-                click: () => {
-                    let fidusFile =
-                        document.getElementById("fidus-uploader").files
-                    if (0 === fidusFile.length) {
-                        return false
-                    }
-                    fidusFile = fidusFile[0]
-                    if (104857600 < fidusFile.size) {
-                        //TODO: This is an arbitrary size. What should be done with huge import files?
-                        return false
-                    }
-                    activateWait()
-
-                    const importer = new FidusFileImporter(
-                        fidusFile,
-                        this.documentOverview.user,
-                        this.documentOverview.path,
-                        true,
-                        this.documentOverview.contacts
-                    )
-
-                    importer
-                        .init()
-                        .then(({ok, statusText, doc}) => {
-                            deactivateWait()
-                            if (ok) {
-                                addAlert("info", statusText)
-                            } else {
-                                addAlert("error", statusText)
-                                return
-                            }
-                            this.documentOverview.documentList.push(doc)
-                            this.documentOverview.initTable()
-                            importDialog.close()
-                        })
-                        .catch(() => false)
-                }
-            },
-            {
-                type: "cancel"
-            }
-        ]
-        const importDialog = new Dialog({
-            id: "importfidus",
-            title: gettext("Import a Fidus file"),
-            body: importFidusTemplate(),
-            height: 100,
-            buttons
-        })
-        importDialog.open()
-
-        document
-            .getElementById("fidus-uploader")
-            .addEventListener("change", () => {
-                document.getElementById("import-fidus-name").innerHTML =
-                    document
-                        .getElementById("fidus-uploader")
-                        .value.replace(/C:\\fakepath\\/i, "")
-            })
-
-        document
-            .getElementById("import-fidus-btn")
-            .addEventListener("click", event => {
-                document.getElementById("fidus-uploader").click()
-                event.preventDefault()
-            })
-    }
-
-    importExternal() {
-        const importIds = Object.keys(this.documentOverview.documentTemplates)
+    async importDocument() {
+        const documentTemplates = this.documentOverview.documentTemplates || {}
+        const importIds = Object.keys(documentTemplates)
         let importId = importIds[0] // Default to first template
 
         const templateSelector =
@@ -184,38 +138,137 @@ export class DocumentOverviewActions {
                 ? `<label for="import-template-selector">${gettext("Import as:")}</label>
                 <div class="fw-select-container">
                     <select class="fw-button fw-light fw-large" id="import-template-selector">
-                        ${Object.entries(
-                            this.documentOverview.documentTemplates
-                        )
+                        ${Object.entries(documentTemplates)
                             .map(
                                 ([key, template]) =>
                                     `<option value="${escapeText(key)}">${escapeText(template.title)}</option>`
                             )
                             .join("")}
                     </select>
-                    <div class="fw-select-arrow fa fa-caret-down"></div>
+                    <div class="fw-select-arrow fa-solid fa-caret-down"></div>
                 </div>`
                 : ""
 
-        const buttons = [
-            {
-                text: gettext("Import"),
-                classes: "fw-dark",
-                click: () => {
-                    let file =
-                        document.getElementById("external-uploader").files
-                    if (0 === file.length) {
-                        return false
-                    }
-                    file = file[0]
-                    if (104857600 < file.size) {
-                        addAlert("error", gettext("File too large"))
-                        return false
-                    }
+        const e2eeMode = this.documentOverview.app.settings.E2EE_MODE
+        const hasPassphrase = this.documentOverview.hasPassphraseSetUp ?? false
 
-                    if (file.type === "application/zip") {
-                        return import("jszip").then(({default: JSZip}) => {
-                            return JSZip.loadAsync(file).then(zip => {
+        // Safeguard: in "required" mode without a passphrase the button should
+        // not be visible, but guard here as well in case it is somehow reached.
+        if (e2eeMode === "required" && !hasPassphrase) {
+            addAlert(
+                "warning",
+                gettext(
+                    "You need to set up a personal passphrase before you can import documents."
+                )
+            )
+            return
+        }
+
+        let e2eeHtml = ""
+        let forceE2EE = false
+        if (e2eeMode === "required") {
+            // hasPassphrase is guaranteed true here (checked above)
+            forceE2EE = true
+            e2eeHtml = `<div class="e2ee-import-note" style="margin-top: 10px;">
+                <em>${gettext("This document will be saved as encrypted.")}</em>
+            </div>`
+        } else if (e2eeMode === "enabled" && hasPassphrase) {
+            // Only offer the E2EE radio buttons when the user has a passphrase.
+            // Without a passphrase, documents are always imported unencrypted.
+            e2eeHtml = `<div class="e2ee-import-choice" style="margin-top: 10px;">
+                <div>
+                    <input type="radio" id="import-nonencrypted" name="import-encryption" value="nonencrypted" checked>
+                    <label for="import-nonencrypted">${gettext("Non-encrypted")}</label>
+                </div>
+                <div>
+                    <input type="radio" id="import-e2ee" name="import-encryption" value="e2ee">
+                    <label for="import-e2ee">${gettext("Encrypted")}</label>
+                </div>
+            </div>`
+        }
+
+        const supportedDescriptions = Object.entries(
+            importerRegistry.getAllDescriptions()
+        )
+            .map(
+                ([description, extensions]) =>
+                    `${description} (${extensions.join(", ")})`
+            )
+            .join("<br>")
+        const supportedFormatsText = `${gettext("Supported formats")}:<p>FIDUS<br>${supportedDescriptions}</p><p>${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}</p>`
+
+        const importDialog = new Dialog({
+            id: "import_document",
+            title: gettext("Import a document"),
+            body: importDocumentTemplate({
+                templateSelector,
+                e2eeHtml,
+                supportedFormatsText
+            }),
+            height: (importIds.length > 1 ? 260 : 210) + (e2eeHtml ? 60 : 0),
+            buttons: [
+                {
+                    text: gettext("Import"),
+                    classes: "fw-dark",
+                    click: async () => {
+                        let file = document.getElementById("doc-uploader").files
+                        if (0 === file.length) {
+                            return false
+                        }
+                        file = file[0]
+                        if (104857600 < file.size) {
+                            addAlert("error", gettext("File too large"))
+                            return false
+                        }
+
+                        // Determine whether to encrypt
+                        let targetE2EE = forceE2EE
+                        if (e2eeMode === "enabled" && hasPassphrase) {
+                            targetE2EE =
+                                document.querySelector(
+                                    'input[name="import-encryption"]:checked'
+                                )?.value === "e2ee"
+                        }
+
+                        const doImport = async e2eeOptions => {
+                            const isFidus =
+                                file.name.split(".").pop().toLowerCase() ===
+                                "fidus"
+
+                            if (isFidus) {
+                                const importer = new FidusFileImporter(
+                                    file,
+                                    this.documentOverview.user,
+                                    this.documentOverview.path,
+                                    true,
+                                    this.documentOverview.contacts,
+                                    e2eeOptions
+                                )
+
+                                try {
+                                    const {ok, statusText, doc} =
+                                        await importer.init()
+                                    deactivateWait()
+                                    if (ok) {
+                                        addAlert("info", statusText)
+                                    } else {
+                                        addAlert("error", statusText)
+                                        return null
+                                    }
+                                    this.documentOverview.documentList.push(doc)
+                                    this.documentOverview.initTable()
+                                    importDialog.close()
+                                    return doc
+                                } catch (_error) {
+                                    deactivateWait()
+                                    return null
+                                }
+                            }
+
+                            // Handle ZIP files for external formats
+                            if (file.type === "application/zip") {
+                                const {default: JSZip} = await import("jszip")
+                                const zip = await JSZip.loadAsync(file)
                                 const importerInfo =
                                     importerRegistry.getZipImporter(zip)
 
@@ -226,149 +279,261 @@ export class DocumentOverviewActions {
                                             "No importable files found in ZIP"
                                         )
                                     )
-                                    return false
+                                    deactivateWait()
+                                    return
                                 }
 
-                                activateWait()
+                                const files = await importerInfo.getContents()
+                                const importer = new importerInfo.importer(
+                                    files.mainContent,
+                                    this.documentOverview.user,
+                                    this.documentOverview.path,
+                                    importId,
+                                    {...files, e2eeOptions}
+                                )
 
-                                return importerInfo
-                                    .getContents()
-                                    .then(files => {
-                                        const importer =
-                                            new importerInfo.importer(
-                                                files.mainContent,
-                                                this.documentOverview.user,
-                                                this.documentOverview.path,
-                                                importId,
-                                                files
-                                            )
+                                const {ok, statusText, doc} =
+                                    await importer.init()
+                                deactivateWait()
+                                if (ok) {
+                                    addAlert("info", statusText)
+                                } else {
+                                    addAlert("error", statusText)
+                                    return null
+                                }
+                                this.documentOverview.documentList.push(doc)
+                                this.documentOverview.initTable()
+                                importDialog.close()
+                                return doc
+                            }
 
-                                        return importer
-                                            .init()
-                                            .then(({ok, statusText, doc}) => {
-                                                deactivateWait()
-                                                if (ok) {
-                                                    addAlert("info", statusText)
-                                                } else {
-                                                    addAlert(
-                                                        "error",
-                                                        statusText
-                                                    )
-                                                    return
-                                                }
-                                                this.documentOverview.documentList.push(
-                                                    doc
-                                                )
-                                                this.documentOverview.initTable()
-                                                importDialog.close()
-                                            })
-                                    })
-                                    .catch(_error => {
-                                        deactivateWait()
-                                    })
-                            })
-                        })
-                    }
+                            // Get file extension for external formats
+                            const fileExtension = file.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase()
+                            const importerInfo =
+                                importerRegistry.getImporter(fileExtension)
 
-                    // Get file extension
-                    const fileExtension = file.name
-                        .split(".")
-                        .pop()
-                        .toLowerCase()
-                    const importerInfo =
-                        importerRegistry.getImporter(fileExtension)
+                            if (!importerInfo) {
+                                addAlert(
+                                    "error",
+                                    gettext("Unsupported file format")
+                                )
+                                deactivateWait()
+                                return
+                            }
 
-                    if (!importerInfo) {
-                        addAlert("error", gettext("Unsupported file format"))
-                        return false
-                    }
+                            // Get selected template if multiple templates exist
+                            if (importIds.length > 1) {
+                                importId = document.getElementById(
+                                    "import-template-selector"
+                                ).value
+                            }
 
-                    // Get selected template if multiple templates exist
-                    if (importIds.length > 1) {
-                        importId = document.getElementById(
-                            "import-template-selector"
-                        ).value
-                    }
+                            const options = {
+                                bibDB: this.documentOverview.app.bibDB,
+                                files: {},
+                                e2eeOptions
+                            }
 
-                    activateWait()
+                            const importer = new importerInfo.importer(
+                                file,
+                                this.documentOverview.user,
+                                this.documentOverview.path,
+                                importId,
+                                options
+                            )
 
-                    const importer = new importerInfo.importer(
-                        file,
-                        this.documentOverview.user,
-                        this.documentOverview.path,
-                        importId
-                    )
-
-                    importer
-                        .init()
-                        .then(({ok, statusText, doc}) => {
+                            const {ok, statusText, doc} = await importer.init()
                             deactivateWait()
                             if (ok) {
                                 addAlert("info", statusText)
                             } else {
                                 addAlert("error", statusText)
-                                return
+                                return null
                             }
                             this.documentOverview.documentList.push(doc)
                             this.documentOverview.initTable()
                             importDialog.close()
-                        })
-                        .catch(() => false)
-                }
-            },
-            {
-                type: "cancel"
-            }
-        ]
-        const supportedDescriptions = Object.entries(
-            importerRegistry.getAllDescriptions()
-        )
-            .map(
-                ([description, extensions]) =>
-                    `${description} (${extensions.join(", ")})`
-            )
-            .join("<br>")
-        const supportedFormats = importerRegistry.getAllFormats()
+                            return doc
+                        }
 
-        const importDialog = new Dialog({
-            id: "import_external",
-            title: gettext("Import a text document in a different format"),
-            body: `
-            <form>
-                ${templateSelector}
-                <div class="fw-select-container">
-                    <div class="fw-select-head">
-                        <button type="button" class="fw-button fw-light fw-large" id="import-external-btn">
-                            ${gettext("Select a file")}
-                        </button>
-                        <label id="import-external-name" class="ajax-upload-label"></label>
-                    </div>
-                    <input id="external-uploader" type="file" accept="${supportedFormats.map(format => `.${format}`).join(",")},.zip" style="display: none;">
-                </div>
-            </form>
-            <div class="noteEl">${gettext("Supported formats")}:</div>
-            <div class="noteEl">${supportedDescriptions}</div>
-            <div class="noteEl">${gettext("You can also upload a ZIP file that contains one file in any of these formats as well as images and/or bibtex file.")}</div>`,
-            height:
-                (importIds.length > 1 ? 250 : 200) +
-                supportedFormats.length * 12,
-            buttons
+                        if (targetE2EE) {
+                            activateWait()
+
+                            // Auto-generate a document password using the
+                            // passphrase system.  No manual password prompt.
+                            const importWithAutoPassword = async () => {
+                                const password =
+                                    await PassphraseManager.generateDocumentPassword()
+                                const salt = window.crypto.getRandomValues(
+                                    new Uint8Array(16)
+                                )
+                                const iterations = 600000
+                                const key =
+                                    await PassphraseManager.resolvePasswordToKey(
+                                        password,
+                                        salt,
+                                        iterations
+                                    )
+                                const e2eeOptions = {
+                                    enabled: true,
+                                    key,
+                                    salt: btoa(String.fromCharCode(...salt)),
+                                    iterations
+                                }
+                                const doc = await doImport(e2eeOptions)
+                                if (doc?.id) {
+                                    try {
+                                        await PassphraseManager.saveDocumentPassword(
+                                            doc.id,
+                                            password
+                                        )
+                                    } catch (err) {
+                                        console.error(
+                                            "Failed to save document password for imported document:",
+                                            err
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (PassphraseManager.hasKeysInSession()) {
+                                // Passphrase already unlocked — proceed.
+                                try {
+                                    await importWithAutoPassword()
+                                } catch (error) {
+                                    deactivateWait()
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "Could not create encrypted document."
+                                        )
+                                    )
+                                    console.error(error)
+                                }
+                            } else {
+                                // Passphrase set up but not yet unlocked in
+                                // this session — prompt to unlock first.
+                                deactivateWait()
+                                let errorMessage = ""
+                                let done = false
+                                while (!done) {
+                                    const result = await new Promise(
+                                        resolve => {
+                                            enterPassphraseDialog(
+                                                pwd =>
+                                                    resolve({
+                                                        action: "unlock",
+                                                        passphrase: pwd
+                                                    }),
+                                                () =>
+                                                    resolve({
+                                                        action: "recover"
+                                                    }),
+                                                {errorMessage}
+                                            )
+                                        }
+                                    )
+                                    if (
+                                        result?.action === "unlock" &&
+                                        result.passphrase
+                                    ) {
+                                        activateWait()
+                                        try {
+                                            await PassphraseManager.unlockWithPassphrase(
+                                                result.passphrase
+                                            )
+                                            await importWithAutoPassword()
+                                            done = true
+                                        } catch (err) {
+                                            deactivateWait()
+                                            if (
+                                                err instanceof DOMException ||
+                                                err.name === "OperationError"
+                                            ) {
+                                                errorMessage = gettext(
+                                                    "Incorrect passphrase. Please try again."
+                                                )
+                                            } else {
+                                                addAlert(
+                                                    "error",
+                                                    gettext(
+                                                        "Could not create encrypted document."
+                                                    )
+                                                )
+                                                console.error(err)
+                                                done = true
+                                            }
+                                        }
+                                    } else if (result?.action === "recover") {
+                                        const {
+                                            recoverWithKeyDialog,
+                                            showRecoveryKeyDialog
+                                        } = await import(
+                                            "../../editor/e2ee/passphrase-dialog.js"
+                                        )
+                                        const recoverResult = await new Promise(
+                                            resolve => {
+                                                recoverWithKeyDialog(resolve)
+                                            }
+                                        )
+                                        if (recoverResult) {
+                                            activateWait()
+                                            try {
+                                                const {newRecoveryKey} =
+                                                    await PassphraseManager.recoverWithRecoveryKey(
+                                                        recoverResult.recoveryKey,
+                                                        recoverResult.newPassphrase
+                                                    )
+                                                await new Promise(resolve =>
+                                                    showRecoveryKeyDialog(
+                                                        newRecoveryKey,
+                                                        resolve
+                                                    )
+                                                )
+                                                await importWithAutoPassword()
+                                                done = true
+                                            } catch (_err) {
+                                                deactivateWait()
+                                                errorMessage = gettext(
+                                                    "Recovery failed. Please check your recovery key and try again."
+                                                )
+                                            }
+                                        }
+                                        // If recoverResult is null (cancelled),
+                                        // loop continues with passphrase dialog.
+                                    } else {
+                                        done = true // User cancelled
+                                    }
+                                }
+                            }
+                        } else {
+                            activateWait()
+                            doImport(null)
+                        }
+                    }
+                },
+                {
+                    type: "cancel"
+                }
+            ]
         })
         importDialog.open()
 
         document
-            .getElementById("external-uploader")
+            .getElementById("doc-uploader")
             .addEventListener("change", () => {
-                document.getElementById("import-external-name").innerHTML =
-                    document
-                        .getElementById("external-uploader")
-                        .value.replace(/C:\\fakepath\\/i, "")
+                document.getElementById("import-doc-name").innerHTML = document
+                    .getElementById("doc-uploader")
+                    .value.replace(/C:\\fakepath\\/i, "")
             })
 
         document
-            .getElementById("import-external-btn")
+            .getElementById("import-doc-btn")
             .addEventListener("click", event => {
-                document.getElementById("external-uploader").click()
+                document.getElementById("doc-uploader").click()
                 event.preventDefault()
             })
     }
@@ -407,6 +572,34 @@ export class DocumentOverviewActions {
             this.documentOverview.documentList,
             this.documentOverview.schema
         ).then(() => {
+            const docs = ids.map(id =>
+                this.documentOverview.documentList.find(
+                    entry => entry.id === id
+                )
+            )
+            const allE2EE = docs.every(doc => doc.e2ee)
+            const anyE2EE = docs.some(doc => doc.e2ee)
+            const e2eeMode = this.documentOverview.app.settings.E2EE_MODE
+
+            const canToggleE2EE =
+                e2eeMode === "enabled" ||
+                (e2eeMode === "required" && !allE2EE) ||
+                (e2eeMode === "disabled" && anyE2EE)
+
+            let e2eeHtml = ""
+            if (canToggleE2EE) {
+                const checked =
+                    e2eeMode === "required" || allE2EE ? "checked" : ""
+                e2eeHtml = `
+                        <div class="e2ee-copy-toggle" style="margin-top: 15px;">
+                            <label>
+                                <input type="checkbox" id="e2ee-copy-toggle" ${checked}>
+                                ${gettext("Encrypt the copy")}
+                            </label>
+                        </div>
+                    `
+            }
+
             const selectTemplateDialog = new Dialog({
                 title: gettext("Choose document template"),
                 body: `<p>
@@ -419,38 +612,128 @@ export class DocumentOverviewActions {
                                 ([importId, dt]) =>
                                     `<option value="${escapeText(importId)}">${escapeText(dt.title)}</option>`
                             )
-                            .join("")}</select>`,
+                            .join("")}</select>
+                        ${e2eeHtml}`,
                 buttons: [
                     {
                         text: gettext("Copy"),
                         classes: "fw-dark",
                         click: () => {
-                            ids.forEach(id => {
-                                const doc =
-                                    this.documentOverview.documentList.find(
-                                        entry => entry.id === id
-                                    )
-                                const copier = new SaveCopy(
-                                    doc,
-                                    {db: doc.bibliography},
-                                    {db: doc.images},
-                                    this.documentOverview.user,
-                                    selectTemplateDialog.dialogEl.querySelector(
-                                        "select"
-                                    ).value
-                                )
+                            const targetE2EE =
+                                canToggleE2EE &&
+                                selectTemplateDialog.dialogEl.querySelector(
+                                    "#e2ee-copy-toggle"
+                                )?.checked
 
-                                copier
-                                    .init()
-                                    .then(({doc}) => {
-                                        this.documentOverview.documentList.push(
-                                            doc
+                            const doCopy = (sourceKey, targetPassword) => {
+                                ids.forEach(id => {
+                                    const doc =
+                                        this.documentOverview.documentList.find(
+                                            entry => entry.id === id
                                         )
-                                        this.documentOverview.initTable()
-                                    })
-                                    .catch(() => false)
-                            })
-                            selectTemplateDialog.close()
+                                    const e2eeOptions = {}
+                                    if (doc.e2ee && sourceKey) {
+                                        e2eeOptions.sourceKey = sourceKey
+                                    }
+                                    if (targetE2EE && targetPassword) {
+                                        e2eeOptions.targetE2EE = true
+                                        e2eeOptions.targetPassword =
+                                            targetPassword
+                                    }
+
+                                    const copier = new SaveCopy(
+                                        doc,
+                                        {db: doc.bibliography},
+                                        {db: doc.images},
+                                        this.documentOverview.user,
+                                        selectTemplateDialog.dialogEl.querySelector(
+                                            "select"
+                                        ).value,
+                                        e2eeOptions
+                                    )
+
+                                    copier
+                                        .init()
+                                        .then(({doc}) => {
+                                            this.documentOverview.documentList.push(
+                                                doc
+                                            )
+                                            this.documentOverview.initTable()
+                                        })
+                                        .catch(error => {
+                                            console.error(error)
+                                            addAlert(
+                                                "error",
+                                                gettext(
+                                                    "Could not copy document."
+                                                )
+                                            )
+                                        })
+                                })
+                                selectTemplateDialog.close()
+                            }
+
+                            if (anyE2EE && !targetE2EE) {
+                                enterPasswordDialog(async password => {
+                                    try {
+                                        const sampleDoc = docs.find(
+                                            doc => doc.e2ee
+                                        )
+                                        const salt = new Uint8Array(
+                                            atob(sampleDoc.e2ee_salt)
+                                                .split("")
+                                                .map(c => c.charCodeAt(0))
+                                        )
+                                        const key =
+                                            await E2EEKeyManager.deriveKey(
+                                                password,
+                                                salt,
+                                                sampleDoc.e2ee_iterations ||
+                                                    600000
+                                            )
+                                        doCopy(key, null)
+                                    } catch (_err) {
+                                        addAlert(
+                                            "error",
+                                            gettext("Incorrect password.")
+                                        )
+                                    }
+                                })
+                            } else if (!anyE2EE && targetE2EE) {
+                                createPasswordDialog(password => {
+                                    doCopy(null, password)
+                                })
+                            } else if (anyE2EE && targetE2EE) {
+                                enterPasswordDialog(async password => {
+                                    try {
+                                        const sampleDoc = docs.find(
+                                            doc => doc.e2ee
+                                        )
+                                        const salt = new Uint8Array(
+                                            atob(sampleDoc.e2ee_salt)
+                                                .split("")
+                                                .map(c => c.charCodeAt(0))
+                                        )
+                                        const key =
+                                            await E2EEKeyManager.deriveKey(
+                                                password,
+                                                salt,
+                                                sampleDoc.e2ee_iterations ||
+                                                    600000
+                                            )
+                                        createPasswordDialog(targetPassword => {
+                                            doCopy(key, targetPassword)
+                                        })
+                                    } catch (_err) {
+                                        addAlert(
+                                            "error",
+                                            gettext("Incorrect password.")
+                                        )
+                                    }
+                                })
+                            } else {
+                                doCopy(null, null)
+                            }
                         }
                     },
                     {

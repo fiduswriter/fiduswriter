@@ -1,5 +1,5 @@
 import {BibLatexFileExporter} from "../export"
-import {BibLatexFileImportDialog} from "../import"
+import {BibliographyFileImportDialog} from "../import"
 
 export const bulkMenuModel = () => ({
     content: [
@@ -82,10 +82,10 @@ export const menuModel = () => ({
         },
         {
             type: "text",
-            title: gettext("Upload BibTeX file"),
+            title: gettext("Import bibliography"),
             keys: "Alt-u",
             action: overview => {
-                const fileImporter = new BibLatexFileImportDialog(
+                const fileImporter = new BibliographyFileImportDialog(
                     overview.app.bibDB,
                     ids => overview.updateTable(ids),
                     overview.app

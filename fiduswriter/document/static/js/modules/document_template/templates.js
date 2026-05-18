@@ -112,6 +112,18 @@ const allowedMarksTemplate = ({marks}) =>
 <label>
     <input type="checkbox" class="marks" value="link" ${marks.includes("link") ? "checked" : ""}/>
     ${gettext("Link")}
+</label>
+<label>
+    <input type="checkbox" class="marks" value="sup" ${marks.includes("sup") ? "checked" : ""}/>
+    ${gettext("Superscript")}
+</label>
+<label>
+    <input type="checkbox" class="marks" value="sub" ${marks.includes("sub") ? "checked" : ""}/>
+    ${gettext("Subscript")}
+</label>
+<label>
+    <input type="checkbox" class="marks" value="code" ${marks.includes("code") ? "checked" : ""}/>
+    ${gettext("Code")}
 </label>`
 
 const headingTemplate = ({
@@ -125,7 +137,7 @@ const headingTemplate = ({
         "heading5",
         "heading6"
     ],
-    marks = ["strong", "em", "underline", "link"],
+    marks = ["strong", "em", "underline", "link", "sup", "sub", "code"],
     locking = "false",
     optional = "false",
     language = false,
@@ -242,6 +254,9 @@ const contributorsTemplate = ({
                 <option value="false" ${metadata === false ? "selected" : ""}>${gettext("None")}</option>
                 <option value="authors" ${metadata === "authors" ? "selected" : ""}>${gettext("Authors")}</option>
                 <option value="editors" ${metadata === "editors" ? "selected" : ""}>${gettext("Editors")}</option>
+                <option value="translators" ${metadata === "translators" ? "selected" : ""}>${gettext("Translators")}</option>
+                <option value="reviewers" ${metadata === "reviewers" ? "selected" : ""}>${gettext("Reviewers")}</option>
+                <option value="contributors" ${metadata === "contributors" ? "selected" : ""}>${gettext("Contributors")}</option>
             </select>
         </div>
         <div class="label">${gettext("Locking")}
@@ -290,7 +305,7 @@ const richtextTemplate = ({
         "blockquote",
         "footnote"
     ],
-    marks = ["strong", "em", "underline", "link"],
+    marks = ["strong", "em", "underline", "link", "sup", "sub", "code"],
     locking = "false",
     optional = "false",
     language = false,
@@ -446,7 +461,7 @@ const tableTemplate = ({
         "blockquote",
         "footnote"
     ],
-    marks = ["strong", "em", "underline", "link"],
+    marks = ["strong", "em", "underline", "link", "sup", "sub", "code"],
     locking = "false",
     optional = "false",
     language = false
@@ -545,7 +560,7 @@ const footnoteTemplate = ({
         "blockquote",
         "table"
     ],
-    footnote_marks = ["strong", "em", "underline", "link"]
+    footnote_marks = ["strong", "em", "underline", "link", "sup", "sub", "code"]
 }) =>
     `<div class="doc-part-block attrs">${allowedElementsTemplate({elements: footnote_elements}, {isFootnote: true})}${allowedMarksTemplate({marks: footnote_marks})}</div>`
 
@@ -629,11 +644,136 @@ export const bibliographyHeaderTemplate = ({
                         <input type="text" value="${escapeText(translation[1])}" >
                     </td>
                     <td class="input-field-list-ctrl">
-                        <span class="fa fa-minus-circle" tabindex="0"></span>&nbsp;<span class="fa fa-plus-circle" tabindex="0"></span>
+                        <span class="fa-solid fa-minus-circle" tabindex="0"></span>&nbsp;<span class="fa-solid fa-plus-circle" tabindex="0"></span>
                     </td>
                 </tr>`
         )
         .join("")}</table>`
+}
+
+export const idTypesTemplate = ({id_types = []}) => {
+    const types = id_types.length ? id_types : [{label: "", regex: ""}]
+    return `<table class="fw-dialog-table fw-small input-list-wrapper id-types-value">${types
+        .map(
+            type =>
+                `<tr>
+                    <td>
+                        <input type="text" class="id-type-label" placeholder="${gettext("Label")}" value="${escapeText(type.label)}" >
+                    </td>
+                    <td>
+                        <input type="text" class="id-type-regex" placeholder="${gettext("Regex")}" value="${escapeText(type.regex)}" >
+                    </td>
+                    <td class="input-field-list-ctrl">
+                        <span class="fa-solid fa-minus-circle" tabindex="0"></span>&nbsp;<span class="fa-solid fa-plus-circle" tabindex="0"></span>
+                    </td>
+                </tr>`
+        )
+        .join("")}</table>`
+}
+
+const codeLanguagesTemplate = ({
+    code_languages = [
+        "javascript",
+        "python",
+        "java",
+        "cpp",
+        "c",
+        "csharp",
+        "php",
+        "ruby",
+        "go",
+        "rust",
+        "swift",
+        "kotlin",
+        "typescript",
+        "html",
+        "css",
+        "sql",
+        "bash",
+        "shell",
+        "r",
+        "matlab",
+        "scala",
+        "perl",
+        "lua",
+        "haskell",
+        "xml",
+        "json",
+        "yaml",
+        "markdown"
+    ]
+}) => {
+    const allLanguages = [
+        "javascript",
+        "python",
+        "java",
+        "cpp",
+        "c",
+        "csharp",
+        "php",
+        "ruby",
+        "go",
+        "rust",
+        "swift",
+        "kotlin",
+        "typescript",
+        "html",
+        "css",
+        "sql",
+        "bash",
+        "shell",
+        "r",
+        "matlab",
+        "scala",
+        "perl",
+        "lua",
+        "haskell",
+        "xml",
+        "json",
+        "yaml",
+        "markdown"
+    ]
+    return `<select multiple size=10>
+${allLanguages.map(lang => `<option value="${lang}"${code_languages.includes(lang) ? " selected" : ""}>${lang}</option>`).join("")}
+</select>`
+}
+
+const codeCategoriesTemplate = ({code_categories = {}}) => {
+    const {CATS} = require("../schema/i18n")
+    const allCategories = Object.keys(CATS)
+    const defaultCategories = {
+        listing: {counter: 0, enabled: true},
+        example: {counter: 0, enabled: true},
+        snippet: {counter: 0, enabled: false},
+        tutorial: {counter: 0, enabled: false},
+        exercise: {counter: 0, enabled: false},
+        exercise_solution: {counter: 0, enabled: false}
+    }
+    const categories = Object.assign({}, defaultCategories, code_categories)
+
+    return `<div class="code-categories-config">
+        <p>${gettext("Select which code block categories are available:")}</p>
+        ${allCategories
+            .map(cat => {
+                const isCodeCategory = [
+                    "listing",
+                    "example",
+                    "snippet",
+                    "tutorial",
+                    "exercise",
+                    "exercise_solution"
+                ].includes(cat)
+                if (!isCodeCategory) {
+                    return ""
+                }
+                const enabled = categories[cat]?.enabled || false
+                return `<label>
+                    <input type="checkbox" class="code-category" value="${cat}" ${enabled ? "checked" : ""}/>
+                    ${CATS[cat]["en-US"] || cat}
+                </label>`
+            })
+            .join("")}
+    </div>`
 }
 
 const templateEditorValueTemplate = ({content}) =>
@@ -668,7 +808,7 @@ export const documentStylesTemplate = ({documentStyles}) => `${documentStyles
     )
     .join("")}
 <button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
-    <i class="fas fa-plus-circle"></i>
+    <i class="fa-solid fa-plus-circle"></i>
     ${gettext("Add new document style")}
 </button>`
 
@@ -680,7 +820,7 @@ export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
     )
     .join("")}
 <button class="fw-green fw-small fw-button ui-button export-template" data-id="0">
-    <i class="fas fa-plus-circle"></i>
+    <i class="fa-solid fa-plus-circle"></i>
     ${gettext("Add new export template")}
 </button>`
 
@@ -766,10 +906,34 @@ export const documentDesignerTemplate = ({
             </tr>
             <tr>
                 <td>
+                    ${gettext("Code block languages")}
+                </td>
+                <td class="code-languages-value">
+                    ${codeLanguagesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext("Code block categories")}
+                </td>
+                <td class="code-categories-value">
+                    ${codeCategoriesTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
                     ${gettext("Custom bibliography header")}
                 </td>
                 <td class="bibliography-header-value">
                     ${bibliographyHeaderTemplate(value.attrs || {})}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    ${gettext("Contributor ID types")}
+                </td>
+                <td class="id-types-value">
+                    ${idTypesTemplate(value.attrs || {})}
                 </td>
             </tr>
             <tr>

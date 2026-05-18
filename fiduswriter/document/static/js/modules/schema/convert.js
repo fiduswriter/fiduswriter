@@ -43,6 +43,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 1.1: // Fidus Writer 3.1
             doc = convertDocV11(doc)
@@ -57,6 +58,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 1.2: // Fidus Writer 3.2
             doc = convertDocV12(doc)
@@ -70,6 +72,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 1.3: // Fidus Writer 3.3 prerelease
             doc = convertDocV13(doc, bibliography)
@@ -82,6 +85,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 2.0: // Fidus Writer 3.3
             doc = convertDocV20(doc)
@@ -93,6 +97,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 2.1: // Fidus Writer 3.4
             doc = convertDocV21(doc)
@@ -103,6 +108,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 2.2: // Fidus Writer 3.5.7
             doc = convertDocV22(doc)
@@ -112,6 +118,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 2.3: // Fidus Writer 3.5.10
             doc = convertDocV23(doc)
@@ -120,6 +127,7 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 3.0: // Fidus Writer 3.6
             doc = convertDocV30(doc)
@@ -127,26 +135,34 @@ export const updateDoc = (doc, docVersion, bibliography = false) => {
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 3.1: // Fidus Writer 3.7
             doc = convertDocV31(doc)
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 3.2: // Fidus Writer 3.8
             doc = convertDocV32(doc)
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 3.3: // Fidus Writer 3.9
             doc = convertDocV33(doc)
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
         case 3.4: // Fidus Writer 3.10
             doc = convertDocV34(doc)
+            doc = convertDocV35(doc)
             break
-        case 3.5: // Fidus Writer 3.12
+        case 3.5: // Fidus Writer 4.0
+            doc = convertDocV35(doc)
+            break
+        case 3.6: // Fidus Writer 4.1
             break
     }
     return doc
@@ -1246,4 +1262,11 @@ const convertDocV34 = doc => {
     const returnDoc = JSON.parse(JSON.stringify(doc))
     returnDoc.content.type = "doc"
     return returnDoc
+}
+
+const convertDocV35 = doc => {
+    // We just need to increase the version number so that documents cannot
+    // be moved from a 4.1 to an 4.0 system, but 3.5 files should be readable
+    // as 3.6 files.
+    return JSON.parse(JSON.stringify(doc))
 }

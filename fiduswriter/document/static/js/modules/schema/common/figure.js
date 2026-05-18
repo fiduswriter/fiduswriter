@@ -76,41 +76,57 @@ export const image = {
         const dom = document.createElement("img")
         if (node.attrs.image !== false) {
             dom.dataset.image = node.attrs.image
-            if (node.type.schema.cached.imageDB) {
-                if (
-                    node.type.schema.cached.imageDB.db[node.attrs.image]?.image
-                ) {
-                    const imgSrc =
-                        node.type.schema.cached.imageDB.db[node.attrs.image]
-                            .image
-                    dom.setAttribute("src", imgSrc)
-                    dom.dataset.imageSrc =
-                        node.type.schema.cached.imageDB.db[
-                            node.attrs.image
-                        ].image
+            const imageDB = node.type.schema.cached.imageDB
+            if (imageDB) {
+                const imageEntry = imageDB.db[node.attrs.image]
+                if (imageEntry?.image) {
+                    const isEncrypted =
+                        imageEntry.file_type === "application/octet-stream"
+                    if (isEncrypted) {
+                        const editor = imageDB.mod?.editor
+                        const key = editor?.e2ee?.key
+                        if (key) {
+                            import("../../editor/e2ee/encryptor").then(
+                                ({E2EEEncryptor}) => {
+                                    E2EEEncryptor.decryptImageToUrl(
+                                        imageEntry.image,
+                                        key,
+                                        imageEntry.original_file_type ||
+                                            "image/png"
+                                    )
+                                        .then(url => {
+                                            dom.setAttribute("src", url)
+                                            dom.dataset.imageSrc = url
+                                        })
+                                        .catch(() => {
+                                            dom.setAttribute(
+                                                "src",
+                                                staticUrl("img/error.avif")
+                                            )
+                                        })
+                                }
+                            )
+                        } else {
+                            dom.setAttribute("src", staticUrl("img/error.avif"))
+                        }
+                    } else {
+                        const imgSrc = imageEntry.image
+                        dom.setAttribute("src", imgSrc)
+                        dom.dataset.imageSrc = imgSrc
+                    }
                 } else {
-                    /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
+                    /* The image was not present in the imageDB -- possibly because a collaborator just added it.
                     Try to reload the imageDB, but only once. If the image cannot be found in the updated
                     imageDB, do not attempt at reloading the imageDB if an image cannot be
                     found. */
                     if (imageDBBroken) {
                         dom.setAttribute("src", staticUrl("img/error.avif"))
                     } else {
-                        node.type.schema.cached.imageDB.getDB().then(() => {
-                            if (
-                                node.type.schema.cached.imageDB.db[
-                                    node.attrs.image
-                                ]?.image
-                            ) {
-                                const imgSrc =
-                                    node.type.schema.cached.imageDB.db[
-                                        node.attrs.image
-                                    ].image
-                                dom.setAttribute("src", imgSrc)
-                                dom.dataset.imageSrc =
-                                    node.type.schema.cached.imageDB.db[
-                                        node.attrs.image
-                                    ].image
+                        imageDB.getDB().then(() => {
+                            const refreshedEntry = imageDB.db[node.attrs.image]
+                            if (refreshedEntry?.image) {
+                                dom.setAttribute("src", refreshedEntry.image)
+                                dom.dataset.imageSrc = refreshedEntry.image
                             } else {
                                 imageDBBroken = true
                             }

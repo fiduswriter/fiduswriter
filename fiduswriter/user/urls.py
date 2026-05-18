@@ -37,11 +37,72 @@ urlpatterns = [
         views.get_confirmkey_data,
         name="get_confirmkey_data",
     ),
+    re_path(
+        "^encryption_key/$",
+        views.get_encryption_key,
+        name="get_encryption_key",
+    ),
+    re_path(
+        "^encryption_key/save/$",
+        views.save_encryption_key,
+        name="save_encryption_key",
+    ),
+    re_path(
+        r"^encryption_public_key/(?P<user_id>[0-9]+)/$",
+        views.get_public_key,
+        name="get_public_key",
+    ),
+    re_path(
+        "^preferences/get/$",
+        views.get_preferences,
+        name="get_preferences",
+    ),
+    re_path(
+        "^preferences/update/$",
+        views.update_preferences,
+        name="update_preferences",
+    ),
+    re_path(
+        "^encryption_key/has_keys/$",
+        views.has_encryption_keys,
+        name="has_encryption_keys",
+    ),
     re_path(r"^signup/$", views.signup, name="account_signup"),
     re_path(r"^login/$", views.login, name="account_login"),
+    re_path(
+        r"^password/reset/$",
+        views.FidusPasswordResetView.as_view(),
+        name="account_reset_password",
+    ),
     # Authentication handling
     re_path("", include("allauth.urls")),
 ]
+
+# Two-factor authentication URL patterns (only if django_otp is available)
+if "django_otp" in settings.INSTALLED_APPS:
+    # Add 2FA URL patterns
+    urlpatterns += [
+        re_path(
+            "^two-factor/setup/$",
+            views.two_factor_setup,
+            name="two_factor_setup",
+        ),
+        re_path(
+            "^two-factor/verify/$",
+            views.two_factor_verify,
+            name="two_factor_verify",
+        ),
+        re_path(
+            "^two-factor/disable/$",
+            views.two_factor_disable,
+            name="two_factor_disable",
+        ),
+        re_path(
+            "^two-factor/status/$",
+            views.two_factor_status,
+            name="two_factor_status",
+        ),
+    ]
 
 if not settings.PASSWORD_LOGIN:
     urlpatterns.insert(0, re_path("^login/$", RedirectView.as_view(url="/")))

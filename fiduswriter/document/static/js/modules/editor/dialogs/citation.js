@@ -1,7 +1,7 @@
 import {DataTable} from "simple-datatables"
 
 import * as plugins from "../../../plugins/citation_dialog"
-import {litToText, nameToText} from "../../bibliography/tools"
+import {dateToYear, litToText, nameToText} from "../../bibliography/tools"
 import {
     Dialog,
     addAlert,
@@ -69,7 +69,7 @@ export class CitationDialog {
             title: gettext("Configure Citation"),
             buttons: this.buttons,
             body: this.citationDialogHTML(),
-            width: 836,
+            width: 1002,
             onClose: () => this.editor.currentView.focus(),
             restoreActiveElement: false
         })
@@ -117,11 +117,14 @@ export class CitationDialog {
         return [
             `${db}-${id}`,
             `<span class="fw-data-table-title fw-inline">
-                <i class="fa fa-book"></i>
+                <i class="fa-solid fa-book"></i>
                 <span class="fw-searchable">${bib.fields.title?.length ? escapeText(litToText(bib.fields.title)) : gettext("Untitled")}</span>
             </span>`,
             bibauthors ? escapeText(nameToText(bibauthors)) : "",
-            checked ? '<i class="fa fa-check" aria-hidden="true"></i>' : ""
+            bib.fields.date ? dateToYear(bib.fields.date) : "",
+            checked
+                ? '<i class="fa-solid fa-check" aria-hidden="true"></i>'
+                : ""
         ]
     }
 
@@ -170,7 +173,8 @@ export class CitationDialog {
             title: bib.fields.title?.length
                 ? litToText(bib.fields.title)
                 : gettext("Untitled"),
-            author: bibauthors ? nameToText(bibauthors) : ""
+            author: bibauthors ? nameToText(bibauthors) : "",
+            year: bib.fields.date ? dateToYear(bib.fields.date) : ""
         }
     }
 
@@ -216,6 +220,7 @@ export class CitationDialog {
                         db: item.db,
                         title: item.title,
                         author: item.author,
+                        year: item.year,
                         locator: "",
                         prefix: ""
                     })
@@ -244,12 +249,18 @@ export class CitationDialog {
             </div>
             <div class='${options.classes.container}' style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             data: {
-                headings: ["", gettext("Title"), gettext("Author"), ""],
+                headings: [
+                    "",
+                    gettext("Title"),
+                    gettext("Author"),
+                    gettext("Year"),
+                    ""
+                ],
                 data: this.createAllTableRows()
             },
             columns: [
                 {
-                    select: [0, 2],
+                    select: [0, 2, 3],
                     type: "string"
                 },
                 {
@@ -257,7 +268,7 @@ export class CitationDialog {
                     hidden: true
                 },
                 {
-                    select: 3,
+                    select: 4,
                     sortable: false
                 }
             ]
@@ -274,13 +285,16 @@ export class CitationDialog {
             return
         }
 
-        if (row.cells[3].data.length) {
-            row.cells[3].data = []
+        if (row.cells[4].data.length) {
+            row.cells[4].data = []
         } else {
-            row.cells[3].data = [
+            row.cells[4].data = [
                 {
                     nodeName: "i",
-                    attributes: {class: "fa fa-check", "aria-hidden": "true"}
+                    attributes: {
+                        class: "fa-solid fa-check",
+                        "aria-hidden": "true"
+                    }
                 }
             ]
         }
@@ -306,10 +320,10 @@ export class CitationDialog {
                 const selectedItems = []
 
                 this.table.data.data.forEach(row => {
-                    if (!row.cells[3].data.length) {
+                    if (!row.cells[4].data.length) {
                         return
                     }
-                    row.cells[3].data = []
+                    row.cells[4].data = []
                     const [db, id] = row.cells[0].data.split("-").map(
                         (val, index) => (index ? Number.parseInt(val) : val) // only parseInt id (where index > 0)
                     )
@@ -324,7 +338,8 @@ export class CitationDialog {
                         id,
                         db,
                         title: row.cells[1].text,
-                        author: row.cells[2].data
+                        author: row.cells[2].data,
+                        year: row.cells[3].data
                     })
                 })
                 this.addToCitedItems(selectedItems)

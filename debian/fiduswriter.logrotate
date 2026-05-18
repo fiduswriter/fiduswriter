@@ -1,0 +1,13 @@
+/var/log/fiduswriter/*.log {
+    daily
+    missingok
+    rotate 14
+    compress
+    delaycompress
+    notifempty
+    create 0640 fiduswriter fiduswriter
+    sharedscripts
+    postrotate
+        systemctl reload fiduswriter.service > /dev/null 2>&1 || true
+    endscript
+}

@@ -12,6 +12,10 @@ export class ImageSelectionDialog {
         this.images = [] // images from both databases
     }
 
+    isE2EE() {
+        return this.page.e2ee?.encrypted === true
+    }
+
     init() {
         this.images = Object.values(this.imageDB.db).map(image => {
             return {
@@ -36,8 +40,11 @@ export class ImageSelectionDialog {
                     icon: "plus-circle",
                     click: () => {
                         import("../edit_dialog").then(({ImageEditDialog}) => {
+                            const targetDB = this.isE2EE()
+                                ? this.imageDB
+                                : this.userImageDB
                             const imageUpload = new ImageEditDialog(
-                                this.userImageDB, // We can only upload to the user's image db
+                                targetDB,
                                 false,
                                 this.page
                             )
@@ -45,7 +52,11 @@ export class ImageSelectionDialog {
                             resolve(
                                 imageUpload.init().then(imageId => {
                                     this.imgId = imageId
-                                    this.imgDb = "user"
+                                    // For E2EE docs the image goes straight
+                                    // into the document DB, not the user's.
+                                    this.imgDb = this.isE2EE()
+                                        ? "document"
+                                        : "user"
                                     this.imageDialog.close()
                                     return this.init()
                                 })

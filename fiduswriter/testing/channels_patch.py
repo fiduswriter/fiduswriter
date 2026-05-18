@@ -1,3 +1,4 @@
+import asyncio
 from functools import partial
 import multiprocessing
 
@@ -38,11 +39,52 @@ class ServerCommandMiddleware:
     def __init__(self, app, commands):
         self.app = app
         self.commands = commands
+        self._exception_handler_installed = False
 
     async def __call__(self, scope, receive, send):
+        # Install a custom event loop exception handler on first request
+        # to suppress CancelledError noise from asyncio/asgiref during tests.
+        # This handles the "CancelledError exception in shielded future"
+        # messages that occur when Selenium navigates away while the server
+        # is still processing a request via sync_to_async.
+        if not self._exception_handler_installed:
+            self._install_exception_handler()
+            self._exception_handler_installed = True
+
         # Process any pending server commands before handling the request
         self.process_server_commands()
-        return await self.app(scope, receive, send)
+        try:
+            return await self.app(scope, receive, send)
+        except asyncio.CancelledError:
+            # Silently handle cancellation. This happens when the test
+            # client (Selenium) navigates away or disconnects while the
+            # server is still processing a previous request.
+            pass
+
+    def _install_exception_handler(self):
+        """
+        Set a custom asyncio event loop exception handler that suppresses
+        CancelledError. The default handler logs these to stderr which
+        produces noisy output in CI and can be mistaken for real errors.
+        """
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            return
+
+        original_handler = loop.get_exception_handler()
+
+        def _custom_exception_handler(loop, context):
+            exception = context.get("exception")
+            if isinstance(exception, asyncio.CancelledError):
+                return
+            # For all other exceptions, use the original handler or default
+            if original_handler is not None:
+                original_handler(loop, context)
+            else:
+                loop.default_exception_handler(context)
+
+        loop.set_exception_handler(_custom_exception_handler)
 
     def process_server_commands(self):
         global _server_command_queue

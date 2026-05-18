@@ -218,10 +218,14 @@ export const contributorInputPlugin = options =>
 
                 // Space key on a selected contributor opens the dialog (when drop-up not focused)
                 if (event.key === " " && isContributorSelected) {
+                    const idTypes =
+                        view.editor.mod.documentTemplate?.currentTemplate
+                            ?.id_types || []
                     const dialog = new ContributorDialog(
                         view.state.selection.$anchor.parent,
                         view,
-                        view.state.selection.node.attrs
+                        view.state.selection.node.attrs,
+                        idTypes
                     )
                     dialog.init()
                     return true

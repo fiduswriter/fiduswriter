@@ -50,11 +50,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        self.click_new_document_button(self.driver)
         # Set copyright
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -639,9 +635,9 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # We import the fidus file
         self.driver.find_element(By.CSS_SELECTOR, "a[href='/']").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import document (Alt-i)']"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#doc-uploader").send_keys(
             upload_full_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()
@@ -653,9 +649,9 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         os.remove(upload_full_path)
         # Upload slim file
         self.driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload FIDUS document (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import document (Alt-i)']"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "#fidus-uploader").send_keys(
+        self.driver.find_element(By.CSS_SELECTOR, "#doc-uploader").send_keys(
             upload_slim_path
         )
         self.driver.find_element(By.CSS_SELECTOR, ".fw-dark").click()

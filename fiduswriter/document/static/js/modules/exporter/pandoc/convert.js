@@ -176,9 +176,45 @@ export class PandocExporterConvert {
                 case "code_block": {
                     options = Object.assign({}, options)
                     options.inCode = true
+                    const classes = node.attrs.language
+                        ? [node.attrs.language]
+                        : []
+                    const keyValuePairs = []
+
+                    // Add caption if title is present
+                    if (node.attrs.title) {
+                        keyValuePairs.push(["caption", node.attrs.title])
+                    }
+
+                    // Add category as custom attribute for round-trip fidelity
+                    if (node.attrs.category) {
+                        keyValuePairs.push(["category", node.attrs.category])
+                    }
+
+                    // Use id if present, otherwise empty string
+                    const id = node.attrs.id || ""
+                    const attrs = [id, classes, keyValuePairs]
+
                     pandocContent.push({
-                        t: "Plain",
-                        c: this.convertContent(node.content, meta, options)
+                        t: "CodeBlock",
+                        c: [
+                            attrs,
+                            this.convertContent(node.content, meta, options)
+                                .map(item => {
+                                    if (item.t === "Str") {
+                                        return item.c
+                                    } else if (item.t === "Space") {
+                                        return " "
+                                    } else if (
+                                        item.t === "SoftBreak" ||
+                                        item.t === "LineBreak"
+                                    ) {
+                                        return "\n"
+                                    }
+                                    return ""
+                                })
+                                .join("")
+                        ]
                     })
                     break
                 }
@@ -827,7 +863,14 @@ export class PandocExporterConvert {
                 case "text": {
                     if (node.text) {
                         let containerContent = pandocContent
-                        let strong, em, underline, hyperlink, anchor
+                        let strong,
+                            em,
+                            underline,
+                            hyperlink,
+                            anchor,
+                            sup,
+                            sub,
+                            code
                         if (node.marks) {
                             strong = node.marks.find(
                                 mark => mark.type === "strong"
@@ -842,6 +885,9 @@ export class PandocExporterConvert {
                             anchor = node.marks.find(
                                 mark => mark.type === "anchor"
                             )
+                            sup = node.marks.find(mark => mark.type === "sup")
+                            sub = node.marks.find(mark => mark.type === "sub")
+                            code = node.marks.find(mark => mark.type === "code")
                         }
                         if (em) {
                             const c = []
@@ -866,6 +912,29 @@ export class PandocExporterConvert {
                                 c
                             })
                             containerContent = c
+                        }
+                        if (sup) {
+                            const c = []
+                            containerContent.push({
+                                t: "Superscript",
+                                c
+                            })
+                            containerContent = c
+                        }
+                        if (sub) {
+                            const c = []
+                            containerContent.push({
+                                t: "Subscript",
+                                c
+                            })
+                            containerContent = c
+                        }
+                        if (code && !options.inCode) {
+                            containerContent.push({
+                                t: "Code",
+                                c: [["", [], []], node.text]
+                            })
+                            break
                         }
                         if (hyperlink) {
                             const c = []

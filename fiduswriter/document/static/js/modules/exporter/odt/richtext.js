@@ -1,5 +1,6 @@
 import {escapeText} from "../../common"
 import {CATS} from "../../schema/i18n"
+import {createZoteroCitation} from "../tools/zotero_csl"
 
 const TEXT_TYPES = {
     heading1: {tag: "text:h", attrs: _options => 'text:outline-level="1"'},
@@ -34,6 +35,51 @@ const INLINE_TYPES = [
     "text"
 ]
 
+/**
+ * Create Zotero reference mark name for ODT.
+ * @param {Array} references - Array of {id, prefix?, locator?} from citation node
+ * @param {Object} bibDB - Bibliography database
+ * @param {string} formattedCitation - Pre-formatted citation text from citeproc
+ * @param {string} citationId - Optional citation ID (generated if not provided)
+ * @returns {string} Reference mark name with JSON encoded
+ */
+
+// Generate a random ID for Zotero bibliography section + Zotero citations
+// Format: RND + random alphanumeric string (10 characters)
+function generateZoteroId() {
+    const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    const length = 10
+    let result = "RND"
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    return result
+}
+
+function createZoteroCitationMark(
+    references,
+    bibDB,
+    formattedCitation,
+    citationId = null
+) {
+    const zoteroCitation = createZoteroCitation(
+        references,
+        bibDB,
+        formattedCitation,
+        citationId
+    )
+    if (!zoteroCitation) {
+        return null
+    }
+
+    const jsonStr = JSON.stringify(zoteroCitation)
+    // In ODT, quotes must be encoded as &quot; in attribute values
+    const encodedJson = jsonStr.replace(/"/g, "&quot;")
+    const zoteroId = generateZoteroId()
+    return `ZOTERO_ITEM CSL_CITATION ${encodedJson} ${zoteroId}`
+}
+
 export class ODTExporterRichtext {
     constructor(
         comments,
@@ -60,6 +106,7 @@ export class ODTExporterRichtext {
         this.categoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
         this.fnCategoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
         this.zIndex = 0
+        this.citationCounter = 0 // Track which citation we're processing
     }
 
     run(node, options = {}, parent = null, siblingIndex = 0) {
@@ -262,6 +309,25 @@ export class ODTExporterRichtext {
                         `<text:bookmark-end text:name="${node.attrs.id}"/>` +
                         end
                 }
+                // Handle code block category labels
+                if (node.type === "code_block") {
+                    const category = node.attrs.category
+                    if (category && node.attrs.id) {
+                        const categoryCounter = options.inFootnote
+                            ? this.fnCategoryCounter
+                            : this.categoryCounter
+                        if (!categoryCounter[category]) {
+                            categoryCounter[category] = 1
+                        }
+                        const catCount = categoryCounter[category]++
+                        const catCountXml = `<text:sequence text:ref-name="ref${category}${catCount - 1}${options.inFootnote ? "A" : ""}" text:name="${category}" text:formula="ooow:${category}+1" style:num-format="1">${catCount}${options.inFootnote ? "A" : ""}</text:sequence>`
+                        const title = node.attrs.title
+                            ? `: ${escapeText(node.attrs.title)}`
+                            : ""
+                        const categoryLabel = `<text:bookmark-start text:name="${node.attrs.id}"/>${CATS[category][this.settings.language]} ${catCountXml}${title}<text:bookmark-end text:name="${node.attrs.id}"/><text:line-break/>`
+                        start += categoryLabel
+                    }
+                }
                 break
             }
             case "blockquote":
@@ -327,6 +393,7 @@ export class ODTExporterRichtext {
                     sup,
                     sub,
                     smallcaps,
+                    code,
                     anchor
                 // Check for hyperlink, bold/strong and italic/em
                 if (node.marks) {
@@ -342,6 +409,7 @@ export class ODTExporterRichtext {
                     )
                     sup = node.marks.find(mark => mark.type === "sup")
                     sub = node.marks.find(mark => mark.type === "sub")
+                    code = node.marks.find(mark => mark.type === "code")
                 }
 
                 if (hyperlink) {
@@ -379,6 +447,9 @@ export class ODTExporterRichtext {
                 } else if (sub) {
                     attributes += "b"
                 }
+                if (code) {
+                    attributes += "t"
+                }
 
                 if (attributes.length) {
                     const styleId = this.styles.getInlineStyleId(attributes)
@@ -399,27 +470,74 @@ export class ODTExporterRichtext {
                 } else {
                     cit = this.citations.pmCits.shift()
                 }
+
+                // Get citation info and formatted text for Zotero export
+                const citInfo = this.citations.citInfos[this.citationCounter]
+                const formattedText =
+                    this.citations.citationTexts[this.citationCounter]
+                this.citationCounter++
+
+                // Create Zotero citation data on-the-fly
+                const markName =
+                    citInfo && formattedText
+                        ? createZoteroCitationMark(
+                              citInfo.references,
+                              this.citations.bibDB,
+                              formattedText
+                          )
+                        : null
+
                 if (options.citationType === "note" && !options.inFootnote) {
                     // If the citations are in notes (footnotes), we need to
                     // put the contents of this citation in a footnote.
-                    start += `
+
+                    if (markName && formattedText) {
+                        // Create Zotero reference mark for footnote citation
+                        start += `
+                    <text:note text:id="ftn${this.fnAlikeCounter++}" text:note-class="footnote">
+                        <text:note-citation>${this.fnAlikeCounter}</text:note-citation>
+                        <text:note-body>
+                            <text:p text:style-name="Footnote">
+                                <text:reference-mark-start text:name="${markName}"/>`
+                        content = formattedText
+                        end =
+                            `<text:reference-mark-end text:name="${markName}"/></text:p>
+                            </text:note-body>
+                    </text:note>` + end
+                    } else {
+                        // Fallback to non-Zotero format
+                        start += `
                     <text:note text:id="ftn${this.fnAlikeCounter++}" text:note-class="footnote">
                         <text:note-citation>${this.fnAlikeCounter}</text:note-citation>
                         <text:note-body>`
-                    end =
-                        `
+                        end =
+                            `
                         </text:note-body>
                     </text:note>` + end
-                    options = Object.assign({}, options)
-                    options.section = "Footnote"
-                    content += this.transformRichtext(
-                        {type: "paragraph", content: cit.content},
-                        options
-                    )
+                        options = Object.assign({}, options)
+                        options.section = "Footnote"
+                        content += this.transformRichtext(
+                            {type: "paragraph", content: cit.content},
+                            options
+                        )
+                    }
                 } else {
-                    cit.content.forEach(citContent => {
-                        content += this.transformRichtext(citContent, options)
-                    })
+                    // For in-text citations, create Zotero reference mark
+                    if (markName && formattedText) {
+                        start += `<text:reference-mark-start text:name="${markName}"/>`
+                        content = formattedText
+                        end =
+                            `<text:reference-mark-end text:name="${markName}"/>` +
+                            end
+                    } else {
+                        // Fallback to formatted text only
+                        cit.content.forEach(citContent => {
+                            content += this.transformRichtext(
+                                citContent,
+                                options
+                            )
+                        })
+                    }
                 }
 
                 break
@@ -665,10 +783,17 @@ export class ODTExporterRichtext {
                 content += "<text:line-break/>"
                 break
             // CSL bib entries
-            case "cslbib":
+            case "cslbib": {
                 options = Object.assign({}, options)
                 options.section = "Bibliography_20_1"
+                // Ensure Sect1 section style exists
+                this.styles.checkSectionStyle("Sect1")
+                // Generate a unique bibliography ID for this document
+                const bibId = generateZoteroId()
+                start += `<text:section text:style-name="Sect1" text:name="ZOTERO_BIBL CSL_BIBLIOGRAPHY ${bibId}">`
+                end = "</text:section>" + end
                 break
+            }
             case "cslblock":
                 end = "<text:line-break/>" + end
                 break

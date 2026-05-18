@@ -1,9 +1,10 @@
 import {Dialog, activateWait, addAlert, deactivateWait} from "../../common"
 import {importBibFileTemplate} from "./templates"
-/** First step of the BibTeX file import. Creates a dialog box to specify upload file.
+/** First step of the bibliography file import. Creates a dialog box to specify upload file.
+ * Supports multiple formats: BibTeX/BibLaTeX, CSL-JSON, RIS, EndNote, Citavi, NBIB, ODT/DOCX citations.
  */
 
-export class BibLatexFileImportDialog {
+export class BibliographyFileImportDialog {
     constructor(bibDB, addToListCall, app) {
         this.bibDB = bibDB
         this.addToListCall = addToListCall
@@ -47,15 +48,17 @@ export class BibLatexFileImportDialog {
                     activateWait()
                     const reader = new window.FileReader()
                     reader.onload = event => {
-                        import("./biblatex").then(({BibLatexImporter}) => {
-                            const importer = new BibLatexImporter(
-                                event.target.result,
-                                this.bibDB,
-                                this.addToListCall,
-                                () => deactivateWait()
-                            )
-                            importer.init()
-                        })
+                        import("./bibliography_import").then(
+                            ({BibliographyImporter}) => {
+                                const importer = new BibliographyImporter(
+                                    event.target.result,
+                                    this.bibDB,
+                                    this.addToListCall,
+                                    () => deactivateWait()
+                                )
+                                importer.init()
+                            }
+                        )
                     }
                     reader.readAsText(bibFile)
                     dialog.close()
@@ -67,9 +70,9 @@ export class BibLatexFileImportDialog {
         ]
         const dialog = new Dialog({
             id: "importbibtex",
-            title: gettext("Import a BibTex library"),
+            title: gettext("Import a bibliography"),
             body: importBibFileTemplate(),
-            height: 180,
+            height: 200,
             buttons
         })
         dialog.open()

@@ -7,9 +7,11 @@ export {
     addAlert,
     langName,
     localizeDate,
+    enableDatePicker,
     noSpaceTmp,
     escapeText,
     unescapeText,
+    infoTooltip,
     cancelPromise,
     findTarget,
     whenReady,
@@ -24,7 +26,6 @@ export {isActivationEvent} from "./events"
 export {getFocusIndex, setFocusIndex} from "./focus"
 
 export {
-    jsonPost,
     get,
     getJson,
     post,
@@ -54,3 +55,7 @@ export {
     longFilePath,
     NewFolderDialog
 } from "./file"
+export {
+    initSettings,
+    getSettings
+} from "./settings"

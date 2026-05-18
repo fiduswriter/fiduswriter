@@ -10,7 +10,7 @@ import {
     randomTableId
 } from "../../schema/common"
 import {CATS} from "../../schema/i18n"
-import {LinkDialog} from "../dialogs"
+import {CitationDialog, LinkDialog} from "../dialogs"
 
 const key = new PluginKey("links")
 
@@ -84,6 +84,30 @@ export const getInternalTargets = (state, language, editor) => {
             })
             return true
         }
+
+        if (
+            node.type.name === "code_block" &&
+            node.attrs.category &&
+            node.attrs.id
+        ) {
+            if (!categories[node.attrs.category]) {
+                categories[node.attrs.category] = 0
+            }
+            categories[node.attrs.category]++
+
+            const categoryLabel =
+                CATS[node.attrs.category]?.[language] || node.attrs.category
+            const text = node.attrs.title
+                ? `${categoryLabel} ${categories[node.attrs.category]}: ${node.attrs.title}`
+                : `${categoryLabel} ${categories[node.attrs.category]}`
+
+            internalTargets.push({
+                id: node.attrs.id,
+                text: editor === "main" ? text : `${text}A`
+            })
+            return true
+        }
+
         if (node.type.name === "text") {
             const anchor = node.marks.find(mark => mark.type.name === "anchor")
             if (anchor) {
@@ -100,6 +124,11 @@ export const getInternalTargets = (state, language, editor) => {
 }
 
 export const linksPlugin = options => {
+    // Holds the action functions for every visible <li> in the current dropup,
+    // ordered exactly as they appear in the DOM.  Populated by createDropUp()
+    // and consumed by the handleKeyDown prop.
+    let currentDropUpActions = []
+
     function getUrl(state, oldState, oldUrl) {
         const id = state.selection.$head.parent.attrs.id,
             mark = state.selection.$head
@@ -133,6 +162,14 @@ export const linksPlugin = options => {
     }
 
     function getCrossReference(state) {
+        // When inline_references is enabled the inline reference editor
+        // handles cross-references; don't show the links dropup for them.
+        if (
+            options.editor?.app?.config?.user?.preferences
+                ?.inline_references === true
+        ) {
+            return undefined
+        }
         return state.selection instanceof NodeSelection
             ? state.selection.node.type.name == "cross_reference"
                 ? state.selection.node
@@ -140,17 +177,29 @@ export const linksPlugin = options => {
             : undefined
     }
 
-    function getDecos(state) {
+    function getCitation(state) {
+        // Only surface a citation in the links dropup when inline_references
+        // is disabled (otherwise the inline reference editor handles it).
+        if (
+            options.editor?.app?.config?.user?.preferences
+                ?.inline_references === true
+        ) {
+            return undefined
+        }
+        return state.selection instanceof NodeSelection
+            ? state.selection.node.type.name === "citation"
+                ? state.selection.node
+                : undefined
+            : undefined
+    }
+
+    function getDecos(state, selectedIndex = -1) {
         const $head = state.selection.$head
         const currentMarks = [],
             linkMark = $head.marks().find(mark => mark.type.name === "link"),
             anchorMark = $head.marks().find(mark => mark.type.name === "anchor")
-        const crossRef =
-            state.selection instanceof NodeSelection
-                ? state.selection.node.type.name == "cross_reference"
-                    ? state.selection.node
-                    : undefined
-                : undefined
+        const crossRef = getCrossReference(state)
+        const citation = getCitation(state)
 
         if (linkMark) {
             currentMarks.push(linkMark)
@@ -161,14 +210,17 @@ export const linksPlugin = options => {
         if (crossRef) {
             currentMarks.push(crossRef)
         }
+        if (citation) {
+            currentMarks.push(citation)
+        }
         if (!currentMarks.length) {
             return DecorationSet.empty
         }
 
         let startPos = $head.start() // position of block start.
-        if (crossRef) {
-            // For cross ref , take the end pos of the node
-            startPos = state.selection.from + crossRef.nodeSize
+        if (crossRef || citation) {
+            // For inline nodes, place dropup after the node
+            startPos = state.selection.from + (crossRef || citation).nodeSize
         } else {
             let index = $head.index()
             while (
@@ -183,12 +235,26 @@ export const linksPlugin = options => {
                 startPos += $head.parent.child(i).nodeSize
             }
         }
-        const dom = createDropUp(linkMark, anchorMark, crossRef, $head),
+        const dom = createDropUp(
+                linkMark,
+                anchorMark,
+                crossRef,
+                $head,
+                citation,
+                selectedIndex
+            ),
             deco = Decoration.widget(startPos, dom)
         return DecorationSet.create(state.doc, [deco])
     }
 
-    function createDropUp(linkMark, anchorMark, crossRef, $head) {
+    function createDropUp(
+        linkMark,
+        anchorMark,
+        crossRef,
+        $head,
+        citation = null,
+        selectedIndex = -1
+    ) {
         const dropUp = document.createElement("span"),
             editor = options.editor,
             writeAccess =
@@ -215,6 +281,10 @@ export const linksPlugin = options => {
         if (anchorMark) {
             anchorHref =
                 window.location.href.split("#")[0] + "#" + anchorMark.attrs.id
+            requiredPx += 92
+        }
+
+        if (citation) {
             requiredPx += 92
         }
 
@@ -302,6 +372,29 @@ ${
                     `
         : ""
 }
+${
+    citation
+        ? `<div class="drop-up-head" ${editAccess ? "" : 'style="border-radius:6px;"'}>
+                        <div class="link-title">${gettext("Citation")}</div>
+                        <div class="link-href">
+                        <span>${citation.attrs.format}</span>
+                        </div>
+                    </div>
+                        ${
+                            editAccess
+                                ? `<ul class="drop-up-options">
+                            <li class="edit-citation" title="${gettext("Edit citation")}">
+                                ${gettext("Edit")}
+                            </li>
+                            <li class="remove-citation" title="${gettext("Remove citation")}">
+                                ${gettext("Remove")}
+                            </li>
+                            </ul>`
+                                : ""
+                        }
+                    `
+        : ""
+}
             </div>`
 
         if (linkType === "internal") {
@@ -313,83 +406,77 @@ ${
             })
         }
 
-        const copyLinkHref = dropUp.querySelector(".copy-link")
-        if (copyLinkHref) {
-            copyLinkHref.addEventListener("mousedown", event => {
+        // Rebuild the actions array so handleKeyDown always has the current
+        // set of handlers in the same order the <li> items appear in the DOM.
+        currentDropUpActions = []
+        const setupAction = (selector, action) => {
+            const el = dropUp.querySelector(selector)
+            if (!el) {
+                return
+            }
+            currentDropUpActions.push(action)
+            el.addEventListener("mousedown", event => {
                 event.preventDefault()
                 event.stopImmediatePropagation()
-                copyLink(linkHref)
-            })
-        }
-        const copyAnchorHref = dropUp.querySelector(".copy-anchor")
-        if (copyAnchorHref) {
-            copyAnchorHref.addEventListener("mousedown", event => {
-                event.preventDefault()
-                event.stopImmediatePropagation()
-                copyLink(anchorHref)
-            })
-        }
-
-        const editLink = dropUp.querySelector(".edit-link")
-        if (editLink) {
-            editLink.addEventListener("mousedown", event => {
-                event.preventDefault()
-                event.stopImmediatePropagation()
-                const dialog = new LinkDialog(editor)
-                dialog.init()
+                action()
             })
         }
 
-        const editCrossRef = dropUp.querySelector(".edit-crossRef")
-        if (editCrossRef) {
-            editCrossRef.addEventListener("mousedown", event => {
-                event.preventDefault()
-                event.stopImmediatePropagation()
-                const dialog = new LinkDialog(editor)
-                dialog.init()
-            })
-        }
-
-        const removeLink = dropUp.querySelector(".remove-link")
-        if (removeLink) {
-            removeLink.addEventListener("mousedown", event => {
-                event.preventDefault()
-                event.stopImmediatePropagation()
-                editor.view.dispatch(
-                    editor.view.state.tr.removeMark(
-                        $head.start(),
-                        $head.end(),
-                        linkMark
-                    )
+        // Actions must be registered in the same order they appear in the HTML
+        // template so that selectedIndex maps to the correct <li> element.
+        setupAction(".copy-link", () => copyLink(linkHref))
+        setupAction(".edit-link", () => {
+            const dialog = new LinkDialog(editor)
+            dialog.init()
+        })
+        setupAction(".remove-link", () => {
+            editor.view.dispatch(
+                editor.view.state.tr.removeMark(
+                    $head.start(),
+                    $head.end(),
+                    linkMark
                 )
-            })
+            )
+        })
+        setupAction(".copy-anchor", () => copyLink(anchorHref))
+        setupAction(".remove-anchor", () => {
+            editor.view.dispatch(
+                editor.view.state.tr.removeMark(
+                    $head.start(),
+                    $head.end(),
+                    anchorMark
+                )
+            )
+        })
+        setupAction(".edit-crossRef", () => {
+            const dialog = new LinkDialog(editor)
+            dialog.init()
+        })
+        setupAction(".remove-crossRef", () => {
+            editor.view.dispatch(
+                editor.view.state.tr.delete($head.pos - 1, $head.pos)
+            )
+        })
+        setupAction(".edit-citation", () => {
+            const dialog = new CitationDialog(editor)
+            dialog.init()
+        })
+        setupAction(".remove-citation", () => {
+            editor.view.dispatch(
+                editor.view.state.tr.delete($head.pos - 1, $head.pos)
+            )
+        })
+
+        // Apply keyboard-focus highlight to the currently selected item.
+        if (selectedIndex >= 0 && selectedIndex < currentDropUpActions.length) {
+            const items = Array.from(
+                dropUp.querySelectorAll(".drop-up-options li")
+            )
+            if (items[selectedIndex]) {
+                items[selectedIndex].classList.add("focused")
+            }
         }
 
-        const removeAnchor = dropUp.querySelector(".remove-anchor")
-        if (removeAnchor) {
-            removeAnchor.addEventListener("mousedown", event => {
-                event.preventDefault()
-                event.stopImmediatePropagation()
-                editor.view.dispatch(
-                    editor.view.state.tr.removeMark(
-                        $head.start(),
-                        $head.end(),
-                        anchorMark
-                    )
-                )
-            })
-        }
-
-        const removeCrossRef = dropUp.querySelector(".remove-crossRef")
-        if (removeCrossRef) {
-            removeCrossRef.addEventListener("mousedown", event => {
-                event.preventDefault()
-                event.stopImmediatePropagation()
-                editor.view.dispatch(
-                    editor.view.state.tr.delete($head.pos - 1, $head.pos)
-                )
-            })
-        }
         return dropUp
     }
 
@@ -400,27 +487,47 @@ ${
                 return {
                     url: window.location.href,
                     decos: DecorationSet.empty,
-                    linkMark: false
+                    linkMark: false,
+                    citation: undefined,
+                    selectedIndex: -1
                 }
             },
             apply(tr, _prev, oldState, state) {
-                let {url, decos, linkMark, anchorMark, crossReference} =
-                    this.getState(oldState)
+                let {
+                    url,
+                    decos,
+                    linkMark,
+                    anchorMark,
+                    crossReference,
+                    citation,
+                    selectedIndex
+                } = this.getState(oldState)
                 url = getUrl(state, oldState, url)
                 const newLinkMark = getLinkMark(state)
                 const newAnchorMark = getAnchorMark(state)
                 const newCrossReference = getCrossReference(state)
-                if (
+                const newCitation = getCitation(state)
+                const meta = tr.getMeta(key)
+                if (meta?.action === "navigate") {
+                    // Keyboard navigation: only selectedIndex changes; rebuild
+                    // the decoration so the focused class is applied correctly.
+                    selectedIndex = meta.index
+                    decos = getDecos(state, selectedIndex)
+                } else if (
                     newLinkMark === linkMark &&
                     newAnchorMark === anchorMark &&
-                    newCrossReference === crossReference
+                    newCrossReference === crossReference &&
+                    newCitation === citation
                 ) {
                     decos = decos.map(tr.mapping, tr.doc)
                 } else {
-                    decos = getDecos(state)
+                    // The cursor moved to a different mark — reset selection.
+                    selectedIndex = -1
+                    decos = getDecos(state, selectedIndex)
                     linkMark = newLinkMark
                     anchorMark = newAnchorMark
                     crossReference = newCrossReference
+                    citation = newCitation
                 }
                 if (!tr.getMeta("remote")) {
                     // We look for changes to figures or headings.
@@ -493,7 +600,9 @@ ${
                     decos,
                     linkMark,
                     anchorMark,
-                    crossReference
+                    crossReference,
+                    citation,
+                    selectedIndex
                 }
             }
         },
@@ -652,6 +761,65 @@ ${
                     const {url} = key.getState(view.state)
                     window.history.replaceState("", "", url)
                 }
+            },
+            handleKeyDown(view, event) {
+                const pluginState = key.getState(view.state)
+                if (!pluginState) {
+                    return false
+                }
+                const {
+                    linkMark,
+                    anchorMark,
+                    crossReference,
+                    citation,
+                    selectedIndex
+                } = pluginState
+                // Only intercept arrow/enter keys when a dropup is visible.
+                if (!linkMark && !anchorMark && !crossReference && !citation) {
+                    return false
+                }
+                const totalItems = currentDropUpActions.length
+                if (totalItems === 0) {
+                    return false
+                }
+
+                if (event.key === "ArrowDown") {
+                    event.preventDefault()
+                    const newIndex =
+                        selectedIndex < totalItems - 1 ? selectedIndex + 1 : 0
+                    view.dispatch(
+                        view.state.tr.setMeta(key, {
+                            action: "navigate",
+                            index: newIndex
+                        })
+                    )
+                    return true
+                }
+
+                if (event.key === "ArrowUp") {
+                    event.preventDefault()
+                    const newIndex =
+                        selectedIndex <= 0 ? totalItems - 1 : selectedIndex - 1
+                    view.dispatch(
+                        view.state.tr.setMeta(key, {
+                            action: "navigate",
+                            index: newIndex
+                        })
+                    )
+                    return true
+                }
+
+                if (
+                    event.key === "Enter" &&
+                    selectedIndex >= 0 &&
+                    selectedIndex < totalItems
+                ) {
+                    event.preventDefault()
+                    currentDropUpActions[selectedIndex]()
+                    return true
+                }
+
+                return false
             },
             decorations(state) {
                 const {decos} = this.getState(state)

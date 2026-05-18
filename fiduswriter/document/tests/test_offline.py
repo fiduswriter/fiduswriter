@@ -809,14 +809,20 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         # Load the documents overview page
         self.driver.get(self.live_server_url)
 
-        # Go offline
+        # Ensure overview + doc list is actually rendered once while online
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "fw-contents"))
         )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.XPATH, f"//a[@href='/document/{self.doc.id}']")
+            )
+        )
+
+        # Now go offline
         self.driver.execute_script("window.theApp.ws.goOffline()")
 
-        # Click the documents overview page button to see
-        # if it's loaded from indexed DB
+        # Click the documents overview page button to see if it's loaded from indexed DB
         doc_overview_menu = self.driver.find_element(
             By.XPATH, "//a[contains(@title,'edit documents')]"
         )
@@ -826,14 +832,18 @@ class FunctionalOfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "fw-contents"))
         )
-        doc_row = self.driver.find_element(
-            By.XPATH, f"//a[@href='/document/{self.doc.id}']"
+        doc_row = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.XPATH, f"//a[@href='/document/{self.doc.id}']")
+            )
         )
-        self.assertEqual(doc_row.is_displayed(), True)
+        self.assertTrue(doc_row.is_displayed())
 
         # Check that the alert regarding offline is shown.
-        alert_element = self.driver.find_element(By.CLASS_NAME, "alerts-info")
-        self.assertEqual(alert_element.is_displayed(), True)
+        alert_element = WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located((By.CLASS_NAME, "alerts-info"))
+        )
+        self.assertTrue(alert_element.is_displayed())
 
 
 class AccessRightsOfflineTests(EditorHelper, ChannelsLiveServerTestCase):

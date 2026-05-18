@@ -23,6 +23,12 @@ CONTACT_EMAIL = "mail@email.com"
 # Interval between document saves
 DOC_SAVE_INTERVAL = 30
 
+# EDITOR_SAVE_MODE controls how the editor persists document changes.
+#   "collaborative" - WebSocket-based real-time collaboration (default).
+#   "direct"        - Periodic REST saves without real-time collaboration.
+#   "external"      - No built-in saving; external plugins handle persistence.
+EDITOR_SAVE_MODE = "collaborative"
+
 ADMINS = (("Your Name", "your_email@example.com"),)
 
 MANAGERS = ADMINS
@@ -81,7 +87,7 @@ TIME_ZONE = "UTC"
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
 
 SITE_ID = 1
 
@@ -154,12 +160,19 @@ SECRET_KEY = "2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4"
 BASE_MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "base.middleware.JsonToPostMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",  # Two-factor authentication (can be disabled via REMOVED_APPS)
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "user.middleware.UserLanguageMiddleware",
+]
+
+# Axes middleware (added conditionally if axes is enabled)
+AXES_BASE_MIDDLEWARE = [
+    "axes.middleware.AxesMiddleware",  # django-axes for brute-force protection
 ]
 
 MIDDLEWARE = []
@@ -206,10 +219,12 @@ BASE_INSTALLED_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.admin",
     "django.contrib.admindocs",
     "django.contrib.flatpages",
     "channels",
+    "axes",  # django-axes for brute-force protection (can be disabled via REMOVED_APPS)
+    "django_otp",  # Two-factor authentication (can be disabled via REMOVED_APPS)
+    "django_otp.plugins.otp_totp",
     "django_js_error_hook",
     "loginas",
     "fixturemedia",
@@ -234,12 +249,22 @@ INSTALLED_APPS = []
 REMOVED_APPS = []
 
 
-AUTHENTICATION_BACKENDS = (
+# Base authentication backends (axes backend will be added conditionally)
+BASE_AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
     # `allauth` specific authentication methods, such as login by e-mail
     "allauth.account.auth_backends.AuthenticationBackend",
-)
+]
+
+# Axes authentication backend (added conditionally if axes is enabled)
+AXES_AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend should be the first backend in the tuple
+    "axes.backends.AxesStandaloneBackend",
+]
+
+# This will be overridden after configuration.py is loaded to conditionally include axes
+AUTHENTICATION_BACKENDS = tuple(BASE_AUTHENTICATION_BACKENDS)
 
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 TESTING = False  # Overriden by test runner.
@@ -252,13 +277,26 @@ def gettext(s):
 
 
 LANGUAGES = (
-    ("en", gettext("English")),
+    ("ar", gettext("Arabic")),
     ("bg", gettext("Bulgarian")),
+    ("cs", gettext("Czech")),
+    ("da", gettext("Danish")),
     ("de", gettext("German")),
+    ("en", gettext("English")),
+    ("es", gettext("Spanish")),
     ("fr", gettext("French")),
     ("it", gettext("Italian")),
-    ("es", gettext("Spanish")),
+    ("ja", gettext("Japanese")),
+    ("ko", gettext("Korean")),
+    ("nb", gettext("Norwegian Bokmål")),
+    ("nl", gettext("Dutch")),
+    ("pl", gettext("Polish")),
     ("pt-br", gettext("Portuguese (Brazil)")),
+    ("pt-pt", gettext("Portuguese (Portugal)")),
+    ("ru", gettext("Russian")),
+    ("sv", gettext("Swedish")),
+    ("tr", gettext("Turkish")),
+    ("zh-hans", gettext("Chinese (Simplified)")),
 )
 
 LOGIN_REDIRECT_URL = "/"
@@ -271,16 +309,38 @@ def can_login_as(request, target_user):
 
 CAN_LOGIN_AS = can_login_as
 
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 
 # allow login either with email or username
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_LOGIN_METHODS = {"email", "username"}
 ACCOUNT_ADAPTER = "user.adapter.AccountAdapter"
 
 AUTH_PROFILE_MODULE = "account.Profile"
 AUTH_USER_MODEL = "user.User"
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 12,  # Recommended length
+        },
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
+
+# Password reset timeout in seconds (24 hours for security)
+# Django default is 3 days (259200 seconds)
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours
 
 LOGGING = {
     "version": 1,
@@ -327,6 +387,16 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
+        "axes": {
+            "handlers": ["null"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+        "axes.watch_login": {
+            "handlers": ["null"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
     },
 }
 
@@ -346,9 +416,76 @@ ADMIN_SITE_TITLE = gettext("Fidus Writer Admin")
 ADMIN_SITE_HEADER = gettext("Fidus Writer Administration Site")
 ADMIN_INDEX_TITLE = gettext("Welcome to the Fidus Writer Administration Site")
 
-# The below allow login via JavaScript
+# The below allow login via JavaScript which is required by Fidus Writer
 SESSION_COOKIE_HTTPONLY = False
 CSRF_COOKIE_HTTPONLY = False
+
+# Security settings for session cookies (GDPR compliance)
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SAMESITE = "Lax"  # Protects against CSRF
+SESSION_COOKIE_AGE = 1209600  # 2 weeks (default)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = False
+
+# Security settings for CSRF cookies (GDPR compliance)
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SAMESITE = "Lax"  # Protects against CSRF
+
+# django-axes configuration for brute-force protection
+AXES_FAILURE_LIMIT = 5  # Number of failed login attempts before lockout
+AXES_COOLOFF_TIME = 1  # Lockout duration in hours
+AXES_RESET_ON_SUCCESS = True  # Reset failed login count after successful login
+AXES_LOCKOUT_PARAMETERS = [
+    "username",
+    "user_agent",
+    "ip_address",
+]  # Track both username and IP
+AXES_ENABLE_ACCESS_FAILURE_LOG = True  # Log failed login attempts
+AXES_ONLY_ADMIN_SITE = False  # Protect all login forms, not just admin
+AXES_VERBOSE = (
+    False  # Disable verbose logging by default (reduce console output)
+)
+AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = (
+    True  # Extend lockout on continued attempts
+)
+AXES_LOCKOUT_TEMPLATE = None  # Use default lockout message
+AXES_HANDLER = (
+    "axes.handlers.database.AxesDatabaseHandler"  # Store attempts in database
+)
+AXES_IPWARE_META_PRECEDENCE_ORDER = [
+    "HTTP_X_FORWARDED_FOR",
+    "REMOTE_ADDR",
+]  # For proxy/load balancer support
+
+# To disable axes entirely (e.g., for local development or testing),
+# add 'axes' to REMOVED_APPS in your configuration.py:
+# REMOVED_APPS = ['axes']
+
+# Two-factor authentication (OTP) configuration
+OTP_TOTP_ISSUER = "Fidus Writer"  # The issuer name for TOTP devices
+
+# To disable OTP entirely (e.g., for local development or testing),
+# add 'django_otp' to REMOVED_APPS in your configuration.py:
+# REMOVED_APPS = ['django_otp']
+
+# GDPR Compliance Settings
+# Data retention and privacy settings
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000  # Already set above, kept for reference
+
+# Password policy for GDPR compliance (already set above, kept for reference)
+# AUTH_PASSWORD_VALIDATORS is already configured with strong requirements
+
+# Additional GDPR-related settings
+# Admins should configure these appropriately for their jurisdiction:
+# - CONTACT_EMAIL: Already set for GDPR contact requirements
+# - Privacy policy and terms should be added via FOOTER_LINKS or flatpages
+# - Data export functionality should be implemented for GDPR subject access requests
+# - Data deletion functionality should respect user privacy rights
+
+# Security headers (can be overridden in configuration.py for production)
+SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
+X_FRAME_OPTIONS = "DENY"  # Prevent clickjacking
 
 # To make npm-mjs enable the webpack offline plugin
 RSPACK_CONFIG_TEMPLATE = os.path.join(
@@ -379,3 +516,9 @@ FOOTER_LINKS = []
 BRANDING_LOGO = False
 
 ASGI_APPLICATION = "base.routing.application"
+
+# E2EE_MODE controls whether end-to-end encrypted documents are allowed.
+# 'disabled'  - No E2EE support. All documents are unencrypted.
+# 'enabled'   - Both E2EE and non-encrypted documents are supported.
+# 'required'  - Only E2EE documents are allowed.
+E2EE_MODE = "disabled"  # Default: disabled for backward compatibility

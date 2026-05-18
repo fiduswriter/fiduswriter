@@ -1,39 +1,120 @@
 import autobahn
+import base64
 import uuid
 import atexit
 import logging
 import gc
 import asyncio
-from time import mktime, time
+import multiprocessing
 from copy import deepcopy
+from dataclasses import dataclass
 
 from asgiref.sync import sync_to_async
-from django.db.utils import DatabaseError
-from django.db.models import F, Q
 from django.conf import settings
-from django.db.utils import IntegrityError
 
 from base.helpers.ws import get_url_base
 from document.helpers.session_user_info import SessionUserInfo
 from document import prosemirror
-from document.helpers.serializers import PythonWithURLSerializer
-from base.base_consumer import BaseWebsocketConsumer
+from document.helpers import document_store
+
+from base.base_consumer import BaseWebsocketConsumer, GuestUser, TokenUser
 from document.models import (
     COMMENT_ONLY,
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
-    DocumentTemplate,
 )
-from usermedia.models import Image, DocumentImage, UserImage
+from document.helpers.token_access import get_token_access
 from user.helpers import Avatars
 
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class SessionParticipantSnapshot:
+    id: int
+    messages: dict
+
+
 class WebsocketConsumer(BaseWebsocketConsumer):
     sessions = dict()
+    runtime_sessions = dict()
+    snapshot_sessions = dict()
+    snapshot_manager = None
     history_length = 1000  # Only keep the last 1000 diffs
+
+    @classmethod
+    def get_session(cls, document_id):
+        return cls.runtime_sessions.get(document_id)
+
+    @classmethod
+    def set_session(cls, document_id, session):
+        cls.runtime_sessions[document_id] = session
+        cls.sync_session_snapshot(document_id)
+
+    @classmethod
+    def remove_session(cls, document_id):
+        cls.runtime_sessions.pop(document_id, None)
+        cls.snapshot_sessions.pop(document_id, None)
+        try:
+            cls.sessions.pop(document_id, None)
+        except (AttributeError, FileNotFoundError):
+            pass
+
+    @classmethod
+    def sync_session_snapshot(cls, document_id):
+        session = cls.get_session(document_id)
+        if not session:
+            cls.remove_session(document_id)
+            return
+        manager = getattr(cls.sessions, "_manager", None)
+        if not manager and not isinstance(cls.sessions, dict):
+            if cls.snapshot_manager is None:
+                cls.snapshot_manager = multiprocessing.Manager()
+            manager = cls.snapshot_manager
+        if manager:
+            snapshot = cls.snapshot_sessions.get(document_id)
+            if not snapshot:
+                snapshot = {"participants": manager.dict()}
+                cls.snapshot_sessions[document_id] = snapshot
+            participants = snapshot["participants"]
+            active_ids = set(session["participants"])
+            for session_id in list(participants.keys()):
+                if session_id not in active_ids:
+                    participants.pop(session_id, None)
+            for session_id, waiter in session["participants"].items():
+                if session_id not in participants:
+                    participants[session_id] = manager.Namespace()
+                participant = participants[session_id]
+                last_ten = manager.list()
+                for item in waiter.messages["last_ten"]:
+                    last_ten.append(deepcopy(item))
+                participant.id = waiter.id
+                participant.messages = manager.dict(
+                    {
+                        "server": waiter.messages["server"],
+                        "client": waiter.messages["client"],
+                        "last_ten": last_ten,
+                    }
+                )
+            cls.sessions[document_id] = snapshot
+            return
+        try:
+            cls.sessions[document_id] = {
+                "participants": {
+                    session_id: SessionParticipantSnapshot(
+                        id=waiter.id, messages=deepcopy(waiter.messages)
+                    )
+                    for session_id, waiter in session["participants"].items()
+                }
+            }
+        except (TypeError, FileNotFoundError):
+            pass
+
+    async def send_message(self, message):
+        await super().send_message(message)
+        if hasattr(self, "document_id"):
+            self.sync_session_snapshot(self.document_id)
 
     async def connect(self):
         self.document_id = int(
@@ -57,7 +138,6 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         # the right setting).
         if len(settings.PORTS) < 2:
             return False
-        # We compare the internal port
         actual_port = self.scope["server"][1]
         expected_conn = settings.PORTS[self.document_id % len(settings.PORTS)]
         expected_port = (
@@ -78,11 +158,35 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             return True
         return False
 
+    async def _resolve_guest_user(self, token_str):
+        """
+        Validate a share token and return a GuestUser if valid.
+        This overrides the base class method to provide document-specific token validation.
+        """
+        document, rights = await sync_to_async(get_token_access)(token_str)
+        if document and document.id == self.document_id:
+            return GuestUser(
+                id=str(token_str), token=str(token_str), token_rights=rights
+            )
+        return None
+
+    async def _resolve_token_user(self, user, token_str):
+        """
+        Validate a share token for a logged-in user and return a TokenUser if valid.
+        The user retains their real identity but also has token-based access rights.
+        """
+        document, rights = await sync_to_async(get_token_access)(token_str)
+        if document and document.id == self.document_id:
+            return TokenUser(
+                user=user, token=str(token_str), token_rights=rights
+            )
+        return None
+
     async def confirm_diff(self, rid):
         response = {"type": "confirm_diff", "rid": rid}
         await self.send_message(response)
 
-    async def subscribe(self, connection_count=0):
+    async def subscribe(self, connection_count=0, client_version=None):
         # Create a new instance
         self.user_info = SessionUserInfo(self.user)
 
@@ -93,57 +197,77 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.access_denied()
             return
 
-        if (
-            doc_db.id in WebsocketConsumer.sessions
-            and len(WebsocketConsumer.sessions[doc_db.id]["participants"]) > 0
-        ):
+        existing_session = WebsocketConsumer.get_session(doc_db.id)
+        if existing_session and len(existing_session["participants"]) > 0:
             logger.debug(
                 f"Action:Serving already opened document. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f" ParticipantID:{self.id}"
             )
-            self.session = WebsocketConsumer.sessions[doc_db.id]
+            self.session = existing_session
             self.id = max(self.session["participants"]) + 1
             self.session["participants"][self.id] = self
-            template = False
+            WebsocketConsumer.sync_session_snapshot(doc_db.id)
+            if isinstance(self.user, GuestUser):
+                self.user.readable_name = f"Guest {self.id}"
         else:
             logger.debug(
                 f"Action:Opening document from DB. "
                 f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
+                f" ParticipantID:{self.id}"
             )
             self.id = 0
-            if "type" not in doc_db.content:
-                doc_db.content = deepcopy(doc_db.template.content)
-                if "type" not in doc_db.content:
-                    doc_db.content["type"] = "doc"
-                if "content" not in doc_db.content:
-                    doc_db.content["content"] = [{type: "title"}]
-                await doc_db.asave()
-            node = prosemirror.from_json(doc_db.content)
-            self.session = {
-                "doc": doc_db,
-                "node": node,
-                "node_updates": False,
-                "participants": {0: self},
-                "last_saved_version": doc_db.version,
-            }
-            WebsocketConsumer.sessions[doc_db.id] = self.session
-            if self.user_info.access_rights == "write":
-                template = True
+            # Initialize document content from template if empty.
+            await document_store.initialize_document_content(doc_db)
+            if doc_db.e2ee:
+                # For E2EE documents, we cannot create a prosemirror
+                # node from the content. The client will decrypt and
+                # handle the content locally.
+                self.session = {
+                    "doc": doc_db,
+                    "node": None,
+                    "node_updates": False,
+                    "participants": {0: self},
+                    "last_saved_version": doc_db.version,
+                }
             else:
-                template = False
+                node = prosemirror.from_json(doc_db.content)
+                self.session = {
+                    "doc": doc_db,
+                    "node": node,
+                    "node_updates": False,
+                    "participants": {0: self},
+                    "last_saved_version": doc_db.version,
+                }
+            WebsocketConsumer.set_session(doc_db.id, self.session)
+            if isinstance(self.user, GuestUser):
+                self.user.readable_name = f"Guest {self.id}"
         logger.debug(
             f"Action:Participant ID Assigned. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}"
         )
         await self.send_message({"type": "subscribed"})
         if connection_count < 1:
-            await self.send_styles()
-            await self.send_document(False, template)
-        if connection_count >= 1:
-            # If the user is reconnecting pass along access_rights to
-            # front end to compare it with previous rights.
+            # Send session_id so the client knows its participant ID
+            session_info_msg = {
+                "type": "session_info",
+                "session_id": self.id,
+                "access_right": self.user_info.access_rights,
+            }
+            if doc_db.e2ee:
+
+                session_info_msg["e2ee"] = True
+                session_info_msg["e2ee_salt"] = (
+                    base64.b64encode(doc_db.e2ee_salt).decode("ascii")
+                    if doc_db.e2ee_salt
+                    else None
+                )
+                session_info_msg["e2ee_iterations"] = doc_db.e2ee_iterations
+            await self.send_message(session_info_msg)
+            # Reconcile version: send missing diffs if client is behind
+            await self.check_version(client_version)
+        else:
+            # Reconnecting user — send access rights for comparison
             await self.send_message(
                 {
                     "type": "access_right",
@@ -153,184 +277,77 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if await self.can_communicate():
             await self.handle_participant_update()
 
-    async def send_styles(self):
-        doc_db = self.session["doc"]
-        response = dict()
-        response["type"] = "styles"
-
-        # Create serializer and get data
-        serializer = PythonWithURLSerializer()
-
-        # These operations could be expensive - run them in parallel
-        export_temps_task = sync_to_async(serializer.serialize)(
-            doc_db.template.exporttemplate_set.all(),
-            fields=["file_type", "template_file", "title"],
-        )
-
-        document_styles_task = sync_to_async(serializer.serialize)(
-            doc_db.template.documentstyle_set.all(),
-            use_natural_foreign_keys=True,
-            fields=["title", "slug", "contents", "documentstylefile_set"],
-        )
-
-        # Run queries in parallel using asyncio.gather
-        export_temps, document_styles = await asyncio.gather(
-            export_temps_task, document_styles_task
-        )
-
-        # Get document templates
-        document_templates = {}
-        query = DocumentTemplate.objects.filter(
-            Q(user=self.user) | Q(user=None)
-        ).order_by(F("user").desc(nulls_first=True))
-
-        # Use async for to properly consume the async iterator
-        async for obj in query.aiterator():
-            document_templates[obj.import_id] = {
-                "title": obj.title,
-                "id": obj.id,
-            }
-
-        response["styles"] = {
-            "export_templates": [obj["fields"] for obj in export_temps],
-            "document_styles": [obj["fields"] for obj in document_styles],
-            "document_templates": document_templates,
-        }
-        await self.send_message(response)
-
     async def unfixable(self):
-        await self.send_document()
+        await WebsocketConsumer.save_document_async(self.user_info.document_id)
+        await self.send_message({"type": "refetch_doc"})
 
-    async def send_document(self, messages=False, template=False):
-        response = dict()
-        response["type"] = "doc_data"
-        doc_owner = self.session["doc"].owner
-        avatars = Avatars()
+    async def check_version(self, client_version, offline=False):
+        """Reconcile the client's document version with the server's.
 
-        # Use async avatar URL generation
-        owner_avatar = await avatars.get_url_async(doc_owner)
+        Called on subscribe (with the version from the subscribe message) and
+        when the client sends a check_version message. If the client is
+        behind, sends the missing diffs. If too many diffs are missing,
+        asks the client to re-fetch via REST.
+        """
+        server_version = self.session["doc"].version
 
-        response["doc_info"] = {
-            "id": self.session["doc"].id,
-            "is_owner": self.user_info.is_owner,
-            "access_rights": self.user_info.access_rights,
-            "path": self.user_info.path,
-            "owner": {
-                "id": doc_owner.id,
-                "name": doc_owner.readable_name,
-                "username": doc_owner.username,
-                "avatar": owner_avatar,
-                "contacts": [],
-            },
-        }
-        await sync_to_async(WebsocketConsumer.serialize_content)(self.session)
-        response["doc"] = {
-            "v": self.session["doc"].version,
-            "content": self.session["doc"].content,
-            "bibliography": self.session["doc"].bibliography,
-            "images": {},
-        }
-        if template:
-            response["doc"]["template"] = {
-                "id": self.session["doc"].template.id,
-                "content": self.session["doc"].template.content,
-            }
-        if messages:
-            response["m"] = messages
-        response["time"] = int(time()) * 1000
-
-        # Get document images
-        doc_id = self.session["doc"].id
-        async for dimage in (
-            DocumentImage.objects.filter(document_id=doc_id)
-            .select_related("image")
-            .only(
-                "id",
-                "title",
-                "copyright",
-                "image__id",
-                "image__image",
-                "image__file_type",
-                "image__added",
-                "image__checksum",
-                "image__thumbnail",
-                "image__height",
-                "image__width",
-            )
-            .aiterator()
-        ):
-            image = dimage.image
-            field_obj = {
-                "id": image.id,
-                "title": dimage.title,
-                "copyright": dimage.copyright,
-                "image": image.image.url,
-                "file_type": image.file_type,
-                "added": mktime(image.added.timetuple()) * 1000,
-                "checksum": image.checksum,
-                "cats": [],
-            }
-            if image.thumbnail:
-                field_obj["thumbnail"] = image.thumbnail.url
-                field_obj["height"] = image.height
-                field_obj["width"] = image.width
-            response["doc"]["images"][image.id] = field_obj
-
-        if self.user_info.access_rights == "read-without-comments":
-            response["doc"]["comments"] = []
-        elif self.user_info.access_rights in ["review", "review-tracked"]:
-            # Reviewer should only get his/her own comments
-            filtered_comments = {}
-            for key, value in list(self.session["doc"].comments.items()):
-                if value["user"] == self.user_info.user.id:
-                    filtered_comments[key] = value
-            response["doc"]["comments"] = filtered_comments
-        else:
-            response["doc"]["comments"] = self.session["doc"].comments
-
-        # Get contacts asynchronously
-        contacts = []
-        async for contact in (
-            doc_owner.contacts.all()
-            .only("id", "username", "first_name", "last_name")
-            .aiterator()
-        ):
-            contacts.append(contact)
-
-        # Get all avatars in parallel
-        contact_avatars = await asyncio.gather(
-            *[avatars.get_url_async(contact) for contact in contacts]
+        logger.debug(
+            f"Action:Reconcile version. URL:{self.endpoint} "
+            f"User:{self.user.id} ParticipantID:{self.id} "
+            f"Client version:{client_version} Server version:{server_version}"
         )
 
-        # Now add contacts with their avatars
-        for i, contact in enumerate(contacts):
-            contact_object = {
-                "id": contact.id,
-                "name": contact.readable_name,
-                "username": contact.get_username(),
-                "avatar": contact_avatars[i],
-                "type": "user",
-            }
-            response["doc_info"]["owner"]["contacts"].append(contact_object)
-
-        if self.user_info.is_owner:
-            invites = []
-            async for invite in doc_owner.invites_by.all().aiterator():
-                invites.append(invite)
-            for contact in invites:
-                contact_object = {
-                    "id": contact.id,
-                    "name": contact.username,
-                    "username": contact.username,
-                    "avatar": None,
-                    "type": "userinvite",
+        if client_version == server_version:
+            # Client is up to date — nothing to send
+            await self.send_message(
+                {
+                    "type": "confirm_version",
+                    "v": server_version,
                 }
-                response["doc_info"]["owner"]["contacts"].append(
-                    contact_object
-                )
+            )
+            return
 
-        response["doc_info"]["session_id"] = self.id
-        await self.send_message(response)
+        if client_version < server_version and not offline:
+            diffs_behind = server_version - client_version
+            if (
+                client_version + len(self.session["doc"].diffs)
+                >= server_version
+            ):
+                # We have enough diffs to catch the client up
+                logger.debug(
+                    f"Action:Sending {diffs_behind} diffs to catch client up. "
+                    f"URL:{self.endpoint} User:{self.user.id} "
+                    f"ParticipantID:{self.id}"
+                )
+                messages = self.session["doc"].diffs[-diffs_behind:]
+                for msg in messages:
+                    new_message = msg.copy()
+                    new_message["server_fix"] = True
+                    await self.send_message(new_message)
+                await self.send_message(
+                    {
+                        "type": "confirm_version",
+                        "v": server_version,
+                    }
+                )
+            else:
+                logger.debug(
+                    f"Action:Client too far behind ({diffs_behind} diffs, "
+                    f"only {len(self.session['doc'].diffs)} stored). "
+                    f"URL:{self.endpoint} User:{self.user.id} "
+                    f"ParticipantID:{self.id}"
+                )
+                # Too many diffs — client needs a full document reset
+                await self.unfixable()
+            return
+
+        # client_version > server_version should not happen
+        logger.debug(
+            f"Action:Client version ahead of server. "
+            f"URL:{self.endpoint} User:{self.user.id} "
+            f"ParticipantID:{self.id}"
+        )
+        await self.unfixable()
 
     async def reject_message(self, message):
         if message["type"] == "diff":
@@ -339,16 +356,14 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
 
     async def handle_message(self, message):
-        if self.user_info.document_id not in WebsocketConsumer.sessions:
+        if not WebsocketConsumer.get_session(self.user_info.document_id):
             logger.debug(
                 f"Action:Receiving message for closed document. "
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
             )
             return
-        if message["type"] == "get_document":
-            await self.send_document()
-        elif (
+        if (
             message["type"] == "participant_update"
             and await self.can_communicate()
         ):
@@ -356,13 +371,17 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         elif message["type"] == "chat" and await self.can_communicate():
             await self.handle_chat(message)
         elif message["type"] == "check_version":
-            await self.check_version(message)
+            await self.check_version(
+                message["v"], message.get("offline", False)
+            )
         elif message["type"] == "selection_change":
             await self.handle_selection_change(message)
         elif message["type"] == "diff" and await self.can_update_document():
             await self.handle_diff(message)
         elif message["type"] == "path_change":
             await self.handle_path_change(message)
+        elif message["type"] == "e2ee_snapshot":
+            await self.handle_e2ee_snapshot(message)
 
     async def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
@@ -375,43 +394,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 del self.session["doc"].bibliography[id]
 
     async def update_images(self, image_updates):
-        for iu in image_updates:
-            if "id" not in iu:
-                continue
-            id = iu["id"]
-            if iu["type"] == "update":
-                # Ensure that access rights exist
-                has_access = await UserImage.objects.filter(
-                    image__id=id, owner=self.user_info.user
-                ).aexists()
-
-                if not has_access:
-                    continue
-
-                doc_image = await DocumentImage.objects.filter(
-                    document_id=self.session["doc"].id, image_id=id
-                ).afirst()
-
-                if doc_image:
-                    doc_image.title = iu["image"]["title"]
-                    doc_image.copyright = iu["image"]["copyright"]
-                    await doc_image.asave()
-                else:
-                    await DocumentImage.objects.acreate(
-                        document_id=self.session["doc"].id,
-                        image_id=id,
-                        title=iu["image"]["title"],
-                        copyright=iu["image"]["copyright"],
-                    )
-            elif iu["type"] == "delete":
-                await DocumentImage.objects.filter(
-                    document_id=self.session["doc"].id, image_id=id
-                ).adelete()
-
-                async for image in Image.objects.filter(id=id).aiterator():
-                    can_delete = await sync_to_async(image.is_deletable)()
-                    if can_delete:
-                        await image.adelete()
+        await document_store.update_document_images(
+            self.session["doc"].id,
+            image_updates,
+            self.user_info.user,
+            doc_e2ee=self.session["doc"].e2ee,
+        )
 
     async def update_comments(self, comments_updates):
         comments_updates = deepcopy(comments_updates)
@@ -485,11 +473,16 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             "from": self.user_info.user.id,
             "type": "chat",
         }
+        # Pass through the e2ee flag for encrypted chat messages.
+        # The server does not read the message body — it just relays
+        # the encrypted blob to other clients.
+        if message.get("e2ee"):
+            chat["e2ee"] = True
         await WebsocketConsumer.send_updates(chat, self.user_info.document_id)
 
     async def handle_selection_change(self, message):
         if (
-            self.user_info.document_id in WebsocketConsumer.sessions
+            WebsocketConsumer.get_session(self.user_info.document_id)
             and message["v"] == self.session["doc"].version
         ):
             await WebsocketConsumer.send_updates(
@@ -501,14 +494,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     async def handle_path_change(self, message):
         if (
-            self.user_info.document_id in WebsocketConsumer.sessions
+            WebsocketConsumer.get_session(self.user_info.document_id)
             and self.user_info.path_object
         ):
-            self.user_info.path_object.path = message["path"]
-            await self.user_info.path_object.asave(
-                update_fields=[
-                    "path",
-                ]
+            await document_store.save_path_object(
+                self.user_info.path_object, message["path"]
             )
             await WebsocketConsumer.send_updates(
                 message,
@@ -542,6 +532,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             self.user_info.access_rights in COMMENT_ONLY
             and not self.only_comments(message)
         ):
+            # Note: For E2EE documents, the diff content is encrypted
+            # (has "ep" field instead of "ds"), so only_comments() will
+            # return True (no plaintext steps to check). Access rights
+            # enforcement for E2EE documents is handled client-side,
+            # since the server cannot read the encrypted diff content.
             logger.error(
                 f"Action:Received non-comment diff from comment-only "
                 f"collaborator.Discarding URL:{self.endpoint} "
@@ -549,49 +544,91 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
             return
         if pv == dv:
-            if "ds" in message:  # ds = document steps
-                updated_node = prosemirror.apply(
-                    message["ds"], self.session["node"]
+            if self.session["doc"].e2ee:
+                # For E2EE documents, we cannot apply diffs server-side.
+                # Instead, we relay the encrypted diff to other clients
+                # and store it for catch-up. The diff content is opaque
+                # to the server.
+                # Validate that the diff was encrypted with the current salt.
+                msg_salt = message.get("e2ee_salt")
+                if msg_salt is not None:
+                    try:
+                        decoded_salt = base64.b64decode(msg_salt)
+                    except Exception:
+                        await self.reject_message(message)
+                        return
+                    if decoded_salt != self.session["doc"].e2ee_salt:
+                        await self.reject_message(message)
+                        return
+                self.session["doc"].diffs.append(message)
+                self.session["doc"].diffs = self.session["doc"].diffs[
+                    -self.history_length :
+                ]
+                self.session["doc"].version += 1
+                # Check if we should request a snapshot from a client
+                if (
+                    self.session["doc"].version % settings.DOC_SAVE_INTERVAL
+                    == 0
+                ):
+                    await self.request_snapshot()
+                if "rid" in message:
+                    await self.confirm_diff(message["rid"])
+                await WebsocketConsumer.send_updates(
+                    message,
+                    self.user_info.document_id,
+                    self.id,
+                    self.user_info.user.id,
                 )
-                if updated_node:
-                    self.session["node"] = updated_node
-                    self.session["node_updates"] = True
-                else:
-                    await self.unfixable()
-                    patch_msg = {
-                        "type": "patch_error",
-                        "user_id": self.user.id,
-                    }
-                    await self.send_message(patch_msg)
-                    # Reset collaboration to avoid any data loss issues.
-                    await self.reset_collaboration(
-                        patch_msg, self.user_info.document_id, self.id
+            else:
+                # Original unencrypted diff handling
+                if "ds" in message:  # ds = document steps
+                    updated_node = prosemirror.apply(
+                        message["ds"], self.session["node"]
                     )
-                    return
-            self.session["doc"].diffs.append(message)
-            self.session["doc"].diffs = self.session["doc"].diffs[
-                -self.history_length :
-            ]
-            self.session["doc"].version += 1
-            if "ti" in message:  # ti = title
-                self.session["doc"].title = message["ti"][-255:]
-            if "cu" in message:  # cu = comment updates
-                await self.update_comments(message["cu"])
-            if "bu" in message:  # bu = bibliography updates
-                await self.update_bibliography(message["bu"])
-            if "iu" in message:  # iu = image updates
-                await self.update_images(message["iu"])
-            if self.session["doc"].version % settings.DOC_SAVE_INTERVAL == 0:
-                await WebsocketConsumer.save_document_async(
-                    self.user_info.document_id
+                    if updated_node:
+                        self.session["node"] = updated_node
+                        self.session["node_updates"] = True
+                    else:
+                        await self.unfixable()
+                        patch_msg = {
+                            "type": "patch_error",
+                            "user_id": self.user.id,
+                        }
+                        await self.send_message(patch_msg)
+                        # Reset collaboration to avoid any data loss issues.
+                        await self.reset_collaboration(
+                            patch_msg, self.user_info.document_id, self.id
+                        )
+                        return
+                self.session["doc"].diffs.append(message)
+                self.session["doc"].diffs = self.session["doc"].diffs[
+                    -self.history_length :
+                ]
+                self.session["doc"].version += 1
+                if "ti" in message:  # ti = title
+                    await document_store.save_document_title(
+                        self.session["doc"], message["ti"]
+                    )
+                if "cu" in message:  # cu = comment updates
+                    await self.update_comments(message["cu"])
+                if "bu" in message:  # bu = bibliography updates
+                    await self.update_bibliography(message["bu"])
+                if "iu" in message:  # iu = image updates
+                    await self.update_images(message["iu"])
+                if (
+                    self.session["doc"].version % settings.DOC_SAVE_INTERVAL
+                    == 0
+                ):
+                    await WebsocketConsumer.save_document_async(
+                        self.user_info.document_id
+                    )
+                await self.confirm_diff(message["rid"])
+                await WebsocketConsumer.send_updates(
+                    message,
+                    self.user_info.document_id,
+                    self.id,
+                    self.user_info.user.id,
                 )
-            await self.confirm_diff(message["rid"])
-            await WebsocketConsumer.send_updates(
-                message,
-                self.user_info.document_id,
-                self.id,
-                self.user_info.user.id,
-            )
         elif pv < dv:
             if pv + len(self.session["doc"].diffs) >= dv:
                 # We have enough diffs stored to fix it.
@@ -622,49 +659,106 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"URL:{self.endpoint} User:{self.user.id} "
                 f"ParticipantID:{self.id}"
             )
+            await self.unfixable()
+            return
 
-    async def check_version(self, message):
-        pv = message["v"]
-        dv = self.session["doc"].version
-        logger.debug(
-            f"Action:Checking version of document. URL:{self.endpoint} "
-            f"User:{self.user.id} ParticipantID:{self.id} "
-            f"Client document version:{pv} Server document version:{dv}"
+    async def handle_e2ee_snapshot(self, message):
+        """Handle a full encrypted snapshot from a client.
+
+        For E2EE documents, the server cannot process content, so clients
+        are responsible for saving encrypted snapshots periodically.
+        The server stores the encrypted content as opaque data.
+        """
+        doc = self.session["doc"]
+
+        # Verify sender has write access
+        if self.user_info.access_rights not in ["write"]:
+            return
+
+        # Validate salt for E2EE documents.
+        # All E2EE snapshots must include e2ee_salt so the server can
+        # verify they match the current key or detect a password change.
+        salt_changed = False
+        if doc.e2ee:
+            msg_salt = message.get("e2ee_salt")
+            if not msg_salt:
+                return
+            try:
+                decoded_salt = base64.b64decode(msg_salt)
+            except Exception:
+                return
+            if decoded_salt != doc.e2ee_salt:
+                salt_changed = True
+                doc.e2ee_salt = decoded_salt
+            if "e2ee_iterations" in message:
+                new_iterations = int(message["e2ee_iterations"])
+                if new_iterations != doc.e2ee_iterations:
+                    salt_changed = True
+                doc.e2ee_iterations = new_iterations
+
+        # Store the encrypted snapshot
+        doc.content = message["content"]  # Encrypted, opaque to server
+        doc.comments = message.get("comments", {})  # Encrypted
+        doc.bibliography = message.get("bibliography", {})  # Encrypted
+
+        # Store the encrypted title if provided (for display in overview).
+        # For E2EE documents the title field holds the encrypted ciphertext;
+        # the client decrypts it when the key is available.
+        if "title" in message:
+            doc.title = message["title"]
+
+        # Record the version this snapshot covers.
+        snapshot_v = message["v"]
+        doc.e2ee_snapshot_version = snapshot_v
+
+        if salt_changed:
+            # Old diffs are encrypted with the old key and useless.
+            # The snapshot becomes the new baseline.
+            doc.diffs = []
+
+        # Save to database. Force save because the encrypted content may
+        # have changed even if the version number hasn't (e.g. initial
+        # snapshot for a newly created E2EE document).
+        await WebsocketConsumer.save_document_async(
+            self.user_info.document_id, force=True
         )
-        if pv == dv:
-            response = {
-                "type": "confirm_version",
-                "v": pv,
-            }
-            await self.send_message(response)
-            return
-        elif pv > dv:
-            logger.debug(
-                f"Action:User is on a newer version of the document. "
-                f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
-            )
-            await self.unfixable()
-            return
-        elif pv + len(self.session["doc"].diffs) >= dv:
-            number_diffs = dv - pv
-            logger.debug(
-                f"Action:Resending document diffs. URL:{self.endpoint} "
-                f"User:{self.user.id} ParticipantID:{self.id}"
-                f"number of messages to be resent:{number_diffs}"
-            )
-            messages = self.session["doc"].diffs[-number_diffs:]
-            await self.send_document(messages)
-            return
+
+        if salt_changed:
+            # Force other clients to refetch so they prompt for the new
+            # password. This prevents outdated clients from sending
+            # diffs encrypted with the old key.
+            for participant in self.session["participants"].values():
+                if participant.id != self.id:
+                    await participant.send_message({"type": "refetch_doc"})
         else:
-            logger.debug(
-                f"Action:User is on a very old version of the document. "
-                f"URL:{self.endpoint} User:{self.user.id} "
-                f"ParticipantID:{self.id}"
+            # Notify other clients of the new snapshot version
+            await WebsocketConsumer.send_updates(
+                {
+                    "type": "e2ee_snapshot_received",
+                    "v": snapshot_v,
+                },
+                self.user_info.document_id,
+                self.id,
+                self.user_info.user.id,
             )
-            # Client has a version that is too old
-            await self.unfixable()
-            return
+
+    async def request_snapshot(self):
+        """Request a snapshot from a write-capable client.
+
+        For E2EE documents, the server cannot save document content
+        because it's encrypted. Instead, the server asks one of the
+        write-capable clients to send an encrypted snapshot.
+        """
+        participants = self.session["participants"]
+        for participant_id, participant in participants.items():
+            if participant.user_info.access_rights in ["write"]:
+                await participant.send_message(
+                    {
+                        "type": "request_snapshot",
+                        "v": self.session["doc"].version,
+                    }
+                )
+                return  # Only ask one client
 
     async def can_update_document(self):
         return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
@@ -688,7 +782,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             and hasattr(self.user_info, "document_id")
         ):
             doc_id = self.user_info.document_id
-            if doc_id in WebsocketConsumer.sessions:
+            if WebsocketConsumer.get_session(doc_id):
                 # Clear this participant's specific resources
                 if (
                     hasattr(self, "id")
@@ -696,6 +790,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 ):
                     # Remove this participant
                     self.session["participants"].pop(self.id)
+                    WebsocketConsumer.sync_session_snapshot(doc_id)
 
                 # Complete document cleanup if no participants remain
                 if len(self.session["participants"]) == 0:
@@ -703,7 +798,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     await WebsocketConsumer.save_document_async(doc_id)
 
                     # Break references manually before deleting
-                    session = WebsocketConsumer.sessions[doc_id]
+                    session = WebsocketConsumer.get_session(doc_id)
 
                     # Clear prosemirror node structure
                     if "node" in session:
@@ -715,7 +810,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                         session["doc"].diffs = None  # Not just an empty list
 
                     # Remove complete session
-                    WebsocketConsumer.sessions.pop(doc_id, None)
+                    WebsocketConsumer.remove_session(doc_id)
 
                     # Force garbage collection
                     gc.collect()
@@ -740,7 +835,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
     @classmethod
     async def send_participant_list(cls, document_id):
-        if document_id in WebsocketConsumer.sessions:
+        session = cls.get_session(document_id)
+        if session:
             avatars = Avatars()
             participant_list = []
 
@@ -748,9 +844,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             avatar_tasks = []
             participants_data = []
 
-            for session_id, waiter in list(
-                cls.sessions[document_id]["participants"].items()
-            ):
+            for session_id, waiter in list(session["participants"].items()):
                 access_rights = waiter.user_info.access_rights
                 if access_rights not in CAN_COMMUNICATE:
                     continue
@@ -792,16 +886,19 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     async def reset_collaboration(
         cls, patch_exception_msg, document_id, sender_id
     ):
+        session = cls.get_session(document_id)
+        if not session:
+            return
         logger.debug(
             f"Action:Resetting collaboration. DocumentID:{document_id} "
             f"Patch conflict triggered. ParticipantID:{sender_id} "
-            f"waiters:{len(cls.sessions[document_id]['participants'])}"
+            f"waiters:{len(session['participants'])}"
         )
 
         # Create a list of coroutines to execute
         tasks = []
 
-        for waiter in list(cls.sessions[document_id]["participants"].values()):
+        for waiter in list(session["participants"].values()):
             if waiter.id != sender_id:
                 tasks.append(waiter.unfixable())
                 tasks.append(waiter.send_message(patch_exception_msg))
@@ -814,15 +911,18 @@ class WebsocketConsumer(BaseWebsocketConsumer):
     async def send_updates(
         cls, message, document_id, sender_id=None, user_id=None
     ):
+        session = cls.get_session(document_id)
+        if not session:
+            return
         logger.debug(
             f"Action:Sending message to waiters. DocumentID:{document_id} "
-            f"waiters:{len(cls.sessions[document_id]['participants'])}"
+            f"waiters:{len(session['participants'])}"
         )
 
         # Create a list of send tasks to execute concurrently
         send_tasks = []
 
-        for waiter in list(cls.sessions[document_id]["participants"].values()):
+        for waiter in list(session["participants"].values()):
             if waiter.id != sender_id:
                 access_rights = waiter.user_info.access_rights
                 msg_to_send = message
@@ -830,7 +930,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 # Check if we need to modify the message based on access rights
                 need_copy = False
 
-                if "comments" in message and len(message["comments"]) > 0:
+                # For E2EE documents, we cannot filter content (it's all
+                # encrypted), so skip comment filtering entirely.
+                if (
+                    not session["doc"].e2ee
+                    and "comments" in message
+                    and len(message["comments"]) > 0
+                ):
                     # Filter comments if needed
                     if access_rights == "read-without-comments":
                         need_copy = True
@@ -869,90 +975,50 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await asyncio.gather(*send_tasks)
 
     @classmethod
-    def serialize_content(cls, session):
-        if "node_updates" in session and session["node_updates"]:
-            session["doc"].content = prosemirror.to_mini_json(session["node"])
-            session["node_updates"] = False
+    async def save_document_async(cls, document_id, force=False):
+        session = cls.get_session(document_id)
+        if not session:
+            return
+        node = None
+        if not session["doc"].e2ee and session.get("node_updates"):
+            node = session["node"]
+        saved = await document_store.save_document_async(
+            doc=session["doc"],
+            node=node,
+            force=force,
+            last_saved_version=session["last_saved_version"],
+        )
+        if saved:
+            session["last_saved_version"] = session["doc"].version
+            if not session["doc"].e2ee:
+                session["node_updates"] = False
 
     @classmethod
-    async def save_document_async(cls, document_id):
-        session = cls.sessions[document_id]
-        if session["doc"].version == session["last_saved_version"]:
+    def save_document(cls, document_id, force=False):
+        session = cls.get_session(document_id)
+        if not session:
             return
-        logger.debug(
-            f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
-            f"Doc version:{session['doc'].version}"
+        node = None
+        if not session["doc"].e2ee and session.get("node_updates"):
+            node = session["node"]
+        saved = document_store.save_document(
+            doc=session["doc"],
+            node=node,
+            force=force,
+            last_saved_version=session["last_saved_version"],
         )
-        cls.serialize_content(session)
-        try:
-            # this try block is to avoid a db exception
-            # in case the doc has been deleted from the db
-            # in fiduswriter the owner of a doc could delete a doc
-            # while an invited writer is editing the same doc
-            await session["doc"].asave(
-                update_fields=[
-                    "title",
-                    "version",
-                    "content",
-                    "diffs",
-                    "comments",
-                    "bibliography",
-                    "updated",
-                ]
-            )
-
-        except DatabaseError as e:
-            expected_msg = "Save with update_fields did not affect any rows."
-            if str(e) == expected_msg:
-                try:
-                    await session["doc"].asave()
-                except IntegrityError:
-                    pass
-            else:
-                raise e
-        session["last_saved_version"] = session["doc"].version
-
-    @classmethod
-    def save_document(cls, document_id):
-        session = cls.sessions[document_id]
-        if session["doc"].version == session["last_saved_version"]:
-            return
-        logger.debug(
-            f"Action:Saving document to DB. DocumentID:{session['doc'].id} "
-            f"Doc version:{session['doc'].version}"
-        )
-        cls.serialize_content(session)
-        try:
-            # this try block is to avoid a db exception
-            # in case the doc has been deleted from the db
-            # in fiduswriter the owner of a doc could delete a doc
-            # while an invited writer is editing the same doc
-            session["doc"].save(
-                update_fields=[
-                    "title",
-                    "version",
-                    "content",
-                    "diffs",
-                    "comments",
-                    "bibliography",
-                    "updated",
-                ]
-            )
-
-        except DatabaseError as e:
-            expected_msg = "Save with update_fields did not affect any rows."
-            if str(e) == expected_msg:
-                try:
-                    session["doc"].save()
-                except IntegrityError:
-                    pass
-            else:
-                raise e
-        session["last_saved_version"] = session["doc"].version
+        if saved:
+            session["last_saved_version"] = session["doc"].version
+            if not session["doc"].e2ee:
+                session["node_updates"] = False
 
     @classmethod
     def save_all_docs(cls):
-        for document_id in cls.sessions:
+        try:
+            document_ids = list(cls.runtime_sessions)
+        except (TypeError, FileNotFoundError):
+            return
+        for document_id in document_ids:
             cls.save_document(document_id)
 
 

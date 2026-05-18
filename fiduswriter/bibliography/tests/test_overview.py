@@ -228,7 +228,7 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element(
-            By.CSS_SELECTOR, "button[title='Upload BibTeX file (Alt-u)']"
+            By.CSS_SELECTOR, "button[title='Import bibliography (Alt-u)']"
         ).click()
         # bibliography path
         bib_path = os.path.join(

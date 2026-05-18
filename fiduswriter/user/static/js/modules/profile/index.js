@@ -12,6 +12,11 @@ import {
 } from "../common"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
+import {
+    checkTwoFactorStatus,
+    twoFactorDisableDialog,
+    twoFactorSetupDialog
+} from "../two_factor"
 import {DeleteUserDialog} from "./delete_user"
 import {
     addEmailDialog,
@@ -75,6 +80,26 @@ export class Profile {
                     case findTarget(event, ".delete-socialaccount", el):
                         deleteSocialaccountDialog(el.target, this.app)
                         break
+                    case this.app.settings.TWO_FACTOR_ENABLED &&
+                        findTarget(event, "#setup-two-factor", el):
+                        dialog = twoFactorSetupDialog()
+                        break
+                    case this.app.settings.TWO_FACTOR_ENABLED &&
+                        findTarget(event, "#disable-two-factor", el):
+                        dialog = twoFactorDisableDialog()
+                        break
+                    case this.app.settings.E2EE_MODE !== "disabled" &&
+                        findTarget(event, "#setup-e2ee-passphrase", el):
+                        this.setupE2EEPassphrase()
+                        break
+                    case this.app.settings.E2EE_MODE !== "disabled" &&
+                        findTarget(event, "#change-e2ee-passphrase", el):
+                        this.changeE2EEPassphrase()
+                        break
+                    case this.app.settings.E2EE_MODE !== "disabled" &&
+                        findTarget(event, "#recover-e2ee-passphrase", el):
+                        this.recoverE2EEPassphrase()
+                        break
                     default:
                         break
                 }
@@ -86,6 +111,14 @@ export class Profile {
                         changePrimaryEmailDialog(this.app)
                     )
                 )
+            // Check and display two-factor authentication status
+            if (this.app.settings.TWO_FACTOR_ENABLED) {
+                this.updateTwoFactorStatus()
+            }
+            // Check and display E2EE passphrase status
+            if (this.app.settings.E2EE_MODE !== "disabled") {
+                this.updateE2EEPassphraseStatus()
+            }
         })
     }
 
@@ -93,34 +126,195 @@ export class Profile {
         this.dom = document.createElement("body")
         this.dom.classList.add("scrollable")
         this.dom.innerHTML = baseBodyTemplate({
-            contents: profileContents(this.user, this.socialaccount_providers),
+            contents: profileContents(
+                this.user,
+                this.socialaccount_providers,
+                this.app.settings
+            ),
             user: this.user,
             app: this.app
         })
         document.body = this.dom
 
-        ensureCSS([staticUrl("css/show_profile.css")])
+        ensureCSS([
+            staticUrl("css/show_profile.css"),
+            staticUrl("css/two_factor.css")
+        ])
 
         setDocTitle(gettext("Configure profile"), this.app)
         const feedbackTab = new FeedbackTab()
         feedbackTab.init()
     }
 
+    updateTwoFactorStatus() {
+        checkTwoFactorStatus().then(enabled => {
+            const enabledStatus = this.dom.querySelector(
+                "#two-factor-enabled-status"
+            )
+            const disabledStatus = this.dom.querySelector(
+                "#two-factor-disabled-status"
+            )
+            const setupBtn = this.dom.querySelector("#setup-two-factor")
+            const disableBtn = this.dom.querySelector("#disable-two-factor")
+
+            if (enabled) {
+                enabledStatus.style.display = "inline"
+                disabledStatus.style.display = "none"
+                setupBtn.style.display = "none"
+                disableBtn.style.display = "inline"
+            } else {
+                enabledStatus.style.display = "none"
+                disabledStatus.style.display = "inline"
+                setupBtn.style.display = "inline"
+                disableBtn.style.display = "none"
+            }
+        })
+    }
+
+    updateE2EEPassphraseStatus() {
+        import("../editor/e2ee/passphrase-manager.js").then(
+            ({PassphraseManager}) => {
+                PassphraseManager.hasEncryptionKeys().then(hasKeys => {
+                    const enabledStatus = this.dom.querySelector(
+                        "#e2ee-passphrase-enabled-status"
+                    )
+                    const disabledStatus = this.dom.querySelector(
+                        "#e2ee-passphrase-disabled-status"
+                    )
+                    const setupBtn = this.dom.querySelector(
+                        "#setup-e2ee-passphrase"
+                    )
+                    const changeBtn = this.dom.querySelector(
+                        "#change-e2ee-passphrase"
+                    )
+                    const recoverBtn = this.dom.querySelector(
+                        "#recover-e2ee-passphrase"
+                    )
+
+                    if (hasKeys) {
+                        enabledStatus.style.display = "inline"
+                        disabledStatus.style.display = "none"
+                        setupBtn.style.display = "none"
+                        changeBtn.style.display = "inline"
+                        recoverBtn.style.display = "inline"
+                    } else {
+                        enabledStatus.style.display = "none"
+                        disabledStatus.style.display = "inline"
+                        setupBtn.style.display = "inline"
+                        changeBtn.style.display = "none"
+                        recoverBtn.style.display = "none"
+                    }
+                })
+            }
+        )
+    }
+
+    async setupE2EEPassphrase() {
+        const {PassphraseManager} = await import(
+            "../editor/e2ee/passphrase-manager.js"
+        )
+        const {setupPassphraseDialog} = await import(
+            "../editor/e2ee/passphrase-dialog.js"
+        )
+
+        setupPassphraseDialog(async passphrase => {
+            try {
+                const {recoveryKey} =
+                    await PassphraseManager.setupEncryption(passphrase)
+                const {showRecoveryKeyDialog} = await import(
+                    "../editor/e2ee/passphrase-dialog.js"
+                )
+                await showRecoveryKeyDialog(recoveryKey)
+                this.updateE2EEPassphraseStatus()
+            } catch (e) {
+                addAlert(
+                    "error",
+                    gettext("Failed to set up passphrase: ") + e.message
+                )
+            }
+        })
+    }
+
+    async recoverE2EEPassphrase() {
+        const {PassphraseManager} = await import(
+            "../editor/e2ee/passphrase-manager.js"
+        )
+        const {recoverWithKeyDialog, showRecoveryKeyDialog} = await import(
+            "../editor/e2ee/passphrase-dialog.js"
+        )
+
+        const recoverResult = await new Promise(resolve => {
+            recoverWithKeyDialog(resolve)
+        })
+        if (!recoverResult) {
+            return
+        }
+        try {
+            const {newRecoveryKey} =
+                await PassphraseManager.recoverWithRecoveryKey(
+                    recoverResult.recoveryKey,
+                    recoverResult.newPassphrase
+                )
+            await new Promise(resolve => {
+                showRecoveryKeyDialog(newRecoveryKey, resolve)
+            })
+            this.updateE2EEPassphraseStatus()
+        } catch (e) {
+            addAlert("error", gettext("Recovery failed: ") + e.message)
+        }
+    }
+
+    async changeE2EEPassphrase() {
+        const {PassphraseManager} = await import(
+            "../editor/e2ee/passphrase-manager.js"
+        )
+        const {changePassphraseDialog} = await import(
+            "../editor/e2ee/passphrase-dialog.js"
+        )
+
+        const changeResult = await new Promise(resolve => {
+            changePassphraseDialog(resolve)
+        })
+        if (!changeResult) {
+            return
+        }
+        try {
+            await PassphraseManager.changePassphrase(
+                changeResult.oldPassphrase,
+                changeResult.newPassphrase
+            )
+            addAlert("success", gettext("Passphrase changed successfully."))
+        } catch (e) {
+            addAlert(
+                "error",
+                gettext("Failed to change passphrase: ") + e.message
+            )
+        }
+    }
+
     save() {
         activateWait()
         const newLang = this.dom.querySelector("#language").value
+        const inlineReferences =
+            this.dom.querySelector("#inline-references").checked
+        const inlineMath = this.dom.querySelector("#inline-math").checked
         return post("/api/user/save/", {
-            form_data: JSON.stringify({
-                user: {
-                    username: this.dom.querySelector("#username").value,
-                    first_name: this.dom.querySelector("#first_name").value,
-                    last_name: this.dom.querySelector("#last_name").value,
-                    language: newLang
-                }
-            })
+            username: this.dom.querySelector("#username").value,
+            first_name: this.dom.querySelector("#first_name").value,
+            last_name: this.dom.querySelector("#last_name").value,
+            language: newLang
         })
             .catch(() =>
                 addAlert("error", gettext("Could not save profile data"))
+            )
+            .then(() =>
+                post("/api/user/preferences/update/", {
+                    inline_references: inlineReferences,
+                    inline_math: inlineMath
+                })
+            )
+            .catch(() =>
+                addAlert("error", gettext("Could not save preferences"))
             )
             .then(() => {
                 deactivateWait()

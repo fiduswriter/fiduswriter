@@ -4,6 +4,23 @@
         footnote-marker-counter;
 }
 
+sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+code {
+    font-family: monospace;
+    background-color: #f0f0f0;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
 /* CSL */
 
 .csl-bib-body {
@@ -250,4 +267,20 @@ table {
 
 .underline {
     text-decoration: underline;
+}
+
+/* Ensure inline code marks stay inline even with higher specificity selectors */
+
+/* Cover all block-level elements that can contain inline content */
+
+.user-contents p code,
+.user-contents h1 code,
+.user-contents h2 code,
+.user-contents h3 code,
+.user-contents h4 code,
+.user-contents h5 code,
+.user-contents h6 code,
+.user-contents figcaption code,
+.user-contents caption code {
+    display: inline;
 }

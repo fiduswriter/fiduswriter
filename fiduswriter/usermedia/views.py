@@ -1,5 +1,4 @@
 from time import mktime
-import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -44,9 +43,9 @@ def save(request):
         response["errormsg"]["error"] = _("Image too large")
     else:
         image = False
-        if "id" in request.POST and "image" not in request.FILES:
+        if "id" in request.JSON and "image" not in request.FILES:
             user_image = UserImage.objects.filter(
-                image_id=int(request.POST["id"]), owner=request.user
+                image_id=int(request.JSON["id"]), owner=request.user
             ).first()
             if user_image:
                 image = user_image.image
@@ -57,13 +56,13 @@ def save(request):
             user_image = UserImage()
             user_image.owner = request.user
             status = 201
-            if "checksum" in request.POST:
-                image.checksum = request.POST["checksum"]
-        user_image.title = request.POST["title"]
-        if "copyright" in request.POST:
-            user_image.copyright = json.loads(request.POST["copyright"])
-        if "cats" in request.POST:
-            user_image.cats = json.loads(request.POST["cats"])
+            if "checksum" in request.JSON:
+                image.checksum = request.JSON["checksum"]
+        user_image.title = request.JSON["title"]
+        if "copyright" in request.JSON:
+            user_image.copyright = request.JSON["copyright"]
+        if "cats" in request.JSON:
+            user_image.cats = request.JSON["cats"]
         if "image" in request.FILES:
             image.image = request.FILES["image"]
         if status == 201 and "image" not in request.FILES:
@@ -97,7 +96,7 @@ def save(request):
 def delete(request):
     response = {}
     status = 201
-    ids = request.POST.getlist("ids[]")
+    ids = request.JSON["ids"]
     UserImage.objects.filter(image_id__in=ids, owner=request.user).delete()
     for image in Image.objects.filter(id__in=ids):
         if image.is_deletable():
@@ -147,14 +146,13 @@ def images(request):
 def save_category(request):
     response = {}
     response["entries"] = []
-    ids = request.POST.getlist("ids[]")
-    titles = request.POST.getlist("titles[]")
+    ids = request.JSON["ids"]
+    titles = request.JSON["titles"]
     ImageCategory.objects.filter(category_owner=request.user).exclude(
         id__in=ids
     ).delete()
     x = 0
     for the_id in ids:
-        the_id = int(the_id)
         the_title = titles[x]
         x += 1
         if 0 == the_id:

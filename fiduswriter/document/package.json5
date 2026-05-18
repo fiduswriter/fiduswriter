@@ -30,6 +30,6 @@
         pretty: "2.0.0",
         rfc6902: "^5.0.1",
         sortablejs: "1.15.0",
-        mathml2omml: "0.5.0",
+        mathml2omml: "0.5.0"
     }
 }

@@ -4,7 +4,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(var(--overlay-color));
+    background-color: rgb(var(--overlay-color));
     z-index: 100;
     backdrop-filter: blur(2px);
 }

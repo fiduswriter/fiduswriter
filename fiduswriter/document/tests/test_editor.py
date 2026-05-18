@@ -118,11 +118,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        self.click_new_document_button(self.driver)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
@@ -456,15 +452,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             return self.check_body(driver, body_text, seconds - 0.1)
 
     def test_track_changes(self):
-        self.driver.get(self.base_url)
+        self.safe_get(self.driver, self.base_url)
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        self.click_new_document_button(self.driver)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
@@ -555,8 +547,16 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             ".editor-toolbar .multi-buttons .ui-button:nth-child(5)",
         ).click()
 
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: len(
+                driver.find_elements(
+                    By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
+                )
+            )
+            >= 6
+        )
         change_tracking_boxes = self.driver.find_elements(
-            By.CSS_SELECTOR, ".margin-box.track"
+            By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
         )
         self.assertEqual(len(change_tracking_boxes), 6)
 
@@ -568,11 +568,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti")
         self.driver.find_element(By.ID, "id-password").send_keys("otter")
         self.driver.find_element(By.ID, "login-submit").click()
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        self.click_new_document_button(self.driver)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
         )
@@ -842,8 +838,12 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Third user signs up
         self.driver.find_element(By.CSS_SELECTOR, 'a[title="Sign up"]').click()
         self.driver.find_element(By.ID, "id-username").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password1").send_keys("password")
-        self.driver.find_element(By.ID, "id-password2").send_keys("password")
+        self.driver.find_element(By.ID, "id-password1").send_keys(
+            "TestPassword123!"
+        )
+        self.driver.find_element(By.ID, "id-password2").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "id-email").send_keys(
             "yeti3@snowman.com"
         )
@@ -873,7 +873,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.driver.find_element(By.CSS_SELECTOR, 'a[href="/"]').click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -923,8 +925,13 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "li:nth-child(4) > .fw-pulldown-item"
         ).click()
-        # Check whether user now has write access
-        WebDriverWait(self.driver, self.wait_time).until(
+        # Check whether user now has write access.
+        # Creating a copy involves 2 HTTP round-trips (createDoc + saveDocument)
+        # followed by 3 more parallel requests to initialise the new editor
+        # (get_ws_base, get_doc_styles, get_doc_data) before render() replaces
+        # document.body and makes old_body stale. Under load this can easily
+        # exceed the default wait_time, so give it extra headroom.
+        WebDriverWait(self.driver, self.wait_time * 3).until(
             EC.staleness_of(old_body)
         )
         self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
@@ -1040,8 +1047,12 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.get(invitation_link)
         self.driver.find_element(By.CSS_SELECTOR, 'a[title="Sign up"]').click()
         self.driver.find_element(By.ID, "id-username").send_keys("Yeti4")
-        self.driver.find_element(By.ID, "id-password1").send_keys("password")
-        self.driver.find_element(By.ID, "id-password2").send_keys("password")
+        self.driver.find_element(By.ID, "id-password1").send_keys(
+            "TestPassword123!"
+        )
+        self.driver.find_element(By.ID, "id-password2").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "id-email").send_keys(
             "yeti4a@snowman.com"
         )
@@ -1064,7 +1075,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.driver.find_element(By.CSS_SELECTOR, 'a[href="/"]').click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti4")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1091,10 +1104,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # User 5 signs up with a different email first and then clicks the
         # invitation link and accepts the invite.
         self.create_user(
-            username="Yeti5", email="yeti5a@snowman.com", passtext="password"
+            username="Yeti5",
+            email="yeti5a@snowman.com",
+            passtext="TestPassword123!",
         )
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti5")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1124,10 +1141,14 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # User 6 signs up with a different email first and then clicks the
         # invitation link and declines the invite.
         self.create_user(
-            username="Yeti6", email="yeti6a@snowman.com", passtext="password"
+            username="Yeti6",
+            email="yeti6a@snowman.com",
+            passtext="TestPassword123!",
         )
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti6")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
@@ -1157,7 +1178,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # User3 signs in and accepts the invite of user7. Access rights
         # should be upgraded to write access.
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         time.sleep(1)
         WebDriverWait(self.driver, self.wait_time).until(
@@ -1268,7 +1291,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti3")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
@@ -1285,7 +1310,9 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Log out"]'
         ).click()
         self.driver.find_element(By.ID, "id-login").send_keys("Yeti4")
-        self.driver.find_element(By.ID, "id-password").send_keys("password")
+        self.driver.find_element(By.ID, "id-password").send_keys(
+            "TestPassword123!"
+        )
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(

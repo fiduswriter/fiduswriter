@@ -52,14 +52,19 @@ export class SaveRevision {
     }
 
     uploadRevision(blob) {
-        post("/api/document/upload/", {
-            note: this.note,
-            file: {
-                file: blob,
-                filename: createSlug(this.doc.title) + ".fidus"
+        post(
+            "/api/document/upload/",
+            {
+                note: this.note,
+                document_id: this.doc.id
             },
-            document_id: this.doc.id
-        })
+            {
+                file: {
+                    file: blob,
+                    filename: createSlug(this.doc.title) + ".fidus"
+                }
+            }
+        )
             .then(
                 () => {
                     addAlert("success", gettext("Revision saved"))

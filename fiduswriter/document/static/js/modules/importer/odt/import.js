@@ -1,15 +1,16 @@
-import {postJson} from "../../common"
+import {escapeText, postJson} from "../../common"
 import {NativeImporter} from "../native"
 import {OdtConvert} from "./convert"
 
 export class OdtImporter {
-    constructor(file, user, path, importId, additionalFiles) {
+    constructor(file, user, path, importId, options = {}) {
         this.file = file
         this.user = user
         this.path = path
         this.importId = importId
 
-        this._additionalFiles = additionalFiles // We do not use these files in the ODT importer
+        this.bibDB = options.bibDB
+        this.e2eeOptions = options.e2eeOptions || null
 
         this.template = null
         this.output = {
@@ -37,6 +38,7 @@ export class OdtImporter {
             return JSZip.loadAsync(this.file).then(zip => {
                 const contentPromise = zip.file("content.xml")?.async("string")
                 const stylePromise = zip.file("styles.xml")?.async("string")
+                const metaPromise = zip.file("meta.xml")?.async("string")
                 const manifestPromise = zip
                     .file("META-INF/manifest.xml")
                     ?.async("string")
@@ -67,33 +69,41 @@ export class OdtImporter {
                 return Promise.all([
                     contentPromise,
                     stylePromise,
+                    metaPromise,
                     manifestPromise,
                     Promise.all(imagePromises)
-                ]).then(([contentXml, stylesXml, manifestXml, images]) => {
-                    const imageObj = {}
-                    images.forEach(({filename, blob}) => {
-                        imageObj[filename] = blob
-                    })
+                ]).then(
+                    ([contentXml, stylesXml, metaXml, manifestXml, images]) => {
+                        const imageObj = {}
+                        images.forEach(({filename, blob}) => {
+                            imageObj[filename] = blob
+                        })
 
-                    return this.handleOdtContent(
-                        contentXml,
-                        stylesXml,
-                        manifestXml,
-                        imageObj
-                    )
-                })
+                        return this.handleOdtContent(
+                            contentXml,
+                            stylesXml,
+                            metaXml,
+                            manifestXml,
+                            imageObj
+                        )
+                    }
+                )
             })
         })
     }
 
-    handleOdtContent(contentXml, stylesXml, manifestXml, images = {}) {
+    handleOdtContent(contentXml, stylesXml, metaXml, manifestXml, images = {}) {
+        const bibliography = {} // Initial empty bibliography that will be populated during conversion
+
         const converter = new OdtConvert(
             contentXml,
             stylesXml,
+            metaXml,
             manifestXml,
             this.importId,
             this.template,
-            {} // Initial empty bibliography that will be populated during conversion
+            bibliography,
+            this.bibDB
         )
 
         let convertedDoc
@@ -116,7 +126,7 @@ export class OdtImporter {
                 comments: convertedDoc.comments,
                 settings: convertedDoc.settings
             },
-            converter.bibliography || {}, // Pass the populated bibliography
+            bibliography, // Pass the populated bibliography
             converter.images,
             Object.entries(images).map(([filename, blob]) => ({
                 filename,
@@ -124,7 +134,9 @@ export class OdtImporter {
             })),
             this.user,
             this.importId,
-            this.path + title
+            this.path + title,
+            null,
+            this.e2eeOptions
         )
 
         return nativeImporter
@@ -133,7 +145,7 @@ export class OdtImporter {
                 this.output.ok = true
                 this.output.doc = doc
                 this.output.docInfo = docInfo
-                this.output.statusText = `${doc.title} ${gettext("successfully imported.")}`
+                this.output.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
                 return this.output
             })
             .catch(error => {

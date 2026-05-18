@@ -145,7 +145,17 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.persona',
     # 'allauth.socialaccount.providers.soundcloud',
     # 'allauth.socialaccount.providers.stackexchange',
+    # "devel",
     "user_template_manager",
+]
+
+# A list of apps to remove from the default installation
+# This is useful for disabling features you don't need
+REMOVED_APPS = [
+    # Example: Disable two-factor authentication entirely
+    # 'django_otp',
+    # Example: Disable brute-force protection (for development only)
+    # 'axes',
 ]
 
 # A list of allowed hostnames of this Fidus Writer installation
@@ -169,3 +179,108 @@ MEDIA_MAX_SIZE = False
 
 # Add branding logo inside of "static-libs" folder. For example: static-libs/svg/logo.svg
 # BRANDING_LOGO = "svg/logo.svg"
+
+# E2EE_MODE controls whether end-to-end encrypted documents are allowed.
+# EXPERIMENTAL: E2EE_MODE is an experimental mode that is still subject to changes
+# and that has not been independently reviewed by security experts yet.
+#
+# 'disabled'  - No E2EE support. All documents are unencrypted.
+# 'enabled'   - Both E2EE and non-encrypted documents are supported.
+# 'required'  - Only E2EE documents are allowed.
+E2EE_MODE = "disabled"  # Default: disabled for backward compatibility
+
+# EDITOR_SAVE_MODE controls how the editor persists document changes.
+#   "collaborative" - WebSocket-based real-time collaboration (default).
+#   "direct"        - Periodic REST saves without real-time collaboration.
+#   "external"      - No built-in saving; external plugins handle persistence.
+# EDITOR_SAVE_MODE = "direct"
+
+#############################################
+# Security Settings                         #
+#############################################
+
+# IMPORTANT: For production environments, configure these security settings!
+
+# Enable HTTPS security (required for production)
+# SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+
+# HSTS (HTTP Strict Transport Security) - forces HTTPS for your domain
+# Only enable this after you're sure HTTPS works correctly!
+# SECURE_HSTS_SECONDS = 31536000  # 1 year
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+
+#############################################
+# django-axes: Brute-Force Protection      #
+#############################################
+
+# django-axes is configured by default with secure settings.
+# Customize these if needed:
+
+# Number of failed login attempts before lockout (default: 5)
+# AXES_FAILURE_LIMIT = 5
+
+# Lockout duration in hours (default: 1)
+# AXES_COOLOFF_TIME = 1
+
+# Lock out parameters by (default: [["ip_address", "user_agent", "username"]])
+# AXES_LOCKOUT_PARAMETERS = [["ip_address", "user_agent", "username"]]
+
+# Reset failed attempts after successful login (default: True)
+# AXES_RESET_ON_SUCCESS = True
+
+# For deployments behind a proxy/load balancer, ensure IP detection is correct:
+# AXES_IPWARE_META_PRECEDENCE_ORDER = [
+#     'HTTP_X_FORWARDED_FOR',
+#     'REMOTE_ADDR',
+# ]
+
+#############################################
+# Password Reset Security                   #
+#############################################
+
+# Password reset link timeout in seconds
+# Default is 24 hours (86400 seconds) for security reasons
+# Django's default is 3 days (259200 seconds)
+# Recommended: Keep at 24 hours or less for better security
+# PASSWORD_RESET_TIMEOUT = 86400  # 24 hours
+# PASSWORD_RESET_TIMEOUT = 43200  # 12 hours (more secure)
+# PASSWORD_RESET_TIMEOUT = 3600   # 1 hour (very secure)
+
+#############################################
+# GDPR Compliance Settings                 #
+#############################################
+
+# For GDPR compliance, ensure you have:
+# 1. Privacy Policy and Terms of Service (use FOOTER_LINKS or flatpages)
+# 2. Cookie consent mechanism (if using tracking cookies)
+# 3. Data export functionality for subject access requests
+# 4. Data deletion functionality for right to be forgotten
+# 5. Contact information for data protection officer (set CONTACT_EMAIL above)
+
+# Session cookie settings (GDPR compliance - user tracking)
+# SESSION_COOKIE_AGE = 1209600  # 2 weeks - adjust based on your needs
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# SESSION_SAVE_EVERY_REQUEST = False
+
+# Example footer links with privacy policy and terms:
+# FOOTER_LINKS = [
+#     {
+#         "text": "Privacy Policy",
+#         "link": "/pages/privacy/"
+#     },
+#     {
+#         "text": "Terms and Conditions",
+#         "link": "/pages/terms/"
+#     },
+#     {
+#         "text": "Data Protection",
+#         "link": "/pages/data-protection/"
+#     }
+# ]
+
+# Email settings for GDPR notifications (e.g., data breach notifications)
+# Ensure DEFAULT_FROM_EMAIL and SERVER_EMAIL are properly configured above

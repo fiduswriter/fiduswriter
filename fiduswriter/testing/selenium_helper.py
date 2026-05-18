@@ -1,8 +1,12 @@
 import re
 import os
 import time
-from urllib3.exceptions import MaxRetryError
-from selenium.common.exceptions import ElementClickInterceptedException
+from urllib3.exceptions import MaxRetryError, ReadTimeoutError
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    TimeoutException,
+    WebDriverException,
+)
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -116,6 +120,21 @@ class SeleniumHelper:
                 count += 1
                 time.sleep(1)
 
+    def click_new_document_button(self, driver):
+        """Click the new document button and handle the encryption choice dialog if present."""
+        WebDriverWait(driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".new_document button")
+            )
+        ).click()
+        try:
+            WebDriverWait(driver, 2).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            )
+            driver.find_element(By.CSS_SELECTOR, ".ui-dialog .fw-dark").click()
+        except TimeoutException:
+            pass
+
     @classmethod
     def get_drivers(cls, number, download_dir=False, user_agent=False):
         # django native clients, to be used for faster login.
@@ -128,6 +147,7 @@ class SeleniumHelper:
         options.add_argument("--kiosk-printing")
         options.add_argument("--safebrowsing-disable-download-protection")
         options.add_argument("--safebrowsing-disable-extension-blacklist")
+        options.add_argument("--window-size=1920,1080")
         prefs = {
             "profile.password_manager_leak_detection": False,
         }
@@ -145,7 +165,8 @@ class SeleniumHelper:
             options.add_argument("--disable-gpu")
             wait_time = 20
         else:
-            wait_time = 6
+
+            wait_time = 10
         for i in range(number):
             driver_env = os.environ.copy()
             if os.getenv("CI") and os.getenv("DEBUG_MODE") == "1" and i < 2:
@@ -194,11 +215,42 @@ class SeleniumHelper:
                 self.leave_site(driver)
         return super().tearDown()
 
+    def safe_get(self, driver, url, retries=3):
+        """Navigate to url, retrying on transient timeout errors."""
+        for attempt in range(retries):
+            try:
+                driver.get(url)
+                return
+            except (
+                MaxRetryError,
+                ReadTimeoutError,
+                TimeoutException,
+                WebDriverException,
+            ):
+                if attempt == retries - 1:
+                    raise
+                time.sleep(1)
+
     def leave_site(self, driver):
         try:
             driver.execute_script(
-                "if (window.theApp) {window.theApp.page = null;}"
+                "if (window.theApp && window.theApp.page) {"
+                # Only call close() for non-E2EE pages. The E2EE editor's
+                # close() schedules an async snapshot + a 300 ms timeout
+                # before closing the WebSocket, which can race with the
+                # navigation below and leave the browser in a bad state.
+                "  if (!window.theApp.page.e2ee && window.theApp.page.close) {"
+                "    window.theApp.page.close();"
+                "  }"
+                "  window.theApp.page = null;"
+                "}"
+                # Suppress any 'Leave site?' beforeunload dialog so that
+                # driver.get() below cannot be blocked by it.
+                "window.onbeforeunload = null;"
             )
+        except (MaxRetryError, ReadTimeoutError, WebDriverException):
+            pass
+        try:
             driver.get("data:,")
-        except MaxRetryError:
+        except (MaxRetryError, ReadTimeoutError, WebDriverException):
             pass

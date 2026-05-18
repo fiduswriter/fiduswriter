@@ -2,7 +2,9 @@ import {
     ContentMenu,
     Dialog,
     addAlert,
+    enableDatePicker,
     findTarget,
+    post,
     postJson,
     setCheckableLabel
 } from "../../common"
@@ -10,7 +12,10 @@ import {AddContactDialog} from "../../contacts/add_dialog"
 import {
     accessRightOverviewTemplate,
     collaboratorsTemplate,
-    contactsTemplate
+    contactsTemplate,
+    createShareTokenDialogTemplate,
+    shareTokenListTemplate,
+    shareTokenRowTemplate
 } from "./templates"
 
 /**
@@ -18,10 +23,30 @@ import {
  */
 
 export class DocumentAccessRightsDialog {
-    constructor(documentIds, contacts, newContactCall) {
+    constructor(
+        documentIds,
+        contacts,
+        newContactCall,
+        e2ee,
+        documentPassword,
+        onShareSuccess,
+        settings
+    ) {
         this.documentIds = documentIds
         this.contacts = contacts
         this.newContactCall = newContactCall // a function to be called when a new contact has been added with contact details
+        // Share-link tab is only available when a single document is selected
+        this.singleDocumentId = documentIds.length === 1 ? documentIds[0] : null
+        // Whether the document(s) are E2EE encrypted. For E2EE documents,
+        // only a subset of access rights are available.
+        this.e2ee = e2ee
+        // The document password, if known (e.g. when opened in the editor).
+        // Used to pre-fill the share-link password field.
+        this.documentPassword = documentPassword
+        // Optional callback invoked after access rights are saved successfully.
+        // Receives the array of new access rights.
+        this.onShareSuccess = onShareSuccess
+        this.settings = settings
     }
 
     init() {
@@ -39,98 +64,141 @@ export class DocumentAccessRightsDialog {
     }
 
     getDropdownMenu(currentRight, onChange) {
-        return {
-            content: [
-                {
-                    type: "header",
-                    title: gettext("Basic"),
-                    tooltip: gettext("Basic access rights")
+        // E2EE documents only support a subset of access rights because
+        // the server cannot process encrypted content for features like
+        // tracked changes, review filtering, etc.
+        const E2EE_ALLOWED_RIGHTS = ["write", "read-without-comments", "read"]
+
+        const allItems = [
+            {
+                type: "header",
+                title: gettext("Basic"),
+                tooltip: gettext("Basic access rights")
+            },
+            {
+                type: "action",
+                title: gettext("Write"),
+                icon: "pencil-alt",
+                tooltip: gettext("Write"),
+                right: "write",
+                action: () => {
+                    onChange("write")
                 },
-                {
-                    type: "action",
-                    title: gettext("Write"),
-                    icon: "pencil-alt",
-                    tooltip: gettext("Write"),
-                    action: () => {
-                        onChange("write")
-                    },
-                    selected: currentRight === "write"
+                selected: currentRight === "write"
+            },
+            {
+                type: "action",
+                title: gettext("Write tracked"),
+                icon: "pencil-alt",
+                tooltip: gettext("Write with changes tracked"),
+                right: "write-tracked",
+                action: () => {
+                    onChange("write-tracked")
                 },
-                {
-                    type: "action",
-                    title: gettext("Write tracked"),
-                    icon: "pencil-alt",
-                    tooltip: gettext("Write with changes tracked"),
-                    action: () => {
-                        onChange("write-tracked")
-                    },
-                    selected: currentRight === "write-tracked"
+                selected: currentRight === "write-tracked"
+            },
+            {
+                type: "action",
+                title: gettext("Comment"),
+                icon: "comment",
+                tooltip: gettext("Comment"),
+                right: "comment",
+                action: () => {
+                    onChange("comment")
                 },
-                {
-                    type: "action",
-                    title: gettext("Comment"),
-                    icon: "comment",
-                    tooltip: gettext("Comment"),
-                    action: () => {
-                        onChange("comment")
-                    },
-                    selected: currentRight === "comment"
+                selected: currentRight === "comment"
+            },
+            {
+                type: "action",
+                title: gettext("Read"),
+                icon: "eye",
+                tooltip: gettext("Read"),
+                right: "read",
+                action: () => {
+                    onChange("read")
                 },
-                {
-                    type: "action",
-                    title: gettext("Read"),
-                    icon: "eye",
-                    tooltip: gettext("Read"),
-                    action: () => {
-                        onChange("read")
-                    },
-                    selected: currentRight === "read"
+                selected: currentRight === "read"
+            },
+            {
+                type: "header",
+                title: gettext("Review"),
+                tooltip: gettext("Access rights used within document review")
+            },
+            {
+                type: "action",
+                title: gettext("No comments"),
+                icon: "eye",
+                tooltip: gettext(
+                    "Read document but not see comments and chats of others"
+                ),
+                right: "read-without-comments",
+                action: () => {
+                    onChange("read-without-comments")
                 },
-                {
-                    type: "header",
-                    title: gettext("Review"),
-                    tooltip: gettext(
-                        "Access rights used within document review"
-                    )
+                selected: currentRight === "read-without-comments"
+            },
+            {
+                type: "action",
+                title: gettext("Review"),
+                icon: "comment",
+                tooltip: gettext(
+                    "Comment, but not see comments and chats of others"
+                ),
+                right: "review",
+                action: () => {
+                    onChange("review")
                 },
-                {
-                    type: "action",
-                    title: gettext("No comments"),
-                    icon: "eye",
-                    tooltip: gettext(
-                        "Read document but not see comments and chats of others"
-                    ),
-                    action: () => {
-                        onChange("read-without-comments")
-                    },
-                    selected: currentRight === "read-without-comments"
+                selected: currentRight === "review"
+            },
+            {
+                type: "action",
+                title: gettext("Review tracked"),
+                icon: "pencil-alt",
+                tooltip: gettext(
+                    "Write with tracked changes, but not see comments and chats of others"
+                ),
+                right: "review-tracked",
+                action: () => {
+                    onChange("review-tracked")
                 },
-                {
-                    type: "action",
-                    title: gettext("Review"),
-                    icon: "comment",
-                    tooltip: gettext(
-                        "Comment, but not see comments and chats of others"
-                    ),
-                    action: () => {
-                        onChange("review")
-                    },
-                    selected: currentRight === "review"
-                },
-                {
-                    type: "action",
-                    title: gettext("Review tracked"),
-                    icon: "pencil-alt",
-                    tooltip: gettext(
-                        "Write with tracked changes, but not see comments and chats of others"
-                    ),
-                    action: () => {
-                        onChange("review-tracked")
-                    },
-                    selected: currentRight === "review-tracked"
+                selected: currentRight === "review-tracked"
+            }
+        ]
+
+        // Filter items for E2EE documents
+        const content = this.e2ee
+            ? allItems.filter(item => {
+                  // Keep headers
+                  if (item.type === "header") {
+                      return true
+                  }
+                  // Only keep allowed rights
+                  return E2EE_ALLOWED_RIGHTS.includes(item.right)
+              })
+            : allItems
+
+        // Remove trailing headers with no items after them
+        const filteredContent = content.filter((item, index) => {
+            if (item.type === "header") {
+                // Check if there's at least one action item after this header
+                // before the next header or end of list
+                const nextItems = content.slice(index + 1)
+                const nextAction = nextItems.find(i => i.type === "action")
+                const nextHeader = nextItems.findIndex(i => i.type === "header")
+                if (!nextAction) {
+                    return false
                 }
-            ]
-        }
+                if (
+                    nextHeader >= 0 &&
+                    nextHeader < nextItems.indexOf(nextAction)
+                ) {
+                    return false
+                }
+            }
+            return true
+        })
+
+        return {content: filteredContent}
     }
 
     createAccessRightsDialog() {
@@ -160,15 +228,24 @@ export class DocumentAccessRightsDialog {
             col => col.count === this.documentIds.length
         )
 
+        // E2EE warning banner body (shown only for E2EE documents)
+        const e2eeWarningBanner = this.e2ee
+            ? `<div class="e2ee-access-rights-warning">
+                <strong><i class="fa-solid fa-lock"></i> ${gettext("End-to-end encrypted document")}</strong>
+                <p>${gettext("This document is end-to-end encrypted. Collaborators without a personal passphrase will need the document password shared with them through a secure channel outside of Fidus Writer. Do not send the password through the document chat.")}</p>
+            </div>`
+            : ""
+
         const buttons = [
             {
                 text:
-                    settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN
+                    this.settings?.REGISTRATION_OPEN ||
+                    this.settings?.SOCIALACCOUNT_OPEN
                         ? gettext("Add contact or invite new user")
                         : gettext("Add contact"),
                 classes: "fw-light fw-add-button",
                 click: () => {
-                    const dialog = new AddContactDialog()
+                    const dialog = new AddContactDialog(this.settings)
                     dialog.init().then(contactsData => {
                         contactsData.forEach(contactData => {
                             if (contactData.id) {
@@ -245,15 +322,147 @@ export class DocumentAccessRightsDialog {
             id: "access-rights-dialog",
             width: 820,
             height: 440,
-            body: accessRightOverviewTemplate({
-                contacts: this.contacts,
-                collaborators
-            }),
+            body:
+                e2eeWarningBanner +
+                accessRightOverviewTemplate({
+                    contacts: this.contacts,
+                    collaborators
+                }),
             buttons
         })
         this.dialog.open()
         this.bindDialogEvents()
+        // Hide the share-link tab when multiple documents are selected
+        if (!this.singleDocumentId) {
+            const shareTab = this.dialog.dialogEl.querySelector(
+                ".ui-tabs-nav .tab-link:last-child"
+            )
+            if (shareTab) {
+                shareTab.style.display = "none"
+            }
+        }
     }
+
+    loadShareTokens() {
+        const listEl = this.dialog.dialogEl.querySelector("#share-token-list")
+        listEl.innerHTML = `<p class="fw-ar-loading">${gettext("Loading…")}</p>`
+        postJson("/api/document/share_token/list/", {
+            document_id: this.singleDocumentId
+        })
+            .then(({json}) => {
+                listEl.innerHTML = shareTokenListTemplate({tokens: json.tokens})
+            })
+            .catch(() => {
+                listEl.innerHTML = `<p class="fw-ar-error">${gettext("Could not load share links.")}</p>`
+            })
+    }
+
+    openCreateShareTokenDialog() {
+        const createDialog = new Dialog({
+            title: gettext("Create share link"),
+            id: "create-share-token-dialog",
+            width: 860,
+            body: createShareTokenDialogTemplate(
+                this.e2ee,
+                this.documentPassword
+            ),
+            buttons: [
+                {
+                    text: gettext("Create"),
+                    classes: "fw-dark",
+                    click: () => {
+                        const rights = createDialog.dialogEl.querySelector(
+                            "#share-token-rights"
+                        ).value
+                        const expiresRaw = createDialog.dialogEl.querySelector(
+                            "#share-token-expires"
+                        ).value
+                        const note = createDialog.dialogEl
+                            .querySelector("#share-token-note")
+                            .value.trim()
+                        postJson("/api/document/share_token/create/", {
+                            document_id: this.singleDocumentId,
+                            rights,
+                            expires_at: expiresRaw || "",
+                            note
+                        })
+                            .then(({json}) => {
+                                // For E2EE documents, optionally append the password to the URL fragment
+                                let shareUrl = json.share_url
+                                if (this.e2ee) {
+                                    const passwordInput =
+                                        createDialog.dialogEl.querySelector(
+                                            "#share-token-password"
+                                        )
+                                    const password = passwordInput
+                                        ? passwordInput.value.trim()
+                                        : ""
+                                    if (password) {
+                                        shareUrl = `${shareUrl}#?password=${encodeURIComponent(password)}`
+                                    }
+                                }
+                                json.share_url = shareUrl
+                                const listEl =
+                                    this.dialog.dialogEl.querySelector(
+                                        "#share-token-list"
+                                    )
+                                // Remove the "no tokens" placeholder if present
+                                const placeholder =
+                                    listEl.querySelector(".fw-ar-no-tokens")
+                                if (placeholder) {
+                                    placeholder.remove()
+                                }
+                                listEl.insertAdjacentHTML(
+                                    "beforeend",
+                                    shareTokenRowTemplate({token: json})
+                                )
+                                addAlert(
+                                    "success",
+                                    gettext("Share link created.")
+                                )
+                            })
+                            .catch(() =>
+                                addAlert(
+                                    "error",
+                                    gettext("Could not create share link.")
+                                )
+                            )
+                        createDialog.close()
+                    }
+                },
+                {type: "cancel"}
+            ]
+        })
+        createDialog.open()
+        const expiresInput = createDialog.dialogEl.querySelector(
+            "#share-token-expires"
+        )
+        enableDatePicker(expiresInput, true)
+    }
+
+    revokeShareToken(tokenId, rowEl) {
+        postJson("/api/document/share_token/revoke/", {token_id: tokenId})
+            .then(({json}) => {
+                if (json.success) {
+                    rowEl.remove()
+                    const listEl =
+                        this.dialog.dialogEl.querySelector("#share-token-list")
+                    if (!listEl.querySelector(".share-token-row")) {
+                        listEl.innerHTML = shareTokenListTemplate({tokens: []})
+                    }
+                    addAlert("success", gettext("Share link revoked."))
+                } else {
+                    addAlert("error", gettext("Could not revoke share link."))
+                }
+            })
+            .catch(() =>
+                addAlert("error", gettext("Could not revoke share link."))
+            )
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Event binding
+    // ------------------------------------------------------------------ //
 
     bindDialogEvents() {
         this.dialog.dialogEl
@@ -317,6 +526,67 @@ export class DocumentAccessRightsDialog {
                         })
                     )
             })
+        // Tab switching
+        this.dialog.dialogEl
+            .querySelectorAll(".ui-tabs-nav .tab-link a")
+            .forEach(linkEl => {
+                linkEl.addEventListener("click", event => {
+                    event.preventDefault()
+                    const href = linkEl.getAttribute("href")
+                    const tabName = href.substring(1)
+
+                    this.dialog.dialogEl
+                        .querySelectorAll(".tab-link")
+                        .forEach(tabLinkEl =>
+                            tabLinkEl.classList.remove("current-tab")
+                        )
+                    linkEl.parentNode.classList.add("current-tab")
+
+                    this.dialog.dialogEl
+                        .querySelectorAll(".tab-content")
+                        .forEach(contentEl => {
+                            if (contentEl.matches(href)) {
+                                contentEl.style.display = ""
+                            } else {
+                                contentEl.style.display = "none"
+                            }
+                        })
+
+                    if (tabName === "sharelink" && this.singleDocumentId) {
+                        this.loadShareTokens()
+                    }
+                })
+            })
+
+        // Share-link tab: create / copy / revoke
+        this.dialog.dialogEl.addEventListener("click", event => {
+            const el = {}
+            if (findTarget(event, "#create-share-token-btn", el)) {
+                this.openCreateShareTokenDialog()
+                return
+            }
+            if (findTarget(event, ".copy-share-token-btn", el)) {
+                const url = el.target.closest(".copy-share-token-btn").dataset
+                    .url
+                navigator.clipboard.writeText(url).then(
+                    () =>
+                        addAlert(
+                            "success",
+                            gettext("Link copied to clipboard.")
+                        ),
+                    () => addAlert("error", gettext("Could not copy link."))
+                )
+                return
+            }
+            if (findTarget(event, ".revoke-share-token-btn", el)) {
+                const btn = el.target.closest(".revoke-share-token-btn")
+                const tokenId = Number.parseInt(btn.dataset.tokenId)
+                const rowEl = btn.closest(".share-token-row")
+                this.revokeShareToken(tokenId, rowEl)
+                return
+            }
+        })
+
         this.dialog.dialogEl.addEventListener("click", event => {
             const el = {}
             switch (true) {
@@ -364,12 +634,15 @@ export class DocumentAccessRightsDialog {
     }
 
     submitAccessRight(newAccessRights) {
-        postJson("/api/document/save_access_rights/", {
-            document_ids: JSON.stringify(this.documentIds),
-            access_rights: JSON.stringify(newAccessRights)
+        post("/api/document/save_access_rights/", {
+            document_ids: this.documentIds,
+            access_rights: newAccessRights
         })
             .then(() => {
                 addAlert("success", gettext("Access rights have been saved"))
+                if (this.onShareSuccess) {
+                    this.onShareSuccess(newAccessRights)
+                }
             })
             .catch(() =>
                 addAlert("error", gettext("Access rights could not be saved"))

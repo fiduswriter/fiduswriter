@@ -13,11 +13,14 @@ export class ContributorDialog {
      * @param {Object} node - The contributors_part node
      * @param {Object} view - The ProseMirror editor view
      * @param {Object|false} contributor - The contributor data if editing, false if adding
+     * @param {Array} idTypes - Array of ID type configs from template [{label, regex}]
      */
-    constructor(node, view, contributor = false) {
+    constructor(node, view, contributor = false, idTypes = []) {
         this.node = node
         this.view = view
         this.contributor = contributor
+        console.log("ContirbutorDialog", {node, view, contributor, idTypes})
+        this.idTypes = idTypes
         this.dialog = false
     }
 
@@ -41,12 +44,45 @@ export class ContributorDialog {
                         ).value,
                     institution = this.dialog.dialogEl.querySelector(
                         "input[name=institution]"
-                    ).value
+                    ).value,
+                    id_type = false,
+                    id_value = false
 
                 firstname = firstname.length ? firstname : false
                 lastname = lastname.length ? lastname : false
                 institution = institution.length ? institution : false
                 email = email.length ? email : false
+
+                // Get ID type/value if fields are shown
+                if (this.idTypes && this.idTypes.length > 0) {
+                    const idTypeEl =
+                        this.dialog.dialogEl.querySelector("[name=id_type]")
+                    if (idTypeEl && idTypeEl.value) {
+                        id_type = idTypeEl.value
+                        const idValueInput = this.dialog.dialogEl.querySelector(
+                            "input[name=id_value]"
+                        )
+                        if (idValueInput && idValueInput.value) {
+                            id_value = idValueInput.value
+                            // Validate id_value against selected id_type's regex
+                            const selectedType = this.idTypes.find(
+                                t => t.label === id_type
+                            )
+                            if (selectedType && selectedType.regex) {
+                                const regex = new RegExp(selectedType.regex)
+                                if (!regex.test(id_value)) {
+                                    addAlert(
+                                        "error",
+                                        gettext(
+                                            "ID Value format is incorrect for "
+                                        ) + id_type
+                                    )
+                                    return
+                                }
+                            }
+                        }
+                    }
+                }
 
                 // Validate email format
                 if (email && !emailRegExp.test(email)) {
@@ -67,7 +103,9 @@ export class ContributorDialog {
                         firstname,
                         lastname,
                         email,
-                        institution
+                        institution,
+                        id_type,
+                        id_value
                     })
                 let tr
 
@@ -118,7 +156,8 @@ export class ContributorDialog {
             id: "edit-contributor",
             title: `${this.contributor ? gettext("Update") : gettext("Add")} ${this.node.attrs.item_title.toLowerCase()}`,
             body: contributorTemplate({
-                contributor: this.contributor ? this.contributor : {}
+                contributor: this.contributor ? this.contributor : {},
+                idTypes: this.idTypes
             }),
             width: 836,
             height: 360,

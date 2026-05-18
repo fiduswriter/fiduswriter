@@ -11,7 +11,11 @@ import {
     TableDialog
 } from "../../dialogs"
 import {setBlockType} from "../../keymap"
-import {checkProtectedInSelection} from "../../state_plugins"
+import {
+    checkProtectedInSelection,
+    getInlineReferenceState,
+    setInlineReferenceState
+} from "../../state_plugins"
 
 const BLOCK_LABELS = {
     paragraph: gettext("Normal Text"),
@@ -474,6 +478,117 @@ export const toolbarModel = () => ({
         },
         {
             type: "button",
+            title: gettext("Superscript"),
+            icon: "superscript",
+            action: editor => {
+                const mark = editor.currentView.state.schema.marks["sup"]
+                const command = toggleMark(mark)
+                command(editor.currentView.state, tr =>
+                    editor.currentView.dispatch(tr)
+                )
+            },
+            available: editor => markAvailable(editor, "sup"),
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.jsonID === "gapcursor" ||
+                    markDisabled(editor, "sup")
+                ) {
+                    return true
+                }
+            },
+            selected: editor => {
+                const storedMarks = editor.currentView.state.storedMarks
+                if (
+                    storedMarks?.some(mark => mark.type.name === "sup") ||
+                    editor.currentView.state.selection.$head
+                        .marks()
+                        .some(mark => mark.type.name === "sup")
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            order: 6
+        },
+        {
+            type: "button",
+            title: gettext("Subscript"),
+            icon: "subscript",
+            action: editor => {
+                const mark = editor.currentView.state.schema.marks["sub"]
+                const command = toggleMark(mark)
+                command(editor.currentView.state, tr =>
+                    editor.currentView.dispatch(tr)
+                )
+            },
+            available: editor => markAvailable(editor, "sub"),
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.jsonID === "gapcursor" ||
+                    markDisabled(editor, "sub")
+                ) {
+                    return true
+                }
+            },
+            selected: editor => {
+                const storedMarks = editor.currentView.state.storedMarks
+                if (
+                    storedMarks?.some(mark => mark.type.name === "sub") ||
+                    editor.currentView.state.selection.$head
+                        .marks()
+                        .some(mark => mark.type.name === "sub")
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            order: 7
+        },
+        {
+            type: "button",
+            title: gettext("Code"),
+            icon: "code",
+            action: editor => {
+                const mark = editor.currentView.state.schema.marks["code"]
+                const command = toggleMark(mark)
+                command(editor.currentView.state, tr =>
+                    editor.currentView.dispatch(tr)
+                )
+            },
+            available: editor => markAvailable(editor, "code"),
+            disabled: editor => {
+                if (
+                    READ_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    COMMENT_ONLY_ROLES.includes(editor.docInfo.access_rights) ||
+                    editor.currentView.state.selection.jsonID === "gapcursor" ||
+                    markDisabled(editor, "code")
+                ) {
+                    return true
+                }
+            },
+            selected: editor => {
+                const storedMarks = editor.currentView.state.storedMarks
+                if (
+                    storedMarks?.some(mark => mark.type.name === "code") ||
+                    editor.currentView.state.selection.$head
+                        .marks()
+                        .some(mark => mark.type.name === "code")
+                ) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+            order: 8
+        },
+        {
+            type: "button",
             title: gettext("Numbered list"),
             icon: "list-ol",
             action: editor => {
@@ -510,7 +625,7 @@ export const toolbarModel = () => ({
                 }
                 return false
             },
-            order: 6
+            order: 9
         },
         {
             type: "button",
@@ -550,7 +665,7 @@ export const toolbarModel = () => ({
                 }
                 return false
             },
-            order: 7
+            order: 10
         },
         {
             type: "button",
@@ -589,7 +704,7 @@ export const toolbarModel = () => ({
                 }
                 return false
             },
-            order: 8
+            order: 11
         },
         {
             id: "link",
@@ -615,7 +730,7 @@ export const toolbarModel = () => ({
                 editor.currentView.state.selection.$head
                     .marks()
                     .some(mark => mark.type.name === "link"),
-            order: 9
+            order: 12
         },
         {
             type: "button",
@@ -641,13 +756,23 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 10
+            order: 13
         },
         {
             type: "button",
             title: gettext("Cite"),
             icon: "book",
             action: editor => {
+                const inlineState = getInlineReferenceState(
+                    editor.currentView.state
+                )
+                if (inlineState?.active && inlineState.isEdit) {
+                    editor.currentView.dispatch(
+                        setInlineReferenceState(editor.currentView.state.tr, {
+                            action: "openDialog"
+                        })
+                    )
+                }
                 const dialog = new CitationDialog(editor)
                 dialog.init()
                 return false
@@ -668,7 +793,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 11
+            order: 14
         },
         {
             type: "button",
@@ -693,7 +818,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 12
+            order: 15
         },
         {
             type: "button",
@@ -719,7 +844,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 13
+            order: 16
         },
         {
             type: "button",
@@ -740,7 +865,7 @@ export const toolbarModel = () => ({
                     return true
                 }
             },
-            order: 14
+            order: 17
         },
         {
             type: "button",

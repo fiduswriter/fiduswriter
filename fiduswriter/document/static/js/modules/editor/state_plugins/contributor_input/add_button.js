@@ -5,11 +5,13 @@ import {ContributorDialog} from "../../dialogs"
 import {nextSelection} from "./helpers"
 
 export class AddButton {
-    constructor(dom, getNode, getPos, view) {
+    constructor(dom, getNode, getPos, view, idTypes) {
         this.dom = dom
         this.getNode = getNode
         this.getPos = getPos
         this.view = view
+
+        this.idTypes = idTypes
 
         this.button = null
     }
@@ -61,7 +63,13 @@ export class AddButton {
     handleActivation(event) {
         event.preventDefault()
         const node = this.getNode()
-        const dialog = new ContributorDialog(node, this.view)
+
+        const dialog = new ContributorDialog(
+            node,
+            this.view,
+            false,
+            this.idTypes
+        )
         dialog.init()
     }
 

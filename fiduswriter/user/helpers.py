@@ -22,6 +22,12 @@ class Avatars:
 
     async def get_url_async(self, user):
         """Asynchronous method to get avatar URL with proper locking"""
+        # Guest users have no avatar
+        from base.base_consumer import GuestUser
+
+        if isinstance(user, GuestUser):
+            return None
+
         # If avatar is already cached, return it immediately
         if user.id in self.AVATARS:
             return self.AVATARS[user.id]

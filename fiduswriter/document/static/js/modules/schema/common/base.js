@@ -92,3 +92,27 @@ export const underline = {
         return ["span", {class: "underline"}, 0]
     }
 }
+
+export const sup = {
+    parseDOM: [{tag: "sup"}],
+    toDOM() {
+        return ["sup", 0]
+    },
+    excludes: "sub"
+}
+
+export const sub = {
+    parseDOM: [{tag: "sub"}],
+    toDOM() {
+        return ["sub", 0]
+    },
+    excludes: "sup"
+}
+
+export const code = {
+    parseDOM: [{tag: "code"}],
+    toDOM() {
+        return ["code", 0]
+    },
+    excludes: "strong em underline link sup sub"
+}

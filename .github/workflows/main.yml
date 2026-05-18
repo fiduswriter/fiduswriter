@@ -5,10 +5,22 @@ on:
         branches:
             - main
             - develop
+        paths-ignore:
+            - 'docs/**'
+            - '**.md'
+            - 'LICENSE'
+            - 'AUTHORS'
+            - '.github/FUNDING.yml'
     pull_request:
         branches:
             - main
             - develop
+        paths-ignore:
+            - 'docs/**'
+            - '**.md'
+            - 'LICENSE'
+            - 'AUTHORS'
+            - '.github/FUNDING.yml'
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
@@ -17,8 +29,8 @@ jobs:
     pre-commit:
         runs-on: ubuntu-latest
         steps:
-        - uses: actions/checkout@v4.1.2
-        - uses: actions/setup-python@v5.1.0
+        - uses: actions/checkout@v6
+        - uses: actions/setup-python@v6
           with:
             python-version: "3.14"
         - uses: pre-commit/action@v3.0.1
@@ -27,32 +39,38 @@ jobs:
         strategy:
             matrix:
                 test:
-                    - "browser_check base"
+                    - "browser_check base style"
                     - user
                     - feedback
                     - document.tests.test_collaboration
-                    - document.tests.test_editor
+                    - document.tests.test_editor.EditorTest.test_crossrefs_and_internal_links
+                    - document.tests.test_editor.EditorTest.test_share_document
+                    - document.tests.test_editor.EditorTest.test_track_changes
                     - document.tests.test_offline
                     - document.tests.test_export
-                    - document.tests.test_admin
+                    - "document.tests.test_admin document.tests.test_external_save"
                     #- document.tests.test_message_exchange
                     - document.tests.test_paste_template_filter
                     - document.tests.test_memory_leak
                     - document.tests.test_merge
-                    - document.tests.test_path
+                    - "document.tests.test_path document.tests.test_inline_editors"
+                    - document.tests.test_share_link_access
+                    - document.tests.test_e2ee
+                    - "document.tests.test_views_unit document.tests.test_helpers"
                     - bibliography
                     - usermedia
                     - user_template_manager
+                    - document.tests.test_import_export
         steps:
             - name: Set up Python
-              uses: actions/setup-python@v5.1.0
+              uses: actions/setup-python@v6
               with:
                   python-version: "3.14"
             - name: Set up Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 22
-            - uses: actions/checkout@v4.1.2
+                  node-version: 26
+            - uses: actions/checkout@v6
             - uses: nanasess/setup-chromedriver@master
             - name: Install dependencies
               run: |

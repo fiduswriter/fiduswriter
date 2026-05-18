@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.core import checks
@@ -9,11 +10,11 @@ from django.contrib.contenttypes.models import ContentType
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
 
-FW_DOCUMENT_VERSION = 3.5
+FW_DOCUMENT_VERSION = 3.6
 
 
 class DocumentTemplate(models.Model):
-    title = models.CharField(max_length=255, default="", blank=True)
+    title = models.TextField(default="", blank=True)
     import_id = models.CharField(max_length=255, default="", blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
@@ -78,7 +79,7 @@ class DocumentTemplate(models.Model):
 
 
 class Document(models.Model):
-    title = models.CharField(max_length=255, default="", blank=True)
+    title = models.TextField(default="", blank=True)
     path = models.TextField(default="", blank=True)
     content = models.JSONField(default=dict)
     doc_version = models.DecimalField(
@@ -110,6 +111,13 @@ class Document(models.Model):
     template = models.ForeignKey(
         DocumentTemplate, on_delete=models.deletion.CASCADE
     )
+    e2ee = models.BooleanField(default=False)
+    e2ee_salt = models.BinaryField(max_length=16, null=True, blank=True)
+    e2ee_iterations = models.PositiveIntegerField(default=600000)
+    # For E2EE documents: the document version at which the last encrypted
+    # snapshot was saved. Diffs stored in `diffs` cover snapshot_version →
+    # version. Null for non-E2EE documents.
+    e2ee_snapshot_version = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         if len(self.title) > 0:
@@ -146,6 +154,9 @@ class Document(models.Model):
                 "accessrightinvite",
                 "documentrevision",
                 "documentimage",
+                "encryption_keys",
+                "sharetoken",
+                "encrypted_images",
             ]
         ]
 
@@ -219,6 +230,8 @@ RIGHTS_CHOICES = (
     # Has no access to revisions.
 )
 
+E2EE_ALLOWED_RIGHTS = ["write", "read-without-comments", "read"]
+
 # Editor and Reviewer can only comment and not edit document
 COMMENT_ONLY = ("review", "comment")
 
@@ -261,8 +274,51 @@ class AccessRight(models.Model):
         }
 
 
+class ShareToken(models.Model):
+    token = models.UUIDField(unique=True, default=uuid.uuid4)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    rights = models.CharField(choices=RIGHTS_CHOICES, max_length=21)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
+    expires_at = models.DateTimeField(null=True, blank=True)
+    note = models.CharField(max_length=255, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("document", "rights", "created_by")
+
+
 def revision_filename(instance, filename):
     return f"document-revisions/{instance.pk}.fidus"
+
+
+class DocumentEncryptionKey(models.Model):
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.CASCADE,
+        related_name="encryption_keys",
+    )
+    holder = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="document_encryption_keys",
+    )
+    # The document encryption key, encrypted. Which key encrypts it
+    # depends on `encrypted_with_master_key`:
+    # - True:  encrypted with the owner's master key (MK)
+    # - False: encrypted with the recipient's public key (PK) via ECDH
+    encrypted_key = models.TextField()  # Base64
+    encrypted_with_master_key = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("document", "holder"),)
+
+    def __str__(self):
+        return f"DEK for doc {self.document_id} / {self.holder.readable_name}"
 
 
 class DocumentRevision(models.Model):

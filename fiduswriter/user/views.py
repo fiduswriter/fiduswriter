@@ -1,9 +1,11 @@
 import json
+import base64
 
 from django.http import JsonResponse, HttpRequest
 from django.db.models import Q
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
 from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
@@ -11,24 +13,34 @@ from django.contrib.auth import get_user_model
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.files import File
+from django.utils.translation import gettext as _
+
+from django_otp import user_has_device
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from base.decorators import ajax_required
-from .forms import UserForm
+from base.mixins import JsonFormMixin
+from .forms import UserForm, FidusLoginForm
 from document.models import AccessRight
-from .models import UserInvite
+from .models import UserInvite, UserEncryptionKey
 from .helpers import Avatars
 from . import emails
+
 
 from allauth.account.models import (
     EmailAddress,
     EmailConfirmation,
     EmailConfirmationHMAC,
 )
-from allauth.account.views import LoginView, SignupView
+from allauth.account.views import (
+    LoginView,
+    SignupView,
+    PasswordResetView,
+    PasswordResetFromKeyView,
+)
 from allauth.account import signals
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.signals import social_account_removed
-from django.contrib.auth.forms import PasswordChangeForm
 from allauth.account.forms import AddEmailForm
 
 from avatar.models import Avatar
@@ -44,19 +56,29 @@ def password_change(request):
     """
     Change password
     """
-    response = {}
-    form = PasswordChangeForm(user=request.user, data=request.POST)
-    if form.is_valid():
-        status = 200
-        form.save()
-        # Updating the password logs out all other sessions for the user
-        # except the current one.
-        update_session_auth_hash(request, form.user)
-    else:
-        response["msg"] = form.errors
-        status = 201
-
-    return JsonResponse(response, status=status)
+    old_password = request.JSON.get("old_password", "")
+    new_password1 = request.JSON.get("new_password1", "")
+    new_password2 = request.JSON.get("new_password2", "")
+    errors = {}
+    if not request.user.check_password(old_password):
+        errors["old_password"] = [
+            _(
+                "Your old password was entered incorrectly. Please enter it again."
+            )
+        ]
+    if new_password1 != new_password2:
+        errors["new_password2"] = [_("The two password fields didn't match.")]
+    if not errors:
+        try:
+            validate_password(new_password1, request.user)
+        except ValidationError as e:
+            errors["new_password1"] = list(e.messages)
+    if errors:
+        return JsonResponse({"msg": errors}, status=201)
+    request.user.set_password(new_password1)
+    request.user.save()
+    update_session_auth_hash(request, request.user)
+    return JsonResponse({}, status=200)
 
 
 @login_required
@@ -67,7 +89,9 @@ def add_email(request):
     Add email address
     """
     response = {}
-    add_email_form = AddEmailForm(request.user, request.POST)
+    add_email_form = AddEmailForm(
+        request.user, {"email": request.JSON.get("email", "")}
+    )
     if add_email_form.is_valid():
         status = 200
         email_address = add_email_form.save(request)
@@ -89,7 +113,7 @@ def add_email(request):
 @require_POST
 def delete_email(request):
     response = {}
-    email = request.POST["email"]
+    email = request.JSON["email"]
     response["msg"] = f"Removed e-mail address {email}"
     status = 200
     email_address = EmailAddress.objects.filter(
@@ -112,7 +136,7 @@ def delete_email(request):
 @require_POST
 def primary_email(request):
     response = {}
-    email = request.POST["email"]
+    email = request.JSON["email"]
     email_address = EmailAddress.objects.filter(
         user=request.user, email=email, verified=True
     ).first()
@@ -139,7 +163,7 @@ def primary_email(request):
 @require_POST
 def delete_socialaccount(request):
     account = SocialAccount.objects.filter(
-        id=request.POST["socialaccount"], user=request.user
+        id=request.JSON["socialaccount"], user=request.user
     ).first()
     if not account:
         return JsonResponse({"msg": "Unknown account"}, status=404)
@@ -230,7 +254,8 @@ def delete_user(request):
     user = request.user
     # Only remove users who are not marked as having staff status
     # to prevent administratoras from deleting themselves accidentally.
-    if not user.check_password(request.POST["password"]):
+    password = request.JSON["password"]
+    if not user.check_password(password):
         status = 401
     elif user.is_staff:
         status = 403
@@ -249,21 +274,19 @@ def save_profile(request):
     Save user profile information
     """
     response = {}
-    form_data = json.loads(request.POST["form_data"])
     User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
-    user_form = UserForm(form_data["user"], instance=user_object)
+    user_form = UserForm(request.JSON, instance=user_object)
+    user_form.save()
     if user_form.is_valid():
-        user_form.save()
+        # user_form.save()
         # Set the language if it has been updated
         if (
-            "language" in form_data["user"]
-            and user_object.language != form_data["user"]["language"]
+            "language" in request.JSON
+            and user_object.language != request.JSON["language"]
         ):
             user_object.language = (
-                form_data["user"]["language"]
-                if form_data["user"]["language"]
-                else None
+                request.JSON["language"] if request.JSON["language"] else None
             )
             user_object.save(update_fields=["language"])
             # Update session language
@@ -353,7 +376,7 @@ def invites_add(request):
     email = False
     errored = False
     status = 202
-    user_string = request.POST["user_string"]
+    user_string = request.JSON["user_string"]
     if (
         UserInvite.objects.filter(username=user_string)
         .filter(by=request.user)
@@ -431,7 +454,7 @@ def invites_connect(user, key=None):
 def invite(request):
     response = {}
     status = 200
-    key = request.POST["key"]
+    key = request.JSON["key"]
     connected = invites_connect(request.user, key)
     if connected:
         response["redirect"] = "/user/contacts/"
@@ -446,7 +469,7 @@ def invite(request):
 def invites_accept(request):
     response = {}
     status = 200
-    invites = json.loads(request.POST["invites"])
+    invites = request.JSON["invites"]
     response["contacts"] = []
     avatars = Avatars()
     for invite in invites:
@@ -492,7 +515,7 @@ def invites_decline(request):
     Decline an invite
     """
     response = {}
-    invites = json.loads(request.POST["invites"])
+    invites = request.JSON["invites"]
     for invite in invites:
         for ui in request.user.invites_to.filter(id=invite["id"]):
             link = HttpRequest.build_absolute_uri(request, "/user/contacts/")
@@ -509,7 +532,7 @@ def delete_contacts(request):
     Delete a contact
     """
     response = {}
-    former_contacts = json.loads(request.POST["contacts"])
+    former_contacts = request.JSON["contacts"]
     for former_contact in former_contacts:
         if former_contact["type"] == "user":
             # Revoke all permissions given to this user
@@ -547,7 +570,7 @@ def get_confirmkey_data(request):
     Get data for an email confirmation key
     """
     response = {}
-    key = request.POST["key"]
+    key = request.JSON["key"]
     confirmation = EmailConfirmationHMAC.from_key(key)
     if not confirmation:
         qs = EmailConfirmation.objects.all_valid()
@@ -574,35 +597,388 @@ def get_confirmkey_data(request):
     return JsonResponse(response, status=status)
 
 
-class FidusSignupView(SignupView):
+class FidusSignupView(JsonFormMixin, SignupView):
     def form_valid(self, form):
         if not settings.REGISTRATION_OPEN:
             return HttpResponseRedirect("/")
         ret = super().form_valid(form)
         if ret.status_code > 399:
             return ret
-        if "invite_key" in self.request.POST:
-            invites_connect(self.user, self.request.POST["invite_key"])
+        invite_key = self.request.JSON.get("invite_key")
+        if invite_key:
+            invites_connect(self.user, invite_key)
         return ret
 
 
 signup = FidusSignupView.as_view()
 
 
-class FidusLoginView(LoginView):
+class FidusLoginView(JsonFormMixin, LoginView):
+    form_class = FidusLoginForm
+
     def form_valid(self, form):
-        form_response = super().form_valid(form)
         is_ajax = (
             self.request.headers.get("x-requested-with") == "XMLHttpRequest"
         )
-        user = self.request.user
+        user = form.user
         if is_ajax and isinstance(user, get_user_model()):
+            # Check if user has 2FA enabled and is not verified yet
+            location = None
+            if "django_otp" in settings.INSTALLED_APPS:
+                if user_has_device(user):
+                    # Check if user has a verified TOTP device
+                    verified_device = TOTPDevice.objects.filter(
+                        user=user, confirmed=True
+                    ).first()
+                    if verified_device:
+                        twofactor = self.request.JSON.get("twofactor")
+                        if twofactor:
+                            if verified_device.verify_token(twofactor):
+                                # User has verified their device, continue normally
+                                form_response = super().form_valid(form)
+                                location = form_response["Location"]
+                            else:
+                                # Invalid code, show error message
+                                form.add_error(
+                                    "twofactor", _("Code is invalid")
+                                )
+                        else:
+                            # User has a confirmed device but needs to verify with token
+                            # Ask to add 2FA verification code
+                            # Not translated as frontend will handle it.
+                            form.add_error("twofactor", "required")
+                    else:
+                        form_response = super().form_valid(form)
+                        location = form_response["Location"]
+                else:
+                    form_response = super().form_valid(form)
+                    location = form_response["Location"]
+            else:
+                # django_otp not available, continue normally
+                # Authorize user
+                form_response = super().form_valid(form)
+                location = form_response["Location"]
             # Add user's language preference to the response
-            response = {"location": form_response["Location"], "user": {}}
+            response = {"user": {}}
+            if location:
+                response["Location"] = location
             if user.language:
                 response["user"]["language"] = user.language
             return JsonResponse(response)
         return form_response
 
 
+# Two-factor authentication views
+
+
+@login_required
+@ajax_required
+@require_POST
+def two_factor_setup(request):
+    """
+    Setup a new TOTP device for the user.
+    Returns a QR code URL and secret key.
+    """
+    # Check if user already has a device
+    existing_device = TOTPDevice.objects.filter(
+        user=request.user, confirmed=True
+    ).first()
+    if existing_device:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Two-factor authentication is already enabled. Disable it first to set up a new device.",
+            },
+            status=400,
+        )
+
+    # Check if there's an existing unconfirmed device to reuse
+    unconfirmed_device = TOTPDevice.objects.filter(
+        user=request.user, confirmed=False
+    ).first()
+
+    if unconfirmed_device:
+        # Reuse the existing unconfirmed device
+        device = unconfirmed_device
+    else:
+        # Create new unconfirmed TOTP device
+        device = TOTPDevice.objects.create(
+            user=request.user,
+            name=f"{request.user.username}'s TOTP Device",
+            confirmed=False,
+            step=30,
+            t0=0,
+            digits=6,
+        )
+
+    secret_key = base64.b32encode(device.bin_key).decode("utf-8")
+    provisioning_uri = device.config_url
+
+    return JsonResponse(
+        {
+            "status": "success",
+            "secret_key": secret_key,
+            "provisioning_uri": provisioning_uri,
+            "device_id": device.id,
+        }
+    )
+
+
+@login_required
+@ajax_required
+@require_POST
+def two_factor_verify(request):
+    """
+    Verify a TOTP code during setup.
+    """
+
+    code = request.JSON.get("code", "").strip()
+    device_id = request.JSON.get("device_id")
+
+    if not code or len(code) != 6:
+        return JsonResponse(
+            {"status": "error", "message": "Invalid code format."},
+            status=400,
+        )
+
+    # Get the device
+    try:
+        device = TOTPDevice.objects.get(
+            id=device_id, user=request.user, confirmed=False
+        )
+    except TOTPDevice.DoesNotExist:
+        return JsonResponse(
+            {"status": "error", "message": "Device not found."}, status=404
+        )
+
+    if device.verify_token(code):  # Verify the code
+        # totp = pyotp.TOTP(device.bin_key)
+        # if totp.verify(code):
+        # Code is valid, confirm the device
+        device.confirmed = True
+        device.save()
+
+        # Delete any other unconfirmed devices for this user to clean up
+        TOTPDevice.objects.filter(user=request.user, confirmed=False).exclude(
+            id=device.id  # Don't delete the one we just confirmed
+        ).delete()
+
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": "Two-factor authentication has been enabled successfully.",
+            }
+        )
+    else:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Invalid code. Please try again.",
+            },
+            status=400,
+        )
+
+
+@login_required
+@ajax_required
+@require_POST
+def two_factor_disable(request):
+    """
+    Disable 2FA for the user by removing all TOTP devices.
+    """
+
+    # Delete all TOTP devices for this user
+    deleted_count = TOTPDevice.objects.filter(user=request.user).delete()[0]
+
+    if deleted_count > 0:
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": "Two-factor authentication has been disabled.",
+            }
+        )
+    else:
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "No two-factor authentication devices found.",
+            },
+            status=400,
+        )
+
+
+@login_required
+@ajax_required
+def two_factor_status(request):
+    """
+    Check if user has 2FA enabled.
+    """
+
+    has_device = TOTPDevice.objects.filter(
+        user=request.user, confirmed=True
+    ).exists()
+
+    return JsonResponse({"status": "success", "enabled": has_device})
+
+
+@login_required
+@ajax_required
+def get_encryption_key(request):
+    """Get the current user's encryption key data (encrypted blobs + salt)."""
+    response = {}
+    status = 200
+    key_record = UserEncryptionKey.objects.filter(user=request.user).first()
+    if key_record:
+        response["has_key"] = True
+        response["public_key"] = key_record.public_key
+        response["encrypted_master_key"] = key_record.encrypted_master_key
+        response["encrypted_private_key"] = key_record.encrypted_private_key
+        response["user_salt"] = base64.b64encode(key_record.user_salt).decode(
+            "ascii"
+        )
+        response["user_iterations"] = key_record.user_iterations
+        response["encrypted_master_key_backup"] = (
+            key_record.encrypted_master_key_backup
+        )
+    else:
+        response["has_key"] = False
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def save_encryption_key(request):
+    """Create or update the user's encryption keys."""
+    response = {}
+    status = 200
+    data = request.JSON.get("data", {})
+    key_record, created = UserEncryptionKey.objects.get_or_create(
+        user=request.user,
+        defaults={
+            "public_key": data.get("public_key", ""),
+            "encrypted_private_key": data.get("encrypted_private_key", ""),
+            "encrypted_master_key": data.get("encrypted_master_key", ""),
+            "user_salt": base64.b64decode(data.get("user_salt", "")),
+            "user_iterations": data.get("user_iterations", 600000),
+            "encrypted_master_key_backup": data.get(
+                "encrypted_master_key_backup", ""
+            ),
+        },
+    )
+    if not created:
+        key_record.public_key = data.get("public_key", key_record.public_key)
+        key_record.encrypted_private_key = data.get(
+            "encrypted_private_key", key_record.encrypted_private_key
+        )
+        key_record.encrypted_master_key = data.get(
+            "encrypted_master_key", key_record.encrypted_master_key
+        )
+        if "user_salt" in data:
+            key_record.user_salt = base64.b64decode(data["user_salt"])
+        if "user_iterations" in data:
+            key_record.user_iterations = data["user_iterations"]
+        key_record.encrypted_master_key_backup = data.get(
+            "encrypted_master_key_backup",
+            key_record.encrypted_master_key_backup,
+        )
+        key_record.save()
+    response["id"] = key_record.id
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+def get_public_key(request, user_id):
+    """Get another user's public key (for sharing encrypted documents)."""
+    response = {}
+    status = 200
+    User = get_user_model()
+    target_user = User.objects.filter(pk=user_id).first()
+    if not target_user:
+        return JsonResponse({"error": "User not found"}, status=404)
+    key_record = UserEncryptionKey.objects.filter(user=target_user).first()
+    if key_record:
+        response["has_key"] = True
+        response["public_key"] = key_record.public_key
+    else:
+        response["has_key"] = False
+    return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_POST
+def update_preferences(request):
+    """Update user preferences (e.g., encryption dialog dismissal)."""
+    user = request.user
+    preferences = user.preferences or {}
+
+    # Update allowed preference keys
+    allowed_keys = {
+        "has_dismissed_passphrase_offer",
+        "inline_references",
+        "inline_math",
+    }
+    for key in allowed_keys:
+        if key in request.JSON:
+            preferences[key] = request.JSON[key]
+
+    user.preferences = preferences
+    user.save()
+
+    return JsonResponse({"preferences": user.preferences}, status=200)
+
+
+@login_required
+@ajax_required
+def get_preferences(request):
+    """Get user preferences."""
+    user = request.user
+    return JsonResponse({"preferences": user.preferences or {}}, status=200)
+
+
+@login_required
+@ajax_required
+def has_encryption_keys(request):
+    """Check if a user has encryption keys (passphrase setup)."""
+    user_id = None
+
+    # Check if request has user_id parameter
+    if request.method == "GET":
+        user_id = request.GET.get("user_id")
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body) if request.body else {}
+            user_id = data.get("user_id")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    if not user_id:
+        return JsonResponse({"error": "user_id required"}, status=400)
+
+    try:
+        user_id = int(user_id)
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "Invalid user_id"}, status=400)
+
+    User = get_user_model()
+    user = User.objects.filter(id=user_id).first()
+    if not user:
+        return JsonResponse({"error": "User not found"}, status=404)
+
+    # Check if user has UserEncryptionKey
+    has_keys = UserEncryptionKey.objects.filter(user=user).exists()
+
+    return JsonResponse({"has_keys": has_keys}, status=200)
+
+
 login = FidusLoginView.as_view()
+
+
+class FidusPasswordResetView(JsonFormMixin, PasswordResetView):
+    pass
+
+
+class FidusPasswordResetFromKeyView(JsonFormMixin, PasswordResetFromKeyView):
+    pass

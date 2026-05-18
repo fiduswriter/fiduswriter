@@ -45,13 +45,32 @@ export class ToolbarView {
     bindEvents() {
         this.listeners.onclick = event => this.onclick(event)
         document.body.addEventListener("click", this.listeners.onclick)
+        this.listeners.onmousedown = event => this.onmousedown(event)
+        document.body.addEventListener("mousedown", this.listeners.onmousedown)
     }
 
     destroy() {
         document.body.removeEventListener("click", this.listeners.onclick)
+        document.body.removeEventListener(
+            "mousedown",
+            this.listeners.onmousedown
+        )
         this.editor.menu.toolbarViews = this.editor.menu.toolbarViews.filter(
             view => view !== this
         )
+    }
+
+    onmousedown(event) {
+        // When the citation inline editor is active, a toolbar click causes a DOM
+        // selectionchange event that makes ProseMirror deactivate the plugin via
+        // appendTransaction — before the click event fires. Preventing focus
+        // transfer here (standard content-editable toolbar pattern) stops that.
+        if (
+            event.target.closest(".editor-toolbar") &&
+            document.activeElement?.classList.contains("citation-inline-input")
+        ) {
+            event.preventDefault()
+        }
     }
 
     onResize() {
@@ -328,7 +347,7 @@ export class ToolbarView {
         return `
         <button aria-label="${menuItem.title}" class="fw-button fw-white fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${menuItem.selected && menuItem.selected(this.editor) ? " ui-state-active" : ""}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ""}" title="${menuItem.title}" >
             <span class="ui-button-text">
-                <i class="fa fa-${typeof menuItem.icon === "function" ? menuItem.icon(this.editor) : menuItem.icon}"></i>
+                <i class="fa-solid fa-${typeof menuItem.icon === "function" ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>
         </button>`
     }

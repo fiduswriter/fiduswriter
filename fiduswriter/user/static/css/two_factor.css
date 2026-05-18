@@ -1,0 +1,245 @@
+/* Two-Factor Authentication Styles */
+
+/* QR Code Container */
+.two-factor-qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+}
+
+.two-factor-qr-container img {
+    max-width: 200px;
+    height: auto;
+}
+
+/* Secret Key Display */
+.two-factor-secret {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: text;
+}
+
+.two-factor-secret:hover {
+    background-color: #e8e8e8;
+}
+
+/* Two-Factor Verification Section */
+.two-factor-verify-section {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #eeeeee;
+}
+
+.two-factor-verify-section p {
+    margin-bottom: 15px;
+    color: #666666;
+    font-size: 14px;
+}
+
+.two-factor-verify-section input[type="text"] {
+    width: 200px;
+    padding: 12px 15px;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-align: center;
+    border: 2px solid #dddddd;
+    border-radius: 6px;
+    margin-right: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.two-factor-verify-section input[type="text"]:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(74 144 226 / 10%);
+}
+
+.two-factor-verify-section button {
+    padding: 12px 25px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.two-factor-verify-section button:active {
+    transform: scale(0.98);
+}
+
+/* Two-Factor Status Indicators */
+#two-factor-status {
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#two-factor-enabled-status {
+    color: #28a745;
+    background-color: rgb(40 167 69 / 10%);
+    padding: 5px 12px;
+    border-radius: 15px;
+}
+
+#two-factor-enabled-status i {
+    margin-right: 5px;
+}
+
+#two-factor-disabled-status {
+    color: #dc3545;
+    background-color: rgb(220 53 69 / 10%);
+    padding: 5px 12px;
+    border-radius: 15px;
+}
+
+#two-factor-disabled-status i {
+    margin-right: 5px;
+}
+
+/* Two-Factor Action Buttons */
+#setup-two-factor,
+#disable-two-factor {
+    display: inline-block;
+    margin-left: 15px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #4a90e2;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#setup-two-factor i,
+#disable-two-factor i {
+    margin-right: 5px;
+}
+
+#disable-two-factor {
+    color: #dc3545;
+}
+
+#setup-two-factor:hover,
+#disable-two-factor:hover {
+    color: #357abd;
+}
+
+#disable-two-factor:hover {
+    color: #c82333;
+} /* Two-Factor Dialog Styles */
+.two-factor-dialog {
+    max-width: 500px;
+    padding: 30px;
+}
+
+.two-factor-dialog h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333333;
+    font-size: 24px;
+    text-align: center;
+}
+
+.two-factor-dialog p {
+    color: #666666;
+    line-height: 1.6;
+}
+
+.two-factor-dialog .fw-button {
+    margin-top: 15px;
+}
+
+/* Attempts Warning */
+.attempts-warning {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (width <= 768px) {
+    .two-factor-qr-container img {
+        max-width: 150px;
+    }
+
+    .two-factor-verify-section input[type="text"] {
+        width: 100%;
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+
+    .two-factor-verify-section button {
+        width: 100%;
+    }
+
+    .two-factor-dialog {
+        padding: 20px;
+        margin: 10px;
+    }
+}
+
+/* Loading Spinner */
+.two-factor-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgb(255 255 255 / 30%);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success/Error Messages */
+.two-factor-success {
+    color: #28a745;
+    background-color: rgb(40 167 69 / 10%);
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.two-factor-error {
+    color: #dc3545;
+    background-color: rgb(220 53 69 / 10%);
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+/* Copy to Clipboard Hint */
+.two-factor-secret::after {
+    content: " (click to copy)";
+    font-size: 11px;
+    font-weight: normal;
+    color: #999999;
+    margin-left: 5px;
+}

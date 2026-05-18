@@ -1,3 +1,4 @@
+import {TextSelection} from "prosemirror-state"
 import {CommentEditor} from "./comment"
 
 export class CommentAnswerEditor extends CommentEditor {
@@ -23,6 +24,16 @@ export class CommentAnswerEditor extends CommentEditor {
             </div>
             <div class="tagger"></div>`
         )
+    }
+
+    initView() {
+        super.initView()
+        if (this.options.answerId) {
+            const selection = TextSelection.atEnd(this.view.state.doc)
+            this.view.dispatch(
+                this.view.state.tr.setSelection(selection).scrollIntoView()
+            )
+        }
     }
 
     submit() {

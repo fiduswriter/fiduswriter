@@ -10,8 +10,11 @@ from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.admin.views.decorators import staff_member_required
+from django.urls.exceptions import NoReverseMatch
+from django.core.exceptions import ImproperlyConfigured
 
 from allauth.socialaccount.adapter import get_adapter
+from allauth.socialaccount.models import SocialApp
 
 from user.helpers import Avatars
 from .decorators import ajax_required
@@ -20,13 +23,45 @@ from .helpers.ws import get_url_base
 from .models import Presence
 
 
+def get_frontend_settings():
+    """Return the settings dict to pass to the frontend as JSON."""
+    return {
+        "E2EE_MODE": settings.E2EE_MODE,
+        "TWO_FACTOR_ENABLED": "django_otp" in settings.INSTALLED_APPS,
+        "BRANDING_LOGO": settings.BRANDING_LOGO,
+        "STATIC_URL": settings.STATIC_URL,
+        "REGISTRATION_OPEN": settings.REGISTRATION_OPEN,
+        "SOCIALACCOUNT_OPEN": settings.SOCIALACCOUNT_OPEN,
+        "PASSWORD_LOGIN": settings.PASSWORD_LOGIN,
+        "CONTACT_EMAIL": settings.CONTACT_EMAIL,
+        "IS_FREE": settings.IS_FREE,
+        "TEST_SERVER": settings.TEST_SERVER,
+        "DEBUG": settings.DEBUG,
+        "CSRF_COOKIE_NAME": settings.CSRF_COOKIE_NAME,
+        "SOURCE_MAPS": settings.SOURCE_MAPS,
+        "USE_SERVICE_WORKER": settings.USE_SERVICE_WORKER,
+        "MEDIA_MAX_SIZE": settings.MEDIA_MAX_SIZE,
+        "FOOTER_LINKS": settings.FOOTER_LINKS,
+        "LANGUAGES": settings.LANGUAGES,
+        "VERSION": get_version(),
+        "EDITOR_SAVE_MODE": settings.EDITOR_SAVE_MODE,
+    }
+
+
 @ensure_csrf_cookie
 def app(request):
     """
     Load a page controlled by the JavaScript app.
     Used all user facing pages after login.
     """
-    return render(request, "app.html", {"version": get_version()})
+    return render(
+        request,
+        "app.html",
+        {
+            "version": get_version(),
+            "settings": json.dumps(get_frontend_settings()),
+        },
+    )
 
 
 def api_404(request):
@@ -54,11 +89,16 @@ def configuration(request):
         ws_url_base = get_url_base(origin, random.choice(settings.PORTS))
     socialaccount_providers = []
     for provider in get_adapter(request).list_providers(request):
+        try:
+            login_url = provider.get_login_url(request)
+        except NoReverseMatch:
+            # Provider is registered but its URLs are not installed.
+            continue
         socialaccount_providers.append(
             {
                 "id": provider.id,
                 "name": provider.name,
-                "login_url": provider.get_login_url(request),
+                "login_url": login_url,
             }
         )
     response = {
@@ -81,6 +121,7 @@ def configuration(request):
             "name": user.readable_name,
             "last_name": user.last_name,
             "language": user.language,
+            "preferences": user.preferences or {},
             "avatar": avatars.get_url(user),
             "emails": [],
             "socialaccounts": [],
@@ -106,7 +147,7 @@ def configuration(request):
                         "name": provider_account.to_str(),
                     }
                 )
-            except KeyError:
+            except (KeyError, SocialApp.DoesNotExist, ImproperlyConfigured):
                 # Social account provider has been removed.
                 pass
         response["user"]["waiting_invites"] = user.invites_to.exists()
@@ -128,7 +169,13 @@ def admin_console(request):
     """
     Load the admin console page.
     """
-    return render(request, "admin/console.html")
+    return render(
+        request,
+        "admin/console.html",
+        {
+            "settings": json.dumps(get_frontend_settings()),
+        },
+    )
 
 
 @ajax_required
@@ -171,7 +218,7 @@ def send_system_message(request):
     Send out a system message to all clients connected to the frontend.
     """
     response = {}
-    message = request.POST["message"]
+    message = request.JSON["message"]
 
     servers = set(
         Presence.objects.values_list("server_url", flat=True).distinct()
@@ -194,7 +241,7 @@ def flatpage(request):
     """
     response = {}
     status = 404
-    url = request.POST["url"]
+    url = request.JSON["url"]
     site_id = get_current_site(request).id
     flatpage = FlatPage.objects.filter(url=url, sites=site_id).first()
     if flatpage:
@@ -202,3 +249,29 @@ def flatpage(request):
         response["title"] = flatpage.title
         response["content"] = flatpage.content
     return JsonResponse(response, status=status)
+
+
+@require_POST
+def set_language(request):
+    """
+    Set the active language. Accepts JSON (language key) or form POST.
+    Replaces Django's built-in set_language for JSON-capable clients.
+    """
+    from django.utils.translation import check_for_language, activate
+
+    language = request.JSON.get("language") or request.POST.get("language")
+    if language and check_for_language(language):
+        activate(language)
+        response = JsonResponse({})
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            language,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            path=settings.LANGUAGE_COOKIE_PATH,
+            domain=settings.LANGUAGE_COOKIE_DOMAIN,
+            secure=settings.LANGUAGE_COOKIE_SECURE,
+            httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+            samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+        )
+        return response
+    return JsonResponse({"error": "Invalid language code"}, status=400)

@@ -75,7 +75,13 @@ export class ExportTemplateDialog {
                         })
                 }
             },
-            {type: "cancel"}
+            {
+                type: "cancel"
+            },
+            {
+                text: gettext("Help"),
+                click: () => this.showHelp()
+            }
         ]
         if (this.id) {
             buttons.unshift({
@@ -225,13 +231,14 @@ export class ExportTemplateDialog {
     }
 
     save() {
-        const saveValues = {
+        const jsonData = {
             id: this.id,
             template_id: this.documentTemplateId,
-            added_file: this.addedFile,
             added_file_type: this.addedFileType
         }
-        return postJson("/api/style/save_export_template/", saveValues)
+        return postJson("/api/style/save_export_template/", jsonData, {
+            added_file: this.addedFile
+        })
     }
 
     checkRemoteFile(url) {
@@ -295,15 +302,39 @@ export class ExportTemplateDialog {
         ).innerHTML = missingTags.join(", ")
     }
 
+    checkTagPresence(text, tag) {
+        // Simple replacement: {tag}
+        if (text.includes(`{${tag}}`)) {
+            return true
+        }
+        // Format string: {tag:format=...}
+        if (text.includes(`{${tag}:format=`)) {
+            return true
+        }
+        // Loop block: {BEGIN_tag} or {BEGIN_tag:limit=N}
+        if (
+            text.includes(`{BEGIN_${tag}}`) ||
+            text.includes(`{BEGIN_${tag}:limit=`)
+        ) {
+            return true
+        }
+        // Conditional referencing tag: {IF(tag...)} or {ELIF(tag...)}
+        const ifRegex = new RegExp(`\\{IF\\(${tag}\\.`, "g")
+        const elifRegex = new RegExp(`\\{ELIF\\(${tag}\\.`, "g")
+        if (ifRegex.test(text) || elifRegex.test(text)) {
+            return true
+        }
+        return false
+    }
+
     checkODT(xml, expectedTags) {
         const pars = xml.querySelectorAll("p")
         const foundTags = []
 
         pars.forEach(par => {
-            // Assuming there is nothing outside of <w:t>...</w:t>
             const text = par.textContent
             expectedTags.forEach(tag => {
-                if (text.includes(`{${tag}}`)) {
+                if (this.checkTagPresence(text, tag)) {
                     foundTags.push(tag)
                 }
             })
@@ -321,10 +352,9 @@ export class ExportTemplateDialog {
         const foundTags = []
 
         pars.forEach(par => {
-            // Assuming there is nothing outside of <w:t>...</w:t>
             const text = par.textContent
             expectedTags.forEach(tag => {
-                if (text.includes(`{${tag}}`)) {
+                if (this.checkTagPresence(text, tag)) {
                     foundTags.push(tag)
                 }
             })
@@ -363,9 +393,6 @@ export class ExportTemplateDialog {
                     this.addedFile = mediaInput
                     this.addedFileType = fileType
                     this.dialog.dialogEl.querySelector(
-                        ".export-template-filetype"
-                    ).innerHTML = fileType
-                    this.dialog.dialogEl.querySelector(
                         ".export-template-file"
                     ).innerHTML = escapeText(mediaInput.name)
                 })
@@ -373,5 +400,76 @@ export class ExportTemplateDialog {
                     this.showErrors([gettext("Selected file not supported.")])
                 })
         })
+    }
+
+    showHelp() {
+        const helpContent = `
+            <div class="help-panel">
+                <h3>${gettext("Templating Syntax Help")}</h3>
+
+                <h4>${gettext("Available Tags")}</h4>
+                <ul>
+                    <li><code>{title}</code> - ${gettext("Document title")}</li>
+                    <li><code>{authors}</code> - ${gettext("All authors (simple)")}</li>
+                    <li><code>{keywords}</code> - ${gettext("Keywords")}</li>
+                    <li><code>@bibliography</code> - ${gettext("Bibliography block")}</li>
+                    <li><code>@copyright</code> - ${gettext("Copyright block")}</li>
+                    <li><code>@licenses</code> - ${gettext("Licenses block")}</li>
+                </ul>
+
+                <h4>${gettext("Format Strings with Delimiters")}</h4>
+                <p>${interpolate(gettext("Syntax: %s"), ["<code>{tag:format=%firstname %lastname|delimiter}</code>"])}</p>
+                <ul>
+                    <li><code>%firstname</code> - ${gettext("First name")}</li>
+                    <li><code>%lastname</code> - ${gettext("Last name")}</li>
+                    <li><code>%institution</code> - ${gettext("Institution")}</li>
+                    <li><code>%email</code> - ${gettext("Email")}</li>
+                    <li><code>%id_type</code> - ${gettext("ID type (e.g., ORCID)")}</li>
+                    <li><code>%id_value</code> - ${gettext("ID value")}</li>
+                </ul>
+                <p>${gettext("Delimiters: ")}<code>;</code> ${gettext("(semicolon+space), ")}<code>,\\n</code> ${gettext("(comma+line break), ")}<code>\\n</code> ${gettext("(line break), ")}<code>\\p</code> ${gettext("(paragraph break), or custom string")}</p>
+
+                <h4>${gettext("Structured Blocks")}</h4>
+                <ul>
+                    <li><code>{BEGIN_tag}...{END_tag}</code> - ${gettext("Loop over items")}</li>
+                    <li><code>{BEGIN_tag:limit=N}...{END_tag}</code> - ${gettext("Loop with limit")}</li>
+                </ul>
+
+                <h4>${gettext("Conditionals")}</h4>
+                <ul>
+                    <li><code>{IF(expression)}...{ENDIF}</code> - ${gettext("Conditional")}</li>
+                    <li><code>{ELIF(expression)}</code> - ${gettext("Else if")}</li>
+                    <li><code>{ELSE}</code> - ${gettext("Else")}</li>
+                </ul>
+
+                <h4>${gettext("Context")}</h4>
+                <p>${gettext("Context object: ")}<code>ctx.count</code>, <code>ctx.first</code>, <code>ctx.last</code>, <code>ctx.index</code>, <code>ctx.item</code></p>
+
+                <h4>${gettext("Examples")}</h4>
+                <pre>
+{BEGIN_authors}
+    &lt;w:p&gt;{%firstname} {%lastname}&lt;/w:p&gt;
+{END_authors}
+                </pre>
+                <pre>
+{IF(authors.count >= 3)}
+    &lt;w:tr&gt;
+        {BEGIN_authors:limit=2}
+            &lt;w:tc&gt;&lt;w:p&gt;{%firstname} {%lastname}&lt;/w:p&gt;&lt;/w:tc&gt;
+        {END_authors}
+        &lt;w:tc&gt;&lt;w:p&gt;${gettext("et al.")}&lt;/w:p&gt;
+    &lt;/w:tr&gt;
+{ENDIF}
+                </pre>
+            </div>`
+
+        const helpDialog = new Dialog({
+            id: "template-help",
+            title: gettext("Templating Help"),
+            body: helpContent,
+            width: 600,
+            height: 500
+        })
+        helpDialog.open()
     }
 }

@@ -19,19 +19,20 @@ repos:
       rev: "75149f4e3b63c4df805860d7b04186d56dcbc05c"
       hooks:
           - id: biome-check
-            #entry: biome check --files-ignore-unknown=true --no-errors-on-unmatched --fix --unsafe
+            entry: biome check --files-ignore-unknown=true --no-errors-on-unmatched --fix --unsafe
             additional_dependencies: ["@biomejs/biome@1.9.2"]
-    - repo: https://github.com/awebdeveloper/pre-commit-stylelint
-      rev: "4200758f4cb2f53dd06898dd8dca35e4b8cfb785"
+    - repo: https://github.com/thibaudcolas/pre-commit-stylelint
+      rev: v16.26.1
       hooks:
           - id: stylelint
             additional_dependencies:
                 [
-                    "stylelint@15.11.0",
-                    "stylelint-config-standard@34.0.0",
-                    "stylelint-value-no-unknown-custom-properties@5.0.0",
-                    "postcss@8.4.32",
+                    "stylelint@16.26.1",
+                    "stylelint-config-standard@39.0.1",
+                    "stylelint-value-no-unknown-custom-properties@6.1.0",
+                    "postcss@8.5.6",
                 ]
+            args: [--fix]
     - repo: local
       hooks:
           - id: django-import-resolver

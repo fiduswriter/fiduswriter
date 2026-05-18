@@ -3,7 +3,9 @@ import {addContactTemplate} from "./templates"
 
 //dialog for adding a user to contacts
 export class AddContactDialog {
-    constructor() {}
+    constructor(settings) {
+        this.settings = settings
+    }
 
     init() {
         return new Promise(resolve => {
@@ -47,7 +49,8 @@ export class AddContactDialog {
             const dialog = new Dialog({
                 id: "add-new-contact",
                 title:
-                    settings_REGISTRATION_OPEN || settings_SOCIALACCOUNT_OPEN
+                    this.settings?.REGISTRATION_OPEN ||
+                    this.settings?.SOCIALACCOUNT_OPEN
                         ? gettext("Add contact or invite new user")
                         : gettext("Add contact"),
                 body: addContactTemplate(),

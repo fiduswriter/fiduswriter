@@ -1,0 +1,569 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "title",
+      "content": [
+        { "type": "text", "text": "Test Document for Export/Import" }
+      ]
+    },
+    {
+      "type": "contributors_part",
+      "attrs": { "metadata": "authors" },
+      "content": [
+        {
+          "type": "contributor",
+          "attrs": {
+            "firstname": "Jane",
+            "lastname": "Doe",
+            "email": "jane@example.com",
+            "institution": "Test University"
+          }
+        },
+        {
+          "type": "contributor",
+          "attrs": {
+            "firstname": "John",
+            "lastname": "Smith",
+            "email": "",
+            "institution": "Research Lab"
+          }
+        }
+      ]
+    },
+    {
+      "type": "tags_part",
+      "attrs": { "metadata": "keywords" },
+      "content": [
+        { "type": "tag", "attrs": { "tag": "testing" } },
+        { "type": "tag", "attrs": { "tag": "export" } },
+        { "type": "tag", "attrs": { "tag": "fiduswriter" } }
+      ]
+    },
+    {
+      "type": "richtext_part",
+      "attrs": { "id": "abstract", "title": "Abstract" },
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This is a comprehensive test document used to verify the fidelity of DOCX and ODT import and export filters in Fidus Writer. It covers all supported features including " },
+            { "type": "text", "marks": [{ "type": "strong" }], "text": "bold" },
+            { "type": "text", "text": ", " },
+            { "type": "text", "marks": [{ "type": "em" }], "text": "italic" },
+            { "type": "text", "text": ", " },
+            { "type": "text", "marks": [{ "type": "underline" }], "text": "underline" },
+            { "type": "text", "text": ", " },
+            { "type": "text", "marks": [{ "type": "sup" }], "text": "superscript" },
+            { "type": "text", "text": ", " },
+            { "type": "text", "marks": [{ "type": "sub" }], "text": "subscript" },
+            { "type": "text", "text": ", " },
+            { "type": "text", "marks": [{ "type": "code" }], "text": "code" },
+            { "type": "text", "text": ", and " },
+            { "type": "text", "marks": [{ "type": "smallcaps" }], "text": "smallcaps" },
+            { "type": "text", "text": " formatting." }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading_part",
+      "attrs": { "id": "introduction", "title": "Introduction" },
+      "content": [
+        {
+          "type": "heading1",
+          "attrs": { "id": "intro-heading", "level": 1 },
+          "content": [
+            { "type": "text", "text": "Introduction" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This section demonstrates various block-level elements and inline formatting." }
+          ]
+        },
+        {
+          "type": "heading2",
+          "attrs": { "id": "text-formatting", "level": 2 },
+          "content": [
+            { "type": "text", "text": "Text Formatting" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "marks": [{ "type": "strong" }, { "type": "em" }], "text": "Bold and italic combined" },
+            { "type": "text", "text": " and " },
+            { "type": "text", "marks": [{ "type": "link", "attrs": { "href": "https://fiduswriter.org", "title": "Fidus Writer" } }], "text": "a hyperlink" },
+            { "type": "text", "text": "." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "marks": [{ "type": "anchor", "attrs": { "id": "my-anchor" } }], "text": "" },
+            { "type": "text", "text": "This paragraph has an anchor named \"my-anchor\" for cross-referencing." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "Cross-reference to " },
+            {
+              "type": "cross_reference",
+              "attrs": { "id": "intro-heading", "title": "Introduction" }
+            },
+            { "type": "text", "text": "." }
+          ]
+        },
+        {
+          "type": "code_block",
+          "attrs": { "language": "javascript", "category": "", "title": "", "id": "" },
+          "content": [
+            { "type": "text", "text": "function hello() {\n  console.log(\"Hello, World!\");\n}" }
+          ]
+        },
+        {
+          "type": "blockquote",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                { "type": "text", "text": "This is a blockquote. It should be rendered as a quotation in both DOCX and ODT." }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading3",
+          "attrs": { "id": "lists", "level": 3 },
+          "content": [
+            { "type": "text", "text": "Lists" }
+          ]
+        },
+        {
+          "type": "bullet_list",
+          "attrs": { "id": "bullet-list-1" },
+          "content": [
+            {
+              "type": "list_item",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    { "type": "text", "text": "First bullet item" }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "list_item",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    { "type": "text", "text": "Second bullet item with " },
+                    { "type": "text", "marks": [{ "type": "strong" }], "text": "bold text" }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "list_item",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    { "type": "text", "text": "Third bullet item" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "ordered_list",
+          "attrs": { "id": "ordered-list-1", "order": 1 },
+          "content": [
+            {
+              "type": "list_item",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    { "type": "text", "text": "First ordered item" }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "list_item",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    { "type": "text", "text": "Second ordered item" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading_part",
+      "attrs": { "id": "figures-and-tables", "title": "Figures and Tables" },
+      "content": [
+        {
+          "type": "heading1",
+          "attrs": { "id": "figures", "level": 1 },
+          "content": [
+            { "type": "text", "text": "Figures" }
+          ]
+        },
+        {
+          "type": "figure",
+          "attrs": {
+            "id": "figure-1",
+            "aligned": "center",
+            "width": 80,
+            "caption": true,
+            "category": "figure"
+          },
+          "content": [
+            {
+              "type": "figure_caption",
+              "content": [
+                { "type": "text", "text": "A sample figure caption" }
+              ]
+            },
+            {
+              "type": "image",
+              "attrs": { "image": "sample-image-1" }
+            }
+          ]
+        },
+        {
+          "type": "figure",
+          "attrs": {
+            "id": "figure-2",
+            "aligned": "left",
+            "width": 50,
+            "caption": false,
+            "category": "none"
+          },
+          "content": [
+            {
+              "type": "figure_equation",
+              "attrs": { "equation": "E = mc^2" }
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "Cross-reference to " },
+            {
+              "type": "cross_reference",
+              "attrs": { "id": "figure-1", "title": "Figure 1" }
+            },
+            { "type": "text", "text": "." }
+          ]
+        },
+        {
+          "type": "heading1",
+          "attrs": { "id": "tables", "level": 1 },
+          "content": [
+            { "type": "text", "text": "Tables" }
+          ]
+        },
+        {
+          "type": "table",
+          "attrs": {
+            "id": "table-1",
+            "aligned": "center",
+            "width": 100,
+            "caption": true,
+            "category": "table"
+          },
+          "content": [
+            {
+              "type": "table_caption",
+              "content": [
+                { "type": "text", "text": "A sample table" }
+              ]
+            },
+            {
+              "type": "table_body",
+              "content": [
+                {
+                  "type": "table_row",
+                  "content": [
+                    {
+                      "type": "table_header",
+                      "attrs": { "colspan": 1, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "marks": [{ "type": "strong" }], "text": "Header 1" }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "table_header",
+                      "attrs": { "colspan": 1, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "marks": [{ "type": "strong" }], "text": "Header 2" }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "table_header",
+                      "attrs": { "colspan": 1, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "marks": [{ "type": "strong" }], "text": "Header 3" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "table_row",
+                  "content": [
+                    {
+                      "type": "table_cell",
+                      "attrs": { "colspan": 1, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "text": "Row 1, Cell 1" }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "table_cell",
+                      "attrs": { "colspan": 1, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "text": "Row 1, Cell 2" }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "table_cell",
+                      "attrs": { "colspan": 1, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "text": "Row 1, Cell 3" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "table_row",
+                  "content": [
+                    {
+                      "type": "table_cell",
+                      "attrs": { "colspan": 2, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "text": "Merged cell (colspan=2)" }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "table_cell",
+                      "attrs": { "colspan": 1, "rowspan": 1 },
+                      "content": [
+                        {
+                          "type": "paragraph",
+                          "content": [
+                            { "type": "text", "text": "Row 2, Cell 3" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading_part",
+      "attrs": { "id": "footnotes-citations", "title": "Footnotes and Citations" },
+      "content": [
+        {
+          "type": "heading1",
+          "attrs": { "id": "footnotes-section", "level": 1 },
+          "content": [
+            { "type": "text", "text": "Footnotes" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This is a paragraph with a footnote" },
+            {
+              "type": "footnote",
+              "attrs": {
+                "footnote": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      { "type": "text", "text": "This is the footnote content with " },
+                      { "type": "text", "marks": [{ "type": "em" }], "text": "italic text" },
+                      { "type": "text", "text": "." }
+                    ]
+                  }
+                ]
+              }
+            },
+            { "type": "text", "text": " at the end." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This paragraph has an equation: " },
+            { "type": "equation", "attrs": { "equation": "\\int_{a}^{b} f(x) \\, dx" } },
+            { "type": "text", "text": " inline with text." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This paragraph contains a citation: " },
+            {
+              "type": "citation",
+              "attrs": {
+                "format": "autocite",
+                "references": [
+                  {
+                    "id": 1,
+                    "locator": "45",
+                    "prefix": "see "
+                  }
+                ]
+              }
+            },
+            { "type": "text", "text": "." }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading_part",
+      "attrs": { "id": "tracked-changes", "title": "Tracked Changes" },
+      "content": [
+        {
+          "type": "heading1",
+          "attrs": { "id": "changes-section", "level": 1 },
+          "content": [
+            { "type": "text", "text": "Tracked Changes" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This paragraph contains " },
+            {
+              "type": "text",
+              "marks": [
+                { "type": "insertion", "attrs": { "user": 1, "username": "Jane Doe", "date": 1700000000, "approved": false } }
+              ],
+              "text": "inserted text"
+            },
+            { "type": "text", "text": " and " },
+            {
+              "type": "text",
+              "marks": [
+                { "type": "deletion", "attrs": { "user": 1, "username": "Jane Doe", "date": 1700000000 } }
+              ],
+              "text": "deleted text"
+            },
+            { "type": "text", "text": " with tracked changes." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "track": [
+              { "type": "block_change", "user": 1, "username": "Jane Doe", "date": 1700000000, "before": { "type": "heading2", "level": 2 } }
+            ]
+          },
+          "content": [
+            { "type": "text", "text": "This paragraph was changed from a heading." }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "Inline " },
+            {
+              "type": "text",
+              "marks": [
+                { "type": "format_change", "attrs": { "user": 1, "username": "Jane Doe", "date": 1700000000, "before": ["em", "strong"], "after": [] } }
+              ],
+              "text": "format changed text"
+            },
+            { "type": "text", "text": " here." }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading_part",
+      "attrs": { "id": "comments-section", "title": "Comments" },
+      "content": [
+        {
+          "type": "heading1",
+          "attrs": { "id": "comments", "level": 1 },
+          "content": [
+            { "type": "text", "text": "Comments" }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "This paragraph has a " },
+            {
+              "type": "text",
+              "marks": [
+                { "type": "comment", "attrs": { "id": 1001 } }
+              ],
+              "text": "commented"
+            },
+            { "type": "text", "text": " word in it." }
+          ]
+        }
+      ]
+    }
+  ]
+}

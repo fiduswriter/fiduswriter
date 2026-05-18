@@ -538,7 +538,7 @@ span.delete {
 
 #unobtrusive-messages .warn {
     color: var(--warning-text-color);
-    background-color: rgba(var(--warning-background-color));
+    background-color: rgb(var(--warning-background-color));
 }
 
 #unobtrusive-messages:empty {
@@ -685,6 +685,48 @@ table.insert-table-selection td.selected {
 /* Links  & Anchors */
 
 .drop-up-outer {
+    /* 1. Reset cascade to browser defaults */
+    all: revert;
+
+    /* 2. Predictable box model */
+    box-sizing: border-box;
+
+    /* 3. Clear spacing & borders */
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+
+    /* 4. Typography isolation */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: inherit; /* Change to explicit hex if needed */
+    text-align: left;
+    text-transform: none;
+    letter-spacing: normal;
+
+    /* 5. Layout & dimensions */
+    width: auto;
+    max-width: 100vw;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    overflow: visible;
+
+    /* 6. Break inherited animations/transforms that distort layout */
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+
+    /* 7. Modern containment & stacking isolation */
+    contain: layout style;
+    isolation: isolate;
+
+    /* 8. White space */
+    white-space: initial;
     position: absolute;
 }
 
@@ -722,7 +764,7 @@ table.insert-table-selection td.selected {
 }
 
 .link.drop-up-inner {
-    box-shadow: 0 0 20px rgba(var(--dropup-box-shadow-color));
+    box-shadow: 0 0 20px rgb(var(--dropup-box-shadow-color));
     border-radius: 6px;
 }
 
@@ -754,7 +796,7 @@ ul.drop-up-options li.focused {
 }
 
 .drop-up-options .remove-link::after {
-    font-family: "Font Awesome 5 Free", monospace;
+    font-family: "Font Awesome 7 Free", monospace;
     content: "\f2ed";
     opacity: 0.4;
     float: right;
@@ -806,7 +848,7 @@ as much black as possible. */
 html[hc="a3"] .ui-widget-overlay,
 html[hc="a4"] .ui-widget-overlay,
 html[hc="a5"] .ui-widget-overlay {
-    background-color: rgba(var(--highcontrast-overlay-color));
+    background-color: rgb(var(--highcontrast-overlay-color));
 }
 
 html[hc="a3"] body,
@@ -841,7 +883,7 @@ html[hc="a5"] #toolbar {
 }
 
 .doc-part.doc-deleted {
-    border: 3px solid rgba(var(--warning-border-color));
+    border: 3px solid rgb(var(--warning-border-color));
     border-radius: 5px;
     padding: 10px 20px 10px 10px;
     margin: 5px 0;
@@ -879,7 +921,7 @@ html[hc="a5"] #toolbar {
     top: auto;
     left: 0;
     display: block;
-    background-color: rgba(var(--editor-navigator-background-color));
+    background-color: rgb(var(--editor-navigator-background-color));
     min-width: 216px;
     max-width: 480px;
     color: var(--editor-navigator-color);
@@ -898,7 +940,7 @@ html[hc="a5"] #toolbar {
 
 #navigator-list {
     max-height: min(550px, 100vh - 315px);
-    overflow-y: hidden scroll;
+    overflow-y: hidden;
 }
 
 #navigator-content a {
@@ -987,7 +1029,7 @@ html[hc="a5"] #toolbar {
     height: 42px;
     text-align: center;
     line-height: 42px;
-    background-color: rgba(var(--editor-navigator-background-color));
+    background-color: rgb(var(--editor-navigator-background-color));
     cursor: pointer;
     z-index: 4;
 }
@@ -1197,4 +1239,225 @@ body.no-scroll {
     .editor-toolbar div.multi-buttons .multi-buttons-cover {
         padding: 0 25px 0 15px;
     }
+}
+
+/* Code block styling */
+.code-block-wrapper {
+    position: relative;
+    margin: 1em 0;
+}
+
+.code-block-wrapper pre {
+    padding-top: 30px;
+    position: relative;
+}
+
+.code-block-wrapper.ProseMirror-selectednode {
+    outline: 2px solid #4a90e2;
+}
+
+.code-block-language-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #4a90e2;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.code-block-menu-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgb(255 255 255 / 80%);
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    padding: 2px 6px;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.code-block-menu-btn:hover {
+    background: rgb(255 255 255 / 100%);
+}
+
+.code-block-wrapper:hover .code-block-menu-btn {
+    opacity: 1;
+}
+
+.code-block-label {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+    color: #333333;
+}
+
+.code-block-label .label-text {
+    background: #f5f5f5;
+    padding: 2px 8px;
+    border-left: 3px solid #4a90e2;
+    display: inline-block;
+}
+
+/* Language indicator for code blocks */
+pre[data-language]:not([data-language=""], [data-category])::after {
+    content: attr(data-language);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgb(0 0 0 / 10%);
+    padding: 2px 6px;
+    font-size: 0.75em;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: bold;
+    opacity: 0.6;
+}
+
+pre[data-language] {
+    position: relative;
+}
+
+/* Inline reference drop-up */
+.inline-reference-drop-up .drop-up-inner {
+    min-width: 280px;
+    max-width: 400px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--cs-white-background);
+    border: 1px solid var(--cs-white-border);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+    padding: 4px 0;
+}
+
+.inline-reference-drop-up-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.inline-reference-drop-up-item {
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.inline-reference-drop-up-item:hover,
+.inline-reference-drop-up-item.selected {
+    background-color: var(--cs-light-background-hover);
+}
+
+.citation-drop-up-key {
+    font-weight: bold;
+    color: var(--cs-light-text);
+    font-size: 12px;
+}
+
+.citation-drop-up-meta {
+    color: var(--cs-light-text-secondary);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inline-reference-drop-up-empty {
+    padding: 8px 10px;
+    color: var(--cs-light-text-secondary);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.inline-reference-drop-up-section-header {
+    padding: 4px 10px 2px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--cs-light-text-secondary);
+    border-top: 1px solid var(--cs-light-border);
+    margin-top: 2px;
+}
+
+.inline-reference-drop-up-xref-text {
+    font-size: 12px;
+    color: var(--cs-light-text);
+}
+
+/* Inline reference widget */
+.inline-reference-widget {
+    position: relative;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.inline-reference-input {
+    display: inline-block;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    border: 1px solid var(--cs-light-border);
+    border-radius: 3px;
+    padding: 0 4px;
+    margin: 0;
+    background: var(--cs-white-background);
+    color: var(--cs-light-text);
+    outline: none;
+    min-width: 120px;
+    white-space: nowrap;
+    cursor: text;
+}
+
+.inline-reference-input:focus {
+    border-color: var(--cs-2-background);
+    box-shadow: 0 0 0 1px var(--cs-2-background);
+}
+
+/* Inline math widget */
+.inline-math-widget {
+    position: relative;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.inline-math-input {
+    display: inline-block;
+    font-family: monospace;
+    font-size: 0.9em;
+    line-height: inherit;
+    border: 1px solid var(--cs-light-border);
+    border-radius: 3px;
+    padding: 0 4px;
+    margin: 0;
+    background: var(--cs-white-background);
+    color: var(--cs-light-text);
+    outline: none;
+    min-width: 80px;
+    white-space: nowrap;
+    cursor: text;
+}
+
+.inline-math-input:focus {
+    border-color: var(--cs-2-background);
+    box-shadow: 0 0 0 1px var(--cs-2-background);
+}
+
+.inline-math-dropup-latex {
+    font-family: monospace;
+    font-size: 0.9em;
+    color: var(--cs-light-text-secondary);
+    word-break: break-all;
 }

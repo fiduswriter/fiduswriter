@@ -51,10 +51,20 @@ export const bulkMenuModel = () => ({
                     )
                 }
                 if (ownIds.length) {
+                    // Check if any of the selected documents are E2EE encrypted
+                    const e2ee = ownIds.some(
+                        id =>
+                            overview.documentList.find(doc => doc.id === id)
+                                ?.e2ee
+                    )
                     const dialog = new DocumentAccessRightsDialog(
                         ids,
                         overview.contacts,
-                        memberDetails => overview.contacts.push(memberDetails)
+                        memberDetails => overview.contacts.push(memberDetails),
+                        e2ee,
+                        "",
+                        null,
+                        overview.app.settings
                     )
                     dialog.init()
                 }
@@ -243,18 +253,11 @@ export const menuModel = () => ({
         },
         {
             type: "text",
-            title: gettext("Upload FIDUS document"),
-            keys: "Alt-u",
-            action: overview => overview.mod.actions.importFidus(),
-            order: 3
-        },
-        {
-            type: "text",
-            id: "import_external",
+            id: "import_document",
             title: gettext("Import document"),
             keys: "Alt-i",
-            action: overview => overview.mod.actions.importExternal(),
-            order: 4
+            action: overview => overview.mod.actions.importDocument(),
+            order: 3
         },
         {
             type: "search",

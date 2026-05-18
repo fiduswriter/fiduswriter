@@ -35,6 +35,12 @@
     --table-row-background-color: #bfedc1;
     --menu-cursor-border-color: #63ab0d;
 
+    /* tabs */
+    --tabs-border-color: #e0e0e0;
+    --tabs-text-inactive: #888888;
+    --tabs-text-active: #333333;
+    --tabs-indicator-color: #42a061;
+
     /* Color Schemes (CS) */
 
     /* red text */

@@ -189,6 +189,9 @@ export class HeaderbarView {
                 this.update()
                 break
             case "menu": {
+                if (menuItem.disabled?.(this.editor)) {
+                    return
+                }
                 let flagCloseAllMenu = true
                 if (!this.parentChain.length) {
                     this.parentChain = [menuItem]
@@ -448,12 +451,14 @@ export class HeaderbarView {
         const docTitleEl = document.body.querySelector("h1#document-title")
         const path = cleanPath(this.getTitle(), docTitleEl.innerText.trim())
         this.editor.docInfo.path = path
-        this.editor.ws.send(() => {
-            return {
-                type: "path_change",
-                path
-            }
-        })
+        if (this.editor.ws) {
+            this.editor.ws.send(() => {
+                return {
+                    type: "path_change",
+                    path
+                }
+            })
+        }
         this.update()
     }
 
@@ -520,22 +525,33 @@ export class HeaderbarView {
             // header is closed
             return "<div></div>"
         }
-        const folderPath = this.editor.docInfo.path.slice(
-            0,
-            this.editor.docInfo.path.lastIndexOf("/")
-        )
-        const exitUrl =
-            !folderPath.length && this.editor.app.routes[""].app === "document"
-                ? "/"
-                : `/documents${encodeURI(folderPath)}/`
+        let exitUrl
+        if (this.editor.docInfo.token) {
+            // Guest user — send to sign-up if open, otherwise to login
+            exitUrl =
+                this.editor.app.settings?.REGISTRATION_OPEN ||
+                this.editor.app.settings?.SOCIALACCOUNT_OPEN
+                    ? "/account/sign-up/"
+                    : "/"
+        } else {
+            const folderPath = this.editor.docInfo.path.slice(
+                0,
+                this.editor.docInfo.path.lastIndexOf("/")
+            )
+            exitUrl =
+                !folderPath.length &&
+                this.editor.app.routes[""].app === "document"
+                    ? "/"
+                    : `/documents${encodeURI(folderPath)}/`
+        }
         return `<div>
-            <div id="close-document-top" title="${gettext("Close the document and return to the document overview menu.")}">
-                <a href="${exitUrl}" aria-label="${gettext("Close document")}" title="${gettext("Close document")}">
-                    <i class="fa fa-times"></i>
+            <div id="close-document-top" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
+                <a href="${exitUrl}" aria-label="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close document")}" title="${this.editor.docInfo.token ? gettext("Sign up or log in") : gettext("Close the document and return to the document overview menu.")}">
+                    <i class="fa-solid fa-times"></i>
                 </a>
             </div>
             <div id="document-top">
-                <h1 id="document-title"${this.editor.app.isOffline() || !this.editor.pathEditable ? "" : ' contenteditable="true"'}>${this.getPathText()}</h1>
+                <h1 id="document-title"${this.editor.app.isOffline() || !this.editor.pathEditable ? "" : ' contenteditable="true"'}>${escapeText(this.getPathText())}</h1>
                 <nav id="header-navigation">
                     ${this.getHeaderNavHTML()}
                 </nav>
@@ -565,8 +581,8 @@ export class HeaderbarView {
                 menu => `
                 <div class="header-menu">
                     <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}"
-                          title="${menu.tooltip}"
-                          aria-label="${menu.tooltip}"
+                          title="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
+                          aria-label="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
                           role="menuitem"
                           aria-haspopup="true">
                         ${this.getAccessKeyHTML(menu.title, menu.keys?.slice(-1))}
@@ -630,8 +646,8 @@ export class HeaderbarView {
         role="menuitem"
         ${menuItem.disabled && menuItem.disabled(this.editor) ? 'aria-disabled="true"' : ""}
         ${menuItem.selected && menuItem.selected(this.editor) ? 'aria-checked="true"' : ""}
-        ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
+        ${menuItem.tooltip ? (typeof menuItem.tooltip === "function" ? `title="${menuItem.tooltip(this.editor)}" aria-label="${menuItem.tooltip(this.editor)}"` : `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"`) : ""}>
+            ${menuItem.icon ? `<i class="fa-solid fa-${menuItem.icon}" aria-hidden="true"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
         </span>`
     }
@@ -644,9 +660,9 @@ export class HeaderbarView {
         }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
             menuItem === this.cursorMenuItem ? " cursor" : ""
         }" ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
-            ${menuItem.icon ? `<i class="fa fa-${menuItem.icon}"></i>` : ""}
+            ${menuItem.icon ? `<i class="fa-solid fa-${menuItem.icon}"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}
-            <span class="fw-icon-right"><i class="fa fa-caret-right"></i></span>
+            <span class="fw-icon-right"><i class="fa-solid fa-caret-right"></i></span>
         </span>
         ${menuItem.open ? this.getMenuHTML(menuItem) : ""}`
     }

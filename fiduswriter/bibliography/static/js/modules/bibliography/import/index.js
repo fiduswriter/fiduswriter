@@ -1,2 +1,2 @@
-export {BibLatexFileImportDialog} from "./dialog"
-export {BibLatexImporter} from "./biblatex"
+export {BibliographyFileImportDialog} from "./dialog"
+export {BibliographyImporter} from "./bibliography_import"

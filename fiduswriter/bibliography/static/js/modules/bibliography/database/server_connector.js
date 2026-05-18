@@ -35,7 +35,7 @@ export class BibliographyDBServerConnector {
     saveBibEntries(tmpDB, isNew) {
         return postJson("/api/bibliography/save/", {
             is_new: isNew,
-            bibs: JSON.stringify(tmpDB)
+            bibs: tmpDB
         }).then(({json}) => json["id_translations"])
     }
 

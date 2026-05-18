@@ -10,7 +10,7 @@ from feedback.models import Feedback
 def feedback(request):
     response = {}
     status = 200
-    feedback_message = request.POST["message"]
+    feedback_message = request.JSON["message"]
     new_feedback = Feedback()
     new_feedback.message = feedback_message
     if request.user.is_authenticated:

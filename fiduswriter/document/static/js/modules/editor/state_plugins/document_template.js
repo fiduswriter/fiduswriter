@@ -7,7 +7,7 @@ export function addDeletedPartWidget(dom, view, getPos) {
     dom.classList.add("doc-deleted")
     dom.insertAdjacentHTML(
         "beforeend",
-        '<div class="remove-doc-part"><i class="fa fa-trash-alt"></i></div>'
+        '<div class="remove-doc-part"><i class="fa-solid fa-trash-alt"></i></div>'
     )
     const removeButton = dom.lastElementChild
     removeButton.addEventListener("click", () => {

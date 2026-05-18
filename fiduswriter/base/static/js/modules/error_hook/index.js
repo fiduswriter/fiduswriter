@@ -1,7 +1,5 @@
 import StackTrace from "stacktrace-js"
 
-import {getCookie} from "../common"
-
 export class ErrorHook {
     constructor() {}
 
@@ -23,7 +21,7 @@ export class ErrorHook {
         return fetch("/api/django_js_error_hook/", {
             method: "POST",
             headers: {
-                "X-CSRFToken": getCookie(settings_CSRF_COOKIE_NAME)
+                "X-CSRFToken": window.settings.getCsrfToken()
             },
             credentials: "include",
             body
@@ -33,7 +31,7 @@ export class ErrorHook {
     }
 
     onError(msg, url, lineNumber, columnNumber, errorObj) {
-        if (settings_SOURCE_MAPS && errorObj) {
+        if (window.settings?.SOURCE_MAPS && errorObj) {
             StackTrace.fromError(errorObj)
                 .then(stackFrames =>
                     this.logError(
@@ -75,7 +73,7 @@ export class ErrorHook {
     }
 
     onUnhandledRejection(rejection) {
-        if (settings_SOURCE_MAPS && rejection.reason?.stack) {
+        if (window.settings?.SOURCE_MAPS && rejection.reason?.stack) {
             StackTrace.fromError(rejection.reason)
                 .then(stackFrames =>
                     this.logUnhandledRejection(

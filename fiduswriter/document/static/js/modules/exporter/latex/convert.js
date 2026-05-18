@@ -102,8 +102,16 @@ export class LatexExporterConvert {
                 break
             case "contributors_part":
                 if (node.content) {
+                    const contributorLabels = {
+                        authors: gettext("Authors"),
+                        editors: gettext("Editors"),
+                        translators: gettext("Translators"),
+                        reviewers: gettext("Reviewers"),
+                        contributors: gettext("Contributors")
+                    }
+                    const roleLabel = contributorLabels[node.attrs.metadata]
+
                     if (node.attrs.metadata === "authors") {
-                        // TODO: deal with node.attrs.metadata === 'editors'
                         const authorsPerAffil = node.content
                             .map(node => {
                                 const author = node.attrs,
@@ -124,7 +132,9 @@ export class LatexExporterConvert {
                                 return {
                                     name: nameParts.join(" "),
                                     affiliation,
-                                    email: author.email
+                                    email: author.email,
+                                    id_type: author.id_type,
+                                    id_value: author.id_value
                                 }
                             })
                             .reduce((affils, author) => {
@@ -136,11 +146,14 @@ export class LatexExporterConvert {
 
                         Object.values(authorsPerAffil).forEach(affil => {
                             affil.forEach(author => {
-                                this.authorsTex += `\n\\author{${escapeLatexText(author.name)}${
-                                    author.email
-                                        ? `\\thanks{${escapeLatexText(author.email)}}`
-                                        : ""
-                                }}`
+                                let thanks = ""
+                                if (author.email) {
+                                    thanks += `\\thanks{${escapeLatexText(author.email)}}`
+                                }
+                                if (author.id_type && author.id_value) {
+                                    thanks += `\\thanks{${escapeLatexText(author.id_type)}: ${escapeLatexText(author.id_value)}}`
+                                }
+                                this.authorsTex += `\n\\author{${escapeLatexText(author.name)}${thanks}}`
                             })
 
                             this.authorsTex += `\n\\affil{${
@@ -156,33 +169,31 @@ export class LatexExporterConvert {
                             start += "\n\n\\maketitle\n"
                             options.madeTitle = true
                         }
-                        // TODO: deal with contributor lists of non-authors properly
-                        content += node.content
+                        const contributorNames = node.content
                             .map(contributorNode => {
+                                const attrs = contributorNode.attrs
                                 const nameParts = []
-                                if (contributorNode.attrs.firstname) {
-                                    nameParts.push(
-                                        contributorNode.attrs.firstname
-                                    )
+                                if (attrs.firstname) {
+                                    nameParts.push(attrs.firstname)
                                 }
-                                if (contributorNode.attrs.lastname) {
-                                    nameParts.push(
-                                        contributorNode.attrs.lastname
-                                    )
+                                if (attrs.lastname) {
+                                    nameParts.push(attrs.lastname)
                                 }
-                                if (
-                                    !nameParts.length &&
-                                    contributorNode.attrs.institution
-                                ) {
+                                if (!nameParts.length && attrs.institution) {
                                     // We have an institution but no names. Use institution as name.
-                                    nameParts.push(
-                                        contributorNode.attrs.institution
-                                    )
+                                    nameParts.push(attrs.institution)
                                 }
-                                return nameParts.join(" ")
+                                let name = nameParts.join(" ")
+                                if (attrs.id_type && attrs.id_value) {
+                                    name += ` (${escapeLatexText(attrs.id_type)}: ${escapeLatexText(attrs.id_value)})`
+                                }
+                                return name
                             })
+                            .filter(name => name.length)
                             .join(", ")
-                        content += "\n\n"
+                        if (contributorNames.length) {
+                            content += `\n\\noindent\\textbf{${roleLabel}:} ${contributorNames}\n\n`
+                        }
                     }
                 }
 
@@ -271,11 +282,50 @@ export class LatexExporterConvert {
                 }
                 break
             }
-            case "code_block":
-                start += "\n\\begin{code}\n\n"
-                end = "\n\n\\end{code}\n" + end
+            case "code_block": {
+                // Support language and category attributes
+                if (node.attrs.category && node.attrs.id) {
+                    const language = this.doc.attrs.language || "en-US"
+                    const {CATS} = require("../../schema/i18n")
+                    const categoryLabel =
+                        CATS[node.attrs.category]?.[language] ||
+                        node.attrs.category
+
+                    // Count code blocks to get the number
+                    const categories = {}
+                    this.doc.descendants(n => {
+                        if (
+                            n.type === "code_block" &&
+                            n.attrs.category &&
+                            n.attrs.id
+                        ) {
+                            if (!categories[n.attrs.category]) {
+                                categories[n.attrs.category] = 0
+                            }
+                            categories[n.attrs.category]++
+                            if (n.attrs.id === node.attrs.id) {
+                                return false
+                            }
+                        }
+                    })
+                    const number = categories[node.attrs.category] || 1
+                    const caption = node.attrs.title
+                        ? `${categoryLabel} ${number}: ${this.convertText(node.attrs.title)}`
+                        : `${categoryLabel} ${number}`
+
+                    start += `\n\\begin{listing}\n\\caption{${caption}}\\label{${node.attrs.id}}\n\\begin{code}\n\n`
+                    end = `\n\n\\end{code}\n\\end{listing}\n` + end
+                    this.features.listing = true
+                } else if (node.attrs.language) {
+                    start += `\n\\begin{code}[${this.convertText(node.attrs.language)}]\n\n`
+                    end = `\n\n\\end{code}\n` + end
+                } else {
+                    start += "\n\\begin{code}\n\n"
+                    end = "\n\n\\end{code}\n" + end
+                }
                 this.features.code = true
                 break
+            }
             case "blockquote":
                 start += "\n\\begin{quote}\n\n"
                 end = "\n\n\\end{quote}\n" + end
@@ -333,7 +383,7 @@ export class LatexExporterConvert {
                 }
                 break
             case "text": {
-                let strong, em, underline, hyperlink, anchor
+                let strong, em, underline, hyperlink, anchor, sup, sub, code
                 // Check for hyperlink, bold/strong, italic/em and underline
                 if (node.marks) {
                     strong = node.marks.find(mark => mark.type === "strong")
@@ -343,6 +393,9 @@ export class LatexExporterConvert {
                     )
                     hyperlink = node.marks.find(mark => mark.type === "link")
                     anchor = node.marks.find(mark => mark.type === "anchor")
+                    sup = node.marks.find(mark => mark.type === "sup")
+                    sub = node.marks.find(mark => mark.type === "sub")
+                    code = node.marks.find(mark => mark.type === "code")
                 }
                 if (em) {
                     start += "\\emph{"
@@ -354,6 +407,18 @@ export class LatexExporterConvert {
                 }
                 if (underline) {
                     start += "\\underline{"
+                    end = "}" + end
+                }
+                if (sup) {
+                    start += "\\textsuperscript{"
+                    end = "}" + end
+                }
+                if (sub) {
+                    start += "\\textsubscript{"
+                    end = "}" + end
+                }
+                if (code) {
+                    start += "\\texttt{"
                     end = "}" + end
                 }
                 if (hyperlink) {

@@ -1,12 +1,33 @@
 import json
 from django.conf import settings
+from asyncio.exceptions import CancelledError
+from asgiref.sync import iscoroutinefunction, markcoroutinefunction
 
 
 class JsonToPostMiddleware:
+    async_capable = True
+    sync_capable = True
+
     def __init__(self, get_response):
         self.get_response = get_response
+        if iscoroutinefunction(self.get_response):
+            markcoroutinefunction(self)
 
     def __call__(self, request):
+        self._process_request(request)
+        try:
+            return self.get_response(request)
+        except CancelledError:
+            pass
+
+    async def __acall__(self, request):
+        self._process_request(request)
+        try:
+            return await self.get_response(request)
+        except CancelledError:
+            pass
+
+    def _process_request(self, request):
         # Always initialise request.JSON so that views can rely on it
         # existing regardless of content-type.  It will be overwritten below
         # with the parsed body when the request actually carries JSON.
@@ -47,5 +68,3 @@ class JsonToPostMiddleware:
                                 )
                     except json.JSONDecodeError:
                         pass  # Let downstream handle invalid JSON gracefully
-
-        return self.get_response(request)

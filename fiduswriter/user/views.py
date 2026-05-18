@@ -277,7 +277,6 @@ def save_profile(request):
     User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
     user_form = UserForm(request.JSON, instance=user_object)
-    print(user_form.is_valid())
     user_form.save()
     if user_form.is_valid():
         # user_form.save()
@@ -289,7 +288,6 @@ def save_profile(request):
             user_object.language = (
                 request.JSON["language"] if request.JSON["language"] else None
             )
-            print(user_object.language)
             user_object.save(update_fields=["language"])
             # Update session language
             request.session["django_language"] = user_object.language

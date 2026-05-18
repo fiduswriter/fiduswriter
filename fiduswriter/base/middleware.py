@@ -1,6 +1,5 @@
 import json
 from django.conf import settings
-from asyncio.exceptions import CancelledError
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction
 
 
@@ -14,18 +13,14 @@ class JsonToPostMiddleware:
             markcoroutinefunction(self)
 
     def __call__(self, request):
+        if iscoroutinefunction(self.get_response):
+            return self.__acall__(request)
         self._process_request(request)
-        try:
-            return self.get_response(request)
-        except CancelledError:
-            pass
+        return self.get_response(request)
 
     async def __acall__(self, request):
         self._process_request(request)
-        try:
-            return await self.get_response(request)
-        except CancelledError:
-            pass
+        return await self.get_response(request)
 
     def _process_request(self, request):
         # Always initialise request.JSON so that views can rely on it

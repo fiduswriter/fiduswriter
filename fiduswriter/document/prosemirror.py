@@ -52,7 +52,7 @@ def to_mini_json(node):
         obj["content"] = list(map(to_mini_json, node.content.content))
     if len(node.marks):
         obj["marks"] = list(map(to_mini_mark_json, node.marks))
-    if hasattr(node, "text"):
+    if node.is_text:
         obj["text"] = node.text
     return obj
 

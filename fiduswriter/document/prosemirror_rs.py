@@ -57,6 +57,7 @@ class Editor:
 
     def __init__(self, schema_json: str, doc_json: str) -> None:
         self._inner = _RustEditor(schema_json, doc_json)
+        self._schema_json = schema_json
 
     def apply_steps(self, steps: list) -> bool:
         """Apply *steps* (list of step dicts) atomically.
@@ -71,6 +72,9 @@ class Editor:
             return result
         print("FAILED APPLICATION")
         print(json.dumps(steps))
+        print(self._inner.doc_json())
+        print(self._schema_json)
+
         return False
         # try:
         #     return

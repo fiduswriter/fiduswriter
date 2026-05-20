@@ -3,12 +3,18 @@ from copy import deepcopy
 
 from asgiref.sync import sync_to_async
 from django.db.utils import DatabaseError, IntegrityError
-
-from document import prosemirror
 from django.conf import settings as _pm_settings
 from usermedia.models import Image, DocumentImage, UserImage
 
-_USE_RUST = getattr(_pm_settings, "PROSEMIRROR_BACKEND", "python") == "rust"
+if getattr(_pm_settings, "PROSEMIRROR_BACKEND", "rust") == "rust":
+    from document import prosemirror_rs as prosemirror  # Not used in rust mode
+
+    _USE_RUST = True
+else:
+    from document import prosemirror
+
+    _USE_RUST = False
+
 
 logger = logging.getLogger(__name__)
 

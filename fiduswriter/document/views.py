@@ -18,8 +18,13 @@ from django.conf import settings
 from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
+from django.conf import settings as _pm_settings
 
-from document import prosemirror
+if getattr(_pm_settings, "PROSEMIRROR_BACKEND", "rust") == "rust":
+    from document import prosemirror_rs as prosemirror
+else:
+    from document import prosemirror
+
 from document.models import (
     Document,
     AccessRight,

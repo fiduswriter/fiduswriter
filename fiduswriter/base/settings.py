@@ -29,6 +29,12 @@ DOC_SAVE_INTERVAL = 30
 #   "external"      - No built-in saving; external plugins handle persistence.
 EDITOR_SAVE_MODE = "collaborative"
 
+# ProseMirror backend used by the document WebSocket consumer.
+# "python" - pure-Python prosemirror package (default).
+# "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`).
+#            Keeps document state in Rust memory; avoids Python object tree overhead.
+PROSEMIRROR_BACKEND = "rust"
+
 ADMINS = (("Your Name", "your_email@example.com"),)
 
 MANAGERS = ADMINS

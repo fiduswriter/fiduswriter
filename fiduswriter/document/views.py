@@ -1276,7 +1276,7 @@ def get_doc_data(request):
     else:
         doc_data = {
             "v": doc.version,
-            "content": prosemirror.to_mini_json(
+            "content": prosemirror.to_content(
                 prosemirror.from_json(doc.content)
             ),
             "bibliography": doc.bibliography,

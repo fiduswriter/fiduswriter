@@ -12,7 +12,7 @@
 
 ### Backend
 - **Framework**: Django 6.0.4
-- **ASGI Server**: Daphne 4.1.2
+- **ASGI Server**: Granian 2.7+
 - **WebSockets**: Django Channels 4.3.2
 - **Python Version**: Python 3.x
 - **Database**: SQLite (default), with support for PostgreSQL and MySQL

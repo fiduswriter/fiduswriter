@@ -459,7 +459,7 @@ sudo snap logs -f fiduswriter
 
 # View logs for specific service
 sudo snap logs fiduswriter.gunicorn
-sudo snap logs fiduswriter.daphne
+sudo snap logs fiduswriter.granian
 ```
 
 ### Django Management Commands

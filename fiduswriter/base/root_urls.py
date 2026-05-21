@@ -91,7 +91,7 @@ if settings.MEDIA_URL[0] == "/":
 
 if settings.STATIC_URL[0] == "/":
     # Serve static files from collecting folder.
-    # This is safe for production when using Daphne/ASGI servers.
+    # This is safe for production when using Granian/ASGI servers.
     # For higher performance, consider using a reverse proxy (nginx/apache).
     urlpatterns += [
         re_path(

@@ -1,7 +1,7 @@
 bleach==6.3.0
 channels==4.3.2
-daphne==4.2.1
-Twisted[tls,http2] # Version is given by daphne.
+granian[uvloop]>=2.7.0
+whitenoise>=6.0.0
 Django==6.0.5
 django-allauth[socialaccount]==65.16.1
 django-axes==8.3.1

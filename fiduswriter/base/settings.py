@@ -164,6 +164,7 @@ SECRET_KEY = "2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4"
 # These middleware classes is what Fidus Writer needs in its standard setup.
 # You only need to change this in very advanced setups.
 BASE_MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "base.middleware.JsonToPostMiddleware",
@@ -217,7 +218,6 @@ TEMPLATES = [
 BASE_INSTALLED_APPS = [
     "npm_mjs",
     "base",
-    "daphne",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",

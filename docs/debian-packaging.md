@@ -4,7 +4,7 @@ This guide explains how to build and install Fidus Writer as a Debian/Ubuntu pac
 
 ## Overview
 
-This package bundles a recent **Python**, **Node.js** (via nodejs-wheel), **database adapters** (PostgreSQL and MySQL), all dependencies (Django, Channels, Daphne, and 30+ packages), and **all optional modules** into a single self-contained installation at `/opt/fiduswriter/`. This means:
+This package bundles a recent **Python**, **Node.js** (via nodejs-wheel), **database adapters** (PostgreSQL and MySQL), all dependencies (Django, Channels, Granian, and 30+ packages), and **all optional modules** into a single self-contained installation at `/opt/fiduswriter/`. This means:
 
 - ✅ **Python included** - No system Python 3.11+ required
 - ✅ **Node.js included** - Bundled via nodejs-wheel for JavaScript transpilation
@@ -97,7 +97,7 @@ sudo systemctl start fiduswriter
 
 **Runtime:**
 - Service uses bundled Python 3.14.2
-- Service uses `/opt/fiduswriter/python3.14/bin/daphne`
+- Service uses `/opt/fiduswriter/python3.14/bin/granian`
 - Commands use `/opt/fiduswriter/python3.14/bin/python3.14`
 - All dependencies installed directly in bundled Python
 - Node.js binaries provided by nodejs-wheel for transpilation

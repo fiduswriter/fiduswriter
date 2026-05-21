@@ -183,6 +183,9 @@ AXES_BASE_MIDDLEWARE = [
 
 MIDDLEWARE = []
 
+SERVESTATIC_USE_FINDERS = True
+SERVESTATIC_AUTOREFRESH = True
+
 
 # The location of the top urls.py file inside the base folder.
 # You only need to change this in very advanced setups.

@@ -364,12 +364,12 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
 
     def setUp(self):
         super().setUp()
-        # Suppress Django's cosmetic deprecation warning about sync
-        # StreamingHttpResponse iterators served through the ASGI handler.
-        # This occurs when a static file request falls through to the
-        # `static_serve` URL fallback in root_urls.py (e.g. during
-        # ServeStatic's autorefresh warmup).  The behaviour is correct;
-        # Django consumes sync iterators in a thread.
+        # Suppress Django's deprecation warning about sync
+        # StreamingHttpResponse iterators. This comes from the
+        # ``static_serve`` fallback for MEDIA_URL in root_urls.py
+        # (Django's ``django.views.static.serve`` returns a sync
+        # FileResponse).  The behavior is correct — Django's ASGI handler
+        # consumes sync iterators in a thread.
         warnings.filterwarnings(
             "ignore",
             message=".*StreamingHttpResponse must consume synchronous iterators.*",

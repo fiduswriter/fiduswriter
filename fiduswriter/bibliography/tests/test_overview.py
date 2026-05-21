@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from django.conf import settings
 
 from testing.selenium_helper import SeleniumHelper
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 
 
 class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):

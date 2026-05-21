@@ -1,7 +1,7 @@
 import sys
 import time
 import multiprocessing
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By

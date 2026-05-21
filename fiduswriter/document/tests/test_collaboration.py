@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
 from django.conf import settings
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 
 

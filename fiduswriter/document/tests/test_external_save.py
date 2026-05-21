@@ -1,6 +1,6 @@
 import time
 
-from testing.channels_patch import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from document.tests.editor_helper import EditorHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait

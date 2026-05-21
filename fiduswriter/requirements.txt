@@ -1,7 +1,7 @@
 bleach==6.3.0
 channels==4.3.2
 granian[uvloop]>=2.7.0
-whitenoise>=6.0.0
+servestatic>=4.3.0
 Django==6.0.5
 django-allauth[socialaccount]==65.16.1
 django-axes==8.3.1

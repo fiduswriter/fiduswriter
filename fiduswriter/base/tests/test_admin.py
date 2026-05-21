@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 
 

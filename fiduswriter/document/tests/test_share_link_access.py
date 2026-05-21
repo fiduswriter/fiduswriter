@@ -1,7 +1,7 @@
 import time
 import sys
 
-from testing.channels_patch import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait

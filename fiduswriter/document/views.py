@@ -18,12 +18,7 @@ from django.conf import settings
 from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
-from django.conf import settings as _pm_settings
 
-if getattr(_pm_settings, "PROSEMIRROR_BACKEND", "rust") == "rust":
-    from document import prosemirror_rs as prosemirror
-else:
-    from document import prosemirror
 
 from document.models import (
     Document,
@@ -1281,9 +1276,7 @@ def get_doc_data(request):
     else:
         doc_data = {
             "v": doc.version,
-            "content": prosemirror.to_content(
-                prosemirror.from_json(doc.content)
-            ),
+            "content": doc.content,
             "bibliography": doc.bibliography,
             "images": {},
         }

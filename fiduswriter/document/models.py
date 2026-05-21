@@ -6,9 +6,9 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
-from django.db.models.expressions import RawSQL
+from django.db.models.expressions import Value
 from django.utils import timezone
-from django.db.utils import DatabaseError, IntegrityError
+
 
 # FW_DOCUMENT_VERSION:
 # Also defined in frontend
@@ -82,16 +82,12 @@ class DocumentTemplate(models.Model):
             return []
 
 
-_JSON_CONTENT_SQL: dict[str, str] = {
-    "sqlite": "%s",
-    "postgresql": "%s::jsonb",
-    "mysql": "%s",  # also covers MariaDB (same Django backend / vendor string)
-}
+class PassthroughEncoder:
+    def __init__(self, **kwargs):
+        pass  # Must accept kwargs to avoid TypeError
 
-
-def _content_expr(content_json_str):
-    sql = _JSON_CONTENT_SQL.get(connection.vendor, "%s")
-    return RawSQL(sql, [content_json_str])
+    def encode(self, o):
+        return o
 
 
 class Document(models.Model):
@@ -189,30 +185,22 @@ class Document(models.Model):
         Django's JSONField always calls json.dumps() on whatever value you assign,
         which would double-encode a string that is already valid JSON. This sync
         method replaces that path with a QuerySet.update() call that passes the
-        rawstring through RawSQL, using the vendor-specific SQL fragment from
-        _JSON_CONTENT_SQL so the same code works on all databses supported by Django.
+        rawstring through Value, using the vendor-specific adapt_json_value() method
+        so the same code works on all databases supported by Django.
         """
         self.updated = timezone.now()
+        content_value = Value(
+            connection.ops.adapt_json_value(
+                content_json_str, encoder=PassthroughEncoder
+            )
+        )
         update_kwargs = {
             fname: (
-                _content_expr(content_json_str)
-                if fname == "content"
-                else getattr(self, fname)
+                content_value if fname == "content" else getattr(self, fname)
             )
             for fname in update_fields
         }
-        try:
-            updated = self.__class__.objects.filter(pk=self.pk).update(
-                **update_kwargs
-            )
-            if updated == 0:
-                self.content = content_json_str
-                try:
-                    self.save()
-                except IntegrityError:
-                    raise
-        except DatabaseError:
-            raise
+        self.__class__.objects.filter(pk=self.pk).update(**update_kwargs)
 
     async def asave_content_str(self, content_json_str, update_fields):
         """Async save: content column written as a raw JSON string.
@@ -220,30 +208,24 @@ class Document(models.Model):
         Django's JSONField always calls json.dumps() on whatever value you assign,
         which would double-encode a string that is already valid JSON. This async
         method replaces that path with a QuerySet.update() call that passes the
-        rawstring through RawSQL, using the vendor-specific SQL fragment from
-        _JSON_CONTENT_SQL so the same code works on all databses supported by Django.
+        rawstring through Value, using the vendor-specific adapt_json_value() method
+        so the same code works on all databases supported by Django.
         """
         self.updated = timezone.now()
+        content_value = Value(
+            connection.ops.adapt_json_value(
+                content_json_str, encoder=PassthroughEncoder
+            )
+        )
         update_kwargs = {
             fname: (
-                _content_expr(content_json_str)
-                if fname == "content"
-                else getattr(self, fname)
+                content_value if fname == "content" else getattr(self, fname)
             )
             for fname in update_fields
         }
-        try:
-            updated = await self.__class__.objects.filter(pk=self.pk).aupdate(
-                **update_kwargs
-            )
-            if updated == 0:
-                self.content = content_json_str
-                try:
-                    await self.asave()
-                except IntegrityError:
-                    pass
-        except DatabaseError:
-            raise
+        await self.__class__.objects.filter(pk=self.pk).aupdate(
+            **update_kwargs
+        )
 
     @classmethod
     def check(cls, **kwargs):

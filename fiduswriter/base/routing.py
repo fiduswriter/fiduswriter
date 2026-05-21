@@ -27,9 +27,9 @@ async def lifespan_handler(scope, receive, send):
     """
     ASGI Lifespan handler for server startup/shutdown lifecycle events.
 
-    On shutdown, saves all open documents before confirming completion so
-    that Granian (or any other ASGI server) waits until the flush is done
-    before terminating the process.
+    On shutdown, saves all open documents and removes all Presence records
+    before confirming completion so that Granian waits until the flush is
+    done before terminating the process.
     """
     while True:
         message = await receive()
@@ -39,6 +39,11 @@ async def lifespan_handler(scope, receive, send):
             from document.consumers import WebsocketConsumer
 
             await sync_to_async(WebsocketConsumer.save_all_docs)()
+
+            from base.consumers import remove_all_presences
+
+            await sync_to_async(remove_all_presences)()
+
             await send({"type": "lifespan.shutdown.complete"})
             return
 

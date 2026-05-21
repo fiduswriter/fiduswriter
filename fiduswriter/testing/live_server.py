@@ -4,6 +4,7 @@ import socket
 import threading
 import time
 import traceback as _traceback
+import warnings
 from functools import partial
 
 # Python 3.14 changed the Linux default from "fork" to "forkserver".  The
@@ -363,6 +364,17 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
 
     def setUp(self):
         super().setUp()
+        # Suppress Django's cosmetic deprecation warning about sync
+        # StreamingHttpResponse iterators served through the ASGI handler.
+        # This occurs when a static file request falls through to the
+        # `static_serve` URL fallback in root_urls.py (e.g. during
+        # ServeStatic's autorefresh warmup).  The behaviour is correct;
+        # Django consumes sync iterators in a thread.
+        warnings.filterwarnings(
+            "ignore",
+            message=".*StreamingHttpResponse must consume synchronous iterators.*",
+            category=Warning,
+        )
         self.run_server_command("clear_contenttype_cache")
 
     def run_server_command(self, command):

@@ -52,9 +52,15 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
 
 def remove_all_presences():
     # Removing all presences connected to this server
-    for client in SystemMessageConsumer.clients:
-        if hasattr(client, "presence"):
-            client.presence.delete()
+    try:
+        for client in SystemMessageConsumer.clients:
+            if hasattr(client, "presence"):
+                client.presence.delete()
+    except ValueError:
+        # The DB/app registry may already be partially torn down when
+        # atexit fires.  This is a best-effort safety net; the real
+        # cleanup happens via the ASGI Lifespan shutdown handler.
+        pass
 
     SystemMessageConsumer.clients = []
 

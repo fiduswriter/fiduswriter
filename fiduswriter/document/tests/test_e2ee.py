@@ -460,9 +460,10 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
 
         # Wait for the flag set by the MutationObserver above.
-        # This is reliable even if the alert has already come and gone by
-        # the time the next Selenium poll would have fired.
-        WebDriverWait(self.driver, self.wait_time).until(
+        # Use a generous timeout: even with the JS optimisation that skips the
+        # current-password PBKDF2, deriving the new key at 600 000 iterations
+        # can take 10-20 s on a slow CI runner, so wait_time * 3 is needed.
+        WebDriverWait(self.driver, self.wait_time * 3).until(
             lambda d: d.execute_script(
                 "return window._e2eeSuccessAlertSeen === true"
             )

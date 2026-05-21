@@ -26,6 +26,17 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
         "initial_documenttemplates.json",
         "initial_styles.json",
     ]
+    # Process names (lowercase substrings) that belong to the Selenium browser
+    # and must be excluded from memory measurements.  Chrome spawns many helper
+    # processes (renderer, GPU, network-service, …) that all carry one of these
+    # names, and Firefox/geckodriver follow the same pattern.
+    BROWSER_PROCESS_NAMES = {
+        "chrome",
+        "chromium",
+        "chromedriver",
+        "firefox",
+        "geckodriver",
+    }
     TEST_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
     NUMBER_OF_DOCS = int(
         os.environ.get("MEMORY_LEAK_TEST_DOCS", "20")
@@ -97,15 +108,33 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
         gc.collect()
         super().tearDown()
 
+    def _is_browser_process(self, proc):
+        """Return True if *proc* is a browser or browser-driver process."""
+        try:
+            name = proc.name().lower()
+            return any(bn in name for bn in self.BROWSER_PROCESS_NAMES)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            return False
+
     def get_memory_usage(self):
-        """Return the memory usage in MB for all child processes."""
+        """Return the memory usage in MB for the server-side processes only.
+
+        Browser processes (Chrome, chromedriver, Firefox, geckodriver, …) are
+        explicitly excluded: they are children of the test runner but their
+        memory is irrelevant to server-side leak detection and would swamp the
+        signal (Chrome alone uses hundreds of MB and spawns new renderer
+        processes on every navigation).
+        """
         gc.collect()
         # Measure current process
         main_process = self.process.memory_info().rss
 
-        # Also measure child processes (Daphne server processes)
+        # Also measure child processes (Daphne server processes),
+        # but skip browser and browser-driver processes.
         child_processes = 0
         for child in self.process.children(recursive=True):
+            if self._is_browser_process(child):
+                continue
             try:
                 child_processes += child.memory_info().rss
             except (psutil.NoSuchProcess, psutil.AccessDenied):

@@ -7,11 +7,13 @@ from django.conf import settings as _pm_settings
 from usermedia.models import Image, DocumentImage, UserImage
 
 if getattr(_pm_settings, "PROSEMIRROR_BACKEND", "rust") == "rust":
-    from document import prosemirror_rs as prosemirror  # Not used in rust mode
+
+    def to_content(node):  # Not used in rust mode
+        return node
 
     _USE_RUST = True
 else:
-    from document import prosemirror
+    from document.prosemirror import to_content
 
     _USE_RUST = False
 
@@ -113,7 +115,7 @@ async def save_document_async(
                     raise e
             return True
         else:
-            doc.content = prosemirror.to_content(node)
+            doc.content = to_content(node)
 
     try:
         # this try block is to avoid a db exception
@@ -188,7 +190,7 @@ def save_document(doc, node=None, force=False, last_saved_version=None):
                     raise e
             return True
         else:
-            doc.content = prosemirror.to_content(node)
+            doc.content = to_content(node)
 
     try:
         doc.save(update_fields=update_fields)

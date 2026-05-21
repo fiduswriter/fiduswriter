@@ -21,6 +21,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from base.decorators import ajax_required
 from base.mixins import JsonFormMixin
+from base.views import apply_language_cookie
 from .forms import UserForm, FidusLoginForm
 from document.models import AccessRight
 from .models import UserInvite, UserEncryptionKey
@@ -35,6 +36,7 @@ from allauth.account.models import (
 )
 from allauth.account.views import (
     LoginView,
+    LogoutView,
     SignupView,
     PasswordResetView,
     PasswordResetFromKeyView,
@@ -275,29 +277,29 @@ def save_profile(request):
     Save user profile information
     """
     response = {}
+    language_updated = False
     User = get_user_model()
     user_object = User.objects.get(pk=request.user.pk)
     user_form = UserForm(request.JSON, instance=user_object)
-    user_form.save()
+    if (
+        "language" in request.JSON
+        and user_object.language != request.JSON["language"]
+    ):
+        language_updated = True
     if user_form.is_valid():
-        # user_form.save()
-        # Set the language if it has been updated
-        if (
-            "language" in request.JSON
-            and user_object.language != request.JSON["language"]
-        ):
-            user_object.language = (
-                request.JSON["language"] if request.JSON["language"] else None
-            )
-            user_object.save(update_fields=["language"])
-            # Update session language
-            request.session["django_language"] = user_object.language
         status = 200
+        user_form.save()
     else:
         response["errors"] = user_form.errors
         status = 422
+        language_updated = (
+            False  # Don't apply update if form otherwise is invalid
+        )
 
-    return JsonResponse(response, status=status)
+    json_response = JsonResponse(response, status=status)
+    if language_updated:
+        apply_language_cookie(json_response, user_object.language)
+    return json_response
 
 
 @login_required
@@ -598,6 +600,16 @@ def get_confirmkey_data(request):
     return JsonResponse(response, status=status)
 
 
+class FidusLogoutView(LogoutView):
+    def post(self, *args, **kwargs):
+        response = super().post(*args, **kwargs)
+        apply_language_cookie(response, None)
+        return response
+
+
+logout_view = FidusLogoutView.as_view()
+
+
 class FidusSignupView(JsonFormMixin, SignupView):
     def form_valid(self, form):
         if not settings.REGISTRATION_OPEN:
@@ -685,6 +697,16 @@ class FidusLoginView(JsonFormMixin, LoginView):
                 response["user"]["language"] = user.language
             return JsonResponse(response)
         return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        # AjaxCapableProcessFormViewMixin.post() wraps our form_valid()
+        # response in a new HttpResponse via _ajax_response(), discarding any
+        # cookies we set there.  We therefore apply the language cookie here,
+        # on the final response, once we know whether login succeeded.
+        response = super().post(request, *args, **kwargs)
+        if request.user.is_authenticated and request.user.language:
+            apply_language_cookie(response, request.user.language)
+        return response
 
 
 # Two-factor authentication views

@@ -382,32 +382,45 @@ export const headerbarModel = () => ({
                         changePasswordDialog(
                             async ({currentPassword, newPassword}) => {
                                 try {
-                                    // Verify current password by resolving to key
-                                    const currentSaltBytes = new Uint8Array(
-                                        atob(editor.e2ee.encryptionSalt)
-                                            .split("")
-                                            .map(c => c.charCodeAt(0))
-                                    )
-                                    const currentKey =
-                                        await E2EEKeyManager.resolvePasswordToKey(
-                                            currentPassword,
-                                            currentSaltBytes,
-                                            editor.e2ee.encryptionIterations
+                                    // Verify the current password.
+                                    // If the entered password matches what is already cached
+                                    // in memory or sessionStorage, the document is already
+                                    // open with that key — skip the expensive PBKDF2
+                                    // re-derivation used only to prove correctness.
+                                    const cachedPassword =
+                                        editor.e2ee.password ||
+                                        E2EEKeyManager.getPasswordFromSession(
+                                            editor.docInfo.id
                                         )
-                                    // Test the key by encrypting and decrypting a test value
-                                    const {E2EEEncryptor} = await import(
-                                        "../../e2ee/encryptor"
-                                    )
-                                    const testValue = "test"
-                                    const encryptedTest =
-                                        await E2EEEncryptor.encrypt(
-                                            testValue,
-                                            currentKey
+                                    if (
+                                        !cachedPassword ||
+                                        currentPassword !== cachedPassword
+                                    ) {
+                                        const currentSaltBytes = new Uint8Array(
+                                            atob(editor.e2ee.encryptionSalt)
+                                                .split("")
+                                                .map(c => c.charCodeAt(0))
                                         )
-                                    await E2EEEncryptor.decrypt(
-                                        encryptedTest,
-                                        editor.e2ee.key
-                                    )
+                                        const currentKey =
+                                            await E2EEKeyManager.resolvePasswordToKey(
+                                                currentPassword,
+                                                currentSaltBytes,
+                                                editor.e2ee.encryptionIterations
+                                            )
+                                        const {E2EEEncryptor} = await import(
+                                            "../../e2ee/encryptor"
+                                        )
+                                        const testValue = "test"
+                                        const encryptedTest =
+                                            await E2EEEncryptor.encrypt(
+                                                testValue,
+                                                currentKey
+                                            )
+                                        await E2EEEncryptor.decrypt(
+                                            encryptedTest,
+                                            editor.e2ee.key
+                                        )
+                                    }
 
                                     // Current password verified — generate new salt and key
                                     const newSalt =

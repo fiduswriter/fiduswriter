@@ -433,17 +433,38 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.ID, "e2ee-confirm-password-input"
         ).send_keys(new_password)
 
+        # Plant a MutationObserver *before* clicking so we cannot miss the
+        # success alert even if it appears and disappears between two Selenium
+        # polls.  The observer sets a persistent JS flag the moment any
+        # .alerts-success node is inserted anywhere under document.body.
+        self.driver.execute_script(
+            """
+            window._e2eeSuccessAlertSeen = false;
+            (new MutationObserver(function(mutations) {
+                mutations.forEach(function(m) {
+                    m.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1 &&
+                                node.classList &&
+                                node.classList.contains('alerts-success')) {
+                            window._e2eeSuccessAlertSeen = true;
+                        }
+                    });
+                });
+            })).observe(document.body, {childList: true, subtree: true});
+        """
+        )
+
         # Click Change Password
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
-        # Wait for the JS-side success alert. It is only shown after
-        # reEncryptWithNewKey() has finished all crypto work and called
-        # ws.send() to queue the new snapshot for the server.
+        # Wait for the flag set by the MutationObserver above.
+        # This is reliable even if the alert has already come and gone by
+        # the time the next Selenium poll would have fired.
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, ".alerts-success")
+            lambda d: d.execute_script(
+                "return window._e2eeSuccessAlertSeen === true"
             )
         )
 

@@ -33,7 +33,7 @@ def apply(steps, node):
     return node
 
 
-def to_mini_json(node):
+def to_content(node):
     # Similar to the ProseMirror internal toJSON function,
     # but leaving out attributes that have default values and dealing with
     # attributes that are objects.
@@ -49,7 +49,7 @@ def to_mini_json(node):
                     obj["attrs"] = {}
                 obj["attrs"][attr] = deepcopy(node.attrs[attr])
     if getattr(node.content, "size", None):
-        obj["content"] = list(map(to_mini_json, node.content.content))
+        obj["content"] = list(map(to_content, node.content.content))
     if len(node.marks):
         obj["marks"] = list(map(to_mini_mark_json, node.marks))
     if node.is_text:

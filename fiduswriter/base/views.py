@@ -251,6 +251,32 @@ def flatpage(request):
     return JsonResponse(response, status=status)
 
 
+def apply_language_cookie(response, language):
+    """
+    Write the Django language cookie to *response*.
+    When *language* is falsy the cookie is deleted so that
+    LocaleMiddleware falls back to Accept-Language / the site default.
+    """
+    if language:
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            language,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            path=settings.LANGUAGE_COOKIE_PATH,
+            domain=settings.LANGUAGE_COOKIE_DOMAIN,
+            secure=settings.LANGUAGE_COOKIE_SECURE,
+            httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+            samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+        )
+    else:
+        response.delete_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            path=settings.LANGUAGE_COOKIE_PATH,
+            domain=settings.LANGUAGE_COOKIE_DOMAIN,
+            samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+        )
+
+
 @require_POST
 def set_language(request):
     """
@@ -263,15 +289,6 @@ def set_language(request):
     if language and check_for_language(language):
         activate(language)
         response = JsonResponse({})
-        response.set_cookie(
-            settings.LANGUAGE_COOKIE_NAME,
-            language,
-            max_age=settings.LANGUAGE_COOKIE_AGE,
-            path=settings.LANGUAGE_COOKIE_PATH,
-            domain=settings.LANGUAGE_COOKIE_DOMAIN,
-            secure=settings.LANGUAGE_COOKIE_SECURE,
-            httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
-            samesite=settings.LANGUAGE_COOKIE_SAMESITE,
-        )
+        apply_language_cookie(response, language)
         return response
     return JsonResponse({"error": "Invalid language code"}, status=400)

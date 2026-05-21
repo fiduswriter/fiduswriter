@@ -45,6 +45,9 @@ payment-paddle = ["fiduswriter-payment-paddle ~= 4.1.1"]
 website = ["fiduswriter-website ~= 4.1.0"]
 mysql = ["mysqlclient"]
 postgresql = ["psycopg2"]
+prosemirror-rust = ["prosemirror-rs"]
+prosemirror-python = ["prosemirror"]
+
 
 [project.scripts]
 fiduswriter = "fiduswriter.manage:entry"

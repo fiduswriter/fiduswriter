@@ -94,7 +94,7 @@ class SimpleMessageExchangeTests(EditorHelper, ChannelsLiveServerTestCase):
         self.assertEqual(doc_message_count, 1)
 
         # Now assert that the document reloaded in front end too !
-        doc_content = prosemirror.to_mini_json(
+        doc_content = prosemirror.to_content(
             prosemirror.from_json(
                 self.driver.execute_script(
                     "return window.theApp.page.docInfo."

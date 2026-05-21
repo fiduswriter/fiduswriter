@@ -3,9 +3,20 @@ from copy import deepcopy
 
 from asgiref.sync import sync_to_async
 from django.db.utils import DatabaseError, IntegrityError
-
-from document import prosemirror
+from django.conf import settings as _pm_settings
 from usermedia.models import Image, DocumentImage, UserImage
+
+if getattr(_pm_settings, "PROSEMIRROR_BACKEND", "rust") == "rust":
+
+    def to_content(node):  # Not used in rust mode
+        return node
+
+    _USE_RUST = True
+else:
+    from document.prosemirror import to_content
+
+    _USE_RUST = False
+
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +74,6 @@ async def save_document_async(
         f"Doc version:{doc.version}"
     )
 
-    if node is not None and not doc.e2ee:
-        doc.content = prosemirror.to_mini_json(node)
-
     update_fields = [
         "title",
         "version",
@@ -86,6 +94,29 @@ async def save_document_async(
                 "e2ee_snapshot_version",
             ]
         )
+
+    if node is not None and not doc.e2ee:
+        if _USE_RUST:
+            # Rust Editor: doc_json() returns a pre-serialised JSON string.
+            # Use the monkey-patched method to bypass Django's JSONField encoder.
+            content_str = node.doc_json()
+            try:
+                await doc.asave_content_str(content_str, update_fields)
+            except DatabaseError as e:
+                expected_msg = (
+                    "Save with update_fields did not affect any rows."
+                )
+                if str(e) == expected_msg:
+                    try:
+                        await doc.asave()
+                    except IntegrityError:
+                        pass
+                else:
+                    raise e
+            return True
+        else:
+            doc.content = to_content(node)
+
     try:
         # this try block is to avoid a db exception
         # in case the doc has been deleted from the db
@@ -122,9 +153,6 @@ def save_document(doc, node=None, force=False, last_saved_version=None):
         f"Doc version:{doc.version}"
     )
 
-    if node is not None and not doc.e2ee:
-        doc.content = prosemirror.to_mini_json(node)
-
     update_fields = [
         "title",
         "version",
@@ -143,6 +171,27 @@ def save_document(doc, node=None, force=False, last_saved_version=None):
                 "e2ee_snapshot_version",
             ]
         )
+
+    if node is not None and not doc.e2ee:
+        if _USE_RUST:
+            content_str = node.doc_json()
+            try:
+                doc.save_content_str(content_str, update_fields)
+            except DatabaseError as e:
+                expected_msg = (
+                    "Save with update_fields did not affect any rows."
+                )
+                if str(e) == expected_msg:
+                    try:
+                        doc.save()
+                    except IntegrityError:
+                        pass
+                else:
+                    raise e
+            return True
+        else:
+            doc.content = to_content(node)
+
     try:
         doc.save(update_fields=update_fields)
     except DatabaseError as e:

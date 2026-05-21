@@ -19,7 +19,7 @@ from django.db.models import F, Q
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
-from document import prosemirror
+
 from document.models import (
     Document,
     AccessRight,
@@ -1276,9 +1276,7 @@ def get_doc_data(request):
     else:
         doc_data = {
             "v": doc.version,
-            "content": prosemirror.to_mini_json(
-                prosemirror.from_json(doc.content)
-            ),
+            "content": doc.content,
             "bibliography": doc.bibliography,
             "images": {},
         }

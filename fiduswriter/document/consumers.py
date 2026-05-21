@@ -14,7 +14,12 @@ from django.conf import settings
 
 from base.helpers.ws import get_url_base
 from document.helpers.session_user_info import SessionUserInfo
-from document import prosemirror
+from django.conf import settings as _pm_settings
+
+if getattr(_pm_settings, "PROSEMIRROR_BACKEND", "rust") == "rust":
+    from document import prosemirror_rs as prosemirror
+else:
+    from document import prosemirror
 from document.helpers import document_store
 
 from base.base_consumer import BaseWebsocketConsumer, GuestUser, TokenUser

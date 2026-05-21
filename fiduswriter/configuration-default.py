@@ -48,7 +48,12 @@ CONTACT_EMAIL = "mail@email.com"
 PORTS = [
     8000,
 ]
-#
+
+# ProseMirror backend used by the document WebSocket consumer.
+# "python" - pure-Python prosemirror package (default).
+# "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`).
+#            Keeps document state in Rust memory; avoids Python object tree overhead.
+PROSEMIRROR_BACKEND = "rust"
 
 # Allow the server to listen to all network interfaces (0.0.0.0) instead of just localhost
 # SECURITY WARNING: Setting this to True in production environments could expose your server

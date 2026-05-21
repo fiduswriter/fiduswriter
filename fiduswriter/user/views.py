@@ -2,6 +2,7 @@ import json
 import base64
 
 from django.http import JsonResponse, HttpRequest
+from django.db import IntegrityError
 from django.db.models import Q
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -622,6 +623,24 @@ class FidusLoginView(JsonFormMixin, LoginView):
         )
         user = form.user
         if is_ajax and isinstance(user, get_user_model()):
+            # Ensure the user has an EmailAddress record so allauth's
+            # sync_email_address does not fail with a FOREIGN KEY constraint
+            # error when the record is absent (e.g. users created outside the
+            # normal allauth signup flow or in test environments).
+            if user.email:
+                try:
+                    EmailAddress.objects.get_or_create(
+                        user=user,
+                        email=user.email,
+                        defaults={"primary": True, "verified": True},
+                    )
+                except IntegrityError:
+                    # User row was removed from the DB between authentication
+                    # and this point (race condition). Return a generic error
+                    # rather than letting a 500 propagate.
+                    return JsonResponse(
+                        {"error": "Authentication error"}, status=500
+                    )
             # Check if user has 2FA enabled and is not verified yet
             location = None
             if "django_otp" in settings.INSTALLED_APPS:
@@ -665,7 +684,7 @@ class FidusLoginView(JsonFormMixin, LoginView):
             if user.language:
                 response["user"]["language"] = user.language
             return JsonResponse(response)
-        return form_response
+        return super().form_valid(form)
 
 
 # Two-factor authentication views

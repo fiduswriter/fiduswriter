@@ -1,4 +1,4 @@
-import json
+from base.json_util import json
 from django.conf import settings
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction
 

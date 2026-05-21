@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path
 from django.utils.translation import gettext as _
-import json
+from base.json_util import json
 from base.views import get_frontend_settings
 from . import models
 

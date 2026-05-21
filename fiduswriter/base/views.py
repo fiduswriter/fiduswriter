@@ -1,4 +1,4 @@
-import json
+from base.json_util import json
 import random
 from httpx_ws import connect_ws
 from django.contrib.auth import get_user_model

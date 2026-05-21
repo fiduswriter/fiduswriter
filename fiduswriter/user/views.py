@@ -1,4 +1,4 @@
-import json
+from base.json_util import json
 import base64
 
 from django.http import JsonResponse, HttpRequest

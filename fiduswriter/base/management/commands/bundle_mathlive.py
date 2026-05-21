@@ -1,10 +1,10 @@
 from base.management import BaseCommand
+from base.json_util import json
 import zipfile
 import os
 import shutil
 import magic
 import hashlib
-import json
 
 from django.conf import settings
 

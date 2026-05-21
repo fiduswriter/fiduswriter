@@ -1,6 +1,6 @@
 import os
-import json
 from copy import deepcopy
+from base.json_util import json
 
 from prosemirror.model import Node, Schema
 from prosemirror.transform import Step

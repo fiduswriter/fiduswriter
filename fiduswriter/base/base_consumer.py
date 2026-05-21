@@ -1,5 +1,5 @@
-import json
 import logging
+from base.json_util import json
 from dataclasses import dataclass
 from channels.generic.websocket import AsyncWebsocketConsumer
 from urllib.parse import parse_qs

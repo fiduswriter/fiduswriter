@@ -25,7 +25,7 @@ Changes in prosemirror-rs 0.3
   new ``Editor``.
 """
 
-import json
+from base.json_util import json
 import os
 
 from django.conf import settings

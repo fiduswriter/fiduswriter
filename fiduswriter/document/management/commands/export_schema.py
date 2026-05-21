@@ -1,5 +1,5 @@
+from base.json_util import json
 import hashlib
-import json
 import os
 import subprocess
 from tempfile import mkstemp

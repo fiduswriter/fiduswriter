@@ -47,6 +47,7 @@ mysql = ["mysqlclient"]
 postgresql = ["psycopg2"]
 prosemirror-rust = ["prosemirror-rs"]
 prosemirror-python = ["prosemirror"]
+orjson = ["orjson"]
 
 
 [project.scripts]

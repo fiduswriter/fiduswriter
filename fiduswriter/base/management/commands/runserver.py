@@ -161,16 +161,16 @@ class Command(RunserverCommand):
         if self.http_timeout:
             cmd += ["--read-timeout", str(self.http_timeout)]
 
-        # Serve media files via Granian's built-in static file server
-        # (avoids Django's sync FileResponse which would produce a warning
-        #  under the ASGI handler).
+        # Serve media files via Granian's built-in static file server.
+        # Django's settings are fully loaded by this point (we're inside
+        # inner_run which runs after Django is configured).
         media_root = getattr(settings, "MEDIA_ROOT", None)
         if media_root:
             cmd += [
                 "--static-path-route",
-                "/media/",
+                "/media",
                 "--static-path-mount",
-                str(media_root),
+                media_root,
             ]
 
         # Use the production ASGI entry point; it handles its own Django

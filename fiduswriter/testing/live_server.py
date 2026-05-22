@@ -4,7 +4,10 @@ import socket
 import threading
 import time
 import traceback as _traceback
+import warnings
 from functools import partial
+from pathlib import Path
+from django.conf import settings
 
 # Python 3.14 changed the Linux default from "fork" to "forkserver".  The
 # live-server test case relies on the child process inheriting the parent's
@@ -141,6 +144,14 @@ class GranianProcess(multiprocessing.Process):
 
             application = self.get_application()
 
+            # Read MEDIA_ROOT after get_application() has fully bootstrapped
+            # Django (via asgi.py), then let Granian serve media files directly
+            # at the Rust level, avoiding Django's sync FileResponse entirely.
+
+            media_root = getattr(settings, "MEDIA_ROOT", None)
+            static_path_mount = [Path(media_root)] if media_root else None
+            static_path_route = ["/media"] if media_root else None
+
             # Daemon thread: probe the TCP port and signal ready as soon as
             # the server accepts its first connection.  This avoids relying on
             # any Granian-internal hooks (_init_shared_socket, _sso, _sfd)
@@ -161,15 +172,6 @@ class GranianProcess(multiprocessing.Process):
 
             threading.Thread(target=_probe, daemon=True).start()
 
-            from pathlib import Path
-
-            try:
-                from django.conf import settings as _dj_settings
-
-                media_root = _dj_settings.MEDIA_ROOT
-            except Exception:
-                media_root = None
-
             Granian(
                 target="__live_test_app__",
                 address=resolved_host,
@@ -177,8 +179,8 @@ class GranianProcess(multiprocessing.Process):
                 interface=Interfaces.ASGI,
                 workers=1,
                 log_enabled=False,
-                static_path_route=["/media/"] if media_root else None,
-                static_path_mount=[Path(media_root)] if media_root else None,
+                static_path_route=static_path_route,
+                static_path_mount=static_path_mount,
             ).serve(target_loader=lambda _: application, wrap_loader=True)
 
         except BaseException as exc:
@@ -319,6 +321,15 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
                     "ChannelsLiveServerTestCase cannot be used with "
                     "in-memory databases"
                 )
+
+        # Suppress Django's warning about sync StreamingHttpResponse
+        # iterators served through the ASGI handler.  This is set before
+        # the server child is forked so it is inherited by the child.
+        warnings.filterwarnings(
+            "ignore",
+            message=".*StreamingHttpResponse must consume synchronous iterators.*",
+            category=Warning,
+        )
 
         super().setUpClass()
 

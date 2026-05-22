@@ -157,6 +157,13 @@ STATICFILES_FINDERS = (
     #    "django.contrib.staticfiles.finders.DefaultStorageFinder",
 )
 
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "servestatic.storage.CompressedManifestStaticFilesStorage"
+    },
+}
+
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = "2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4"
 

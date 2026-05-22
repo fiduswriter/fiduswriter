@@ -86,6 +86,24 @@ def get_internal_port(conn):
         return int(conn["internal"])
 
 
+def _free_ports(ports):
+    """Kill any processes listening on the given TCP ports to release them."""
+    if not ports:
+        return
+    try:
+        subprocess.run(
+            ["fuser", "-k"] + [f"{port}/tcp" for port in ports],
+            capture_output=True,
+            timeout=5,
+        )
+        # Give the OS a moment to actually release the ports
+        time.sleep(0.3)
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        pass
+    except Exception:
+        pass
+
+
 class Command(RunserverCommand):
     protocol = "http"
 
@@ -207,6 +225,11 @@ class Command(RunserverCommand):
                 raise CommandError(
                     "PORTS must be a list of integers or dicts with an `internal` key."
                 )
+
+        # Kill any stale processes still holding the target ports from a
+        # previous run (common during auto-reload when old Granian workers
+        # haven't released their sockets yet).
+        _free_ports(ports)
 
         # Start maintenance page servers for each port
         maintenance_servers = []

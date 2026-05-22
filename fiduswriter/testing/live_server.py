@@ -12,6 +12,13 @@ import warnings
 from functools import partial
 from pathlib import Path
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.db import connections
+from django.db.backends.base.creation import TEST_DATABASE_PREFIX
+from django.test.testcases import TransactionTestCase
+from django.test.utils import modify_settings
+
+from channels.routing import get_default_application
 
 logger = logging.getLogger("testing.live_server")
 logger.setLevel(logging.DEBUG)
@@ -32,14 +39,6 @@ try:
     multiprocessing.set_start_method("fork", force=True)
 except (RuntimeError, AttributeError):
     pass
-
-from django.core.exceptions import ImproperlyConfigured
-from django.db import connections
-from django.db.backends.base.creation import TEST_DATABASE_PREFIX
-from django.test.testcases import TransactionTestCase
-from django.test.utils import modify_settings
-
-from channels.routing import get_default_application
 
 
 def _find_free_port(host):

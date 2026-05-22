@@ -3,6 +3,38 @@ from django.conf import settings
 from asgiref.sync import iscoroutinefunction, markcoroutinefunction
 
 
+class ConditionalMessageMiddleware:
+    """Strips the messages cookie from responses for non-admin URLs.
+
+    ``django.contrib.messages.middleware.MessageMiddleware`` still runs
+    (the admin app requires it), but this middleware removes the
+    ``messages`` cookie from every response whose path does not start with
+    ``/admin/``, avoiding unnecessary overhead on all other page loads.
+    """
+
+    async_capable = True
+    sync_capable = True
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        if iscoroutinefunction(self.get_response):
+            markcoroutinefunction(self)
+
+    def __call__(self, request):
+        if iscoroutinefunction(self.get_response):
+            return self.__acall__(request)
+        return self._process(request)
+
+    async def __acall__(self, request):
+        return await self._process(request)
+
+    def _process(self, request):
+        response = self.get_response(request)
+        if not request.path.startswith("/admin/"):
+            response.cookies.pop("messages", None)
+        return response
+
+
 class JsonToPostMiddleware:
     async_capable = True
     sync_capable = True

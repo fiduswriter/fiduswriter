@@ -22,9 +22,5 @@
         }
         return null;
     };
-    window.settings.postResponseHook = function(response) {
-        document.cookie = "messages=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        return response;
-    };
     window.staticUrl = window.settings.staticUrl;
 </script>

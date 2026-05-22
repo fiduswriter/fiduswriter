@@ -53,9 +53,7 @@ export const get = (url, params = {}, csrfToken = false) => {
             "X-Requested-With": "XMLHttpRequest"
         },
         credentials: "include"
-    })
-        .then(settings.postResponseHook)
-        .then(handleFetchErrors)
+    }).then(handleFetchErrors)
 }
 
 export const getJson = (url, params = {}, csrfToken = false) =>
@@ -102,10 +100,7 @@ export const postBare = (url, object = {}, files = {}, options = {}) => {
 }
 
 export const post = (url, object = {}, files = {}, options = {}) => {
-    const settings = getSettings()
-    return postBare(url, object, files, options)
-        .then(settings.postResponseHook)
-        .then(handleFetchErrors)
+    return postBare(url, object, files, options).then(handleFetchErrors)
 }
 
 // post json object and return json and status

@@ -179,6 +179,7 @@ BASE_MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django_otp.middleware.OTPMiddleware",  # Two-factor authentication (can be disabled via REMOVED_APPS)
     "django.contrib.messages.middleware.MessageMiddleware",
+    "base.middleware.ConditionalMessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]

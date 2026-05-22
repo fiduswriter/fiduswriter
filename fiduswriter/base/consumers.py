@@ -34,7 +34,8 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
 
     async def disconnect(self, close_code):
         if hasattr(self, "presence"):
-            await self.presence.adelete()
+            if self.presence.id is not None:
+                await self.presence.adelete()
         if self in SystemMessageConsumer.clients:
             SystemMessageConsumer.clients.remove(self)
         await self.close()
@@ -53,8 +54,10 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
 def remove_all_presences():
     # Removing all presences connected to this server
     for client in SystemMessageConsumer.clients:
-        if hasattr(client, "presence"):
+        if hasattr(client, "presence") and client.presence.id is not None:
             client.presence.delete()
+        if client in SystemMessageConsumer.clients:
+            SystemMessageConsumer.clients.remove(client)
 
     SystemMessageConsumer.clients = []
 

@@ -1,7 +1,7 @@
 import os
 import time
 import sys
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys

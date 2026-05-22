@@ -1,58 +1,29 @@
 # Origin: https://github.com/django/daphne/blob/2b13b74ce266fedf1cad9122314a2a3579cee576/daphne/management/commands/runserver.py
 # With Fidus Writer specific adjustments.
+# Daphne replaced with Granian (Rust-based ASGI server).
 
 import datetime
-import importlib
 import logging
+import os
+import signal
+import subprocess
 import sys
 import threading
 import time
-import os
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
 
 from base import get_version
 
-from django.apps import apps
 from django.conf import settings
-from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
-from django.core.exceptions import ImproperlyConfigured
-from django.core.management import CommandError
+from django.core.management import CommandError, call_command
 from django.core.management.commands.runserver import (
     Command as RunserverCommand,
 )
-from django.core.management import call_command
-
-from daphne.endpoints import build_endpoint_description_strings
-from daphne.server import Server
 
 logger = logging.getLogger("django.channels.server")
-
-
-def get_default_application():
-    """
-    Gets the default application, set in the ASGI_APPLICATION setting.
-    """
-    try:
-        path, name = settings.ASGI_APPLICATION.rsplit(".", 1)
-    except (ValueError, AttributeError):
-        raise ImproperlyConfigured("Cannot find ASGI_APPLICATION setting.")
-    try:
-        module = importlib.import_module(path)
-    except ImportError:
-        raise ImproperlyConfigured(
-            "Cannot import ASGI_APPLICATION module %r" % path
-        )
-    try:
-        value = getattr(module, name)
-    except AttributeError:
-        raise ImproperlyConfigured(
-            f"Cannot find {name!r} in ASGI_APPLICATION module {path}"
-        )
-    return value
 
 
 class MaintenancePageHandler(SimpleHTTPRequestHandler):
@@ -81,7 +52,6 @@ class JSFileHandler(FileSystemEventHandler):
                     self._handle_change(event.src_path)
 
     def _should_ignore(self, path):
-        # Add any specific files or directories you want to ignore
         ignore_list = ["node_modules", ".git"]
         return any(ignore_item in path for ignore_item in ignore_list)
 
@@ -118,7 +88,6 @@ def get_internal_port(conn):
 
 class Command(RunserverCommand):
     protocol = "http"
-    server_cls = Server
 
     def add_arguments(self, parser):
         super().add_arguments(parser)
@@ -129,19 +98,8 @@ class Command(RunserverCommand):
             type=int,
             default=None,
             help=(
-                "Specify the daphne http_timeout interval in seconds "
+                "Specify the granian read_timeout interval in seconds "
                 "(default: no timeout)"
-            ),
-        )
-        parser.add_argument(
-            "--websocket_handshake_timeout",
-            action="store",
-            dest="websocket_handshake_timeout",
-            type=int,
-            default=5,
-            help=(
-                "Specify the daphne websocket_handshake_timeout interval in "
-                "seconds (default: 5)"
             ),
         )
 
@@ -153,9 +111,6 @@ class Command(RunserverCommand):
             "addrport" in options and options["addrport"] is not None
         )
         self.http_timeout = options.get("http_timeout", None)
-        self.websocket_handshake_timeout = options.get(
-            "websocket_handshake_timeout", 5
-        )
         # Check Channels is installed right
         if not hasattr(settings, "ASGI_APPLICATION"):
             raise CommandError(
@@ -163,6 +118,65 @@ class Command(RunserverCommand):
             )
         # Dispatch upward
         super().handle(*args, **options)
+
+    def _build_granian_env(self):
+        """
+        Build the subprocess environment for Granian.
+
+        Ensures the directory containing the 'fiduswriter' package is on
+        PYTHONPATH so that 'fiduswriter.asgi:application' is always importable,
+        regardless of how manage.py was invoked.
+        """
+        env = os.environ.copy()
+        src_parent = os.path.dirname(settings.SRC_PATH)
+        existing = env.get("PYTHONPATH", "")
+        parts = [p for p in existing.split(os.pathsep) if p]
+        if src_parent not in parts:
+            parts.insert(0, src_parent)
+        env["PYTHONPATH"] = os.pathsep.join(parts)
+        return env
+
+    def _build_granian_cmd(self, port, options):
+        """Return the Granian CLI invocation for a single port."""
+        cmd = [
+            sys.executable,
+            "-m",
+            "granian",
+            "--interface",
+            "asgi",
+            "--host",
+            self.addr,
+            "--port",
+            str(port),
+            "--access-log",
+        ]
+
+        if settings.DEBUG:
+            cmd += ["--log-level", "info"]
+
+        root_path = getattr(settings, "FORCE_SCRIPT_NAME", "") or ""
+        if root_path:
+            cmd += ["--base-path", root_path]
+
+        if self.http_timeout:
+            cmd += ["--read-timeout", str(self.http_timeout)]
+
+        # Serve media files via Granian's built-in static file server.
+        # Django's settings are fully loaded by this point (we're inside
+        # inner_run which runs after Django is configured).
+        media_root = getattr(settings, "MEDIA_ROOT", None)
+        if media_root:
+            cmd += [
+                "--static-path-route",
+                "/media",
+                "--static-path-mount",
+                media_root,
+            ]
+
+        # Use the production ASGI entry point; it handles its own Django
+        # settings bootstrap via asgi.py.
+        cmd.append("fiduswriter.asgi:application")
+        return cmd
 
     def inner_run(self, *args, **options):
         # Determine the address to bind to
@@ -245,14 +259,8 @@ class Command(RunserverCommand):
             }
         )
 
-        # Configure endpoints for all ports
-        endpoints = []
-        for port in ports:
-            endpoints.extend(
-                build_endpoint_description_strings(host=self.addr, port=port)
-            )
-
         # Add JavaScript file watcher
+        observer = None
         if settings.DEBUG:
             js_handler = JSFileHandler(self)
             observer = Observer()
@@ -261,77 +269,44 @@ class Command(RunserverCommand):
             )
             observer.start()
 
+        # Launch one Granian subprocess per port
+        granian_env = self._build_granian_env()
+        processes = []
+        for port in ports:
+            cmd = self._build_granian_cmd(port, options)
+            proc = subprocess.Popen(cmd, env=granian_env)
+            processes.append(proc)
+
         try:
-            self.server_cls(
-                application=self.get_application(options),
-                endpoints=endpoints,
-                signal_handlers=not options["use_reloader"],
-                action_logger=self.log_action,
-                http_timeout=self.http_timeout,
-                root_path=getattr(settings, "FORCE_SCRIPT_NAME", "") or "",
-                websocket_handshake_timeout=self.websocket_handshake_timeout,
-            ).run()
-            logger.debug("Fidus Writer exited")
-        except KeyboardInterrupt:
-            if settings.DEBUG:
+            # Poll until a process exits unexpectedly or CTRL-C is received
+            while True:
+                for proc in processes:
+                    ret = proc.poll()
+                    if ret is not None:
+                        logger.error(
+                            "Granian worker on port %s exited with code %s",
+                            ports[processes.index(proc)],
+                            ret,
+                        )
+                        raise SystemExit(ret)
+                time.sleep(0.5)
+        except (KeyboardInterrupt, SystemExit):
+            pass
+        finally:
+            # Graceful shutdown: SIGTERM first, SIGKILL after timeout
+            for proc in processes:
+                if proc.poll() is None:
+                    proc.send_signal(signal.SIGTERM)
+            for proc in processes:
+                try:
+                    proc.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+
+            if observer is not None:
                 observer.stop()
+                observer.join()
+
             shutdown_message = options.get("shutdown_message", "")
             if shutdown_message:
                 self.stdout.write(shutdown_message)
-            return
-
-        finally:
-            if settings.DEBUG:
-                observer.join()
-
-    def get_application(self, options):
-        """
-        Returns the static files serving application wrapping the default application,
-        if static files should be served. Otherwise just returns the default
-        handler.
-        """
-        staticfiles_installed = apps.is_installed("django.contrib.staticfiles")
-        use_static_handler = options.get(
-            "use_static_handler", staticfiles_installed
-        )
-        insecure_serving = options.get("insecure_serving", False)
-        if use_static_handler and (settings.DEBUG or insecure_serving):
-            return ASGIStaticFilesHandler(get_default_application())
-        else:
-            return get_default_application()
-
-    def log_action(self, protocol, action, details):
-        """
-        Logs various different kinds of requests to the console.
-        """
-        # HTTP requests
-        if protocol == "http" and action == "complete":
-            msg = "HTTP %(method)s %(path)s %(status)s [%(time_taken).2f, %(client)s]"
-
-            # Utilize terminal colors, if available
-            if 200 <= details["status"] < 300:
-                # Put 2XX first, since it should be the common case
-                logger.info(self.style.HTTP_SUCCESS(msg), details)
-            elif 100 <= details["status"] < 200:
-                logger.info(self.style.HTTP_INFO(msg), details)
-            elif details["status"] == 304:
-                logger.info(self.style.HTTP_NOT_MODIFIED(msg), details)
-            elif 300 <= details["status"] < 400:
-                logger.info(self.style.HTTP_REDIRECT(msg), details)
-            elif details["status"] == 404:
-                logger.warning(self.style.HTTP_NOT_FOUND(msg), details)
-            elif 400 <= details["status"] < 500:
-                logger.warning(self.style.HTTP_BAD_REQUEST(msg), details)
-            else:
-                # Any 5XX, or any other response
-                logger.error(self.style.HTTP_SERVER_ERROR(msg), details)
-
-        # Websocket requests
-        elif protocol == "websocket" and action == "connected":
-            logger.info("WebSocket CONNECT %(path)s [%(client)s]", details)
-        elif protocol == "websocket" and action == "disconnected":
-            logger.info("WebSocket DISCONNECT %(path)s [%(client)s]", details)
-        elif protocol == "websocket" and action == "connecting":
-            logger.info("WebSocket HANDSHAKING %(path)s [%(client)s]", details)
-        elif protocol == "websocket" and action == "rejected":
-            logger.info("WebSocket REJECT %(path)s [%(client)s]", details)

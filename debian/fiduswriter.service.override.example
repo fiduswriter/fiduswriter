@@ -16,8 +16,8 @@
 
 [Service]
 # Change the bind address and port
-# Environment="DAPHNE_BIND=0.0.0.0"
-# Environment="DAPHNE_PORT=8080"
+# Environment="GRANIAN_HOST=0.0.0.0"
+# Environment="GRANIAN_PORT=8080"
 
 # Increase resource limits
 # LimitNOFILE=131072

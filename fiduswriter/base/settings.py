@@ -157,6 +157,13 @@ STATICFILES_FINDERS = (
     #    "django.contrib.staticfiles.finders.DefaultStorageFinder",
 )
 
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "servestatic.storage.CompressedManifestStaticFilesStorage"
+    },
+}
+
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = "2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4"
 
@@ -164,6 +171,7 @@ SECRET_KEY = "2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4"
 # These middleware classes is what Fidus Writer needs in its standard setup.
 # You only need to change this in very advanced setups.
 BASE_MIDDLEWARE = [
+    "servestatic.middleware.ServeStaticMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "base.middleware.JsonToPostMiddleware",
@@ -181,6 +189,9 @@ AXES_BASE_MIDDLEWARE = [
 ]
 
 MIDDLEWARE = []
+
+SERVESTATIC_USE_FINDERS = True
+SERVESTATIC_AUTOREFRESH = True
 
 
 # The location of the top urls.py file inside the base folder.
@@ -215,9 +226,9 @@ TEMPLATES = [
 # The following are the apps needed by Fidus Writer.
 
 BASE_INSTALLED_APPS = [
+    "servestatic",
     "npm_mjs",
     "base",
-    "daphne",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",

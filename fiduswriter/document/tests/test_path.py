@@ -1,7 +1,7 @@
 import time
 from urllib.parse import urlparse
 
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys

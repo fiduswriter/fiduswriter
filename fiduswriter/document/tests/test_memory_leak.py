@@ -3,7 +3,7 @@ import gc
 import time
 import psutil
 from django.contrib.auth import get_user_model
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -129,7 +129,7 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
         # Measure current process
         main_process = self.process.memory_info().rss
 
-        # Also measure child processes (Daphne server processes),
+        # Also measure child processes (Granian server processes),
         # but skip browser and browser-driver processes.
         child_processes = 0
         for child in self.process.children(recursive=True):

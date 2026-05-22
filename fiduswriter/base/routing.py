@@ -1,5 +1,6 @@
 from importlib import import_module
 
+from asgiref.sync import sync_to_async
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
@@ -21,9 +22,36 @@ for app in settings.INSTALLED_APPS:
             path(f"ws/{app_name}/", URLRouter(ws_urls.urlpatterns)),
         ]
 
+
+async def lifespan_handler(scope, receive, send):
+    """
+    ASGI Lifespan handler for server startup/shutdown lifecycle events.
+
+    On shutdown, saves all open documents and removes all Presence records
+    before confirming completion so that Granian waits until the flush is
+    done before terminating the process.
+    """
+    while True:
+        message = await receive()
+        if message["type"] == "lifespan.startup":
+            await send({"type": "lifespan.startup.complete"})
+        elif message["type"] == "lifespan.shutdown":
+            from document.consumers import WebsocketConsumer
+
+            await sync_to_async(WebsocketConsumer.save_all_docs)()
+
+            from base.consumers import remove_all_presences
+
+            await sync_to_async(remove_all_presences)()
+
+            await send({"type": "lifespan.shutdown.complete"})
+            return
+
+
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
+        "lifespan": lifespan_handler,
         "websocket": AllowedHostsOriginValidator(
             AuthMiddlewareStack(URLRouter(websocket_routes))
         ),

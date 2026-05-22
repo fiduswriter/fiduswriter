@@ -1,4 +1,4 @@
-from channels.testing import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from .editor_helper import EditorHelper
 from document.consumers import WebsocketConsumer
 from document import prosemirror

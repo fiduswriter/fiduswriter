@@ -2,7 +2,7 @@ import os
 import time
 import sys
 
-from testing.channels_patch import ChannelsLiveServerTestCase
+from testing.live_server import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from testing.mail import get_outbox, empty_outbox, delete_outbox
 from selenium.webdriver.common.by import By

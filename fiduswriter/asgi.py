@@ -46,6 +46,19 @@ INSTALLED_APPS = CONFIGURATION.BASE_INSTALLED_APPS + list(
 for app in CONFIGURATION.REMOVED_APPS:
     INSTALLED_APPS.remove(app)
 
+# Add appropriate admin app based on whether django_otp is enabled.
+# This mirrors the same logic in manage.py.
+if "django_otp" in INSTALLED_APPS:
+    INSTALLED_APPS.insert(
+        INSTALLED_APPS.index("django.contrib.admindocs"),
+        "base.twofactor_admin.OTPAdminConfig",
+    )
+else:
+    INSTALLED_APPS.insert(
+        INSTALLED_APPS.index("django.contrib.admindocs"),
+        "django.contrib.admin",
+    )
+
 # Check if axes is enabled (not in REMOVED_APPS)
 axes_enabled = "axes" in INSTALLED_APPS
 

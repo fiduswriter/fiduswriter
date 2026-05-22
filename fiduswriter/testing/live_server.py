@@ -4,7 +4,6 @@ import socket
 import threading
 import time
 import traceback as _traceback
-import warnings
 from functools import partial
 
 # Python 3.14 changed the Linux default from "fork" to "forkserver".  The
@@ -162,6 +161,15 @@ class GranianProcess(multiprocessing.Process):
 
             threading.Thread(target=_probe, daemon=True).start()
 
+            from pathlib import Path
+
+            try:
+                from django.conf import settings as _dj_settings
+
+                media_root = _dj_settings.MEDIA_ROOT
+            except Exception:
+                media_root = None
+
             Granian(
                 target="__live_test_app__",
                 address=resolved_host,
@@ -169,6 +177,8 @@ class GranianProcess(multiprocessing.Process):
                 interface=Interfaces.ASGI,
                 workers=1,
                 log_enabled=False,
+                static_path_route=["/media/"] if media_root else None,
+                static_path_mount=[Path(media_root)] if media_root else None,
             ).serve(target_loader=lambda _: application, wrap_loader=True)
 
         except BaseException as exc:
@@ -364,17 +374,6 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
 
     def setUp(self):
         super().setUp()
-        # Suppress Django's deprecation warning about sync
-        # StreamingHttpResponse iterators. This comes from the
-        # ``static_serve`` fallback for MEDIA_URL in root_urls.py
-        # (Django's ``django.views.static.serve`` returns a sync
-        # FileResponse).  The behavior is correct — Django's ASGI handler
-        # consumes sync iterators in a thread.
-        warnings.filterwarnings(
-            "ignore",
-            message=".*StreamingHttpResponse must consume synchronous iterators.*",
-            category=Warning,
-        )
         self.run_server_command("clear_contenttype_cache")
 
     def run_server_command(self, command):

@@ -161,6 +161,18 @@ class Command(RunserverCommand):
         if self.http_timeout:
             cmd += ["--read-timeout", str(self.http_timeout)]
 
+        # Serve media files via Granian's built-in static file server
+        # (avoids Django's sync FileResponse which would produce a warning
+        #  under the ASGI handler).
+        media_root = getattr(settings, "MEDIA_ROOT", None)
+        if media_root:
+            cmd += [
+                "--static-path-route",
+                "/media/",
+                "--static-path-mount",
+                str(media_root),
+            ]
+
         # Use the production ASGI entry point; it handles its own Django
         # settings bootstrap via asgi.py.
         cmd.append("fiduswriter.asgi:application")

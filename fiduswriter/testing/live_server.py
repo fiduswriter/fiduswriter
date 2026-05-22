@@ -423,26 +423,6 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
         cls._saved_media_root = getattr(settings, "MEDIA_ROOT", None)
         settings.MEDIA_ROOT = cls._test_media_dir
 
-        # Switch to a staticfiles storage backend that doesn't require
-        # a pre-built manifest.  The default CompressedManifestStaticFilesStorage
-        # tries to load staticfiles.json on instantiation, which fails on CI
-        # where setup --no-static skips collectstatic.  Use the simple
-        # StaticFilesStorage instead so the ASGI application can boot.
-        #
-        # IMPORTANT: Mutate the existing STORAGES dict in-place rather than
-        # rebinding settings.STORAGES = new_dict, because Django's
-        # StorageHandler (module-level singleton in core.files.storage)
-        # captures self._config = settings.STORAGES in its __init__.  If we
-        # replace the entire dict, the singleton's reference still points to
-        # the old dict (inherited by the forked child process), and the child
-        # will continue to use CompressedManifestStaticFilesStorage.
-        cls._saved_staticfiles_storage = getattr(settings, "STORAGES", {}).get(
-            "staticfiles"
-        )
-        settings.STORAGES["staticfiles"] = {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
-        }
-
         global _server_command_queue
         _server_command_queue = multiprocessing.Queue()
         cls._server_command_queue = _server_command_queue
@@ -517,9 +497,6 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
             import shutil
 
             shutil.rmtree(cls._test_media_dir, ignore_errors=True)
-        # Restore original staticfiles storage backend
-        if hasattr(cls, "_saved_staticfiles_storage"):
-            settings.STORAGES["staticfiles"] = cls._saved_staticfiles_storage
         super().tearDownClass()
 
     @classmethod

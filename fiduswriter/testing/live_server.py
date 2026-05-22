@@ -1,6 +1,9 @@
 import asyncio
+import logging
 import multiprocessing
+import os
 import socket
+import sys
 import tempfile
 import threading
 import time
@@ -9,6 +12,17 @@ import warnings
 from functools import partial
 from pathlib import Path
 from django.conf import settings
+
+logger = logging.getLogger("testing.live_server")
+logger.setLevel(logging.DEBUG)
+# Add a stderr handler in case Django's test runner suppresses propagation
+if not logger.handlers:
+    _handler = logging.StreamHandler(sys.stderr)
+    _handler.setLevel(logging.DEBUG)
+    _handler.setFormatter(
+        logging.Formatter("[live_server] %(levelname)s %(message)s")
+    )
+    logger.addHandler(_handler)
 
 # Python 3.14 changed the Linux default from "fork" to "forkserver".  The
 # live-server test case relies on the child process inheriting the parent's
@@ -129,6 +143,7 @@ class GranianProcess(multiprocessing.Process):
         from granian import Granian
         from granian.constants import Interfaces
 
+        pid = os.getpid()
         try:
             if self.setup is not None:
                 self.setup()
@@ -137,11 +152,24 @@ class GranianProcess(multiprocessing.Process):
             # "localhost"), so resolve it now.
             resolved_host = socket.gethostbyname(self.host)
 
+            logger.info(
+                "[pid=%d] GranianProcess.run: host=%s resolved_host=%s port.value=%d",
+                pid,
+                self.host,
+                resolved_host,
+                self.port.value,
+            )
+
             # Pre-select a free port and publish it to shared memory *before*
             # starting the server.  This guarantees the parent always reads a
             # valid port number — even if an exception is raised later.
             port = self.port.value or _find_free_port(self.host)
             self.port.value = port
+            logger.info(
+                "[pid=%d] GranianProcess.run: selected port=%d",
+                pid,
+                port,
+            )
 
             application = self.get_application()
 
@@ -150,17 +178,45 @@ class GranianProcess(multiprocessing.Process):
             # at the Rust level, avoiding Django's sync FileResponse entirely.
 
             media_root = getattr(settings, "MEDIA_ROOT", None)
+            logger.info(
+                "[pid=%d] GranianProcess.run: media_root=%r",
+                pid,
+                media_root,
+            )
             static_path_mount = [Path(media_root)] if media_root else None
             static_path_route = ["/media"] if media_root else None
+
+            if media_root:
+                logger.info(
+                    "[pid=%d] GranianProcess.run: media_root exists? %s",
+                    pid,
+                    Path(media_root).exists(),
+                )
 
             # Daemon thread: probe the TCP port and signal ready as soon as
             # the server accepts its first connection.  This avoids relying on
             # any Granian-internal hooks (_init_shared_socket, _sso, _sfd)
             # that may change across Granian versions.
             def _probe():
+                logger.info(
+                    "[pid=%d] probe thread: waiting for %s:%d (timeout=10s)",
+                    pid,
+                    resolved_host,
+                    port,
+                )
                 if _wait_for_port(resolved_host, port):
+                    logger.info(
+                        "[pid=%d] probe thread: port %d ACCEPTING connections",
+                        pid,
+                        port,
+                    )
                     self.ready.set()
                 elif not self.ready.is_set():
+                    logger.error(
+                        "[pid=%d] probe thread: port %d NEVER became ready",
+                        pid,
+                        port,
+                    )
                     self.errors.put(
                         (
                             RuntimeError(
@@ -173,6 +229,15 @@ class GranianProcess(multiprocessing.Process):
 
             threading.Thread(target=_probe, daemon=True).start()
 
+            logger.info(
+                "[pid=%d] GranianProcess.run: starting Granian.serve() on %s:%d",
+                pid,
+                resolved_host,
+                port,
+            )
+
+            sys.stdout.flush()
+
             Granian(
                 target="__live_test_app__",
                 address=resolved_host,
@@ -184,7 +249,16 @@ class GranianProcess(multiprocessing.Process):
                 static_path_mount=static_path_mount,
             ).serve(target_loader=lambda _: application, wrap_loader=True)
 
+            logger.info(
+                "[pid=%d] GranianProcess.run: Granian.serve() RETURNED",
+                pid,
+            )
+
         except BaseException as exc:
+            logger.exception(
+                "[pid=%d] GranianProcess.run: EXCEPTION in child process",
+                pid,
+            )
             self.errors.put((exc, _traceback.format_exc()))
             if not self.ready.is_set():
                 self.ready.set()
@@ -364,23 +438,53 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
             get_application,
             setup=set_database_connection,
         )
+        logger.info(
+            "[pid=%d] setUpClass: starting server process for %s",
+            os.getpid(),
+            cls.host,
+        )
         cls._server_process.start()
+        logger.info(
+            "[pid=%d] setUpClass: server process started, pid=%d",
+            os.getpid(),
+            cls._server_process.pid,
+        )
         while True:
             if not cls._server_process.ready.wait(timeout=1):
                 if cls._server_process.is_alive():
+                    logger.info(
+                        "[pid=%d] setUpClass: still waiting for server ready...",
+                        os.getpid(),
+                    )
                     continue
                 raise RuntimeError("Server stopped unexpectedly") from None
             break
+
+        logger.info(
+            "[pid=%d] setUpClass: server ready event received",
+            os.getpid(),
+        )
 
         # Surface any startup error from the child process immediately,
         # rather than proceeding with port=0 and failing obscurely later.
         if not cls._server_process.errors.empty():
             _exc, tb = cls._server_process.errors.get()
+            logger.error(
+                "[pid=%d] setUpClass: server process has startup errors:\n%s",
+                os.getpid(),
+                tb,
+            )
             raise RuntimeError(
                 f"Live server process failed to start:\n{tb}"
             ) from _exc
 
         cls._port = cls._server_process.port.value
+        logger.info(
+            "[pid=%d] setUpClass: live_server_url=http://%s:%d",
+            os.getpid(),
+            cls.host,
+            cls._port,
+        )
 
     @classmethod
     def tearDownClass(cls):

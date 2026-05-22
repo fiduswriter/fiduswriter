@@ -1,6 +1,7 @@
 import asyncio
 import multiprocessing
 import socket
+import tempfile
 import threading
 import time
 import traceback as _traceback
@@ -338,6 +339,17 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
         )
         cls._live_server_modified_settings.enable()
 
+        # Use a temporary directory for MEDIA_ROOT during tests so that
+        # Granian's static mount always points at an existing directory,
+        # and leftover test files never persist across runs.  The temp
+        # dir is created before the server child is forked so both the
+        # test runner and the server child can access it.
+        cls._test_media_dir = tempfile.mkdtemp(
+            prefix="fiduswriter-test-media-"
+        )
+        cls._saved_media_root = getattr(settings, "MEDIA_ROOT", None)
+        settings.MEDIA_ROOT = cls._test_media_dir
+
         global _server_command_queue
         _server_command_queue = multiprocessing.Queue()
         cls._server_command_queue = _server_command_queue
@@ -375,6 +387,13 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
         cls._server_process.terminate()
         cls._server_process.join()
         cls._live_server_modified_settings.disable()
+        # Restore MEDIA_ROOT and remove the temporary media directory
+        if hasattr(cls, "_saved_media_root"):
+            settings.MEDIA_ROOT = cls._saved_media_root
+        if hasattr(cls, "_test_media_dir"):
+            import shutil
+
+            shutil.rmtree(cls._test_media_dir, ignore_errors=True)
         super().tearDownClass()
 
     @classmethod

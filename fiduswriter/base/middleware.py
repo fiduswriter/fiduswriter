@@ -23,13 +23,13 @@ class ConditionalMessageMiddleware:
     def __call__(self, request):
         if iscoroutinefunction(self.get_response):
             return self.__acall__(request)
-        return self._process(request)
+        response = self.get_response(request)
+        if not request.path.startswith("/admin/"):
+            response.cookies.pop("messages", None)
+        return response
 
     async def __acall__(self, request):
-        return await self._process(request)
-
-    def _process(self, request):
-        response = self.get_response(request)
+        response = await self.get_response(request)
         if not request.path.startswith("/admin/"):
             response.cookies.pop("messages", None)
         return response

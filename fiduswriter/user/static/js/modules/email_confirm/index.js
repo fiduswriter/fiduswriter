@@ -1,4 +1,4 @@
-import * as pluginLoaders from "../../plugins/confirm_account"
+import {plugins as pluginLoaders} from "../../plugins/confirm_account"
 import {
     activateWait,
     addAlert,

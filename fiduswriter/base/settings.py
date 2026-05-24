@@ -265,6 +265,34 @@ INSTALLED_APPS = []
 # These are apps that are removed from core apps overriden by configuration.py
 REMOVED_APPS = []
 
+# These apps will be hidden from the app list available to the frontend.
+# End users have access to the list of apps that are NOT hidden.
+# JavaScript plugins will only be considered from apps that are NOT hidden.
+HIDDEN_APPS = [
+    "servestatic",
+    "npm_mjs",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sites",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "base.twofactor_admin.OTPAdminConfig",
+    "django.contrib.admindocs",
+    "django.contrib.flatpages",
+    "channels",
+    "axes",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_js_error_hook",
+    "loginas",
+    "fixturemedia",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "avatar",
+    "devel",
+]
 
 # Base authentication backends (axes backend will be added conditionally)
 BASE_AUTHENTICATION_BACKENDS = [

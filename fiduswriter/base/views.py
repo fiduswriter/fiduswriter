@@ -45,6 +45,12 @@ def get_frontend_settings():
         "LANGUAGES": settings.LANGUAGES,
         "VERSION": get_version(),
         "EDITOR_SAVE_MODE": settings.EDITOR_SAVE_MODE,
+        "APPS": list(
+            filter(
+                lambda app_name: app_name not in settings.HIDDEN_APPS,
+                settings.INSTALLED_APPS,
+            )
+        ),
     }
 
 

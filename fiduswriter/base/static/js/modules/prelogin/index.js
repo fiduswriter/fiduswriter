@@ -1,4 +1,4 @@
-import * as plugins from "../../plugins/prelogin"
+import {plugins} from "../../plugins/prelogin"
 import {ensureCSS, setDocTitle, setLanguage, whenReady} from "../common"
 import {FeedbackTab} from "../feedback"
 
@@ -8,7 +8,7 @@ export class PreloginPage {
     constructor({app, language}) {
         this.app = app
         this.language = language
-        this.pluginLoaders = {}
+        this.pluginLoaders = []
         this.title = ""
         this.contents = ""
         this.footerLinks = this.app.settings?.FOOTER_LINKS?.length
@@ -49,25 +49,43 @@ export class PreloginPage {
     }
 
     activateFidusPlugins() {
+        if (this.plugins) {
+            // Plugins have been activated already
+            return
+        }
         // Add plugins.
         this.plugins = {}
 
         // Plugins for the specific page
-        Object.keys(this.pluginLoaders).forEach(plugin => {
-            if (typeof this.pluginLoaders[plugin] === "function") {
-                this.plugins[plugin] = new this.pluginLoaders[plugin]({
-                    page: this
-                })
-                this.plugins[plugin].init()
+        this.pluginLoaders.forEach(([app, plugin]) => {
+            if (!this.app.settings.APPS.includes(app)) {
+                return
             }
+
+            Object.values(plugin).forEach(pluginExport => {
+                if (typeof pluginExport === "function") {
+                    this.plugins[pluginExport.name] = new pluginExport({
+                        page: this
+                    })
+                    this.plugins[pluginExport.name].init()
+                }
+            })
         })
 
         // General plugins for all prelogin pages
-        Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === "function") {
-                this.plugins[plugin] = new plugins[plugin]({page: this})
-                this.plugins[plugin].init()
+        plugins.forEach(([app, plugin]) => {
+            if (!this.app.settings.APPS.includes(app)) {
+                return
             }
+
+            Object.values(plugin).forEach(pluginExport => {
+                if (typeof pluginExport === "function") {
+                    this.plugins[pluginExport.name] = new pluginExport({
+                        page: this
+                    })
+                    this.plugins[pluginExport.name].init()
+                }
+            })
         })
     }
 

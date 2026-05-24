@@ -1,3 +1,4 @@
+import {plugins} from "../../plugins/profile"
 import {
     activateWait,
     addAlert,
@@ -34,91 +35,118 @@ export class Profile {
         this.app = app
         this.user = user
         this.socialaccount_providers = socialaccount_providers
+        this.pluginTemplates = []
+        this.clickTargets = {
+            "#add-profile-email": (_el, _event) => addEmailDialog(this.app),
+            "#fw-edit-profile-pwd": (_el, _event) =>
+                changePwdDialog({username: this.user.username}),
+            "#delete-account": (_el, _event) => {
+                const dialog = new DeleteUserDialog(
+                    this.dom.querySelector("#delete-account").dataset.username
+                )
+                dialog.init()
+            },
+            "#submit-profile": (_el, _event) => this.save(),
+            ".delete-email": (el, _event) =>
+                deleteEmailDialog(el.target, this.app),
+            ".delete-socialaccount": (el, _event) =>
+                deleteSocialaccountDialog(el.target, this.app)
+        }
+
+        this.postRenderHandlers = [
+            () => {
+                dropdownSelect(
+                    this.dom.querySelector("#edit-avatar-pulldown"),
+                    {
+                        onChange: value => {
+                            switch (value) {
+                                case "change":
+                                    changeAvatarDialog(this.app)
+                                    break
+                                case "delete":
+                                    deleteAvatarDialog(this.app)
+                                    break
+                            }
+                        },
+                        button: this.dom.querySelector("#edit-avatar-btn")
+                    }
+                )
+            },
+            () => {
+                this.dom
+                    .querySelectorAll(".primary-email-radio")
+                    .forEach(el =>
+                        el.addEventListener("change", () =>
+                            changePrimaryEmailDialog(this.app)
+                        )
+                    )
+            }
+        ]
+        if (this.app.settings.TWO_FACTOR_ENABLED) {
+            this.clickTargets["#setup-two-factor"] = (_el, _event) => {
+                twoFactorSetupDialog()
+            }
+            this.clickTargets["#disable-two-factor"] = (_el, _event) => {
+                twoFactorDisableDialog()
+            }
+
+            // Check and display two-factor authentication status
+            this.postRenderHandlers.push(this.updateTwoFactorStatus)
+        }
+        if (this.app.settings.E2EE_ENABLED) {
+            this.clickTargets["#setup-e2ee-passphrase"] = (_el, _event) => {
+                this.setupE2EEPassphrase()
+            }
+            this.clickTargets["#change-e2ee-passphrase"] = (_el, _event) => {
+                this.changeE2EEPassphrase()
+            }
+            this.clickTargets["#recover-e2ee-passphrase"] = (_el, _event) => {
+                this.recoverE2EEPassphrase()
+            }
+
+            // Check and display E2EE passphrase status
+            this.postRenderHandlers.push(this.updateE2EEPassphraseStatus)
+        }
     }
 
     init() {
         return whenReady().then(() => {
+            this.activateFidusPlugins()
             this.render()
             const smenu = new SiteMenu(this.app, "") // Nothing highlighted
             smenu.init()
-            dropdownSelect(this.dom.querySelector("#edit-avatar-pulldown"), {
-                onChange: value => {
-                    switch (value) {
-                        case "change":
-                            changeAvatarDialog(this.app)
-                            break
-                        case "delete":
-                            deleteAvatarDialog(this.app)
-                            break
-                    }
-                },
-                button: this.dom.querySelector("#edit-avatar-btn")
-            })
             this.dom.addEventListener("click", event => {
                 const el = {}
-                let dialog
-                switch (true) {
-                    case findTarget(event, "#add-profile-email", el):
-                        addEmailDialog(this.app)
-                        break
-                    case findTarget(event, "#fw-edit-profile-pwd", el):
-                        changePwdDialog({username: this.user.username})
-                        break
-                    case findTarget(event, "#delete-account", el):
-                        dialog = new DeleteUserDialog(
-                            this.dom.querySelector("#delete-account").dataset
-                                .username
-                        )
-                        dialog.init()
-                        break
-                    case findTarget(event, "#submit-profile", el):
-                        this.save()
-                        break
-                    case findTarget(event, ".delete-email", el):
-                        deleteEmailDialog(el.target, this.app)
-                        break
-                    case findTarget(event, ".delete-socialaccount", el):
-                        deleteSocialaccountDialog(el.target, this.app)
-                        break
-                    case this.app.settings.TWO_FACTOR_ENABLED &&
-                        findTarget(event, "#setup-two-factor", el):
-                        dialog = twoFactorSetupDialog()
-                        break
-                    case this.app.settings.TWO_FACTOR_ENABLED &&
-                        findTarget(event, "#disable-two-factor", el):
-                        dialog = twoFactorDisableDialog()
-                        break
-                    case this.app.settings.E2EE_MODE !== "disabled" &&
-                        findTarget(event, "#setup-e2ee-passphrase", el):
-                        this.setupE2EEPassphrase()
-                        break
-                    case this.app.settings.E2EE_MODE !== "disabled" &&
-                        findTarget(event, "#change-e2ee-passphrase", el):
-                        this.changeE2EEPassphrase()
-                        break
-                    case this.app.settings.E2EE_MODE !== "disabled" &&
-                        findTarget(event, "#recover-e2ee-passphrase", el):
-                        this.recoverE2EEPassphrase()
-                        break
-                    default:
-                        break
+                Object.entries(this.clickTargets).find(
+                    ([selector, handler]) => {
+                        if (findTarget(event, selector, el)) {
+                            handler(event, el)
+                        }
+                    }
+                )
+            })
+            this.postRenderHandlers.forEach(handler => handler())
+        })
+    }
+
+    activateFidusPlugins() {
+        if (this.plugins) {
+            // Plugins have been activated already
+            return
+        }
+        // Add plugins.
+        this.plugins = {}
+
+        plugins.forEach(([app, plugin]) => {
+            if (!this.app.settings.APPS.includes(app)) {
+                return
+            }
+            Object.values(plugin).forEach(pluginExport => {
+                if (typeof pluginExport === "function") {
+                    this.plugins[pluginExport.name] = new pluginExport(this)
+                    this.plugins[pluginExport.name].init()
                 }
             })
-            this.dom
-                .querySelectorAll(".primary-email-radio")
-                .forEach(el =>
-                    el.addEventListener("change", () =>
-                        changePrimaryEmailDialog(this.app)
-                    )
-                )
-            // Check and display two-factor authentication status
-            if (this.app.settings.TWO_FACTOR_ENABLED) {
-                this.updateTwoFactorStatus()
-            }
-            // Check and display E2EE passphrase status
-            if (this.app.settings.E2EE_MODE !== "disabled") {
-                this.updateE2EEPassphraseStatus()
-            }
         })
     }
 
@@ -129,7 +157,8 @@ export class Profile {
             contents: profileContents(
                 this.user,
                 this.socialaccount_providers,
-                this.app.settings
+                this.app.settings,
+                this.pluginTemplates
             ),
             user: this.user,
             app: this.app

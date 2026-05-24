@@ -23,7 +23,7 @@ import {
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"
 import {docSchema} from "../../schema/document"
-import {DocumentAccessRightsDialog} from "../access_rights"
+
 import {DocumentOverviewActions} from "./actions"
 import {bulkMenuModel, menuModel} from "./menu"
 import {dateCell, deleteFolderCell} from "./templates"
@@ -98,6 +98,10 @@ export class DocumentOverview {
                     this.mod.actions.revisionsDialog(docId, this.app)
                     break
                 }
+                case findTarget(event, ".document-settings", el):
+                    docId = Number.parseInt(el.target.dataset.id)
+                    this.mod.actions.settingsDocumentDialog(docId)
+                    break
                 case findTarget(event, ".delete-document", el):
                     docId = Number.parseInt(el.target.dataset.id)
                     this.mod.actions.deleteDocumentDialog([docId], this.app)
@@ -110,26 +114,8 @@ export class DocumentOverview {
                     break
                 }
                 case findTarget(event, ".owned-by-user.rights", el): {
-                    if (this.app.isOffline()) {
-                        addAlert(
-                            "info",
-                            gettext(
-                                "You cannot access rights data of a document while you are offline."
-                            )
-                        )
-                    } else {
-                        docId = Number.parseInt(el.target.dataset.id)
-                        const dialog = new DocumentAccessRightsDialog(
-                            [docId],
-                            this.contacts,
-                            memberDetails => this.contacts.push(memberDetails),
-                            false,
-                            "",
-                            null,
-                            this.app.settings
-                        )
-                        dialog.init()
-                    }
+                    // Per-row access-rights icon has been removed for owners.
+                    // Access rights are now edited inside the Document Settings dialog.
                     break
                 }
                 case findTarget(event, "a.fw-data-table-title.parentdir", el):
@@ -593,7 +579,7 @@ export class DocumentOverview {
                     gettext("Created"),
                     gettext("Last changed"),
                     gettext("Owner"),
-                    gettext("Rights"),
+                    gettext("Settings"),
                     ""
                 ],
                 data: fileList
@@ -690,7 +676,7 @@ export class DocumentOverview {
             } else {
                 if (
                     event.target.closest(
-                        "a, span.fw-link-text, span.delete-document, span.delete-folder, span.rights, span.revisions, label"
+                        "a, span.fw-link-text, span.delete-document, span.delete-folder, span.rights, span.revisions, span.document-settings, label"
                     )
                 ) {
                     return
@@ -812,8 +798,8 @@ export class DocumentOverview {
                 ${avatarTemplate({user: doc.owner})}
             </span>
             <span class="fw-searchable">${escapeText(doc.owner.name)}</span>`,
-            `<span class="rights${doc.is_owner ? " owned-by-user" : ""}" data-id="${doc.id}" title="${doc.rights}">
-                <i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>
+            `<span class="${doc.is_owner ? "document-settings fw-link-text" : "rights"}" data-id="${doc.id}" title="${doc.rights}">
+                ${doc.is_owner ? '<i class="fa-solid fa-cog"></i>' : `<i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>`}
             </span>`,
             `<span class="delete-document fw-link-text" data-id="${doc.id}"
                     data-title="${escapeText(currentPath)}">

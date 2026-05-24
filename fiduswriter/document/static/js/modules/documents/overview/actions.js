@@ -17,9 +17,10 @@ import {
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
 import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
+import {AccessRightsTab} from "../access_rights"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
-import {importDocumentTemplate} from "./templates"
+import {documentDialogTemplate, importDocumentTemplate} from "./templates"
 
 // Returns the user-facing title for a document. For E2EE documents,
 // `doc.title` holds the encrypted ciphertext; the decrypted title (if any)
@@ -43,6 +44,73 @@ export class DocumentOverviewActions {
     constructor(documentOverview) {
         documentOverview.mod.actions = this
         this.documentOverview = documentOverview
+        this.dialogParts = []
+        this.onSave = []
+        this.accessRightsTab = null
+        this.accessRightsLoading = false
+
+        // Always add the Access Rights tab to the document settings dialog.
+        this.dialogParts.push({
+            title: gettext("Access Rights"),
+            description: gettext("Share your document with others"),
+            template: ({doc}) => {
+                if (
+                    !this.accessRightsLoading &&
+                    (!this.accessRightsTab ||
+                        this.accessRightsTab.documentIds[0] !== doc.id)
+                ) {
+                    this.loadAccessRightsTab(doc)
+                }
+                if (this.accessRightsLoading) {
+                    return `<div id="access-rights-settings-tab"><table class="fw-dialog-table"><tr><th></th><td><i class="fa fa-spinner fa-pulse"></i> ${gettext("Loading access rights…")}</td></tr></table></div>`
+                }
+                return `<div id="access-rights-settings-tab">${this.accessRightsTab.render()}</div>`
+            }
+        })
+
+        this.onSave.push(doc => {
+            if (
+                this.accessRightsTab &&
+                this.accessRightsTab.documentIds[0] === doc.id
+            ) {
+                return this.accessRightsTab.submit()
+            }
+            return Promise.resolve()
+        })
+    }
+
+    loadAccessRightsTab(doc) {
+        this.accessRightsLoading = true
+        this.accessRightsTab = new AccessRightsTab({
+            documentIds: [doc.id],
+            contacts: this.documentOverview.contacts,
+            newContactCall: memberDetails =>
+                this.documentOverview.contacts.push(memberDetails),
+            e2ee: doc.e2ee,
+            settings: this.documentOverview.app.settings
+        })
+        this.accessRightsTab
+            .load()
+            .then(() => {
+                this.accessRightsLoading = false
+                const container = document.querySelector(
+                    "#access-rights-settings-tab"
+                )
+                if (container) {
+                    this.accessRightsTab.container = container
+                    this.accessRightsTab.render()
+                    this.accessRightsTab.bindEvents()
+                }
+            })
+            .catch(() => {
+                this.accessRightsLoading = false
+                const container = document.querySelector(
+                    "#access-rights-settings-tab"
+                )
+                if (container) {
+                    container.innerHTML = `<p class="fw-ar-error">${gettext("Could not load access rights.")}</p>`
+                }
+            })
     }
 
     deleteDocument(id) {
@@ -942,6 +1010,70 @@ export class DocumentOverviewActions {
                 })
             })
         )
+    }
+
+    settingsDocumentDialog(docId) {
+        const doc = this.documentOverview.documentList.find(
+            entry => entry.id === docId
+        )
+        if (!doc || !this.dialogParts.length) {
+            return
+        }
+        const body = documentDialogTemplate({
+            doc,
+            dialogParts: this.dialogParts
+        })
+        const dialog = new Dialog({
+            width: 840,
+            height: 520,
+            title: `${gettext("Document Settings")}: ${escapeText(doc.title)}`,
+            body,
+            buttons: [
+                {
+                    text: gettext("Submit"),
+                    classes: "fw-dark",
+                    click: () => {
+                        return Promise.all(
+                            this.onSave.map(method => method(doc))
+                        ).then(() => dialog.close())
+                    }
+                },
+                {
+                    type: "cancel"
+                }
+            ]
+        })
+        dialog.open()
+        dialog.dialogEl
+            .querySelectorAll("#documentoptions-tab .tab-content")
+            .forEach((el, index) => {
+                if (index) {
+                    el.style.display = "none"
+                }
+            })
+        dialog.dialogEl
+            .querySelectorAll("#documentoptions-tab .tab-link a")
+            .forEach(el =>
+                el.addEventListener("click", event => {
+                    event.preventDefault()
+
+                    el.parentNode.parentNode
+                        .querySelectorAll(".tab-link.current-tab")
+                        .forEach(el => el.classList.remove("current-tab"))
+                    el.parentNode.classList.add("current-tab")
+
+                    const link = el.getAttribute("href")
+                    dialog.dialogEl
+                        .querySelectorAll("#documentoptions-tab .tab-content")
+                        .forEach(el => {
+                            if (el.matches(link)) {
+                                el.style.display = ""
+                            } else {
+                                el.style.display = "none"
+                            }
+                        })
+                })
+            )
     }
 
     revisionsDialog(documentId, app) {

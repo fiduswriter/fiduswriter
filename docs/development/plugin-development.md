@@ -390,9 +390,47 @@ Route properties:
 
 Page instances must implement an `init()` method that returns a Promise.
 
-Register your plugin class in the `plugins` global that the core app reads
-during initialisation (the exact mechanism depends on how your plugin is
-bundled — consult the `activateFidusPlugins` method in `app/index.js`).
+### Registering the plugin so the core loads it
+
+The core discovers plugins automatically — you do **not** need to edit any core
+file. Place a JavaScript file inside your Django app's
+`static/js/plugins/<type>/` directory, where `<type>` matches the hook point you
+want to attach to:
+
+| Plugin type directory | Loaded by | Typical use |
+|---|---|---|
+| `static/js/plugins/app/` | `App.activateFidusPlugins()` | Add SPA routes, app-level services |
+| `static/js/plugins/editor/` | `Editor.activateFidusPlugins()` | Editor extensions (toolbars, sidebars, exporters) |
+| `static/js/plugins/documents_overview/` | `DocumentOverview.activateFidusPlugins()` | Document overview extensions (bulk actions, extra columns) |
+| `static/js/plugins/menu/` | `SiteMenu.activatePlugins()` | Extra top-level navigation items |
+| `static/js/plugins/prelogin/` | `PreloginPage.activateFidusPlugins()` | Public page plugins (login, signup, password reset) |
+| `static/js/plugins/login/` | `LoginPage` | Login-specific plugins |
+| `static/js/plugins/profile/` | `Profile.activateFidusPlugins()` | User profile page extensions |
+
+Export your plugin class from that file:
+
+```/dev/null/plugin-registration.js#L1-8
+// my_plugin/static/js/plugins/app/my_plugin.js
+export class MyPlugin {
+    constructor(app) { … }
+    init() { … }
+}
+```
+
+During transpilation, `django-npm-mjs` collects every `.js` file in those
+directories across all installed apps and generates a single `index.js` per
+type. The generated `index.js` exports a `plugins` array of
+`[app_name, module_namespace]` tuples. Core code imports `{plugins}` and
+instantiates every exported class whose app is present in
+`this.app.settings.APPS`.
+
+You only need one file per hook point; if you need to register both an app
+route and a menu item, create two files:
+
+```
+my_plugin/static/js/plugins/app/my_plugin.js
+my_plugin/static/js/plugins/menu/my_plugin.js
+```
 
 ---
 

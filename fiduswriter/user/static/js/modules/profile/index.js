@@ -122,7 +122,8 @@ export class Profile {
                 Object.entries(this.clickTargets).find(
                     ([selector, handler]) => {
                         if (findTarget(event, selector, el)) {
-                            handler(event, el)
+                            handler(el, event)
+                            return true
                         }
                     }
                 )

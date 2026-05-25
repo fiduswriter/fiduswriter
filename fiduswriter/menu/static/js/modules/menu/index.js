@@ -1,6 +1,6 @@
 import {keyName} from "w3c-keyname"
 
-import * as plugins from "../../plugins/menu"
+import {plugins} from "../../plugins/menu"
 import {dropdownSelect, post, whenReady} from "../common"
 import {headerNavTemplate} from "./templates"
 
@@ -213,11 +213,16 @@ export class SiteMenu {
         if (!this.plugins) {
             this.plugins = {}
 
-            Object.keys(plugins).forEach(plugin => {
-                if (typeof plugins[plugin] === "function") {
-                    this.plugins[plugin] = new plugins[plugin](this)
-                    this.plugins[plugin].init()
+            plugins.forEach(([app, plugin]) => {
+                if (!this.app.settings.APPS.includes(app)) {
+                    return
                 }
+                Object.values(plugin).forEach(pluginExport => {
+                    if (typeof pluginExport === "function") {
+                        this.plugins[pluginExport.name] = new pluginExport(this)
+                        this.plugins[pluginExport.name].init()
+                    }
+                })
             })
         }
     }

@@ -39,3 +39,33 @@ export const dateCell = ({date}) => ({
     data: localizeDate(date * 1000, "sortable-date"),
     text: localizeDate(date * 1000, "minutes")
 })
+
+export const documentDialogTemplate = ({doc, dialogParts}) =>
+    `<div id="document-dialog">
+        <div id="documentoptions-tab">
+            <ul class="ui-tabs-nav">
+                ${dialogParts
+                    .map(
+                        (part, index) =>
+                            `<li class="tab-link ${index === 0 ? "current-tab" : ""}">
+                                <a href="#docOptionTab${index}" class="tab-link-inner" title="${escapeText(
+                                    part.description
+                                )}">
+                                    ${escapeText(part.title)}
+                                </a>
+                            </li>`
+                    )
+                    .join("")}
+            </ul>
+            ${dialogParts
+                .map(
+                    (part, index) =>
+                        `<div class="tab-content ui-tabs-panel" id="docOptionTab${index}" title="${escapeText(
+                            part.description
+                        )}">
+                            ${part.template({doc})}
+                        </div>`
+                )
+                .join("")}
+        </div>
+    </div>`

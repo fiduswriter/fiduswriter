@@ -1227,7 +1227,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         write_access_rights = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-write"
         )
-        self.assertEqual(len(write_access_rights), 2)
+        self.assertEqual(len(write_access_rights), 1)
+        document_settings = self.driver.find_elements(
+            By.CSS_SELECTOR, ".fw-contents tbody tr .document-settings"
+        )
+        self.assertEqual(len(document_settings), 1)
         self.driver.find_element(By.CSS_SELECTOR, "#preferences-btn").click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Log out"]'
@@ -1244,7 +1248,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         self.assert_with_retry(self.check_document_count, 2)
         self.driver.find_element(
-            By.CSS_SELECTOR, ".fw-contents tbody tr .icon-access-write"
+            By.CSS_SELECTOR, ".fw-contents tbody tr .document-settings"
         ).click()
         # Downgrade the write rights to read rights for user 3
         self.driver.find_element(

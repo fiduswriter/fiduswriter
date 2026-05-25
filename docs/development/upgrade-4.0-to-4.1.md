@@ -16,6 +16,7 @@ has not changed is not repeated here.
 | **FontAwesome** | Upgraded to `@fortawesome/fontawesome-free` v7 |
 | **EDITOR\_SAVE\_MODE** | New Django setting; plugins that touch document saving must be aware of it |
 | **E2EE\_MODE** | New Django setting controlling end-to-end encryption |
+| **Plugin system** | Transpiled plugin indexes now export `{plugins: [[app, module], …]}` tuples with app-filtering; core pages iterate with `plugins.forEach(([app, plugin]) => …)` instead of `Object.keys(plugins).forEach(...)` |
 | **Two-Factor Authentication** | `django-otp` is now active by default |
 | **Brute-force protection** | `django-axes` is now active by default |
 | **Password policy** | Minimum password length increased from 8 to 12 characters |
@@ -396,7 +397,76 @@ relevant in `"collaborative"` mode.
 
 ---
 
-## 6. E2EE\_MODE
+## 6. Plugin system (custom hook authors only)
+
+### What changed
+
+In 4.0.x, each plugin type directory (`static/js/plugins/<type>/`) contained an
+`init.js` that exported individual plugin classes directly. Core code imported
+the whole module namespace and iterated with `Object.keys(plugins).forEach(...)`.
+
+In 4.1.0, the transpiler generates a single `index.js` per plugin type that
+exports a `plugins` array of `[app_name, module_namespace]` tuples. Core code
+iterates with `plugins.forEach(([app, plugin]) => …)` and filters by
+`this.app.settings.APPS.includes(app)` before instantiating any exported class.
+
+**If your plugin only hooks into existing core pages** (e.g. you export a class
+from `static/js/plugins/app/my_plugin.js` or
+`static/js/plugins/editor/my_plugin.js`), **you do not need to change your
+plugin code.** The transpiler and the core `activateFidusPlugins` methods handle
+the new format automatically.
+
+**You only need to act if your plugin creates its own hook point** — a custom
+page or component that loads plugins from a `../../plugins/<type>` directory.
+In that case, update your consumer code to match the new tuple format:
+
+**Old (4.0.x)**
+
+```/dev/null/old-plugin-consumer.js#L1-8
+import * as plugins from "../../plugins/my_type"
+
+Object.keys(plugins).forEach(plugin => {
+    if (typeof plugins[plugin] === "function") {
+        this.plugins[plugin] = new plugins[plugin](this)
+        this.plugins[plugin].init()
+    }
+})
+```
+
+**New (4.1.0)**
+
+```/dev/null/new-plugin-consumer.js#L1-13
+import {plugins} from "../../plugins/my_type"
+
+plugins.forEach(([app, plugin]) => {
+    if (!this.app.settings.APPS.includes(app)) {
+        return
+    }
+    Object.values(plugin).forEach(pluginExport => {
+        if (typeof pluginExport === "function") {
+            this.plugins[pluginExport.name] = new pluginExport(this)
+            this.plugins[pluginExport.name].init()
+        }
+    })
+})
+```
+
+### Key rules for custom hook authors
+
+1. **Import the named `plugins` export**, not the namespace:
+   ```js
+   import {plugins} from "../../plugins/my_type"
+   ```
+
+2. **Iterate with tuple destructuring** (`[app, plugin]`) and **filter by
+   `this.app.settings.APPS.includes(app)`** before instantiating anything.
+
+3. **Use `Object.values(plugin)`** to enumerate the exported classes inside each
+   module namespace.
+
+---
+
+## 7. E2EE\_MODE
 
 A new Django setting `E2EE_MODE` controls end-to-end encryption support.
 
@@ -413,7 +483,7 @@ behaviour to the encryption posture of the deployment.
 
 ---
 
-## 7. New security features
+## 8. New security features
 
 ### Two-Factor Authentication
 

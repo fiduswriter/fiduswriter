@@ -66,6 +66,15 @@ fiduswriter/
 
 ## JavaScript Build System
 
+### Cross-app JavaScript imports
+The `transpile` management command merges `static/js/modules/` directories from all installed Django apps into a single output tree. This means modules in one app can import from another app using relative paths as if they lived in the same directory.
+
+For example, from a file in `gitrepo_export/static/js/modules/gitrepo_export/`:
+- `../../books/exporter/docx` resolves to `books/static/js/modules/books/exporter/docx`
+- `../../exporter/html` resolves to `document/static/js/modules/exporter/html`
+
+All apps' `js/modules` folders are overlaid, so cross-app imports work transparently without needing absolute or package-style paths.
+
 ### Source files vs. bundled files
 The project uses **rspack** to bundle frontend JavaScript. The `npm_mjs` Django app overrides
 the default `{% static %}` template tag so that requests for `.mjs` files are transparently

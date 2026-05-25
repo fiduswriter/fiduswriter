@@ -68,7 +68,12 @@ export const changePwdDialogTemplate = ({username}) =>
         <tr><td><span id="fw-password-change-error" class="warning"></span></td></tr>
     </tbody></table>`
 
-export const profileContents = (user, socialaccount_providers, settings = {}) =>
+export const profileContents = (
+    user,
+    socialaccount_providers,
+    settings = {},
+    pluginTemplates = []
+) =>
     `<div id="profile-wrapper" class="clearfix ui-dialog ui-dialog-fullpage">
         <div id="profile-avatar">
             ${avatarTemplate({user})}
@@ -280,6 +285,7 @@ export const profileContents = (user, socialaccount_providers, settings = {}) =>
                     </div>`
                     : ""
             }
+            ${pluginTemplates.join("")}
             <div id="profile-submit-wrapper">
                 <span id="submit-profile" class="fw-button fw-dark">
                     ${gettext("Submit")}

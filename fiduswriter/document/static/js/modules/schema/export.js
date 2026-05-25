@@ -1,4 +1,3 @@
-import * as plugins from "../../plugins/schema_export"
 import {docSchema} from "./document"
 
 export class SchemaExport {
@@ -7,7 +6,6 @@ export class SchemaExport {
     }
 
     init() {
-        this.activateFidusPlugins()
         const spec = {
             nodes: {},
             marks: {}
@@ -19,17 +17,5 @@ export class SchemaExport {
             (key, value) => (spec.marks[key] = value)
         )
         return JSON.stringify(spec)
-    }
-
-    activateFidusPlugins() {
-        // Add plugins.
-        this.plugins = {}
-
-        Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === "function") {
-                this.plugins[plugin] = new plugins[plugin](this)
-                this.plugins[plugin].init()
-            }
-        })
     }
 }

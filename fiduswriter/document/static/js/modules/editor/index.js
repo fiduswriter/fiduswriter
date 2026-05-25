@@ -34,7 +34,7 @@ import {
 } from "./e2ee/password-dialog"
 import {E2EESnapshotManager} from "./e2ee/snapshot-manager"
 
-import * as plugins from "../../plugins/editor"
+import {plugins} from "../../plugins/editor"
 import {getSettings} from "../schema/convert"
 import {docSchema} from "../schema/document"
 import {ModCitations} from "./citations"
@@ -1084,16 +1084,32 @@ export class Editor {
     }
 
     activateFidusPlugins() {
+        if (this.plugins) {
+            // Plugins have been activated already
+            return
+        }
         // Add plugins.
         this.plugins = {}
 
         return Promise.all(
-            Object.keys(plugins).map(plugin => {
-                if (typeof plugins[plugin] === "function") {
-                    this.plugins[plugin] = new plugins[plugin](this)
-                    return this.plugins[plugin].init() || Promise.resolve()
+            plugins.map(([app, plugin]) => {
+                if (!this.app.settings.APPS.includes(app)) {
+                    return Promise.resolve()
                 }
-                return Promise.resolve()
+                return Promise.all(
+                    Object.values(plugin).map(pluginExport => {
+                        if (typeof pluginExport === "function") {
+                            this.plugins[pluginExport.name] = new pluginExport(
+                                this
+                            )
+                            return (
+                                this.plugins[pluginExport.name].init() ||
+                                Promise.resolve()
+                            )
+                        }
+                        return Promise.resolve()
+                    })
+                )
             })
         )
     }

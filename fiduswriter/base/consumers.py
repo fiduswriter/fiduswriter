@@ -35,7 +35,11 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
     async def disconnect(self, close_code):
         if hasattr(self, "presence"):
             if self.presence.id is not None:
-                await self.presence.adelete()
+                try:
+                    await self.presence.adelete()
+                except ValueError:
+                    # Presence already deleted
+                    pass
         if self in SystemMessageConsumer.clients:
             SystemMessageConsumer.clients.remove(self)
         await self.close()

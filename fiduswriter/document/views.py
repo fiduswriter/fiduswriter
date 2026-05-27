@@ -128,6 +128,7 @@ def documents_list(request):
         .prefetch_related(
             "accessright_set",
             "documentrevision_set",
+            "template__exporttemplate_set",
         )
         .distinct()
         .order_by("-updated")
@@ -185,6 +186,10 @@ def documents_list(request):
                 "rights": access_right,
                 "revisions": revision_list,
                 "template": document.template.title,
+                "export_templates": [
+                    {"id": t.id, "title": t.title, "file_type": t.file_type}
+                    for t in document.template.exporttemplate_set.all()
+                ],
             }
         )
     return output_list
@@ -1143,7 +1148,9 @@ def get_doc_styles(request):
             }
 
     response = {
-        "export_templates": [obj["fields"] for obj in export_templates],
+        "export_templates": [
+            {**obj["fields"], "id": obj["pk"]} for obj in export_templates
+        ],
         "document_styles": [obj["fields"] for obj in document_styles],
         "document_templates": document_templates,
     }

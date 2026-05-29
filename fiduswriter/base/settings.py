@@ -31,9 +31,10 @@ EDITOR_SAVE_MODE = "collaborative"
 
 # ProseMirror backend used by the document WebSocket consumer.
 # "python" - pure-Python prosemirror package (default).
-# "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`).
+# "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`). EXPERIMENTAL
 #            Keeps document state in Rust memory; avoids Python object tree overhead.
-PROSEMIRROR_BACKEND = "rust"
+#
+PROSEMIRROR_BACKEND = "python"
 
 ADMINS = (("Your Name", "your_email@example.com"),)
 
@@ -564,6 +565,6 @@ ASGI_APPLICATION = "base.routing.application"
 
 # E2EE_MODE controls whether end-to-end encrypted documents are allowed.
 # 'disabled'  - No E2EE support. All documents are unencrypted.
-# 'enabled'   - Both E2EE and non-encrypted documents are supported.
-# 'required'  - Only E2EE documents are allowed.
+# 'enabled'   - Both E2EE and non-encrypted documents are supported. EXPERIMENTAL
+# 'required'  - Only E2EE documents are allowed. EXPERIMENTAL
 E2EE_MODE = "disabled"  # Default: disabled for backward compatibility

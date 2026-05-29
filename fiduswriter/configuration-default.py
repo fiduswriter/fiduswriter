@@ -51,9 +51,9 @@ PORTS = [
 
 # ProseMirror backend used by the document WebSocket consumer.
 # "python" - pure-Python prosemirror package (default).
-# "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`).
+# "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`). EXPERIMENTAL
 #            Keeps document state in Rust memory; avoids Python object tree overhead.
-PROSEMIRROR_BACKEND = "rust"
+PROSEMIRROR_BACKEND = "python"
 
 # Allow the server to listen to all network interfaces (0.0.0.0) instead of just localhost
 # SECURITY WARNING: Setting this to True in production environments could expose your server
@@ -190,8 +190,8 @@ MEDIA_MAX_SIZE = False
 # and that has not been independently reviewed by security experts yet.
 #
 # 'disabled'  - No E2EE support. All documents are unencrypted.
-# 'enabled'   - Both E2EE and non-encrypted documents are supported.
-# 'required'  - Only E2EE documents are allowed.
+# 'enabled'   - Both E2EE and non-encrypted documents are supported. EXPERIMENTAL
+# 'required'  - Only E2EE documents are allowed. EXPERIMENTAL
 E2EE_MODE = "disabled"  # Default: disabled for backward compatibility
 
 # EDITOR_SAVE_MODE controls how the editor persists document changes.

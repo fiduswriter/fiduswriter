@@ -7,7 +7,11 @@ from testing.live_server import ChannelsLiveServerTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (
+    StaleElementReferenceException,
+    ElementClickInterceptedException,
+    TimeoutException,
+)
 from .editor_helper import EditorHelper
 
 from document.models import AccessRight
@@ -131,18 +135,46 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
             raise last_exc
         return wait.until(condition((by, value)))
 
+    def _wait_for_overlays_to_clear(self, driver):
+        try:
+            WebDriverWait(driver, self.wait_time).until(
+                lambda d: len(
+                    [
+                        el
+                        for el in d.find_elements(
+                            By.CSS_SELECTOR, ".ui-widget-overlay"
+                        )
+                        if el.is_displayed()
+                    ]
+                )
+                == 0
+            )
+        except TimeoutException:
+            # Let the normal click path fail if something is genuinely stuck
+            pass
+
     def _click_and_type(self, driver, by, value, text):
         last_exc = None
         for _ in range(5):
             try:
+                self._wait_for_overlays_to_clear(driver)
                 elem = self._find_fresh_element(
                     driver, by, value, EC.element_to_be_clickable
                 )
+                driver.execute_script(
+                    "arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});",
+                    elem,
+                )
+                self._wait_for_overlays_to_clear(driver)
                 elem.click()
                 elem.send_keys(text)
                 return
-            except StaleElementReferenceException as exc:
+            except (
+                StaleElementReferenceException,
+                ElementClickInterceptedException,
+            ) as exc:
                 last_exc = exc
+                time.sleep(0.5)
         if last_exc:
             raise last_exc
 

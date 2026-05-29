@@ -7,6 +7,7 @@ from testing.live_server import ChannelsLiveServerTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 from .editor_helper import EditorHelper
 
 from document.models import AccessRight
@@ -116,6 +117,35 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             return False
 
+    def _find_fresh_element(
+        self, driver, by, value, condition=EC.presence_of_element_located
+    ):
+        wait = WebDriverWait(driver, self.wait_time)
+        last_exc = None
+        for _ in range(5):
+            try:
+                return wait.until(condition((by, value)))
+            except StaleElementReferenceException as exc:
+                last_exc = exc
+        if last_exc:
+            raise last_exc
+        return wait.until(condition((by, value)))
+
+    def _click_and_type(self, driver, by, value, text):
+        last_exc = None
+        for _ in range(5):
+            try:
+                elem = self._find_fresh_element(
+                    driver, by, value, EC.element_to_be_clickable
+                )
+                elem.click()
+                elem.send_keys(text)
+                return
+            except StaleElementReferenceException as exc:
+                last_exc = exc
+        if last_exc:
+            raise last_exc
+
     def get_memory_usage(self):
         """Return the memory usage in MB for the server-side processes only.
 
@@ -163,21 +193,25 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
         self.load_document_editor(self.driver2, doc)
 
         # Set title
-        title_input = self.driver.find_element(By.CLASS_NAME, "doc-title")
-        title_input.send_keys(f"Test Document {document_num}")
+        self._click_and_type(
+            self.driver,
+            By.CLASS_NAME,
+            "doc-title",
+            f"Test Document {document_num}",
+        )
 
         # Set document content in driver1
-        body_input = self.driver.find_element(By.CLASS_NAME, "doc-body")
-        body_input.click()
-        body_input.send_keys(self.TEST_TEXT)
+        self._click_and_type(
+            self.driver, By.CLASS_NAME, "doc-body", self.TEST_TEXT
+        )
 
         # Wait for sync
         self.wait_for_doc_sync(self.driver, self.driver2)
 
         # Add additional text from driver2
-        body_input2 = self.driver2.find_element(By.CLASS_NAME, "doc-body")
-        body_input2.click()
-        body_input2.send_keys(" " + self.TEST_TEXT)
+        self._click_and_type(
+            self.driver2, By.CLASS_NAME, "doc-body", " " + self.TEST_TEXT
+        )
 
         # Wait for sync again
         self.wait_for_doc_sync(self.driver, self.driver2)

@@ -67,7 +67,7 @@ jobs:
               with:
                   python-version: "3.14"
             - name: Set up Node
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v6
               with:
                   node-version: 26
             - uses: actions/checkout@v6
@@ -102,7 +102,7 @@ jobs:
                 echo "FFMPEG_PID2=$!" >> $GITHUB_ENV
             - name: Run test ${{ matrix.test }} without debug mode
               if: runner.debug != '1'
-              uses: nick-invision/retry@v3
+              uses: nick-invision/retry@v4
               with:
                 timeout_minutes: 10
                 max_attempts: 3

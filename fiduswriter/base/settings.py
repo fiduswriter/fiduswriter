@@ -34,7 +34,7 @@ EDITOR_SAVE_MODE = "collaborative"
 # "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`). EXPERIMENTAL
 #            Keeps document state in Rust memory; avoids Python object tree overhead.
 #
-PROSEMIRROR_BACKEND = "python"
+PROSEMIRROR_BACKEND = "rust"
 
 ADMINS = (("Your Name", "your_email@example.com"),)
 

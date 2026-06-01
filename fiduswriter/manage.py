@@ -174,6 +174,11 @@ def entry():
     Uses the current working directory as the project path.
     """
     os.environ.setdefault("NO_COMPILEMESSAGES", "true")
+    # Force fork method for multiprocessing (needed for Python 3.14)
+    try:
+        multiprocessing.set_start_method("fork", force=True)
+    except RuntimeError:
+        pass
     inner(os.environ.get("PROJECT_PATH", os.getcwd()))
 
 

@@ -72,7 +72,16 @@ class Command(BaseCommand):
         self.stdout.write("Bundling MathLive")
 
         # Calculate hash of source files
-        current_hash = self.calculate_source_hash()
+        try:
+            current_hash = self.calculate_source_hash()
+        except FileNotFoundError:
+            self.stdout.write(
+                self.style.WARNING(
+                    "MathLive source files not found. Skipping bundle creation. "
+                    "Run ./manage.py setup first."
+                )
+            )
+            return
 
         # Check if the hash has changed
         if options["force"] or self.has_content_changed(current_hash):
@@ -89,7 +98,7 @@ class Command(BaseCommand):
         # Hash MathLive CSS
         css_path = os.path.join(
             settings.PROJECT_PATH,
-            ".transpile/node_modules/mathlive/dist/mathlive-static.css",
+            "static-libs/css/mathlive.css",
         )
         with open(css_path, "rb") as f:
             hasher.update(f.read())
@@ -97,7 +106,7 @@ class Command(BaseCommand):
         # Hash font files
         fonts_path = os.path.join(
             settings.PROJECT_PATH,
-            ".transpile/node_modules/mathlive/dist/fonts/",
+            "static-libs/css/fonts/",
         )
         for filename in os.listdir(fonts_path):
             if filename[0] == ".":
@@ -134,7 +143,7 @@ class Command(BaseCommand):
         with open(
             os.path.join(
                 settings.PROJECT_PATH,
-                ".transpile/node_modules/mathlive/dist/mathlive-static.css",
+                "static-libs/css/mathlive.css",
             )
         ) as f:
             with open(
@@ -148,7 +157,7 @@ class Command(BaseCommand):
             os.makedirs(mathlive_fonts_path)
         fontfiles_src_path = os.path.join(
             settings.PROJECT_PATH,
-            ".transpile/node_modules/mathlive/dist/fonts/",
+            "static-libs/css/fonts/",
         )
         fontfiles = os.listdir(fontfiles_src_path)
         for filename in fontfiles:

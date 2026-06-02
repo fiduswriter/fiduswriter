@@ -123,8 +123,27 @@ class Command(BaseCommand):
         if os.path.exists(cache_file):
             with open(cache_file) as f:
                 cached_data = json.load(f)
-                return cached_data.get("hash") != current_hash
-        return True
+                if cached_data.get("hash") != current_hash:
+                    return True
+        # Also regenerate if any output file is missing
+        required_outputs = [
+            os.path.join(
+                settings.PROJECT_PATH,
+                "static-libs/css/libs/mathlive/mathlive.css",
+            ),
+            os.path.join(
+                settings.PROJECT_PATH,
+                "static-libs/zip/mathlive_style.zip",
+            ),
+            os.path.join(
+                settings.PROJECT_PATH,
+                "static-libs/js/modules/mathlive/opf_includes.js",
+            ),
+        ]
+        for path in required_outputs:
+            if not os.path.exists(path):
+                return True
+        return False
 
     def save_hash(self, current_hash):
         cache_file = os.path.join(

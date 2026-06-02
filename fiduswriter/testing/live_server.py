@@ -21,6 +21,7 @@ except (RuntimeError, AttributeError):
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
 from django.db.backends.base.creation import TEST_DATABASE_PREFIX
+from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
 from django.test.testcases import TransactionTestCase
 from django.test.utils import modify_settings
 
@@ -301,8 +302,8 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
 
     host = "localhost"
     ProtocolServerProcess = GranianProcess
-    static_wrapper = None
-    serve_static = False
+    static_wrapper = ASGIStaticFilesHandler
+    serve_static = True
     commands = {"clear_contenttype_cache": clear_contenttype_cache}
 
     @property

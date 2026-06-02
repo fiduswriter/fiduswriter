@@ -23,6 +23,7 @@ export class CitationDialog {
     }
 
     init() {
+        this.activatePlugins()
         if (this.node?.type && this.node?.type.name === "citation") {
             this.initialFormat = this.node.attrs.format
             this.initialReferences = this.node.attrs.references
@@ -62,8 +63,6 @@ export class CitationDialog {
             type: "cancel"
         })
 
-        this.activateFidusPlugins()
-
         this.dialog = new Dialog({
             id: "configure-citation",
             title: gettext("Configure Citation"),
@@ -78,7 +77,7 @@ export class CitationDialog {
         this.bind()
     }
 
-    activateFidusPlugins() {
+    activatePlugins() {
         if (this.plugins) {
             // Plugins have been activated already
             return

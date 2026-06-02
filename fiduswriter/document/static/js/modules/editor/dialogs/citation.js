@@ -1,6 +1,6 @@
 import {DataTable} from "simple-datatables"
 
-import * as plugins from "../../../plugins/citation_dialog"
+import {plugins} from "../../../plugins/citation_dialog"
 import {dateToYear, litToText, nameToText} from "../../bibliography/tools"
 import {
     Dialog,
@@ -62,14 +62,14 @@ export class CitationDialog {
             type: "cancel"
         })
 
-        this.activatePlugins()
+        this.activateFidusPlugins()
 
         this.dialog = new Dialog({
             id: "configure-citation",
             title: gettext("Configure Citation"),
             buttons: this.buttons,
             body: this.citationDialogHTML(),
-            width: 1002,
+            width: 1004,
             onClose: () => this.editor.currentView.focus(),
             restoreActiveElement: false
         })
@@ -78,16 +78,35 @@ export class CitationDialog {
         this.bind()
     }
 
-    activatePlugins() {
-        // Add plugins
+    activateFidusPlugins() {
+        if (this.plugins) {
+            // Plugins have been activated already
+            return
+        }
+        // Add plugins.
         this.plugins = {}
 
-        Object.keys(plugins).forEach(plugin => {
-            if (typeof plugins[plugin] === "function") {
-                this.plugins[plugin] = new plugins[plugin](this)
-                this.plugins[plugin].init()
-            }
-        })
+        return Promise.all(
+            plugins.map(([app, plugin]) => {
+                if (!this.editor.app.settings.APPS.includes(app)) {
+                    return Promise.resolve()
+                }
+                return Promise.all(
+                    Object.values(plugin).map(pluginExport => {
+                        if (typeof pluginExport === "function") {
+                            this.plugins[pluginExport.name] = new pluginExport(
+                                this
+                            )
+                            return (
+                                this.plugins[pluginExport.name].init() ||
+                                Promise.resolve()
+                            )
+                        }
+                        return Promise.resolve()
+                    })
+                )
+            })
+        )
     }
 
     createAllTableRows() {

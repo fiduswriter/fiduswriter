@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 10:17+0000\n"
+"POT-Creation-Date: 2026-06-02 16:59+0000\n"
 "PO-Revision-Date: 2024-01-04 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: English\n"
@@ -16,95 +16,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: base/settings.py:280
+#: base/settings.py:326
 msgid "Arabic"
 msgstr "Arabic"
 
-#: base/settings.py:281
+#: base/settings.py:327
 msgid "Bulgarian"
 msgstr "Bulgarian"
 
-#: base/settings.py:282
+#: base/settings.py:328
 msgid "Czech"
 msgstr "Czech"
 
-#: base/settings.py:283
+#: base/settings.py:329
 msgid "Danish"
 msgstr "Danish"
 
-#: base/settings.py:284
+#: base/settings.py:330
 msgid "German"
 msgstr "German"
 
-#: base/settings.py:285
+#: base/settings.py:331
 msgid "English"
 msgstr "English"
 
-#: base/settings.py:286
+#: base/settings.py:332
 msgid "Spanish"
 msgstr "Spanish"
 
-#: base/settings.py:287
+#: base/settings.py:333
 msgid "French"
 msgstr "French"
 
-#: base/settings.py:288
+#: base/settings.py:334
 msgid "Italian"
 msgstr "Italian"
 
-#: base/settings.py:289
+#: base/settings.py:335
 msgid "Japanese"
 msgstr "Japanese"
 
-#: base/settings.py:290
+#: base/settings.py:336
 msgid "Korean"
 msgstr "Korean"
 
-#: base/settings.py:291
+#: base/settings.py:337
 msgid "Norwegian Bokmål"
 msgstr "Norwegian Bokmål"
 
-#: base/settings.py:292
+#: base/settings.py:338
 msgid "Dutch"
 msgstr "Dutch"
 
-#: base/settings.py:293
+#: base/settings.py:339
 msgid "Polish"
 msgstr "Polish"
 
-#: base/settings.py:294
+#: base/settings.py:340
 msgid "Portuguese (Brazil)"
 msgstr "Portuguese (Brazil)"
 
-#: base/settings.py:295
+#: base/settings.py:341
 msgid "Portuguese (Portugal)"
 msgstr "Portuguese (Portugal)"
 
-#: base/settings.py:296
+#: base/settings.py:342
 msgid "Russian"
 msgstr "Russian"
 
-#: base/settings.py:297
+#: base/settings.py:343
 msgid "Swedish"
 msgstr "Swedish"
 
-#: base/settings.py:298
+#: base/settings.py:344
 msgid "Turkish"
 msgstr "Turkish"
 
-#: base/settings.py:299
+#: base/settings.py:345
 msgid "Chinese (Simplified)"
 msgstr "Chinese (Simplified)"
 
-#: base/settings.py:415
+#: base/settings.py:461
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:416
+#: base/settings.py:462
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer Administration Site"
 
-#: base/settings.py:417
+#: base/settings.py:463
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Welcome to the Fidus Writer Administration Site"
 
@@ -206,7 +206,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "Duplicate selected document templates"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:979
+#: document/emails.py:18 document/emails.py:236 document/views.py:985
 msgid "Untitled"
 msgstr "Untitled"
 
@@ -585,15 +585,15 @@ msgstr ""
 msgid "In case you forgot, your username is %(username)s."
 msgstr "In case you forgot, your username is %(username)s."
 
-#: user/views.py:66
+#: user/views.py:69
 msgid "Your old password was entered incorrectly. Please enter it again."
 msgstr "Your old password was entered incorrectly. Please enter it again."
 
-#: user/views.py:70
+#: user/views.py:73
 msgid "The two password fields didn't match."
 msgstr "The two password fields didn't match."
 
-#: user/views.py:645
+#: user/views.py:674
 msgid "Code is invalid"
 msgstr "Code is invalid"
 

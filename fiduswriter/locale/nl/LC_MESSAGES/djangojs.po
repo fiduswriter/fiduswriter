@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer frontend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 13:28+0000\n"
+"POT-Creation-Date: 2026-06-02 17:43+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -64,6 +64,7 @@ msgstr "Systeembericht"
 
 #: base/static/js/modules/common/dialog.js:29
 #: base/static/js/modules/common/dialog.js:32
+#: document/static/js/modules/document_template/export_template_dialog.js:82
 msgid "Help"
 msgstr "Hulp"
 
@@ -77,7 +78,7 @@ msgid "Close"
 msgstr "Sluit"
 
 #: base/static/js/modules/common/dialog.js:84
-#: document/static/js/modules/documents/overview/index.js:942
+#: document/static/js/modules/documents/overview/index.js:937
 #: document/static/js/modules/editor/collab/doc.js:371
 #: document/static/js/modules/editor/collab/doc.js:573
 #: document/static/js/modules/editor/comments/editors/answer.js:22
@@ -102,22 +103,22 @@ msgstr "OK"
 #: base/static/js/modules/common/file/tools.js:16
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
-#: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:175
-#: document/static/js/modules/editor/menus/headerbar/view.js:505
+#: document/static/js/modules/editor/dialogs/citation.js:139
+#: document/static/js/modules/editor/dialogs/citation.js:193
+#: document/static/js/modules/editor/menus/headerbar/view.js:508
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
-#: document/static/js/modules/importer/docx/convert.js:85
-#: document/static/js/modules/importer/docx/convert.js:93
-#: document/static/js/modules/importer/docx/convert.js:521
+#: document/static/js/modules/importer/docx/convert.js:89
+#: document/static/js/modules/importer/docx/convert.js:97
+#: document/static/js/modules/importer/docx/convert.js:607
 #: document/static/js/modules/importer/docx/import.js:49
-#: document/static/js/modules/importer/odt/convert.js:460
-#: document/static/js/modules/importer/odt/convert.js:471
-#: document/static/js/modules/importer/odt/import.js:114
+#: document/static/js/modules/importer/odt/convert.js:462
+#: document/static/js/modules/importer/odt/convert.js:473
+#: document/static/js/modules/importer/odt/import.js:120
 #: document/static/js/modules/importer/pandoc/import.js:22
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:224
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
-#: usermedia/static/js/modules/images/overview/index.js:175
+#: usermedia/static/js/modules/images/overview/index.js:194
 msgid "Untitled"
 msgstr "Zonder titel"
 
@@ -129,14 +130,15 @@ msgstr "Nieuwe map"
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
 #: bibliography/static/js/modules/bibliography/overview/index.js:321
-#: document/static/js/modules/documents/access_rights/index.js:296
+#: document/static/js/modules/documents/access_rights/index.js:659
+#: document/static/js/modules/documents/overview/actions.js:1033
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
 #: user/static/js/modules/contacts/add_dialog.js:14
 #: user/static/js/modules/profile/dialogs.js:128
 #: user/static/js/modules/profile/dialogs.js:219
 #: user/static/js/modules/profile/dialogs.js:389
-#: user/static/js/modules/profile/templates.js:285
+#: user/static/js/modules/profile/templates.js:291
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
 msgstr "Indienen"
@@ -310,10 +312,10 @@ msgstr "Selecteer taal"
 
 #: base/static/js/modules/setup/index.js:6
 #: base/static/js/modules/setup/index.js:8
-#: document/static/js/modules/editor/dialogs/citation.js:48
+#: document/static/js/modules/editor/dialogs/citation.js:49
 #: document/static/js/modules/editor/dialogs/code_block.js:113
-#: document/static/js/modules/editor/dialogs/contributor.js:28
-#: document/static/js/modules/editor/dialogs/contributor.js:119
+#: document/static/js/modules/editor/dialogs/contributor.js:31
+#: document/static/js/modules/editor/dialogs/contributor.js:157
 #: document/static/js/modules/editor/dialogs/figure.js:359
 #: document/static/js/modules/editor/dialogs/link.js:57
 #: document/static/js/modules/editor/dialogs/link.js:67
@@ -347,8 +349,8 @@ msgstr "De bibliografie kon niet worden bijgewerkt"
 #: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
 #: document/static/js/modules/exporter/native/revision.js:78
-#: usermedia/static/js/modules/images/overview/index.js:94
-#: usermedia/static/js/modules/images/overview/index.js:108
+#: usermedia/static/js/modules/images/overview/index.js:113
+#: usermedia/static/js/modules/images/overview/index.js:127
 msgid "You are currently offline. Please try again when you are back online."
 msgstr "Je bent momenteel offline. Probeer het opnieuw als u weer online bent."
 
@@ -419,7 +421,8 @@ msgid "Prefix used"
 msgstr "Voorvoegsel gebruikt"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:92
-#: user/static/js/modules/profile/templates.js:92
+#: document/static/js/modules/document_template/export_template_dialog.js:423
+#: user/static/js/modules/profile/templates.js:97
 msgid "First name"
 msgstr "Voornaam"
 
@@ -428,7 +431,8 @@ msgid "Prefix"
 msgstr "Voorvoegsel"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:104
-#: user/static/js/modules/profile/templates.js:96
+#: document/static/js/modules/document_template/export_template_dialog.js:424
+#: user/static/js/modules/profile/templates.js:101
 msgid "Last name"
 msgstr "Achternaam"
 
@@ -537,7 +541,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Er is een probleem opgetreden bij het importeren van de bibliografie"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:211
+#: document/static/js/modules/documents/overview/actions.js:279
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Importeren"
@@ -567,12 +571,12 @@ msgid "Bibliography Manager"
 msgstr "Bibliografie Manager"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:241
+#: document/static/js/modules/editor/dialogs/citation.js:259
 msgid "No sources registered"
 msgstr "Geen bronnen geregistreerd"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:242
+#: document/static/js/modules/editor/dialogs/citation.js:260
 msgid "No sources found"
 msgstr "Geen bronnen gevonden"
 
@@ -580,14 +584,14 @@ msgstr "Geen bronnen gevonden"
 #: document/static/js/modules/document_template/document_style_dialog.js:84
 #: document/static/js/modules/document_template/templates.js:156
 #: document/static/js/modules/document_template/templates.js:247
-#: document/static/js/modules/document_template/templates.js:320
-#: document/static/js/modules/document_template/templates.js:403
-#: document/static/js/modules/document_template/templates.js:476
-#: document/static/js/modules/document_template/templates.js:527
-#: document/static/js/modules/document_template/templates.js:813
+#: document/static/js/modules/document_template/templates.js:323
+#: document/static/js/modules/document_template/templates.js:406
+#: document/static/js/modules/document_template/templates.js:479
+#: document/static/js/modules/document_template/templates.js:530
 #: document/static/js/modules/document_template/templates.js:836
-#: document/static/js/modules/documents/overview/index.js:582
-#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/document_template/templates.js:859
+#: document/static/js/modules/documents/overview/index.js:577
+#: document/static/js/modules/editor/dialogs/citation.js:272
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
@@ -604,7 +608,7 @@ msgid "Sourcetype"
 msgstr "Brontype"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:255
+#: document/static/js/modules/editor/dialogs/citation.js:273
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -625,12 +629,12 @@ msgstr "Categorieën bewerken"
 #: bibliography/static/js/modules/bibliography/overview/index.js:376
 #: document/static/js/modules/document_template/document_style_dialog.js:74
 #: document/static/js/modules/document_template/document_style_dialog.js:172
-#: document/static/js/modules/document_template/export_template_dialog.js:82
-#: document/static/js/modules/document_template/export_template_dialog.js:178
-#: document/static/js/modules/document_template/templates.js:821
+#: document/static/js/modules/document_template/export_template_dialog.js:88
+#: document/static/js/modules/document_template/export_template_dialog.js:184
+#: document/static/js/modules/document_template/templates.js:844
 #: document/static/js/modules/documents/access_rights/templates.js:28
-#: document/static/js/modules/documents/overview/actions.js:110
-#: document/static/js/modules/documents/overview/index.js:155
+#: document/static/js/modules/documents/overview/actions.js:178
+#: document/static/js/modules/documents/overview/index.js:141
 #: document/static/js/modules/documents/revisions/index.js:133
 #: document/static/js/modules/documents/revisions/templates.js:11
 #: document/static/js/modules/editor/marginboxes/templates.js:531
@@ -640,21 +644,21 @@ msgstr "Categorieën bewerken"
 #: user/static/js/modules/profile/delete_user.js:18
 #: user/static/js/modules/profile/dialogs.js:104
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:60
-#: usermedia/static/js/modules/images/overview/index.js:126
+#: usermedia/static/js/modules/images/overview/index.js:145
 msgid "Delete"
 msgstr "Verwijderen"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
-#: document/static/js/modules/document_template/export_template_dialog.js:192
-#: document/static/js/modules/documents/overview/actions.js:91
-#: document/static/js/modules/documents/overview/index.js:147
+#: document/static/js/modules/document_template/export_template_dialog.js:198
+#: document/static/js/modules/documents/overview/actions.js:159
+#: document/static/js/modules/documents/overview/index.js:133
 #: document/static/js/modules/documents/revisions/index.js:151
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:40
 #: user/static/js/modules/profile/dialogs.js:116
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:75
-#: usermedia/static/js/modules/images/overview/index.js:140
+#: usermedia/static/js/modules/images/overview/index.js:159
 msgid "Confirm deletion"
 msgstr "Bevestig het verwijderen"
 
@@ -693,7 +697,7 @@ msgid "Edit categories"
 msgstr "Categorieën bewerken"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:67
-#: document/static/js/modules/editor/dialogs/citation.js:32
+#: document/static/js/modules/editor/dialogs/citation.js:33
 msgid "Register new source"
 msgstr "Registreer nieuwe bron"
 
@@ -717,29 +721,33 @@ msgstr "en anderen"
 msgid "Source/Editor"
 msgstr "Bron/redacteur"
 
-#: document/static/js/modules/document_template/designer.js:101
+#: document/static/js/modules/document_template/designer.js:102
 msgid "The template needs a title."
 msgstr "De sjabloon heeft een titel nodig."
 
-#: document/static/js/modules/document_template/designer.js:109
+#: document/static/js/modules/document_template/designer.js:110
 msgid "The template needs an ID."
 msgstr "De sjabloon heeft een ID nodig."
 
-#: document/static/js/modules/document_template/designer.js:115
+#: document/static/js/modules/document_template/designer.js:116
 msgid "The template ID cannot contain spaces."
 msgstr "De sjabloon-ID mag geen spaties bevatten."
 
-#: document/static/js/modules/document_template/designer.js:255
+#: document/static/js/modules/document_template/designer.js:262
 msgid "All document parts need an ID."
 msgstr "Alle documentonderdelen hebben een ID nodig."
 
-#: document/static/js/modules/document_template/designer.js:262
+#: document/static/js/modules/document_template/designer.js:269
 msgid "IDs cannot contain spaces."
 msgstr "ID's mogen geen spaties bevatten."
 
-#: document/static/js/modules/document_template/designer.js:280
+#: document/static/js/modules/document_template/designer.js:287
 msgid "IDs have to be unique."
 msgstr "ID's moeten uniek zijn."
+
+#: document/static/js/modules/document_template/designer.js:373
+msgid "One or more contributor ID regexes are invalid."
+msgstr "Een of meer regexes voor bijdrager-ID's zijn ongeldig."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:18
 #: document/static/js/modules/document_template/export_template_dialog.js:26
@@ -790,51 +798,181 @@ msgstr "De slak moet uniek zijn."
 msgid "A file with the same name exists already."
 msgstr "Er bestaat al een bestand met dezelfde naam."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:89
+#: document/static/js/modules/document_template/export_template_dialog.js:95
 msgid "Export template"
 msgstr "Sjabloon exporteren"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:93
+#: document/static/js/modules/document_template/export_template_dialog.js:99
 #: document/static/js/modules/editor/menus/headerbar/model.js:40
-#: usermedia/static/js/modules/images/overview/index.js:255
+#: usermedia/static/js/modules/images/overview/index.js:274
 msgid "File"
 msgstr "Bestand"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:102
+#: document/static/js/modules/document_template/export_template_dialog.js:108
 msgid "Select"
 msgstr "Selecteer"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:108
+#: document/static/js/modules/document_template/export_template_dialog.js:114
 msgid "Filetype"
 msgstr "Bestandstype"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:116
+#: document/static/js/modules/document_template/export_template_dialog.js:122
 msgid "Found tags"
 msgstr "Tags gevonden"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:122
+#: document/static/js/modules/document_template/export_template_dialog.js:128
 msgid "Missing tags"
 msgstr "Ontbrekende tags"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:193
+#: document/static/js/modules/document_template/export_template_dialog.js:199
 msgid "Do you really want to delete the export template?"
 msgstr "Wilt u de exportsjabloon echt verwijderen?"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:206
+#: document/static/js/modules/document_template/export_template_dialog.js:212
 msgid "You need to upload a template file in ODT or DOCX format."
 msgstr "U moet een sjabloonbestand in ODT- of DOCX-indeling uploaden."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:220
+#: document/static/js/modules/document_template/export_template_dialog.js:226
 msgid "Another export file with the same filename exists already."
 msgstr "Er bestaat al een ander exportbestand met dezelfde bestandsnaam."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:257
+#: document/static/js/modules/document_template/export_template_dialog.js:263
 msgid "Unknown filetype"
 msgstr "Onbekend bestandstype"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:374
+#: document/static/js/modules/document_template/export_template_dialog.js:400
 msgid "Selected file not supported."
 msgstr "Geselecteerd bestand wordt niet ondersteund."
+
+#: document/static/js/modules/document_template/export_template_dialog.js:408
+msgid "Templating Syntax Help"
+msgstr "Hulp bij sjablonensyntaxis"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:410
+msgid "Available Tags"
+msgstr "Beschikbare labels"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:412
+msgid "Document title"
+msgstr "Documenttitel"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:413
+msgid "All authors (simple)"
+msgstr "Alle auteurs (eenvoudig)"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:414
+#: document/static/js/modules/document_template/templates.js:414
+msgid "Keywords"
+msgstr "Trefwoorden"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:415
+msgid "Bibliography block"
+msgstr "Bibliografie blok"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:416
+msgid "Copyright block"
+msgstr "Auteursrecht blokkeren"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:417
+msgid "Licenses block"
+msgstr "Licenties blokkeren"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:420
+msgid "Format Strings with Delimiters"
+msgstr "Tekenreeksen opmaken met scheidingstekens"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:421
+#, javascript-format
+msgid "Syntax: %s"
+msgstr "Syntaxis: %s"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:425
+#: document/static/js/modules/editor/dialogs/templates.js:404
+msgid "Institution"
+msgstr "Instelling"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:426
+#: document/static/js/modules/editor/dialogs/templates.js:403
+#: document/static/js/modules/schema/document/content.js:58
+#: user/static/js/modules/profile/templates.js:168
+msgid "Email"
+msgstr "E-mail"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:427
+msgid "ID type (e.g., ORCID)"
+msgstr "ID-type (bijvoorbeeld ORCID)"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:428
+msgid "ID value"
+msgstr "ID-waarde"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "Delimiters: "
+msgstr "Scheidingstekens: "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(semicolon+space), "
+msgstr "(puntkomma+spatie), "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(comma+line break), "
+msgstr "(komma+regeleinde), "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(line break), "
+msgstr "(regeleinde), "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(paragraph break), or custom string"
+msgstr "(alinea-einde) of aangepaste tekenreeks"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:432
+msgid "Structured Blocks"
+msgstr "Gestructureerde blokken"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:434
+msgid "Loop over items"
+msgstr "Loop over items"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:435
+msgid "Loop with limit"
+msgstr "Lus met limiet"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:438
+msgid "Conditionals"
+msgstr "Voorwaardelijke voorwaarden"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:440
+msgid "Conditional"
+msgstr "Voorwaardelijk"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:441
+msgid "Else if"
+msgstr "Anders als"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:442
+msgid "Else"
+msgstr "Anders"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:445
+msgid "Context"
+msgstr "Context"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:446
+msgid "Context object: "
+msgstr "Contextobject: "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:448
+msgid "Examples"
+msgstr "Voorbeelden"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:460
+msgid "et al."
+msgstr "et al."
+
+#: document/static/js/modules/document_template/export_template_dialog.js:468
+msgid "Templating Help"
+msgstr "Hulp bij sjablonen"
 
 #: document/static/js/modules/document_template/importer.js:42
 msgid "The uploaded file does not appear to be a Fidus Writer Template file."
@@ -849,7 +987,7 @@ msgstr "Het geüploade bestand lijkt geen Fidus Writer-bestand te zijn."
 #: document/static/js/modules/document_template/importer.js:164
 #: document/static/js/modules/importer/docx/import.js:73
 #: document/static/js/modules/importer/native/file.js:213
-#: document/static/js/modules/importer/odt/import.js:142
+#: document/static/js/modules/importer/odt/import.js:148
 #: document/static/js/modules/importer/pandoc/import.js:163
 msgid "successfully imported."
 msgstr "succesvol geïmporteerd."
@@ -890,7 +1028,7 @@ msgstr "Tabel invoegen"
 #: document/static/js/modules/document_template/schema.js:194
 #: document/static/js/modules/document_template/schema.js:198
 #: document/static/js/modules/document_template/templates.js:92
-#: document/static/js/modules/document_template/templates.js:468
+#: document/static/js/modules/document_template/templates.js:471
 #: document/static/js/modules/editor/menus/toolbar/model.js:872
 msgid "Table"
 msgstr "Tabel"
@@ -1092,10 +1230,10 @@ msgstr "Rubriek"
 
 #: document/static/js/modules/document_template/templates.js:151
 #: document/static/js/modules/document_template/templates.js:242
-#: document/static/js/modules/document_template/templates.js:315
-#: document/static/js/modules/document_template/templates.js:398
-#: document/static/js/modules/document_template/templates.js:471
-#: document/static/js/modules/document_template/templates.js:522
+#: document/static/js/modules/document_template/templates.js:318
+#: document/static/js/modules/document_template/templates.js:401
+#: document/static/js/modules/document_template/templates.js:474
+#: document/static/js/modules/document_template/templates.js:525
 #: document/static/js/modules/editor/menus/code_block/model.js:6
 #: document/static/js/modules/editor/menus/figure/model.js:7
 #: document/static/js/modules/editor/menus/table/model.js:388
@@ -1104,26 +1242,26 @@ msgstr "Configureer"
 
 #: document/static/js/modules/document_template/templates.js:155
 #: document/static/js/modules/document_template/templates.js:246
-#: document/static/js/modules/document_template/templates.js:319
-#: document/static/js/modules/document_template/templates.js:380
-#: document/static/js/modules/document_template/templates.js:402
-#: document/static/js/modules/document_template/templates.js:475
-#: document/static/js/modules/document_template/templates.js:526
-#: document/static/js/modules/document_template/templates.js:814
+#: document/static/js/modules/document_template/templates.js:322
+#: document/static/js/modules/document_template/templates.js:383
+#: document/static/js/modules/document_template/templates.js:405
+#: document/static/js/modules/document_template/templates.js:478
+#: document/static/js/modules/document_template/templates.js:529
+#: document/static/js/modules/document_template/templates.js:837
 msgid "ID"
 msgstr "Identiteitskaart"
 
 #: document/static/js/modules/document_template/templates.js:160
 #: document/static/js/modules/document_template/templates.js:252
-#: document/static/js/modules/document_template/templates.js:324
-#: document/static/js/modules/document_template/templates.js:408
+#: document/static/js/modules/document_template/templates.js:327
+#: document/static/js/modules/document_template/templates.js:411
 msgid "Metadata function"
 msgstr "Metagegevensfunctie"
 
 #: document/static/js/modules/document_template/templates.js:162
 #: document/static/js/modules/document_template/templates.js:254
-#: document/static/js/modules/document_template/templates.js:326
-#: document/static/js/modules/document_template/templates.js:410
+#: document/static/js/modules/document_template/templates.js:329
+#: document/static/js/modules/document_template/templates.js:413
 #: document/static/js/modules/editor/dialogs/code_block.js:205
 #: document/static/js/modules/editor/dialogs/code_block.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:167
@@ -1140,69 +1278,69 @@ msgid "Title (translated)"
 msgstr "Titel (vertaald)"
 
 #: document/static/js/modules/document_template/templates.js:167
-#: document/static/js/modules/document_template/templates.js:259
-#: document/static/js/modules/document_template/templates.js:339
-#: document/static/js/modules/document_template/templates.js:414
-#: document/static/js/modules/document_template/templates.js:480
-msgid "Locking"
-msgstr "Vergrendelen"
-
-#: document/static/js/modules/document_template/templates.js:169
-#: document/static/js/modules/document_template/templates.js:261
-#: document/static/js/modules/document_template/templates.js:341
-#: document/static/js/modules/document_template/templates.js:416
-#: document/static/js/modules/document_template/templates.js:482
-msgid "User can change contents"
-msgstr "Gebruiker kan inhoud wijzigen"
-
-#: document/static/js/modules/document_template/templates.js:170
 #: document/static/js/modules/document_template/templates.js:262
 #: document/static/js/modules/document_template/templates.js:342
 #: document/static/js/modules/document_template/templates.js:417
 #: document/static/js/modules/document_template/templates.js:483
+msgid "Locking"
+msgstr "Vergrendelen"
+
+#: document/static/js/modules/document_template/templates.js:169
+#: document/static/js/modules/document_template/templates.js:264
+#: document/static/js/modules/document_template/templates.js:344
+#: document/static/js/modules/document_template/templates.js:419
+#: document/static/js/modules/document_template/templates.js:485
+msgid "User can change contents"
+msgstr "Gebruiker kan inhoud wijzigen"
+
+#: document/static/js/modules/document_template/templates.js:170
+#: document/static/js/modules/document_template/templates.js:265
+#: document/static/js/modules/document_template/templates.js:345
+#: document/static/js/modules/document_template/templates.js:420
+#: document/static/js/modules/document_template/templates.js:486
 msgid "User can not change contents"
 msgstr "Gebruiker kan de inhoud niet wijzigen"
 
 #: document/static/js/modules/document_template/templates.js:171
-#: document/static/js/modules/document_template/templates.js:263
-#: document/static/js/modules/document_template/templates.js:343
-#: document/static/js/modules/document_template/templates.js:418
+#: document/static/js/modules/document_template/templates.js:266
+#: document/static/js/modules/document_template/templates.js:346
+#: document/static/js/modules/document_template/templates.js:421
 msgid "User can only add content"
 msgstr "Gebruiker kan alleen inhoud toevoegen"
 
 #: document/static/js/modules/document_template/templates.js:174
-#: document/static/js/modules/document_template/templates.js:266
-#: document/static/js/modules/document_template/templates.js:346
-#: document/static/js/modules/document_template/templates.js:421
-#: document/static/js/modules/document_template/templates.js:487
-#: document/static/js/modules/document_template/templates.js:531
-msgid "Optional"
-msgstr "Optioneel"
-
-#: document/static/js/modules/document_template/templates.js:176
-#: document/static/js/modules/document_template/templates.js:268
-#: document/static/js/modules/document_template/templates.js:348
-#: document/static/js/modules/document_template/templates.js:423
-#: document/static/js/modules/document_template/templates.js:489
-#: document/static/js/modules/document_template/templates.js:533
-msgid "Obligatory field"
-msgstr "Verplicht veld"
-
-#: document/static/js/modules/document_template/templates.js:177
 #: document/static/js/modules/document_template/templates.js:269
 #: document/static/js/modules/document_template/templates.js:349
 #: document/static/js/modules/document_template/templates.js:424
 #: document/static/js/modules/document_template/templates.js:490
 #: document/static/js/modules/document_template/templates.js:534
+msgid "Optional"
+msgstr "Optioneel"
+
+#: document/static/js/modules/document_template/templates.js:176
+#: document/static/js/modules/document_template/templates.js:271
+#: document/static/js/modules/document_template/templates.js:351
+#: document/static/js/modules/document_template/templates.js:426
+#: document/static/js/modules/document_template/templates.js:492
+#: document/static/js/modules/document_template/templates.js:536
+msgid "Obligatory field"
+msgstr "Verplicht veld"
+
+#: document/static/js/modules/document_template/templates.js:177
+#: document/static/js/modules/document_template/templates.js:272
+#: document/static/js/modules/document_template/templates.js:352
+#: document/static/js/modules/document_template/templates.js:427
+#: document/static/js/modules/document_template/templates.js:493
+#: document/static/js/modules/document_template/templates.js:537
 msgid "Optional, shown by default"
 msgstr "Optioneel, standaard weergegeven"
 
 #: document/static/js/modules/document_template/templates.js:178
-#: document/static/js/modules/document_template/templates.js:270
-#: document/static/js/modules/document_template/templates.js:350
-#: document/static/js/modules/document_template/templates.js:425
-#: document/static/js/modules/document_template/templates.js:491
-#: document/static/js/modules/document_template/templates.js:535
+#: document/static/js/modules/document_template/templates.js:273
+#: document/static/js/modules/document_template/templates.js:353
+#: document/static/js/modules/document_template/templates.js:428
+#: document/static/js/modules/document_template/templates.js:494
+#: document/static/js/modules/document_template/templates.js:538
 msgid "Optional, not shown by default"
 msgstr "Optioneel, niet standaard weergegeven"
 
@@ -1211,32 +1349,32 @@ msgid "Allowed headings"
 msgstr "Toegestane koppen"
 
 #: document/static/js/modules/document_template/templates.js:209
-#: document/static/js/modules/document_template/templates.js:355
-#: document/static/js/modules/document_template/templates.js:496
+#: document/static/js/modules/document_template/templates.js:358
+#: document/static/js/modules/document_template/templates.js:499
 #: document/static/js/modules/editor/dialogs/code_block.js:202
-#: user/static/js/modules/profile/templates.js:209
+#: user/static/js/modules/profile/templates.js:214
 msgid "Language"
 msgstr "Taal"
 
 #: document/static/js/modules/document_template/templates.js:211
-#: document/static/js/modules/document_template/templates.js:357
-#: document/static/js/modules/document_template/templates.js:498
+#: document/static/js/modules/document_template/templates.js:360
+#: document/static/js/modules/document_template/templates.js:501
 msgid "Document language"
 msgstr "Documenttaal"
 
 #: document/static/js/modules/document_template/templates.js:219
-#: document/static/js/modules/document_template/templates.js:274
-#: document/static/js/modules/document_template/templates.js:365
-#: document/static/js/modules/document_template/templates.js:429
-#: document/static/js/modules/document_template/templates.js:506
+#: document/static/js/modules/document_template/templates.js:277
+#: document/static/js/modules/document_template/templates.js:368
+#: document/static/js/modules/document_template/templates.js:432
+#: document/static/js/modules/document_template/templates.js:509
 msgid "Initial content"
 msgstr "Initiële inhoud"
 
 #: document/static/js/modules/document_template/templates.js:223
-#: document/static/js/modules/document_template/templates.js:278
-#: document/static/js/modules/document_template/templates.js:369
-#: document/static/js/modules/document_template/templates.js:433
-#: document/static/js/modules/document_template/templates.js:510
+#: document/static/js/modules/document_template/templates.js:281
+#: document/static/js/modules/document_template/templates.js:372
+#: document/static/js/modules/document_template/templates.js:436
+#: document/static/js/modules/document_template/templates.js:513
 #: document/static/js/modules/editor/marginboxes/templates.js:422
 msgid "Instructions"
 msgstr "Instructies"
@@ -1246,237 +1384,191 @@ msgid "Namelist"
 msgstr "Namenlijst"
 
 #: document/static/js/modules/document_template/templates.js:251
-#: document/static/js/modules/document_template/templates.js:407
+#: document/static/js/modules/document_template/templates.js:410
 msgid "Item title"
 msgstr "Titel van item"
 
 #: document/static/js/modules/document_template/templates.js:255
+#: document/static/js/modules/exporter/latex/convert.js:106
 msgid "Authors"
 msgstr "Auteurs"
 
 #: document/static/js/modules/document_template/templates.js:256
+#: document/static/js/modules/exporter/latex/convert.js:107
 msgid "Editors"
 msgstr "Redacteuren"
 
-#: document/static/js/modules/document_template/templates.js:312
+#: document/static/js/modules/document_template/templates.js:257
+#: document/static/js/modules/exporter/latex/convert.js:108
+msgid "Translators"
+msgstr "Vertalers"
+
+#: document/static/js/modules/document_template/templates.js:258
+#: document/static/js/modules/exporter/latex/convert.js:109
+msgid "Reviewers"
+msgstr "Recensenten"
+
+#: document/static/js/modules/document_template/templates.js:259
+#: document/static/js/modules/exporter/latex/convert.js:110
+msgid "Contributors"
+msgstr "Bijdragers"
+
+#: document/static/js/modules/document_template/templates.js:315
 msgid "Richtext"
 msgstr "Richttekst"
 
-#: document/static/js/modules/document_template/templates.js:327
+#: document/static/js/modules/document_template/templates.js:330
 #: document/static/js/modules/importer/pandoc/convert.js:147
 msgid "Abstract"
 msgstr "Abstract"
 
-#: document/static/js/modules/document_template/templates.js:328
+#: document/static/js/modules/document_template/templates.js:331
 msgid "Cases/Case Reports"
 msgstr "Cases/Caserapporten"
 
-#: document/static/js/modules/document_template/templates.js:329
+#: document/static/js/modules/document_template/templates.js:332
 msgid "Conclusions/Comment"
 msgstr "Conclusies/commentaar"
 
-#: document/static/js/modules/document_template/templates.js:330
+#: document/static/js/modules/document_template/templates.js:333
 msgid "Discussion/Interpretation"
 msgstr "Discussie/interpretatie"
 
-#: document/static/js/modules/document_template/templates.js:331
+#: document/static/js/modules/document_template/templates.js:334
 msgid "Introduction/Synopsis"
 msgstr "Inleiding/Synopsis"
 
-#: document/static/js/modules/document_template/templates.js:332
+#: document/static/js/modules/document_template/templates.js:335
 msgid "Materials"
 msgstr "Materialen"
 
-#: document/static/js/modules/document_template/templates.js:333
+#: document/static/js/modules/document_template/templates.js:336
 msgid "Methods/Methodology/Procedures"
 msgstr "Methoden/Methodologie/Procedures"
 
-#: document/static/js/modules/document_template/templates.js:334
+#: document/static/js/modules/document_template/templates.js:337
 msgid "Results/Statement of Findings"
 msgstr "Resultaten/verklaring van bevindingen"
 
-#: document/static/js/modules/document_template/templates.js:335
+#: document/static/js/modules/document_template/templates.js:338
 msgid "Subjects/Participants/Patients"
 msgstr "Onderwerpen/Deelnemers/Patiënten"
 
-#: document/static/js/modules/document_template/templates.js:336
+#: document/static/js/modules/document_template/templates.js:339
 msgid "Supplementary materials"
 msgstr "Aanvullende materialen"
 
-#: document/static/js/modules/document_template/templates.js:378
+#: document/static/js/modules/document_template/templates.js:381
 msgid "Separator"
 msgstr "Scheidingsteken"
 
-#: document/static/js/modules/document_template/templates.js:395
+#: document/static/js/modules/document_template/templates.js:398
 msgid "Tags"
 msgstr "Labels"
 
-#: document/static/js/modules/document_template/templates.js:411
-msgid "Keywords"
-msgstr "Trefwoorden"
-
-#: document/static/js/modules/document_template/templates.js:484
+#: document/static/js/modules/document_template/templates.js:487
 msgid "User can not change first row"
 msgstr "Gebruiker kan de eerste rij niet wijzigen"
 
-#: document/static/js/modules/document_template/templates.js:519
+#: document/static/js/modules/document_template/templates.js:522
 msgid "Table of Contents"
 msgstr "Inhoudsopgave"
 
-#: document/static/js/modules/document_template/templates.js:732
+#: document/static/js/modules/document_template/templates.js:661
+msgid "Label"
+msgstr "Label"
+
+#: document/static/js/modules/document_template/templates.js:664
+msgid "Regex"
+msgstr "Regex"
+
+#: document/static/js/modules/document_template/templates.js:755
 msgid "Select which code block categories are available:"
 msgstr "Selecteer welke codeblokcategorieën beschikbaar zijn:"
 
-#: document/static/js/modules/document_template/templates.js:789
+#: document/static/js/modules/document_template/templates.js:812
 msgid "Add new document style"
 msgstr "Voeg een nieuwe documentstijl toe"
 
-#: document/static/js/modules/document_template/templates.js:801
+#: document/static/js/modules/document_template/templates.js:824
 msgid "Add new export template"
 msgstr "Voeg een nieuwe exportsjabloon toe"
 
-#: document/static/js/modules/document_template/templates.js:819
+#: document/static/js/modules/document_template/templates.js:842
 msgid "Element types"
 msgstr "Elementtypen"
 
-#: document/static/js/modules/document_template/templates.js:820
+#: document/static/js/modules/document_template/templates.js:843
 msgid "Document structure"
 msgstr "Documentstructuur"
 
-#: document/static/js/modules/document_template/templates.js:847
+#: document/static/js/modules/document_template/templates.js:870
 msgid "Setting"
 msgstr "Instelling"
 
-#: document/static/js/modules/document_template/templates.js:848
+#: document/static/js/modules/document_template/templates.js:871
 msgid "Value"
 msgstr "Waarde"
 
-#: document/static/js/modules/document_template/templates.js:854
+#: document/static/js/modules/document_template/templates.js:877
 msgid "Footnote specifications"
 msgstr "Voetnoot specificaties"
 
-#: document/static/js/modules/document_template/templates.js:862
+#: document/static/js/modules/document_template/templates.js:885
 msgid "Available languages"
 msgstr "Beschikbare talen"
 
-#: document/static/js/modules/document_template/templates.js:870
-#: user/static/js/modules/profile/templates.js:211
+#: document/static/js/modules/document_template/templates.js:893
+#: user/static/js/modules/profile/templates.js:216
 msgid "Default language"
 msgstr "Standaardtaal"
 
-#: document/static/js/modules/document_template/templates.js:878
+#: document/static/js/modules/document_template/templates.js:901
 msgid "Permitted paper sizes"
 msgstr "Toegestane papierformaten"
 
-#: document/static/js/modules/document_template/templates.js:886
+#: document/static/js/modules/document_template/templates.js:909
 msgid "Code block languages"
 msgstr "Codebloktalen"
 
-#: document/static/js/modules/document_template/templates.js:894
+#: document/static/js/modules/document_template/templates.js:917
 msgid "Code block categories"
 msgstr "Codeblokcategorieën"
 
-#: document/static/js/modules/document_template/templates.js:902
+#: document/static/js/modules/document_template/templates.js:925
 msgid "Custom bibliography header"
 msgstr "Aangepaste bibliografiekop"
 
-#: document/static/js/modules/document_template/templates.js:910
+#: document/static/js/modules/document_template/templates.js:933
+msgid "Contributor ID types"
+msgstr "Typen bijdrager-ID's"
+
+#: document/static/js/modules/document_template/templates.js:941
 msgid "Available citation styles"
 msgstr "Beschikbare citatiestijlen"
 
-#: document/static/js/modules/document_template/templates.js:918
+#: document/static/js/modules/document_template/templates.js:949
 msgid "Default citation style"
 msgstr "Standaard citatiestijl"
 
-#: document/static/js/modules/document_template/templates.js:928
+#: document/static/js/modules/document_template/templates.js:959
 msgid "Document styles"
 msgstr "Documentstijlen"
 
-#: document/static/js/modules/document_template/templates.js:938
+#: document/static/js/modules/document_template/templates.js:969
 msgid "Export templates"
 msgstr "Sjablonen exporteren"
 
-#: document/static/js/modules/documents/access_rights/index.js:57
+#: document/static/js/modules/documents/access_rights/index.js:99
 msgid "Cannot load document access data."
 msgstr "Kan documenttoegangsgegevens niet laden."
 
-#: document/static/js/modules/documents/access_rights/index.js:75
-msgid "Basic"
-msgstr "Basis"
-
-#: document/static/js/modules/documents/access_rights/index.js:76
-msgid "Basic access rights"
-msgstr "Basistoegangsrechten"
-
-#: document/static/js/modules/documents/access_rights/index.js:80
-#: document/static/js/modules/documents/access_rights/index.js:82
-#: document/static/js/modules/documents/access_rights/templates.js:92
-#: document/static/js/modules/documents/access_rights/templates.js:98
-msgid "Write"
-msgstr "Schrijven"
-
-#: document/static/js/modules/documents/access_rights/index.js:91
-#: document/static/js/modules/documents/access_rights/templates.js:99
-msgid "Write tracked"
-msgstr "Schrijf bijgehouden"
-
-#: document/static/js/modules/documents/access_rights/index.js:93
-msgid "Write with changes tracked"
-msgstr "Schrijf terwijl de wijzigingen worden bijgehouden"
-
-#: document/static/js/modules/documents/access_rights/index.js:102
-#: document/static/js/modules/documents/access_rights/index.js:104
-#: document/static/js/modules/documents/access_rights/templates.js:97
-#: document/static/js/modules/editor/menus/selection/model.js:43
-msgid "Comment"
-msgstr "Opmerking"
-
-#: document/static/js/modules/documents/access_rights/index.js:113
 #: document/static/js/modules/documents/access_rights/index.js:115
-#: document/static/js/modules/documents/access_rights/templates.js:90
-#: document/static/js/modules/documents/access_rights/templates.js:93
-msgid "Read"
-msgstr "Lezen"
-
-#: document/static/js/modules/documents/access_rights/index.js:124
-#: document/static/js/modules/documents/access_rights/index.js:142
-#: document/static/js/modules/documents/access_rights/templates.js:95
-msgid "Review"
-msgstr "Beoordeling"
-
-#: document/static/js/modules/documents/access_rights/index.js:125
-msgid "Access rights used within document review"
-msgstr "Toegangsrechten gebruikt bij documentbeoordeling"
-
-#: document/static/js/modules/documents/access_rights/index.js:129
-msgid "No comments"
-msgstr "Geen opmerkingen"
-
-#: document/static/js/modules/documents/access_rights/index.js:132
-msgid "Read document but not see comments and chats of others"
-msgstr "Lees het document, maar zie geen opmerkingen en chats van anderen"
-
-#: document/static/js/modules/documents/access_rights/index.js:145
-msgid "Comment, but not see comments and chats of others"
-msgstr "Reageer, maar zie geen opmerkingen en chats van anderen"
-
-#: document/static/js/modules/documents/access_rights/index.js:155
-#: document/static/js/modules/documents/access_rights/templates.js:96
-msgid "Review tracked"
-msgstr "Beoordeling bijgehouden"
-
-#: document/static/js/modules/documents/access_rights/index.js:158
-msgid "Write with tracked changes, but not see comments and chats of others"
-msgstr ""
-"Schrijf met bijgehouden wijzigingen, maar zie geen opmerkingen en chats van "
-"anderen"
-
-#: document/static/js/modules/documents/access_rights/index.js:234
-#: document/static/js/modules/documents/overview/index.js:789
+#: document/static/js/modules/documents/overview/index.js:784
 msgid "End-to-end encrypted document"
 msgstr "End-to-end gecodeerd document"
 
-#: document/static/js/modules/documents/access_rights/index.js:235
+#: document/static/js/modules/documents/access_rights/index.js:116
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
 "passphrase will need the document password shared with them through a secure "
@@ -1488,70 +1580,142 @@ msgstr ""
 "via een beveiligd kanaal buiten Fidus Writer. Stuur het wachtwoord niet via "
 "de documentchat."
 
-#: document/static/js/modules/documents/access_rights/index.js:244
-#: user/static/js/modules/contacts/add_dialog.js:54
-msgid "Add contact or invite new user"
-msgstr "Contact toevoegen of nieuwe gebruiker uitnodigen"
+#: document/static/js/modules/documents/access_rights/index.js:248
+msgid "Link copied to clipboard."
+msgstr "Link gekopieerd naar klembord."
 
-#: document/static/js/modules/documents/access_rights/index.js:245
-#: user/static/js/modules/contacts/add_dialog.js:55
-msgid "Add contact"
-msgstr "Contactpersoon toevoegen"
+#: document/static/js/modules/documents/access_rights/index.js:250
+msgid "Could not copy link."
+msgstr "Kan link niet kopiëren."
+
+#: document/static/js/modules/documents/access_rights/index.js:316
+msgid "Basic"
+msgstr "Basis"
+
+#: document/static/js/modules/documents/access_rights/index.js:317
+msgid "Basic access rights"
+msgstr "Basistoegangsrechten"
 
 #: document/static/js/modules/documents/access_rights/index.js:321
-msgid "Share your document with others"
-msgstr "Deel uw document met anderen"
+#: document/static/js/modules/documents/access_rights/index.js:323
+#: document/static/js/modules/documents/access_rights/templates.js:92
+#: document/static/js/modules/documents/access_rights/templates.js:98
+msgid "Write"
+msgstr "Schrijven"
+
+#: document/static/js/modules/documents/access_rights/index.js:330
+#: document/static/js/modules/documents/access_rights/templates.js:99
+msgid "Write tracked"
+msgstr "Schrijf bijgehouden"
+
+#: document/static/js/modules/documents/access_rights/index.js:332
+msgid "Write with changes tracked"
+msgstr "Schrijf terwijl de wijzigingen worden bijgehouden"
+
+#: document/static/js/modules/documents/access_rights/index.js:339
+#: document/static/js/modules/documents/access_rights/index.js:341
+#: document/static/js/modules/documents/access_rights/templates.js:97
+#: document/static/js/modules/editor/menus/selection/model.js:43
+msgid "Comment"
+msgstr "Opmerking"
 
 #: document/static/js/modules/documents/access_rights/index.js:348
+#: document/static/js/modules/documents/access_rights/index.js:350
+#: document/static/js/modules/documents/access_rights/templates.js:90
+#: document/static/js/modules/documents/access_rights/templates.js:93
+msgid "Read"
+msgstr "Lezen"
+
+#: document/static/js/modules/documents/access_rights/index.js:357
+#: document/static/js/modules/documents/access_rights/index.js:373
+#: document/static/js/modules/documents/access_rights/templates.js:95
+msgid "Review"
+msgstr "Beoordeling"
+
+#: document/static/js/modules/documents/access_rights/index.js:358
+msgid "Access rights used within document review"
+msgstr "Toegangsrechten gebruikt bij documentbeoordeling"
+
+#: document/static/js/modules/documents/access_rights/index.js:362
+msgid "No comments"
+msgstr "Geen opmerkingen"
+
+#: document/static/js/modules/documents/access_rights/index.js:365
+msgid "Read document but not see comments and chats of others"
+msgstr "Lees het document, maar zie geen opmerkingen en chats van anderen"
+
+#: document/static/js/modules/documents/access_rights/index.js:376
+msgid "Comment, but not see comments and chats of others"
+msgstr "Reageer, maar zie geen opmerkingen en chats van anderen"
+
+#: document/static/js/modules/documents/access_rights/index.js:384
+#: document/static/js/modules/documents/access_rights/templates.js:96
+msgid "Review tracked"
+msgstr "Beoordeling bijgehouden"
+
+#: document/static/js/modules/documents/access_rights/index.js:387
+msgid "Write with tracked changes, but not see comments and chats of others"
+msgstr ""
+"Schrijf met bijgehouden wijzigingen, maar zie geen opmerkingen en chats van "
+"anderen"
+
+#: document/static/js/modules/documents/access_rights/index.js:430
 #: document/static/js/modules/documents/access_rights/templates.js:38
 msgid "Loading…"
 msgstr "Laden…"
 
-#: document/static/js/modules/documents/access_rights/index.js:356
+#: document/static/js/modules/documents/access_rights/index.js:440
 msgid "Could not load share links."
 msgstr "Kan deellinks niet laden."
 
-#: document/static/js/modules/documents/access_rights/index.js:362
+#: document/static/js/modules/documents/access_rights/index.js:446
 msgid "Create share link"
 msgstr "Maak een deellink"
 
-#: document/static/js/modules/documents/access_rights/index.js:371
-#: document/static/js/modules/documents/overview/index.js:946
+#: document/static/js/modules/documents/access_rights/index.js:455
+#: document/static/js/modules/documents/overview/index.js:941
 msgid "Create"
 msgstr "Creëren"
 
-#: document/static/js/modules/documents/access_rights/index.js:421
+#: document/static/js/modules/documents/access_rights/index.js:503
 msgid "Share link created."
 msgstr "Deellink gemaakt."
 
-#: document/static/js/modules/documents/access_rights/index.js:427
+#: document/static/js/modules/documents/access_rights/index.js:509
 msgid "Could not create share link."
 msgstr "Kan de deellink niet maken."
 
-#: document/static/js/modules/documents/access_rights/index.js:453
+#: document/static/js/modules/documents/access_rights/index.js:535
 msgid "Share link revoked."
 msgstr "Deellink ingetrokken."
 
-#: document/static/js/modules/documents/access_rights/index.js:455
-#: document/static/js/modules/documents/access_rights/index.js:459
+#: document/static/js/modules/documents/access_rights/index.js:537
+#: document/static/js/modules/documents/access_rights/index.js:541
 msgid "Could not revoke share link."
 msgstr "Kan de deellink niet intrekken."
 
-#: document/static/js/modules/documents/access_rights/index.js:575
-msgid "Link copied to clipboard."
-msgstr "Link gekopieerd naar klembord."
-
-#: document/static/js/modules/documents/access_rights/index.js:577
-msgid "Could not copy link."
-msgstr "Kan link niet kopiëren."
-
-#: document/static/js/modules/documents/access_rights/index.js:642
+#: document/static/js/modules/documents/access_rights/index.js:552
 msgid "Access rights have been saved"
 msgstr "Toegangsrechten zijn opgeslagen"
 
-#: document/static/js/modules/documents/access_rights/index.js:648
+#: document/static/js/modules/documents/access_rights/index.js:558
 msgid "Access rights could not be saved"
 msgstr "Toegangsrechten konden niet worden opgeslagen"
+
+#: document/static/js/modules/documents/access_rights/index.js:607
+#: user/static/js/modules/contacts/add_dialog.js:54
+msgid "Add contact or invite new user"
+msgstr "Contact toevoegen of nieuwe gebruiker uitnodigen"
+
+#: document/static/js/modules/documents/access_rights/index.js:608
+#: user/static/js/modules/contacts/add_dialog.js:55
+msgid "Add contact"
+msgstr "Contactpersoon toevoegen"
+
+#: document/static/js/modules/documents/access_rights/index.js:671
+#: document/static/js/modules/documents/overview/actions.js:55
+msgid "Share your document with others"
+msgstr "Deel uw document met anderen"
 
 #: document/static/js/modules/documents/access_rights/templates.js:6
 msgid "People"
@@ -1575,7 +1739,6 @@ msgstr "Medewerkers"
 
 #: document/static/js/modules/documents/access_rights/templates.js:27
 #: document/static/js/modules/documents/access_rights/templates.js:85
-#: document/static/js/modules/documents/overview/index.js:587
 msgid "Rights"
 msgstr "Rechten"
 
@@ -1649,62 +1812,74 @@ msgstr ""
 msgid "Invite"
 msgstr "Uitnodiging"
 
-#: document/static/js/modules/documents/overview/actions.js:36
-#: document/static/js/modules/documents/overview/index.js:779
+#: document/static/js/modules/documents/overview/actions.js:37
+#: document/static/js/modules/documents/overview/index.js:774
 #: document/static/js/modules/editor/e2ee/password-dialog.js:196
 msgid "Encrypted Document"
 msgstr "Gecodeerd document"
 
-#: document/static/js/modules/documents/overview/actions.js:60
+#: document/static/js/modules/documents/overview/actions.js:54
+msgid "Access Rights"
+msgstr "Toegangsrechten"
+
+#: document/static/js/modules/documents/overview/actions.js:65
+msgid "Loading access rights…"
+msgstr "Toegangsrechten laden…"
+
+#: document/static/js/modules/documents/overview/actions.js:111
+msgid "Could not load access rights."
+msgstr "Kan toegangsrechten niet laden."
+
+#: document/static/js/modules/documents/overview/actions.js:128
 msgid "Document has been deleted"
 msgstr "Document is verwijderd"
 
-#: document/static/js/modules/documents/overview/actions.js:70
+#: document/static/js/modules/documents/overview/actions.js:138
 msgid "Could not delete document"
 msgstr "Kan document niet verwijderen"
 
-#: document/static/js/modules/documents/overview/actions.js:80
+#: document/static/js/modules/documents/overview/actions.js:148
 msgid "You cannot delete a document while you are offline."
 msgstr "U kunt een document niet verwijderen terwijl u offline bent."
 
-#: document/static/js/modules/documents/overview/actions.js:96
+#: document/static/js/modules/documents/overview/actions.js:164
 msgid "Do you really want to delete the following documents?"
 msgstr "Wilt u de volgende documenten echt verwijderen?"
 
-#: document/static/js/modules/documents/overview/actions.js:99
+#: document/static/js/modules/documents/overview/actions.js:167
 msgid "Do you really want to delete the following document?"
 msgstr "Wilt u het volgende document echt verwijderen?"
 
-#: document/static/js/modules/documents/overview/actions.js:138
+#: document/static/js/modules/documents/overview/actions.js:206
 msgid "Import as:"
 msgstr "Importeren als:"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:229
 msgid ""
 "You need to set up a personal passphrase before you can import documents."
 msgstr ""
 "Voordat u documenten kunt importeren, moet u een persoonlijke wachtwoordzin "
 "instellen."
 
-#: document/static/js/modules/documents/overview/actions.js:173
+#: document/static/js/modules/documents/overview/actions.js:241
 msgid "This document will be saved as encrypted."
 msgstr "Dit document wordt gecodeerd opgeslagen."
 
-#: document/static/js/modules/documents/overview/actions.js:181
-#: document/static/js/modules/documents/overview/index.js:926
+#: document/static/js/modules/documents/overview/actions.js:249
+#: document/static/js/modules/documents/overview/index.js:921
 msgid "Non-encrypted"
 msgstr "Niet-gecodeerd"
 
-#: document/static/js/modules/documents/overview/actions.js:185
-#: document/static/js/modules/documents/overview/index.js:931
+#: document/static/js/modules/documents/overview/actions.js:253
+#: document/static/js/modules/documents/overview/index.js:926
 msgid "Encrypted"
 msgstr "Gecodeerd"
 
-#: document/static/js/modules/documents/overview/actions.js:198
+#: document/static/js/modules/documents/overview/actions.js:266
 msgid "Supported formats"
 msgstr "Ondersteunde formaten"
 
-#: document/static/js/modules/documents/overview/actions.js:198
+#: document/static/js/modules/documents/overview/actions.js:266
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1712,76 +1887,80 @@ msgstr ""
 "U kunt ook een ZIP-bestand uploaden dat één bestand in een van deze formaten "
 "bevat, evenals afbeeldingen en/of een Bibtex-bestand."
 
-#: document/static/js/modules/documents/overview/actions.js:202
+#: document/static/js/modules/documents/overview/actions.js:270
 msgid "Import a document"
 msgstr "Importeer een document"
 
-#: document/static/js/modules/documents/overview/actions.js:220
+#: document/static/js/modules/documents/overview/actions.js:288
 msgid "File too large"
 msgstr "Bestand te groot"
 
-#: document/static/js/modules/documents/overview/actions.js:279
+#: document/static/js/modules/documents/overview/actions.js:347
 msgid "No importable files found in ZIP"
 msgstr "Geen importeerbare bestanden gevonden in ZIP"
 
-#: document/static/js/modules/documents/overview/actions.js:321
+#: document/static/js/modules/documents/overview/actions.js:389
 msgid "Unsupported file format"
 msgstr "Niet-ondersteunde bestandsindeling"
 
-#: document/static/js/modules/documents/overview/actions.js:411
-#: document/static/js/modules/documents/overview/actions.js:463
+#: document/static/js/modules/documents/overview/actions.js:479
+#: document/static/js/modules/documents/overview/actions.js:531
 msgid "Could not create encrypted document."
 msgstr "Kan versleuteld document niet maken."
 
-#: document/static/js/modules/documents/overview/actions.js:457
+#: document/static/js/modules/documents/overview/actions.js:525
 #: document/static/js/modules/editor/collab/doc.js:309
 msgid "Incorrect passphrase. Please try again."
 msgstr "Onjuiste wachtwoordzin. Probeer het opnieuw."
 
-#: document/static/js/modules/documents/overview/actions.js:501
+#: document/static/js/modules/documents/overview/actions.js:569
 msgid "Recovery failed. Please check your recovery key and try again."
 msgstr ""
 "Herstel is mislukt. Controleer uw herstelsleutel en probeer het opnieuw."
 
-#: document/static/js/modules/documents/overview/actions.js:597
-#: document/static/js/modules/editor/document_template/index.js:129
+#: document/static/js/modules/documents/overview/actions.js:665
+#: document/static/js/modules/editor/document_template/index.js:130
 msgid "Encrypt the copy"
 msgstr "Versleutel de kopie"
 
-#: document/static/js/modules/documents/overview/actions.js:604
-#: document/static/js/modules/editor/document_template/index.js:136
+#: document/static/js/modules/documents/overview/actions.js:672
+#: document/static/js/modules/editor/document_template/index.js:137
 msgid "Choose document template"
 msgstr "Kies documentsjabloon"
 
-#: document/static/js/modules/documents/overview/actions.js:606
+#: document/static/js/modules/documents/overview/actions.js:674
 msgid "Select document template for copies"
 msgstr "Selecteer documentsjabloon voor kopieën"
 
-#: document/static/js/modules/documents/overview/actions.js:606
-#: document/static/js/modules/editor/document_template/index.js:138
+#: document/static/js/modules/documents/overview/actions.js:674
+#: document/static/js/modules/editor/document_template/index.js:139
 msgid "Select document template for copy."
 msgstr "Selecteer documentsjabloon om te kopiëren."
 
-#: document/static/js/modules/documents/overview/actions.js:619
+#: document/static/js/modules/documents/overview/actions.js:687
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
-#: document/static/js/modules/editor/document_template/index.js:151
+#: document/static/js/modules/editor/document_template/index.js:152
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:342
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: document/static/js/modules/documents/overview/actions.js:668
+#: document/static/js/modules/documents/overview/actions.js:736
 msgid "Could not copy document."
 msgstr "Kan document niet kopiëren."
 
-#: document/static/js/modules/documents/overview/actions.js:698
-#: document/static/js/modules/documents/overview/actions.js:730
-#: document/static/js/modules/editor/document_template/index.js:229
-#: document/static/js/modules/editor/document_template/index.js:283
+#: document/static/js/modules/documents/overview/actions.js:766
+#: document/static/js/modules/documents/overview/actions.js:798
+#: document/static/js/modules/editor/document_template/index.js:230
+#: document/static/js/modules/editor/document_template/index.js:284
 msgid "Incorrect password."
 msgstr "Onjuist wachtwoord."
 
-#: document/static/js/modules/documents/overview/actions.js:952
+#: document/static/js/modules/documents/overview/actions.js:1029
+msgid "Document Settings"
+msgstr "Documentinstellingen"
+
+#: document/static/js/modules/documents/overview/actions.js:1084
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
@@ -1792,13 +1971,7 @@ msgstr ""
 msgid "Document Overview"
 msgstr "Documentoverzicht"
 
-#: document/static/js/modules/documents/overview/index.js:117
-msgid "You cannot access rights data of a document while you are offline."
-msgstr ""
-"U heeft geen toegang tot de rechtengegevens van een document terwijl u "
-"offline bent."
-
-#: document/static/js/modules/documents/overview/index.js:149
+#: document/static/js/modules/documents/overview/index.js:135
 msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
@@ -1806,53 +1979,58 @@ msgstr ""
 "Als u een lege map achterlaat, wordt deze verwijderd. Wilt u deze map echt "
 "verwijderen?"
 
-#: document/static/js/modules/documents/overview/index.js:195
+#: document/static/js/modules/documents/overview/index.js:181
 msgid "You cannot open a document while you are offline."
 msgstr "U kunt een document niet openen terwijl u offline bent."
 
-#: document/static/js/modules/documents/overview/index.js:239
+#: document/static/js/modules/documents/overview/index.js:234
 msgid "Document data loading failed."
 msgstr "Laden van documentgegevens mislukt."
 
-#: document/static/js/modules/documents/overview/index.js:572
+#: document/static/js/modules/documents/overview/index.js:567
 msgid "No documents available"
 msgstr "Geen documenten beschikbaar"
 
-#: document/static/js/modules/documents/overview/index.js:573
+#: document/static/js/modules/documents/overview/index.js:568
 msgid "No documents found"
 msgstr "Geen documenten gevonden"
 
-#: document/static/js/modules/documents/overview/index.js:583
+#: document/static/js/modules/documents/overview/index.js:578
 msgid "Revisions"
 msgstr "Revisies"
 
-#: document/static/js/modules/documents/overview/index.js:584
+#: document/static/js/modules/documents/overview/index.js:579
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:112
 msgid "Created"
 msgstr "Gemaakt"
 
-#: document/static/js/modules/documents/overview/index.js:585
+#: document/static/js/modules/documents/overview/index.js:580
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:113
 msgid "Last changed"
 msgstr "Laatst gewijzigd"
 
-#: document/static/js/modules/documents/overview/index.js:586
+#: document/static/js/modules/documents/overview/index.js:581
 msgid "Owner"
 msgstr "Eigenaar"
 
-#: document/static/js/modules/documents/overview/index.js:827
+#: document/static/js/modules/documents/overview/index.js:582
+#: document/static/js/modules/editor/menus/headerbar/model.js:690
+msgid "Settings"
+msgstr "Instellingen"
+
+#: document/static/js/modules/documents/overview/index.js:822
 msgid "Undefined"
 msgstr "Ongedefinieerd"
 
-#: document/static/js/modules/documents/overview/index.js:840
+#: document/static/js/modules/documents/overview/index.js:835
 msgid "Copy selected as..."
 msgstr "Geselecteerde kopiëren als..."
 
-#: document/static/js/modules/documents/overview/index.js:842
+#: document/static/js/modules/documents/overview/index.js:837
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Kopieer de documenten en wijs ze toe aan een specifiek sjabloon."
 
-#: document/static/js/modules/documents/overview/index.js:893
+#: document/static/js/modules/documents/overview/index.js:888
 msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
@@ -1860,30 +2038,30 @@ msgstr ""
 "Gecodeerde documenten beschermen uw inhoud, zodat alleen mensen met het "
 "wachtwoord deze kunnen lezen."
 
-#: document/static/js/modules/documents/overview/index.js:894
-#: document/static/js/modules/documents/overview/index.js:908
+#: document/static/js/modules/documents/overview/index.js:889
+#: document/static/js/modules/documents/overview/index.js:903
 msgid "Advantages"
 msgstr "Voordelen"
 
-#: document/static/js/modules/documents/overview/index.js:896
+#: document/static/js/modules/documents/overview/index.js:891
 msgid "Only people with the password can read the document."
 msgstr "Alleen mensen met het wachtwoord kunnen het document lezen."
 
-#: document/static/js/modules/documents/overview/index.js:897
+#: document/static/js/modules/documents/overview/index.js:892
 msgid "The server cannot access the document contents."
 msgstr "De server heeft geen toegang tot de inhoud van het document."
 
-#: document/static/js/modules/documents/overview/index.js:899
-#: document/static/js/modules/documents/overview/index.js:914
+#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:909
 msgid "Disadvantages"
 msgstr "Nadelen"
 
-#: document/static/js/modules/documents/overview/index.js:901
+#: document/static/js/modules/documents/overview/index.js:896
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr ""
 "Beperkte toegangsrechten (geen bijgehouden wijzigingen of beoordelingsmodi)."
 
-#: document/static/js/modules/documents/overview/index.js:902
+#: document/static/js/modules/documents/overview/index.js:897
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
@@ -1891,7 +2069,7 @@ msgstr ""
 "Als u het wachtwoord of de wachtwoordzin kwijtraakt, kunt u het document op "
 "geen enkele manier herstellen."
 
-#: document/static/js/modules/documents/overview/index.js:903
+#: document/static/js/modules/documents/overview/index.js:898
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
@@ -1899,45 +2077,45 @@ msgstr ""
 "U moet het wachtwoord handmatig met bijdragers delen (tenzij ze een "
 "persoonlijke wachtwoordzin gebruiken)."
 
-#: document/static/js/modules/documents/overview/index.js:907
+#: document/static/js/modules/documents/overview/index.js:902
 msgid "Regular documents are the default and work well for most users."
 msgstr ""
 "Normale documenten zijn de standaard en werken goed voor de meeste "
 "gebruikers."
 
-#: document/static/js/modules/documents/overview/index.js:910
+#: document/static/js/modules/documents/overview/index.js:905
 msgid "Full access rights options including tracked changes and review modes."
 msgstr ""
 "Opties voor volledige toegangsrechten, inclusief bijgehouden wijzigingen en "
 "beoordelingsmodi."
 
-#: document/static/js/modules/documents/overview/index.js:911
+#: document/static/js/modules/documents/overview/index.js:906
 msgid "No risk of losing access if you forget a password."
 msgstr "Geen risico dat u de toegang verliest als u een wachtwoord vergeet."
 
-#: document/static/js/modules/documents/overview/index.js:912
+#: document/static/js/modules/documents/overview/index.js:907
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr ""
 "Gemakkelijker samenwerken: u hoeft geen wachtwoorden te delen met bijdragers."
 
-#: document/static/js/modules/documents/overview/index.js:916
+#: document/static/js/modules/documents/overview/index.js:911
 msgid "The server can technically access the document contents."
 msgstr ""
 "De server heeft technisch gezien toegang tot de inhoud van het document."
 
-#: document/static/js/modules/documents/overview/index.js:917
+#: document/static/js/modules/documents/overview/index.js:912
 msgid "No additional protection beyond your account password."
 msgstr "Geen extra bescherming naast uw accountwachtwoord."
 
-#: document/static/js/modules/documents/overview/index.js:921
+#: document/static/js/modules/documents/overview/index.js:916
 msgid "Choose encryption type of new document."
 msgstr "Kies het coderingstype van het nieuwe document."
 
-#: document/static/js/modules/documents/overview/index.js:975
+#: document/static/js/modules/documents/overview/index.js:970
 msgid "Set Up Personal Encryption (Optional)"
 msgstr "Persoonlijke codering instellen (optioneel)"
 
-#: document/static/js/modules/documents/overview/index.js:977
+#: document/static/js/modules/documents/overview/index.js:972
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
@@ -1945,26 +2123,26 @@ msgstr ""
 "Wilt u nu een persoonlijke wachtwoordzin instellen? Hiermee kunt u al uw "
 "gecodeerde documenten ontgrendelen met één enkele wachtwoordzin."
 
-#: document/static/js/modules/documents/overview/index.js:978
+#: document/static/js/modules/documents/overview/index.js:973
 msgid "Note:"
 msgstr "Opmerking:"
 
-#: document/static/js/modules/documents/overview/index.js:978
+#: document/static/js/modules/documents/overview/index.js:973
 msgid "This is optional. You can also use a per-document password instead."
 msgstr ""
 "Dit is optioneel. U kunt in plaats daarvan ook een wachtwoord per document "
 "gebruiken."
 
-#: document/static/js/modules/documents/overview/index.js:982
+#: document/static/js/modules/documents/overview/index.js:977
 msgid "Skip for Now"
 msgstr "Overslaan voor nu"
 
-#: document/static/js/modules/documents/overview/index.js:993
+#: document/static/js/modules/documents/overview/index.js:988
 msgid "Set Up Passphrase"
 msgstr "Wachtwoordzin instellen"
 
-#: document/static/js/modules/documents/overview/index.js:1028
-#: user/static/js/modules/profile/index.js:232
+#: document/static/js/modules/documents/overview/index.js:1023
+#: user/static/js/modules/profile/index.js:264
 msgid "Failed to set up passphrase: "
 msgstr "Kan de wachtwoordzin niet instellen:"
 
@@ -2599,7 +2777,7 @@ msgstr ""
 msgid "Insert"
 msgstr "Invoegen"
 
-#: document/static/js/modules/editor/dialogs/citation.js:39
+#: document/static/js/modules/editor/dialogs/citation.js:40
 #: document/static/js/modules/editor/dialogs/code_block.js:120
 #: document/static/js/modules/editor/dialogs/figure.js:374
 #: document/static/js/modules/editor/dialogs/templates.js:315
@@ -2614,21 +2792,21 @@ msgstr "Invoegen"
 msgid "Remove"
 msgstr "Verwijderen"
 
-#: document/static/js/modules/editor/dialogs/citation.js:69
+#: document/static/js/modules/editor/dialogs/citation.js:68
 msgid "Configure Citation"
 msgstr "Configureer Citatie"
 
-#: document/static/js/modules/editor/dialogs/citation.js:243
+#: document/static/js/modules/editor/dialogs/citation.js:261
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "Zoekopdracht..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:256
+#: document/static/js/modules/editor/dialogs/citation.js:274
 #: document/static/js/modules/editor/dialogs/templates.js:313
 msgid "Year"
 msgstr "Jaar"
 
-#: document/static/js/modules/editor/dialogs/citation.js:425
+#: document/static/js/modules/editor/dialogs/citation.js:443
 msgid "Please select at least one citation source!"
 msgstr "Selecteer ten minste één citatiebron!"
 
@@ -2644,14 +2822,18 @@ msgstr "Categorie"
 msgid "Optional title"
 msgstr "Optionele titel"
 
-#: document/static/js/modules/editor/dialogs/contributor.js:28
-#: document/static/js/modules/editor/dialogs/contributor.js:119
-#: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:22
+#: document/static/js/modules/editor/dialogs/contributor.js:31
+#: document/static/js/modules/editor/dialogs/contributor.js:157
+#: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:24
 #: document/static/js/modules/editor/state_plugins/tag_input/tag_editor_plugins.js:20
 msgid "Add"
 msgstr "Toevoegen"
 
-#: document/static/js/modules/editor/dialogs/contributor.js:53
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+msgid "ID Value format is incorrect for "
+msgstr "ID-waardenotatie is onjuist voor "
+
+#: document/static/js/modules/editor/dialogs/contributor.js:89
 msgid "Email is in incorrect format!"
 msgstr "E-mail heeft het verkeerde formaat!"
 
@@ -2891,50 +3073,48 @@ msgstr "Pagina"
 msgid "Text before"
 msgstr "Tekst ervoor"
 
-#: document/static/js/modules/editor/dialogs/templates.js:387
+#: document/static/js/modules/editor/dialogs/templates.js:395
+msgid "Select ID Type"
+msgstr "Selecteer ID-type"
+
+#: document/static/js/modules/editor/dialogs/templates.js:401
 msgid "Firstname"
 msgstr "Voornaam"
 
-#: document/static/js/modules/editor/dialogs/templates.js:388
+#: document/static/js/modules/editor/dialogs/templates.js:402
 msgid "Lastname"
 msgstr "Achternaam"
 
-#: document/static/js/modules/editor/dialogs/templates.js:389
-#: document/static/js/modules/schema/document/content.js:47
-#: user/static/js/modules/profile/templates.js:163
-msgid "Email"
-msgstr "E-mail"
+#: document/static/js/modules/editor/dialogs/templates.js:409
+msgid "ID Value"
+msgstr "ID-waarde"
 
-#: document/static/js/modules/editor/dialogs/templates.js:390
-msgid "Institution"
-msgstr "Instelling"
-
-#: document/static/js/modules/editor/document_template/index.js:58
+#: document/static/js/modules/editor/document_template/index.js:59
 msgid "Optional sections"
 msgstr "Optionele secties"
 
-#: document/static/js/modules/editor/document_template/index.js:60
+#: document/static/js/modules/editor/document_template/index.js:61
 msgid "Choose which optional sections to enable."
 msgstr "Kies welke optionele secties u wilt inschakelen."
 
-#: document/static/js/modules/editor/document_template/index.js:66
+#: document/static/js/modules/editor/document_template/index.js:67
 msgid "Show/hide"
 msgstr "Tonen/verbergen"
 
-#: document/static/js/modules/editor/document_template/index.js:109
+#: document/static/js/modules/editor/document_template/index.js:110
 msgid "Create copy as ..."
 msgstr "Kopie maken als..."
 
-#: document/static/js/modules/editor/document_template/index.js:112
+#: document/static/js/modules/editor/document_template/index.js:113
 msgid "Create copy of the current document with a specific template."
 msgstr "Maak een kopie van het huidige document met een specifieke sjabloon."
 
-#: document/static/js/modules/editor/document_template/index.js:331
+#: document/static/js/modules/editor/document_template/index.js:332
 msgid "Export the document to a DOCX file with the given template."
 msgstr ""
 "Exporteer het document naar een DOCX-bestand met de opgegeven sjabloon."
 
-#: document/static/js/modules/editor/document_template/index.js:354
+#: document/static/js/modules/editor/document_template/index.js:355
 msgid "Export the document to an ODT file with the given template."
 msgstr "Exporteer het document naar een ODT-bestand met de opgegeven sjabloon."
 
@@ -3145,7 +3325,7 @@ msgstr ""
 #: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
 #: user/static/js/modules/profile/templates.js:30
-#: user/static/js/modules/profile/templates.js:100
+#: user/static/js/modules/profile/templates.js:105
 #: user/static/js/modules/signup/index.js:27
 msgid "Password"
 msgstr "Wachtwoord"
@@ -3325,7 +3505,7 @@ msgid "Incorrect passphrase."
 msgstr "Onjuiste wachtwoordzin."
 
 #: document/static/js/modules/editor/index.js:804
-#: user/static/js/modules/profile/index.js:263
+#: user/static/js/modules/profile/index.js:295
 msgid "Recovery failed: "
 msgstr "Herstel mislukt:"
 
@@ -3470,7 +3650,7 @@ msgid "Removed"
 msgstr "VERWIJDERD"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:250
-#: usermedia/static/js/modules/images/overview/index.js:257
+#: usermedia/static/js/modules/images/overview/index.js:276
 msgid "Added"
 msgstr "Toegevoegd"
 
@@ -3652,8 +3832,8 @@ msgid "Sign up / Log in"
 msgstr "Aanmelden / Inloggen"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:198
-#: document/static/js/modules/editor/menus/headerbar/view.js:545
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:548
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Close the document and return to the document overview menu."
 msgstr "Sluit het document en keer terug naar het documentoverzichtmenu."
 
@@ -3716,7 +3896,7 @@ msgstr ""
 "gebruikers van de wachtwoordzin ontvangen deze automatisch; Bijdragers "
 "zonder wachtwoordzin moeten deze handmatig met hen delen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:472
+#: document/static/js/modules/editor/menus/headerbar/model.js:485
 msgid ""
 "Document encryption key rotated. Other passphrase users will receive the new "
 "key automatically."
@@ -3724,7 +3904,7 @@ msgstr ""
 "Documentencryptiesleutel geroteerd. Andere wachtwoordzingebruikers ontvangen "
 "de nieuwe sleutel automatisch."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:479
+#: document/static/js/modules/editor/menus/headerbar/model.js:492
 msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
@@ -3732,47 +3912,47 @@ msgstr ""
 "Documentwachtwoord gewijzigd. Vergeet niet om het nieuwe wachtwoord met uw "
 "bijdragers te delen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:487
+#: document/static/js/modules/editor/menus/headerbar/model.js:500
 msgid "The current password is incorrect."
 msgstr "Het huidige wachtwoord is onjuist."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:503
+#: document/static/js/modules/editor/menus/headerbar/model.js:516
 msgid "Export"
 msgstr "Exporteren"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:504
+#: document/static/js/modules/editor/menus/headerbar/model.js:517
 msgid "Export of the document contents"
 msgstr "Exporteren van de documentinhoud"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:510
+#: document/static/js/modules/editor/menus/headerbar/model.js:523
 msgid "HTML"
 msgstr "HTML"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:512
+#: document/static/js/modules/editor/menus/headerbar/model.js:525
 msgid "Export the document to an HTML file."
 msgstr "Exporteer het document naar een HTML-bestand."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:533
+#: document/static/js/modules/editor/menus/headerbar/model.js:546
 msgid "Epub"
 msgstr "Epub"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:536
+#: document/static/js/modules/editor/menus/headerbar/model.js:549
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Exporteer het document naar een elektronisch Epub-lezerbestand."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:559
+#: document/static/js/modules/editor/menus/headerbar/model.js:572
 msgid "LaTeX"
 msgstr "Latex"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:561
+#: document/static/js/modules/editor/menus/headerbar/model.js:574
 msgid "Export the document to an LaTeX file."
 msgstr "Exporteer het document naar een LaTeX-bestand."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:581
+#: document/static/js/modules/editor/menus/headerbar/model.js:594
 msgid "JATS"
 msgstr "JATS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:584
+#: document/static/js/modules/editor/menus/headerbar/model.js:597
 msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
@@ -3780,209 +3960,205 @@ msgstr ""
 "Exporteer het document naar een Journal Archiving and Interchange Tag "
 "Library NISO JATS versie 1.2-bestand."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:607
+#: document/static/js/modules/editor/menus/headerbar/model.js:620
 msgid "BITS"
 msgstr "BITS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:610
+#: document/static/js/modules/editor/menus/headerbar/model.js:623
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr ""
 "Exporteer het document naar een Book Interchange Tag Set BITS versie 2.1-"
 "bestand."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:633
+#: document/static/js/modules/editor/menus/headerbar/model.js:646
 msgid "Pandoc JSON"
 msgstr "Pandoc JSON"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:636
+#: document/static/js/modules/editor/menus/headerbar/model.js:649
 msgid "Export the document to a Pandoc JSON file."
 msgstr "Exporteer het document naar een Pandoc JSON-bestand."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:658
+#: document/static/js/modules/editor/menus/headerbar/model.js:671
 msgid "Slim FIDUS"
 msgstr "Slanke FIDUS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:661
+#: document/static/js/modules/editor/menus/headerbar/model.js:674
 msgid "Export the document to a FIDUS file without its template."
 msgstr "Exporteer het document naar een FIDUS-bestand zonder sjabloon."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:677
-msgid "Settings"
-msgstr "Instellingen"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:678
+#: document/static/js/modules/editor/menus/headerbar/model.js:691
 msgid "Configure settings of this document."
 msgstr "Configureer de instellingen van dit document."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:685
+#: document/static/js/modules/editor/menus/headerbar/model.js:698
 msgid "Citation Style"
 msgstr "Citatiestijl"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:687
+#: document/static/js/modules/editor/menus/headerbar/model.js:700
 msgid "Choose your preferred citation style."
 msgstr "Kies de citatiestijl van uw voorkeur."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:696
+#: document/static/js/modules/editor/menus/headerbar/model.js:709
 msgid "Document Style"
 msgstr "Documentstijl"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:698
+#: document/static/js/modules/editor/menus/headerbar/model.js:711
 msgid "Choose your preferred document style."
 msgstr "Kies de documentstijl van uw voorkeur."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:710
+#: document/static/js/modules/editor/menus/headerbar/model.js:723
 msgid "Text Language"
 msgstr "Teksttaal"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:712
+#: document/static/js/modules/editor/menus/headerbar/model.js:725
 msgid "Choose the language of the document."
 msgstr "Kies de taal van het document."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:720
+#: document/static/js/modules/editor/menus/headerbar/model.js:733
 #: document/static/js/modules/schema/const.js:19
 msgid "English (United States)"
 msgstr "Engels (Verenigde Staten)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:725
+#: document/static/js/modules/editor/menus/headerbar/model.js:738
 #: document/static/js/modules/schema/const.js:18
 msgid "English (United Kingdom)"
 msgstr "Engels (Verenigd Koninkrijk)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:728
+#: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:23
 msgid "German (Germany)"
 msgstr "Duits (Duitsland)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:731
+#: document/static/js/modules/editor/menus/headerbar/model.js:744
 #: document/static/js/modules/schema/const.js:11
 msgid "Chinese (Simplified)"
 msgstr "Chinees (vereenvoudigd)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/editor/menus/headerbar/model.js:747
 #: document/static/js/modules/schema/const.js:47
 msgid "Spanish"
 msgstr "Spaans"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:735
+#: document/static/js/modules/editor/menus/headerbar/model.js:748
 #: document/static/js/modules/schema/const.js:21
 msgid "French"
 msgstr "Frans"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:736
+#: document/static/js/modules/editor/menus/headerbar/model.js:749
 #: document/static/js/modules/schema/const.js:30
 msgid "Japanese"
 msgstr "Japanse"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:737
+#: document/static/js/modules/editor/menus/headerbar/model.js:750
 #: document/static/js/modules/schema/const.js:29
 msgid "Italian"
 msgstr "Italiaans"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:741
+#: document/static/js/modules/editor/menus/headerbar/model.js:754
 #: document/static/js/modules/schema/const.js:38
 msgid "Portuguese (Brazil)"
 msgstr "Portugees (Brazilië)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:791
+#: document/static/js/modules/editor/menus/headerbar/model.js:804
 msgid "Other"
 msgstr "Ander"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:842
+#: document/static/js/modules/editor/menus/headerbar/model.js:855
 msgid "Paper Size"
 msgstr "Papierformaat"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:845
+#: document/static/js/modules/editor/menus/headerbar/model.js:858
 msgid "Choose a papersize for print and PDF generation."
 msgstr "Kies een papierformaat voor afdrukken en PDF-generatie."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:853
+#: document/static/js/modules/editor/menus/headerbar/model.js:866
 msgid "DIN A4"
 msgstr "DIN-A4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:856
+#: document/static/js/modules/editor/menus/headerbar/model.js:869
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr ""
 "A4 (DIN A4/ISO 216), dat in het grootste deel van de wereld wordt gebruikt."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:879
+#: document/static/js/modules/editor/menus/headerbar/model.js:892
 msgid "US Letter"
 msgstr "Amerikaanse brief"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:882
+#: document/static/js/modules/editor/menus/headerbar/model.js:895
 msgid "The format used by the USA and some other American countries."
 msgstr ""
 "Het formaat dat wordt gebruikt door de VS en enkele andere Amerikaanse "
 "landen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:910
+#: document/static/js/modules/editor/menus/headerbar/model.js:923
 msgid "Copyright Information"
 msgstr "Auteursrechtinformatie"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:934
+#: document/static/js/modules/editor/menus/headerbar/model.js:947
 msgid "Tools"
 msgstr "Hulpmiddelen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:935
+#: document/static/js/modules/editor/menus/headerbar/model.js:948
 msgid "Select document editing tool."
 msgstr "Selecteer het documentbewerkingshulpmiddel."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:941
+#: document/static/js/modules/editor/menus/headerbar/model.js:954
 #: document/static/js/modules/editor/tools/word_count/index.js:13
 msgid "Word counter"
 msgstr "Woordteller"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:943
+#: document/static/js/modules/editor/menus/headerbar/model.js:956
 msgid "See document statistics."
 msgstr "Zie documentstatistieken."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:951
+#: document/static/js/modules/editor/menus/headerbar/model.js:964
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:34
 #: document/static/js/modules/editor/tools/search_replace/index.js:265
 msgid "Search and replace"
 msgstr "Zoeken en vervangen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:953
+#: document/static/js/modules/editor/menus/headerbar/model.js:966
 msgid "Show a search and replace dialog."
 msgstr "Toon een zoek-en-vervang-dialoogvenster."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:962
+#: document/static/js/modules/editor/menus/headerbar/model.js:975
 msgid "Keyboard shortcuts"
 msgstr "Sneltoetsen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:965
+#: document/static/js/modules/editor/menus/headerbar/model.js:978
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Toon een overzicht van beschikbare sneltoetsen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:977
+#: document/static/js/modules/editor/menus/headerbar/model.js:990
 msgid "Track changes"
 msgstr "Houd wijzigingen bij"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:979
+#: document/static/js/modules/editor/menus/headerbar/model.js:992
 msgid "Tracking changes to the document"
 msgstr "Wijzigingen in het document bijhouden"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:985
+#: document/static/js/modules/editor/menus/headerbar/model.js:998
 msgid "Record"
 msgstr "Dossier"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:987
+#: document/static/js/modules/editor/menus/headerbar/model.js:1000
 msgid "Record document changes"
 msgstr "Documentwijzigingen vastleggen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1005
+#: document/static/js/modules/editor/menus/headerbar/model.js:1018
 msgid "Accept all"
 msgstr "Accepteer alles"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1007
+#: document/static/js/modules/editor/menus/headerbar/model.js:1020
 msgid "Accept all tracked changes."
 msgstr "Accepteer alle bijgehouden wijzigingen."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1014
+#: document/static/js/modules/editor/menus/headerbar/model.js:1027
 msgid "Reject all"
 msgstr "Alles afwijzen"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1016
+#: document/static/js/modules/editor/menus/headerbar/model.js:1029
 msgid "Reject all tracked changes."
 msgstr "Weiger alle bijgehouden wijzigingen."
 
@@ -3990,12 +4166,12 @@ msgstr "Weiger alle bijgehouden wijzigingen."
 msgid "You cannot close a document when you're offline."
 msgstr "U kunt een document niet sluiten als u offline bent."
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:545
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:548
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Sign up or log in"
 msgstr "Meld u aan of log in"
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Close document"
 msgstr "Document sluiten"
 
@@ -4392,8 +4568,8 @@ msgstr "Tekens met spaties"
 
 #: document/static/js/modules/exporter/docx/metadata.js:64
 #: document/static/js/modules/exporter/docx/metadata.js:67
-#: document/static/js/modules/exporter/odt/metadata.js:67
-#: document/static/js/modules/importer/docx/parse.js:244
+#: document/static/js/modules/exporter/odt/metadata.js:68
+#: document/static/js/modules/importer/docx/parse.js:255
 msgid "Unknown"
 msgstr "Onbekend"
 
@@ -4442,7 +4618,7 @@ msgstr "Kan document niet maken"
 msgid "Could not save "
 msgstr "Kan niet opslaan"
 
-#: document/static/js/modules/importer/odt/import.js:47
+#: document/static/js/modules/importer/odt/import.js:48
 msgid "File does not contain content.xml"
 msgstr "Bestand bevat geen content.xml"
 
@@ -4926,8 +5102,8 @@ msgstr "Inloggen met"
 
 #: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
-#: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:246
+#: user/static/js/modules/profile/templates.js:93
+#: user/static/js/modules/profile/templates.js:251
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "Gebruikersnaam"
@@ -5174,23 +5350,23 @@ msgstr "Bevestig de primaire instelling"
 msgid "Set this email as the address primary"
 msgstr "Stel dit e-mailadres in als het primaire adres"
 
-#: user/static/js/modules/profile/index.js:144
+#: user/static/js/modules/profile/index.js:176
 msgid "Configure profile"
 msgstr "Profiel configureren"
 
-#: user/static/js/modules/profile/index.js:286
+#: user/static/js/modules/profile/index.js:318
 msgid "Passphrase changed successfully."
 msgstr "Wachtwoordzin gewijzigd."
 
-#: user/static/js/modules/profile/index.js:290
+#: user/static/js/modules/profile/index.js:322
 msgid "Failed to change passphrase: "
 msgstr "Kan de wachtwoordzin niet wijzigen:"
 
-#: user/static/js/modules/profile/index.js:308
+#: user/static/js/modules/profile/index.js:340
 msgid "Could not save profile data"
 msgstr "Kan profielgegevens niet opslaan"
 
-#: user/static/js/modules/profile/index.js:317
+#: user/static/js/modules/profile/index.js:349
 msgid "Could not save preferences"
 msgstr "Kan voorkeuren niet opslaan"
 
@@ -5235,85 +5411,85 @@ msgstr "Oud wachtwoord"
 msgid "Confirm the new password"
 msgstr "Bevestig het nieuwe wachtwoord"
 
-#: user/static/js/modules/profile/templates.js:77
+#: user/static/js/modules/profile/templates.js:82
 msgid "Edit profile picture"
 msgstr "Profielfoto bewerken"
 
-#: user/static/js/modules/profile/templates.js:80
+#: user/static/js/modules/profile/templates.js:85
 msgid "Change picture"
 msgstr "Afbeelding wijzigen"
 
-#: user/static/js/modules/profile/templates.js:81
+#: user/static/js/modules/profile/templates.js:86
 msgid "Delete picture"
 msgstr "Afbeelding verwijderen"
 
-#: user/static/js/modules/profile/templates.js:108
+#: user/static/js/modules/profile/templates.js:113
 #: user/static/js/modules/two_factor/index.js:223
 msgid "Two-Factor Authentication"
 msgstr "Tweefactorauthenticatie"
 
-#: user/static/js/modules/profile/templates.js:112
+#: user/static/js/modules/profile/templates.js:117
 msgid "Enabled"
 msgstr "Ingeschakeld"
 
-#: user/static/js/modules/profile/templates.js:116
+#: user/static/js/modules/profile/templates.js:121
 msgid "Disabled"
 msgstr "Gehandicapt"
 
-#: user/static/js/modules/profile/templates.js:121
+#: user/static/js/modules/profile/templates.js:126
 msgid "Enable 2FA"
 msgstr "Schakel 2FA in"
 
-#: user/static/js/modules/profile/templates.js:125
+#: user/static/js/modules/profile/templates.js:130
 #: user/static/js/modules/two_factor/index.js:135
 msgid "Disable 2FA"
 msgstr "Schakel 2FA uit"
 
-#: user/static/js/modules/profile/templates.js:133
+#: user/static/js/modules/profile/templates.js:138
 msgid "End-to-End Encryption"
 msgstr "End-to-end-codering"
 
-#: user/static/js/modules/profile/templates.js:137
+#: user/static/js/modules/profile/templates.js:142
 msgid "Personal passphrase set up"
 msgstr "Persoonlijke wachtwoordzin ingesteld"
 
-#: user/static/js/modules/profile/templates.js:141
+#: user/static/js/modules/profile/templates.js:146
 msgid "Not set up"
 msgstr "Niet ingesteld"
 
-#: user/static/js/modules/profile/templates.js:146
+#: user/static/js/modules/profile/templates.js:151
 msgid "Set up encryption passphrase"
 msgstr "Stel een wachtwoordzin voor codering in"
 
-#: user/static/js/modules/profile/templates.js:150
+#: user/static/js/modules/profile/templates.js:155
 msgid "Change passphrase"
 msgstr "Wachtwoordzin wijzigen"
 
-#: user/static/js/modules/profile/templates.js:154
+#: user/static/js/modules/profile/templates.js:159
 msgid "Recover with recovery key"
 msgstr "Herstel met herstelsleutel"
 
-#: user/static/js/modules/profile/templates.js:164
+#: user/static/js/modules/profile/templates.js:169
 msgid "Primary address"
 msgstr "Primair adres"
 
-#: user/static/js/modules/profile/templates.js:165
+#: user/static/js/modules/profile/templates.js:170
 msgid "Verified"
 msgstr "Geverifieerd"
 
-#: user/static/js/modules/profile/templates.js:220
+#: user/static/js/modules/profile/templates.js:225
 msgid "Editor"
 msgstr "Editor"
 
-#: user/static/js/modules/profile/templates.js:224
+#: user/static/js/modules/profile/templates.js:229
 msgid "Enable inline reference typing (@)"
 msgstr "Schakel inline referentietypen in (@)"
 
-#: user/static/js/modules/profile/templates.js:226
+#: user/static/js/modules/profile/templates.js:231
 msgid "Type @ in the editor to insert a citation or cross-reference:"
 msgstr "Typ @ in de editor om een ​​citaat of kruisverwijzing in te voegen:"
 
-#: user/static/js/modules/profile/templates.js:228
+#: user/static/js/modules/profile/templates.js:233
 msgid ""
 "Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
 "citation: @@entry_key. Multiple sources: @key1;key2"
@@ -5321,15 +5497,15 @@ msgstr ""
 "Citaat: @entry_key – optioneel achtervoegsel: @entry_key[prefix][locator]. "
 "Tekstcitaat: @@entry_key. Meerdere bronnen: @key1;key2"
 
-#: user/static/js/modules/profile/templates.js:229
+#: user/static/js/modules/profile/templates.js:234
 msgid "Cross-reference: @#target-id"
 msgstr "Kruisverwijzing: @#target-id"
 
-#: user/static/js/modules/profile/templates.js:233
+#: user/static/js/modules/profile/templates.js:238
 msgid "Enable inline math typing ($)"
 msgstr "Inline wiskundig typen inschakelen ($)"
 
-#: user/static/js/modules/profile/templates.js:235
+#: user/static/js/modules/profile/templates.js:240
 msgid ""
 "Type $ in the editor followed by LaTeX math to insert an equation inline, "
 "e.g. $x^2. Press Enter or Tab to confirm."
@@ -5337,15 +5513,15 @@ msgstr ""
 "Typ $ in de editor gevolgd door LaTeX wiskunde om een ​​vergelijking inline in "
 "te voegen, b.v. $x^2. Druk op Enter of Tab om te bevestigen."
 
-#: user/static/js/modules/profile/templates.js:245
+#: user/static/js/modules/profile/templates.js:250
 msgid "Social Account Provider"
 msgstr "Aanbieder van sociale accounts"
 
-#: user/static/js/modules/profile/templates.js:273
+#: user/static/js/modules/profile/templates.js:278
 msgid "Connect"
 msgstr "Verbinden"
 
-#: user/static/js/modules/profile/templates.js:288
+#: user/static/js/modules/profile/templates.js:294
 msgid "Delete account"
 msgstr "Account verwijderen"
 
@@ -5609,29 +5785,29 @@ msgstr "Kan categorieën niet updaten"
 msgid "Media Manager"
 msgstr "Mediamanager"
 
-#: usermedia/static/js/modules/images/overview/index.js:102
+#: usermedia/static/js/modules/images/overview/index.js:121
 msgid "The image(s) could not be deleted"
 msgstr "De afbeelding(en) konden niet worden verwijderd"
 
-#: usermedia/static/js/modules/images/overview/index.js:118
+#: usermedia/static/js/modules/images/overview/index.js:137
 msgid "The image(s) have been deleted"
 msgstr "De afbeelding(en) zijn verwijderd"
 
-#: usermedia/static/js/modules/images/overview/index.js:141
+#: usermedia/static/js/modules/images/overview/index.js:160
 msgid "Delete the image(s)"
 msgstr "Verwijder de afbeelding(en)"
 
-#: usermedia/static/js/modules/images/overview/index.js:235
+#: usermedia/static/js/modules/images/overview/index.js:254
 #: usermedia/static/js/modules/images/selection_dialog/index.js:113
 msgid "No images available"
 msgstr "Geen afbeeldingen beschikbaar"
 
-#: usermedia/static/js/modules/images/overview/index.js:236
+#: usermedia/static/js/modules/images/overview/index.js:255
 #: usermedia/static/js/modules/images/selection_dialog/index.js:114
 msgid "No images found"
 msgstr "Geen afbeeldingen gevonden"
 
-#: usermedia/static/js/modules/images/overview/index.js:256
+#: usermedia/static/js/modules/images/overview/index.js:275
 msgid "Size (px)"
 msgstr "Grootte (px)"
 
@@ -5654,6 +5830,11 @@ msgstr "Nieuwe afbeelding toevoegen"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:70
 msgid "Use image"
 msgstr "Gebruik afbeelding"
+
+#~ msgid "You cannot access rights data of a document while you are offline."
+#~ msgstr ""
+#~ "U heeft geen toegang tot de rechtengegevens van een document terwijl u "
+#~ "offline bent."
 
 #~ msgid "Could not obtain submission info."
 #~ msgstr "Kon geen inzendingsinformatie verkrijgen."

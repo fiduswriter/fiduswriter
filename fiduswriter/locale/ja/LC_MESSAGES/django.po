@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 10:17+0000\n"
+"POT-Creation-Date: 2026-06-02 16:59+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0900\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -15,95 +15,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Manual\n"
 
-#: base/settings.py:280
+#: base/settings.py:326
 msgid "Arabic"
 msgstr "アラビア語"
 
-#: base/settings.py:281
+#: base/settings.py:327
 msgid "Bulgarian"
 msgstr "ブルガリア語"
 
-#: base/settings.py:282
+#: base/settings.py:328
 msgid "Czech"
 msgstr "チェコ語"
 
-#: base/settings.py:283
+#: base/settings.py:329
 msgid "Danish"
 msgstr "デンマーク語"
 
-#: base/settings.py:284
+#: base/settings.py:330
 msgid "German"
 msgstr "ドイツ語"
 
-#: base/settings.py:285
+#: base/settings.py:331
 msgid "English"
 msgstr "英語"
 
-#: base/settings.py:286
+#: base/settings.py:332
 msgid "Spanish"
 msgstr "スペイン語"
 
-#: base/settings.py:287
+#: base/settings.py:333
 msgid "French"
 msgstr "フランス語"
 
-#: base/settings.py:288
+#: base/settings.py:334
 msgid "Italian"
 msgstr "イタリア語"
 
-#: base/settings.py:289
+#: base/settings.py:335
 msgid "Japanese"
 msgstr "日本語"
 
-#: base/settings.py:290
+#: base/settings.py:336
 msgid "Korean"
 msgstr "韓国語"
 
-#: base/settings.py:291
+#: base/settings.py:337
 msgid "Norwegian Bokmål"
 msgstr "ノルウェー語ブークモール"
 
-#: base/settings.py:292
+#: base/settings.py:338
 msgid "Dutch"
 msgstr "オランダ語"
 
-#: base/settings.py:293
+#: base/settings.py:339
 msgid "Polish"
 msgstr "ポーランド語"
 
-#: base/settings.py:294
+#: base/settings.py:340
 msgid "Portuguese (Brazil)"
 msgstr "ポルトガル語（ブラジル）"
 
-#: base/settings.py:295
+#: base/settings.py:341
 msgid "Portuguese (Portugal)"
 msgstr "ポルトガル語 (ポルトガル)"
 
-#: base/settings.py:296
+#: base/settings.py:342
 msgid "Russian"
 msgstr "ロシア語"
 
-#: base/settings.py:297
+#: base/settings.py:343
 msgid "Swedish"
 msgstr "スウェーデン語"
 
-#: base/settings.py:298
+#: base/settings.py:344
 msgid "Turkish"
 msgstr "トルコ語"
 
-#: base/settings.py:299
+#: base/settings.py:345
 msgid "Chinese (Simplified)"
 msgstr "中国語（簡体字）"
 
-#: base/settings.py:415
+#: base/settings.py:461
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer 管理"
 
-#: base/settings.py:416
+#: base/settings.py:462
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer 管理サイト"
 
-#: base/settings.py:417
+#: base/settings.py:463
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Fidus Writer 管理サイトへようこそ"
 
@@ -201,7 +201,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "選択したドキュメントテンプレートを複製します"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:979
+#: document/emails.py:18 document/emails.py:236 document/views.py:985
 msgid "Untitled"
 msgstr "無題"
 
@@ -574,15 +574,15 @@ msgstr "パスワードのリセットを要求していない場合は、無視
 msgid "In case you forgot, your username is %(username)s."
 msgstr "忘れた場合に備えて、あなたのユーザー名は %(username)s です。"
 
-#: user/views.py:66
+#: user/views.py:69
 msgid "Your old password was entered incorrectly. Please enter it again."
 msgstr "古いパスワードが間違って入力されました。もう一度入力してください。"
 
-#: user/views.py:70
+#: user/views.py:73
 msgid "The two password fields didn't match."
 msgstr "2 つのパスワード フィールドが一致しませんでした。"
 
-#: user/views.py:645
+#: user/views.py:674
 msgid "Code is invalid"
 msgstr "コードが無効です"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 10:17+0000\n"
+"POT-Creation-Date: 2026-06-02 16:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,95 +18,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: base/settings.py:280
+#: base/settings.py:326
 msgid "Arabic"
 msgstr "아랍어"
 
-#: base/settings.py:281
+#: base/settings.py:327
 msgid "Bulgarian"
 msgstr "불가리아어"
 
-#: base/settings.py:282
+#: base/settings.py:328
 msgid "Czech"
 msgstr "체코어"
 
-#: base/settings.py:283
+#: base/settings.py:329
 msgid "Danish"
 msgstr "덴마크어"
 
-#: base/settings.py:284
+#: base/settings.py:330
 msgid "German"
 msgstr "독일어"
 
-#: base/settings.py:285
+#: base/settings.py:331
 msgid "English"
 msgstr "영어"
 
-#: base/settings.py:286
+#: base/settings.py:332
 msgid "Spanish"
 msgstr "스페인어"
 
-#: base/settings.py:287
+#: base/settings.py:333
 msgid "French"
 msgstr "프랑스어"
 
-#: base/settings.py:288
+#: base/settings.py:334
 msgid "Italian"
 msgstr "이탈리아어"
 
-#: base/settings.py:289
+#: base/settings.py:335
 msgid "Japanese"
 msgstr "일본어"
 
-#: base/settings.py:290
+#: base/settings.py:336
 msgid "Korean"
 msgstr "한국어"
 
-#: base/settings.py:291
+#: base/settings.py:337
 msgid "Norwegian Bokmål"
 msgstr "노르웨이어 복몰어"
 
-#: base/settings.py:292
+#: base/settings.py:338
 msgid "Dutch"
 msgstr "네덜란드어"
 
-#: base/settings.py:293
+#: base/settings.py:339
 msgid "Polish"
 msgstr "폴란드어"
 
-#: base/settings.py:294
+#: base/settings.py:340
 msgid "Portuguese (Brazil)"
 msgstr "포르투갈어(브라질)"
 
-#: base/settings.py:295
+#: base/settings.py:341
 msgid "Portuguese (Portugal)"
 msgstr "포르투갈어(포르투갈)"
 
-#: base/settings.py:296
+#: base/settings.py:342
 msgid "Russian"
 msgstr "러시아어"
 
-#: base/settings.py:297
+#: base/settings.py:343
 msgid "Swedish"
 msgstr "스웨덴어"
 
-#: base/settings.py:298
+#: base/settings.py:344
 msgid "Turkish"
 msgstr "터키어"
 
-#: base/settings.py:299
+#: base/settings.py:345
 msgid "Chinese (Simplified)"
 msgstr "중국어(간체)"
 
-#: base/settings.py:415
+#: base/settings.py:461
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer 관리자"
 
-#: base/settings.py:416
+#: base/settings.py:462
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer 관리 사이트"
 
-#: base/settings.py:417
+#: base/settings.py:463
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Fidus Writer 관리 사이트에 오신 것을 환영합니다."
 
@@ -206,7 +206,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "선택한 문서 템플릿 복제"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:979
+#: document/emails.py:18 document/emails.py:236 document/views.py:985
 msgid "Untitled"
 msgstr "제목 없음"
 
@@ -578,15 +578,15 @@ msgstr "비밀번호 재설정을 요청하지 않은 경우에는 무시해도 
 msgid "In case you forgot, your username is %(username)s."
 msgstr "잊어버린 경우를 대비해 사용자 이름은 %(username)s입니다."
 
-#: user/views.py:66
+#: user/views.py:69
 msgid "Your old password was entered incorrectly. Please enter it again."
 msgstr "이전 비밀번호가 잘못 입력되었습니다. 다시 입력해 주세요."
 
-#: user/views.py:70
+#: user/views.py:73
 msgid "The two password fields didn't match."
 msgstr "두 개의 비밀번호 필드가 일치하지 않습니다."
 
-#: user/views.py:645
+#: user/views.py:674
 msgid "Code is invalid"
 msgstr "코드가 유효하지 않습니다"
 

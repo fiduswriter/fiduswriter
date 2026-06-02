@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer frontend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 13:28+0000\n"
+"POT-Creation-Date: 2026-06-02 17:43+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0200\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -64,6 +64,7 @@ msgstr "Системное сообщение"
 
 #: base/static/js/modules/common/dialog.js:29
 #: base/static/js/modules/common/dialog.js:32
+#: document/static/js/modules/document_template/export_template_dialog.js:82
 msgid "Help"
 msgstr "Помощь"
 
@@ -77,7 +78,7 @@ msgid "Close"
 msgstr "Закрыть"
 
 #: base/static/js/modules/common/dialog.js:84
-#: document/static/js/modules/documents/overview/index.js:942
+#: document/static/js/modules/documents/overview/index.js:937
 #: document/static/js/modules/editor/collab/doc.js:371
 #: document/static/js/modules/editor/collab/doc.js:573
 #: document/static/js/modules/editor/comments/editors/answer.js:22
@@ -102,22 +103,22 @@ msgstr "ОК"
 #: base/static/js/modules/common/file/tools.js:16
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
-#: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:175
-#: document/static/js/modules/editor/menus/headerbar/view.js:505
+#: document/static/js/modules/editor/dialogs/citation.js:139
+#: document/static/js/modules/editor/dialogs/citation.js:193
+#: document/static/js/modules/editor/menus/headerbar/view.js:508
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
-#: document/static/js/modules/importer/docx/convert.js:85
-#: document/static/js/modules/importer/docx/convert.js:93
-#: document/static/js/modules/importer/docx/convert.js:521
+#: document/static/js/modules/importer/docx/convert.js:89
+#: document/static/js/modules/importer/docx/convert.js:97
+#: document/static/js/modules/importer/docx/convert.js:607
 #: document/static/js/modules/importer/docx/import.js:49
-#: document/static/js/modules/importer/odt/convert.js:460
-#: document/static/js/modules/importer/odt/convert.js:471
-#: document/static/js/modules/importer/odt/import.js:114
+#: document/static/js/modules/importer/odt/convert.js:462
+#: document/static/js/modules/importer/odt/convert.js:473
+#: document/static/js/modules/importer/odt/import.js:120
 #: document/static/js/modules/importer/pandoc/import.js:22
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:224
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
-#: usermedia/static/js/modules/images/overview/index.js:175
+#: usermedia/static/js/modules/images/overview/index.js:194
 msgid "Untitled"
 msgstr "Без названия"
 
@@ -129,14 +130,15 @@ msgstr "Новая папка"
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
 #: bibliography/static/js/modules/bibliography/overview/index.js:321
-#: document/static/js/modules/documents/access_rights/index.js:296
+#: document/static/js/modules/documents/access_rights/index.js:659
+#: document/static/js/modules/documents/overview/actions.js:1033
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
 #: user/static/js/modules/contacts/add_dialog.js:14
 #: user/static/js/modules/profile/dialogs.js:128
 #: user/static/js/modules/profile/dialogs.js:219
 #: user/static/js/modules/profile/dialogs.js:389
-#: user/static/js/modules/profile/templates.js:285
+#: user/static/js/modules/profile/templates.js:291
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
 msgstr "Отправить"
@@ -310,10 +312,10 @@ msgstr "Выберите язык"
 
 #: base/static/js/modules/setup/index.js:6
 #: base/static/js/modules/setup/index.js:8
-#: document/static/js/modules/editor/dialogs/citation.js:48
+#: document/static/js/modules/editor/dialogs/citation.js:49
 #: document/static/js/modules/editor/dialogs/code_block.js:113
-#: document/static/js/modules/editor/dialogs/contributor.js:28
-#: document/static/js/modules/editor/dialogs/contributor.js:119
+#: document/static/js/modules/editor/dialogs/contributor.js:31
+#: document/static/js/modules/editor/dialogs/contributor.js:157
 #: document/static/js/modules/editor/dialogs/figure.js:359
 #: document/static/js/modules/editor/dialogs/link.js:57
 #: document/static/js/modules/editor/dialogs/link.js:67
@@ -348,8 +350,8 @@ msgstr "Библиографию не удалось обновить."
 #: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
 #: document/static/js/modules/exporter/native/revision.js:78
-#: usermedia/static/js/modules/images/overview/index.js:94
-#: usermedia/static/js/modules/images/overview/index.js:108
+#: usermedia/static/js/modules/images/overview/index.js:113
+#: usermedia/static/js/modules/images/overview/index.js:127
 msgid "You are currently offline. Please try again when you are back online."
 msgstr ""
 "Вы сейчас не в сети. Пожалуйста, повторите попытку, когда вернетесь в "
@@ -422,7 +424,8 @@ msgid "Prefix used"
 msgstr "Префикс использован"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:92
-#: user/static/js/modules/profile/templates.js:92
+#: document/static/js/modules/document_template/export_template_dialog.js:423
+#: user/static/js/modules/profile/templates.js:97
 msgid "First name"
 msgstr "Имя"
 
@@ -431,7 +434,8 @@ msgid "Prefix"
 msgstr "Префикс"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:104
-#: user/static/js/modules/profile/templates.js:96
+#: document/static/js/modules/document_template/export_template_dialog.js:424
+#: user/static/js/modules/profile/templates.js:101
 msgid "Last name"
 msgstr "Фамилия"
 
@@ -536,7 +540,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "Возникла проблема с импортом библиографии."
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:211
+#: document/static/js/modules/documents/overview/actions.js:279
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "Импорт"
@@ -566,12 +570,12 @@ msgid "Bibliography Manager"
 msgstr "Менеджер по библиографии"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:241
+#: document/static/js/modules/editor/dialogs/citation.js:259
 msgid "No sources registered"
 msgstr "Источники не зарегистрированы"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:242
+#: document/static/js/modules/editor/dialogs/citation.js:260
 msgid "No sources found"
 msgstr "Источники не найдены"
 
@@ -579,14 +583,14 @@ msgstr "Источники не найдены"
 #: document/static/js/modules/document_template/document_style_dialog.js:84
 #: document/static/js/modules/document_template/templates.js:156
 #: document/static/js/modules/document_template/templates.js:247
-#: document/static/js/modules/document_template/templates.js:320
-#: document/static/js/modules/document_template/templates.js:403
-#: document/static/js/modules/document_template/templates.js:476
-#: document/static/js/modules/document_template/templates.js:527
-#: document/static/js/modules/document_template/templates.js:813
+#: document/static/js/modules/document_template/templates.js:323
+#: document/static/js/modules/document_template/templates.js:406
+#: document/static/js/modules/document_template/templates.js:479
+#: document/static/js/modules/document_template/templates.js:530
 #: document/static/js/modules/document_template/templates.js:836
-#: document/static/js/modules/documents/overview/index.js:582
-#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/document_template/templates.js:859
+#: document/static/js/modules/documents/overview/index.js:577
+#: document/static/js/modules/editor/dialogs/citation.js:272
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
@@ -603,7 +607,7 @@ msgid "Sourcetype"
 msgstr "Тип источника"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:255
+#: document/static/js/modules/editor/dialogs/citation.js:273
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -624,12 +628,12 @@ msgstr "Редактировать категории"
 #: bibliography/static/js/modules/bibliography/overview/index.js:376
 #: document/static/js/modules/document_template/document_style_dialog.js:74
 #: document/static/js/modules/document_template/document_style_dialog.js:172
-#: document/static/js/modules/document_template/export_template_dialog.js:82
-#: document/static/js/modules/document_template/export_template_dialog.js:178
-#: document/static/js/modules/document_template/templates.js:821
+#: document/static/js/modules/document_template/export_template_dialog.js:88
+#: document/static/js/modules/document_template/export_template_dialog.js:184
+#: document/static/js/modules/document_template/templates.js:844
 #: document/static/js/modules/documents/access_rights/templates.js:28
-#: document/static/js/modules/documents/overview/actions.js:110
-#: document/static/js/modules/documents/overview/index.js:155
+#: document/static/js/modules/documents/overview/actions.js:178
+#: document/static/js/modules/documents/overview/index.js:141
 #: document/static/js/modules/documents/revisions/index.js:133
 #: document/static/js/modules/documents/revisions/templates.js:11
 #: document/static/js/modules/editor/marginboxes/templates.js:531
@@ -639,21 +643,21 @@ msgstr "Редактировать категории"
 #: user/static/js/modules/profile/delete_user.js:18
 #: user/static/js/modules/profile/dialogs.js:104
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:60
-#: usermedia/static/js/modules/images/overview/index.js:126
+#: usermedia/static/js/modules/images/overview/index.js:145
 msgid "Delete"
 msgstr "Удалить"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
-#: document/static/js/modules/document_template/export_template_dialog.js:192
-#: document/static/js/modules/documents/overview/actions.js:91
-#: document/static/js/modules/documents/overview/index.js:147
+#: document/static/js/modules/document_template/export_template_dialog.js:198
+#: document/static/js/modules/documents/overview/actions.js:159
+#: document/static/js/modules/documents/overview/index.js:133
 #: document/static/js/modules/documents/revisions/index.js:151
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:40
 #: user/static/js/modules/profile/dialogs.js:116
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:75
-#: usermedia/static/js/modules/images/overview/index.js:140
+#: usermedia/static/js/modules/images/overview/index.js:159
 msgid "Confirm deletion"
 msgstr "Подтвердить удаление"
 
@@ -692,7 +696,7 @@ msgid "Edit categories"
 msgstr "Редактировать категории"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:67
-#: document/static/js/modules/editor/dialogs/citation.js:32
+#: document/static/js/modules/editor/dialogs/citation.js:33
 msgid "Register new source"
 msgstr "Зарегистрировать новый источник"
 
@@ -716,29 +720,35 @@ msgstr "и другие"
 msgid "Source/Editor"
 msgstr "Источник/редактор"
 
-#: document/static/js/modules/document_template/designer.js:101
+#: document/static/js/modules/document_template/designer.js:102
 msgid "The template needs a title."
 msgstr "Шаблону нужен заголовок."
 
-#: document/static/js/modules/document_template/designer.js:109
+#: document/static/js/modules/document_template/designer.js:110
 msgid "The template needs an ID."
 msgstr "Шаблону нужен идентификатор."
 
-#: document/static/js/modules/document_template/designer.js:115
+#: document/static/js/modules/document_template/designer.js:116
 msgid "The template ID cannot contain spaces."
 msgstr "Идентификатор шаблона не может содержать пробелы."
 
-#: document/static/js/modules/document_template/designer.js:255
+#: document/static/js/modules/document_template/designer.js:262
 msgid "All document parts need an ID."
 msgstr "Все части документа нуждаются в идентификаторе."
 
-#: document/static/js/modules/document_template/designer.js:262
+#: document/static/js/modules/document_template/designer.js:269
 msgid "IDs cannot contain spaces."
 msgstr "Идентификаторы не могут содержать пробелы."
 
-#: document/static/js/modules/document_template/designer.js:280
+#: document/static/js/modules/document_template/designer.js:287
 msgid "IDs have to be unique."
 msgstr "Идентификаторы должны быть уникальными."
+
+#: document/static/js/modules/document_template/designer.js:373
+msgid "One or more contributor ID regexes are invalid."
+msgstr ""
+"Одно или несколько регулярных выражений идентификатора участника "
+"недействительны."
 
 #: document/static/js/modules/document_template/document_style_dialog.js:18
 #: document/static/js/modules/document_template/export_template_dialog.js:26
@@ -788,51 +798,181 @@ msgstr "Слизняк должен быть уникальным."
 msgid "A file with the same name exists already."
 msgstr "Файл с таким именем уже существует."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:89
+#: document/static/js/modules/document_template/export_template_dialog.js:95
 msgid "Export template"
 msgstr "Экспортировать шаблон"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:93
+#: document/static/js/modules/document_template/export_template_dialog.js:99
 #: document/static/js/modules/editor/menus/headerbar/model.js:40
-#: usermedia/static/js/modules/images/overview/index.js:255
+#: usermedia/static/js/modules/images/overview/index.js:274
 msgid "File"
 msgstr "Файл"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:102
+#: document/static/js/modules/document_template/export_template_dialog.js:108
 msgid "Select"
 msgstr "Выбрать"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:108
+#: document/static/js/modules/document_template/export_template_dialog.js:114
 msgid "Filetype"
 msgstr "Тип файла"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:116
+#: document/static/js/modules/document_template/export_template_dialog.js:122
 msgid "Found tags"
 msgstr "Найдены теги"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:122
+#: document/static/js/modules/document_template/export_template_dialog.js:128
 msgid "Missing tags"
 msgstr "Отсутствующие теги"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:193
+#: document/static/js/modules/document_template/export_template_dialog.js:199
 msgid "Do you really want to delete the export template?"
 msgstr "Вы действительно хотите удалить шаблон экспорта?"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:206
+#: document/static/js/modules/document_template/export_template_dialog.js:212
 msgid "You need to upload a template file in ODT or DOCX format."
 msgstr "Вам необходимо загрузить файл шаблона в формате ODT или DOCX."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:220
+#: document/static/js/modules/document_template/export_template_dialog.js:226
 msgid "Another export file with the same filename exists already."
 msgstr "Другой файл экспорта с таким же именем уже существует."
 
-#: document/static/js/modules/document_template/export_template_dialog.js:257
+#: document/static/js/modules/document_template/export_template_dialog.js:263
 msgid "Unknown filetype"
 msgstr "Неизвестный тип файла"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:374
+#: document/static/js/modules/document_template/export_template_dialog.js:400
 msgid "Selected file not supported."
 msgstr "Выбранный файл не поддерживается."
+
+#: document/static/js/modules/document_template/export_template_dialog.js:408
+msgid "Templating Syntax Help"
+msgstr "Справка по синтаксису шаблонов"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:410
+msgid "Available Tags"
+msgstr "Доступные теги"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:412
+msgid "Document title"
+msgstr "Название документа"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:413
+msgid "All authors (simple)"
+msgstr "Все авторы (простые)"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:414
+#: document/static/js/modules/document_template/templates.js:414
+msgid "Keywords"
+msgstr "Ключевые слова"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:415
+msgid "Bibliography block"
+msgstr "Библиографический блок"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:416
+msgid "Copyright block"
+msgstr "Блок авторских прав"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:417
+msgid "Licenses block"
+msgstr "Блок лицензий"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:420
+msgid "Format Strings with Delimiters"
+msgstr "Форматирование строк с помощью разделителей"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:421
+#, javascript-format
+msgid "Syntax: %s"
+msgstr "Синтаксис: %s"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:425
+#: document/static/js/modules/editor/dialogs/templates.js:404
+msgid "Institution"
+msgstr "учреждение"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:426
+#: document/static/js/modules/editor/dialogs/templates.js:403
+#: document/static/js/modules/schema/document/content.js:58
+#: user/static/js/modules/profile/templates.js:168
+msgid "Email"
+msgstr "Электронная почта"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:427
+msgid "ID type (e.g., ORCID)"
+msgstr "Тип идентификатора (например, ORCID)"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:428
+msgid "ID value"
+msgstr "Значение идентификатора"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "Delimiters: "
+msgstr "Разделители: "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(semicolon+space), "
+msgstr "(точка с запятой+пробел), "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(comma+line break), "
+msgstr "(запятая+перенос строки), "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(line break), "
+msgstr "(перерыв строки), "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(paragraph break), or custom string"
+msgstr "(разрыв абзаца) или пользовательская строка"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:432
+msgid "Structured Blocks"
+msgstr "Структурированные блоки"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:434
+msgid "Loop over items"
+msgstr "Перебирать элементы"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:435
+msgid "Loop with limit"
+msgstr "Цикл с пределом"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:438
+msgid "Conditionals"
+msgstr "Условные предложения"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:440
+msgid "Conditional"
+msgstr "Условный"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:441
+msgid "Else if"
+msgstr "Иначе, если"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:442
+msgid "Else"
+msgstr "Еще"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:445
+msgid "Context"
+msgstr "Контекст"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:446
+msgid "Context object: "
+msgstr "Объект контекста: "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:448
+msgid "Examples"
+msgstr "Примеры"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:460
+msgid "et al."
+msgstr "и др."
+
+#: document/static/js/modules/document_template/export_template_dialog.js:468
+msgid "Templating Help"
+msgstr "Помощь по шаблонам"
 
 #: document/static/js/modules/document_template/importer.js:42
 msgid "The uploaded file does not appear to be a Fidus Writer Template file."
@@ -847,7 +987,7 @@ msgstr "Загруженный файл не является файлом Fidus
 #: document/static/js/modules/document_template/importer.js:164
 #: document/static/js/modules/importer/docx/import.js:73
 #: document/static/js/modules/importer/native/file.js:213
-#: document/static/js/modules/importer/odt/import.js:142
+#: document/static/js/modules/importer/odt/import.js:148
 #: document/static/js/modules/importer/pandoc/import.js:163
 msgid "successfully imported."
 msgstr "успешно импортирован."
@@ -887,7 +1027,7 @@ msgstr "Вставить таблицу"
 #: document/static/js/modules/document_template/schema.js:194
 #: document/static/js/modules/document_template/schema.js:198
 #: document/static/js/modules/document_template/templates.js:92
-#: document/static/js/modules/document_template/templates.js:468
+#: document/static/js/modules/document_template/templates.js:471
 #: document/static/js/modules/editor/menus/toolbar/model.js:872
 msgid "Table"
 msgstr "Стол"
@@ -1089,10 +1229,10 @@ msgstr "Заголовок"
 
 #: document/static/js/modules/document_template/templates.js:151
 #: document/static/js/modules/document_template/templates.js:242
-#: document/static/js/modules/document_template/templates.js:315
-#: document/static/js/modules/document_template/templates.js:398
-#: document/static/js/modules/document_template/templates.js:471
-#: document/static/js/modules/document_template/templates.js:522
+#: document/static/js/modules/document_template/templates.js:318
+#: document/static/js/modules/document_template/templates.js:401
+#: document/static/js/modules/document_template/templates.js:474
+#: document/static/js/modules/document_template/templates.js:525
 #: document/static/js/modules/editor/menus/code_block/model.js:6
 #: document/static/js/modules/editor/menus/figure/model.js:7
 #: document/static/js/modules/editor/menus/table/model.js:388
@@ -1101,26 +1241,26 @@ msgstr "Настроить"
 
 #: document/static/js/modules/document_template/templates.js:155
 #: document/static/js/modules/document_template/templates.js:246
-#: document/static/js/modules/document_template/templates.js:319
-#: document/static/js/modules/document_template/templates.js:380
-#: document/static/js/modules/document_template/templates.js:402
-#: document/static/js/modules/document_template/templates.js:475
-#: document/static/js/modules/document_template/templates.js:526
-#: document/static/js/modules/document_template/templates.js:814
+#: document/static/js/modules/document_template/templates.js:322
+#: document/static/js/modules/document_template/templates.js:383
+#: document/static/js/modules/document_template/templates.js:405
+#: document/static/js/modules/document_template/templates.js:478
+#: document/static/js/modules/document_template/templates.js:529
+#: document/static/js/modules/document_template/templates.js:837
 msgid "ID"
 msgstr "ИДЕНТИФИКАТОР"
 
 #: document/static/js/modules/document_template/templates.js:160
 #: document/static/js/modules/document_template/templates.js:252
-#: document/static/js/modules/document_template/templates.js:324
-#: document/static/js/modules/document_template/templates.js:408
+#: document/static/js/modules/document_template/templates.js:327
+#: document/static/js/modules/document_template/templates.js:411
 msgid "Metadata function"
 msgstr "Функция метаданных"
 
 #: document/static/js/modules/document_template/templates.js:162
 #: document/static/js/modules/document_template/templates.js:254
-#: document/static/js/modules/document_template/templates.js:326
-#: document/static/js/modules/document_template/templates.js:410
+#: document/static/js/modules/document_template/templates.js:329
+#: document/static/js/modules/document_template/templates.js:413
 #: document/static/js/modules/editor/dialogs/code_block.js:205
 #: document/static/js/modules/editor/dialogs/code_block.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:167
@@ -1137,69 +1277,69 @@ msgid "Title (translated)"
 msgstr "Название (переведено)"
 
 #: document/static/js/modules/document_template/templates.js:167
-#: document/static/js/modules/document_template/templates.js:259
-#: document/static/js/modules/document_template/templates.js:339
-#: document/static/js/modules/document_template/templates.js:414
-#: document/static/js/modules/document_template/templates.js:480
-msgid "Locking"
-msgstr "Блокировка"
-
-#: document/static/js/modules/document_template/templates.js:169
-#: document/static/js/modules/document_template/templates.js:261
-#: document/static/js/modules/document_template/templates.js:341
-#: document/static/js/modules/document_template/templates.js:416
-#: document/static/js/modules/document_template/templates.js:482
-msgid "User can change contents"
-msgstr "Пользователь может изменить содержимое"
-
-#: document/static/js/modules/document_template/templates.js:170
 #: document/static/js/modules/document_template/templates.js:262
 #: document/static/js/modules/document_template/templates.js:342
 #: document/static/js/modules/document_template/templates.js:417
 #: document/static/js/modules/document_template/templates.js:483
+msgid "Locking"
+msgstr "Блокировка"
+
+#: document/static/js/modules/document_template/templates.js:169
+#: document/static/js/modules/document_template/templates.js:264
+#: document/static/js/modules/document_template/templates.js:344
+#: document/static/js/modules/document_template/templates.js:419
+#: document/static/js/modules/document_template/templates.js:485
+msgid "User can change contents"
+msgstr "Пользователь может изменить содержимое"
+
+#: document/static/js/modules/document_template/templates.js:170
+#: document/static/js/modules/document_template/templates.js:265
+#: document/static/js/modules/document_template/templates.js:345
+#: document/static/js/modules/document_template/templates.js:420
+#: document/static/js/modules/document_template/templates.js:486
 msgid "User can not change contents"
 msgstr "Пользователь не может изменить содержимое"
 
 #: document/static/js/modules/document_template/templates.js:171
-#: document/static/js/modules/document_template/templates.js:263
-#: document/static/js/modules/document_template/templates.js:343
-#: document/static/js/modules/document_template/templates.js:418
+#: document/static/js/modules/document_template/templates.js:266
+#: document/static/js/modules/document_template/templates.js:346
+#: document/static/js/modules/document_template/templates.js:421
 msgid "User can only add content"
 msgstr "Пользователь может только добавлять контент"
 
 #: document/static/js/modules/document_template/templates.js:174
-#: document/static/js/modules/document_template/templates.js:266
-#: document/static/js/modules/document_template/templates.js:346
-#: document/static/js/modules/document_template/templates.js:421
-#: document/static/js/modules/document_template/templates.js:487
-#: document/static/js/modules/document_template/templates.js:531
-msgid "Optional"
-msgstr "Необязательный"
-
-#: document/static/js/modules/document_template/templates.js:176
-#: document/static/js/modules/document_template/templates.js:268
-#: document/static/js/modules/document_template/templates.js:348
-#: document/static/js/modules/document_template/templates.js:423
-#: document/static/js/modules/document_template/templates.js:489
-#: document/static/js/modules/document_template/templates.js:533
-msgid "Obligatory field"
-msgstr "Обязательное поле"
-
-#: document/static/js/modules/document_template/templates.js:177
 #: document/static/js/modules/document_template/templates.js:269
 #: document/static/js/modules/document_template/templates.js:349
 #: document/static/js/modules/document_template/templates.js:424
 #: document/static/js/modules/document_template/templates.js:490
 #: document/static/js/modules/document_template/templates.js:534
+msgid "Optional"
+msgstr "Необязательный"
+
+#: document/static/js/modules/document_template/templates.js:176
+#: document/static/js/modules/document_template/templates.js:271
+#: document/static/js/modules/document_template/templates.js:351
+#: document/static/js/modules/document_template/templates.js:426
+#: document/static/js/modules/document_template/templates.js:492
+#: document/static/js/modules/document_template/templates.js:536
+msgid "Obligatory field"
+msgstr "Обязательное поле"
+
+#: document/static/js/modules/document_template/templates.js:177
+#: document/static/js/modules/document_template/templates.js:272
+#: document/static/js/modules/document_template/templates.js:352
+#: document/static/js/modules/document_template/templates.js:427
+#: document/static/js/modules/document_template/templates.js:493
+#: document/static/js/modules/document_template/templates.js:537
 msgid "Optional, shown by default"
 msgstr "Необязательно, отображается по умолчанию"
 
 #: document/static/js/modules/document_template/templates.js:178
-#: document/static/js/modules/document_template/templates.js:270
-#: document/static/js/modules/document_template/templates.js:350
-#: document/static/js/modules/document_template/templates.js:425
-#: document/static/js/modules/document_template/templates.js:491
-#: document/static/js/modules/document_template/templates.js:535
+#: document/static/js/modules/document_template/templates.js:273
+#: document/static/js/modules/document_template/templates.js:353
+#: document/static/js/modules/document_template/templates.js:428
+#: document/static/js/modules/document_template/templates.js:494
+#: document/static/js/modules/document_template/templates.js:538
 msgid "Optional, not shown by default"
 msgstr "Необязательно, не отображается по умолчанию"
 
@@ -1208,32 +1348,32 @@ msgid "Allowed headings"
 msgstr "Разрешенные заголовки"
 
 #: document/static/js/modules/document_template/templates.js:209
-#: document/static/js/modules/document_template/templates.js:355
-#: document/static/js/modules/document_template/templates.js:496
+#: document/static/js/modules/document_template/templates.js:358
+#: document/static/js/modules/document_template/templates.js:499
 #: document/static/js/modules/editor/dialogs/code_block.js:202
-#: user/static/js/modules/profile/templates.js:209
+#: user/static/js/modules/profile/templates.js:214
 msgid "Language"
 msgstr "Язык"
 
 #: document/static/js/modules/document_template/templates.js:211
-#: document/static/js/modules/document_template/templates.js:357
-#: document/static/js/modules/document_template/templates.js:498
+#: document/static/js/modules/document_template/templates.js:360
+#: document/static/js/modules/document_template/templates.js:501
 msgid "Document language"
 msgstr "Язык документа"
 
 #: document/static/js/modules/document_template/templates.js:219
-#: document/static/js/modules/document_template/templates.js:274
-#: document/static/js/modules/document_template/templates.js:365
-#: document/static/js/modules/document_template/templates.js:429
-#: document/static/js/modules/document_template/templates.js:506
+#: document/static/js/modules/document_template/templates.js:277
+#: document/static/js/modules/document_template/templates.js:368
+#: document/static/js/modules/document_template/templates.js:432
+#: document/static/js/modules/document_template/templates.js:509
 msgid "Initial content"
 msgstr "Исходное содержание"
 
 #: document/static/js/modules/document_template/templates.js:223
-#: document/static/js/modules/document_template/templates.js:278
-#: document/static/js/modules/document_template/templates.js:369
-#: document/static/js/modules/document_template/templates.js:433
-#: document/static/js/modules/document_template/templates.js:510
+#: document/static/js/modules/document_template/templates.js:281
+#: document/static/js/modules/document_template/templates.js:372
+#: document/static/js/modules/document_template/templates.js:436
+#: document/static/js/modules/document_template/templates.js:513
 #: document/static/js/modules/editor/marginboxes/templates.js:422
 msgid "Instructions"
 msgstr "Инструкции"
@@ -1243,236 +1383,191 @@ msgid "Namelist"
 msgstr "Список имен"
 
 #: document/static/js/modules/document_template/templates.js:251
-#: document/static/js/modules/document_template/templates.js:407
+#: document/static/js/modules/document_template/templates.js:410
 msgid "Item title"
 msgstr "Название товара"
 
 #: document/static/js/modules/document_template/templates.js:255
+#: document/static/js/modules/exporter/latex/convert.js:106
 msgid "Authors"
 msgstr "Авторы"
 
 #: document/static/js/modules/document_template/templates.js:256
+#: document/static/js/modules/exporter/latex/convert.js:107
 msgid "Editors"
 msgstr "Редакторы"
 
-#: document/static/js/modules/document_template/templates.js:312
+#: document/static/js/modules/document_template/templates.js:257
+#: document/static/js/modules/exporter/latex/convert.js:108
+msgid "Translators"
+msgstr "Переводчики"
+
+#: document/static/js/modules/document_template/templates.js:258
+#: document/static/js/modules/exporter/latex/convert.js:109
+msgid "Reviewers"
+msgstr "Рецензенты"
+
+#: document/static/js/modules/document_template/templates.js:259
+#: document/static/js/modules/exporter/latex/convert.js:110
+msgid "Contributors"
+msgstr "Авторы"
+
+#: document/static/js/modules/document_template/templates.js:315
 msgid "Richtext"
 msgstr "Richtext"
 
-#: document/static/js/modules/document_template/templates.js:327
+#: document/static/js/modules/document_template/templates.js:330
 #: document/static/js/modules/importer/pandoc/convert.js:147
 msgid "Abstract"
 msgstr "Абстрактный"
 
-#: document/static/js/modules/document_template/templates.js:328
+#: document/static/js/modules/document_template/templates.js:331
 msgid "Cases/Case Reports"
 msgstr "Случаи/отчеты о случаях"
 
-#: document/static/js/modules/document_template/templates.js:329
+#: document/static/js/modules/document_template/templates.js:332
 msgid "Conclusions/Comment"
 msgstr "Выводы/Комментарий"
 
-#: document/static/js/modules/document_template/templates.js:330
+#: document/static/js/modules/document_template/templates.js:333
 msgid "Discussion/Interpretation"
 msgstr "Обсуждение/Интерпретация"
 
-#: document/static/js/modules/document_template/templates.js:331
+#: document/static/js/modules/document_template/templates.js:334
 msgid "Introduction/Synopsis"
 msgstr "Введение/Краткий обзор"
 
-#: document/static/js/modules/document_template/templates.js:332
+#: document/static/js/modules/document_template/templates.js:335
 msgid "Materials"
 msgstr "Материалы"
 
-#: document/static/js/modules/document_template/templates.js:333
+#: document/static/js/modules/document_template/templates.js:336
 msgid "Methods/Methodology/Procedures"
 msgstr "Методы/методология/процедуры"
 
-#: document/static/js/modules/document_template/templates.js:334
+#: document/static/js/modules/document_template/templates.js:337
 msgid "Results/Statement of Findings"
 msgstr "Результаты/заявление о результатах"
 
-#: document/static/js/modules/document_template/templates.js:335
+#: document/static/js/modules/document_template/templates.js:338
 msgid "Subjects/Participants/Patients"
 msgstr "Субъекты/участники/пациенты"
 
-#: document/static/js/modules/document_template/templates.js:336
+#: document/static/js/modules/document_template/templates.js:339
 msgid "Supplementary materials"
 msgstr "Дополнительные материалы"
 
-#: document/static/js/modules/document_template/templates.js:378
+#: document/static/js/modules/document_template/templates.js:381
 msgid "Separator"
 msgstr "Сепаратор"
 
-#: document/static/js/modules/document_template/templates.js:395
+#: document/static/js/modules/document_template/templates.js:398
 msgid "Tags"
 msgstr "Теги"
 
-#: document/static/js/modules/document_template/templates.js:411
-msgid "Keywords"
-msgstr "Ключевые слова"
-
-#: document/static/js/modules/document_template/templates.js:484
+#: document/static/js/modules/document_template/templates.js:487
 msgid "User can not change first row"
 msgstr "Пользователь не может изменить первую строку"
 
-#: document/static/js/modules/document_template/templates.js:519
+#: document/static/js/modules/document_template/templates.js:522
 msgid "Table of Contents"
 msgstr "Оглавление"
 
-#: document/static/js/modules/document_template/templates.js:732
+#: document/static/js/modules/document_template/templates.js:661
+msgid "Label"
+msgstr "Этикетка"
+
+#: document/static/js/modules/document_template/templates.js:664
+msgid "Regex"
+msgstr "регулярное выражение"
+
+#: document/static/js/modules/document_template/templates.js:755
 msgid "Select which code block categories are available:"
 msgstr "Выберите, какие категории блоков кода доступны:"
 
-#: document/static/js/modules/document_template/templates.js:789
+#: document/static/js/modules/document_template/templates.js:812
 msgid "Add new document style"
 msgstr "Добавить новый стиль документа"
 
-#: document/static/js/modules/document_template/templates.js:801
+#: document/static/js/modules/document_template/templates.js:824
 msgid "Add new export template"
 msgstr "Добавить новый шаблон экспорта"
 
-#: document/static/js/modules/document_template/templates.js:819
+#: document/static/js/modules/document_template/templates.js:842
 msgid "Element types"
 msgstr "Типы элементов"
 
-#: document/static/js/modules/document_template/templates.js:820
+#: document/static/js/modules/document_template/templates.js:843
 msgid "Document structure"
 msgstr "Структура документа"
 
-#: document/static/js/modules/document_template/templates.js:847
+#: document/static/js/modules/document_template/templates.js:870
 msgid "Setting"
 msgstr "Параметр"
 
-#: document/static/js/modules/document_template/templates.js:848
+#: document/static/js/modules/document_template/templates.js:871
 msgid "Value"
 msgstr "Ценить"
 
-#: document/static/js/modules/document_template/templates.js:854
+#: document/static/js/modules/document_template/templates.js:877
 msgid "Footnote specifications"
 msgstr "Характеристики сносок"
 
-#: document/static/js/modules/document_template/templates.js:862
+#: document/static/js/modules/document_template/templates.js:885
 msgid "Available languages"
 msgstr "Доступные языки"
 
-#: document/static/js/modules/document_template/templates.js:870
-#: user/static/js/modules/profile/templates.js:211
+#: document/static/js/modules/document_template/templates.js:893
+#: user/static/js/modules/profile/templates.js:216
 msgid "Default language"
 msgstr "Язык по умолчанию"
 
-#: document/static/js/modules/document_template/templates.js:878
+#: document/static/js/modules/document_template/templates.js:901
 msgid "Permitted paper sizes"
 msgstr "Разрешенные размеры бумаги"
 
-#: document/static/js/modules/document_template/templates.js:886
+#: document/static/js/modules/document_template/templates.js:909
 msgid "Code block languages"
 msgstr "Языки кодовых блоков"
 
-#: document/static/js/modules/document_template/templates.js:894
+#: document/static/js/modules/document_template/templates.js:917
 msgid "Code block categories"
 msgstr "Категории блоков кода"
 
-#: document/static/js/modules/document_template/templates.js:902
+#: document/static/js/modules/document_template/templates.js:925
 msgid "Custom bibliography header"
 msgstr "Пользовательский заголовок библиографии"
 
-#: document/static/js/modules/document_template/templates.js:910
+#: document/static/js/modules/document_template/templates.js:933
+msgid "Contributor ID types"
+msgstr "Типы идентификаторов участников"
+
+#: document/static/js/modules/document_template/templates.js:941
 msgid "Available citation styles"
 msgstr "Доступные стили цитирования"
 
-#: document/static/js/modules/document_template/templates.js:918
+#: document/static/js/modules/document_template/templates.js:949
 msgid "Default citation style"
 msgstr "Стиль цитирования по умолчанию"
 
-#: document/static/js/modules/document_template/templates.js:928
+#: document/static/js/modules/document_template/templates.js:959
 msgid "Document styles"
 msgstr "Стили документа"
 
-#: document/static/js/modules/document_template/templates.js:938
+#: document/static/js/modules/document_template/templates.js:969
 msgid "Export templates"
 msgstr "Экспорт шаблонов"
 
-#: document/static/js/modules/documents/access_rights/index.js:57
+#: document/static/js/modules/documents/access_rights/index.js:99
 msgid "Cannot load document access data."
 msgstr "Невозможно загрузить данные доступа к документу."
 
-#: document/static/js/modules/documents/access_rights/index.js:75
-msgid "Basic"
-msgstr "Базовый"
-
-#: document/static/js/modules/documents/access_rights/index.js:76
-msgid "Basic access rights"
-msgstr "Основные права доступа"
-
-#: document/static/js/modules/documents/access_rights/index.js:80
-#: document/static/js/modules/documents/access_rights/index.js:82
-#: document/static/js/modules/documents/access_rights/templates.js:92
-#: document/static/js/modules/documents/access_rights/templates.js:98
-msgid "Write"
-msgstr "Писать"
-
-#: document/static/js/modules/documents/access_rights/index.js:91
-#: document/static/js/modules/documents/access_rights/templates.js:99
-msgid "Write tracked"
-msgstr "Запись отслеживается"
-
-#: document/static/js/modules/documents/access_rights/index.js:93
-msgid "Write with changes tracked"
-msgstr "Пишите с отслеживаемыми изменениями"
-
-#: document/static/js/modules/documents/access_rights/index.js:102
-#: document/static/js/modules/documents/access_rights/index.js:104
-#: document/static/js/modules/documents/access_rights/templates.js:97
-#: document/static/js/modules/editor/menus/selection/model.js:43
-msgid "Comment"
-msgstr "Комментарий"
-
-#: document/static/js/modules/documents/access_rights/index.js:113
 #: document/static/js/modules/documents/access_rights/index.js:115
-#: document/static/js/modules/documents/access_rights/templates.js:90
-#: document/static/js/modules/documents/access_rights/templates.js:93
-msgid "Read"
-msgstr "Читать"
-
-#: document/static/js/modules/documents/access_rights/index.js:124
-#: document/static/js/modules/documents/access_rights/index.js:142
-#: document/static/js/modules/documents/access_rights/templates.js:95
-msgid "Review"
-msgstr "Обзор"
-
-#: document/static/js/modules/documents/access_rights/index.js:125
-msgid "Access rights used within document review"
-msgstr "Права доступа, используемые при проверке документов"
-
-#: document/static/js/modules/documents/access_rights/index.js:129
-msgid "No comments"
-msgstr "Без комментариев"
-
-#: document/static/js/modules/documents/access_rights/index.js:132
-msgid "Read document but not see comments and chats of others"
-msgstr "Читать документ, но не видеть комментарии и чаты других"
-
-#: document/static/js/modules/documents/access_rights/index.js:145
-msgid "Comment, but not see comments and chats of others"
-msgstr "Комментируйте, но не смотрите комментарии и чаты других"
-
-#: document/static/js/modules/documents/access_rights/index.js:155
-#: document/static/js/modules/documents/access_rights/templates.js:96
-msgid "Review tracked"
-msgstr "Отзыв отслеживается"
-
-#: document/static/js/modules/documents/access_rights/index.js:158
-msgid "Write with tracked changes, but not see comments and chats of others"
-msgstr ""
-"Пишите с отслеживанием изменений, но не смотрите комментарии и чаты других"
-
-#: document/static/js/modules/documents/access_rights/index.js:234
-#: document/static/js/modules/documents/overview/index.js:789
+#: document/static/js/modules/documents/overview/index.js:784
 msgid "End-to-end encrypted document"
 msgstr "Документ со сквозным шифрованием"
 
-#: document/static/js/modules/documents/access_rights/index.js:235
+#: document/static/js/modules/documents/access_rights/index.js:116
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
 "passphrase will need the document password shared with them through a secure "
@@ -1484,70 +1579,141 @@ msgstr ""
 "безопасный канал за пределами Fidus Writer. Не отправляйте пароль через чат "
 "документов."
 
-#: document/static/js/modules/documents/access_rights/index.js:244
-#: user/static/js/modules/contacts/add_dialog.js:54
-msgid "Add contact or invite new user"
-msgstr "Добавьте контакт или пригласите нового пользователя"
+#: document/static/js/modules/documents/access_rights/index.js:248
+msgid "Link copied to clipboard."
+msgstr "Ссылка скопирована в буфер обмена."
 
-#: document/static/js/modules/documents/access_rights/index.js:245
-#: user/static/js/modules/contacts/add_dialog.js:55
-msgid "Add contact"
-msgstr "Добавить контакт"
+#: document/static/js/modules/documents/access_rights/index.js:250
+msgid "Could not copy link."
+msgstr "Не удалось скопировать ссылку."
+
+#: document/static/js/modules/documents/access_rights/index.js:316
+msgid "Basic"
+msgstr "Базовый"
+
+#: document/static/js/modules/documents/access_rights/index.js:317
+msgid "Basic access rights"
+msgstr "Основные права доступа"
 
 #: document/static/js/modules/documents/access_rights/index.js:321
-msgid "Share your document with others"
-msgstr "Поделитесь своим документом с другими"
+#: document/static/js/modules/documents/access_rights/index.js:323
+#: document/static/js/modules/documents/access_rights/templates.js:92
+#: document/static/js/modules/documents/access_rights/templates.js:98
+msgid "Write"
+msgstr "Писать"
+
+#: document/static/js/modules/documents/access_rights/index.js:330
+#: document/static/js/modules/documents/access_rights/templates.js:99
+msgid "Write tracked"
+msgstr "Запись отслеживается"
+
+#: document/static/js/modules/documents/access_rights/index.js:332
+msgid "Write with changes tracked"
+msgstr "Пишите с отслеживаемыми изменениями"
+
+#: document/static/js/modules/documents/access_rights/index.js:339
+#: document/static/js/modules/documents/access_rights/index.js:341
+#: document/static/js/modules/documents/access_rights/templates.js:97
+#: document/static/js/modules/editor/menus/selection/model.js:43
+msgid "Comment"
+msgstr "Комментарий"
 
 #: document/static/js/modules/documents/access_rights/index.js:348
+#: document/static/js/modules/documents/access_rights/index.js:350
+#: document/static/js/modules/documents/access_rights/templates.js:90
+#: document/static/js/modules/documents/access_rights/templates.js:93
+msgid "Read"
+msgstr "Читать"
+
+#: document/static/js/modules/documents/access_rights/index.js:357
+#: document/static/js/modules/documents/access_rights/index.js:373
+#: document/static/js/modules/documents/access_rights/templates.js:95
+msgid "Review"
+msgstr "Обзор"
+
+#: document/static/js/modules/documents/access_rights/index.js:358
+msgid "Access rights used within document review"
+msgstr "Права доступа, используемые при проверке документов"
+
+#: document/static/js/modules/documents/access_rights/index.js:362
+msgid "No comments"
+msgstr "Без комментариев"
+
+#: document/static/js/modules/documents/access_rights/index.js:365
+msgid "Read document but not see comments and chats of others"
+msgstr "Читать документ, но не видеть комментарии и чаты других"
+
+#: document/static/js/modules/documents/access_rights/index.js:376
+msgid "Comment, but not see comments and chats of others"
+msgstr "Комментируйте, но не смотрите комментарии и чаты других"
+
+#: document/static/js/modules/documents/access_rights/index.js:384
+#: document/static/js/modules/documents/access_rights/templates.js:96
+msgid "Review tracked"
+msgstr "Отзыв отслеживается"
+
+#: document/static/js/modules/documents/access_rights/index.js:387
+msgid "Write with tracked changes, but not see comments and chats of others"
+msgstr ""
+"Пишите с отслеживанием изменений, но не смотрите комментарии и чаты других"
+
+#: document/static/js/modules/documents/access_rights/index.js:430
 #: document/static/js/modules/documents/access_rights/templates.js:38
 msgid "Loading…"
 msgstr "Загрузка…"
 
-#: document/static/js/modules/documents/access_rights/index.js:356
+#: document/static/js/modules/documents/access_rights/index.js:440
 msgid "Could not load share links."
 msgstr "Не удалось загрузить ссылки для обмена."
 
-#: document/static/js/modules/documents/access_rights/index.js:362
+#: document/static/js/modules/documents/access_rights/index.js:446
 msgid "Create share link"
 msgstr "Создать ссылку для обмена"
 
-#: document/static/js/modules/documents/access_rights/index.js:371
-#: document/static/js/modules/documents/overview/index.js:946
+#: document/static/js/modules/documents/access_rights/index.js:455
+#: document/static/js/modules/documents/overview/index.js:941
 msgid "Create"
 msgstr "Создать"
 
-#: document/static/js/modules/documents/access_rights/index.js:421
+#: document/static/js/modules/documents/access_rights/index.js:503
 msgid "Share link created."
 msgstr "Ссылка для общего доступа создана."
 
-#: document/static/js/modules/documents/access_rights/index.js:427
+#: document/static/js/modules/documents/access_rights/index.js:509
 msgid "Could not create share link."
 msgstr "Не удалось создать ссылку для общего доступа."
 
-#: document/static/js/modules/documents/access_rights/index.js:453
+#: document/static/js/modules/documents/access_rights/index.js:535
 msgid "Share link revoked."
 msgstr "Ссылка на общий доступ удалена."
 
-#: document/static/js/modules/documents/access_rights/index.js:455
-#: document/static/js/modules/documents/access_rights/index.js:459
+#: document/static/js/modules/documents/access_rights/index.js:537
+#: document/static/js/modules/documents/access_rights/index.js:541
 msgid "Could not revoke share link."
 msgstr "Не удалось отозвать ссылку общего доступа."
 
-#: document/static/js/modules/documents/access_rights/index.js:575
-msgid "Link copied to clipboard."
-msgstr "Ссылка скопирована в буфер обмена."
-
-#: document/static/js/modules/documents/access_rights/index.js:577
-msgid "Could not copy link."
-msgstr "Не удалось скопировать ссылку."
-
-#: document/static/js/modules/documents/access_rights/index.js:642
+#: document/static/js/modules/documents/access_rights/index.js:552
 msgid "Access rights have been saved"
 msgstr "Права доступа сохранены."
 
-#: document/static/js/modules/documents/access_rights/index.js:648
+#: document/static/js/modules/documents/access_rights/index.js:558
 msgid "Access rights could not be saved"
 msgstr "Права доступа не удалось сохранить."
+
+#: document/static/js/modules/documents/access_rights/index.js:607
+#: user/static/js/modules/contacts/add_dialog.js:54
+msgid "Add contact or invite new user"
+msgstr "Добавьте контакт или пригласите нового пользователя"
+
+#: document/static/js/modules/documents/access_rights/index.js:608
+#: user/static/js/modules/contacts/add_dialog.js:55
+msgid "Add contact"
+msgstr "Добавить контакт"
+
+#: document/static/js/modules/documents/access_rights/index.js:671
+#: document/static/js/modules/documents/overview/actions.js:55
+msgid "Share your document with others"
+msgstr "Поделитесь своим документом с другими"
 
 #: document/static/js/modules/documents/access_rights/templates.js:6
 msgid "People"
@@ -1571,7 +1737,6 @@ msgstr "Соавторы"
 
 #: document/static/js/modules/documents/access_rights/templates.js:27
 #: document/static/js/modules/documents/access_rights/templates.js:85
-#: document/static/js/modules/documents/overview/index.js:587
 msgid "Rights"
 msgstr "Права"
 
@@ -1645,62 +1810,74 @@ msgstr ""
 msgid "Invite"
 msgstr "Приглашать"
 
-#: document/static/js/modules/documents/overview/actions.js:36
-#: document/static/js/modules/documents/overview/index.js:779
+#: document/static/js/modules/documents/overview/actions.js:37
+#: document/static/js/modules/documents/overview/index.js:774
 #: document/static/js/modules/editor/e2ee/password-dialog.js:196
 msgid "Encrypted Document"
 msgstr "Зашифрованный документ"
 
-#: document/static/js/modules/documents/overview/actions.js:60
+#: document/static/js/modules/documents/overview/actions.js:54
+msgid "Access Rights"
+msgstr "Права доступа"
+
+#: document/static/js/modules/documents/overview/actions.js:65
+msgid "Loading access rights…"
+msgstr "Загрузка прав доступа…"
+
+#: document/static/js/modules/documents/overview/actions.js:111
+msgid "Could not load access rights."
+msgstr "Не удалось загрузить права доступа."
+
+#: document/static/js/modules/documents/overview/actions.js:128
 msgid "Document has been deleted"
 msgstr "Документ удален"
 
-#: document/static/js/modules/documents/overview/actions.js:70
+#: document/static/js/modules/documents/overview/actions.js:138
 msgid "Could not delete document"
 msgstr "Не удалось удалить документ"
 
-#: document/static/js/modules/documents/overview/actions.js:80
+#: document/static/js/modules/documents/overview/actions.js:148
 msgid "You cannot delete a document while you are offline."
 msgstr "Вы не можете удалить документ, пока находитесь в автономном режиме."
 
-#: document/static/js/modules/documents/overview/actions.js:96
+#: document/static/js/modules/documents/overview/actions.js:164
 msgid "Do you really want to delete the following documents?"
 msgstr "Вы действительно хотите удалить следующие документы?"
 
-#: document/static/js/modules/documents/overview/actions.js:99
+#: document/static/js/modules/documents/overview/actions.js:167
 msgid "Do you really want to delete the following document?"
 msgstr "Вы действительно хотите удалить следующий документ?"
 
-#: document/static/js/modules/documents/overview/actions.js:138
+#: document/static/js/modules/documents/overview/actions.js:206
 msgid "Import as:"
 msgstr "Импортировать как:"
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:229
 msgid ""
 "You need to set up a personal passphrase before you can import documents."
 msgstr ""
 "Прежде чем вы сможете импортировать документы, вам необходимо установить "
 "личную парольную фразу."
 
-#: document/static/js/modules/documents/overview/actions.js:173
+#: document/static/js/modules/documents/overview/actions.js:241
 msgid "This document will be saved as encrypted."
 msgstr "Этот документ будет сохранен в зашифрованном виде."
 
-#: document/static/js/modules/documents/overview/actions.js:181
-#: document/static/js/modules/documents/overview/index.js:926
+#: document/static/js/modules/documents/overview/actions.js:249
+#: document/static/js/modules/documents/overview/index.js:921
 msgid "Non-encrypted"
 msgstr "незашифрованный"
 
-#: document/static/js/modules/documents/overview/actions.js:185
-#: document/static/js/modules/documents/overview/index.js:931
+#: document/static/js/modules/documents/overview/actions.js:253
+#: document/static/js/modules/documents/overview/index.js:926
 msgid "Encrypted"
 msgstr "Зашифрованный"
 
-#: document/static/js/modules/documents/overview/actions.js:198
+#: document/static/js/modules/documents/overview/actions.js:266
 msgid "Supported formats"
 msgstr "Поддерживаемые форматы"
 
-#: document/static/js/modules/documents/overview/actions.js:198
+#: document/static/js/modules/documents/overview/actions.js:266
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
@@ -1708,77 +1885,81 @@ msgstr ""
 "Вы также можете загрузить ZIP-файл, содержащий один файл в любом из этих "
 "форматов, а также изображения и/или файл bibtex."
 
-#: document/static/js/modules/documents/overview/actions.js:202
+#: document/static/js/modules/documents/overview/actions.js:270
 msgid "Import a document"
 msgstr "Импортировать документ"
 
-#: document/static/js/modules/documents/overview/actions.js:220
+#: document/static/js/modules/documents/overview/actions.js:288
 msgid "File too large"
 msgstr "Файл слишком большой"
 
-#: document/static/js/modules/documents/overview/actions.js:279
+#: document/static/js/modules/documents/overview/actions.js:347
 msgid "No importable files found in ZIP"
 msgstr "В ZIP-архиве не найдено импортируемых файлов."
 
-#: document/static/js/modules/documents/overview/actions.js:321
+#: document/static/js/modules/documents/overview/actions.js:389
 msgid "Unsupported file format"
 msgstr "Неподдерживаемый формат файла"
 
-#: document/static/js/modules/documents/overview/actions.js:411
-#: document/static/js/modules/documents/overview/actions.js:463
+#: document/static/js/modules/documents/overview/actions.js:479
+#: document/static/js/modules/documents/overview/actions.js:531
 msgid "Could not create encrypted document."
 msgstr "Не удалось создать зашифрованный документ."
 
-#: document/static/js/modules/documents/overview/actions.js:457
+#: document/static/js/modules/documents/overview/actions.js:525
 #: document/static/js/modules/editor/collab/doc.js:309
 msgid "Incorrect passphrase. Please try again."
 msgstr "Неверная парольная фраза. Пожалуйста, попробуйте еще раз."
 
-#: document/static/js/modules/documents/overview/actions.js:501
+#: document/static/js/modules/documents/overview/actions.js:569
 msgid "Recovery failed. Please check your recovery key and try again."
 msgstr ""
 "Восстановление не удалось. Пожалуйста, проверьте свой ключ восстановления и "
 "повторите попытку."
 
-#: document/static/js/modules/documents/overview/actions.js:597
-#: document/static/js/modules/editor/document_template/index.js:129
+#: document/static/js/modules/documents/overview/actions.js:665
+#: document/static/js/modules/editor/document_template/index.js:130
 msgid "Encrypt the copy"
 msgstr "Зашифровать копию"
 
-#: document/static/js/modules/documents/overview/actions.js:604
-#: document/static/js/modules/editor/document_template/index.js:136
+#: document/static/js/modules/documents/overview/actions.js:672
+#: document/static/js/modules/editor/document_template/index.js:137
 msgid "Choose document template"
 msgstr "Выберите шаблон документа"
 
-#: document/static/js/modules/documents/overview/actions.js:606
+#: document/static/js/modules/documents/overview/actions.js:674
 msgid "Select document template for copies"
 msgstr "Выберите шаблон документа для копий"
 
-#: document/static/js/modules/documents/overview/actions.js:606
-#: document/static/js/modules/editor/document_template/index.js:138
+#: document/static/js/modules/documents/overview/actions.js:674
+#: document/static/js/modules/editor/document_template/index.js:139
 msgid "Select document template for copy."
 msgstr "Выберите шаблон документа для копирования."
 
-#: document/static/js/modules/documents/overview/actions.js:619
+#: document/static/js/modules/documents/overview/actions.js:687
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
-#: document/static/js/modules/editor/document_template/index.js:151
+#: document/static/js/modules/editor/document_template/index.js:152
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:342
 msgid "Copy"
 msgstr "Копировать"
 
-#: document/static/js/modules/documents/overview/actions.js:668
+#: document/static/js/modules/documents/overview/actions.js:736
 msgid "Could not copy document."
 msgstr "Не удалось скопировать документ."
 
-#: document/static/js/modules/documents/overview/actions.js:698
-#: document/static/js/modules/documents/overview/actions.js:730
-#: document/static/js/modules/editor/document_template/index.js:229
-#: document/static/js/modules/editor/document_template/index.js:283
+#: document/static/js/modules/documents/overview/actions.js:766
+#: document/static/js/modules/documents/overview/actions.js:798
+#: document/static/js/modules/editor/document_template/index.js:230
+#: document/static/js/modules/editor/document_template/index.js:284
 msgid "Incorrect password."
 msgstr "Неправильный пароль."
 
-#: document/static/js/modules/documents/overview/actions.js:952
+#: document/static/js/modules/documents/overview/actions.js:1029
+msgid "Document Settings"
+msgstr "Настройки документа"
+
+#: document/static/js/modules/documents/overview/actions.js:1084
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr ""
@@ -1789,13 +1970,7 @@ msgstr ""
 msgid "Document Overview"
 msgstr "Обзор документа"
 
-#: document/static/js/modules/documents/overview/index.js:117
-msgid "You cannot access rights data of a document while you are offline."
-msgstr ""
-"Вы не можете получить доступ к данным о правах документа, пока находитесь в "
-"автономном режиме."
-
-#: document/static/js/modules/documents/overview/index.js:149
+#: document/static/js/modules/documents/overview/index.js:135
 msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
@@ -1803,53 +1978,58 @@ msgstr ""
 "Если оставить пустую папку, она будет удалена. Вы действительно хотите "
 "удалить эту папку?"
 
-#: document/static/js/modules/documents/overview/index.js:195
+#: document/static/js/modules/documents/overview/index.js:181
 msgid "You cannot open a document while you are offline."
 msgstr "Вы не можете открыть документ, находясь в автономном режиме."
 
-#: document/static/js/modules/documents/overview/index.js:239
+#: document/static/js/modules/documents/overview/index.js:234
 msgid "Document data loading failed."
 msgstr "Не удалось загрузить данные документа."
 
-#: document/static/js/modules/documents/overview/index.js:572
+#: document/static/js/modules/documents/overview/index.js:567
 msgid "No documents available"
 msgstr "Нет доступных документов"
 
-#: document/static/js/modules/documents/overview/index.js:573
+#: document/static/js/modules/documents/overview/index.js:568
 msgid "No documents found"
 msgstr "Документы не найдены"
 
-#: document/static/js/modules/documents/overview/index.js:583
+#: document/static/js/modules/documents/overview/index.js:578
 msgid "Revisions"
 msgstr "Редакции"
 
-#: document/static/js/modules/documents/overview/index.js:584
+#: document/static/js/modules/documents/overview/index.js:579
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:112
 msgid "Created"
 msgstr "Созданный"
 
-#: document/static/js/modules/documents/overview/index.js:585
+#: document/static/js/modules/documents/overview/index.js:580
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:113
 msgid "Last changed"
 msgstr "Последнее изменение"
 
-#: document/static/js/modules/documents/overview/index.js:586
+#: document/static/js/modules/documents/overview/index.js:581
 msgid "Owner"
 msgstr "Владелец"
 
-#: document/static/js/modules/documents/overview/index.js:827
+#: document/static/js/modules/documents/overview/index.js:582
+#: document/static/js/modules/editor/menus/headerbar/model.js:690
+msgid "Settings"
+msgstr "Настройки"
+
+#: document/static/js/modules/documents/overview/index.js:822
 msgid "Undefined"
 msgstr "Неопределенный"
 
-#: document/static/js/modules/documents/overview/index.js:840
+#: document/static/js/modules/documents/overview/index.js:835
 msgid "Copy selected as..."
 msgstr "Копировать выбранное как..."
 
-#: document/static/js/modules/documents/overview/index.js:842
+#: document/static/js/modules/documents/overview/index.js:837
 msgid "Copy the documents and assign them to a specific template."
 msgstr "Скопируйте документы и присвойте их определенному шаблону."
 
-#: document/static/js/modules/documents/overview/index.js:893
+#: document/static/js/modules/documents/overview/index.js:888
 msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
@@ -1857,37 +2037,37 @@ msgstr ""
 "Зашифрованные документы защищают ваш контент, поэтому его смогут прочитать "
 "только люди, у которых есть пароль."
 
-#: document/static/js/modules/documents/overview/index.js:894
-#: document/static/js/modules/documents/overview/index.js:908
+#: document/static/js/modules/documents/overview/index.js:889
+#: document/static/js/modules/documents/overview/index.js:903
 msgid "Advantages"
 msgstr "Преимущества"
 
-#: document/static/js/modules/documents/overview/index.js:896
+#: document/static/js/modules/documents/overview/index.js:891
 msgid "Only people with the password can read the document."
 msgstr "Только люди с паролем могут прочитать документ."
 
-#: document/static/js/modules/documents/overview/index.js:897
+#: document/static/js/modules/documents/overview/index.js:892
 msgid "The server cannot access the document contents."
 msgstr "Сервер не может получить доступ к содержимому документа."
 
-#: document/static/js/modules/documents/overview/index.js:899
-#: document/static/js/modules/documents/overview/index.js:914
+#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:909
 msgid "Disadvantages"
 msgstr "Недостатки"
 
-#: document/static/js/modules/documents/overview/index.js:901
+#: document/static/js/modules/documents/overview/index.js:896
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr ""
 "Ограниченные права доступа (без отслеживания изменений и режимов просмотра)."
 
-#: document/static/js/modules/documents/overview/index.js:902
+#: document/static/js/modules/documents/overview/index.js:897
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
 msgstr ""
 "Если вы потеряете пароль или кодовую фразу, восстановить документ невозможно."
 
-#: document/static/js/modules/documents/overview/index.js:903
+#: document/static/js/modules/documents/overview/index.js:898
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
@@ -1895,45 +2075,45 @@ msgstr ""
 "Вы должны передать пароль соавторам вручную (если они не используют личную "
 "парольную фразу)."
 
-#: document/static/js/modules/documents/overview/index.js:907
+#: document/static/js/modules/documents/overview/index.js:902
 msgid "Regular documents are the default and work well for most users."
 msgstr ""
 "Обычные документы используются по умолчанию и подходят большинству "
 "пользователей."
 
-#: document/static/js/modules/documents/overview/index.js:910
+#: document/static/js/modules/documents/overview/index.js:905
 msgid "Full access rights options including tracked changes and review modes."
 msgstr ""
 "Параметры полных прав доступа, включая отслеживание изменений и режимы "
 "просмотра."
 
-#: document/static/js/modules/documents/overview/index.js:911
+#: document/static/js/modules/documents/overview/index.js:906
 msgid "No risk of losing access if you forget a password."
 msgstr "Никакого риска потери доступа, если вы забудете пароль."
 
-#: document/static/js/modules/documents/overview/index.js:912
+#: document/static/js/modules/documents/overview/index.js:907
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr ""
 "Упрощенная совместная работа — нет необходимости делиться паролями с "
 "соавторами."
 
-#: document/static/js/modules/documents/overview/index.js:916
+#: document/static/js/modules/documents/overview/index.js:911
 msgid "The server can technically access the document contents."
 msgstr "Сервер может технически получить доступ к содержимому документа."
 
-#: document/static/js/modules/documents/overview/index.js:917
+#: document/static/js/modules/documents/overview/index.js:912
 msgid "No additional protection beyond your account password."
 msgstr "Никакой дополнительной защиты, кроме пароля вашей учетной записи."
 
-#: document/static/js/modules/documents/overview/index.js:921
+#: document/static/js/modules/documents/overview/index.js:916
 msgid "Choose encryption type of new document."
 msgstr "Выберите тип шифрования нового документа."
 
-#: document/static/js/modules/documents/overview/index.js:975
+#: document/static/js/modules/documents/overview/index.js:970
 msgid "Set Up Personal Encryption (Optional)"
 msgstr "Настройте личное шифрование (необязательно)"
 
-#: document/static/js/modules/documents/overview/index.js:977
+#: document/static/js/modules/documents/overview/index.js:972
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
@@ -1942,26 +2122,26 @@ msgstr ""
 "разблокировать все ваши зашифрованные документы с помощью одной парольной "
 "фразы."
 
-#: document/static/js/modules/documents/overview/index.js:978
+#: document/static/js/modules/documents/overview/index.js:973
 msgid "Note:"
 msgstr "Примечание:"
 
-#: document/static/js/modules/documents/overview/index.js:978
+#: document/static/js/modules/documents/overview/index.js:973
 msgid "This is optional. You can also use a per-document password instead."
 msgstr ""
 "Это необязательно. Вместо этого вы также можете использовать пароль для "
 "каждого документа."
 
-#: document/static/js/modules/documents/overview/index.js:982
+#: document/static/js/modules/documents/overview/index.js:977
 msgid "Skip for Now"
 msgstr "Пропустить сейчас"
 
-#: document/static/js/modules/documents/overview/index.js:993
+#: document/static/js/modules/documents/overview/index.js:988
 msgid "Set Up Passphrase"
 msgstr "Установить парольную фразу"
 
-#: document/static/js/modules/documents/overview/index.js:1028
-#: user/static/js/modules/profile/index.js:232
+#: document/static/js/modules/documents/overview/index.js:1023
+#: user/static/js/modules/profile/index.js:264
 msgid "Failed to set up passphrase: "
 msgstr "Не удалось установить парольную фразу:"
 
@@ -2582,7 +2762,7 @@ msgstr ""
 msgid "Insert"
 msgstr "Вставлять"
 
-#: document/static/js/modules/editor/dialogs/citation.js:39
+#: document/static/js/modules/editor/dialogs/citation.js:40
 #: document/static/js/modules/editor/dialogs/code_block.js:120
 #: document/static/js/modules/editor/dialogs/figure.js:374
 #: document/static/js/modules/editor/dialogs/templates.js:315
@@ -2597,21 +2777,21 @@ msgstr "Вставлять"
 msgid "Remove"
 msgstr "Удалить"
 
-#: document/static/js/modules/editor/dialogs/citation.js:69
+#: document/static/js/modules/editor/dialogs/citation.js:68
 msgid "Configure Citation"
 msgstr "Настроить цитирование"
 
-#: document/static/js/modules/editor/dialogs/citation.js:243
+#: document/static/js/modules/editor/dialogs/citation.js:261
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "Поиск..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:256
+#: document/static/js/modules/editor/dialogs/citation.js:274
 #: document/static/js/modules/editor/dialogs/templates.js:313
 msgid "Year"
 msgstr "Год"
 
-#: document/static/js/modules/editor/dialogs/citation.js:425
+#: document/static/js/modules/editor/dialogs/citation.js:443
 msgid "Please select at least one citation source!"
 msgstr "Пожалуйста, выберите хотя бы один источник цитирования!"
 
@@ -2627,14 +2807,18 @@ msgstr "Категория"
 msgid "Optional title"
 msgstr "Необязательное название"
 
-#: document/static/js/modules/editor/dialogs/contributor.js:28
-#: document/static/js/modules/editor/dialogs/contributor.js:119
-#: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:22
+#: document/static/js/modules/editor/dialogs/contributor.js:31
+#: document/static/js/modules/editor/dialogs/contributor.js:157
+#: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:24
 #: document/static/js/modules/editor/state_plugins/tag_input/tag_editor_plugins.js:20
 msgid "Add"
 msgstr "Добавить"
 
-#: document/static/js/modules/editor/dialogs/contributor.js:53
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+msgid "ID Value format is incorrect for "
+msgstr "Формат значения идентификатора неверен для "
+
+#: document/static/js/modules/editor/dialogs/contributor.js:89
 msgid "Email is in incorrect format!"
 msgstr "Электронная почта имеет неверный формат!"
 
@@ -2874,49 +3058,47 @@ msgstr "Страница"
 msgid "Text before"
 msgstr "Текст перед"
 
-#: document/static/js/modules/editor/dialogs/templates.js:387
+#: document/static/js/modules/editor/dialogs/templates.js:395
+msgid "Select ID Type"
+msgstr "Выберите тип идентификатора"
+
+#: document/static/js/modules/editor/dialogs/templates.js:401
 msgid "Firstname"
 msgstr "Имя"
 
-#: document/static/js/modules/editor/dialogs/templates.js:388
+#: document/static/js/modules/editor/dialogs/templates.js:402
 msgid "Lastname"
 msgstr "Фамилия"
 
-#: document/static/js/modules/editor/dialogs/templates.js:389
-#: document/static/js/modules/schema/document/content.js:47
-#: user/static/js/modules/profile/templates.js:163
-msgid "Email"
-msgstr "Электронная почта"
+#: document/static/js/modules/editor/dialogs/templates.js:409
+msgid "ID Value"
+msgstr "Значение идентификатора"
 
-#: document/static/js/modules/editor/dialogs/templates.js:390
-msgid "Institution"
-msgstr "учреждение"
-
-#: document/static/js/modules/editor/document_template/index.js:58
+#: document/static/js/modules/editor/document_template/index.js:59
 msgid "Optional sections"
 msgstr "Дополнительные разделы"
 
-#: document/static/js/modules/editor/document_template/index.js:60
+#: document/static/js/modules/editor/document_template/index.js:61
 msgid "Choose which optional sections to enable."
 msgstr "Выберите, какие дополнительные разделы включить."
 
-#: document/static/js/modules/editor/document_template/index.js:66
+#: document/static/js/modules/editor/document_template/index.js:67
 msgid "Show/hide"
 msgstr "Показать/скрыть"
 
-#: document/static/js/modules/editor/document_template/index.js:109
+#: document/static/js/modules/editor/document_template/index.js:110
 msgid "Create copy as ..."
 msgstr "Создать копию как..."
 
-#: document/static/js/modules/editor/document_template/index.js:112
+#: document/static/js/modules/editor/document_template/index.js:113
 msgid "Create copy of the current document with a specific template."
 msgstr "Создайте копию текущего документа с определенным шаблоном."
 
-#: document/static/js/modules/editor/document_template/index.js:331
+#: document/static/js/modules/editor/document_template/index.js:332
 msgid "Export the document to a DOCX file with the given template."
 msgstr "Экспортируйте документ в файл DOCX с заданным шаблоном."
 
-#: document/static/js/modules/editor/document_template/index.js:354
+#: document/static/js/modules/editor/document_template/index.js:355
 msgid "Export the document to an ODT file with the given template."
 msgstr "Экспортируйте документ в файл ODT с заданным шаблоном."
 
@@ -3125,7 +3307,7 @@ msgstr ""
 #: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
 #: user/static/js/modules/profile/templates.js:30
-#: user/static/js/modules/profile/templates.js:100
+#: user/static/js/modules/profile/templates.js:105
 #: user/static/js/modules/signup/index.js:27
 msgid "Password"
 msgstr "Пароль"
@@ -3306,7 +3488,7 @@ msgid "Incorrect passphrase."
 msgstr "Неверная парольная фраза."
 
 #: document/static/js/modules/editor/index.js:804
-#: user/static/js/modules/profile/index.js:263
+#: user/static/js/modules/profile/index.js:295
 msgid "Recovery failed: "
 msgstr "Восстановление не удалось:"
 
@@ -3450,7 +3632,7 @@ msgid "Removed"
 msgstr "Удаленный"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:250
-#: usermedia/static/js/modules/images/overview/index.js:257
+#: usermedia/static/js/modules/images/overview/index.js:276
 msgid "Added"
 msgstr "Добавлен"
 
@@ -3632,8 +3814,8 @@ msgid "Sign up / Log in"
 msgstr "Зарегистрируйтесь / Войдите"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:198
-#: document/static/js/modules/editor/menus/headerbar/view.js:545
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:548
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Close the document and return to the document overview menu."
 msgstr "Закройте документ и вернитесь в меню обзора документа."
 
@@ -3697,7 +3879,7 @@ msgstr ""
 "фразы получат его автоматически; соавторам, не использующим парольную фразу, "
 "необходимо поделиться им вручную."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:472
+#: document/static/js/modules/editor/menus/headerbar/model.js:485
 msgid ""
 "Document encryption key rotated. Other passphrase users will receive the new "
 "key automatically."
@@ -3705,54 +3887,54 @@ msgstr ""
 "Ключ шифрования документа заменен. Другие пользователи парольной фразы "
 "получат новый ключ автоматически."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:479
+#: document/static/js/modules/editor/menus/headerbar/model.js:492
 msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
 msgstr ""
 "Пароль документа изменен. Не забудьте сообщить новый пароль своим коллегам."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:487
+#: document/static/js/modules/editor/menus/headerbar/model.js:500
 msgid "The current password is incorrect."
 msgstr "Текущий пароль неверен."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:503
+#: document/static/js/modules/editor/menus/headerbar/model.js:516
 msgid "Export"
 msgstr "Экспорт"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:504
+#: document/static/js/modules/editor/menus/headerbar/model.js:517
 msgid "Export of the document contents"
 msgstr "Экспорт содержимого документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:510
+#: document/static/js/modules/editor/menus/headerbar/model.js:523
 msgid "HTML"
 msgstr "HTML"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:512
+#: document/static/js/modules/editor/menus/headerbar/model.js:525
 msgid "Export the document to an HTML file."
 msgstr "Экспортируйте документ в HTML-файл."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:533
+#: document/static/js/modules/editor/menus/headerbar/model.js:546
 msgid "Epub"
 msgstr "Электронная публикация"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:536
+#: document/static/js/modules/editor/menus/headerbar/model.js:549
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Экспортируйте документ в файл электронной читалки Epub."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:559
+#: document/static/js/modules/editor/menus/headerbar/model.js:572
 msgid "LaTeX"
 msgstr "Латекс"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:561
+#: document/static/js/modules/editor/menus/headerbar/model.js:574
 msgid "Export the document to an LaTeX file."
 msgstr "Экспортируйте документ в файл LaTeX."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:581
+#: document/static/js/modules/editor/menus/headerbar/model.js:594
 msgid "JATS"
 msgstr "ДЖАТС"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:584
+#: document/static/js/modules/editor/menus/headerbar/model.js:597
 msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
@@ -3760,205 +3942,201 @@ msgstr ""
 "Экспортируйте документ в файл библиотеки тегов архивирования и обмена "
 "журналами NISO JATS версии 1.2."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:607
+#: document/static/js/modules/editor/menus/headerbar/model.js:620
 msgid "BITS"
 msgstr "БИТЫ"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:610
+#: document/static/js/modules/editor/menus/headerbar/model.js:623
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr ""
 "Экспортируйте документ в файл набора тегов Book Interchange BITS версии 2.1."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:633
+#: document/static/js/modules/editor/menus/headerbar/model.js:646
 msgid "Pandoc JSON"
 msgstr "Пандок JSON"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:636
+#: document/static/js/modules/editor/menus/headerbar/model.js:649
 msgid "Export the document to a Pandoc JSON file."
 msgstr "Экспортируйте документ в файл Pandoc JSON."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:658
+#: document/static/js/modules/editor/menus/headerbar/model.js:671
 msgid "Slim FIDUS"
 msgstr "Тонкий ФИДУС"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:661
+#: document/static/js/modules/editor/menus/headerbar/model.js:674
 msgid "Export the document to a FIDUS file without its template."
 msgstr "Экспортируйте документ в файл FIDUS без его шаблона."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:677
-msgid "Settings"
-msgstr "Настройки"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:678
+#: document/static/js/modules/editor/menus/headerbar/model.js:691
 msgid "Configure settings of this document."
 msgstr "Настройте параметры этого документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:685
+#: document/static/js/modules/editor/menus/headerbar/model.js:698
 msgid "Citation Style"
 msgstr "Стиль цитирования"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:687
+#: document/static/js/modules/editor/menus/headerbar/model.js:700
 msgid "Choose your preferred citation style."
 msgstr "Выберите предпочитаемый стиль цитирования."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:696
+#: document/static/js/modules/editor/menus/headerbar/model.js:709
 msgid "Document Style"
 msgstr "Стиль документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:698
+#: document/static/js/modules/editor/menus/headerbar/model.js:711
 msgid "Choose your preferred document style."
 msgstr "Выберите предпочитаемый стиль документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:710
+#: document/static/js/modules/editor/menus/headerbar/model.js:723
 msgid "Text Language"
 msgstr "Язык текста"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:712
+#: document/static/js/modules/editor/menus/headerbar/model.js:725
 msgid "Choose the language of the document."
 msgstr "Выберите язык документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:720
+#: document/static/js/modules/editor/menus/headerbar/model.js:733
 #: document/static/js/modules/schema/const.js:19
 msgid "English (United States)"
 msgstr "Английский (США)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:725
+#: document/static/js/modules/editor/menus/headerbar/model.js:738
 #: document/static/js/modules/schema/const.js:18
 msgid "English (United Kingdom)"
 msgstr "Английский (Великобритания)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:728
+#: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:23
 msgid "German (Germany)"
 msgstr "Немецкий (Германия)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:731
+#: document/static/js/modules/editor/menus/headerbar/model.js:744
 #: document/static/js/modules/schema/const.js:11
 msgid "Chinese (Simplified)"
 msgstr "Китайский (упрощенный)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/editor/menus/headerbar/model.js:747
 #: document/static/js/modules/schema/const.js:47
 msgid "Spanish"
 msgstr "испанский"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:735
+#: document/static/js/modules/editor/menus/headerbar/model.js:748
 #: document/static/js/modules/schema/const.js:21
 msgid "French"
 msgstr "Французский"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:736
+#: document/static/js/modules/editor/menus/headerbar/model.js:749
 #: document/static/js/modules/schema/const.js:30
 msgid "Japanese"
 msgstr "японский"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:737
+#: document/static/js/modules/editor/menus/headerbar/model.js:750
 #: document/static/js/modules/schema/const.js:29
 msgid "Italian"
 msgstr "итальянский"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:741
+#: document/static/js/modules/editor/menus/headerbar/model.js:754
 #: document/static/js/modules/schema/const.js:38
 msgid "Portuguese (Brazil)"
 msgstr "Португальский (Бразилия)"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:791
+#: document/static/js/modules/editor/menus/headerbar/model.js:804
 msgid "Other"
 msgstr "Другой"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:842
+#: document/static/js/modules/editor/menus/headerbar/model.js:855
 msgid "Paper Size"
 msgstr "Размер бумаги"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:845
+#: document/static/js/modules/editor/menus/headerbar/model.js:858
 msgid "Choose a papersize for print and PDF generation."
 msgstr "Выберите формат бумаги для печати и создания PDF-файлов."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:853
+#: document/static/js/modules/editor/menus/headerbar/model.js:866
 msgid "DIN A4"
 msgstr "DIN А4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:856
+#: document/static/js/modules/editor/menus/headerbar/model.js:869
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216), который используется в большинстве стран мира."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:879
+#: document/static/js/modules/editor/menus/headerbar/model.js:892
 msgid "US Letter"
 msgstr "Письмо США"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:882
+#: document/static/js/modules/editor/menus/headerbar/model.js:895
 msgid "The format used by the USA and some other American countries."
 msgstr "Формат, используемый США и некоторыми другими американскими странами."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:910
+#: document/static/js/modules/editor/menus/headerbar/model.js:923
 msgid "Copyright Information"
 msgstr "Информация об авторских правах"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:934
+#: document/static/js/modules/editor/menus/headerbar/model.js:947
 msgid "Tools"
 msgstr "Инструменты"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:935
+#: document/static/js/modules/editor/menus/headerbar/model.js:948
 msgid "Select document editing tool."
 msgstr "Выберите инструмент редактирования документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:941
+#: document/static/js/modules/editor/menus/headerbar/model.js:954
 #: document/static/js/modules/editor/tools/word_count/index.js:13
 msgid "Word counter"
 msgstr "Счетчик слов"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:943
+#: document/static/js/modules/editor/menus/headerbar/model.js:956
 msgid "See document statistics."
 msgstr "Смотрите статистику документа."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:951
+#: document/static/js/modules/editor/menus/headerbar/model.js:964
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:34
 #: document/static/js/modules/editor/tools/search_replace/index.js:265
 msgid "Search and replace"
 msgstr "Искать и заменять"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:953
+#: document/static/js/modules/editor/menus/headerbar/model.js:966
 msgid "Show a search and replace dialog."
 msgstr "Показать диалог поиска и замены."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:962
+#: document/static/js/modules/editor/menus/headerbar/model.js:975
 msgid "Keyboard shortcuts"
 msgstr "Сочетания клавиш"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:965
+#: document/static/js/modules/editor/menus/headerbar/model.js:978
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "Показать обзор доступных сочетаний клавиш."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:977
+#: document/static/js/modules/editor/menus/headerbar/model.js:990
 msgid "Track changes"
 msgstr "Отслеживать изменения"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:979
+#: document/static/js/modules/editor/menus/headerbar/model.js:992
 msgid "Tracking changes to the document"
 msgstr "Отслеживание изменений в документе"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:985
+#: document/static/js/modules/editor/menus/headerbar/model.js:998
 msgid "Record"
 msgstr "Записывать"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:987
+#: document/static/js/modules/editor/menus/headerbar/model.js:1000
 msgid "Record document changes"
 msgstr "Фиксировать изменения документа"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1005
+#: document/static/js/modules/editor/menus/headerbar/model.js:1018
 msgid "Accept all"
 msgstr "Принять все"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1007
+#: document/static/js/modules/editor/menus/headerbar/model.js:1020
 msgid "Accept all tracked changes."
 msgstr "Примите все отслеженные изменения."
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1014
+#: document/static/js/modules/editor/menus/headerbar/model.js:1027
 msgid "Reject all"
 msgstr "Отклонить все"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1016
+#: document/static/js/modules/editor/menus/headerbar/model.js:1029
 msgid "Reject all tracked changes."
 msgstr "Отклонить все отслеживаемые изменения."
 
@@ -3966,12 +4144,12 @@ msgstr "Отклонить все отслеживаемые изменения.
 msgid "You cannot close a document when you're offline."
 msgstr "Вы не можете закрыть документ, находясь в автономном режиме."
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:545
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:548
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Sign up or log in"
 msgstr "Зарегистрируйтесь или войдите"
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Close document"
 msgstr "Закрыть документ"
 
@@ -4368,8 +4546,8 @@ msgstr "Символы с пробелами"
 
 #: document/static/js/modules/exporter/docx/metadata.js:64
 #: document/static/js/modules/exporter/docx/metadata.js:67
-#: document/static/js/modules/exporter/odt/metadata.js:67
-#: document/static/js/modules/importer/docx/parse.js:244
+#: document/static/js/modules/exporter/odt/metadata.js:68
+#: document/static/js/modules/importer/docx/parse.js:255
 msgid "Unknown"
 msgstr "Неизвестный"
 
@@ -4418,7 +4596,7 @@ msgstr "Не удалось создать документ"
 msgid "Could not save "
 msgstr "Не удалось сохранить"
 
-#: document/static/js/modules/importer/odt/import.js:47
+#: document/static/js/modules/importer/odt/import.js:48
 msgid "File does not contain content.xml"
 msgstr "Файл не содержит content.xml"
 
@@ -4904,8 +5082,8 @@ msgstr "Войти с помощью"
 
 #: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
-#: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:246
+#: user/static/js/modules/profile/templates.js:93
+#: user/static/js/modules/profile/templates.js:251
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "Имя пользователя"
@@ -5154,23 +5332,23 @@ msgstr "Подтвердите выбор основного"
 msgid "Set this email as the address primary"
 msgstr "Установить этот адрес электронной почты в качестве основного адреса"
 
-#: user/static/js/modules/profile/index.js:144
+#: user/static/js/modules/profile/index.js:176
 msgid "Configure profile"
 msgstr "Настроить профиль"
 
-#: user/static/js/modules/profile/index.js:286
+#: user/static/js/modules/profile/index.js:318
 msgid "Passphrase changed successfully."
 msgstr "Парольная фраза успешно изменена."
 
-#: user/static/js/modules/profile/index.js:290
+#: user/static/js/modules/profile/index.js:322
 msgid "Failed to change passphrase: "
 msgstr "Не удалось изменить парольную фразу:"
 
-#: user/static/js/modules/profile/index.js:308
+#: user/static/js/modules/profile/index.js:340
 msgid "Could not save profile data"
 msgstr "Не удалось сохранить данные профиля"
 
-#: user/static/js/modules/profile/index.js:317
+#: user/static/js/modules/profile/index.js:349
 msgid "Could not save preferences"
 msgstr "Не удалось сохранить настройки"
 
@@ -5214,85 +5392,85 @@ msgstr "Старый пароль"
 msgid "Confirm the new password"
 msgstr "Подтвердите новый пароль"
 
-#: user/static/js/modules/profile/templates.js:77
+#: user/static/js/modules/profile/templates.js:82
 msgid "Edit profile picture"
 msgstr "Редактировать изображение профиля"
 
-#: user/static/js/modules/profile/templates.js:80
+#: user/static/js/modules/profile/templates.js:85
 msgid "Change picture"
 msgstr "Изменить картинку"
 
-#: user/static/js/modules/profile/templates.js:81
+#: user/static/js/modules/profile/templates.js:86
 msgid "Delete picture"
 msgstr "Удалить изображение"
 
-#: user/static/js/modules/profile/templates.js:108
+#: user/static/js/modules/profile/templates.js:113
 #: user/static/js/modules/two_factor/index.js:223
 msgid "Two-Factor Authentication"
 msgstr "Двухфакторная аутентификация"
 
-#: user/static/js/modules/profile/templates.js:112
+#: user/static/js/modules/profile/templates.js:117
 msgid "Enabled"
 msgstr "Включено"
 
-#: user/static/js/modules/profile/templates.js:116
+#: user/static/js/modules/profile/templates.js:121
 msgid "Disabled"
 msgstr "Неполноценный"
 
-#: user/static/js/modules/profile/templates.js:121
+#: user/static/js/modules/profile/templates.js:126
 msgid "Enable 2FA"
 msgstr "Включить 2FA"
 
-#: user/static/js/modules/profile/templates.js:125
+#: user/static/js/modules/profile/templates.js:130
 #: user/static/js/modules/two_factor/index.js:135
 msgid "Disable 2FA"
 msgstr "Отключить 2FA"
 
-#: user/static/js/modules/profile/templates.js:133
+#: user/static/js/modules/profile/templates.js:138
 msgid "End-to-End Encryption"
 msgstr "Сквозное шифрование"
 
-#: user/static/js/modules/profile/templates.js:137
+#: user/static/js/modules/profile/templates.js:142
 msgid "Personal passphrase set up"
 msgstr "Настройка личной фразы-пароля"
 
-#: user/static/js/modules/profile/templates.js:141
+#: user/static/js/modules/profile/templates.js:146
 msgid "Not set up"
 msgstr "Не настроено"
 
-#: user/static/js/modules/profile/templates.js:146
+#: user/static/js/modules/profile/templates.js:151
 msgid "Set up encryption passphrase"
 msgstr "Установить парольную фразу шифрования"
 
-#: user/static/js/modules/profile/templates.js:150
+#: user/static/js/modules/profile/templates.js:155
 msgid "Change passphrase"
 msgstr "Изменить парольную фразу"
 
-#: user/static/js/modules/profile/templates.js:154
+#: user/static/js/modules/profile/templates.js:159
 msgid "Recover with recovery key"
 msgstr "Восстановить с помощью ключа восстановления"
 
-#: user/static/js/modules/profile/templates.js:164
+#: user/static/js/modules/profile/templates.js:169
 msgid "Primary address"
 msgstr "Основной адрес"
 
-#: user/static/js/modules/profile/templates.js:165
+#: user/static/js/modules/profile/templates.js:170
 msgid "Verified"
 msgstr "Проверено"
 
-#: user/static/js/modules/profile/templates.js:220
+#: user/static/js/modules/profile/templates.js:225
 msgid "Editor"
 msgstr "Редактор"
 
-#: user/static/js/modules/profile/templates.js:224
+#: user/static/js/modules/profile/templates.js:229
 msgid "Enable inline reference typing (@)"
 msgstr "Включить ввод встроенных ссылок (@)"
 
-#: user/static/js/modules/profile/templates.js:226
+#: user/static/js/modules/profile/templates.js:231
 msgid "Type @ in the editor to insert a citation or cross-reference:"
 msgstr "Введите @ в редакторе, чтобы вставить цитату или перекрестную ссылку:"
 
-#: user/static/js/modules/profile/templates.js:228
+#: user/static/js/modules/profile/templates.js:233
 msgid ""
 "Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
 "citation: @@entry_key. Multiple sources: @key1;key2"
@@ -5300,15 +5478,15 @@ msgstr ""
 "Ссылка: @entry_key – необязательный суффикс: @entry_key[префикс][локатор]. "
 "Текстовая ссылка: @@entry_key. Несколько источников: @key1;key2."
 
-#: user/static/js/modules/profile/templates.js:229
+#: user/static/js/modules/profile/templates.js:234
 msgid "Cross-reference: @#target-id"
 msgstr "Перекрестная ссылка: @#target-id"
 
-#: user/static/js/modules/profile/templates.js:233
+#: user/static/js/modules/profile/templates.js:238
 msgid "Enable inline math typing ($)"
 msgstr "Включить встроенный математический ввод ($)"
 
-#: user/static/js/modules/profile/templates.js:235
+#: user/static/js/modules/profile/templates.js:240
 msgid ""
 "Type $ in the editor followed by LaTeX math to insert an equation inline, "
 "e.g. $x^2. Press Enter or Tab to confirm."
@@ -5317,15 +5495,15 @@ msgstr ""
 "вставить уравнение в строку, например $х^2. Нажмите Enter или Tab для "
 "подтверждения."
 
-#: user/static/js/modules/profile/templates.js:245
+#: user/static/js/modules/profile/templates.js:250
 msgid "Social Account Provider"
 msgstr "Поставщик социальных учетных записей"
 
-#: user/static/js/modules/profile/templates.js:273
+#: user/static/js/modules/profile/templates.js:278
 msgid "Connect"
 msgstr "Соединять"
 
-#: user/static/js/modules/profile/templates.js:288
+#: user/static/js/modules/profile/templates.js:294
 msgid "Delete account"
 msgstr "Удалить аккаунт"
 
@@ -5589,29 +5767,29 @@ msgstr "Не удалось обновить категории"
 msgid "Media Manager"
 msgstr "Медиа-менеджер"
 
-#: usermedia/static/js/modules/images/overview/index.js:102
+#: usermedia/static/js/modules/images/overview/index.js:121
 msgid "The image(s) could not be deleted"
 msgstr "Изображение(я) не удалось удалить."
 
-#: usermedia/static/js/modules/images/overview/index.js:118
+#: usermedia/static/js/modules/images/overview/index.js:137
 msgid "The image(s) have been deleted"
 msgstr "Изображения были удалены"
 
-#: usermedia/static/js/modules/images/overview/index.js:141
+#: usermedia/static/js/modules/images/overview/index.js:160
 msgid "Delete the image(s)"
 msgstr "Удалить изображения"
 
-#: usermedia/static/js/modules/images/overview/index.js:235
+#: usermedia/static/js/modules/images/overview/index.js:254
 #: usermedia/static/js/modules/images/selection_dialog/index.js:113
 msgid "No images available"
 msgstr "Нет доступных изображений"
 
-#: usermedia/static/js/modules/images/overview/index.js:236
+#: usermedia/static/js/modules/images/overview/index.js:255
 #: usermedia/static/js/modules/images/selection_dialog/index.js:114
 msgid "No images found"
 msgstr "Изображения не найдены"
 
-#: usermedia/static/js/modules/images/overview/index.js:256
+#: usermedia/static/js/modules/images/overview/index.js:275
 msgid "Size (px)"
 msgstr "Размер (пикселей)"
 
@@ -5634,6 +5812,11 @@ msgstr "Добавить новое изображение"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:70
 msgid "Use image"
 msgstr "Использовать изображение"
+
+#~ msgid "You cannot access rights data of a document while you are offline."
+#~ msgstr ""
+#~ "Вы не можете получить доступ к данным о правах документа, пока находитесь "
+#~ "в автономном режиме."
 
 #~ msgid "Could not obtain submission info."
 #~ msgstr "Не удалось получить информацию об отправке."

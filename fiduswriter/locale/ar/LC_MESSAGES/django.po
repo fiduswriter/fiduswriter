@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 10:17+0000\n"
+"POT-Creation-Date: 2026-06-02 16:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,95 +18,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: base/settings.py:280
+#: base/settings.py:326
 msgid "Arabic"
 msgstr "عربي"
 
-#: base/settings.py:281
+#: base/settings.py:327
 msgid "Bulgarian"
 msgstr "البلغارية"
 
-#: base/settings.py:282
+#: base/settings.py:328
 msgid "Czech"
 msgstr "التشيكية"
 
-#: base/settings.py:283
+#: base/settings.py:329
 msgid "Danish"
 msgstr "دانماركي"
 
-#: base/settings.py:284
+#: base/settings.py:330
 msgid "German"
 msgstr "الألمانية"
 
-#: base/settings.py:285
+#: base/settings.py:331
 msgid "English"
 msgstr "إنجليزي"
 
-#: base/settings.py:286
+#: base/settings.py:332
 msgid "Spanish"
 msgstr "الأسبانية"
 
-#: base/settings.py:287
+#: base/settings.py:333
 msgid "French"
 msgstr "فرنسي"
 
-#: base/settings.py:288
+#: base/settings.py:334
 msgid "Italian"
 msgstr "ايطالي"
 
-#: base/settings.py:289
+#: base/settings.py:335
 msgid "Japanese"
 msgstr "اليابانية"
 
-#: base/settings.py:290
+#: base/settings.py:336
 msgid "Korean"
 msgstr "كوري"
 
-#: base/settings.py:291
+#: base/settings.py:337
 msgid "Norwegian Bokmål"
 msgstr "البوكمال النرويجية"
 
-#: base/settings.py:292
+#: base/settings.py:338
 msgid "Dutch"
 msgstr "هولندي"
 
-#: base/settings.py:293
+#: base/settings.py:339
 msgid "Polish"
 msgstr "بولندي"
 
-#: base/settings.py:294
+#: base/settings.py:340
 msgid "Portuguese (Brazil)"
 msgstr "البرتغالية (البرازيل)"
 
-#: base/settings.py:295
+#: base/settings.py:341
 msgid "Portuguese (Portugal)"
 msgstr "البرتغالية (البرتغال)"
 
-#: base/settings.py:296
+#: base/settings.py:342
 msgid "Russian"
 msgstr "الروسية"
 
-#: base/settings.py:297
+#: base/settings.py:343
 msgid "Swedish"
 msgstr "السويدية"
 
-#: base/settings.py:298
+#: base/settings.py:344
 msgid "Turkish"
 msgstr "تركي"
 
-#: base/settings.py:299
+#: base/settings.py:345
 msgid "Chinese (Simplified)"
 msgstr "الصينية (المبسطة)"
 
-#: base/settings.py:415
+#: base/settings.py:461
 msgid "Fidus Writer Admin"
 msgstr "مشرف الكاتب فيدوس"
 
-#: base/settings.py:416
+#: base/settings.py:462
 msgid "Fidus Writer Administration Site"
 msgstr "موقع إدارة الكاتب Fidus"
 
-#: base/settings.py:417
+#: base/settings.py:463
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "مرحبًا بك في موقع إدارة Fidus Writer"
 
@@ -207,7 +207,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "تكرار قوالب المستندات المحددة"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:979
+#: document/emails.py:18 document/emails.py:236 document/views.py:985
 msgid "Untitled"
 msgstr "بدون عنوان"
 
@@ -585,15 +585,15 @@ msgstr ""
 msgid "In case you forgot, your username is %(username)s."
 msgstr "في حالة نسيانك، اسم المستخدم الخاص بك هو %(username)s."
 
-#: user/views.py:66
+#: user/views.py:69
 msgid "Your old password was entered incorrectly. Please enter it again."
 msgstr "تم إدخال كلمة المرور القديمة بشكل غير صحيح. الرجاء إدخاله مرة أخرى."
 
-#: user/views.py:70
+#: user/views.py:73
 msgid "The two password fields didn't match."
 msgstr "حقلا كلمة المرور غير متطابقين."
 
-#: user/views.py:645
+#: user/views.py:674
 msgid "Code is invalid"
 msgstr "الرمز غير صالح"
 

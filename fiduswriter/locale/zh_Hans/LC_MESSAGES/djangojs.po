@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer frontend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-14 13:28+0000\n"
+"POT-Creation-Date: 2026-06-02 17:43+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0800\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -62,6 +62,7 @@ msgstr "系统消息"
 
 #: base/static/js/modules/common/dialog.js:29
 #: base/static/js/modules/common/dialog.js:32
+#: document/static/js/modules/document_template/export_template_dialog.js:82
 msgid "Help"
 msgstr "帮助"
 
@@ -75,7 +76,7 @@ msgid "Close"
 msgstr "关闭"
 
 #: base/static/js/modules/common/dialog.js:84
-#: document/static/js/modules/documents/overview/index.js:942
+#: document/static/js/modules/documents/overview/index.js:937
 #: document/static/js/modules/editor/collab/doc.js:371
 #: document/static/js/modules/editor/collab/doc.js:573
 #: document/static/js/modules/editor/comments/editors/answer.js:22
@@ -100,22 +101,22 @@ msgstr "确定"
 #: base/static/js/modules/common/file/tools.js:16
 #: base/static/js/modules/common/file/tools.js:36
 #: bibliography/static/js/modules/bibliography/overview/index.js:278
-#: document/static/js/modules/editor/dialogs/citation.js:121
-#: document/static/js/modules/editor/dialogs/citation.js:175
-#: document/static/js/modules/editor/menus/headerbar/view.js:505
+#: document/static/js/modules/editor/dialogs/citation.js:139
+#: document/static/js/modules/editor/dialogs/citation.js:193
+#: document/static/js/modules/editor/menus/headerbar/view.js:508
 #: document/static/js/modules/editor/state_plugins/inline_reference/dropup.js:42
 #: document/static/js/modules/exporter/tools/file.js:3
-#: document/static/js/modules/importer/docx/convert.js:85
-#: document/static/js/modules/importer/docx/convert.js:93
-#: document/static/js/modules/importer/docx/convert.js:521
+#: document/static/js/modules/importer/docx/convert.js:89
+#: document/static/js/modules/importer/docx/convert.js:97
+#: document/static/js/modules/importer/docx/convert.js:607
 #: document/static/js/modules/importer/docx/import.js:49
-#: document/static/js/modules/importer/odt/convert.js:460
-#: document/static/js/modules/importer/odt/convert.js:471
-#: document/static/js/modules/importer/odt/import.js:114
+#: document/static/js/modules/importer/odt/convert.js:462
+#: document/static/js/modules/importer/odt/convert.js:473
+#: document/static/js/modules/importer/odt/import.js:120
 #: document/static/js/modules/importer/pandoc/import.js:22
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:224
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:229
-#: usermedia/static/js/modules/images/overview/index.js:175
+#: usermedia/static/js/modules/images/overview/index.js:194
 msgid "Untitled"
 msgstr "无题"
 
@@ -127,14 +128,15 @@ msgstr "新建文件夹"
 #: base/static/js/modules/common/file/dialog.js:81
 #: bibliography/static/js/modules/bibliography/form/index.js:88
 #: bibliography/static/js/modules/bibliography/overview/index.js:321
-#: document/static/js/modules/documents/access_rights/index.js:296
+#: document/static/js/modules/documents/access_rights/index.js:659
+#: document/static/js/modules/documents/overview/actions.js:1033
 #: document/static/js/modules/editor/comments/editors/answer.js:19
 #: document/static/js/modules/editor/comments/editors/comment.js:100
 #: user/static/js/modules/contacts/add_dialog.js:14
 #: user/static/js/modules/profile/dialogs.js:128
 #: user/static/js/modules/profile/dialogs.js:219
 #: user/static/js/modules/profile/dialogs.js:389
-#: user/static/js/modules/profile/templates.js:285
+#: user/static/js/modules/profile/templates.js:291
 #: usermedia/static/js/modules/images/overview/categories.js:73
 msgid "Submit"
 msgstr "提交"
@@ -303,10 +305,10 @@ msgstr "选择语言"
 
 #: base/static/js/modules/setup/index.js:6
 #: base/static/js/modules/setup/index.js:8
-#: document/static/js/modules/editor/dialogs/citation.js:48
+#: document/static/js/modules/editor/dialogs/citation.js:49
 #: document/static/js/modules/editor/dialogs/code_block.js:113
-#: document/static/js/modules/editor/dialogs/contributor.js:28
-#: document/static/js/modules/editor/dialogs/contributor.js:119
+#: document/static/js/modules/editor/dialogs/contributor.js:31
+#: document/static/js/modules/editor/dialogs/contributor.js:157
 #: document/static/js/modules/editor/dialogs/figure.js:359
 #: document/static/js/modules/editor/dialogs/link.js:57
 #: document/static/js/modules/editor/dialogs/link.js:67
@@ -340,8 +342,8 @@ msgstr "参考书目无法更新"
 #: bibliography/static/js/modules/bibliography/overview/index.js:342
 #: document/static/js/modules/exporter/native/revision.js:45
 #: document/static/js/modules/exporter/native/revision.js:78
-#: usermedia/static/js/modules/images/overview/index.js:94
-#: usermedia/static/js/modules/images/overview/index.js:108
+#: usermedia/static/js/modules/images/overview/index.js:113
+#: usermedia/static/js/modules/images/overview/index.js:127
 msgid "You are currently offline. Please try again when you are back online."
 msgstr "您目前处于离线状态。请当您重新上线后重试。"
 
@@ -412,7 +414,8 @@ msgid "Prefix used"
 msgstr "使用的前缀"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:92
-#: user/static/js/modules/profile/templates.js:92
+#: document/static/js/modules/document_template/export_template_dialog.js:423
+#: user/static/js/modules/profile/templates.js:97
 msgid "First name"
 msgstr "名"
 
@@ -421,7 +424,8 @@ msgid "Prefix"
 msgstr "前缀"
 
 #: bibliography/static/js/modules/bibliography/form/fields/name.js:104
-#: user/static/js/modules/profile/templates.js:96
+#: document/static/js/modules/document_template/export_template_dialog.js:424
+#: user/static/js/modules/profile/templates.js:101
 msgid "Last name"
 msgstr "姓"
 
@@ -525,7 +529,7 @@ msgid "There was an issue with the bibliography import"
 msgstr "参考书目导入出现问题"
 
 #: bibliography/static/js/modules/bibliography/import/dialog.js:27
-#: document/static/js/modules/documents/overview/actions.js:211
+#: document/static/js/modules/documents/overview/actions.js:279
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:117
 msgid "Import"
 msgstr "导入"
@@ -555,12 +559,12 @@ msgid "Bibliography Manager"
 msgstr "参考文献管理器"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:108
-#: document/static/js/modules/editor/dialogs/citation.js:241
+#: document/static/js/modules/editor/dialogs/citation.js:259
 msgid "No sources registered"
 msgstr "没有注册来源"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:109
-#: document/static/js/modules/editor/dialogs/citation.js:242
+#: document/static/js/modules/editor/dialogs/citation.js:260
 msgid "No sources found"
 msgstr "没有找到来源"
 
@@ -568,14 +572,14 @@ msgstr "没有找到来源"
 #: document/static/js/modules/document_template/document_style_dialog.js:84
 #: document/static/js/modules/document_template/templates.js:156
 #: document/static/js/modules/document_template/templates.js:247
-#: document/static/js/modules/document_template/templates.js:320
-#: document/static/js/modules/document_template/templates.js:403
-#: document/static/js/modules/document_template/templates.js:476
-#: document/static/js/modules/document_template/templates.js:527
-#: document/static/js/modules/document_template/templates.js:813
+#: document/static/js/modules/document_template/templates.js:323
+#: document/static/js/modules/document_template/templates.js:406
+#: document/static/js/modules/document_template/templates.js:479
+#: document/static/js/modules/document_template/templates.js:530
 #: document/static/js/modules/document_template/templates.js:836
-#: document/static/js/modules/documents/overview/index.js:582
-#: document/static/js/modules/editor/dialogs/citation.js:254
+#: document/static/js/modules/document_template/templates.js:859
+#: document/static/js/modules/documents/overview/index.js:577
+#: document/static/js/modules/editor/dialogs/citation.js:272
 #: document/static/js/modules/editor/dialogs/code_block.js:234
 #: document/static/js/modules/editor/dialogs/templates.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:311
@@ -592,7 +596,7 @@ msgid "Sourcetype"
 msgstr "来源类型"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:119
-#: document/static/js/modules/editor/dialogs/citation.js:255
+#: document/static/js/modules/editor/dialogs/citation.js:273
 #: document/static/js/modules/editor/dialogs/templates.js:312
 #: document/static/js/modules/editor/marginboxes/templates.js:333
 #: document/static/js/modules/editor/marginboxes/templates.js:334
@@ -613,12 +617,12 @@ msgstr "编辑类别"
 #: bibliography/static/js/modules/bibliography/overview/index.js:376
 #: document/static/js/modules/document_template/document_style_dialog.js:74
 #: document/static/js/modules/document_template/document_style_dialog.js:172
-#: document/static/js/modules/document_template/export_template_dialog.js:82
-#: document/static/js/modules/document_template/export_template_dialog.js:178
-#: document/static/js/modules/document_template/templates.js:821
+#: document/static/js/modules/document_template/export_template_dialog.js:88
+#: document/static/js/modules/document_template/export_template_dialog.js:184
+#: document/static/js/modules/document_template/templates.js:844
 #: document/static/js/modules/documents/access_rights/templates.js:28
-#: document/static/js/modules/documents/overview/actions.js:110
-#: document/static/js/modules/documents/overview/index.js:155
+#: document/static/js/modules/documents/overview/actions.js:178
+#: document/static/js/modules/documents/overview/index.js:141
 #: document/static/js/modules/documents/revisions/index.js:133
 #: document/static/js/modules/documents/revisions/templates.js:11
 #: document/static/js/modules/editor/marginboxes/templates.js:531
@@ -628,21 +632,21 @@ msgstr "编辑类别"
 #: user/static/js/modules/profile/delete_user.js:18
 #: user/static/js/modules/profile/dialogs.js:104
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:60
-#: usermedia/static/js/modules/images/overview/index.js:126
+#: usermedia/static/js/modules/images/overview/index.js:145
 msgid "Delete"
 msgstr "删除"
 
 #: bibliography/static/js/modules/bibliography/overview/index.js:390
 #: document/static/js/modules/document_template/document_style_dialog.js:186
-#: document/static/js/modules/document_template/export_template_dialog.js:192
-#: document/static/js/modules/documents/overview/actions.js:91
-#: document/static/js/modules/documents/overview/index.js:147
+#: document/static/js/modules/document_template/export_template_dialog.js:198
+#: document/static/js/modules/documents/overview/actions.js:159
+#: document/static/js/modules/documents/overview/index.js:133
 #: document/static/js/modules/documents/revisions/index.js:151
 #: user/static/js/modules/contacts/delete_dialog.js:33
 #: user/static/js/modules/profile/delete_user.js:40
 #: user/static/js/modules/profile/dialogs.js:116
 #: user_template_manager/static/js/modules/user_template_manager/actions.js:75
-#: usermedia/static/js/modules/images/overview/index.js:140
+#: usermedia/static/js/modules/images/overview/index.js:159
 msgid "Confirm deletion"
 msgstr "确认删除"
 
@@ -681,7 +685,7 @@ msgid "Edit categories"
 msgstr "编辑类别"
 
 #: bibliography/static/js/modules/bibliography/overview/menu.js:67
-#: document/static/js/modules/editor/dialogs/citation.js:32
+#: document/static/js/modules/editor/dialogs/citation.js:33
 msgid "Register new source"
 msgstr "注册新文献"
 
@@ -705,29 +709,33 @@ msgstr "和其他人"
 msgid "Source/Editor"
 msgstr "来源/编辑"
 
-#: document/static/js/modules/document_template/designer.js:101
+#: document/static/js/modules/document_template/designer.js:102
 msgid "The template needs a title."
 msgstr "模板需要一个标题。"
 
-#: document/static/js/modules/document_template/designer.js:109
+#: document/static/js/modules/document_template/designer.js:110
 msgid "The template needs an ID."
 msgstr "该模板需要一个 ID。"
 
-#: document/static/js/modules/document_template/designer.js:115
+#: document/static/js/modules/document_template/designer.js:116
 msgid "The template ID cannot contain spaces."
 msgstr "模板 ID 不能包含空格。"
 
-#: document/static/js/modules/document_template/designer.js:255
+#: document/static/js/modules/document_template/designer.js:262
 msgid "All document parts need an ID."
 msgstr "所有文档部分都需要一个 ID。"
 
-#: document/static/js/modules/document_template/designer.js:262
+#: document/static/js/modules/document_template/designer.js:269
 msgid "IDs cannot contain spaces."
 msgstr "ID 不能包含空格。"
 
-#: document/static/js/modules/document_template/designer.js:280
+#: document/static/js/modules/document_template/designer.js:287
 msgid "IDs have to be unique."
 msgstr "ID 必须是唯一的。"
+
+#: document/static/js/modules/document_template/designer.js:373
+msgid "One or more contributor ID regexes are invalid."
+msgstr "一个或多个贡献者 ID 正则表达式无效。"
 
 #: document/static/js/modules/document_template/document_style_dialog.js:18
 #: document/static/js/modules/document_template/export_template_dialog.js:26
@@ -776,51 +784,181 @@ msgstr "别名必须是唯一的。"
 msgid "A file with the same name exists already."
 msgstr "已存在同名文件。"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:89
+#: document/static/js/modules/document_template/export_template_dialog.js:95
 msgid "Export template"
 msgstr "导出模板"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:93
+#: document/static/js/modules/document_template/export_template_dialog.js:99
 #: document/static/js/modules/editor/menus/headerbar/model.js:40
-#: usermedia/static/js/modules/images/overview/index.js:255
+#: usermedia/static/js/modules/images/overview/index.js:274
 msgid "File"
 msgstr "文件"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:102
+#: document/static/js/modules/document_template/export_template_dialog.js:108
 msgid "Select"
 msgstr "选择"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:108
+#: document/static/js/modules/document_template/export_template_dialog.js:114
 msgid "Filetype"
 msgstr "文件类型"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:116
+#: document/static/js/modules/document_template/export_template_dialog.js:122
 msgid "Found tags"
 msgstr "找到标签"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:122
+#: document/static/js/modules/document_template/export_template_dialog.js:128
 msgid "Missing tags"
 msgstr "缺少标签"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:193
+#: document/static/js/modules/document_template/export_template_dialog.js:199
 msgid "Do you really want to delete the export template?"
 msgstr "您确实要删除导出模板吗？"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:206
+#: document/static/js/modules/document_template/export_template_dialog.js:212
 msgid "You need to upload a template file in ODT or DOCX format."
 msgstr "您需要上传ODT或DOCX格式的模板文件。"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:220
+#: document/static/js/modules/document_template/export_template_dialog.js:226
 msgid "Another export file with the same filename exists already."
 msgstr "已存在另一个具有相同文件名的导出文件。"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:257
+#: document/static/js/modules/document_template/export_template_dialog.js:263
 msgid "Unknown filetype"
 msgstr "未知文件类型"
 
-#: document/static/js/modules/document_template/export_template_dialog.js:374
+#: document/static/js/modules/document_template/export_template_dialog.js:400
 msgid "Selected file not supported."
 msgstr "不支持所选文件。"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:408
+msgid "Templating Syntax Help"
+msgstr "模板语法帮助"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:410
+msgid "Available Tags"
+msgstr "可用标签"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:412
+msgid "Document title"
+msgstr "文件标题"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:413
+msgid "All authors (simple)"
+msgstr "所有作者（简单）"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:414
+#: document/static/js/modules/document_template/templates.js:414
+msgid "Keywords"
+msgstr "关键词"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:415
+msgid "Bibliography block"
+msgstr "参考书目块"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:416
+msgid "Copyright block"
+msgstr "版权块"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:417
+msgid "Licenses block"
+msgstr "许可证块"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:420
+msgid "Format Strings with Delimiters"
+msgstr "使用分隔符格式化字符串"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:421
+#, javascript-format
+msgid "Syntax: %s"
+msgstr "语法：%s"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:425
+#: document/static/js/modules/editor/dialogs/templates.js:404
+msgid "Institution"
+msgstr "机构"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:426
+#: document/static/js/modules/editor/dialogs/templates.js:403
+#: document/static/js/modules/schema/document/content.js:58
+#: user/static/js/modules/profile/templates.js:168
+msgid "Email"
+msgstr "电子邮件"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:427
+msgid "ID type (e.g., ORCID)"
+msgstr "ID 类型（例如 ORCID）"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:428
+msgid "ID value"
+msgstr "ID值"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "Delimiters: "
+msgstr "分隔符： "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(semicolon+space), "
+msgstr "（分号+空格）， "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(comma+line break), "
+msgstr "（逗号+换行符）， "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(line break), "
+msgstr "（换行符）， "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:430
+msgid "(paragraph break), or custom string"
+msgstr "（段落分隔符），或自定义字符串"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:432
+msgid "Structured Blocks"
+msgstr "结构化块"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:434
+msgid "Loop over items"
+msgstr "循环项目"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:435
+msgid "Loop with limit"
+msgstr "有限制的循环"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:438
+msgid "Conditionals"
+msgstr "条件句"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:440
+msgid "Conditional"
+msgstr "有条件的"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:441
+msgid "Else if"
+msgstr "否则如果"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:442
+msgid "Else"
+msgstr "别的"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:445
+msgid "Context"
+msgstr "语境"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:446
+msgid "Context object: "
+msgstr "上下文对象： "
+
+#: document/static/js/modules/document_template/export_template_dialog.js:448
+msgid "Examples"
+msgstr "示例"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:460
+msgid "et al."
+msgstr "等人。"
+
+#: document/static/js/modules/document_template/export_template_dialog.js:468
+msgid "Templating Help"
+msgstr "模板帮助"
 
 #: document/static/js/modules/document_template/importer.js:42
 msgid "The uploaded file does not appear to be a Fidus Writer Template file."
@@ -835,7 +973,7 @@ msgstr "上传的文件似乎不是 Fidus Writer 文件。"
 #: document/static/js/modules/document_template/importer.js:164
 #: document/static/js/modules/importer/docx/import.js:73
 #: document/static/js/modules/importer/native/file.js:213
-#: document/static/js/modules/importer/odt/import.js:142
+#: document/static/js/modules/importer/odt/import.js:148
 #: document/static/js/modules/importer/pandoc/import.js:163
 msgid "successfully imported."
 msgstr "成功导入。"
@@ -874,7 +1012,7 @@ msgstr "插入表"
 #: document/static/js/modules/document_template/schema.js:194
 #: document/static/js/modules/document_template/schema.js:198
 #: document/static/js/modules/document_template/templates.js:92
-#: document/static/js/modules/document_template/templates.js:468
+#: document/static/js/modules/document_template/templates.js:471
 #: document/static/js/modules/editor/menus/toolbar/model.js:872
 msgid "Table"
 msgstr "表格"
@@ -1076,10 +1214,10 @@ msgstr "标题"
 
 #: document/static/js/modules/document_template/templates.js:151
 #: document/static/js/modules/document_template/templates.js:242
-#: document/static/js/modules/document_template/templates.js:315
-#: document/static/js/modules/document_template/templates.js:398
-#: document/static/js/modules/document_template/templates.js:471
-#: document/static/js/modules/document_template/templates.js:522
+#: document/static/js/modules/document_template/templates.js:318
+#: document/static/js/modules/document_template/templates.js:401
+#: document/static/js/modules/document_template/templates.js:474
+#: document/static/js/modules/document_template/templates.js:525
 #: document/static/js/modules/editor/menus/code_block/model.js:6
 #: document/static/js/modules/editor/menus/figure/model.js:7
 #: document/static/js/modules/editor/menus/table/model.js:388
@@ -1088,26 +1226,26 @@ msgstr "配置"
 
 #: document/static/js/modules/document_template/templates.js:155
 #: document/static/js/modules/document_template/templates.js:246
-#: document/static/js/modules/document_template/templates.js:319
-#: document/static/js/modules/document_template/templates.js:380
-#: document/static/js/modules/document_template/templates.js:402
-#: document/static/js/modules/document_template/templates.js:475
-#: document/static/js/modules/document_template/templates.js:526
-#: document/static/js/modules/document_template/templates.js:814
+#: document/static/js/modules/document_template/templates.js:322
+#: document/static/js/modules/document_template/templates.js:383
+#: document/static/js/modules/document_template/templates.js:405
+#: document/static/js/modules/document_template/templates.js:478
+#: document/static/js/modules/document_template/templates.js:529
+#: document/static/js/modules/document_template/templates.js:837
 msgid "ID"
 msgstr "ID"
 
 #: document/static/js/modules/document_template/templates.js:160
 #: document/static/js/modules/document_template/templates.js:252
-#: document/static/js/modules/document_template/templates.js:324
-#: document/static/js/modules/document_template/templates.js:408
+#: document/static/js/modules/document_template/templates.js:327
+#: document/static/js/modules/document_template/templates.js:411
 msgid "Metadata function"
 msgstr "元数据功能"
 
 #: document/static/js/modules/document_template/templates.js:162
 #: document/static/js/modules/document_template/templates.js:254
-#: document/static/js/modules/document_template/templates.js:326
-#: document/static/js/modules/document_template/templates.js:410
+#: document/static/js/modules/document_template/templates.js:329
+#: document/static/js/modules/document_template/templates.js:413
 #: document/static/js/modules/editor/dialogs/code_block.js:205
 #: document/static/js/modules/editor/dialogs/code_block.js:221
 #: document/static/js/modules/editor/dialogs/templates.js:167
@@ -1124,69 +1262,69 @@ msgid "Title (translated)"
 msgstr "标题（翻译）"
 
 #: document/static/js/modules/document_template/templates.js:167
-#: document/static/js/modules/document_template/templates.js:259
-#: document/static/js/modules/document_template/templates.js:339
-#: document/static/js/modules/document_template/templates.js:414
-#: document/static/js/modules/document_template/templates.js:480
-msgid "Locking"
-msgstr "锁定"
-
-#: document/static/js/modules/document_template/templates.js:169
-#: document/static/js/modules/document_template/templates.js:261
-#: document/static/js/modules/document_template/templates.js:341
-#: document/static/js/modules/document_template/templates.js:416
-#: document/static/js/modules/document_template/templates.js:482
-msgid "User can change contents"
-msgstr "用户可以更改内容"
-
-#: document/static/js/modules/document_template/templates.js:170
 #: document/static/js/modules/document_template/templates.js:262
 #: document/static/js/modules/document_template/templates.js:342
 #: document/static/js/modules/document_template/templates.js:417
 #: document/static/js/modules/document_template/templates.js:483
+msgid "Locking"
+msgstr "锁定"
+
+#: document/static/js/modules/document_template/templates.js:169
+#: document/static/js/modules/document_template/templates.js:264
+#: document/static/js/modules/document_template/templates.js:344
+#: document/static/js/modules/document_template/templates.js:419
+#: document/static/js/modules/document_template/templates.js:485
+msgid "User can change contents"
+msgstr "用户可以更改内容"
+
+#: document/static/js/modules/document_template/templates.js:170
+#: document/static/js/modules/document_template/templates.js:265
+#: document/static/js/modules/document_template/templates.js:345
+#: document/static/js/modules/document_template/templates.js:420
+#: document/static/js/modules/document_template/templates.js:486
 msgid "User can not change contents"
 msgstr "用户无法更改内容"
 
 #: document/static/js/modules/document_template/templates.js:171
-#: document/static/js/modules/document_template/templates.js:263
-#: document/static/js/modules/document_template/templates.js:343
-#: document/static/js/modules/document_template/templates.js:418
+#: document/static/js/modules/document_template/templates.js:266
+#: document/static/js/modules/document_template/templates.js:346
+#: document/static/js/modules/document_template/templates.js:421
 msgid "User can only add content"
 msgstr "用户只能添加内容"
 
 #: document/static/js/modules/document_template/templates.js:174
-#: document/static/js/modules/document_template/templates.js:266
-#: document/static/js/modules/document_template/templates.js:346
-#: document/static/js/modules/document_template/templates.js:421
-#: document/static/js/modules/document_template/templates.js:487
-#: document/static/js/modules/document_template/templates.js:531
-msgid "Optional"
-msgstr "选修的"
-
-#: document/static/js/modules/document_template/templates.js:176
-#: document/static/js/modules/document_template/templates.js:268
-#: document/static/js/modules/document_template/templates.js:348
-#: document/static/js/modules/document_template/templates.js:423
-#: document/static/js/modules/document_template/templates.js:489
-#: document/static/js/modules/document_template/templates.js:533
-msgid "Obligatory field"
-msgstr "必填字段"
-
-#: document/static/js/modules/document_template/templates.js:177
 #: document/static/js/modules/document_template/templates.js:269
 #: document/static/js/modules/document_template/templates.js:349
 #: document/static/js/modules/document_template/templates.js:424
 #: document/static/js/modules/document_template/templates.js:490
 #: document/static/js/modules/document_template/templates.js:534
+msgid "Optional"
+msgstr "选修的"
+
+#: document/static/js/modules/document_template/templates.js:176
+#: document/static/js/modules/document_template/templates.js:271
+#: document/static/js/modules/document_template/templates.js:351
+#: document/static/js/modules/document_template/templates.js:426
+#: document/static/js/modules/document_template/templates.js:492
+#: document/static/js/modules/document_template/templates.js:536
+msgid "Obligatory field"
+msgstr "必填字段"
+
+#: document/static/js/modules/document_template/templates.js:177
+#: document/static/js/modules/document_template/templates.js:272
+#: document/static/js/modules/document_template/templates.js:352
+#: document/static/js/modules/document_template/templates.js:427
+#: document/static/js/modules/document_template/templates.js:493
+#: document/static/js/modules/document_template/templates.js:537
 msgid "Optional, shown by default"
 msgstr "可选，默认显示"
 
 #: document/static/js/modules/document_template/templates.js:178
-#: document/static/js/modules/document_template/templates.js:270
-#: document/static/js/modules/document_template/templates.js:350
-#: document/static/js/modules/document_template/templates.js:425
-#: document/static/js/modules/document_template/templates.js:491
-#: document/static/js/modules/document_template/templates.js:535
+#: document/static/js/modules/document_template/templates.js:273
+#: document/static/js/modules/document_template/templates.js:353
+#: document/static/js/modules/document_template/templates.js:428
+#: document/static/js/modules/document_template/templates.js:494
+#: document/static/js/modules/document_template/templates.js:538
 msgid "Optional, not shown by default"
 msgstr "可选，默认不显示"
 
@@ -1195,32 +1333,32 @@ msgid "Allowed headings"
 msgstr "允许的标题"
 
 #: document/static/js/modules/document_template/templates.js:209
-#: document/static/js/modules/document_template/templates.js:355
-#: document/static/js/modules/document_template/templates.js:496
+#: document/static/js/modules/document_template/templates.js:358
+#: document/static/js/modules/document_template/templates.js:499
 #: document/static/js/modules/editor/dialogs/code_block.js:202
-#: user/static/js/modules/profile/templates.js:209
+#: user/static/js/modules/profile/templates.js:214
 msgid "Language"
 msgstr "语言"
 
 #: document/static/js/modules/document_template/templates.js:211
-#: document/static/js/modules/document_template/templates.js:357
-#: document/static/js/modules/document_template/templates.js:498
+#: document/static/js/modules/document_template/templates.js:360
+#: document/static/js/modules/document_template/templates.js:501
 msgid "Document language"
 msgstr "文档语言"
 
 #: document/static/js/modules/document_template/templates.js:219
-#: document/static/js/modules/document_template/templates.js:274
-#: document/static/js/modules/document_template/templates.js:365
-#: document/static/js/modules/document_template/templates.js:429
-#: document/static/js/modules/document_template/templates.js:506
+#: document/static/js/modules/document_template/templates.js:277
+#: document/static/js/modules/document_template/templates.js:368
+#: document/static/js/modules/document_template/templates.js:432
+#: document/static/js/modules/document_template/templates.js:509
 msgid "Initial content"
 msgstr "初始内容"
 
 #: document/static/js/modules/document_template/templates.js:223
-#: document/static/js/modules/document_template/templates.js:278
-#: document/static/js/modules/document_template/templates.js:369
-#: document/static/js/modules/document_template/templates.js:433
-#: document/static/js/modules/document_template/templates.js:510
+#: document/static/js/modules/document_template/templates.js:281
+#: document/static/js/modules/document_template/templates.js:372
+#: document/static/js/modules/document_template/templates.js:436
+#: document/static/js/modules/document_template/templates.js:513
 #: document/static/js/modules/editor/marginboxes/templates.js:422
 msgid "Instructions"
 msgstr "指示"
@@ -1230,235 +1368,191 @@ msgid "Namelist"
 msgstr "名单"
 
 #: document/static/js/modules/document_template/templates.js:251
-#: document/static/js/modules/document_template/templates.js:407
+#: document/static/js/modules/document_template/templates.js:410
 msgid "Item title"
 msgstr "项目标题"
 
 #: document/static/js/modules/document_template/templates.js:255
+#: document/static/js/modules/exporter/latex/convert.js:106
 msgid "Authors"
 msgstr "作者"
 
 #: document/static/js/modules/document_template/templates.js:256
+#: document/static/js/modules/exporter/latex/convert.js:107
 msgid "Editors"
 msgstr "编辑"
 
-#: document/static/js/modules/document_template/templates.js:312
+#: document/static/js/modules/document_template/templates.js:257
+#: document/static/js/modules/exporter/latex/convert.js:108
+msgid "Translators"
+msgstr "翻译人员"
+
+#: document/static/js/modules/document_template/templates.js:258
+#: document/static/js/modules/exporter/latex/convert.js:109
+msgid "Reviewers"
+msgstr "审稿人"
+
+#: document/static/js/modules/document_template/templates.js:259
+#: document/static/js/modules/exporter/latex/convert.js:110
+msgid "Contributors"
+msgstr "贡献者"
+
+#: document/static/js/modules/document_template/templates.js:315
 msgid "Richtext"
 msgstr "富文本"
 
-#: document/static/js/modules/document_template/templates.js:327
+#: document/static/js/modules/document_template/templates.js:330
 #: document/static/js/modules/importer/pandoc/convert.js:147
 msgid "Abstract"
 msgstr "抽象的"
 
-#: document/static/js/modules/document_template/templates.js:328
+#: document/static/js/modules/document_template/templates.js:331
 msgid "Cases/Case Reports"
 msgstr "病例/病例报告"
 
-#: document/static/js/modules/document_template/templates.js:329
+#: document/static/js/modules/document_template/templates.js:332
 msgid "Conclusions/Comment"
 msgstr "结论/评论"
 
-#: document/static/js/modules/document_template/templates.js:330
+#: document/static/js/modules/document_template/templates.js:333
 msgid "Discussion/Interpretation"
 msgstr "讨论/解释"
 
-#: document/static/js/modules/document_template/templates.js:331
+#: document/static/js/modules/document_template/templates.js:334
 msgid "Introduction/Synopsis"
 msgstr "简介/概要"
 
-#: document/static/js/modules/document_template/templates.js:332
+#: document/static/js/modules/document_template/templates.js:335
 msgid "Materials"
 msgstr "材料"
 
-#: document/static/js/modules/document_template/templates.js:333
+#: document/static/js/modules/document_template/templates.js:336
 msgid "Methods/Methodology/Procedures"
 msgstr "方法/方法论/程序"
 
-#: document/static/js/modules/document_template/templates.js:334
+#: document/static/js/modules/document_template/templates.js:337
 msgid "Results/Statement of Findings"
 msgstr "结果/调查结果声明"
 
-#: document/static/js/modules/document_template/templates.js:335
+#: document/static/js/modules/document_template/templates.js:338
 msgid "Subjects/Participants/Patients"
 msgstr "受试者/参与者/患者"
 
-#: document/static/js/modules/document_template/templates.js:336
+#: document/static/js/modules/document_template/templates.js:339
 msgid "Supplementary materials"
 msgstr "补充材料"
 
-#: document/static/js/modules/document_template/templates.js:378
+#: document/static/js/modules/document_template/templates.js:381
 msgid "Separator"
 msgstr "分离器"
 
-#: document/static/js/modules/document_template/templates.js:395
+#: document/static/js/modules/document_template/templates.js:398
 msgid "Tags"
 msgstr "标签"
 
-#: document/static/js/modules/document_template/templates.js:411
-msgid "Keywords"
-msgstr "关键词"
-
-#: document/static/js/modules/document_template/templates.js:484
+#: document/static/js/modules/document_template/templates.js:487
 msgid "User can not change first row"
 msgstr "用户无法更改第一行"
 
-#: document/static/js/modules/document_template/templates.js:519
+#: document/static/js/modules/document_template/templates.js:522
 msgid "Table of Contents"
 msgstr "目录"
 
-#: document/static/js/modules/document_template/templates.js:732
+#: document/static/js/modules/document_template/templates.js:661
+msgid "Label"
+msgstr "标签"
+
+#: document/static/js/modules/document_template/templates.js:664
+msgid "Regex"
+msgstr "正则表达式"
+
+#: document/static/js/modules/document_template/templates.js:755
 msgid "Select which code block categories are available:"
 msgstr "选择可用的代码块类别："
 
-#: document/static/js/modules/document_template/templates.js:789
+#: document/static/js/modules/document_template/templates.js:812
 msgid "Add new document style"
 msgstr "添加新文档样式"
 
-#: document/static/js/modules/document_template/templates.js:801
+#: document/static/js/modules/document_template/templates.js:824
 msgid "Add new export template"
 msgstr "添加新的导出模板"
 
-#: document/static/js/modules/document_template/templates.js:819
+#: document/static/js/modules/document_template/templates.js:842
 msgid "Element types"
 msgstr "元素类型"
 
-#: document/static/js/modules/document_template/templates.js:820
+#: document/static/js/modules/document_template/templates.js:843
 msgid "Document structure"
 msgstr "文件结构"
 
-#: document/static/js/modules/document_template/templates.js:847
+#: document/static/js/modules/document_template/templates.js:870
 msgid "Setting"
 msgstr "环境"
 
-#: document/static/js/modules/document_template/templates.js:848
+#: document/static/js/modules/document_template/templates.js:871
 msgid "Value"
 msgstr "价值"
 
-#: document/static/js/modules/document_template/templates.js:854
+#: document/static/js/modules/document_template/templates.js:877
 msgid "Footnote specifications"
 msgstr "脚注规格"
 
-#: document/static/js/modules/document_template/templates.js:862
+#: document/static/js/modules/document_template/templates.js:885
 msgid "Available languages"
 msgstr "可用语言"
 
-#: document/static/js/modules/document_template/templates.js:870
-#: user/static/js/modules/profile/templates.js:211
+#: document/static/js/modules/document_template/templates.js:893
+#: user/static/js/modules/profile/templates.js:216
 msgid "Default language"
 msgstr "默认语言"
 
-#: document/static/js/modules/document_template/templates.js:878
+#: document/static/js/modules/document_template/templates.js:901
 msgid "Permitted paper sizes"
 msgstr "允许的纸张尺寸"
 
-#: document/static/js/modules/document_template/templates.js:886
+#: document/static/js/modules/document_template/templates.js:909
 msgid "Code block languages"
 msgstr "代码块语言"
 
-#: document/static/js/modules/document_template/templates.js:894
+#: document/static/js/modules/document_template/templates.js:917
 msgid "Code block categories"
 msgstr "代码块类别"
 
-#: document/static/js/modules/document_template/templates.js:902
+#: document/static/js/modules/document_template/templates.js:925
 msgid "Custom bibliography header"
 msgstr "自定义参考书目标题"
 
-#: document/static/js/modules/document_template/templates.js:910
+#: document/static/js/modules/document_template/templates.js:933
+msgid "Contributor ID types"
+msgstr ""
+
+#: document/static/js/modules/document_template/templates.js:941
 msgid "Available citation styles"
 msgstr "可用的引文样式"
 
-#: document/static/js/modules/document_template/templates.js:918
+#: document/static/js/modules/document_template/templates.js:949
 msgid "Default citation style"
 msgstr "默认引用样式"
 
-#: document/static/js/modules/document_template/templates.js:928
+#: document/static/js/modules/document_template/templates.js:959
 msgid "Document styles"
 msgstr "文档样式"
 
-#: document/static/js/modules/document_template/templates.js:938
+#: document/static/js/modules/document_template/templates.js:969
 msgid "Export templates"
 msgstr "导出模板"
 
-#: document/static/js/modules/documents/access_rights/index.js:57
+#: document/static/js/modules/documents/access_rights/index.js:99
 msgid "Cannot load document access data."
 msgstr "无法加载文档访问数据。"
 
-#: document/static/js/modules/documents/access_rights/index.js:75
-msgid "Basic"
-msgstr "基本的"
-
-#: document/static/js/modules/documents/access_rights/index.js:76
-msgid "Basic access rights"
-msgstr "基本访问权限"
-
-#: document/static/js/modules/documents/access_rights/index.js:80
-#: document/static/js/modules/documents/access_rights/index.js:82
-#: document/static/js/modules/documents/access_rights/templates.js:92
-#: document/static/js/modules/documents/access_rights/templates.js:98
-msgid "Write"
-msgstr "写"
-
-#: document/static/js/modules/documents/access_rights/index.js:91
-#: document/static/js/modules/documents/access_rights/templates.js:99
-msgid "Write tracked"
-msgstr "写入跟踪"
-
-#: document/static/js/modules/documents/access_rights/index.js:93
-msgid "Write with changes tracked"
-msgstr "写入并跟踪更改"
-
-#: document/static/js/modules/documents/access_rights/index.js:102
-#: document/static/js/modules/documents/access_rights/index.js:104
-#: document/static/js/modules/documents/access_rights/templates.js:97
-#: document/static/js/modules/editor/menus/selection/model.js:43
-msgid "Comment"
-msgstr "评论"
-
-#: document/static/js/modules/documents/access_rights/index.js:113
 #: document/static/js/modules/documents/access_rights/index.js:115
-#: document/static/js/modules/documents/access_rights/templates.js:90
-#: document/static/js/modules/documents/access_rights/templates.js:93
-msgid "Read"
-msgstr "读"
-
-#: document/static/js/modules/documents/access_rights/index.js:124
-#: document/static/js/modules/documents/access_rights/index.js:142
-#: document/static/js/modules/documents/access_rights/templates.js:95
-msgid "Review"
-msgstr "审查"
-
-#: document/static/js/modules/documents/access_rights/index.js:125
-msgid "Access rights used within document review"
-msgstr "文件审查中使用的访问权限"
-
-#: document/static/js/modules/documents/access_rights/index.js:129
-msgid "No comments"
-msgstr "暂无评论"
-
-#: document/static/js/modules/documents/access_rights/index.js:132
-msgid "Read document but not see comments and chats of others"
-msgstr "阅读文档但看不到其他人的评论和聊天"
-
-#: document/static/js/modules/documents/access_rights/index.js:145
-msgid "Comment, but not see comments and chats of others"
-msgstr "评论，但看不到别人的评论和聊天"
-
-#: document/static/js/modules/documents/access_rights/index.js:155
-#: document/static/js/modules/documents/access_rights/templates.js:96
-msgid "Review tracked"
-msgstr "已追踪评论"
-
-#: document/static/js/modules/documents/access_rights/index.js:158
-msgid "Write with tracked changes, but not see comments and chats of others"
-msgstr "编写跟踪更改，但看不到其他人的评论和聊天"
-
-#: document/static/js/modules/documents/access_rights/index.js:234
-#: document/static/js/modules/documents/overview/index.js:789
+#: document/static/js/modules/documents/overview/index.js:784
 msgid "End-to-end encrypted document"
 msgstr "端到端加密文档"
 
-#: document/static/js/modules/documents/access_rights/index.js:235
+#: document/static/js/modules/documents/access_rights/index.js:116
 msgid ""
 "This document is end-to-end encrypted. Collaborators without a personal "
 "passphrase will need the document password shared with them through a secure "
@@ -1468,70 +1562,140 @@ msgstr ""
 "该文档是端到端加密的。没有个人密码的协作者将需要通过 Fidus Writer 外部的安全"
 "通道与他们共享文档密码。不要通过文档聊天发送密码。"
 
-#: document/static/js/modules/documents/access_rights/index.js:244
-#: user/static/js/modules/contacts/add_dialog.js:54
-msgid "Add contact or invite new user"
-msgstr "添加联系人或邀请新用户"
+#: document/static/js/modules/documents/access_rights/index.js:248
+msgid "Link copied to clipboard."
+msgstr "链接已复制到剪贴板。"
 
-#: document/static/js/modules/documents/access_rights/index.js:245
-#: user/static/js/modules/contacts/add_dialog.js:55
-msgid "Add contact"
-msgstr "添加联系人"
+#: document/static/js/modules/documents/access_rights/index.js:250
+msgid "Could not copy link."
+msgstr "无法复制链接。"
+
+#: document/static/js/modules/documents/access_rights/index.js:316
+msgid "Basic"
+msgstr "基本的"
+
+#: document/static/js/modules/documents/access_rights/index.js:317
+msgid "Basic access rights"
+msgstr "基本访问权限"
 
 #: document/static/js/modules/documents/access_rights/index.js:321
-msgid "Share your document with others"
-msgstr "与他人共享您的文档"
+#: document/static/js/modules/documents/access_rights/index.js:323
+#: document/static/js/modules/documents/access_rights/templates.js:92
+#: document/static/js/modules/documents/access_rights/templates.js:98
+msgid "Write"
+msgstr "写"
+
+#: document/static/js/modules/documents/access_rights/index.js:330
+#: document/static/js/modules/documents/access_rights/templates.js:99
+msgid "Write tracked"
+msgstr "写入跟踪"
+
+#: document/static/js/modules/documents/access_rights/index.js:332
+msgid "Write with changes tracked"
+msgstr "写入并跟踪更改"
+
+#: document/static/js/modules/documents/access_rights/index.js:339
+#: document/static/js/modules/documents/access_rights/index.js:341
+#: document/static/js/modules/documents/access_rights/templates.js:97
+#: document/static/js/modules/editor/menus/selection/model.js:43
+msgid "Comment"
+msgstr "评论"
 
 #: document/static/js/modules/documents/access_rights/index.js:348
+#: document/static/js/modules/documents/access_rights/index.js:350
+#: document/static/js/modules/documents/access_rights/templates.js:90
+#: document/static/js/modules/documents/access_rights/templates.js:93
+msgid "Read"
+msgstr "读"
+
+#: document/static/js/modules/documents/access_rights/index.js:357
+#: document/static/js/modules/documents/access_rights/index.js:373
+#: document/static/js/modules/documents/access_rights/templates.js:95
+msgid "Review"
+msgstr "审查"
+
+#: document/static/js/modules/documents/access_rights/index.js:358
+msgid "Access rights used within document review"
+msgstr "文件审查中使用的访问权限"
+
+#: document/static/js/modules/documents/access_rights/index.js:362
+msgid "No comments"
+msgstr "暂无评论"
+
+#: document/static/js/modules/documents/access_rights/index.js:365
+msgid "Read document but not see comments and chats of others"
+msgstr "阅读文档但看不到其他人的评论和聊天"
+
+#: document/static/js/modules/documents/access_rights/index.js:376
+msgid "Comment, but not see comments and chats of others"
+msgstr "评论，但看不到别人的评论和聊天"
+
+#: document/static/js/modules/documents/access_rights/index.js:384
+#: document/static/js/modules/documents/access_rights/templates.js:96
+msgid "Review tracked"
+msgstr "已追踪评论"
+
+#: document/static/js/modules/documents/access_rights/index.js:387
+msgid "Write with tracked changes, but not see comments and chats of others"
+msgstr "编写跟踪更改，但看不到其他人的评论和聊天"
+
+#: document/static/js/modules/documents/access_rights/index.js:430
 #: document/static/js/modules/documents/access_rights/templates.js:38
 msgid "Loading…"
 msgstr "加载中…"
 
-#: document/static/js/modules/documents/access_rights/index.js:356
+#: document/static/js/modules/documents/access_rights/index.js:440
 msgid "Could not load share links."
 msgstr "无法加载共享链接。"
 
-#: document/static/js/modules/documents/access_rights/index.js:362
+#: document/static/js/modules/documents/access_rights/index.js:446
 msgid "Create share link"
 msgstr "创建分享链接"
 
-#: document/static/js/modules/documents/access_rights/index.js:371
-#: document/static/js/modules/documents/overview/index.js:946
+#: document/static/js/modules/documents/access_rights/index.js:455
+#: document/static/js/modules/documents/overview/index.js:941
 msgid "Create"
 msgstr "新建"
 
-#: document/static/js/modules/documents/access_rights/index.js:421
+#: document/static/js/modules/documents/access_rights/index.js:503
 msgid "Share link created."
 msgstr "已创建共享链接。"
 
-#: document/static/js/modules/documents/access_rights/index.js:427
+#: document/static/js/modules/documents/access_rights/index.js:509
 msgid "Could not create share link."
 msgstr "无法创建共享链接。"
 
-#: document/static/js/modules/documents/access_rights/index.js:453
+#: document/static/js/modules/documents/access_rights/index.js:535
 msgid "Share link revoked."
 msgstr "分享链接已撤销。"
 
-#: document/static/js/modules/documents/access_rights/index.js:455
-#: document/static/js/modules/documents/access_rights/index.js:459
+#: document/static/js/modules/documents/access_rights/index.js:537
+#: document/static/js/modules/documents/access_rights/index.js:541
 msgid "Could not revoke share link."
 msgstr "无法撤销共享链接。"
 
-#: document/static/js/modules/documents/access_rights/index.js:575
-msgid "Link copied to clipboard."
-msgstr "链接已复制到剪贴板。"
-
-#: document/static/js/modules/documents/access_rights/index.js:577
-msgid "Could not copy link."
-msgstr "无法复制链接。"
-
-#: document/static/js/modules/documents/access_rights/index.js:642
+#: document/static/js/modules/documents/access_rights/index.js:552
 msgid "Access rights have been saved"
 msgstr "访问权限已保存"
 
-#: document/static/js/modules/documents/access_rights/index.js:648
+#: document/static/js/modules/documents/access_rights/index.js:558
 msgid "Access rights could not be saved"
 msgstr "无法保存访问权限"
+
+#: document/static/js/modules/documents/access_rights/index.js:607
+#: user/static/js/modules/contacts/add_dialog.js:54
+msgid "Add contact or invite new user"
+msgstr "添加联系人或邀请新用户"
+
+#: document/static/js/modules/documents/access_rights/index.js:608
+#: user/static/js/modules/contacts/add_dialog.js:55
+msgid "Add contact"
+msgstr "添加联系人"
+
+#: document/static/js/modules/documents/access_rights/index.js:671
+#: document/static/js/modules/documents/overview/actions.js:55
+msgid "Share your document with others"
+msgstr "与他人共享您的文档"
 
 #: document/static/js/modules/documents/access_rights/templates.js:6
 msgid "People"
@@ -1555,7 +1719,6 @@ msgstr "合作者"
 
 #: document/static/js/modules/documents/access_rights/templates.js:27
 #: document/static/js/modules/documents/access_rights/templates.js:85
-#: document/static/js/modules/documents/overview/index.js:587
 msgid "Rights"
 msgstr "权利"
 
@@ -1628,135 +1791,151 @@ msgstr ""
 msgid "Invite"
 msgstr "邀请"
 
-#: document/static/js/modules/documents/overview/actions.js:36
-#: document/static/js/modules/documents/overview/index.js:779
+#: document/static/js/modules/documents/overview/actions.js:37
+#: document/static/js/modules/documents/overview/index.js:774
 #: document/static/js/modules/editor/e2ee/password-dialog.js:196
 msgid "Encrypted Document"
 msgstr "加密文档"
 
-#: document/static/js/modules/documents/overview/actions.js:60
+#: document/static/js/modules/documents/overview/actions.js:54
+msgid "Access Rights"
+msgstr "访问权"
+
+#: document/static/js/modules/documents/overview/actions.js:65
+msgid "Loading access rights…"
+msgstr "正在加载访问权限..."
+
+#: document/static/js/modules/documents/overview/actions.js:111
+msgid "Could not load access rights."
+msgstr "无法加载访问权限。"
+
+#: document/static/js/modules/documents/overview/actions.js:128
 msgid "Document has been deleted"
 msgstr "文档已被删除"
 
-#: document/static/js/modules/documents/overview/actions.js:70
+#: document/static/js/modules/documents/overview/actions.js:138
 msgid "Could not delete document"
 msgstr "无法删除文档"
 
-#: document/static/js/modules/documents/overview/actions.js:80
+#: document/static/js/modules/documents/overview/actions.js:148
 msgid "You cannot delete a document while you are offline."
 msgstr "离线时无法删除文档。"
 
-#: document/static/js/modules/documents/overview/actions.js:96
+#: document/static/js/modules/documents/overview/actions.js:164
 msgid "Do you really want to delete the following documents?"
 msgstr "您确实要删除以下文档吗？"
 
-#: document/static/js/modules/documents/overview/actions.js:99
+#: document/static/js/modules/documents/overview/actions.js:167
 msgid "Do you really want to delete the following document?"
 msgstr "您确实要删除以下文档吗？"
 
-#: document/static/js/modules/documents/overview/actions.js:138
+#: document/static/js/modules/documents/overview/actions.js:206
 msgid "Import as:"
 msgstr "导入为："
 
-#: document/static/js/modules/documents/overview/actions.js:161
+#: document/static/js/modules/documents/overview/actions.js:229
 msgid ""
 "You need to set up a personal passphrase before you can import documents."
 msgstr "您需要先设置个人密码才能导入文档。"
 
-#: document/static/js/modules/documents/overview/actions.js:173
+#: document/static/js/modules/documents/overview/actions.js:241
 msgid "This document will be saved as encrypted."
 msgstr "该文档将被加密保存。"
 
-#: document/static/js/modules/documents/overview/actions.js:181
-#: document/static/js/modules/documents/overview/index.js:926
+#: document/static/js/modules/documents/overview/actions.js:249
+#: document/static/js/modules/documents/overview/index.js:921
 msgid "Non-encrypted"
 msgstr "未加密"
 
-#: document/static/js/modules/documents/overview/actions.js:185
-#: document/static/js/modules/documents/overview/index.js:931
+#: document/static/js/modules/documents/overview/actions.js:253
+#: document/static/js/modules/documents/overview/index.js:926
 msgid "Encrypted"
 msgstr "加密"
 
-#: document/static/js/modules/documents/overview/actions.js:198
+#: document/static/js/modules/documents/overview/actions.js:266
 msgid "Supported formats"
 msgstr "支持的格式"
 
-#: document/static/js/modules/documents/overview/actions.js:198
+#: document/static/js/modules/documents/overview/actions.js:266
 msgid ""
 "You can also upload a ZIP file that contains one file in any of these "
 "formats as well as images and/or bibtex file."
 msgstr ""
 "您还可以上传包含任一这些格式的文件以及图像和/或 bibtex 文件的 ZIP 文件。"
 
-#: document/static/js/modules/documents/overview/actions.js:202
+#: document/static/js/modules/documents/overview/actions.js:270
 msgid "Import a document"
 msgstr "导入文档"
 
-#: document/static/js/modules/documents/overview/actions.js:220
+#: document/static/js/modules/documents/overview/actions.js:288
 msgid "File too large"
 msgstr "文件太大"
 
-#: document/static/js/modules/documents/overview/actions.js:279
+#: document/static/js/modules/documents/overview/actions.js:347
 msgid "No importable files found in ZIP"
 msgstr "ZIP 中找不到可导入的文件"
 
-#: document/static/js/modules/documents/overview/actions.js:321
+#: document/static/js/modules/documents/overview/actions.js:389
 msgid "Unsupported file format"
 msgstr "不支持的文件格式"
 
-#: document/static/js/modules/documents/overview/actions.js:411
-#: document/static/js/modules/documents/overview/actions.js:463
+#: document/static/js/modules/documents/overview/actions.js:479
+#: document/static/js/modules/documents/overview/actions.js:531
 msgid "Could not create encrypted document."
 msgstr "无法创建加密文档。"
 
-#: document/static/js/modules/documents/overview/actions.js:457
+#: document/static/js/modules/documents/overview/actions.js:525
 #: document/static/js/modules/editor/collab/doc.js:309
 msgid "Incorrect passphrase. Please try again."
 msgstr "密码不正确。请再试一次。"
 
-#: document/static/js/modules/documents/overview/actions.js:501
+#: document/static/js/modules/documents/overview/actions.js:569
 msgid "Recovery failed. Please check your recovery key and try again."
 msgstr "恢复失败。请检查您的恢复密钥并重试。"
 
-#: document/static/js/modules/documents/overview/actions.js:597
-#: document/static/js/modules/editor/document_template/index.js:129
+#: document/static/js/modules/documents/overview/actions.js:665
+#: document/static/js/modules/editor/document_template/index.js:130
 msgid "Encrypt the copy"
 msgstr "加密副本"
 
-#: document/static/js/modules/documents/overview/actions.js:604
-#: document/static/js/modules/editor/document_template/index.js:136
+#: document/static/js/modules/documents/overview/actions.js:672
+#: document/static/js/modules/editor/document_template/index.js:137
 msgid "Choose document template"
 msgstr "选择文档模板"
 
-#: document/static/js/modules/documents/overview/actions.js:606
+#: document/static/js/modules/documents/overview/actions.js:674
 msgid "Select document template for copies"
 msgstr "选择副本的文档模板"
 
-#: document/static/js/modules/documents/overview/actions.js:606
-#: document/static/js/modules/editor/document_template/index.js:138
+#: document/static/js/modules/documents/overview/actions.js:674
+#: document/static/js/modules/editor/document_template/index.js:139
 msgid "Select document template for copy."
 msgstr "选择要复制的文档模板。"
 
-#: document/static/js/modules/documents/overview/actions.js:619
+#: document/static/js/modules/documents/overview/actions.js:687
 #: document/static/js/modules/editor/collab/merge/state_plugins/diff.js:339
-#: document/static/js/modules/editor/document_template/index.js:151
+#: document/static/js/modules/editor/document_template/index.js:152
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:303
 #: document/static/js/modules/editor/e2ee/passphrase-dialog.js:342
 msgid "Copy"
 msgstr "复制"
 
-#: document/static/js/modules/documents/overview/actions.js:668
+#: document/static/js/modules/documents/overview/actions.js:736
 msgid "Could not copy document."
 msgstr "无法复制文档。"
 
-#: document/static/js/modules/documents/overview/actions.js:698
-#: document/static/js/modules/documents/overview/actions.js:730
-#: document/static/js/modules/editor/document_template/index.js:229
-#: document/static/js/modules/editor/document_template/index.js:283
+#: document/static/js/modules/documents/overview/actions.js:766
+#: document/static/js/modules/documents/overview/actions.js:798
+#: document/static/js/modules/editor/document_template/index.js:230
+#: document/static/js/modules/editor/document_template/index.js:284
 msgid "Incorrect password."
 msgstr "密码不正确。"
 
-#: document/static/js/modules/documents/overview/actions.js:952
+#: document/static/js/modules/documents/overview/actions.js:1029
+msgid "Document Settings"
+msgstr "文档设置"
+
+#: document/static/js/modules/documents/overview/actions.js:1084
 msgid ""
 "You cannot view the revision history of a document while you are offline."
 msgstr "离线时您无法查看文档的修订历史记录。"
@@ -1765,158 +1944,159 @@ msgstr "离线时您无法查看文档的修订历史记录。"
 msgid "Document Overview"
 msgstr "文档概述"
 
-#: document/static/js/modules/documents/overview/index.js:117
-msgid "You cannot access rights data of a document while you are offline."
-msgstr "离线时您无法访问文档的权限数据。"
-
-#: document/static/js/modules/documents/overview/index.js:149
+#: document/static/js/modules/documents/overview/index.js:135
 msgid ""
 "Leaving an empty folder will delete it. Do you really want to delete this "
 "folder?"
 msgstr "留下空文件夹将删除它。您真的要删除该文件夹吗？"
 
-#: document/static/js/modules/documents/overview/index.js:195
+#: document/static/js/modules/documents/overview/index.js:181
 msgid "You cannot open a document while you are offline."
 msgstr "离线时无法打开文档。"
 
-#: document/static/js/modules/documents/overview/index.js:239
+#: document/static/js/modules/documents/overview/index.js:234
 msgid "Document data loading failed."
 msgstr "文档数据加载失败。"
 
-#: document/static/js/modules/documents/overview/index.js:572
+#: document/static/js/modules/documents/overview/index.js:567
 msgid "No documents available"
 msgstr "无可用文件"
 
-#: document/static/js/modules/documents/overview/index.js:573
+#: document/static/js/modules/documents/overview/index.js:568
 msgid "No documents found"
 msgstr "没有找到文件"
 
-#: document/static/js/modules/documents/overview/index.js:583
+#: document/static/js/modules/documents/overview/index.js:578
 msgid "Revisions"
 msgstr "修订"
 
-#: document/static/js/modules/documents/overview/index.js:584
+#: document/static/js/modules/documents/overview/index.js:579
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:112
 msgid "Created"
 msgstr "已创建"
 
-#: document/static/js/modules/documents/overview/index.js:585
+#: document/static/js/modules/documents/overview/index.js:580
 #: user_template_manager/static/js/modules/user_template_manager/overview.js:113
 msgid "Last changed"
 msgstr "最后更改"
 
-#: document/static/js/modules/documents/overview/index.js:586
+#: document/static/js/modules/documents/overview/index.js:581
 msgid "Owner"
 msgstr "所有者"
 
-#: document/static/js/modules/documents/overview/index.js:827
+#: document/static/js/modules/documents/overview/index.js:582
+#: document/static/js/modules/editor/menus/headerbar/model.js:690
+msgid "Settings"
+msgstr "设置"
+
+#: document/static/js/modules/documents/overview/index.js:822
 msgid "Undefined"
 msgstr "不明确的"
 
-#: document/static/js/modules/documents/overview/index.js:840
+#: document/static/js/modules/documents/overview/index.js:835
 msgid "Copy selected as..."
 msgstr "将所选内容复制为..."
 
-#: document/static/js/modules/documents/overview/index.js:842
+#: document/static/js/modules/documents/overview/index.js:837
 msgid "Copy the documents and assign them to a specific template."
 msgstr "复制文档并将其分配给特定模板。"
 
-#: document/static/js/modules/documents/overview/index.js:893
+#: document/static/js/modules/documents/overview/index.js:888
 msgid ""
 "Encrypted documents protect your content so that only people with the "
 "password can read it."
 msgstr "加密文档可以保护您的内容，以便只有知道密码的人才能阅读。"
 
-#: document/static/js/modules/documents/overview/index.js:894
-#: document/static/js/modules/documents/overview/index.js:908
+#: document/static/js/modules/documents/overview/index.js:889
+#: document/static/js/modules/documents/overview/index.js:903
 msgid "Advantages"
 msgstr "优点"
 
-#: document/static/js/modules/documents/overview/index.js:896
+#: document/static/js/modules/documents/overview/index.js:891
 msgid "Only people with the password can read the document."
 msgstr "只有知道密码的人才能阅读该文档。"
 
-#: document/static/js/modules/documents/overview/index.js:897
+#: document/static/js/modules/documents/overview/index.js:892
 msgid "The server cannot access the document contents."
 msgstr "服务器无法访问文档内容。"
 
-#: document/static/js/modules/documents/overview/index.js:899
-#: document/static/js/modules/documents/overview/index.js:914
+#: document/static/js/modules/documents/overview/index.js:894
+#: document/static/js/modules/documents/overview/index.js:909
 msgid "Disadvantages"
 msgstr "缺点"
 
-#: document/static/js/modules/documents/overview/index.js:901
+#: document/static/js/modules/documents/overview/index.js:896
 msgid "Limited access rights options (no tracked changes or review modes)."
 msgstr "有限的访问权限选项（无跟踪更改或审阅模式）。"
 
-#: document/static/js/modules/documents/overview/index.js:902
+#: document/static/js/modules/documents/overview/index.js:897
 msgid ""
 "If you lose the password or passphrase, there is no way to recover the "
 "document."
 msgstr "如果您丢失密码或密码短语，则无法恢复文档。"
 
-#: document/static/js/modules/documents/overview/index.js:903
+#: document/static/js/modules/documents/overview/index.js:898
 msgid ""
 "You must share the password with collaborators manually (unless they use a "
 "personal passphrase)."
 msgstr "您必须手动与协作者共享密码（除非他们使用个人密码）。"
 
-#: document/static/js/modules/documents/overview/index.js:907
+#: document/static/js/modules/documents/overview/index.js:902
 msgid "Regular documents are the default and work well for most users."
 msgstr "常规文档是默认文档，对于大多数用户来说效果很好。"
 
-#: document/static/js/modules/documents/overview/index.js:910
+#: document/static/js/modules/documents/overview/index.js:905
 msgid "Full access rights options including tracked changes and review modes."
 msgstr "完整的访问权限选项，包括跟踪更改和审阅模式。"
 
-#: document/static/js/modules/documents/overview/index.js:911
+#: document/static/js/modules/documents/overview/index.js:906
 msgid "No risk of losing access if you forget a password."
 msgstr "如果您忘记密码，没有失去访问权限的风险。"
 
-#: document/static/js/modules/documents/overview/index.js:912
+#: document/static/js/modules/documents/overview/index.js:907
 msgid "Easier collaboration — no need to share passwords with collaborators."
 msgstr "更轻松的协作 - 无需与协作者共享密码。"
 
-#: document/static/js/modules/documents/overview/index.js:916
+#: document/static/js/modules/documents/overview/index.js:911
 msgid "The server can technically access the document contents."
 msgstr "服务器在技术上可以访问文档内容。"
 
-#: document/static/js/modules/documents/overview/index.js:917
+#: document/static/js/modules/documents/overview/index.js:912
 msgid "No additional protection beyond your account password."
 msgstr "除了您的帐户密码之外，没有其他保护。"
 
-#: document/static/js/modules/documents/overview/index.js:921
+#: document/static/js/modules/documents/overview/index.js:916
 msgid "Choose encryption type of new document."
 msgstr "选择新文档的加密类型。"
 
-#: document/static/js/modules/documents/overview/index.js:975
+#: document/static/js/modules/documents/overview/index.js:970
 msgid "Set Up Personal Encryption (Optional)"
 msgstr "设置个人加密（可选）"
 
-#: document/static/js/modules/documents/overview/index.js:977
+#: document/static/js/modules/documents/overview/index.js:972
 msgid ""
 "Would you like to set up a personal passphrase now? This will allow you to "
 "unlock all your encrypted documents with a single passphrase."
 msgstr "您想现在设置个人密码吗？这将允许您使用单个密码解锁所有加密文档。"
 
-#: document/static/js/modules/documents/overview/index.js:978
+#: document/static/js/modules/documents/overview/index.js:973
 msgid "Note:"
 msgstr "笔记："
 
-#: document/static/js/modules/documents/overview/index.js:978
+#: document/static/js/modules/documents/overview/index.js:973
 msgid "This is optional. You can also use a per-document password instead."
 msgstr "这是可选的。您还可以使用每个文档的密码。"
 
-#: document/static/js/modules/documents/overview/index.js:982
+#: document/static/js/modules/documents/overview/index.js:977
 msgid "Skip for Now"
 msgstr "暂时跳过"
 
-#: document/static/js/modules/documents/overview/index.js:993
+#: document/static/js/modules/documents/overview/index.js:988
 msgid "Set Up Passphrase"
 msgstr "设置密码"
 
-#: document/static/js/modules/documents/overview/index.js:1028
-#: user/static/js/modules/profile/index.js:232
+#: document/static/js/modules/documents/overview/index.js:1023
+#: user/static/js/modules/profile/index.js:264
 msgid "Failed to set up passphrase: "
 msgstr "设置密码失败："
 
@@ -2491,7 +2671,7 @@ msgstr "在服务器上找不到您复制的图像之一。请尝试重新上传
 msgid "Insert"
 msgstr "插入"
 
-#: document/static/js/modules/editor/dialogs/citation.js:39
+#: document/static/js/modules/editor/dialogs/citation.js:40
 #: document/static/js/modules/editor/dialogs/code_block.js:120
 #: document/static/js/modules/editor/dialogs/figure.js:374
 #: document/static/js/modules/editor/dialogs/templates.js:315
@@ -2506,21 +2686,21 @@ msgstr "插入"
 msgid "Remove"
 msgstr "消除"
 
-#: document/static/js/modules/editor/dialogs/citation.js:69
+#: document/static/js/modules/editor/dialogs/citation.js:68
 msgid "Configure Citation"
 msgstr "配置引文"
 
-#: document/static/js/modules/editor/dialogs/citation.js:243
+#: document/static/js/modules/editor/dialogs/citation.js:261
 #: usermedia/static/js/modules/images/selection_dialog/index.js:115
 msgid "Search..."
 msgstr "搜索..."
 
-#: document/static/js/modules/editor/dialogs/citation.js:256
+#: document/static/js/modules/editor/dialogs/citation.js:274
 #: document/static/js/modules/editor/dialogs/templates.js:313
 msgid "Year"
 msgstr "年"
 
-#: document/static/js/modules/editor/dialogs/citation.js:425
+#: document/static/js/modules/editor/dialogs/citation.js:443
 msgid "Please select at least one citation source!"
 msgstr "请至少选择一个引用来源！"
 
@@ -2536,14 +2716,18 @@ msgstr "类别"
 msgid "Optional title"
 msgstr "可选标题"
 
-#: document/static/js/modules/editor/dialogs/contributor.js:28
-#: document/static/js/modules/editor/dialogs/contributor.js:119
-#: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:22
+#: document/static/js/modules/editor/dialogs/contributor.js:31
+#: document/static/js/modules/editor/dialogs/contributor.js:157
+#: document/static/js/modules/editor/state_plugins/contributor_input/add_button.js:24
 #: document/static/js/modules/editor/state_plugins/tag_input/tag_editor_plugins.js:20
 msgid "Add"
 msgstr "添加"
 
-#: document/static/js/modules/editor/dialogs/contributor.js:53
+#: document/static/js/modules/editor/dialogs/contributor.js:77
+msgid "ID Value format is incorrect for "
+msgstr "ID 值格式不正确 "
+
+#: document/static/js/modules/editor/dialogs/contributor.js:89
 msgid "Email is in incorrect format!"
 msgstr "电子邮件格式不正确！"
 
@@ -2783,49 +2967,47 @@ msgstr "页"
 msgid "Text before"
 msgstr "之前的文字"
 
-#: document/static/js/modules/editor/dialogs/templates.js:387
+#: document/static/js/modules/editor/dialogs/templates.js:395
+msgid "Select ID Type"
+msgstr "选择身份证件类型"
+
+#: document/static/js/modules/editor/dialogs/templates.js:401
 msgid "Firstname"
 msgstr "名"
 
-#: document/static/js/modules/editor/dialogs/templates.js:388
+#: document/static/js/modules/editor/dialogs/templates.js:402
 msgid "Lastname"
 msgstr "姓"
 
-#: document/static/js/modules/editor/dialogs/templates.js:389
-#: document/static/js/modules/schema/document/content.js:47
-#: user/static/js/modules/profile/templates.js:163
-msgid "Email"
-msgstr "电子邮件"
+#: document/static/js/modules/editor/dialogs/templates.js:409
+msgid "ID Value"
+msgstr "ID值"
 
-#: document/static/js/modules/editor/dialogs/templates.js:390
-msgid "Institution"
-msgstr "机构"
-
-#: document/static/js/modules/editor/document_template/index.js:58
+#: document/static/js/modules/editor/document_template/index.js:59
 msgid "Optional sections"
 msgstr "可选部分"
 
-#: document/static/js/modules/editor/document_template/index.js:60
+#: document/static/js/modules/editor/document_template/index.js:61
 msgid "Choose which optional sections to enable."
 msgstr "选择要启用的可选部分。"
 
-#: document/static/js/modules/editor/document_template/index.js:66
+#: document/static/js/modules/editor/document_template/index.js:67
 msgid "Show/hide"
 msgstr "显示/隐藏"
 
-#: document/static/js/modules/editor/document_template/index.js:109
+#: document/static/js/modules/editor/document_template/index.js:110
 msgid "Create copy as ..."
 msgstr "创建副本为..."
 
-#: document/static/js/modules/editor/document_template/index.js:112
+#: document/static/js/modules/editor/document_template/index.js:113
 msgid "Create copy of the current document with a specific template."
 msgstr "使用特定模板创建当前文档的副本。"
 
-#: document/static/js/modules/editor/document_template/index.js:331
+#: document/static/js/modules/editor/document_template/index.js:332
 msgid "Export the document to a DOCX file with the given template."
 msgstr "使用给定模板将文档导出为 DOCX 文件。"
 
-#: document/static/js/modules/editor/document_template/index.js:354
+#: document/static/js/modules/editor/document_template/index.js:355
 msgid "Export the document to an ODT file with the given template."
 msgstr "使用给定模板将文档导出到 ODT 文件。"
 
@@ -3024,7 +3206,7 @@ msgstr "该文档采用端到端加密。输入密码以解密。"
 #: user/static/js/modules/login/index.js:66
 #: user/static/js/modules/password_reset/change_password.js:22
 #: user/static/js/modules/profile/templates.js:30
-#: user/static/js/modules/profile/templates.js:100
+#: user/static/js/modules/profile/templates.js:105
 #: user/static/js/modules/signup/index.js:27
 msgid "Password"
 msgstr "密码"
@@ -3188,7 +3370,7 @@ msgid "Incorrect passphrase."
 msgstr "密码不正确。"
 
 #: document/static/js/modules/editor/index.js:804
-#: user/static/js/modules/profile/index.js:263
+#: user/static/js/modules/profile/index.js:295
 msgid "Recovery failed: "
 msgstr "恢复失败："
 
@@ -3331,7 +3513,7 @@ msgid "Removed"
 msgstr "已删除"
 
 #: document/static/js/modules/editor/marginboxes/templates.js:250
-#: usermedia/static/js/modules/images/overview/index.js:257
+#: usermedia/static/js/modules/images/overview/index.js:276
 msgid "Added"
 msgstr "额外"
 
@@ -3511,8 +3693,8 @@ msgid "Sign up / Log in"
 msgstr "注册/登录"
 
 #: document/static/js/modules/editor/menus/headerbar/model.js:198
-#: document/static/js/modules/editor/menus/headerbar/view.js:545
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:548
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Close the document and return to the document overview menu."
 msgstr "关闭文档并返回到文档概述菜单。"
 
@@ -3572,262 +3754,258 @@ msgstr ""
 "您的个人密码仍将解锁此文档。自动生成新的随机密码。其他密码用户将自动收到；非"
 "密码短语协作者需要手动与他们共享。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:472
+#: document/static/js/modules/editor/menus/headerbar/model.js:485
 msgid ""
 "Document encryption key rotated. Other passphrase users will receive the new "
 "key automatically."
 msgstr "文档加密密钥已轮换。其他密码短语用户将自动收到新密钥。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:479
+#: document/static/js/modules/editor/menus/headerbar/model.js:492
 msgid ""
 "Document password changed. Remember to share the new password with your "
 "collaborators."
 msgstr "文档密码已更改。请记住与您的协作者分享新密码。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:487
+#: document/static/js/modules/editor/menus/headerbar/model.js:500
 msgid "The current password is incorrect."
 msgstr "当前密码不正确。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:503
+#: document/static/js/modules/editor/menus/headerbar/model.js:516
 msgid "Export"
 msgstr "导出"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:504
+#: document/static/js/modules/editor/menus/headerbar/model.js:517
 msgid "Export of the document contents"
 msgstr "导出文档内容"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:510
+#: document/static/js/modules/editor/menus/headerbar/model.js:523
 msgid "HTML"
 msgstr "超文本标记语言"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:512
+#: document/static/js/modules/editor/menus/headerbar/model.js:525
 msgid "Export the document to an HTML file."
 msgstr "将文档导出为 HTML 文件。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:533
+#: document/static/js/modules/editor/menus/headerbar/model.js:546
 msgid "Epub"
 msgstr "电子书"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:536
+#: document/static/js/modules/editor/menus/headerbar/model.js:549
 msgid "Export the document to an Epub electronic reader file."
 msgstr "将文档导出为 Epub 电子阅读器文件。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:559
+#: document/static/js/modules/editor/menus/headerbar/model.js:572
 msgid "LaTeX"
 msgstr "乳胶"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:561
+#: document/static/js/modules/editor/menus/headerbar/model.js:574
 msgid "Export the document to an LaTeX file."
 msgstr "将文档导出为 LaTeX 文件。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:581
+#: document/static/js/modules/editor/menus/headerbar/model.js:594
 msgid "JATS"
 msgstr "JATS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:584
+#: document/static/js/modules/editor/menus/headerbar/model.js:597
 msgid ""
 "Export the document to a Journal Archiving and Interchange Tag Library NISO "
 "JATS Version 1.2 file."
 msgstr "将文档导出到期刊存档和交换标签库 NISO JATS 版本 1.2 文件。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:607
+#: document/static/js/modules/editor/menus/headerbar/model.js:620
 msgid "BITS"
 msgstr "BITS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:610
+#: document/static/js/modules/editor/menus/headerbar/model.js:623
 msgid ""
 "Export the document to a Book Interchange Tag Set BITS Version 2.1 file."
 msgstr "将文档导出到图书交换标签集 BITS 版本 2.1 文件。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:633
+#: document/static/js/modules/editor/menus/headerbar/model.js:646
 msgid "Pandoc JSON"
 msgstr "Pandoc JSON"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:636
+#: document/static/js/modules/editor/menus/headerbar/model.js:649
 msgid "Export the document to a Pandoc JSON file."
 msgstr "将文档导出到 Pandoc JSON 文件。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:658
+#: document/static/js/modules/editor/menus/headerbar/model.js:671
 msgid "Slim FIDUS"
 msgstr "苗条FIDUS"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:661
+#: document/static/js/modules/editor/menus/headerbar/model.js:674
 msgid "Export the document to a FIDUS file without its template."
 msgstr "将文档导出到不带模板的 FIDUS 文件。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:677
-msgid "Settings"
-msgstr "设置"
-
-#: document/static/js/modules/editor/menus/headerbar/model.js:678
+#: document/static/js/modules/editor/menus/headerbar/model.js:691
 msgid "Configure settings of this document."
 msgstr "配置本文档的设置。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:685
+#: document/static/js/modules/editor/menus/headerbar/model.js:698
 msgid "Citation Style"
 msgstr "引文风格"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:687
+#: document/static/js/modules/editor/menus/headerbar/model.js:700
 msgid "Choose your preferred citation style."
 msgstr "选择您喜欢的引用样式。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:696
+#: document/static/js/modules/editor/menus/headerbar/model.js:709
 msgid "Document Style"
 msgstr "文档样式"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:698
+#: document/static/js/modules/editor/menus/headerbar/model.js:711
 msgid "Choose your preferred document style."
 msgstr "选择您喜欢的文档样式。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:710
+#: document/static/js/modules/editor/menus/headerbar/model.js:723
 msgid "Text Language"
 msgstr "文本语言"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:712
+#: document/static/js/modules/editor/menus/headerbar/model.js:725
 msgid "Choose the language of the document."
 msgstr "选择文档的语言。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:720
+#: document/static/js/modules/editor/menus/headerbar/model.js:733
 #: document/static/js/modules/schema/const.js:19
 msgid "English (United States)"
 msgstr "英语（美国）"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:725
+#: document/static/js/modules/editor/menus/headerbar/model.js:738
 #: document/static/js/modules/schema/const.js:18
 msgid "English (United Kingdom)"
 msgstr "英语（英国）"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:728
+#: document/static/js/modules/editor/menus/headerbar/model.js:741
 #: document/static/js/modules/schema/const.js:23
 msgid "German (Germany)"
 msgstr "德语（德国）"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:731
+#: document/static/js/modules/editor/menus/headerbar/model.js:744
 #: document/static/js/modules/schema/const.js:11
 msgid "Chinese (Simplified)"
 msgstr "中文（简体）"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:734
+#: document/static/js/modules/editor/menus/headerbar/model.js:747
 #: document/static/js/modules/schema/const.js:47
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:735
+#: document/static/js/modules/editor/menus/headerbar/model.js:748
 #: document/static/js/modules/schema/const.js:21
 msgid "French"
 msgstr "法语"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:736
+#: document/static/js/modules/editor/menus/headerbar/model.js:749
 #: document/static/js/modules/schema/const.js:30
 msgid "Japanese"
 msgstr "日本人"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:737
+#: document/static/js/modules/editor/menus/headerbar/model.js:750
 #: document/static/js/modules/schema/const.js:29
 msgid "Italian"
 msgstr "意大利语"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:741
+#: document/static/js/modules/editor/menus/headerbar/model.js:754
 #: document/static/js/modules/schema/const.js:38
 msgid "Portuguese (Brazil)"
 msgstr "葡萄牙语（巴西）"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:791
+#: document/static/js/modules/editor/menus/headerbar/model.js:804
 msgid "Other"
 msgstr "其他"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:842
+#: document/static/js/modules/editor/menus/headerbar/model.js:855
 msgid "Paper Size"
 msgstr "纸张尺寸"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:845
+#: document/static/js/modules/editor/menus/headerbar/model.js:858
 msgid "Choose a papersize for print and PDF generation."
 msgstr "选择用于打印和 PDF 生成的纸张尺寸。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:853
+#: document/static/js/modules/editor/menus/headerbar/model.js:866
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:856
+#: document/static/js/modules/editor/menus/headerbar/model.js:869
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) 在世界大部分地区使用。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:879
+#: document/static/js/modules/editor/menus/headerbar/model.js:892
 msgid "US Letter"
 msgstr "美国信"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:882
+#: document/static/js/modules/editor/menus/headerbar/model.js:895
 msgid "The format used by the USA and some other American countries."
 msgstr "美国和其他一些美洲国家使用的格式。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:910
+#: document/static/js/modules/editor/menus/headerbar/model.js:923
 msgid "Copyright Information"
 msgstr "版权信息"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:934
+#: document/static/js/modules/editor/menus/headerbar/model.js:947
 msgid "Tools"
 msgstr "工具"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:935
+#: document/static/js/modules/editor/menus/headerbar/model.js:948
 msgid "Select document editing tool."
 msgstr "选择文档编辑工具。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:941
+#: document/static/js/modules/editor/menus/headerbar/model.js:954
 #: document/static/js/modules/editor/tools/word_count/index.js:13
 msgid "Word counter"
 msgstr "字数计数器"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:943
+#: document/static/js/modules/editor/menus/headerbar/model.js:956
 msgid "See document statistics."
 msgstr "参见文档统计。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:951
+#: document/static/js/modules/editor/menus/headerbar/model.js:964
 #: document/static/js/modules/editor/tools/key_bindings/templates.js:34
 #: document/static/js/modules/editor/tools/search_replace/index.js:265
 msgid "Search and replace"
 msgstr "搜索和替换"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:953
+#: document/static/js/modules/editor/menus/headerbar/model.js:966
 msgid "Show a search and replace dialog."
 msgstr "显示搜索和替换对话框。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:962
+#: document/static/js/modules/editor/menus/headerbar/model.js:975
 msgid "Keyboard shortcuts"
 msgstr "键盘快捷键"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:965
+#: document/static/js/modules/editor/menus/headerbar/model.js:978
 msgid "Show an overview of available keyboard shortcuts."
 msgstr "显示可用键盘快捷键的概述。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:977
+#: document/static/js/modules/editor/menus/headerbar/model.js:990
 msgid "Track changes"
 msgstr "追踪变更"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:979
+#: document/static/js/modules/editor/menus/headerbar/model.js:992
 msgid "Tracking changes to the document"
 msgstr "跟踪文档的更改"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:985
+#: document/static/js/modules/editor/menus/headerbar/model.js:998
 msgid "Record"
 msgstr "记录"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:987
+#: document/static/js/modules/editor/menus/headerbar/model.js:1000
 msgid "Record document changes"
 msgstr "记录文档变更"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1005
+#: document/static/js/modules/editor/menus/headerbar/model.js:1018
 msgid "Accept all"
 msgstr "全部接受"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1007
+#: document/static/js/modules/editor/menus/headerbar/model.js:1020
 msgid "Accept all tracked changes."
 msgstr "接受所有跟踪的更改。"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1014
+#: document/static/js/modules/editor/menus/headerbar/model.js:1027
 msgid "Reject all"
 msgstr "全部拒绝"
 
-#: document/static/js/modules/editor/menus/headerbar/model.js:1016
+#: document/static/js/modules/editor/menus/headerbar/model.js:1029
 msgid "Reject all tracked changes."
 msgstr "拒绝所有跟踪的更改。"
 
@@ -3835,12 +4013,12 @@ msgstr "拒绝所有跟踪的更改。"
 msgid "You cannot close a document when you're offline."
 msgstr "离线时无法关闭文档。"
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:545
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:548
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Sign up or log in"
 msgstr "注册或登录"
 
-#: document/static/js/modules/editor/menus/headerbar/view.js:546
+#: document/static/js/modules/editor/menus/headerbar/view.js:549
 msgid "Close document"
 msgstr "关闭文档"
 
@@ -4234,8 +4412,8 @@ msgstr "带空格的字符"
 
 #: document/static/js/modules/exporter/docx/metadata.js:64
 #: document/static/js/modules/exporter/docx/metadata.js:67
-#: document/static/js/modules/exporter/odt/metadata.js:67
-#: document/static/js/modules/importer/docx/parse.js:244
+#: document/static/js/modules/exporter/odt/metadata.js:68
+#: document/static/js/modules/importer/docx/parse.js:255
 msgid "Unknown"
 msgstr "未知"
 
@@ -4284,7 +4462,7 @@ msgstr "无法创建文档"
 msgid "Could not save "
 msgstr "无法保存"
 
-#: document/static/js/modules/importer/odt/import.js:47
+#: document/static/js/modules/importer/odt/import.js:48
 msgid "File does not contain content.xml"
 msgstr "文件不包含 content.xml"
 
@@ -4761,8 +4939,8 @@ msgstr "登录方式"
 
 #: user/static/js/modules/login/index.js:60
 #: user/static/js/modules/profile/templates.js:29
-#: user/static/js/modules/profile/templates.js:88
-#: user/static/js/modules/profile/templates.js:246
+#: user/static/js/modules/profile/templates.js:93
+#: user/static/js/modules/profile/templates.js:251
 #: user/static/js/modules/signup/index.js:22
 msgid "Username"
 msgstr "用户名"
@@ -5003,23 +5181,23 @@ msgstr "确认设置主要"
 msgid "Set this email as the address primary"
 msgstr "将此电子邮件设置为主要地址"
 
-#: user/static/js/modules/profile/index.js:144
+#: user/static/js/modules/profile/index.js:176
 msgid "Configure profile"
 msgstr "配置配置文件"
 
-#: user/static/js/modules/profile/index.js:286
+#: user/static/js/modules/profile/index.js:318
 msgid "Passphrase changed successfully."
 msgstr "密码更改成功。"
 
-#: user/static/js/modules/profile/index.js:290
+#: user/static/js/modules/profile/index.js:322
 msgid "Failed to change passphrase: "
 msgstr "更改密码失败："
 
-#: user/static/js/modules/profile/index.js:308
+#: user/static/js/modules/profile/index.js:340
 msgid "Could not save profile data"
 msgstr "无法保存个人资料数据"
 
-#: user/static/js/modules/profile/index.js:317
+#: user/static/js/modules/profile/index.js:349
 msgid "Could not save preferences"
 msgstr "无法保存首选项"
 
@@ -5061,85 +5239,85 @@ msgstr "旧密码"
 msgid "Confirm the new password"
 msgstr "确认新密码"
 
-#: user/static/js/modules/profile/templates.js:77
+#: user/static/js/modules/profile/templates.js:82
 msgid "Edit profile picture"
 msgstr "编辑个人资料图片"
 
-#: user/static/js/modules/profile/templates.js:80
+#: user/static/js/modules/profile/templates.js:85
 msgid "Change picture"
 msgstr "更改图片"
 
-#: user/static/js/modules/profile/templates.js:81
+#: user/static/js/modules/profile/templates.js:86
 msgid "Delete picture"
 msgstr "删除图片"
 
-#: user/static/js/modules/profile/templates.js:108
+#: user/static/js/modules/profile/templates.js:113
 #: user/static/js/modules/two_factor/index.js:223
 msgid "Two-Factor Authentication"
 msgstr "双因素身份验证"
 
-#: user/static/js/modules/profile/templates.js:112
+#: user/static/js/modules/profile/templates.js:117
 msgid "Enabled"
 msgstr "启用"
 
-#: user/static/js/modules/profile/templates.js:116
+#: user/static/js/modules/profile/templates.js:121
 msgid "Disabled"
 msgstr "残疾人"
 
-#: user/static/js/modules/profile/templates.js:121
+#: user/static/js/modules/profile/templates.js:126
 msgid "Enable 2FA"
 msgstr "启用 2FA"
 
-#: user/static/js/modules/profile/templates.js:125
+#: user/static/js/modules/profile/templates.js:130
 #: user/static/js/modules/two_factor/index.js:135
 msgid "Disable 2FA"
 msgstr "禁用 2FA"
 
-#: user/static/js/modules/profile/templates.js:133
+#: user/static/js/modules/profile/templates.js:138
 msgid "End-to-End Encryption"
 msgstr "端到端加密"
 
-#: user/static/js/modules/profile/templates.js:137
+#: user/static/js/modules/profile/templates.js:142
 msgid "Personal passphrase set up"
 msgstr "个人密码设置"
 
-#: user/static/js/modules/profile/templates.js:141
+#: user/static/js/modules/profile/templates.js:146
 msgid "Not set up"
 msgstr "未设置"
 
-#: user/static/js/modules/profile/templates.js:146
+#: user/static/js/modules/profile/templates.js:151
 msgid "Set up encryption passphrase"
 msgstr "设置加密密码"
 
-#: user/static/js/modules/profile/templates.js:150
+#: user/static/js/modules/profile/templates.js:155
 msgid "Change passphrase"
 msgstr "更改密码短语"
 
-#: user/static/js/modules/profile/templates.js:154
+#: user/static/js/modules/profile/templates.js:159
 msgid "Recover with recovery key"
 msgstr "使用恢复密钥恢复"
 
-#: user/static/js/modules/profile/templates.js:164
+#: user/static/js/modules/profile/templates.js:169
 msgid "Primary address"
 msgstr "主要地址"
 
-#: user/static/js/modules/profile/templates.js:165
+#: user/static/js/modules/profile/templates.js:170
 msgid "Verified"
 msgstr "已验证"
 
-#: user/static/js/modules/profile/templates.js:220
+#: user/static/js/modules/profile/templates.js:225
 msgid "Editor"
 msgstr "编辑"
 
-#: user/static/js/modules/profile/templates.js:224
+#: user/static/js/modules/profile/templates.js:229
 msgid "Enable inline reference typing (@)"
 msgstr "启用内联引用类型 (@)"
 
-#: user/static/js/modules/profile/templates.js:226
+#: user/static/js/modules/profile/templates.js:231
 msgid "Type @ in the editor to insert a citation or cross-reference:"
 msgstr "在编辑器中输入 @ 以插入引用或交叉引用："
 
-#: user/static/js/modules/profile/templates.js:228
+#: user/static/js/modules/profile/templates.js:233
 msgid ""
 "Citation: @entry_key – optional suffix: @entry_key[prefix][locator]. Textual "
 "citation: @@entry_key. Multiple sources: @key1;key2"
@@ -5147,15 +5325,15 @@ msgstr ""
 "引用：@entry_key – 可选后缀：@entry_key[前缀][定位符]。文本引用："
 "@@entry_key。多个来源：@key1;key2"
 
-#: user/static/js/modules/profile/templates.js:229
+#: user/static/js/modules/profile/templates.js:234
 msgid "Cross-reference: @#target-id"
 msgstr "交叉引用：@#target-id"
 
-#: user/static/js/modules/profile/templates.js:233
+#: user/static/js/modules/profile/templates.js:238
 msgid "Enable inline math typing ($)"
 msgstr "启用内联数学输入 ($)"
 
-#: user/static/js/modules/profile/templates.js:235
+#: user/static/js/modules/profile/templates.js:240
 msgid ""
 "Type $ in the editor followed by LaTeX math to insert an equation inline, "
 "e.g. $x^2. Press Enter or Tab to confirm."
@@ -5163,15 +5341,15 @@ msgstr ""
 "在编辑器中输入 $，然后输入 LaTeX math 以插入内联方程式，例如$x^2。按 Enter "
 "或 Tab 进行确认。"
 
-#: user/static/js/modules/profile/templates.js:245
+#: user/static/js/modules/profile/templates.js:250
 msgid "Social Account Provider"
 msgstr "社交账户提供商"
 
-#: user/static/js/modules/profile/templates.js:273
+#: user/static/js/modules/profile/templates.js:278
 msgid "Connect"
 msgstr "连接"
 
-#: user/static/js/modules/profile/templates.js:288
+#: user/static/js/modules/profile/templates.js:294
 msgid "Delete account"
 msgstr "删除帐户"
 
@@ -5426,29 +5604,29 @@ msgstr "无法更新类别"
 msgid "Media Manager"
 msgstr "媒体经理"
 
-#: usermedia/static/js/modules/images/overview/index.js:102
+#: usermedia/static/js/modules/images/overview/index.js:121
 msgid "The image(s) could not be deleted"
 msgstr "图片无法删除"
 
-#: usermedia/static/js/modules/images/overview/index.js:118
+#: usermedia/static/js/modules/images/overview/index.js:137
 msgid "The image(s) have been deleted"
 msgstr "图片已被删除"
 
-#: usermedia/static/js/modules/images/overview/index.js:141
+#: usermedia/static/js/modules/images/overview/index.js:160
 msgid "Delete the image(s)"
 msgstr "删除图像"
 
-#: usermedia/static/js/modules/images/overview/index.js:235
+#: usermedia/static/js/modules/images/overview/index.js:254
 #: usermedia/static/js/modules/images/selection_dialog/index.js:113
 msgid "No images available"
 msgstr "没有可用的图像"
 
-#: usermedia/static/js/modules/images/overview/index.js:236
+#: usermedia/static/js/modules/images/overview/index.js:255
 #: usermedia/static/js/modules/images/selection_dialog/index.js:114
 msgid "No images found"
 msgstr "没有找到图片"
 
-#: usermedia/static/js/modules/images/overview/index.js:256
+#: usermedia/static/js/modules/images/overview/index.js:275
 msgid "Size (px)"
 msgstr "尺寸（像素）"
 
@@ -5471,6 +5649,9 @@ msgstr "添加新图像"
 #: usermedia/static/js/modules/images/selection_dialog/index.js:70
 msgid "Use image"
 msgstr "使用图像"
+
+#~ msgid "You cannot access rights data of a document while you are offline."
+#~ msgstr "离线时您无法访问文档的权限数据。"
 
 #~ msgid "Could not obtain submission info."
 #~ msgstr "无法获取提交信息。"

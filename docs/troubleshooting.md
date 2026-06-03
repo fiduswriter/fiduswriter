@@ -173,7 +173,7 @@ This guide provides solutions to common problems you might encounter with Fidus 
 1. Check Node.js version:
    ```bash
    node --version
-   # Should be 18 or higher
+   # Should be 24 or higher
    ```
 
 2. Clear npm cache:

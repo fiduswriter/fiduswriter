@@ -256,7 +256,7 @@ Edit `.github/workflows/check-dependencies.yml` to customize:
 
 - **Node.js version**: Change in `setup-node` step
   ```yaml
-  node-version: '20'
+  node-version: '24'
   ```
 
 #### Enable Slack Notifications

@@ -6,7 +6,7 @@ Install Fidus Writer from source on Ubuntu using a Python virtual environment.
 
 - Ubuntu 20.04 or later
 - Python 3.10+
-- Node.js 18+
+- Node.js 24+
 - PostgreSQL (recommended)
 
 ## System Dependencies

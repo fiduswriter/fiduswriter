@@ -25,7 +25,7 @@ Build-Depends: debhelper-compat (= 13),
                libjpeg-dev,
                zlib1g-dev,
                libmagic1,
-               nodejs (>= 18),
+               nodejs (>= 24),
                npm
 Standards-Version: 4.6.2
 Homepage: https://www.fiduswriter.org

@@ -35,10 +35,10 @@ export class PandocConvert {
     }
 
     validatePandocFormat() {
-        // Check API version (Pandoc uses [major, minor, patch])
+        // Check API version (Pandoc uses [major, minor, patch] or [major, minor, patch, tweak])
         if (
             !Array.isArray(this.doc["pandoc-api-version"]) ||
-            this.doc["pandoc-api-version"].length !== 3 ||
+            this.doc["pandoc-api-version"].length < 3 ||
             !this.doc["pandoc-api-version"].every(
                 num => typeof num === "number"
             )

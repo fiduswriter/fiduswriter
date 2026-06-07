@@ -333,6 +333,13 @@ export class DocumentOverviewActions {
                                 }
                             }
 
+                            // Get selected template if multiple templates exist
+                            if (importIds.length > 1) {
+                                importId = document.getElementById(
+                                    "import-template-selector"
+                                ).value
+                            }
+
                             // Handle ZIP files for external formats
                             if (file.type === "application/zip") {
                                 const {default: JSZip} = await import("jszip")
@@ -357,7 +364,7 @@ export class DocumentOverviewActions {
                                     this.documentOverview.user,
                                     this.documentOverview.path,
                                     importId,
-                                    {...files, e2eeOptions}
+                                    {files, e2eeOptions}
                                 )
 
                                 const {ok, statusText, doc} =
@@ -390,13 +397,6 @@ export class DocumentOverviewActions {
                                 )
                                 deactivateWait()
                                 return
-                            }
-
-                            // Get selected template if multiple templates exist
-                            if (importIds.length > 1) {
-                                importId = document.getElementById(
-                                    "import-template-selector"
-                                ).value
                             }
 
                             const options = {

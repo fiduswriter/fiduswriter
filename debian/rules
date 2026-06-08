@@ -57,9 +57,10 @@ override_dh_auto_clean:
 	find . -name "*.mo" -delete 2>/dev/null || true
 
 override_dh_auto_build:
-	# Build phase - just compile message catalogs with system Python
-	# Note: We need python3-babel in Build-Depends for this
-	python3 setup.py compile_catalog || echo "Warning: Could not compile catalogs, will try later"
+	# Build phase - compile message catalogs with system Python's pybabel
+	# (avoid setup.py to prevent setuptools from validating pyproject.toml)
+	pybabel compile -d fiduswriter/locale -D django 2>/dev/null || true
+	pybabel compile -d fiduswriter/locale -D djangojs 2>/dev/null || true
 
 override_dh_auto_install:
 	# Check if Python is already built and cached
@@ -185,6 +186,11 @@ override_dh_strip:
 # Don't compress files in virtualenv
 override_dh_compress:
 	dh_compress -X.py -X.txt -X.so
+
+# Skip dwz for bundled Python - many bundled .so files have debug
+# sections that dwz cannot handle
+override_dh_dwz:
+	@echo "Skipping dh_dwz for bundled Python binaries"
 
 # Skip shlibs processing for bundled libraries
 override_dh_shlibdeps:

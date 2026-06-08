@@ -6,6 +6,10 @@ License:        AGPL-3.0-or-later
 URL:            https://www.fiduswriter.org
 Source0:        %{name}-%{version}.tar.gz
 
+# Exclude bundled Python from shebang mangling - many files use
+# #!/usr/bin/env python which brp-mangle-shebangs rejects
+%global __brp_mangle_shebangs_exclude_from ^/opt/fiduswriter/python.*
+
 # Python 3.14.5 configuration
 %global python_version 3.14.5
 %global python_major_minor 3.14

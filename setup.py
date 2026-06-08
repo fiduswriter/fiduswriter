@@ -4,7 +4,12 @@ from setuptools.command.sdist import sdist as _sdist
 from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
 from setuptools.command.install import install
 from setuptools.command.build_py import build_py as _build_py
-from setuptools.command.bdist_wheel import bdist_wheel as _bdist_wheel
+
+try:
+    from setuptools.command.bdist_wheel import bdist_wheel as _bdist_wheel
+except ImportError:
+    # setuptools >= 70.0.0 removed bdist_wheel from setuptools.command
+    _bdist_wheel = None
 from babel.messages.frontend import compile_catalog as _compile_catalog
 
 
@@ -50,22 +55,24 @@ class sdist(_sdist):
         _sdist.run(self)
 
 
-class bdist_wheel(_bdist_wheel):
-    """Custom build command."""
-
-    def run(self):
-        self.run_command("compile_catalog")
-        _bdist_wheel.run(self)
-
-
 cmdclass = {
     "compile_catalog": compile_catalog,
     "sdist": sdist,
     "build_py": build_py,
     "bdist_egg": bdist_egg,
-    "bdist_wheel": bdist_wheel,
     "install": install,
 }
+
+if _bdist_wheel:
+
+    class bdist_wheel(_bdist_wheel):
+        """Custom build command."""
+
+        def run(self):
+            self.run_command("compile_catalog")
+            _bdist_wheel.run(self)
+
+    cmdclass["bdist_wheel"] = bdist_wheel
 
 
 setup(

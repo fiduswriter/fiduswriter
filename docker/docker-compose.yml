@@ -1,0 +1,16 @@
+services:
+  fiduswriter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        FIDUSWRITER_VERSION: ${FIDUSWRITER_VERSION}
+    volumes:
+      - ./volumes/data:/data
+    ports:
+      - "8000:8000"
+    container_name: fiduswriter
+    restart: unless-stopped
+    user: "999:999"
+    environment:
+      - FIDUSWRITER_VERSION=${FIDUSWRITER_VERSION}

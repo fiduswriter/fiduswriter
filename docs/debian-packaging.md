@@ -47,6 +47,26 @@ docker pull ghcr.io/fiduswriter/fiduswriter:latest
 
 See the [docker/README.md](../docker/) for more details.
 
+### RPM Packages (RHEL / Rocky Linux / AlmaLinux / Fedora)
+
+For RHEL-based distributions, add the YUM repository and install with `dnf`:
+
+```bash
+sudo tee /etc/yum.repos.d/fiduswriter.repo <<'EOF'
+[fiduswriter]
+name=Fidus Writer
+baseurl=https://fiduswriter.github.io/fiduswriter/yum
+enabled=1
+gpgcheck=0
+EOF
+sudo dnf makecache
+sudo dnf install fiduswriter-server
+```
+
+You can also download the RPM manually from the [GitHub Releases page](https://github.com/fiduswriter/fiduswriter/releases).
+
+See the [RPM Installation Guide](installation/rpm.md) for details.
+
 ### PyPI
 
 For development or custom setups, install from PyPI:

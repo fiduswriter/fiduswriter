@@ -2,8 +2,9 @@
 FROM ubuntu:24.04
 EXPOSE 8000
 
-# Use build arg to allow overriding version
-ARG FIDUSWRITER_VERSION=4.1.4
+# Version is informational only — the package is built from the copied source.
+# Pass it via --build-arg or let the Makefile read it from version.txt.
+ARG FIDUSWRITER_VERSION
 ENV VERSION=${FIDUSWRITER_VERSION}
 
 # Executing group, with fixed group id

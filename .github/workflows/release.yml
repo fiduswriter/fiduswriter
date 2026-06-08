@@ -166,6 +166,17 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
 
+            - name: Check Docker Hub secrets
+              id: dockerhub
+              env:
+                  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+              run: |
+                  if [ -n "$DOCKER_USERNAME" ]; then
+                    echo "available=true" >> $GITHUB_OUTPUT
+                  else
+                    echo "available=false" >> $GITHUB_OUTPUT
+                  fi
+
             - name: Log in to GitHub Container Registry
               uses: docker/login-action@v3
               with:
@@ -173,12 +184,31 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
+            - name: Log in to Docker Hub
+              if: steps.dockerhub.outputs.available == 'true'
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
+
+            - name: Generate image list
+              id: images
+              env:
+                  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+              run: |
+                  IMAGES="ghcr.io/${{ github.repository_owner }}/fiduswriter"
+                  if [ -n "$DOCKER_USERNAME" ]; then
+                    IMAGES="$IMAGES"$'\n'"fiduswriter/fiduswriter"
+                  fi
+                  echo "list<<EOF" >> $GITHUB_OUTPUT
+                  echo "$IMAGES" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+
             - name: Extract metadata for Docker
               id: meta
               uses: docker/metadata-action@v5
               with:
-                  images: |
-                    ghcr.io/${{ github.repository_owner }}/fiduswriter
+                  images: ${{ steps.images.outputs.list }}
                   tags: |
                     type=raw,value=latest
                     type=raw,value=${{ steps.version.outputs.version }}
@@ -199,32 +229,46 @@ jobs:
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
 
-    update-apt-repo:
-        name: Update APT Repository
+    update-repos:
+        name: Update Package Repositories
         needs: release
-        # Only update the APT repo for stable releases — skip beta, rc, alpha, dev tags
+        # Only update repositories for stable releases — skip beta, rc, alpha, dev tags
         # so users with automatic updates don't receive pre-release packages.
         if: ${{ !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc') && !contains(github.ref_name, 'RC') && !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'dev') }}
         runs-on: ubuntu-latest
         permissions:
             contents: write
         steps:
-            - name: Download amd64 artifact
+            - name: Download debian amd64 artifact
               uses: actions/download-artifact@v8
               with:
                   name: debian-package-amd64
                   path: debs/
 
-            - name: Download arm64 artifact
+            - name: Download debian arm64 artifact
               uses: actions/download-artifact@v8
               with:
                   name: debian-package-arm64
                   path: debs/
 
-            - name: Install reprepro
+            - name: Download rpm x86_64 artifact
+              uses: actions/download-artifact@v8
+              with:
+                  name: rpm-package-x86_64
+                  path: rpms/
+              continue-on-error: true
+
+            - name: Download rpm aarch64 artifact
+              uses: actions/download-artifact@v8
+              with:
+                  name: rpm-package-aarch64
+                  path: rpms/
+              continue-on-error: true
+
+            - name: Install repository tools
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y reprepro
+                  sudo apt-get install -y reprepro createrepo-c
 
             - name: Clone gh-pages branch
               run: |
@@ -286,18 +330,50 @@ jobs:
                   # Remove the pool/ directory - .deb files are hosted on GitHub Releases
                   rm -rf gh-pages-repo/apt/pool
 
-                  # Create a simple index page
+            - name: Update YUM repository
+              run: |
+                  TAG="${{ github.ref_name }}"
+                  REPO="${{ github.repository }}"
+                  BASE_URL="https://github.com/${REPO}/releases/download/${TAG}/"
+
+                  # Only create YUM repo if RPMs exist
+                  if ls rpms/*.rpm >/dev/null 2>&1; then
+                    mkdir -p /tmp/rpms
+                    cp rpms/*.rpm /tmp/rpms/
+                    echo "Generating YUM repository metadata..."
+                    createrepo_c --baseurl "$BASE_URL" --outputdir gh-pages-repo/yum /tmp/rpms/
+                    echo "YUM repo metadata generated."
+                  else
+                    echo "No RPM artifacts found, skipping YUM repo update."
+                  fi
+
+            - name: Create index page
+              run: |
                   cat > gh-pages-repo/index.html <<'EOF'
                   <!DOCTYPE html>
                   <html>
-                  <head><title>Fidus Writer APT Repository</title></head>
+                  <head><title>Fidus Writer Package Repositories</title></head>
                   <body>
-                  <h1>Fidus Writer APT Repository</h1>
-                  <p>Add this repository to your system:</p>
+                  <h1>Fidus Writer Package Repositories</h1>
+
+                  <h2>APT Repository (Debian / Ubuntu / Linux Mint)</h2>
                   <pre>
                   echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
                   sudo apt-get update
                   sudo apt-get install fiduswriter-server
+                  </pre>
+
+                  <h2>YUM Repository (RHEL / Rocky Linux / AlmaLinux / Fedora)</h2>
+                  <pre>
+                  sudo tee /etc/yum.repos.d/fiduswriter.repo &lt;&lt;'REPO'
+                  [fiduswriter]
+                  name=Fidus Writer
+                  baseurl=https://fiduswriter.github.io/fiduswriter/yum
+                  enabled=1
+                  gpgcheck=0
+                  REPO
+                  sudo dnf makecache
+                  sudo dnf install fiduswriter-server
                   </pre>
                   </body>
                   </html>
@@ -308,7 +384,7 @@ jobs:
               run: |
                   git add -A
                   if ! git diff --cached --quiet; then
-                    git commit -m "Update APT repository for ${{ github.ref_name }}"
+                    git commit -m "Update package repositories for ${{ github.ref_name }}"
                     git push -u origin gh-pages --force
                   fi
 

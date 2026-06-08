@@ -13,6 +13,38 @@ For most users, we recommend:
 
 ### Easy Setup (Recommended for Production)
 
+#### [Debian/Ubuntu/Mint — APT Repository](apt.md)
+- ✅ Automatic updates via `apt`
+- ✅ No compilation required
+- ✅ All dependencies bundled
+- ✅ Best for Debian-based production servers
+
+**Quick Start:**
+```bash
+echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+sudo apt-get update
+sudo apt-get install fiduswriter-server
+```
+
+#### [RHEL/Rocky/AlmaLinux/Fedora — RPM Packages](rpm.md)
+- ✅ Self-contained RPM with bundled Python
+- ✅ Automatic updates via `dnf`
+- ✅ YUM repository hosted on GitHub Pages
+- ✅ Best for RHEL-based production servers
+
+**Quick Start:**
+```bash
+sudo tee /etc/yum.repos.d/fiduswriter.repo <<'EOF'
+[fiduswriter]
+name=Fidus Writer
+baseurl=https://fiduswriter.github.io/fiduswriter/yum
+enabled=1
+gpgcheck=0
+EOF
+sudo dnf makecache
+sudo dnf install fiduswriter-server
+```
+
 #### [Running on Ubuntu Snap](snap.md)
 - ✅ Easiest installation method
 - ✅ Automatic updates
@@ -32,8 +64,8 @@ sudo snap install fiduswriter
 
 **Quick Start:**
 ```bash
-docker pull fiduswriter/fiduswriter
-docker run -p 8000:8000 fiduswriter/fiduswriter
+docker pull ghcr.io/fiduswriter/fiduswriter:latest
+docker run -p 8000:8000 ghcr.io/fiduswriter/fiduswriter:latest
 ```
 
 ### Advanced Setup (For Developers)
@@ -69,7 +101,7 @@ docker run -p 8000:8000 fiduswriter/fiduswriter
 
 ### Supported Platforms
 
-- **Linux**: Ubuntu, Debian, Fedora, CentOS (via snap or source)
+- **Linux**: Ubuntu, Debian, Linux Mint (via APT repo or snap); RHEL, Rocky Linux, AlmaLinux, Fedora (via RPM)
 - **macOS**: Via Docker or source installation
 - **Windows**: Via Docker or WSL2
 
@@ -149,9 +181,12 @@ If you encounter issues not covered here:
 
 ## Platform-Specific Notes
 
-### Ubuntu/Debian
-- Use snap for easiest installation
-- apt packages available for dependencies
+### Ubuntu/Debian/Mint
+- Use the [APT repository](apt.md) for automatic updates on production servers
+- Use snap for the easiest desktop installation
+
+### RHEL / Rocky Linux / AlmaLinux / Fedora
+- Download the [RPM package](rpm.md) from GitHub Releases
 
 ### macOS
 - Docker is recommended

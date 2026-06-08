@@ -1,0 +1,55 @@
+name: Docker CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - 'fiduswriter/**'
+      - 'pyproject.toml'
+      - 'setup.py'
+      - 'setup.cfg'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - 'fiduswriter/**'
+      - 'pyproject.toml'
+      - 'setup.py'
+      - 'setup.cfg'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Determine version
+        id: version
+        run: |
+          VERSION=$(tr -d '[:space:]' < fiduswriter/version.txt)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: fiduswriter:test
+          build-args: |
+            FIDUSWRITER_VERSION=${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

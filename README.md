@@ -15,9 +15,10 @@ Installation
 The installation procedures can be found in our [documentation](docs/installation/).
 
 **Quick Start:**
+- **Debian/Ubuntu/Mint**: [APT Repository](docs/debian-packaging.md#apt-repository-recommended-for-debianubuntu)
+- **RHEL/Rocky/AlmaLinux/Fedora**: [RPM Packages](docs/installation/rpm.md)
 - **Ubuntu**: [Snap Installation](docs/installation/snap.md)
 - **Docker**: [Docker Installation](docs/installation/docker.md)
-- **Debian/Ubuntu Package**: [Build Debian Package](docs/debian-packaging.md)
 - **Developers**: [Development Setup](docs/installation/developer-install.md)
 
 Documentation

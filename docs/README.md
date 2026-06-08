@@ -16,6 +16,8 @@ Fidus Writer is an online collaborative editor especially made for academics who
 Choose the installation method that best suits your needs:
 
 **Easy Setup:**
+- [Debian/Ubuntu/Mint — APT Repository](installation/apt.md) - Automatic updates via `apt`
+- [RHEL/Rocky/AlmaLinux/Fedora — RPM Packages](installation/rpm.md) - Self-contained RPM with bundled Python
 - [Running on Ubuntu Snap](installation/snap.md) - Easiest way to get started on Ubuntu
 - [Docker Installation](installation/docker.md) - Run Fidus Writer in containers
 
@@ -51,6 +53,14 @@ Resources for developers and contributors:
 
 ## Quick Start
 
+### Using APT (Debian / Ubuntu / Linux Mint)
+
+```bash
+echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+sudo apt-get update
+sudo apt-get install fiduswriter-server
+```
+
 ### Using Snap (Ubuntu)
 
 ```bash
@@ -60,8 +70,8 @@ sudo snap install fiduswriter
 ### Using Docker
 
 ```bash
-docker pull fiduswriter/fiduswriter
-docker run -p 8000:8000 fiduswriter/fiduswriter
+docker pull ghcr.io/fiduswriter/fiduswriter:latest
+docker run -p 8000:8000 ghcr.io/fiduswriter/fiduswriter:latest
 ```
 
 Then visit `http://localhost:8000` in your browser.

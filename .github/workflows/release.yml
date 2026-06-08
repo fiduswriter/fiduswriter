@@ -30,7 +30,7 @@ jobs:
               uses: actions/checkout@v6
 
             - name: Cache Python build
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: .python-build-cache
                   key: python-build-${{ matrix.arch }}-${{ hashFiles('debian/rules') }}
@@ -52,7 +52,7 @@ jobs:
               run: ./build-deb.sh
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: debian-package-${{ matrix.arch }}
                   path: debian-build/*.deb
@@ -73,7 +73,7 @@ jobs:
               uses: actions/checkout@v6
 
             - name: Cache Python build
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: .python-build-cache
                   key: rpm-python-build-${{ matrix.arch }}-${{ hashFiles('rpm/fiduswriter-server.spec') }}
@@ -103,7 +103,7 @@ jobs:
               run: sudo chown -R $(id -u):$(id -g) .
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: rpm-package-${{ matrix.arch }}
                   path: rpm-build/*.rpm
@@ -127,7 +127,7 @@ jobs:
               run: python -m build
 
             - name: Upload artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: pypi-package
                   path: dist/*
@@ -210,13 +210,13 @@ jobs:
             contents: write
         steps:
             - name: Download amd64 artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: debian-package-amd64
                   path: debs/
 
             - name: Download arm64 artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: debian-package-arm64
                   path: debs/
@@ -314,12 +314,15 @@ jobs:
 
     release:
         name: Create Release
-        # Note: build-rpm is intentionally excluded from needs so that the
-        # release (and APT repo update) is created even when RPM builds fail.
         needs:
             - build-deb
+            - build-rpm
             - build-pypi
             - build-docker
+        # Wait for all build jobs to finish (using always() so RPM failures
+        # don't block the release), then create the release only on tags.
+        # Manual workflow_dispatch from a branch skips release creation.
+        if: always() && needs.build-deb.result == 'success' && needs.build-pypi.result == 'success' && needs.build-docker.result == 'success' && github.ref_type == 'tag'
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -334,33 +337,33 @@ jobs:
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
 
             - name: Download debian amd64 artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: debian-package-amd64
                   path: debian-build-amd64/
 
             - name: Download debian arm64 artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: debian-package-arm64
                   path: debian-build-arm64/
 
             - name: Download rpm x86_64 artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: rpm-package-x86_64
                   path: rpm-build-x86_64/
               continue-on-error: true
 
             - name: Download rpm aarch64 artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: rpm-package-aarch64
                   path: rpm-build-aarch64/
               continue-on-error: true
 
             - name: Download pypi artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v8
               with:
                   name: pypi-package
                   path: pypi-dist/
@@ -376,7 +379,7 @@ jobs:
                   ls -la release-assets/
 
             - name: Upload release assets
-              uses: softprops/action-gh-release@v2
+              uses: softprops/action-gh-release@v3
               with:
                   files: release-assets/*
                   body: |

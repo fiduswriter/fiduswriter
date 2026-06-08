@@ -102,15 +102,198 @@ jobs:
                   name: rpm-package-${{ matrix.arch }}
                   path: rpm-build/*.rpm
 
-    release:
-        name: Upload Release Assets
-        needs:
-            - build-deb
-            - build-rpm
+    build-pypi:
+        name: Build PyPI Package
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              with:
+                  python-version: '3.14'
+
+            - name: Install build tools
+              run: pip install build
+
+            - name: Build package
+              run: python -m build
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: pypi-package
+                  path: dist/*
+
+            - name: Publish to PyPI
+              uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                  password: ${{ secrets.PYPI_API_TOKEN }}
+
+    build-docker:
+        name: Build and Push Docker Image
+        runs-on: ubuntu-latest
+        needs: []
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Determine version
+              id: version
+              run: |
+                  VERSION=$(tr -d '[:space:]' < fiduswriter/version.txt)
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+                  echo "Building version: $VERSION"
+                  IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+                  echo "major=$MAJOR" >> $GITHUB_OUTPUT
+                  echo "minor=$MINOR" >> $GITHUB_OUTPUT
+
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Log in to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Extract metadata for Docker
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                  images: |
+                    ghcr.io/${{ github.repository_owner }}/fiduswriter
+                  tags: |
+                    type=raw,value=latest
+                    type=raw,value=${{ steps.version.outputs.version }}
+                    type=raw,value=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}
+                    type=raw,value=${{ steps.version.outputs.major }}
+
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  file: ./docker/Dockerfile
+                  platforms: linux/amd64,linux/arm64
+                  push: true
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  build-args: |
+                    FIDUSWRITER_VERSION=${{ steps.version.outputs.version }}
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+
+    update-apt-repo:
+        name: Update APT Repository
+        needs: build-deb
         runs-on: ubuntu-latest
         permissions:
             contents: write
         steps:
+            - name: Download amd64 artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: debian-package-amd64
+                  path: debs/
+
+            - name: Download arm64 artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: debian-package-arm64
+                  path: debs/
+
+            - name: Install reprepro
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y reprepro
+
+            - name: Clone gh-pages branch
+              run: |
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --global user.name "github-actions[bot]"
+                  if ! git clone --branch gh-pages --single-branch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages-repo 2>/dev/null; then
+                    (
+                      mkdir -p gh-pages-repo
+                      cd gh-pages-repo
+                      git init
+                      git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+                      git checkout -b gh-pages
+                    )
+                  fi
+
+            - name: Update APT repository
+              run: |
+                  mkdir -p gh-pages-repo/apt/conf
+                  cat > gh-pages-repo/apt/conf/distributions <<'EOF'
+                  Origin: Fidus Writer
+                  Label: Fidus Writer
+                  Suite: stable
+                  Codename: stable
+                  Version: 1.0
+                  Architectures: amd64 arm64
+                  Components: main
+                  Description: Fidus Writer APT repository
+                  EOF
+
+                  for deb in debs/*.deb; do
+                    echo "Adding $deb to APT repository..."
+                    reprepro -b gh-pages-repo/apt includedeb stable "$deb"
+                  done
+
+                  # Create a simple index page
+                  cat > gh-pages-repo/index.html <<'EOF'
+                  <!DOCTYPE html>
+                  <html>
+                  <head><title>Fidus Writer APT Repository</title></head>
+                  <body>
+                  <h1>Fidus Writer APT Repository</h1>
+                  <p>Add this repository to your system:</p>
+                  <pre>
+                  echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+                  sudo apt-get update
+                  sudo apt-get install fiduswriter-server
+                  </pre>
+                  </body>
+                  </html>
+                  EOF
+
+            - name: Push gh-pages branch
+              working-directory: gh-pages-repo
+              run: |
+                  git add -A
+                  if ! git diff --cached --quiet; then
+                    git commit -m "Update APT repository for ${{ github.ref_name }}"
+                    git push -u origin gh-pages --force
+                  fi
+
+    release:
+        name: Create Release
+        needs:
+            - build-deb
+            - build-rpm
+            - build-pypi
+            - build-docker
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Determine version
+              id: version
+              run: |
+                  VERSION=$(tr -d '[:space:]' < fiduswriter/version.txt)
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+
             - name: Download debian amd64 artifact
               uses: actions/download-artifact@v4
               with:
@@ -135,6 +318,12 @@ jobs:
                   name: rpm-package-aarch64
                   path: rpm-build-aarch64/
 
+            - name: Download pypi artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: pypi-package
+                  path: pypi-dist/
+
             - name: Upload release assets
               uses: softprops/action-gh-release@v2
               with:
@@ -143,3 +332,41 @@ jobs:
                       debian-build-arm64/*.deb
                       rpm-build-x86_64/*.rpm
                       rpm-build-aarch64/*.rpm
+                  body: |
+                      ## Fidus Writer ${{ steps.version.outputs.version }}
+
+                      ### Docker Image
+
+                      Multi-architecture Docker images (amd64, arm64) are available:
+
+                      ```bash
+                      docker pull ghcr.io/fiduswriter/fiduswriter:${{ steps.version.outputs.version }}
+                      docker pull ghcr.io/fiduswriter/fiduswriter:latest
+                      ```
+
+                      ### PyPI
+
+                      Install with pip:
+
+                      ```bash
+                      pip install fiduswriter==${{ steps.version.outputs.version }}
+                      ```
+
+                      ### APT Repository (Debian/Ubuntu/Linux Mint)
+
+                      Add the repository and install:
+
+                      ```bash
+                      echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+                      sudo apt-get update
+                      sudo apt-get install fiduswriter-server
+                      ```
+
+                      ### RPM Packages
+
+                      Download and install the RPM for your architecture from the assets below.
+
+                      ### System Packages
+
+                      - **Debian/Ubuntu**: `fiduswriter-server_*_amd64.deb` or `fiduswriter-server_*_arm64.deb`
+                      - **RHEL/Rocky/AlmaLinux/Fedora**: `fiduswriter-server-*_x86_64.rpm` or `fiduswriter-server-*_aarch64.rpm`

@@ -2,6 +2,59 @@
 
 This guide explains how to build and install Fidus Writer as a Debian/Ubuntu package with all Python dependencies bundled.
 
+## Installation Methods
+
+Fidus Writer can be installed in several ways:
+
+### APT Repository (Recommended for Debian/Ubuntu)
+
+The easiest way to install on Debian, Ubuntu, or Linux Mint is via the official APT repository. This ensures you always get the latest version automatically.
+
+```bash
+# Add the repository
+echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+
+# Update package index
+sudo apt-get update
+
+# Install Fidus Writer
+sudo apt-get install fiduswriter-server
+```
+
+To upgrade to a new release later, simply run:
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+```
+
+### Manual .deb Installation
+
+You can also download the `.deb` package from the [GitHub releases page](https://github.com/fiduswriter/fiduswriter/releases) and install it manually:
+
+```bash
+sudo dpkg -i fiduswriter-server_*_amd64.deb
+sudo apt-get install -f
+```
+
+### Docker
+
+Pre-built multi-architecture Docker images are available:
+
+```bash
+docker pull ghcr.io/fiduswriter/fiduswriter:latest
+```
+
+See the [docker/README.md](../docker/) for more details.
+
+### PyPI
+
+For development or custom setups, install from PyPI:
+
+```bash
+pip install fiduswriter
+```
+
 ## Overview
 
 This package bundles a recent **Python**, **Node.js** (via nodejs-wheel), **database adapters** (PostgreSQL and MySQL), all dependencies (Django, Channels, Granian, and 30+ packages), and **all optional modules** into a single self-contained installation at `/opt/fiduswriter/`. This means:

@@ -16,6 +16,7 @@ BuildRequires:  gcc, make, wget
 BuildRequires:  openssl-devel, libffi-devel, bzip2-devel, readline-devel
 BuildRequires:  sqlite-devel, ncurses-devel, xz-devel, tk-devel
 BuildRequires:  zlib-devel, libjpeg-turbo-devel
+BuildRequires:  mariadb-devel
 BuildRequires:  python3, python3-pip, python3-setuptools
 BuildRequires:  systemd-rpm-macros
 

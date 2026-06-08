@@ -106,6 +106,12 @@ def inner(default_project_path):
             if app in settings_dict["INSTALLED_APPS"]:
                 settings_dict["INSTALLED_APPS"].remove(app)
 
+    # Ensure each app is only listed once while preserving order
+    if "INSTALLED_APPS" in settings_dict:
+        settings_dict["INSTALLED_APPS"] = list(
+            dict.fromkeys(settings_dict["INSTALLED_APPS"])
+        )
+
     # Add appropriate admin app based on whether django_otp is enabled
     # OTPAdminConfig should be used when django_otp is present, otherwise use standard admin
     if "django_otp" in settings_dict.get("INSTALLED_APPS", []):

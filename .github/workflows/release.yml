@@ -194,7 +194,10 @@ jobs:
 
     update-apt-repo:
         name: Update APT Repository
-        needs: build-deb
+        needs: release
+        # Only update the APT repo for stable releases — skip beta, rc, alpha, dev tags
+        # so users with automatic updates don't receive pre-release packages.
+        if: ${{ !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc') && !contains(github.ref_name, 'RC') && !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'dev') }}
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -249,6 +252,33 @@ jobs:
                     reprepro -b gh-pages-repo/apt includedeb stable "$deb"
                   done
 
+                  # Replace relative pool/ paths with absolute GitHub Release asset URLs.
+                  # The .deb files themselves are too large (>100MB) to push to gh-pages,
+                  # so we keep them as release assets and only store metadata on gh-pages.
+                  TAG="${{ github.ref_name }}"
+                  REPO="${{ github.repository }}"
+                  BASE_URL="https://github.com/${REPO}/releases/download/${TAG}"
+
+                  for pkg in gh-pages-repo/apt/dists/stable/main/binary-*/Packages; do
+                    [ -f "$pkg" ] || continue
+                    echo "Rewriting Filename URLs in $pkg..."
+                    awk -v base="$BASE_URL" '
+                      /^Filename: pool\// {
+                        # Extract the basename from the pool path
+                        n = split($0, parts, "/")
+                        filename = parts[n]
+                        print "Filename: " base "/" filename
+                        next
+                      }
+                      { print }
+                    ' "$pkg" > "${pkg}.tmp" && mv "${pkg}.tmp" "$pkg"
+                    # Regenerate the compressed version
+                    gzip -k -f "$pkg"
+                  done
+
+                  # Remove the pool/ directory - .deb files are hosted on GitHub Releases
+                  rm -rf gh-pages-repo/apt/pool
+
                   # Create a simple index page
                   cat > gh-pages-repo/index.html <<'EOF'
                   <!DOCTYPE html>
@@ -277,9 +307,10 @@ jobs:
 
     release:
         name: Create Release
+        # Note: build-rpm is intentionally excluded from needs so that the
+        # release (and APT repo update) is created even when RPM builds fail.
         needs:
             - build-deb
-            - build-rpm
             - build-pypi
             - build-docker
         runs-on: ubuntu-latest
@@ -312,12 +343,14 @@ jobs:
               with:
                   name: rpm-package-x86_64
                   path: rpm-build-x86_64/
+              continue-on-error: true
 
             - name: Download rpm aarch64 artifact
               uses: actions/download-artifact@v4
               with:
                   name: rpm-package-aarch64
                   path: rpm-build-aarch64/
+              continue-on-error: true
 
             - name: Download pypi artifact
               uses: actions/download-artifact@v4
@@ -325,14 +358,20 @@ jobs:
                   name: pypi-package
                   path: pypi-dist/
 
+            - name: Collect release assets
+              run: |
+                  mkdir -p release-assets
+                  cp debian-build-amd64/*.deb release-assets/ 2>/dev/null || true
+                  cp debian-build-arm64/*.deb release-assets/ 2>/dev/null || true
+                  cp rpm-build-x86_64/*.rpm release-assets/ 2>/dev/null || true
+                  cp rpm-build-aarch64/*.rpm release-assets/ 2>/dev/null || true
+                  echo "Assets to upload:"
+                  ls -la release-assets/
+
             - name: Upload release assets
               uses: softprops/action-gh-release@v2
               with:
-                  files: |
-                      debian-build-amd64/*.deb
-                      debian-build-arm64/*.deb
-                      rpm-build-x86_64/*.rpm
-                      rpm-build-aarch64/*.rpm
+                  files: release-assets/*
                   body: |
                       ## Fidus Writer ${{ steps.version.outputs.version }}
 

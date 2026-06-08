@@ -10,6 +10,11 @@ Source0:        %{name}-%{version}.tar.gz
 # #!/usr/bin/env python which brp-mangle-shebangs rejects
 %global __brp_mangle_shebangs_exclude_from ^/opt/fiduswriter/python.*
 
+# Disable debuginfo package generation - pre-built .so files from Python
+# wheels (PIL, psycopg2-binary, etc.) don't have proper build-ids and
+# cause "Missing build-id" / "Generating build-id links failed" errors.
+%global debug_package %{nil}
+
 # Python 3.14.5 configuration
 %global python_version 3.14.5
 %global python_major_minor 3.14

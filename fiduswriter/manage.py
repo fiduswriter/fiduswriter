@@ -103,7 +103,8 @@ def inner(default_project_path):
         ] + list(settings_dict["INSTALLED_APPS"])
     if "REMOVED_APPS" in settings_dict:
         for app in settings_dict["REMOVED_APPS"]:
-            settings_dict["INSTALLED_APPS"].remove(app)
+            if app in settings_dict["INSTALLED_APPS"]:
+                settings_dict["INSTALLED_APPS"].remove(app)
 
     # Add appropriate admin app based on whether django_otp is enabled
     # OTPAdminConfig should be used when django_otp is present, otherwise use standard admin

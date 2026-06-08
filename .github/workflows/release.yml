@@ -8,6 +8,11 @@ on:
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
 
+# Opt into Node.js 24 early for JavaScript-based actions.
+# This suppresses deprecation warnings for actions still on Node.js 20.
+env:
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
     build-deb:
         name: Build Debian Package (${{ matrix.arch }})
@@ -131,6 +136,8 @@ jobs:
               uses: pypa/gh-action-pypi-publish@release/v1
               with:
                   password: ${{ secrets.PYPI_API_TOKEN }}
+                  skip-existing: true
+                  attestations: false
 
     build-docker:
         name: Build and Push Docker Image

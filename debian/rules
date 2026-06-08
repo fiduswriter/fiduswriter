@@ -5,8 +5,8 @@ export PYBUILD_NAME=fiduswriter
 export DH_VIRTUALENV_INSTALL_ROOT=/opt
 export DH_VIRTUALENV_INSTALL_SUFFIX=fiduswriter
 
-# Python 3.14.2 configuration
-PYTHON_VERSION=3.14.2
+# Python 3.14.5 configuration
+PYTHON_VERSION=3.14.5
 PYTHON_MAJORMINOR=3.14
 PYTHON_URL=https://www.python.org/ftp/python/$(PYTHON_VERSION)/Python-$(PYTHON_VERSION).tar.xz
 PYTHON_PREFIX=/opt/fiduswriter/python$(PYTHON_MAJORMINOR)

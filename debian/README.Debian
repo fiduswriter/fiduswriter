@@ -9,7 +9,7 @@ packaged for Debian and Ubuntu systems.
 Important Notes
 ---------------
 
-**Python 3.14.2 and Node.js Bundled:** This package includes Python 3.14.2 compiled 
+**Python 3.14.5 and Node.js Bundled:** This package includes Python 3.14.5 compiled 
 from source and installed to `/opt/fiduswriter/python3.14/`. All dependencies 
 (Django 6.0, Channels, Granian, Node.js via nodejs-wheel, and 30+ packages) are 
 bundled. This means:
@@ -135,7 +135,7 @@ Management Commands
 -------------------
 
 All Django management commands are available via the 'fiduswriter' command
-(which uses the bundled Python 3.14.2):
+(which uses the bundled Python 3.14.5):
 
   fiduswriter migrate              Run database migrations
   fiduswriter createsuperuser      Create admin user
@@ -165,7 +165,7 @@ For production deployments:
 7. Consider Redis for caching and session storage
 8. Set up regular backups of /var/lib/fiduswriter/
 
-Note: Python 3.14.2 is bundled and provides excellent performance with
+Note: Python 3.14.5 is bundled and provides excellent performance with
 optimizations and JIT compilation enabled.
 
 Example nginx configuration is provided in:

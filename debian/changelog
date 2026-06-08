@@ -3,7 +3,7 @@ fiduswriter-server (4.1.0~beta.1-1) unstable; urgency=medium
   * Initial Debian package release
   * Upstream version 4.1.0-beta.1
   * Single package with all modules included
-  * Bundled Python 3.14.2 compiled from source
+  * Bundled Python 3.14.5 compiled from source
   * All dependencies and optional modules included:
     - fiduswriter-books
     - fiduswriter-citation-api-import

@@ -52,7 +52,7 @@ RUN apt-get update \
         software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python 3.14.2 from deadsnakes PPA
+# Install Python 3.14.5 from deadsnakes PPA
 RUN add-apt-repository ppa:deadsnakes/ppa -y \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \

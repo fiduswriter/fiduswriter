@@ -57,7 +57,7 @@ find debian -name "*.debhelper" -delete 2>/dev/null || true
 rm -rf build dist *.egg-info
 rm -rf fiduswriter/.transpile fiduswriter/static-transpile fiduswriter/static-collected
 rm -rf .pybuild
-rm -rf Python-3.14.2 Python-3.14.2.tar.xz
+rm -rf Python-3.14.5 Python-3.14.5.tar.xz
 find . -name "*.pyc" -delete
 find . -name "*.mo" -delete
 find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true

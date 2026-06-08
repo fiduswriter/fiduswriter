@@ -134,7 +134,7 @@ sudo systemctl start fiduswriter
 ### How It Works
 
 **Build Process:**
-1. Downloads and compiles Python 3.14.2 from source
+1. Downloads and compiles Python 3.14.5 from source
 2. Installs all packages from `fiduswriter/requirements.txt` into bundled Python
 3. Installs Node.js via `nodejs-wheel` Python package for JavaScript transpilation
 4. Installs database adapters (psycopg2-binary for PostgreSQL, mysqlclient for MySQL)
@@ -149,7 +149,7 @@ sudo systemctl start fiduswriter
 5. Works even if system has only Python 3.8 or 3.9
 
 **Runtime:**
-- Service uses bundled Python 3.14.2
+- Service uses bundled Python 3.14.5
 - Service uses `/opt/fiduswriter/python3.14/bin/granian`
 - Commands use `/opt/fiduswriter/python3.14/bin/python3.14`
 - All dependencies installed directly in bundled Python
@@ -195,7 +195,7 @@ debian/rules clean
 dpkg-buildpackage -b -us -uc
 ```
 
-**Note:** Python 3.14.2 is compiled from source during the first build (~10-15 minutes). 
+**Note:** Python 3.14.5 is compiled from source during the first build (~10-15 minutes). 
 The compiled Python is cached in `.python-build-cache/` so subsequent builds are much 
 faster (~2-3 minutes). The cache is automatically reused unless you delete it or change 
 the Python version.
@@ -410,14 +410,14 @@ sudo mk-build-deps -i debian/control
 ```
 
 **Python download fails:**
-The build downloads Python 3.14.2 from python.org. Ensure you have internet access and
+The build downloads Python 3.14.5 from python.org. Ensure you have internet access and
 either `wget` or `curl` installed:
 ```bash
 sudo apt-get install wget
 ```
 
 **Slow builds:**
-First build compiles Python 3.14.2 from source (~10-15 minutes). Subsequent builds use 
+First build compiles Python 3.14.5 from source (~10-15 minutes). Subsequent builds use 
 the cached Python from `.python-build-cache/` and are much faster (~2-3 minutes). If you 
 need to rebuild Python, delete `.python-build-cache/`.
 
@@ -495,5 +495,5 @@ This means:
 
 **Last Updated:** 2025-12-19  
 **Package Version:** 4.0.17-1  
-**Python Version:** 3.14.2 (bundled)  
+**Python Version:** 3.14.5 (bundled)  
 **Approach:** Bundled Python + virtualenv

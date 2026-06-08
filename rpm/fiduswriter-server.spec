@@ -6,8 +6,8 @@ License:        AGPL-3.0-or-later
 URL:            https://www.fiduswriter.org
 Source0:        %{name}-%{version}.tar.gz
 
-# Python 3.14.2 configuration
-%global python_version 3.14.2
+# Python 3.14.5 configuration
+%global python_version 3.14.5
 %global python_major_minor 3.14
 %global python_prefix /opt/fiduswriter/python%{python_major_minor}
 %global python_url https://www.python.org/ftp/python/%{python_version}/Python-%{python_version}.tar.xz

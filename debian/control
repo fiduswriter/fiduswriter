@@ -17,16 +17,14 @@ Build-Depends: debhelper-compat (= 13),
                libbz2-dev,
                libreadline-dev,
                libsqlite3-dev,
-               libncurses5-dev,
+               libncurses-dev,
                libncursesw5-dev,
                xz-utils,
                tk-dev,
                liblzma-dev,
                libjpeg-dev,
                zlib1g-dev,
-               libmagic1,
-               nodejs (>= 24),
-               npm
+               libmagic1
 Standards-Version: 4.6.2
 Homepage: https://www.fiduswriter.org
 Vcs-Browser: https://github.com/fiduswriter/fiduswriter

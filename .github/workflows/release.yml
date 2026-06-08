@@ -39,9 +39,9 @@ jobs:
                     build-essential debhelper dh-python dh-virtualenv \
                     python3 python3-setuptools python3-babel python3-wheel python3-pip \
                     libssl-dev libffi-dev libbz2-dev libreadline-dev \
-                    libsqlite3-dev libncurses5-dev libncursesw5-dev \
+                    libsqlite3-dev libncurses-dev libncursesw5-dev \
                     xz-utils tk-dev liblzma-dev libjpeg-dev zlib1g-dev \
-                    libmagic1 nodejs npm wget curl devscripts equivs
+                    libmagic1 wget curl devscripts equivs
 
             - name: Build Debian package
               run: ./build-deb.sh
@@ -84,11 +84,12 @@ jobs:
                     bash -c "
                       set -e
                       dnf install -y epel-release
+                      dnf config-manager --set-enabled crb 2>/dev/null || dnf config-manager --set-enabled powertools 2>/dev/null || true
                       dnf install -y rpm-build gcc make wget curl \
                         openssl-devel libffi-devel bzip2-devel readline-devel \
                         sqlite-devel ncurses-devel xz-devel tk-devel \
-                        zlib-devel libjpeg-turbo-devel file-devel \
-                        python3 python3-pip python3-setuptools python3-wheel python3-babel \
+                        zlib-devel libjpeg-turbo-devel \
+                        python3 python3-pip python3-setuptools \
                         systemd-rpm-macros
                       ./build-rpm.sh
                     "

@@ -15,8 +15,8 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRequires:  gcc, make, wget, curl
 BuildRequires:  openssl-devel, libffi-devel, bzip2-devel, readline-devel
 BuildRequires:  sqlite-devel, ncurses-devel, xz-devel, tk-devel
-BuildRequires:  zlib-devel, libjpeg-turbo-devel, file-devel
-BuildRequires:  python3, python3-pip, python3-setuptools, python3-wheel, python3-babel
+BuildRequires:  zlib-devel, libjpeg-turbo-devel
+BuildRequires:  python3, python3-pip, python3-setuptools
 BuildRequires:  systemd-rpm-macros
 
 Requires:       shadow-utils, gettext, file-libs, libjpeg-turbo

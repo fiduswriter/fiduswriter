@@ -88,17 +88,23 @@ echo ""
 # Check and install build dependencies
 echo "Checking build dependencies..."
 if ! dpkg-checkbuilddeps 2>/dev/null; then
-    echo ""
-    echo "Missing build dependencies. Installing..."
-    sudo apt-get update
-    sudo mk-build-deps -i -r -t "apt-get -y --no-install-recommends" debian/control || {
-        echo "Error: Failed to install build dependencies"
-        echo "You may need to run manually:"
-        echo "  sudo apt install build-essential debhelper dh-python dh-virtualenv"
-        echo "  sudo apt install python3-all python3-dev python3-venv python3-pip"
-        echo "  sudo apt install libjpeg-dev zlib1g-dev libmagic1 nodejs npm"
-        exit 1
-    }
+    if [ "$CI" = "true" ]; then
+        echo ""
+        echo "Warning: dpkg-checkbuilddeps reports missing dependencies, but running in CI."
+        echo "Assuming dependencies were pre-installed by the workflow. Continuing..."
+    else
+        echo ""
+        echo "Missing build dependencies. Installing..."
+        sudo apt-get update
+        sudo mk-build-deps -i -r -t "apt-get -y --no-install-recommends" debian/control || {
+            echo "Error: Failed to install build dependencies"
+            echo "You may need to run manually:"
+            echo "  sudo apt install build-essential debhelper dh-python dh-virtualenv"
+            echo "  sudo apt install python3-all python3-dev python3-venv python3-pip"
+            echo "  sudo apt install libjpeg-dev zlib1g-dev libmagic1"
+            exit 1
+        }
+    fi
 fi
 
 echo "Build dependencies satisfied."

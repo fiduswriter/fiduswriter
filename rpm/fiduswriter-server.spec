@@ -69,6 +69,7 @@ make -j$(nproc)
 # Install Python to buildroot
 cd Python-%{python_version}
 make install DESTDIR=%{buildroot}
+cd ..
 
 # Set up library path for build-time Python
 PYTHON_BUILDLIB=%{buildroot}%{python_prefix}/lib

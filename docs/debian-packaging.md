@@ -36,7 +36,7 @@ sudo mk-build-deps -i -r -t "apt-get -y --no-install-recommends" debian/control
 
 ```bash
 # Install package (includes all modules)
-sudo dpkg -i debian-build/fiduswriter_*.deb
+sudo dpkg -i debian-build/fiduswriter-server_*.deb
 sudo apt-get install -f
 ```
 
@@ -86,7 +86,7 @@ sudo systemctl start fiduswriter
 3. Installs Node.js via `nodejs-wheel` Python package for JavaScript transpilation
 4. Installs database adapters (psycopg2-binary for PostgreSQL, mysqlclient for MySQL)
 5. Bundles Python with all packages into .deb package
-6. Output: `debian-build/fiduswriter_*.deb` (~250-300 MB)
+6. Output: `debian-build/fiduswriter-server_*.deb` (~250-300 MB)
 
 **Installation:**
 1. Extracts Python 3.14 to `/opt/fiduswriter/python3.14/`
@@ -151,8 +151,8 @@ the Python version.
 
 ```
 debian-build/
-└── fiduswriter_4.0.X-1_amd64.deb                  (~250-300 MB)
-└── fiduswriter_4.0.X-1_arm64.deb                  (~250-300 MB)
+└── fiduswriter-server_4.0.X-1_amd64.deb                  (~250-300 MB)
+└── fiduswriter-server_4.0.X-1_arm64.deb                  (~250-300 MB)
 ```
 
 ## Configuration
@@ -332,7 +332,7 @@ sudo -u postgres pg_dump fiduswriter > backup.sql
 sudo tar -czf media-backup.tar.gz /var/lib/fiduswriter/media/
 
 # Install new version
-sudo dpkg -i debian-build/fiduswriter_4.0.18-1_*.deb
+sudo dpkg -i debian-build/fiduswriter-server_4.0.18-1_*.deb
 
 # Run migrations and asset generation (transpile must run before collectstatic)
 sudo -u fiduswriter fiduswriter migrate
@@ -373,7 +373,7 @@ need to rebuild Python, delete `.python-build-cache/`.
 **Package conflicts:**
 ```bash
 sudo apt-get purge fiduswriter
-sudo dpkg -i debian-build/fiduswriter_*.deb
+sudo dpkg -i debian-build/fiduswriter-server_*.deb
 ```
 
 ### Runtime Issues

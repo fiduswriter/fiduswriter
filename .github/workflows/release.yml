@@ -52,24 +52,88 @@ jobs:
                   name: debian-package-${{ matrix.arch }}
                   path: debian-build/*.deb
 
+    build-rpm:
+        name: Build RPM Package (${{ matrix.arch }})
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - arch: x86_64
+                      runs-on: ubuntu-latest
+                    - arch: aarch64
+                      runs-on: ubuntu-24.04-arm
+        runs-on: ${{ matrix.runs-on }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Cache Python build
+              uses: actions/cache@v4
+              with:
+                  path: .python-build-cache
+                  key: rpm-python-build-${{ matrix.arch }}-${{ hashFiles('rpm/fiduswriter-server.spec') }}
+                  restore-keys: |
+                      rpm-python-build-${{ matrix.arch }}-
+
+            - name: Build RPM in Rocky Linux container
+              run: |
+                  docker run --rm \
+                    -v $(pwd):/src \
+                    -w /src \
+                    rockylinux:9 \
+                    bash -c "
+                      set -e
+                      dnf install -y epel-release
+                      dnf install -y rpm-build gcc make wget curl \
+                        openssl-devel libffi-devel bzip2-devel readline-devel \
+                        sqlite-devel ncurses-devel xz-devel tk-devel \
+                        zlib-devel libjpeg-turbo-devel file-devel \
+                        python3 python3-pip python3-setuptools python3-wheel python3-babel \
+                        systemd-rpm-macros
+                      ./build-rpm.sh
+                    "
+
+            - name: Fix permissions
+              run: sudo chown -R $(id -u):$(id -g) .
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: rpm-package-${{ matrix.arch }}
+                  path: rpm-build/*.rpm
+
     release:
         name: Upload Release Assets
-        needs: build-deb
+        needs:
+            - build-deb
+            - build-rpm
         runs-on: ubuntu-latest
         permissions:
             contents: write
         steps:
-            - name: Download amd64 artifact
+            - name: Download debian amd64 artifact
               uses: actions/download-artifact@v4
               with:
                   name: debian-package-amd64
                   path: debian-build-amd64/
 
-            - name: Download arm64 artifact
+            - name: Download debian arm64 artifact
               uses: actions/download-artifact@v4
               with:
                   name: debian-package-arm64
                   path: debian-build-arm64/
+
+            - name: Download rpm x86_64 artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: rpm-package-x86_64
+                  path: rpm-build-x86_64/
+
+            - name: Download rpm aarch64 artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: rpm-package-aarch64
+                  path: rpm-build-aarch64/
 
             - name: Upload release assets
               uses: softprops/action-gh-release@v2
@@ -77,3 +141,5 @@ jobs:
                   files: |
                       debian-build-amd64/*.deb
                       debian-build-arm64/*.deb
+                      rpm-build-x86_64/*.rpm
+                      rpm-build-aarch64/*.rpm

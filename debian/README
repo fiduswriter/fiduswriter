@@ -15,7 +15,7 @@ Build packages:
     ./build-deb.sh
 
 Install:
-    sudo dpkg -i debian-build/fiduswriter_*.deb
+    sudo dpkg -i debian-build/fiduswriter-server_*.deb
     sudo apt-get install -f
 
 Updating Python Version

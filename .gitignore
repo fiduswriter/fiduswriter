@@ -46,8 +46,8 @@ build
 debian/files
 debian/.debhelper/
 debian/tmp/
-debian/fiduswriter/
-debian/fiduswriter-*/
+debian/fiduswriter-server/
+debian/fiduswriter-server-*/
 debian/*.substvars
 debian/*.debhelper.log
 debian/*-stamp

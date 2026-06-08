@@ -17,11 +17,11 @@ export PYTHONDONTWRITEBYTECODE=1
 export NO_COMPILEMESSAGES=true
 
 # The Python binary has rpath=$(PYTHON_PREFIX)/lib (the final install location),
-# but during the build the shared library lives at debian/fiduswriter$(PYTHON_PREFIX)/lib.
+# but during the build the shared library lives at debian/fiduswriter-server$(PYTHON_PREFIX)/lib.
 # Setting LD_LIBRARY_PATH here lets the dynamic linker find libpython3.14.so
 # without a segfault when pip or any other Python command is invoked at build time.
-PYTHON_BUILDLIB = $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX)/lib
-PYTHON_EXEC = LD_LIBRARY_PATH=$(PYTHON_BUILDLIB):$$LD_LIBRARY_PATH $(CURDIR)/debian/fiduswriter$(PYTHON_BIN)
+PYTHON_BUILDLIB = $(CURDIR)/debian/fiduswriter-server$(PYTHON_PREFIX)/lib
+PYTHON_EXEC = LD_LIBRARY_PATH=$(PYTHON_BUILDLIB):$$LD_LIBRARY_PATH $(CURDIR)/debian/fiduswriter-server$(PYTHON_BIN)
 
 # Read optional plugin package-specs from pyproject.toml
 # [project.optional-dependencies].  Lines look like:
@@ -43,7 +43,7 @@ override_dh_auto_clean:
 	rm -rf fiduswriter/static-collected
 	rm -rf fiduswriter/static-libs
 	rm -rf fiduswriter/node_modules
-	rm -rf debian/fiduswriter/
+	rm -rf debian/fiduswriter-server/
 	rm -rf .pybuild
 	rm -rf Python-$(PYTHON_VERSION)
 	rm -f Python-$(PYTHON_VERSION).tar.xz
@@ -61,8 +61,8 @@ override_dh_auto_install:
 	@if [ -d "$(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR)" ] && \
 	    [ -f "$(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR)/bin/python$(PYTHON_MAJORMINOR)" ]; then \
 		echo "Using cached Python $(PYTHON_VERSION)..."; \
-		mkdir -p $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX); \
-		cp -r $(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR)/* $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX)/; \
+		mkdir -p $(CURDIR)/debian/fiduswriter-server$(PYTHON_PREFIX); \
+		cp -r $(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR)/* $(CURDIR)/debian/fiduswriter-server$(PYTHON_PREFIX)/; \
 	else \
 		echo "Downloading Python $(PYTHON_VERSION)..."; \
 		wget -q $(PYTHON_URL) || curl -sLO $(PYTHON_URL); \
@@ -70,7 +70,7 @@ override_dh_auto_install:
 		echo "Building Python $(PYTHON_VERSION) (this will be cached)..."; \
 		cd Python-$(PYTHON_VERSION) && \
 			./configure \
-				--prefix=$(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX) \
+				--prefix=$(CURDIR)/debian/fiduswriter-server$(PYTHON_PREFIX) \
 				--enable-optimizations \
 				--with-lto \
 				--enable-shared \
@@ -82,7 +82,7 @@ override_dh_auto_install:
 			make install; \
 		echo "Caching Python build for future use..."; \
 		mkdir -p $(CURDIR)/.python-build-cache; \
-		cp -r $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX) $(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR); \
+		cp -r $(CURDIR)/debian/fiduswriter-server$(PYTHON_PREFIX) $(CURDIR)/.python-build-cache/python$(PYTHON_MAJORMINOR); \
 		echo "Python build cached in .python-build-cache/"; \
 	fi
 	
@@ -124,48 +124,48 @@ override_dh_auto_install:
 	
 	# Fix all shebang lines in bin directory (pip hardcodes build paths)
 	@echo "Fixing shebang lines in all Python scripts..."
-	find $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX)/bin -type f -exec \
+	find $(CURDIR)/debian/fiduswriter-server$(PYTHON_PREFIX)/bin -type f -exec \
 		sed -i '1s|^#!.*python.*|#!/opt/fiduswriter/python$(PYTHON_MAJORMINOR)/bin/python$(PYTHON_MAJORMINOR)|' {} +
 	
 	# Create wrapper script
-	install -d debian/fiduswriter/usr/bin
-	echo '#!/bin/sh' > debian/fiduswriter/usr/bin/fiduswriter
-	echo 'export PATH=$(PYTHON_PREFIX)/bin:/usr/local/bin:/usr/bin:/bin' >> debian/fiduswriter/usr/bin/fiduswriter
-	echo 'export LD_LIBRARY_PATH=$(PYTHON_PREFIX)/lib:$$LD_LIBRARY_PATH' >> debian/fiduswriter/usr/bin/fiduswriter
-	echo 'export PROJECT_PATH=/var/lib/fiduswriter' >> debian/fiduswriter/usr/bin/fiduswriter
-	echo 'export SRC_PATH=$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/fiduswriter' >> debian/fiduswriter/usr/bin/fiduswriter
-	echo 'cd /var/lib/fiduswriter' >> debian/fiduswriter/usr/bin/fiduswriter
-	echo 'exec $(PYTHON_PREFIX)/bin/python$(PYTHON_MAJORMINOR) -m fiduswriter.manage --pythonpath /etc/fiduswriter "$$@"' >> debian/fiduswriter/usr/bin/fiduswriter
-	chmod +x debian/fiduswriter/usr/bin/fiduswriter
+	install -d debian/fiduswriter-server/usr/bin
+	echo '#!/bin/sh' > debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'export PATH=$(PYTHON_PREFIX)/bin:/usr/local/bin:/usr/bin:/bin' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'export LD_LIBRARY_PATH=$(PYTHON_PREFIX)/lib:$$LD_LIBRARY_PATH' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'export PROJECT_PATH=/var/lib/fiduswriter' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'export SRC_PATH=$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/fiduswriter' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'cd /var/lib/fiduswriter' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'exec $(PYTHON_PREFIX)/bin/python$(PYTHON_MAJORMINOR) -m fiduswriter.manage --pythonpath /etc/fiduswriter "$$@"' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	chmod +x debian/fiduswriter-server/usr/bin/fiduswriter
 	
 	# Install configuration template
 	install -D -m 644 fiduswriter/configuration-default.py \
-		debian/fiduswriter/etc/fiduswriter/configuration.py.template
+		debian/fiduswriter-server/etc/fiduswriter/configuration.py.template
 	
 	# Install requirements.txt for reference
 	install -D -m 644 fiduswriter/requirements.txt \
-		debian/fiduswriter/usr/share/fiduswriter/requirements.txt
+		debian/fiduswriter-server/usr/share/fiduswriter/requirements.txt
 	
 	# Create necessary directories
-	install -d debian/fiduswriter/var/lib/fiduswriter
-	install -d debian/fiduswriter/var/lib/fiduswriter/media
-	install -d debian/fiduswriter/var/log/fiduswriter
-	install -d debian/fiduswriter/usr/share/fiduswriter
+	install -d debian/fiduswriter-server/var/lib/fiduswriter
+	install -d debian/fiduswriter-server/var/lib/fiduswriter/media
+	install -d debian/fiduswriter-server/var/log/fiduswriter
+	install -d debian/fiduswriter-server/usr/share/fiduswriter
 	
 	# Install systemd service file (with Python version substitution)
-	install -d debian/fiduswriter/usr/lib/systemd/system
+	install -d debian/fiduswriter-server/usr/lib/systemd/system
 	sed 's|python3\.14|python$(PYTHON_MAJORMINOR)|g' debian/fiduswriter.service > \
-		debian/fiduswriter/usr/lib/systemd/system/fiduswriter.service
-	chmod 644 debian/fiduswriter/usr/lib/systemd/system/fiduswriter.service
+		debian/fiduswriter-server/usr/lib/systemd/system/fiduswriter.service
+	chmod 644 debian/fiduswriter-server/usr/lib/systemd/system/fiduswriter.service
 
 override_dh_fixperms:
 	dh_fixperms
 	# Ensure proper permissions for runtime directories
-	chmod 750 debian/fiduswriter/var/lib/fiduswriter || true
-	chmod 750 debian/fiduswriter/var/log/fiduswriter || true
+	chmod 750 debian/fiduswriter-server/var/lib/fiduswriter || true
+	chmod 750 debian/fiduswriter-server/var/log/fiduswriter || true
 	# Fix virtualenv and Python permissions
-	chmod 755 debian/fiduswriter/opt/fiduswriter/venv/bin/* || true
-	chmod 755 debian/fiduswriter$(PYTHON_PREFIX)/bin/* || true
+	chmod 755 debian/fiduswriter-server/opt/fiduswriter/venv/bin/* || true
+	chmod 755 debian/fiduswriter-server$(PYTHON_PREFIX)/bin/* || true
 
 override_dh_installinit:
 	dh_installinit --name=fiduswriter --no-start

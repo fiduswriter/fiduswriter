@@ -46,10 +46,10 @@ chmod +x debian/rules
 
 # Clean previous builds
 echo "Cleaning previous build artifacts..."
-rm -rf debian/fiduswriter 2>/dev/null || sudo rm -rf debian/fiduswriter
+rm -rf debian/fiduswriter-server 2>/dev/null || sudo rm -rf debian/fiduswriter-server
 rm -rf debian/.debhelper 2>/dev/null || sudo rm -rf debian/.debhelper
 rm -rf debian/tmp 2>/dev/null || sudo rm -rf debian/tmp
-rm -rf debian/fiduswriter-*/ 2>/dev/null || true
+rm -rf debian/fiduswriter-server-*/ 2>/dev/null || true
 rm -f debian/files
 rm -f debian/*.substvars
 rm -f debian/*.debhelper.log
@@ -180,7 +180,7 @@ echo "Packages created in $BUILD_DIR/:"
 ls -lh "$BUILD_DIR"/*.deb 2>/dev/null || echo "No .deb files found"
 echo ""
 echo "To install:"
-echo "  Main package:     sudo dpkg -i $BUILD_DIR/fiduswriter_*.deb"
+echo "  Main package:     sudo dpkg -i $BUILD_DIR/fiduswriter-server_*.deb"
 echo "  Fix dependencies: sudo apt-get install -f"
 echo ""
 

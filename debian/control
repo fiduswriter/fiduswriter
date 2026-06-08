@@ -33,7 +33,7 @@ Vcs-Browser: https://github.com/fiduswriter/fiduswriter
 Vcs-Git: https://github.com/fiduswriter/fiduswriter.git
 Rules-Requires-Root: no
 
-Package: fiduswriter
+Package: fiduswriter-server
 Architecture: any
 Depends: ${misc:Depends},
          adduser,

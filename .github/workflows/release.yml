@@ -327,6 +327,9 @@ jobs:
                     gzip -k -f "$pkg"
                   done
 
+                  # Regenerate the Release file so checksums match the modified Packages.gz
+                  reprepro -b gh-pages-repo/apt export
+
                   # Remove the pool/ directory - .deb files are hosted on GitHub Releases
                   rm -rf gh-pages-repo/apt/pool
 
@@ -357,8 +360,22 @@ jobs:
                   <h1>Fidus Writer Package Repositories</h1>
 
                   <h2>APT Repository (Debian / Ubuntu / Linux Mint)</h2>
+                  <p><strong>Traditional format (all versions):</strong></p>
                   <pre>
                   echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+                  sudo apt-get update
+                  sudo apt-get install fiduswriter-server
+                  </pre>
+                  <p><strong>Modern DEB822 format (Ubuntu 24.04+, Debian 13+, Mint 22+):</strong></p>
+                  <pre>
+                  sudo tee /etc/apt/sources.list.d/fiduswriter.sources &lt;&lt;'EOF'
+                  Types: deb
+                  URIs: https://fiduswriter.github.io/fiduswriter/apt
+                  Suites: stable
+                  Components: main
+                  Trusted: yes
+                  Architectures: amd64 arm64
+                  EOF
                   sudo apt-get update
                   sudo apt-get install fiduswriter-server
                   </pre>

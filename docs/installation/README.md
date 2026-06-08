@@ -21,6 +21,7 @@ For most users, we recommend:
 
 **Quick Start:**
 ```bash
+# Traditional format (all versions)
 echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
 sudo apt-get update
 sudo apt-get install fiduswriter-server

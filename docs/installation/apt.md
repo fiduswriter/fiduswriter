@@ -10,6 +10,8 @@ The easiest way to install Fidus Writer on Debian-based systems is via the offic
 
 ## Add the repository and install
 
+### Traditional format (works on all versions)
+
 ```bash
 # Add the APT repository
 echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
@@ -18,6 +20,24 @@ echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable mai
 sudo apt-get update
 
 # Install Fidus Writer
+sudo apt-get install fiduswriter-server
+```
+
+### Modern DEB822 format (Ubuntu 24.04+, Debian 13+, Mint 22+)
+
+If your system supports the newer `.sources` format, you can use this instead:
+
+```bash
+sudo tee /etc/apt/sources.list.d/fiduswriter.sources <<'EOF'
+Types: deb
+URIs: https://fiduswriter.github.io/fiduswriter/apt
+Suites: stable
+Components: main
+Trusted: yes
+Architectures: amd64 arm64
+EOF
+
+sudo apt-get update
 sudo apt-get install fiduswriter-server
 ```
 

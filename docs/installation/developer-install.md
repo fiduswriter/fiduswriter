@@ -6,7 +6,7 @@ This guide will help you set up a development environment for Fidus Writer. Foll
 
 ### Required Software
 
-- **Python 3.12+** (3.13 or 3.14 recommended)
+- **Python 3.13+** (3.14 recommended)
 - **Node.js 24+** and npm
 - **Git**
 - **Database** (PostgreSQL recommended for development matching production)

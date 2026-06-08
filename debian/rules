@@ -34,6 +34,11 @@ PLUGIN_PKGS := $(shell grep '"fiduswriter-' pyproject.toml | \
 %:
 	dh $@ --with python3 --buildsystem=pybuild
 
+override_dh_auto_configure:
+	# Skip pybuild auto_configure - we build our own Python and don't need
+	# the system Python to validate pyproject.toml during packaging
+	@echo "Skipping pybuild auto_configure"
+
 override_dh_auto_clean:
 	# Skip pybuild auto_clean since we're building our own Python
 	rm -rf build

@@ -85,7 +85,7 @@ jobs:
                       set -e
                       dnf install -y epel-release
                       dnf config-manager --set-enabled crb 2>/dev/null || dnf config-manager --set-enabled powertools 2>/dev/null || true
-                      dnf install -y rpm-build gcc make wget curl \
+                      dnf install -y rpm-build gcc make wget \
                         openssl-devel libffi-devel bzip2-devel readline-devel \
                         sqlite-devel ncurses-devel xz-devel tk-devel \
                         zlib-devel libjpeg-turbo-devel \

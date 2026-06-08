@@ -140,8 +140,8 @@ with open("debian/changelog") as fh:
     content = fh.read()
 
 # 1. Update the package version in the first line
-content = re.sub(r'^fiduswriter \([^)]+\)',
-                 f'fiduswriter ({deb_version})', content)
+content = re.sub(r'^fiduswriter-server \([^)]+\)',
+                 f'fiduswriter-server ({deb_version})', content)
 
 # 2. Update the "Upstream version" bullet in the entry body
 content = re.sub(r'(?m)^(\s+\* Upstream version ).*$',

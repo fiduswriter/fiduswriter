@@ -12,7 +12,7 @@ Source0:        %{name}-%{version}.tar.gz
 %global python_prefix /opt/fiduswriter/python%{python_major_minor}
 %global python_url https://www.python.org/ftp/python/%{python_version}/Python-%{python_version}.tar.xz
 
-BuildRequires:  gcc, make, wget, curl
+BuildRequires:  gcc, make, wget
 BuildRequires:  openssl-devel, libffi-devel, bzip2-devel, readline-devel
 BuildRequires:  sqlite-devel, ncurses-devel, xz-devel, tk-devel
 BuildRequires:  zlib-devel, libjpeg-turbo-devel

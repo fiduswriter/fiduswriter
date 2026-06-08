@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Fidus Writer APT Repository</title></head>
+<body>
+<h1>Fidus Writer APT Repository</h1>
+<p>Add this repository to your system:</p>
+<pre>
+echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+sudo apt-get update
+sudo apt-get install fiduswriter-server
+</pre>
+</body>
+</html>

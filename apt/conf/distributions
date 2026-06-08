@@ -1,0 +1,8 @@
+Origin: Fidus Writer
+Label: Fidus Writer
+Suite: stable
+Codename: stable
+Version: 1.0
+Architectures: amd64 arm64
+Components: main
+Description: Fidus Writer APT repository

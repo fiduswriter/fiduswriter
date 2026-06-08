@@ -1,0 +1,47 @@
+Package: fiduswriter-server
+Version: 4.1.6-1
+Architecture: amd64
+Maintainer: Lund Info AB <mail@lundinfo.com>
+Installed-Size: 576843
+Depends: adduser, lsb-base, gettext, libmagic1, libjpeg62-turbo | libjpeg8, libssl3 | libssl1.1, libffi8 | libffi7, libbz2-1.0, libreadline8 | libreadline7, libsqlite3-0, libncurses6 | libncurses5, liblzma5
+Recommends: nginx | apache2, postgresql | mysql-server | mariadb-server, python3-psycopg2 | python3-mysqlclient, languagetool, pandoc, git
+Suggests: redis-server
+Homepage: https://www.fiduswriter.org
+Priority: optional
+Section: web
+Filename: https://github.com/fiduswriter/fiduswriter/releases/download/v4.1.6/fiduswriter-server_4.1.6-1_amd64.deb
+Size: 124233604
+SHA256: 7b3d32216820be801f1ee88a848347606bb62c7a99cdbf8d7b8a2ceb08aceb2c
+SHA1: 06cbda1d5ce689d71b0cd02366e6439920f58450
+MD5sum: b897670387f39c7f2ca8dd776a1030c1
+Description: Collaborative academic word processor (bundled)
+ Fidus Writer is an online collaborative editor especially made for academics
+ who need to use citations and/or formulas. The editor focuses on the content
+ rather than the layout, so that with the same text, you can later on publish
+ it in multiple ways: On a website, as a printed book, or as an ebook.
+ .
+ Features:
+  * Semantic word processing
+  * Real-time collaboration
+  * Citation management
+  * Formula support with LaTeX
+  * Multiple export formats (HTML, EPUB, LaTeX, DOCX)
+  * Template system
+  * Plugin architecture
+ .
+ This package includes Python compiled from source and all Python
+ dependencies bundled in a virtualenv at /opt/fiduswriter/, making it
+ self-contained and working on different versions of Ubuntu and Debian
+ without requiring a modern system Python.
+ .
+ This package includes all optional modules:
+  * fiduswriter-books - Book document type support
+  * fiduswriter-citation-api-import - Import citations from external APIs
+  * fiduswriter-languagetool - Grammar and spell checking
+  * fiduswriter-ojs - Open Journal Systems integration
+  * fiduswriter-pandoc - Additional export formats via Pandoc
+  * fiduswriter-phplist - PHPList newsletter integration
+  * fiduswriter-gitrepo-export - Export to Git repositories
+  * fiduswriter-payment-paddle - Paddle payment processing
+  * fiduswriter-website - Static website generation
+

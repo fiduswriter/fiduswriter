@@ -151,7 +151,8 @@ the Python version.
 
 ```
 debian-build/
-└── fiduswriter_4.0.X-1_all.deb                    (~250-300 MB)
+└── fiduswriter_4.0.X-1_amd64.deb                  (~250-300 MB)
+└── fiduswriter_4.0.X-1_arm64.deb                  (~250-300 MB)
 ```
 
 ## Configuration
@@ -331,7 +332,7 @@ sudo -u postgres pg_dump fiduswriter > backup.sql
 sudo tar -czf media-backup.tar.gz /var/lib/fiduswriter/media/
 
 # Install new version
-sudo dpkg -i debian-build/fiduswriter_4.0.18-1_all.deb
+sudo dpkg -i debian-build/fiduswriter_4.0.18-1_*.deb
 
 # Run migrations and asset generation (transpile must run before collectstatic)
 sudo -u fiduswriter fiduswriter migrate

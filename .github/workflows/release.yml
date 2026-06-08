@@ -1,0 +1,79 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - '*'
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+jobs:
+    build-deb:
+        name: Build Debian Package (${{ matrix.arch }})
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - arch: amd64
+                      runs-on: ubuntu-latest
+                    - arch: arm64
+                      runs-on: ubuntu-24.04-arm
+        runs-on: ${{ matrix.runs-on }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Cache Python build
+              uses: actions/cache@v4
+              with:
+                  path: .python-build-cache
+                  key: python-build-${{ matrix.arch }}-${{ hashFiles('debian/rules') }}
+                  restore-keys: |
+                      python-build-${{ matrix.arch }}-
+
+            - name: Install build dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y --no-install-recommends \
+                    build-essential debhelper dh-python dh-virtualenv \
+                    python3 python3-setuptools python3-babel python3-wheel python3-pip \
+                    libssl-dev libffi-dev libbz2-dev libreadline-dev \
+                    libsqlite3-dev libncurses5-dev libncursesw5-dev \
+                    xz-utils tk-dev liblzma-dev libjpeg-dev zlib1g-dev \
+                    libmagic1 nodejs npm wget curl devscripts equivs
+
+            - name: Build Debian package
+              run: ./build-deb.sh
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: debian-package-${{ matrix.arch }}
+                  path: debian-build/*.deb
+
+    release:
+        name: Upload Release Assets
+        needs: build-deb
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Download amd64 artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: debian-package-amd64
+                  path: debian-build-amd64/
+
+            - name: Download arm64 artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: debian-package-arm64
+                  path: debian-build-arm64/
+
+            - name: Upload release assets
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: |
+                      debian-build-amd64/*.deb
+                      debian-build-arm64/*.deb

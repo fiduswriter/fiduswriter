@@ -34,7 +34,7 @@ Vcs-Git: https://github.com/fiduswriter/fiduswriter.git
 Rules-Requires-Root: no
 
 Package: fiduswriter
-Architecture: all
+Architecture: any
 Depends: ${misc:Depends},
          adduser,
          lsb-base,

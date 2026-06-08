@@ -23,12 +23,11 @@ export NO_COMPILEMESSAGES=true
 PYTHON_BUILDLIB = $(CURDIR)/debian/fiduswriter$(PYTHON_PREFIX)/lib
 PYTHON_EXEC = LD_LIBRARY_PATH=$(PYTHON_BUILDLIB):$$LD_LIBRARY_PATH $(CURDIR)/debian/fiduswriter$(PYTHON_BIN)
 
-# Read optional plugin package-specs from the commented-out entries in
-# pyproject.toml [project.optional-dependencies].  Lines look like:
-#   #books = ["fiduswriter-books ~= 4.0.0"]
+# Read optional plugin package-specs from pyproject.toml
+# [project.optional-dependencies].  Lines look like:
+#   books = ["fiduswriter-books ~= 4.1.4"]
 # We extract the quoted spec and collapse the space around ~= so pip is happy.
-PLUGIN_PKGS := $(shell grep -E '^[[:space:]]*#[a-zA-Z]' pyproject.toml | \
-	grep '"fiduswriter-' | \
+PLUGIN_PKGS := $(shell grep '"fiduswriter-' pyproject.toml | \
 	sed 's/.*"\(fiduswriter-[^"]*\)".*/\1/' | \
 	tr -d ' ' | tr '\n' ' ')
 

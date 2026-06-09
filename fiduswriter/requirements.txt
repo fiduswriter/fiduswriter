@@ -1,6 +1,6 @@
 bleach==6.3.0
 channels==4.3.2
-granian[uvloop]==2.7.0
+granian[uvloop]==2.7.4
 servestatic==4.3.1
 Django==6.0.5
 django-allauth[socialaccount]==65.16.1

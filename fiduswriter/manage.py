@@ -114,18 +114,27 @@ def inner(default_project_path):
 
     # Add appropriate admin app based on whether django_otp is enabled
     # OTPAdminConfig should be used when django_otp is present, otherwise use standard admin
-    if "django_otp" in settings_dict.get("INSTALLED_APPS", []):
-        # Use OTP-enabled admin
-        settings_dict["INSTALLED_APPS"].insert(
-            settings_dict["INSTALLED_APPS"].index("django.contrib.admindocs"),
-            "base.twofactor_admin.OTPAdminConfig",
-        )
-    else:
-        # Use standard admin
-        settings_dict["INSTALLED_APPS"].insert(
-            settings_dict["INSTALLED_APPS"].index("django.contrib.admindocs"),
-            "django.contrib.admin",
-        )
+    installed_apps = settings_dict.get("INSTALLED_APPS", [])
+    known_admin_apps = {
+        "django.contrib.admin",
+        "django.contrib.admin.apps.AdminConfig",
+        "base.twofactor_admin.OTPAdminConfig",
+        "two_factor_admin_config.FidusConfig",
+    }
+    has_admin_app = any(app in known_admin_apps for app in installed_apps)
+    if not has_admin_app:
+        if "django_otp" in installed_apps:
+            # Use OTP-enabled admin
+            settings_dict["INSTALLED_APPS"].insert(
+                installed_apps.index("django.contrib.admindocs"),
+                "base.twofactor_admin.OTPAdminConfig",
+            )
+        else:
+            # Use standard admin
+            settings_dict["INSTALLED_APPS"].insert(
+                installed_apps.index("django.contrib.admindocs"),
+                "django.contrib.admin",
+            )
 
     # Check if axes is enabled (not in REMOVED_APPS)
     axes_enabled = "axes" in settings_dict.get("INSTALLED_APPS", [])

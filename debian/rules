@@ -49,6 +49,7 @@ override_dh_auto_clean:
 	rm -rf fiduswriter/static-libs
 	rm -rf fiduswriter/node_modules
 	rm -rf debian/fiduswriter-server/
+	rm -rf debian/fiduswriter-server-nodejs/
 	rm -rf .pybuild
 	rm -rf Python-$(PYTHON_VERSION)
 	rm -f Python-$(PYTHON_VERSION).tar.xz
@@ -109,6 +110,7 @@ override_dh_auto_install:
 		-r fiduswriter/requirements.txt
 	
 	# Install nodejs-wheel to bundle Node.js in Python environment (required for transpile)
+	# These files will be moved to a separate fiduswriter-server-nodejs package later.
 	@echo "Installing Node.js via nodejs-wheel..."
 	$(PYTHON_EXEC) -m pip install --no-cache-dir \
 		nodejs-wheel
@@ -185,6 +187,42 @@ override_dh_auto_install:
 	find debian/fiduswriter-server$(PYTHON_PREFIX) -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true
 	# Strip shared libraries more aggressively
 	find debian/fiduswriter-server$(PYTHON_PREFIX) -type f -name '*.so' -exec strip --strip-unneeded {} + 2>/dev/null || true
+	
+	# Remove Python config dir (static lib + headers only needed for building extensions)
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/config-$(PYTHON_MAJORMINOR)-x86_64-linux-gnu
+	
+	# Remove Python internal test extension modules
+	find debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/lib-dynload -name '_test*.so' -delete
+	
+	# Remove pycryptodome self-test data
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/Crypto/SelfTest
+	
+	# Remove pydoc_data topics
+	rm -f debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/pydoc_data/topics.py
+	
+	# Remove autobahn flatc binary (not needed at runtime)
+	rm -f debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/autobahn/_flatc/bin/flatc
+	
+	# Move nodejs-wheel files to separate package
+	mkdir -p debian/fiduswriter-server-nodejs$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages
+	mkdir -p debian/fiduswriter-server-nodejs$(PYTHON_PREFIX)/bin
+	
+	# Move all nodejs_wheel* site-packages directories to the nodejs package
+	for d in debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/nodejs_wheel*; do \
+		[ -e "$$d" ] && mv "$$d" \
+		   debian/fiduswriter-server-nodejs$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/; \
+	done
+	
+	# Move nodejs wrapper scripts from bin/
+	for script in node npm npx corepack; do \
+		if [ -f debian/fiduswriter-server$(PYTHON_PREFIX)/bin/$$script ]; then \
+			mv debian/fiduswriter-server$(PYTHON_PREFIX)/bin/$$script \
+			   debian/fiduswriter-server-nodejs$(PYTHON_PREFIX)/bin/; \
+		fi; \
+	done
+	
+	# Remove unnecessary C++ headers from bundled nodejs (65MB+, not needed at runtime)
+	rm -rf debian/fiduswriter-server-nodejs$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/nodejs_wheel/include
 
 override_dh_fixperms:
 	dh_fixperms
@@ -194,6 +232,7 @@ override_dh_fixperms:
 	# Fix virtualenv and Python permissions
 	chmod 755 debian/fiduswriter-server/opt/fiduswriter/venv/bin/* || true
 	chmod 755 debian/fiduswriter-server$(PYTHON_PREFIX)/bin/* || true
+	chmod 755 debian/fiduswriter-server-nodejs$(PYTHON_PREFIX)/bin/* || true
 
 override_dh_installinit:
 	dh_installinit --name=fiduswriter --no-start

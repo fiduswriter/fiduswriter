@@ -107,8 +107,8 @@ EOF
         echo ""
         # Detect bundled Python version
         PYTHON_VERSION=$(ls -d /opt/fiduswriter/python* 2>/dev/null | head -1 | sed 's|.*/python||')
-        echo "Python ${PYTHON_VERSION:-3.14+}, Node.js (via nodejs-wheel), and database adapters"
-        echo "(PostgreSQL/MySQL) with all dependencies and optional modules installed in:"
+        echo "Python ${PYTHON_VERSION:-3.14+} and database adapters (PostgreSQL/MySQL)"
+        echo "with all dependencies and optional modules installed in:"
         echo "  /opt/fiduswriter/python${PYTHON_VERSION:-3.14+}/"
         echo ""
         echo "Included modules:"
@@ -116,7 +116,11 @@ EOF
         echo "  - phplist, gitrepo-export, payment-paddle, website"
         echo ""
         echo "Bundled components:"
-        echo "  - Node.js (via nodejs-wheel) for JavaScript transpilation"
+        if dpkg-query -W fiduswriter-server-nodejs >/dev/null 2>&1; then
+            echo "  - Node.js (bundled via fiduswriter-server-nodejs) for JavaScript transpilation"
+        else
+            echo "  - Node.js (system package) for JavaScript transpilation"
+        fi
         echo "  - PostgreSQL adapter (psycopg2-binary)"
         echo "  - MySQL adapter (mysqlclient)"
         echo ""

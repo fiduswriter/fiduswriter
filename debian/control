@@ -45,7 +45,8 @@ Depends: ${misc:Depends},
          libreadline8 | libreadline7,
          libsqlite3-0,
          libncurses6 | libncurses5,
-         liblzma5
+         liblzma5,
+         nodejs (>= 22) | fiduswriter-server-nodejs
 Recommends: nginx | apache2,
             postgresql | mysql-server | mariadb-server,
             python3-psycopg2 | python3-mysqlclient,
@@ -73,6 +74,11 @@ Description: Collaborative academic word processor (bundled)
  self-contained and working on different versions of Ubuntu and Debian
  without requiring a modern system Python.
  .
+ Node.js (>= 22) is required for JavaScript transpilation. On systems
+ with a recent nodejs package, the system version is used. On older
+ distributions, the companion fiduswriter-server-nodejs package is
+ installed automatically to provide a bundled Node.js runtime.
+ .
  This package includes all optional modules:
   * fiduswriter-books - Book document type support
   * fiduswriter-citation-api-import - Import citations from external APIs
@@ -83,3 +89,18 @@ Description: Collaborative academic word processor (bundled)
   * fiduswriter-gitrepo-export - Export to Git repositories
   * fiduswriter-payment-paddle - Paddle payment processing
   * fiduswriter-website - Static website generation
+
+Package: fiduswriter-server-nodejs
+Architecture: any
+Depends: ${misc:Depends}
+Description: Bundled Node.js runtime for Fidus Writer
+ This package provides a bundled Node.js runtime (via nodejs-wheel)
+ for Fidus Writer on systems where the distribution's Node.js package
+ is too old (below version 22).
+ .
+ The main fiduswriter-server package prefers the system nodejs (>= 22)
+ if available. This package is only installed automatically on older
+ distributions that do not meet that requirement.
+ .
+ On systems with nodejs (>= 22) already installed, this package is
+ not needed and will not be installed.

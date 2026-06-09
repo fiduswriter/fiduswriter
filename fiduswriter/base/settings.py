@@ -158,6 +158,10 @@ STATICFILES_FINDERS = (
     #    "django.contrib.staticfiles.finders.DefaultStorageFinder",
 )
 
+# Scan all fiduswriter subpackages for package.json files, even those not
+# explicitly listed in INSTALLED_APPS.
+NPM_MJS_PACKAGE_NAMESPACES = ["fiduswriter"]
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {

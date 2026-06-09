@@ -9,19 +9,19 @@ packaged for Debian and Ubuntu systems.
 Important Notes
 ---------------
 
-**Python 3.14.5 and Node.js Bundled:** This package includes Python 3.14.5 compiled 
-from source and installed to `/opt/fiduswriter/python3.14/`. All dependencies 
-(Django 6.0, Channels, Granian, Node.js via nodejs-wheel, and 30+ packages) are 
-bundled. This means:
+**Python 3.14.5 Bundled:** This package includes Python 3.14.5 compiled from source
+and installed to `/opt/fiduswriter/python3.14/`. All Python dependencies (Django 6.0,
+Channels, Granian, and 30+ packages) are bundled. This means:
 
 - Works on Ubuntu 20.04+, Debian 11+ (even with older system Python)
 - No internet required during installation
 - Completely isolated from system Python
 - No conflicts with other Python applications
 
-**Node.js for Transpilation:** Node.js is bundled via the `nodejs-wheel` Python 
-package, which provides Node.js binaries in the Python environment. This is used 
-by the `transpile` command (via django-npm-mjs) to build JavaScript assets.
+**Node.js for Transpilation:** Node.js (>= 22) is required for JavaScript transpilation.
+On systems with a recent `nodejs` package, the system version is used automatically.
+On older distributions, the companion `fiduswriter-server-nodejs` package is installed
+automatically to provide a bundled Node.js runtime.
 
 **Database Adapters Included:** PostgreSQL (psycopg2-binary) and MySQL (mysqlclient) 
 database adapters are bundled in the package. You can use either database without 
@@ -98,7 +98,7 @@ File Locations
 --------------
 
 Bundled Python:    /opt/fiduswriter/python3.14/
-Virtualenv:        /opt/fiduswriter/venv/
+Python bin dir:    /opt/fiduswriter/python3.14/bin/
 Configuration:     /etc/fiduswriter/configuration.py
 Data directory:    /var/lib/fiduswriter/  (PROJECT_PATH)
 Media files:       /var/lib/fiduswriter/media/
@@ -149,7 +149,7 @@ Run as the fiduswriter user:
   $ sudo -u fiduswriter fiduswriter <command>
 
 Or directly with bundled Python:
-  $ sudo -u fiduswriter /opt/fiduswriter/venv/bin/python3 -m fiduswriter.manage <command>
+  $ sudo -u fiduswriter /opt/fiduswriter/python3.14/bin/python3.14 -m fiduswriter.manage <command>
 
 Production Deployment
 ---------------------

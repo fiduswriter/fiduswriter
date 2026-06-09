@@ -130,6 +130,10 @@ override_dh_auto_install:
 	$(PYTHON_EXEC) -m pip install --no-cache-dir \
 		--no-deps .
 	
+	# Ensure django-npm-mjs>=4.1.0 is installed (plugins may downgrade it)
+	$(PYTHON_EXEC) -m pip install --no-cache-dir \
+		"django-npm-mjs>=4.1.0"
+	
 	# Fix all shebang lines in bin directory (pip hardcodes build paths)
 	@echo "Fixing shebang lines in all Python scripts..."
 	find $(CURDIR)/debian/fiduswriter-server$(PYTHON_PREFIX)/bin -type f -exec \

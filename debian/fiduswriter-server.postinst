@@ -83,13 +83,23 @@ while True:
     port += 1
 ")
             if [ -n "$FREE_PORT" ]; then
-                # Update or add PORTS in configuration.py
-                if grep -q "^PORTS" /etc/fiduswriter/configuration.py; then
-                    sed -i "s/^PORTS = .*/PORTS = [$FREE_PORT]/" /etc/fiduswriter/configuration.py
-                else
-                    echo "" >> /etc/fiduswriter/configuration.py
-                    echo "PORTS = [$FREE_PORT]" >> /etc/fiduswriter/configuration.py
-                fi
+                python3 -c "
+import re
+with open('/etc/fiduswriter/configuration.py', 'r') as f:
+    content = f.read()
+
+# Replace multi-line or single-line PORTS definition
+pattern = r'^PORTS\s*=\s*\[[^\]]*\]'
+replacement = 'PORTS = [$FREE_PORT]'
+new_content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
+
+if new_content == content:
+    # PORTS not found, append it
+    new_content = content.rstrip() + '\n\nPORTS = [$FREE_PORT]\n'
+
+with open('/etc/fiduswriter/configuration.py', 'w') as f:
+    f.write(new_content)
+"
                 echo "Configured to use port $FREE_PORT"
             fi
         fi
@@ -130,15 +140,31 @@ while True:
         # Determine the actual port for display
         DISPLAY_PORT=4386
         if [ -f /etc/fiduswriter/configuration.py ]; then
-            PORT_LINE=$(grep "^PORTS" /etc/fiduswriter/configuration.py 2>/dev/null || true)
-            if [ -n "$PORT_LINE" ]; then
-                # Extract first number from PORTS = [...]
-                EXTRACTED_PORT=$(echo "$PORT_LINE" | python3 -c "import sys, re; m = re.search(r'\[(\d+)', sys.stdin.read()); print(m.group(1) if m else '4386')")
-                if [ -n "$EXTRACTED_PORT" ]; then
-                    DISPLAY_PORT="$EXTRACTED_PORT"
-                fi
+            EXTRACTED_PORT=$(python3 -c "
+import re
+with open('/etc/fiduswriter/configuration.py', 'r') as f:
+    content = f.read()
+m = re.search(r'PORTS\s*=\s*\[(\d+)', content)
+print(m.group(1) if m else '')
+")
+            if [ -n "$EXTRACTED_PORT" ]; then
+                DISPLAY_PORT="$EXTRACTED_PORT"
             fi
         fi
+
+        # Warn if the configured port appears to be in use
+        python3 -c "
+import socket
+port = $DISPLAY_PORT
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    try:
+        s.bind(('127.0.0.1', port))
+    except OSError:
+        print('')
+        print('WARNING: Port ' + str(port) + ' appears to be in use on 127.0.0.1.')
+        print('         If another service is using this port, Fidus Writer may fail to start.')
+        print('         Edit PORTS in /etc/fiduswriter/configuration.py to use a different port.')
+"
 
         # Display post-installation message
         db_version 2.0

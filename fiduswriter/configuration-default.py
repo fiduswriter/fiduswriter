@@ -45,9 +45,7 @@ TEST_SERVER = True
 # the site.
 CONTACT_EMAIL = "mail@email.com"
 # Ports that Fidus Writer will run on.
-PORTS = [
-    4386,
-]
+PORTS = [4386]
 
 # ProseMirror backend used by the document WebSocket consumer.
 # "python" - pure-Python prosemirror package (default).

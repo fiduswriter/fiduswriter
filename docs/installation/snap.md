@@ -761,9 +761,9 @@ If you need to change MySQL settings (e.g., password, database name):
 
 **Security Note:** For production deployments, make sure to use a strong, unique password.
 
-### Enable Redis for Caching
+### Optional: Enable Redis for Caching
 
-For better performance with multiple users:
+If you want to use Redis for caching or sessions (not required):
 
 1. Install Redis:
    ```bash

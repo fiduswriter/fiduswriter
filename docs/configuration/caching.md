@@ -2,7 +2,20 @@
 
 Configure caching to improve Fidus Writer performance.
 
-## Redis Caching
+## File-Based Caching
+
+```python
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
+    }
+}
+```
+
+## Redis Caching (Optional)
+
+Redis can be used for caching and session storage. It is **not required** for Fidus Writer to run.
 
 ### Install Redis
 

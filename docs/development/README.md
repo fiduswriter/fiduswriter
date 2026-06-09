@@ -368,10 +368,10 @@ refactor: simplify export logic
 
 ### Caching
 
-- Use Redis for session storage
 - Cache expensive computations
 - Use Django's cache framework
 - Consider CDN for static files
+- Optionally use Redis for session storage
 
 ## Security
 

@@ -30,8 +30,8 @@ Use a load balancer to:
 
 - Multiple Fidus Writer servers
 - Shared PostgreSQL database
-- Shared Redis instance
 - Shared file storage (NFS or S3)
+- Optional: shared Redis instance for sessions/caching
 
 ## NGINX Load Balancer
 

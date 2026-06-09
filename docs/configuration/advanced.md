@@ -127,7 +127,20 @@ DATABASES = {
 
 ### Cache Configuration
 
-#### Redis (Recommended)
+#### File-Based Caching
+
+```python
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
+    }
+}
+```
+
+#### Redis (Optional)
+
+Redis can be used for caching and sessions. It is not required.
 
 ```python
 CACHES = {
@@ -145,7 +158,7 @@ CACHES = {
     }
 }
 
-# Use Redis for sessions
+# Optionally use Redis for sessions
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
 ```
@@ -342,25 +355,6 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 ```
 
-## WebSocket Configuration
-
-```python
-# Channel layers for WebSocket support
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
-            'capacity': 1500,
-            'expiry': 10,
-        },
-    },
-}
-
-# ASGI application
-ASGI_APPLICATION = 'fiduswriter.asgi.application'
-```
-
 ## Internationalization
 
 ```python
@@ -555,7 +549,6 @@ Before going to production:
 - [ ] Strong `SECRET_KEY` (50+ characters)
 - [ ] Proper `ALLOWED_HOSTS` configured
 - [ ] PostgreSQL database configured
-- [ ] Redis cache enabled
 - [ ] HTTPS/SSL enabled with valid certificate
 - [ ] `SECURE_*` settings enabled
 - [ ] Email properly configured
@@ -608,7 +601,7 @@ EDITOR_SAVE_MODE = "collaborative"  # default, can be changed
 
 ### `"collaborative"` (default)
 
-The default mode, unchanged from prior versions. All connected clients synchronise document changes in real time via WebSockets. This requires Django Channels and a channel layer (e.g. Redis). Most deployments should use this mode.
+The default mode, unchanged from prior versions. All connected clients synchronise document changes in real time via WebSockets. Most deployments should use this mode.
 
 The `DOC_SAVE_INTERVAL` setting (default `30` seconds) controls how often the server persists the in-memory document state to the database:
 

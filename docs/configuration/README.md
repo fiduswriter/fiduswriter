@@ -21,7 +21,7 @@ This section provides guides for configuring and customizing Fidus Writer for yo
 
 - [Load Balancer Setup](load-balancer.md) - Deploy with load balancing
 - [Performance Optimization](performance.md) - Tune for better performance
-- [Caching with Redis](caching.md) - Configure Redis for session storage and caching
+- [Caching Configuration](caching.md) - Configure caching and sessions
 
 ### Operations
 
@@ -97,15 +97,11 @@ EMAIL_HOST_PASSWORD=password
 Advanced Django settings can be configured in `configuration.py`:
 
 ```python
-# Session configuration
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
-
 # Cache configuration
 CACHES = {
     'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
     }
 }
 
@@ -263,7 +259,7 @@ See the [Security Configuration Guide](security.md) for detailed security and GD
 ### Performance
 
 1. ✅ **Use PostgreSQL** for production (not SQLite)
-2. ✅ **Enable caching** with Redis
+2. ✅ **Enable file-based caching** for better performance
 3. ✅ **Configure static file serving** properly
 4. ✅ **Set appropriate timeouts**
 5. ✅ **Enable database connection pooling**
@@ -295,7 +291,6 @@ Before going to production:
 - [ ] Set up email (SMTP)
 - [ ] Enable HTTPS/SSL
 - [ ] Configure static file serving
-- [ ] Set up Redis for caching
 - [ ] Configure backup strategy
 - [ ] Set up monitoring and logging
 - [ ] Configure authentication providers

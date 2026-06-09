@@ -61,10 +61,6 @@ services:
       POSTGRES_PASSWORD: changeme
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-
   fiduswriter:
     image: fiduswriter/fiduswriter:latest
     ports:
@@ -74,13 +70,11 @@ services:
       - static_files:/app/static
     environment:
       - DATABASE_URL=postgresql://fiduswriter:changeme@db:5432/fiduswriter
-      - REDIS_URL=redis://redis:6379/0
       - DJANGO_SECRET_KEY=change-this-to-a-random-secret-key
       - DJANGO_DEBUG=False
       - ALLOWED_HOSTS=localhost,127.0.0.1
     depends_on:
       - db
-      - redis
     restart: unless-stopped
 
 volumes:
@@ -284,7 +278,6 @@ EMAIL_HOST_PASSWORD = 'your-password'
 ### Performance Issues
 
 - **Use PostgreSQL**: Switch from SQLite to PostgreSQL for better performance
-- **Enable Redis**: Configure Redis for caching and session storage
 - **Check resources**: Ensure adequate CPU and RAM allocation
 
 ### Database Errors
@@ -326,7 +319,6 @@ EMAIL_HOST_PASSWORD = 'your-password'
 - 4+ GB RAM
 - 20+ GB disk space
 - PostgreSQL database
-- Redis for caching
 
 ## Security Checklist
 

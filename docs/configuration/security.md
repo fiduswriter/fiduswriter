@@ -1008,7 +1008,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 # Or use cached sessions for performance
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
-# Or Redis for distributed deployments
+# Or Redis for distributed deployments (optional)
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 CACHES = {
     'default': {

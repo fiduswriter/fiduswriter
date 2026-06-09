@@ -337,7 +337,7 @@ python manage.py createsuperuser
    - See database configuration guide
 
 2. **No caching enabled**
-   - Solution: Enable Redis caching
+   - Solution: Enable file-based caching (or optionally Redis)
    - See caching configuration guide
 
 3. **Static files not optimized**
@@ -374,7 +374,7 @@ python manage.py createsuperuser
 
 **Solutions:**
 
-1. Enable Redis for session storage:
+1. Optionally switch sessions to cache-backed storage
    ```python
    SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
    ```

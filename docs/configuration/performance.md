@@ -36,16 +36,20 @@ class Meta:
 
 ## Caching
 
-### Enable Redis
+### Enable File-Based Caching
 
 ```python
 CACHES = {
     'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
     }
 }
 ```
+
+### Optional: Redis Caching
+
+If you prefer, you can also use Redis for caching and sessions (see [Caching Configuration](caching.md)).
 
 ### Template Caching
 

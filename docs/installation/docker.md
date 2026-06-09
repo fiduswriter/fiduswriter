@@ -40,10 +40,6 @@ services:
       POSTGRES_PASSWORD: changeme
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    restart: unless-stopped
-
   fiduswriter:
     image: fiduswriter/fiduswriter:latest
     ports:
@@ -53,13 +49,11 @@ services:
       - static_files:/app/static
     environment:
       - DATABASE_URL=postgresql://fiduswriter:changeme@db:5432/fiduswriter
-      - REDIS_URL=redis://redis:6379/0
       - DJANGO_SECRET_KEY=change-this-to-a-random-secret-key
       - DJANGO_DEBUG=False
       - ALLOWED_HOSTS=localhost,127.0.0.1
     depends_on:
       - db
-      - redis
     restart: unless-stopped
 
 volumes:
@@ -160,9 +154,6 @@ environment:
   - EMAIL_HOST_USER=your-email@example.com
   - EMAIL_HOST_PASSWORD=your-password
   - DEFAULT_FROM_EMAIL=noreply@example.com
-  
-  # Redis for caching and sessions
-  - REDIS_URL=redis://redis:6379/0
   
   # Site configuration
   - SITE_NAME=My Fidus Writer
@@ -471,7 +462,7 @@ docker-compose down -v
 version: '3.8'
 
 services:
-  # ... db and redis services ...
+  # ... db service ...
   
   fiduswriter:
     image: fiduswriter/fiduswriter:latest
@@ -482,7 +473,6 @@ services:
       # ... environment variables ...
     depends_on:
       - db
-      - redis
     deploy:
       replicas: 3  # Run 3 instances
     restart: unless-stopped
@@ -552,8 +542,7 @@ docker-compose exec fiduswriter python manage.py collectstatic --noinput
 
 1. **Allocate more resources** in Docker settings
 2. **Use PostgreSQL** instead of SQLite
-3. **Enable Redis caching**
-4. **Use volume mounts** for better I/O
+3. **Use volume mounts** for better I/O
 5. **Limit container resources**:
 
 ```yaml
@@ -592,7 +581,6 @@ docker-compose exec fiduswriter chown -R www-data:www-data /app/media
 
 - [ ] Set `DJANGO_DEBUG=False`
 - [ ] Use PostgreSQL database
-- [ ] Configure Redis for caching
 - [ ] Set secure `DJANGO_SECRET_KEY`
 - [ ] Configure proper `ALLOWED_HOSTS`
 - [ ] Enable HTTPS with valid SSL certificate

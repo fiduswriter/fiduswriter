@@ -196,10 +196,10 @@ Open an issue on [GitHub Issues](https://github.com/fiduswriter/fiduswriter/issu
 ### How do I improve performance?
 
 1. Use PostgreSQL instead of SQLite
-2. Enable Redis for caching and sessions
-3. Use a reverse proxy (NGINX/Apache)
-4. Allocate adequate server resources
-5. Enable static file caching
+2. Use a reverse proxy (NGINX/Apache)
+3. Allocate adequate server resources
+4. Enable static file caching
+5. Optionally use Redis for caching and sessions
 6. Use a CDN for static files (optional)
 
 See the [Performance Optimization Guide](configuration/performance.md) for details.
@@ -218,9 +218,9 @@ Use load balancing for larger deployments.
 Common causes:
 - Using SQLite instead of PostgreSQL
 - Insufficient RAM or CPU
-- No caching enabled (Redis)
 - Running on shared hosting
 - No static file serving optimization
+- No caching configured
 
 ## Security Questions
 

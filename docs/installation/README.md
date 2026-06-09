@@ -211,7 +211,7 @@ If you encounter issues not covered here:
 For large deployments:
 
 - Use PostgreSQL instead of SQLite
-- Configure Redis for session storage and caching
+- Optionally configure Redis or file-based caching
 - Use CDN for static files
 - Enable compression in web server
 - Consider horizontal scaling with load balancer

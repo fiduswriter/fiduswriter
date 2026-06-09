@@ -1,7 +1,7 @@
 [Unit]
 Description=Fidus Writer ASGI Application
 Documentation=https://www.fiduswriter.org
-After=network.target postgresql.service mysql.service mariadb.service redis.service
+After=network.target postgresql.service mysql.service mariadb.service
 
 [Service]
 Type=simple

@@ -25,6 +25,8 @@ case "$1" in
         # Create configuration directory if it doesn't exist
         install -d -o root -g root -m 0755 /etc/fiduswriter
 
+        CONFIG_CREATED=false
+
         # Copy default configuration if configuration.py doesn't exist
         if [ ! -f /etc/fiduswriter/configuration.py ]; then
             if [ -f /etc/fiduswriter/configuration.py.template ]; then
@@ -32,7 +34,7 @@ case "$1" in
                 chmod 640 /etc/fiduswriter/configuration.py
                 chown root:fiduswriter /etc/fiduswriter/configuration.py
                 echo "Default configuration created at /etc/fiduswriter/configuration.py"
-                echo "Please edit this file to configure your Fidus Writer installation."
+                CONFIG_CREATED=true
             fi
         fi
 
@@ -62,6 +64,34 @@ EOF
             chmod 640 /etc/fiduswriter/configuration.py
             chown root:fiduswriter /etc/fiduswriter/configuration.py
             echo "Minimal configuration created at /etc/fiduswriter/configuration.py"
+            CONFIG_CREATED=true
+        fi
+
+        # Find a free port starting from 4386 and update the config on fresh installs
+        if [ "$CONFIG_CREATED" = "true" ]; then
+            FREE_PORT=$(python3 -c "
+import socket
+port = 4386
+while True:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.bind(('127.0.0.1', port))
+            print(port)
+            break
+        except OSError:
+            pass
+    port += 1
+")
+            if [ -n "$FREE_PORT" ]; then
+                # Update or add PORTS in configuration.py
+                if grep -q "^PORTS" /etc/fiduswriter/configuration.py; then
+                    sed -i "s/^PORTS = .*/PORTS = [$FREE_PORT]/" /etc/fiduswriter/configuration.py
+                else
+                    echo "" >> /etc/fiduswriter/configuration.py
+                    echo "PORTS = [$FREE_PORT]" >> /etc/fiduswriter/configuration.py
+                fi
+                echo "Configured to use port $FREE_PORT"
+            fi
         fi
 
         # Generate SECRET_KEY if not present in configuration
@@ -95,6 +125,19 @@ EOF
         # Reload systemd daemon
         if [ -d /run/systemd/system ]; then
             systemctl --system daemon-reload >/dev/null || true
+        fi
+
+        # Determine the actual port for display
+        DISPLAY_PORT=4386
+        if [ -f /etc/fiduswriter/configuration.py ]; then
+            PORT_LINE=$(grep "^PORTS" /etc/fiduswriter/configuration.py 2>/dev/null || true)
+            if [ -n "$PORT_LINE" ]; then
+                # Extract first number from PORTS = [...]
+                EXTRACTED_PORT=$(echo "$PORT_LINE" | python3 -c "import sys, re; m = re.search(r'\[(\d+)', sys.stdin.read()); print(m.group(1) if m else '4386')")
+                if [ -n "$EXTRACTED_PORT" ]; then
+                    DISPLAY_PORT="$EXTRACTED_PORT"
+                fi
+            fi
         fi
 
         # Display post-installation message
@@ -139,10 +182,10 @@ EOF
         echo "   sudo systemctl start fiduswriter"
         echo ""
         echo "4. Access Fidus Writer at:"
-        echo "   http://127.0.0.1:4386/"
+        echo "   http://127.0.0.1:${DISPLAY_PORT}/"
         echo ""
         echo "5. (Optional) Configure a reverse proxy (nginx or apache2)"
-        echo "    The service listens on http://127.0.0.1:4386"
+        echo "    The service listens on http://127.0.0.1:${DISPLAY_PORT}"
         echo "    A reverse proxy is recommended for SSL/TLS and better performance"
         echo ""
         echo "Documentation: https://www.fiduswriter.org"

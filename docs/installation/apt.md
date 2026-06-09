@@ -13,8 +13,11 @@ The easiest way to install Fidus Writer on Debian-based systems is via the offic
 ### Traditional format (works on all versions)
 
 ```bash
+# Download the repository signing key
+sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+
 # Add the APT repository
-echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+echo "deb [signed-by=/usr/share/keyrings/fiduswriter.gpg] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
 
 # Update package index
 sudo apt-get update
@@ -25,17 +28,32 @@ sudo apt-get install fiduswriter-server
 
 ### Modern DEB822 format (Ubuntu 24.04+, Debian 13+, Mint 22+)
 
-If your system supports the newer `.sources` format, you can use this instead:
+If your system supports the newer `.sources` format:
 
 ```bash
+# Download the repository signing key
+sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+
 sudo tee /etc/apt/sources.list.d/fiduswriter.sources <<'EOF'
 Types: deb
 URIs: https://fiduswriter.github.io/fiduswriter/apt
 Suites: stable
 Components: main
-Trusted: yes
+Signed-By: /usr/share/keyrings/fiduswriter.gpg
 Architectures: amd64 arm64
 EOF
+
+sudo apt-get update
+sudo apt-get install fiduswriter-server
+```
+
+### Unsigned / trusted fallback
+
+If the signing key is temporarily unavailable, you can use `trusted=yes` as a fallback:
+
+```bash
+# Add the APT repository without signature verification
+echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
 
 sudo apt-get update
 sudo apt-get install fiduswriter-server

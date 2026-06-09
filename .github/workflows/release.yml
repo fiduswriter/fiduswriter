@@ -350,7 +350,7 @@ jobs:
                   dist_dir = os.path.join(REPO_DIR, "dists", DIST)
                   for root, _dirs, filenames in os.walk(dist_dir):
                       for filename in filenames:
-                          if filename in ("Release", "InRelease"):
+                          if filename in ("Release", "InRelease", "Release.gpg"):
                               continue
                           filepath = os.path.join(root, filename)
                           relpath = os.path.relpath(filepath, dist_dir)
@@ -390,6 +390,55 @@ jobs:
                   # Remove the pool/ directory - .deb files are hosted on GitHub Releases
                   rm -rf gh-pages-repo/apt/pool
 
+            - name: Sign APT repository
+              env:
+                  APT_GPG_PRIVATE_KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+                  APT_GPG_PASSPHRASE: ${{ secrets.APT_GPG_PASSPHRASE }}
+              run: |
+                  if [ -z "$APT_GPG_PRIVATE_KEY" ]; then
+                    echo "No APT_GPG_PRIVATE_KEY secret found, skipping GPG signing."
+                    echo "To enable signing, add the private key as a repository secret."
+                    exit 0
+                  fi
+
+                  export GNUPGHOME="$RUNNER_TEMP/gnupg-apt"
+                  mkdir -p "$GNUPGHOME"
+                  chmod 700 "$GNUPGHOME"
+
+                  # Import the private key
+                  echo "$APT_GPG_PRIVATE_KEY" | gpg --batch --yes --pinentry-mode loopback --import
+
+                  # Get the first signing key ID
+                  KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/ {print $5; exit}')
+                  if [ -z "$KEY_ID" ]; then
+                    echo "ERROR: Could not extract key ID from imported private key."
+                    exit 1
+                  fi
+                  echo "Signing with key ID: $KEY_ID"
+
+                  RELEASE="gh-pages-repo/apt/dists/stable/Release"
+
+                  # Create detached signature (Release.gpg)
+                  if [ -n "$APT_GPG_PASSPHRASE" ]; then
+                    gpg --batch --yes --pinentry-mode loopback --passphrase "$APT_GPG_PASSPHRASE" \
+                        --armor --detach-sign --output "${RELEASE}.gpg" --local-user "$KEY_ID" "$RELEASE"
+                    # Create inline signed Release (InRelease)
+                    gpg --batch --yes --pinentry-mode loopback --passphrase "$APT_GPG_PASSPHRASE" \
+                        --armor --clearsign --output "${RELEASE}.clear" --local-user "$KEY_ID" "$RELEASE"
+                  else
+                    gpg --batch --yes --pinentry-mode loopback \
+                        --armor --detach-sign --output "${RELEASE}.gpg" --local-user "$KEY_ID" "$RELEASE"
+                    gpg --batch --yes --pinentry-mode loopback \
+                        --armor --clearsign --output "${RELEASE}.clear" --local-user "$KEY_ID" "$RELEASE"
+                  fi
+
+                  mv "${RELEASE}.clear" "gh-pages-repo/apt/dists/stable/InRelease"
+
+                  # Export public key for users to download
+                  gpg --armor --export "$KEY_ID" > "gh-pages-repo/apt/fiduswriter.asc"
+
+                  echo "APT repository signed successfully."
+
             - name: Update YUM repository
               run: |
                   TAG="${{ github.ref_name }}"
@@ -419,18 +468,20 @@ jobs:
                   <h2>APT Repository (Debian / Ubuntu / Linux Mint)</h2>
                   <p><strong>Traditional format (all versions):</strong></p>
                   <pre>
-                  echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+                  sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+                  echo "deb [signed-by=/usr/share/keyrings/fiduswriter.gpg] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
                   sudo apt-get update
                   sudo apt-get install fiduswriter-server
                   </pre>
                   <p><strong>Modern DEB822 format (Ubuntu 24.04+, Debian 13+, Mint 22+):</strong></p>
                   <pre>
+                  sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
                   sudo tee /etc/apt/sources.list.d/fiduswriter.sources &lt;&lt;'EOF'
                   Types: deb
                   URIs: https://fiduswriter.github.io/fiduswriter/apt
                   Suites: stable
                   Components: main
-                  Trusted: yes
+                  Signed-By: /usr/share/keyrings/fiduswriter.gpg
                   Architectures: amd64 arm64
                   EOF
                   sudo apt-get update
@@ -557,7 +608,8 @@ jobs:
                       Add the repository and install:
 
                       ```bash
-                      echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+                      sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+                      echo "deb [signed-by=/usr/share/keyrings/fiduswriter.gpg] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
                       sudo apt-get update
                       sudo apt-get install fiduswriter-server
                       ```

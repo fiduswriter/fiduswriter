@@ -62,6 +62,8 @@ override_dh_auto_build:
 	# (avoid setup.py to prevent setuptools from validating pyproject.toml)
 	pybabel compile -d fiduswriter/locale -D django 2>/dev/null || true
 	pybabel compile -d fiduswriter/locale -D djangojs 2>/dev/null || true
+	# Ensure .mo files are newer than .po so setup.py skips compilemessages at runtime
+	find fiduswriter/locale -name "*.mo" -exec touch {} +
 
 override_dh_auto_install:
 	# Check if Python is already built and cached
@@ -146,6 +148,8 @@ override_dh_auto_install:
 	echo 'export LD_LIBRARY_PATH=$(PYTHON_PREFIX)/lib:$$LD_LIBRARY_PATH' >> debian/fiduswriter-server/usr/bin/fiduswriter
 	echo 'export PROJECT_PATH=/var/lib/fiduswriter' >> debian/fiduswriter-server/usr/bin/fiduswriter
 	echo 'export SRC_PATH=$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages/fiduswriter' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'export DJANGO_SETTINGS_MODULE=configuration' >> debian/fiduswriter-server/usr/bin/fiduswriter
+	echo 'export NO_COMPILEMESSAGES=true' >> debian/fiduswriter-server/usr/bin/fiduswriter
 	echo 'cd /var/lib/fiduswriter' >> debian/fiduswriter-server/usr/bin/fiduswriter
 	echo 'exec $(PYTHON_PREFIX)/bin/python$(PYTHON_MAJORMINOR) -m fiduswriter.manage --pythonpath /etc/fiduswriter "$$@"' >> debian/fiduswriter-server/usr/bin/fiduswriter
 	chmod +x debian/fiduswriter-server/usr/bin/fiduswriter

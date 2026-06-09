@@ -179,13 +179,41 @@ override_dh_installinit:
 override_dh_installsystemd:
 	dh_installsystemd --name=fiduswriter --no-start
 
-# Strip binaries in virtualenv and Python
+# Strip binaries in virtualenv and Python (including .so files to reduce size)
 override_dh_strip:
-	dh_strip --exclude=_cext --exclude=.so
+	dh_strip --exclude=_cext
 
 # Don't compress files in virtualenv
 override_dh_compress:
 	dh_compress -X.py -X.txt -X.so
+
+# Use xz compression for smaller .deb packages
+override_dh_builddeb:
+	dh_builddeb -- -Zxz -z9
+
+# Clean up unnecessary files after installation to reduce package size
+override_dh_auto_install::
+	# Remove Python test suites and development files not needed at runtime
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/test
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/lib2to3
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/ensurepip
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/idlelib
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/tkinter
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/turtledemo
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/distutils/tests
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/unittest/test
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/include
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/share/man
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/share/doc
+	rm -rf debian/fiduswriter-server$(PYTHON_PREFIX)/lib/pkgconfig
+	# Remove test directories from pip-installed packages
+	find debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages -type d -name test -exec rm -rf {} + 2>/dev/null || true
+	find debian/fiduswriter-server$(PYTHON_PREFIX)/lib/python$(PYTHON_MAJORMINOR)/site-packages -type d -name tests -exec rm -rf {} + 2>/dev/null || true
+	# Remove cached/compiled files
+	find debian/fiduswriter-server$(PYTHON_PREFIX) -name '*.pyc' -delete 2>/dev/null || true
+	find debian/fiduswriter-server$(PYTHON_PREFIX) -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true
+	# Strip shared libraries more aggressively
+	find debian/fiduswriter-server$(PYTHON_PREFIX) -type f -name '*.so' -exec strip --strip-unneeded {} + 2>/dev/null || true
 
 # Skip dwz for bundled Python - many bundled .so files have debug
 # sections that dwz cannot handle

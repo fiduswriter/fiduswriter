@@ -298,97 +298,20 @@ jobs:
                   Description: Fidus Writer APT repository
                   EOF
 
+                  # Remove old versions to keep the repo size under control.
+                  # Only the latest version is kept in the apt repository.
+                  echo "Removing old versions of fiduswriter-server..."
+                  reprepro -b gh-pages-repo/apt remove stable fiduswriter-server || true
+
                   for deb in debs/*.deb; do
                     echo "Adding $deb to APT repository..."
                     reprepro -b gh-pages-repo/apt includedeb stable "$deb"
                   done
 
-                  # Replace relative pool/ paths with absolute GitHub Release asset URLs.
-                  # The .deb files themselves are too large (>100MB) to push to gh-pages,
-                  # so we keep them as release assets and only store metadata on gh-pages.
-                  TAG="${{ github.ref_name }}"
-                  REPO="${{ github.repository }}"
-                  BASE_URL="https://github.com/${REPO}/releases/download/${TAG}"
-
-                  for pkg in gh-pages-repo/apt/dists/stable/main/binary-*/Packages; do
-                    [ -f "$pkg" ] || continue
-                    echo "Rewriting Filename URLs in $pkg..."
-                    awk -v base="$BASE_URL" '
-                      /^Filename: pool\// {
-                        # Extract the basename from the pool path
-                        n = split($0, parts, "/")
-                        filename = parts[n]
-                        print "Filename: " base "/" filename
-                        next
-                      }
-                      { print }
-                    ' "$pkg" > "${pkg}.tmp" && mv "${pkg}.tmp" "$pkg"
-                    # Regenerate the compressed version
-                    gzip -k -f "$pkg"
-                  done
-
-                  # Regenerate the Release file so checksums match the modified Packages.gz.
-                  # reprepro export uses its internal database (with original pool paths) to
-                  # compute checksums, so we generate the Release file ourselves from the
-                  # actual files on disk after the URL rewrites.
-                  python3 << 'PYEOF'
-                  import hashlib
-                  import os
-                  from datetime import datetime, timezone
-
-                  REPO_DIR = "gh-pages-repo/apt"
-                  DIST = "stable"
-
-                  def hash_file(path, algorithm):
-                      h = hashlib.new(algorithm)
-                      with open(path, "rb") as f:
-                          for chunk in iter(lambda: f.read(8192), b""):
-                              h.update(chunk)
-                      return h.hexdigest()
-
-                  files = []
-                  dist_dir = os.path.join(REPO_DIR, "dists", DIST)
-                  for root, _dirs, filenames in os.walk(dist_dir):
-                      for filename in filenames:
-                          if filename in ("Release", "InRelease", "Release.gpg"):
-                              continue
-                          filepath = os.path.join(root, filename)
-                          relpath = os.path.relpath(filepath, dist_dir)
-                          size = os.path.getsize(filepath)
-                          md5 = hash_file(filepath, "md5")
-                          sha1 = hash_file(filepath, "sha1")
-                          sha256 = hash_file(filepath, "sha256")
-                          files.append((md5, sha1, sha256, size, relpath))
-
-                  release_path = os.path.join(dist_dir, "Release")
-                  with open(release_path, "w") as f:
-                      f.write("Origin: Fidus Writer\n")
-                      f.write("Label: Fidus Writer\n")
-                      f.write("Suite: stable\n")
-                      f.write("Codename: stable\n")
-                      f.write("Version: 1.0\n")
-                      f.write(f"Date: {datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S %Z')}\n")
-                      f.write("Architectures: amd64 arm64\n")
-                      f.write("Components: main\n")
-                      f.write("Description: Fidus Writer APT repository\n")
-
-                      f.write("MD5Sum:\n")
-                      for md5, _sha1, _sha256, size, relpath in files:
-                          f.write(f" {md5} {size} {relpath}\n")
-
-                      f.write("SHA1:\n")
-                      for _md5, sha1, _sha256, size, relpath in files:
-                          f.write(f" {sha1} {size} {relpath}\n")
-
-                      f.write("SHA256:\n")
-                      for _md5, _sha1, sha256, size, relpath in files:
-                          f.write(f" {sha256} {size} {relpath}\n")
-
-                  print(f"Generated {release_path} with {len(files)} entries.")
-                  PYEOF
-
-                  # Remove the pool/ directory - .deb files are hosted on GitHub Releases
-                  rm -rf gh-pages-repo/apt/pool
+                  # Regenerate the Release file with correct checksums.
+                  # This works because the .deb files are now small enough to be hosted
+                  # directly in the pool/ directory on gh-pages.
+                  reprepro -b gh-pages-repo/apt export
 
             - name: Sign APT repository
               env:

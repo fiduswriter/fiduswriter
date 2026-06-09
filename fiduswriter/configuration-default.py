@@ -46,7 +46,7 @@ TEST_SERVER = True
 CONTACT_EMAIL = "mail@email.com"
 # Ports that Fidus Writer will run on.
 PORTS = [
-    8000,
+    4386,
 ]
 
 # ProseMirror backend used by the document WebSocket consumer.
@@ -166,6 +166,7 @@ REMOVED_APPS = [
 # A list of allowed hostnames of this Fidus Writer installation
 ALLOWED_HOSTS = [
     "localhost",
+    "127.0.0.1",
 ]
 
 # Disable service worker (default is True)

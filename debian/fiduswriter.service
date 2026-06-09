@@ -18,7 +18,7 @@ Environment="LD_LIBRARY_PATH=/opt/fiduswriter/python3.14/lib"
 ExecStartPre=/opt/fiduswriter/python3.14/bin/python3.14 -m fiduswriter.manage --pythonpath /etc/fiduswriter migrate --noinput
 ExecStartPre=/opt/fiduswriter/python3.14/bin/python3.14 -m fiduswriter.manage --pythonpath /etc/fiduswriter transpile
 ExecStartPre=/opt/fiduswriter/python3.14/bin/python3.14 -m fiduswriter.manage --pythonpath /etc/fiduswriter collectstatic --noinput
-ExecStart=/opt/fiduswriter/python3.14/bin/granian --interface asgi --host 127.0.0.1 --port 8000 --access-log --log-level warning fiduswriter.asgi:application
+ExecStart=/opt/fiduswriter/python3.14/bin/granian --interface asgi --host 127.0.0.1 --port 4386 --access-log --log-level warning fiduswriter.asgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
 KillSignal=SIGTERM

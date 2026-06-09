@@ -372,6 +372,7 @@ jobs:
                   if ls rpms/*.rpm >/dev/null 2>&1; then
                     mkdir -p /tmp/rpms
                     cp rpms/*.rpm /tmp/rpms/
+                    mkdir -p gh-pages-repo/yum
                     echo "Generating YUM repository metadata..."
                     createrepo_c --baseurl "$BASE_URL" --outputdir gh-pages-repo/yum /tmp/rpms/
                     echo "YUM repo metadata generated."

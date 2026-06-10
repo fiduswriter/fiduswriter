@@ -92,3 +92,5 @@ debian/*-stamp
 .vscode/
 *cache.json
 screenshots/
+# Generated from debian/changelog.in by build-deb.sh
+debian/changelog

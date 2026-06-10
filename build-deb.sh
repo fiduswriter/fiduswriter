@@ -131,12 +131,13 @@ echo "  Changelog date   : $DEB_DATE"
 
 export FW_VERSION DEB_VERSION DEB_DATE
 python3 - << 'PYEOF'
-import re, os
+import re, os, shutil
 fw_version = os.environ['FW_VERSION']
 deb_version = os.environ['DEB_VERSION']
 deb_date    = os.environ['DEB_DATE']
 
-with open("debian/changelog") as fh:
+# Read from template and write to generated file
+with open("debian/changelog.in") as fh:
     content = fh.read()
 
 # 1. Update the package version in the first line
@@ -155,7 +156,7 @@ with open("debian/changelog", "w") as fh:
     fh.write(content)
 PYEOF
 
-echo "Updated debian/changelog."
+echo "Generated debian/changelog from debian/changelog.in."
 echo ""
 # ---------------------------------------------------------------------------
 

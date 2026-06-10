@@ -143,13 +143,31 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         # the right setting).
         if len(settings.PORTS) < 2:
             return False
-        actual_port = self.scope["server"][1]
+        server = self.scope.get("server")
+        if not server or len(server) < 2:
+            # Granian (and some other ASGI servers) may not populate
+            # scope["server"] for WebSocket connections. Without a known
+            # actual port we cannot verify routing, so assume correct.
+            return False
+        try:
+            actual_port = int(server[1])
+        except (ValueError, TypeError):
+            logger.warning(
+                f"Could not determine actual port from scope['server']: {server}"
+            )
+            return False
         expected_conn = settings.PORTS[self.document_id % len(settings.PORTS)]
-        expected_port = (
-            expected_conn["internal"]
-            if isinstance(expected_conn, dict)
-            else expected_conn
-        )
+        try:
+            expected_port = int(
+                expected_conn["internal"]
+                if isinstance(expected_conn, dict)
+                else expected_conn
+            )
+        except (ValueError, TypeError):
+            logger.warning(
+                f"Could not determine expected port from PORTS: {expected_conn}"
+            )
+            return False
         if actual_port != expected_port:
             # Redirect to the correct URL
             await self.init()

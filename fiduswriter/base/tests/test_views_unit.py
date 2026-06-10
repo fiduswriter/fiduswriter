@@ -94,7 +94,7 @@ class ConfigurationViewTest(TestCase):
         )
 
     def test_anonymous_user_configuration(self):
-        response = json_post(self.client, "/api/base/configuration/", {})
+        response = ajax_get(self.client, "/api/base/configuration/")
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn("user", data)
@@ -104,7 +104,7 @@ class ConfigurationViewTest(TestCase):
 
     def test_authenticated_user_configuration(self):
         self.client.force_login(self.user)
-        response = json_post(self.client, "/api/base/configuration/", {})
+        response = ajax_get(self.client, "/api/base/configuration/")
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertTrue(data["user"]["is_authenticated"])
@@ -115,13 +115,13 @@ class ConfigurationViewTest(TestCase):
         self.assertIn("socialaccounts", data["user"])
 
     def test_configuration_includes_social_providers(self):
-        response = json_post(self.client, "/api/base/configuration/", {})
+        response = ajax_get(self.client, "/api/base/configuration/")
         data = response.json()
         self.assertIn("socialaccount_providers", data)
         self.assertIsInstance(data["socialaccount_providers"], list)
 
     def test_authenticated_user_has_waiting_invites_field(self):
         self.client.force_login(self.user)
-        response = json_post(self.client, "/api/base/configuration/", {})
+        response = ajax_get(self.client, "/api/base/configuration/")
         data = response.json()
         self.assertIn("waiting_invites", data["user"])

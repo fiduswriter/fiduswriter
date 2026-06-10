@@ -13,8 +13,11 @@ The easiest way to install on Debian, Ubuntu, or Linux Mint is via the official 
 **Traditional format (all versions):**
 
 ```bash
+# Download the repository signing key
+sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+
 # Add the repository
-echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+echo "deb [signed-by=/usr/share/keyrings/fiduswriter.gpg] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
 
 # Update package index
 sudo apt-get update
@@ -26,15 +29,26 @@ sudo apt-get install fiduswriter-server
 **Modern DEB822 format (Ubuntu 24.04+, Debian 13+, Mint 22+):**
 
 ```bash
+# Download the repository signing key
+sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+
 sudo tee /etc/apt/sources.list.d/fiduswriter.sources <<'EOF'
 Types: deb
 URIs: https://fiduswriter.github.io/fiduswriter/apt
 Suites: stable
 Components: main
-Trusted: yes
+Signed-By: /usr/share/keyrings/fiduswriter.gpg
 Architectures: amd64 arm64
 EOF
 
+sudo apt-get update
+sudo apt-get install fiduswriter-server
+```
+
+If the signing key is temporarily unavailable, you can fall back to `trusted=yes`:
+
+```bash
+echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
 sudo apt-get update
 sudo apt-get install fiduswriter-server
 ```

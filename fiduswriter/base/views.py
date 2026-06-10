@@ -78,10 +78,10 @@ def api_404(request):
 
 
 @ajax_required
-@require_POST
 def configuration(request):
     """
     Load the configuration options of the page that are request dependent.
+    Accepts both GET and POST for compatibility with maintenance page mode.
     """
     if len(settings.PORTS) < 2:
         ws_url_base = "/ws"

@@ -30,9 +30,27 @@ class MaintenancePageHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def do_GET(self):
+    def _serve_maintenance(self):
         self.path = "/index.html"
         return SimpleHTTPRequestHandler.do_GET(self)
+
+    def do_GET(self):
+        return self._serve_maintenance()
+
+    def do_POST(self):
+        return self._serve_maintenance()
+
+    def do_PUT(self):
+        return self._serve_maintenance()
+
+    def do_DELETE(self):
+        return self._serve_maintenance()
+
+    def do_PATCH(self):
+        return self._serve_maintenance()
+
+    def do_OPTIONS(self):
+        return self._serve_maintenance()
 
     def translate_path(self, path):
         return os.path.join(settings.SETUP_PAGE_PATH, "index.html")

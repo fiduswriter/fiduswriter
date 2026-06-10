@@ -384,7 +384,7 @@ jobs:
 
             - name: Create index page
               run: |
-                  cat > gh-pages-repo/index.html <<'EOF'
+                  cat > gh-pages-repo/index.html <<'INDEXHTML'
                   <!DOCTYPE html>
                   <html>
                   <head><title>Fidus Writer Package Repositories</title></head>
@@ -428,7 +428,7 @@ jobs:
                   </pre>
                   </body>
                   </html>
-                  EOF
+                  INDEXHTML
 
             - name: Push gh-pages branch
               working-directory: gh-pages-repo

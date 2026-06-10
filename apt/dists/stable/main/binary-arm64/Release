@@ -1,7 +1,3 @@
 Archive: stable
-Version: 1.0
 Component: main
-Origin: Fidus Writer
-Label: Fidus Writer
 Architecture: arm64
-Description: Fidus Writer APT repository

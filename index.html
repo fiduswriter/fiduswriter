@@ -1,13 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head><title>Fidus Writer APT Repository</title></head>
+<head><title>Fidus Writer Package Repositories</title></head>
 <body>
-<h1>Fidus Writer APT Repository</h1>
-<p>Add this repository to your system:</p>
+<h1>Fidus Writer Package Repositories</h1>
+
+<h2>APT Repository (Debian / Ubuntu / Linux Mint)</h2>
+<p><strong>Traditional format (all versions):</strong></p>
 <pre>
-echo "deb [trusted=yes] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
+sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+echo "deb [signed-by=/usr/share/keyrings/fiduswriter.gpg] https://fiduswriter.github.io/fiduswriter/apt stable main" | sudo tee /etc/apt/sources.list.d/fiduswriter.list
 sudo apt-get update
 sudo apt-get install fiduswriter-server
+</pre>
+<p><strong>Modern DEB822 format (Ubuntu 24.04+, Debian 13+, Mint 22+):</strong></p>
+<pre>
+sudo curl -fsSL https://fiduswriter.github.io/fiduswriter/apt/fiduswriter.asc | sudo gpg --dearmor -o /usr/share/keyrings/fiduswriter.gpg
+sudo tee /etc/apt/sources.list.d/fiduswriter.sources &lt;&lt;'EOF'
+Types: deb
+URIs: https://fiduswriter.github.io/fiduswriter/apt
+Suites: stable
+Components: main
+Signed-By: /usr/share/keyrings/fiduswriter.gpg
+Architectures: amd64 arm64
+EOF
+sudo apt-get update
+sudo apt-get install fiduswriter-server
+</pre>
+
+<h2>YUM Repository (RHEL / Rocky Linux / AlmaLinux / Fedora)</h2>
+<pre>
+sudo tee /etc/yum.repos.d/fiduswriter.repo &lt;&lt;'REPO'
+[fiduswriter]
+name=Fidus Writer
+baseurl=https://fiduswriter.github.io/fiduswriter/yum
+enabled=1
+gpgcheck=0
+REPO
+sudo dnf makecache
+sudo dnf install fiduswriter-server
 </pre>
 </body>
 </html>

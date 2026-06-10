@@ -132,6 +132,14 @@ with open('/etc/fiduswriter/configuration.py', 'w') as f:
             fi
         fi
 
+        # Run setup to initialize database, load fixtures, transpile, and collectstatic
+        # Only on fresh install (no existing database)
+        if [ ! -f /var/lib/fiduswriter/fiduswriter.db ]; then
+            echo "Initializing Fidus Writer (this may take a minute)..."
+            su -s /bin/sh fiduswriter -c 'fiduswriter setup' || true
+            echo "Initialization complete."
+        fi
+
         # Reload systemd daemon
         if [ -d /run/systemd/system ]; then
             systemctl --system daemon-reload >/dev/null || true
@@ -202,8 +210,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         echo "2. Create a superuser account:"
         echo "   sudo -u fiduswriter fiduswriter createsuperuser"
         echo ""
-        echo "3. Start the service (migrations, transpile, and collectstatic"
-        echo "   are run automatically on startup):"
+        echo "3. Start the service:"
         echo "   sudo systemctl enable fiduswriter"
         echo "   sudo systemctl start fiduswriter"
         echo ""

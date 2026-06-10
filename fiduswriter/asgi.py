@@ -44,7 +44,11 @@ INSTALLED_APPS = CONFIGURATION.BASE_INSTALLED_APPS + list(
     CONFIGURATION.INSTALLED_APPS
 )
 for app in CONFIGURATION.REMOVED_APPS:
-    INSTALLED_APPS.remove(app)
+    if app in INSTALLED_APPS:
+        INSTALLED_APPS.remove(app)
+
+# Ensure each app is only listed once while preserving order
+INSTALLED_APPS = list(dict.fromkeys(INSTALLED_APPS))
 
 # Add appropriate admin app based on whether django_otp is enabled.
 # This mirrors the same logic in manage.py.

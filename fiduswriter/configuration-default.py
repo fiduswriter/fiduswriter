@@ -47,6 +47,10 @@ CONTACT_EMAIL = "mail@email.com"
 # Ports that Fidus Writer will run on.
 PORTS = [4386]
 
+# Ports this server instance actually binds to. Defaults to PORTS.
+# For multi-server setups, set this to only the port(s) served locally.
+# LOCAL_PORTS = [4386]
+
 # ProseMirror backend used by the document WebSocket consumer.
 # "python" - pure-Python prosemirror package (default).
 # "rust"   - prosemirror-rs Rust extension (requires `pip install prosemirror-rs`). EXPERIMENTAL

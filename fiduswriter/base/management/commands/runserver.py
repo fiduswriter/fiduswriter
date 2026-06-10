@@ -228,7 +228,9 @@ class Command(RunserverCommand):
         if self.addrport_provided:
             ports = [default_port]
         else:
-            ports = getattr(settings, "PORTS", [default_port])
+            ports = getattr(settings, "LOCAL_PORTS", None)
+            if ports is None:
+                ports = getattr(settings, "PORTS", [default_port])
             if isinstance(ports, int):
                 ports = [ports]
             elif isinstance(ports, (list, tuple)):
@@ -241,7 +243,7 @@ class Command(RunserverCommand):
                 ports = [get_internal_port(p) for p in ports]
             except (ValueError, TypeError):
                 raise CommandError(
-                    "PORTS must be a list of integers or dicts with an `internal` key."
+                    "PORTS/LOCAL_PORTS must be a list of integers or dicts with an `internal` key."
                 )
 
         # Kill any stale processes still holding the target ports from a

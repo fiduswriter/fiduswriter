@@ -1,9 +1,15 @@
 import os
 
 # The ports Fidus Writer is running on:
+# For multi-server setups, this must be the FULL list of ports/connections
+# across all servers so that document routing is consistent everywhere.
 PORTS = [
     8000,
 ]
+
+# Ports this server instance actually binds to. Defaults to PORTS.
+# For multi-server setups, set this to only the port(s) served locally.
+# LOCAL_PORTS = [8000]
 
 # Allow the server to listen to all network interfaces (0.0.0.0) instead of just localhost
 # SECURITY WARNING: Setting this to True in production environments could expose your server

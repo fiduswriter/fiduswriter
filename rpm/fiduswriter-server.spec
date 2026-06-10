@@ -88,8 +88,12 @@ PYTHON_BIN=%{buildroot}%{python_prefix}/bin/python%{python_major_minor}
 # Install setuptools, wheel, and babel
 LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN -m pip install --no-cache-dir setuptools wheel babel
 
-# Compile message catalogs
-LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN setup.py compile_catalog || true
+# Compile message catalogs with pybabel
+LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN -m babel.messages.frontend compile_catalog \
+    -d fiduswriter/locale -D django || true
+LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN -m babel.messages.frontend compile_catalog \
+    -d fiduswriter/locale -D djangojs || true
+find fiduswriter/locale -name "*.mo" -exec touch {} +
 
 # Upgrade pip
 LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN -m pip install --no-cache-dir --upgrade pip setuptools wheel
@@ -122,6 +126,8 @@ export PATH=%{python_prefix}/bin:/usr/local/bin:/usr/bin:/bin
 export LD_LIBRARY_PATH=%{python_prefix}/lib:$LD_LIBRARY_PATH
 export PROJECT_PATH=/var/lib/fiduswriter
 export SRC_PATH=%{python_prefix}/lib/python%{python_major_minor}/site-packages/fiduswriter
+export DJANGO_SETTINGS_MODULE=configuration
+export NO_COMPILEMESSAGES=true
 cd /var/lib/fiduswriter
 exec %{python_prefix}/bin/python%{python_major_minor} -m fiduswriter.manage --pythonpath /etc/fiduswriter "$@"
 EOF
@@ -163,6 +169,8 @@ install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter/media
 install -d -o fiduswriter -g fiduswriter -m 0750 /var/log/fiduswriter
 install -d -o root -g root -m 0755 /etc/fiduswriter
 
+CONFIG_CREATED=false
+
 # Copy default configuration if it doesn't exist
 if [ ! -f /etc/fiduswriter/configuration.py ]; then
     if [ -f /etc/fiduswriter/configuration.py.template ]; then
@@ -170,7 +178,7 @@ if [ ! -f /etc/fiduswriter/configuration.py ]; then
         chmod 640 /etc/fiduswriter/configuration.py
         chown root:fiduswriter /etc/fiduswriter/configuration.py
         echo "Default configuration created at /etc/fiduswriter/configuration.py"
-        echo "Please edit this file to configure your Fidus Writer installation."
+        CONFIG_CREATED=true
     fi
 fi
 
@@ -190,6 +198,39 @@ EOF
     chmod 640 /etc/fiduswriter/configuration.py
     chown root:fiduswriter /etc/fiduswriter/configuration.py
     echo "Minimal configuration created at /etc/fiduswriter/configuration.py"
+    CONFIG_CREATED=true
+fi
+
+# Find a free port starting from 4386 and update the config on fresh installs
+if [ "$CONFIG_CREATED" = "true" ]; then
+    FREE_PORT=$(python3 -c "
+import socket
+port = 4386
+while True:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.bind(('127.0.0.1', port))
+            print(port)
+            break
+        except OSError:
+            pass
+    port += 1
+")
+    if [ -n "$FREE_PORT" ]; then
+        python3 -c "
+import re
+with open('/etc/fiduswriter/configuration.py', 'r') as f:
+    content = f.read()
+pattern = r'^PORTS\s*=\s*\[[^\]]*\]'
+replacement = 'PORTS = [$FREE_PORT]'
+new_content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
+if new_content == content:
+    new_content = content.rstrip() + '\n\nPORTS = [$FREE_PORT]\n'
+with open('/etc/fiduswriter/configuration.py', 'w') as f:
+    f.write(new_content)
+"
+        echo "Configured to use port $FREE_PORT"
+    fi
 fi
 
 # Generate SECRET_KEY if not present
@@ -217,7 +258,90 @@ if [ ! -f /etc/ld.so.conf.d/fiduswriter.conf ]; then
     fi
 fi
 
+# Run setup to initialize database, load fixtures, transpile, and collectstatic
+# Only on fresh install (no existing database)
+if [ ! -f /var/lib/fiduswriter/fiduswriter.db ]; then
+    echo "Initializing Fidus Writer (this may take a minute)..."
+    su -s /bin/sh fiduswriter -c 'fiduswriter setup' || true
+    echo "Initialization complete."
+fi
+
 %systemd_post fiduswriter.service
+
+# Determine the actual port for display
+DISPLAY_PORT=4386
+if [ -f /etc/fiduswriter/configuration.py ]; then
+    EXTRACTED_PORT=$(python3 -c "
+import re
+with open('/etc/fiduswriter/configuration.py', 'r') as f:
+    content = f.read()
+m = re.search(r'PORTS\s*=\s*\[(\d+)', content)
+print(m.group(1) if m else '')
+")
+    if [ -n "$EXTRACTED_PORT" ]; then
+        DISPLAY_PORT="$EXTRACTED_PORT"
+    fi
+fi
+
+# Warn if the configured port appears to be in use
+python3 -c "
+import socket
+port = $DISPLAY_PORT
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    try:
+        s.bind(('127.0.0.1', port))
+    except OSError:
+        print('')
+        print('WARNING: Port ' + str(port) + ' appears to be in use on 127.0.0.1.')
+        print('         If another service is using this port, Fidus Writer may fail to start.')
+        print('         Edit PORTS in /etc/fiduswriter/configuration.py to use a different port.')
+"
+
+echo ""
+echo "=========================================="
+echo "Fidus Writer Installation Complete"
+echo "=========================================="
+echo ""
+PYTHON_VERSION=$(ls -d /opt/fiduswriter/python* 2>/dev/null | head -1 | sed 's|.*/python||')
+echo "Python ${PYTHON_VERSION:-3.14+} and database adapters (PostgreSQL/MySQL)"
+echo "with all dependencies and optional modules installed in:"
+echo "  /opt/fiduswriter/python${PYTHON_VERSION:-3.14+}/"
+echo ""
+echo "Included modules:"
+echo "  - books, citation-api-import, languagetool, ojs, pandoc"
+echo "  - phplist, gitrepo-export, payment-paddle, website"
+echo ""
+echo "Bundled components:"
+echo "  - Node.js for JavaScript transpilation"
+echo "  - PostgreSQL adapter (psycopg2-binary)"
+echo "  - MySQL adapter (mysqlclient)"
+echo ""
+echo "Next steps:"
+echo "1. Review /etc/fiduswriter/configuration.py"
+echo "   Default uses SQLite at /var/lib/fiduswriter/fiduswriter.db"
+echo "   For production, use PostgreSQL or MySQL (adapters already bundled!)"
+echo "   Set DEBUG = False for production, or DEBUG = True for development"
+echo ""
+echo "   NOTE: If you change the database settings, run setup afterward:"
+echo "   sudo -u fiduswriter fiduswriter setup"
+echo ""
+echo "2. Create a superuser account:"
+echo "   sudo -u fiduswriter fiduswriter createsuperuser"
+echo ""
+echo "3. Start the service:"
+echo "   sudo systemctl enable fiduswriter"
+echo "   sudo systemctl start fiduswriter"
+echo ""
+echo "4. Access Fidus Writer at:"
+echo "   http://127.0.0.1:${DISPLAY_PORT}/"
+echo ""
+echo "5. (Optional) Configure a reverse proxy (nginx or httpd)"
+echo "    The service listens on http://127.0.0.1:${DISPLAY_PORT}"
+echo "    A reverse proxy is recommended for SSL/TLS and better performance"
+echo ""
+echo "Documentation: https://www.fiduswriter.org"
+echo "=========================================="
+echo ""
 
 %preun
 %systemd_preun fiduswriter.service

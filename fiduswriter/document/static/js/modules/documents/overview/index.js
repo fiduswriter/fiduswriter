@@ -9,7 +9,6 @@ import {
     activateWait,
     addAlert,
     avatarTemplate,
-    baseBodyTemplate,
     deactivateWait,
     ensureCSS,
     escapeText,
@@ -20,6 +19,7 @@ import {
     shortFileTitle,
     whenReady
 } from "fwtoolkit"
+import {baseBodyTemplate} from "../../common/index.js"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"
 import {docSchema} from "@fiduswriter/document/schema/document/index"

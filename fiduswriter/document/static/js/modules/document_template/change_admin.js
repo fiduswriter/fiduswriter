@@ -28,7 +28,7 @@ export class DocumentTemplateAdmin {
             staticUrl("css/colors.css"),
             staticUrl("css/document_template_admin.css"),
             staticUrl("css/admin.css"),
-            staticUrl("css/ui_dialogs.css"),
+            staticUrl("css/dialog.css"),
             staticUrl("css/buttons.css")
         ])
         const csl = new CSL()

@@ -5,7 +5,6 @@ import {
     DatatableBulk,
     OverviewMenuView,
     addAlert,
-    baseBodyTemplate,
     ensureCSS,
     escapeText,
     findTarget,
@@ -13,6 +12,7 @@ import {
     setDocTitle,
     whenReady
 } from "fwtoolkit"
+import {baseBodyTemplate} from "../common/index.js"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {DocTemplatesActions} from "./actions"

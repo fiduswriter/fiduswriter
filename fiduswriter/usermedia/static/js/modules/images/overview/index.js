@@ -8,7 +8,6 @@ import {
     OverviewMenuView,
     activateWait,
     addAlert,
-    baseBodyTemplate,
     deactivateWait,
     ensureCSS,
     escapeText,
@@ -19,6 +18,7 @@ import {
     setDocTitle,
     whenReady
 } from "fwtoolkit"
+import {baseBodyTemplate} from "../../common/index.js"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"
 import {ImageOverviewCategories} from "./categories"

@@ -7,13 +7,13 @@ import {
     OverviewMenuView,
     addAlert,
     avatarTemplate,
-    baseBodyTemplate,
     escapeText,
     findTarget,
     postJson,
     setDocTitle,
     whenReady
 } from "fwtoolkit"
+import {baseBodyTemplate} from "../common/index.js"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {DeleteContactDialog} from "./delete_dialog"

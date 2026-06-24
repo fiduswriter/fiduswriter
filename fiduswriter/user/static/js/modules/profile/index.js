@@ -2,7 +2,6 @@ import {plugins} from "../../plugins/profile"
 import {
     activateWait,
     addAlert,
-    baseBodyTemplate,
     deactivateWait,
     dropdownSelect,
     ensureCSS,
@@ -11,6 +10,7 @@ import {
     setDocTitle,
     whenReady
 } from "fwtoolkit"
+import {baseBodyTemplate} from "../common/index.js"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {

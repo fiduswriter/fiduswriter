@@ -1,4 +1,4 @@
-import {Dialog, escapeText, findTarget, postJson} from "../common"
+import {Dialog, escapeText, findTarget, postJson} from "fwtoolkit"
 
 export class DocumentStyleDialog {
     constructor(id, style, documentTemplateId, allStyles, refresh) {

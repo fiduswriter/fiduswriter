@@ -1,4 +1,4 @@
-import {randomCommentId} from "../../schema/common"
+import {randomCommentId} from "@fiduswriter/document/schema/common/index"
 import {
     addCommentDuringCreationDecoration,
     removeCommentDuringCreationDecoration

@@ -4,7 +4,7 @@ import {
     addAlert,
     deactivateWait,
     postBare
-} from "../common"
+} from "fwtoolkit"
 import {deleteUserDialogTemplate} from "./templates"
 
 export class DeleteUserDialog {

@@ -1,9 +1,9 @@
 // A slight modification of the document schema for the purpose of copying.
 import {DOMSerializer, Node, Schema} from "prosemirror-model"
 
-import {citation} from "../../../schema/common"
-import {footnote} from "../../../schema/document/content"
-import {fnSchema} from "../../../schema/footnotes"
+import {citation} from "@fiduswriter/document/schema/common/index"
+import {footnote} from "@fiduswriter/document/schema/document/content"
+import {fnSchema} from "@fiduswriter/document/schema/footnotes"
 
 const copyCitation = Object.assign({}, citation)
 

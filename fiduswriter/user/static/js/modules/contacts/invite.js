@@ -1,4 +1,4 @@
-import {postJson} from "../common"
+import {postJson} from "fwtoolkit"
 
 export class ContactInvite {
     constructor({app}, key) {

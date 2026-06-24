@@ -1,4 +1,4 @@
-import {FormatCitations} from "./format"
+import {FormatCitations} from "@fiduswriter/document/citations/format"
 /**
  * Render citations into the DOM.
  */

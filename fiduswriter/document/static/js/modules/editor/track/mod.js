@@ -1,4 +1,4 @@
-import {findTarget} from "../../common"
+import {findTarget} from "fwtoolkit"
 import {
     deactivateAllSelectedChanges,
     setSelectedChanges

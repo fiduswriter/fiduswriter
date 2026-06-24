@@ -1,4 +1,4 @@
-import {activateWait, addAlert, deactivateWait, postJson} from "../common"
+import {activateWait, addAlert, deactivateWait, postJson} from "fwtoolkit"
 
 /* A class that holds information about images uploaded by the user. */
 

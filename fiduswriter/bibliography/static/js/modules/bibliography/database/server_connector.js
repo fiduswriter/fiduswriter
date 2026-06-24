@@ -1,4 +1,4 @@
-import {post, postJson} from "../../common/network"
+import {post, postJson} from "fwtoolkit/network"
 
 // class for server calls of BibliographyDB.
 export class BibliographyDBServerConnector {

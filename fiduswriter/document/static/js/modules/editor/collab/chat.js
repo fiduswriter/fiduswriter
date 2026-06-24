@@ -1,4 +1,4 @@
-import {localizeDate, whenReady} from "../../common"
+import {localizeDate, whenReady} from "fwtoolkit"
 import {E2EEEncryptor} from "../e2ee/encryptor"
 import {messageTemplate} from "./templates"
 

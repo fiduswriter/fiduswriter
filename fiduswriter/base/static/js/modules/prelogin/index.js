@@ -1,5 +1,5 @@
 import {plugins} from "../../plugins/prelogin"
-import {ensureCSS, setDocTitle, setLanguage, whenReady} from "../common"
+import {ensureCSS, setDocTitle, setLanguage, whenReady} from "fwtoolkit"
 import {FeedbackTab} from "../feedback"
 
 import {basePreloginTemplate} from "./templates"

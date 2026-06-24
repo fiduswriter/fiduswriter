@@ -1,5 +1,5 @@
 import download from "downloadjs"
-import {ZipFileCreator} from "../../exporter/tools/zip"
+import {ZipFileCreator} from "@fiduswriter/document/exporter/tools/zip"
 
 export class BibLatexFileExporter {
     constructor(bibDB, pks) {

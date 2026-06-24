@@ -1,5 +1,5 @@
 import JSZip from "jszip"
-import {Dialog, escapeText, findTarget, get, postJson} from "../common"
+import {Dialog, escapeText, findTarget, get, postJson} from "fwtoolkit"
 
 export class ExportTemplateDialog {
     constructor(

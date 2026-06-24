@@ -1,4 +1,4 @@
-import {Dialog, addAlert, postJson} from "../../../common"
+import {Dialog, addAlert, postJson} from "fwtoolkit"
 import {CopyrightDialog} from "../../../copyright_dialog"
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
@@ -306,7 +306,7 @@ export const headerbarModel = () => ({
                     order: 5,
                     keys: "Ctrl-p",
                     action: editor => {
-                        import("../../../exporter/print").then(
+                        import("@fiduswriter/document/exporter/print/index").then(
                             ({PrintExporter}) => {
                                 const exporter = new PrintExporter(
                                     editor.getDoc({
@@ -525,7 +525,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an HTML file."),
                     order: 0,
                     action: editor => {
-                        import("../../../exporter/html").then(
+                        import("@fiduswriter/document/exporter/html/index").then(
                             ({HTMLExporter}) => {
                                 const exporter = new HTMLExporter(
                                     editor.getDoc({
@@ -550,7 +550,7 @@ export const headerbarModel = () => ({
                     ),
                     order: 1,
                     action: editor => {
-                        import("../../../exporter/epub").then(
+                        import("@fiduswriter/document/exporter/epub/index").then(
                             ({EpubExporter}) => {
                                 const exporter = new EpubExporter(
                                     editor.getDoc({
@@ -574,7 +574,7 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an LaTeX file."),
                     order: 2,
                     action: editor => {
-                        import("../../../exporter/latex").then(
+                        import("@fiduswriter/document/exporter/latex/index").then(
                             ({LatexExporter}) => {
                                 const exporter = new LatexExporter(
                                     editor.getDoc({
@@ -598,7 +598,7 @@ export const headerbarModel = () => ({
                     ),
                     order: 2,
                     action: editor => {
-                        import("../../../exporter/jats").then(
+                        import("@fiduswriter/document/exporter/jats/index").then(
                             ({JATSExporter}) => {
                                 const exporter = new JATSExporter(
                                     editor.getDoc({
@@ -624,7 +624,7 @@ export const headerbarModel = () => ({
                     ),
                     order: 2,
                     action: editor => {
-                        import("../../../exporter/jats").then(
+                        import("@fiduswriter/document/exporter/jats/index").then(
                             ({JATSExporter}) => {
                                 const exporter = new JATSExporter(
                                     editor.getDoc({
@@ -650,7 +650,7 @@ export const headerbarModel = () => ({
                     ),
                     order: 3,
                     action: editor => {
-                        import("../../../exporter/pandoc").then(
+                        import("@fiduswriter/document/exporter/pandoc/index").then(
                             ({PandocExporter}) => {
                                 const exporter = new PandocExporter(
                                     editor.getDoc({

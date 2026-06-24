@@ -6,7 +6,7 @@ import {
     post,
     postJson,
     whenReady
-} from "../common"
+} from "fwtoolkit"
 import {PreloginPage} from "../prelogin"
 import {
     checkTermsTemplate,

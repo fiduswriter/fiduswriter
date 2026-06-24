@@ -9,7 +9,7 @@
  For E2EE documents, images are encrypted client-side and uploaded directly
  via a dedicated endpoint to an EncryptedDocumentImage model.
 */
-import {addAlert, get, post, postJson} from "../../common"
+import {addAlert, get, post, postJson} from "fwtoolkit"
 export class ModImageDB {
     constructor(mod) {
         mod.imageDB = this

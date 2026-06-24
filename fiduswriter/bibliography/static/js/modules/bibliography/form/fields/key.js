@@ -1,4 +1,4 @@
-import {getFocusIndex, noSpaceTmp, setFocusIndex} from "../../../common"
+import {getFocusIndex, noSpaceTmp, setFocusIndex} from "fwtoolkit"
 import {getBibOptionTitle} from "../strings"
 import {LiteralFieldForm} from "./literal"
 

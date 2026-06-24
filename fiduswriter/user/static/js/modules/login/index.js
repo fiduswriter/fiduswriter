@@ -1,5 +1,5 @@
 import {plugins as pluginLoaders} from "../../plugins/login"
-import {escapeText, postJson} from "../common"
+import {escapeText, postJson} from "fwtoolkit"
 import {PreloginPage} from "../prelogin"
 import {twoFactorLoginDialog} from "../two_factor"
 

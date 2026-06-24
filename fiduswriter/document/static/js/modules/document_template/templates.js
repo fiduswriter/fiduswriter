@@ -1,5 +1,5 @@
-import {escapeText} from "../common"
-import {LANGUAGES, PAPER_SIZES} from "../schema/const"
+import {escapeText} from "fwtoolkit"
+import {LANGUAGES, PAPER_SIZES} from "@fiduswriter/document/schema/const"
 
 const allowedElementsTemplate = (
     {elements},
@@ -739,7 +739,7 @@ ${allLanguages.map(lang => `<option value="${lang}"${code_languages.includes(lan
 }
 
 const codeCategoriesTemplate = ({code_categories = {}}) => {
-    const {CATS} = require("../schema/i18n")
+    const {CATS} = require("@fiduswriter/document/schema/i18n")
     const allCategories = Object.keys(CATS)
     const defaultCategories = {
         listing: {counter: 0, enabled: true},

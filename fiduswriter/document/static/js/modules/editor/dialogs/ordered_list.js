@@ -1,4 +1,4 @@
-import {Dialog} from "../../common"
+import {Dialog} from "fwtoolkit"
 import {orderedListStartTemplate} from "./templates"
 
 export class OrderedListStartDialog {

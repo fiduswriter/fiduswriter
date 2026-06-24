@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {RenderCitations} from "../../../citations/render"
-import {BIBLIOGRAPHY_HEADERS} from "../../../schema/i18n"
+import {BIBLIOGRAPHY_HEADERS} from "@fiduswriter/document/schema/i18n"
 import {createDocCopySchema, fnCopySchema} from "./schema"
 
 // Wrap around DOMSerializer, allowing post processing.

@@ -1,4 +1,4 @@
-import {langName} from "../common"
+import {langName} from "fwtoolkit"
 
 export const basePreloginTemplate = ({
     contents,

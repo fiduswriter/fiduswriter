@@ -1,6 +1,6 @@
 import {Plugin, PluginKey, Selection} from "prosemirror-state"
 import {WRITE_ROLES} from "../"
-import {ContentMenu} from "../../common"
+import {ContentMenu} from "fwtoolkit"
 
 const key = new PluginKey("table")
 

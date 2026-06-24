@@ -210,11 +210,11 @@ class MyPluginConfig(AppConfig):
 
 ### Sending requests — `postBare`, `post`, `postJson`
 
-Import the network helpers from `"../common"` (adjust the relative path to
+Import the network helpers from `"fwtoolkit"` (adjust the relative path to
 wherever your module lives):
 
 ```/dev/null/my-plugin-network.js#L1-10
-import {post, postJson, postBare} from "../common"
+import {post, postJson, postBare} from "fwtoolkit"
 ```
 
 | Function | When to use |
@@ -230,7 +230,7 @@ to pass a token explicitly in web workers (see below).
 #### Scalar POST (most common case)
 
 ```/dev/null/post-scalar.js#L1-10
-import {post} from "../common"
+import {post} from "fwtoolkit"
 
 async function deleteItem(itemId) {
     await post("/api/my-plugin/delete/", {id: itemId})
@@ -240,7 +240,7 @@ async function deleteItem(itemId) {
 #### POST with a response body
 
 ```/dev/null/post-json.js#L1-10
-import {postJson} from "../common"
+import {postJson} from "fwtoolkit"
 
 async function saveItem(itemId, metadata) {
     const {json, status} = await postJson("/api/my-plugin/save/", {
@@ -260,7 +260,7 @@ sent as `multipart/form-data`; the JSON data remains available on the backend
 as `request.JSON`.
 
 ```/dev/null/post-file.js#L1-16
-import {post} from "../common"
+import {post} from "fwtoolkit"
 
 async function uploadAsset(itemId, file) {
     await post(
@@ -288,12 +288,12 @@ supply it explicitly:
 
 ```/dev/null/worker-post.js#L1-12
 // In the main thread — pass the token to the worker
-import {getSettings} from "../common"
+import {getSettings} from "fwtoolkit"
 const csrfToken = getSettings().getCsrfToken()
 myWorker.postMessage({csrfToken})
 
 // Inside the web worker — use it explicitly
-import {postBare} from "../common"
+import {postBare} from "fwtoolkit"
 self.onmessage = async ({data}) => {
     await postBare("/api/my-plugin/sync/", {payload: data.payload}, data.csrfToken)
 }
@@ -302,10 +302,10 @@ self.onmessage = async ({data}) => {
 ### Accessing settings — `getSettings()`
 
 Runtime settings are exposed through `getSettings()`, exported from
-`"../common"`:
+`"fwtoolkit"`:
 
 ```/dev/null/settings-usage.js#L1-22
-import {getSettings} from "../common"
+import {getSettings} from "fwtoolkit"
 
 const settings = getSettings()
 
@@ -487,7 +487,7 @@ If your plugin interacts with the document save lifecycle, check
 | `"external"` | No built-in saving; your plugin (or another) owns persistence |
 
 ```/dev/null/save-mode.js#L1-14
-import {getSettings} from "../common"
+import {getSettings} from "fwtoolkit"
 
 export class MyPluginSaveExtension {
     init() {
@@ -559,8 +559,8 @@ def get_note(request):
 **`my_plugin/static/js/modules/my_plugin/notes.js`**
 
 ```/dev/null/example-notes.js#L1-28
-import {postJson} from "../common"
-import {getSettings} from "../common"
+import {postJson} from "fwtoolkit"
+import {getSettings} from "fwtoolkit"
 
 export class NotesPlugin {
     constructor(editor) {

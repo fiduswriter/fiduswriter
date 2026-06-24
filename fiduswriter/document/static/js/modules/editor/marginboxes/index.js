@@ -1,7 +1,7 @@
 import {DiffDOM, stringToObj} from "diff-dom"
 import fastdom from "fastdom"
 
-import {cancelPromise, findTarget} from "../../common"
+import {cancelPromise, findTarget} from "fwtoolkit"
 import {
     getCommentDuringCreationDecoration,
     getFootnoteMarkers,

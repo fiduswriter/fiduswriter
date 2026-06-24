@@ -1,8 +1,8 @@
 import deepEqual from "fast-deep-equal"
 
-import {ContentMenu, Dialog, addAlert, dropdownSelect} from "../../common"
+import {ContentMenu, Dialog, addAlert, dropdownSelect} from "fwtoolkit"
 import {ImageSelectionDialog} from "../../images/selection_dialog"
-import {randomFigureId} from "../../schema/common"
+import {randomFigureId} from "@fiduswriter/document/schema/common/index"
 import {E2EEEncryptor} from "../e2ee/encryptor"
 import {configureFigureTemplate} from "./templates"
 

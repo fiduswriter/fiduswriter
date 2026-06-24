@@ -1,5 +1,5 @@
-import {docSchema} from "../schema/document"
-import {toFullJSON, toMiniJSON} from "../schema/mini_json"
+import {docSchema} from "@fiduswriter/document/schema/document/index"
+import {toFullJSON, toMiniJSON} from "@fiduswriter/document/schema/mini_json"
 
 export function extractTemplate(doc) {
     const template = toFullJSON(doc, docSchema)

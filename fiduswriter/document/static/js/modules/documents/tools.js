@@ -1,6 +1,6 @@
-import {addAlert, postJson} from "../common"
+import {addAlert, postJson} from "fwtoolkit"
 import {acceptAllNoInsertions} from "../editor/track"
-import {getSettings} from "../schema/convert"
+import {getSettings} from "@fiduswriter/document/schema/convert"
 
 export const getMissingDocumentListData = (
     ids,

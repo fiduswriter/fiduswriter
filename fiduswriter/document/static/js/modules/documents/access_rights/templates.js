@@ -1,4 +1,4 @@
-import {avatarTemplate, escapeText} from "../../common"
+import {avatarTemplate, escapeText} from "fwtoolkit"
 
 /** Outer wrapper with two tabs: "People" and "Share link" */
 export const accessRightOverviewTemplate = ({contacts, collaborators}) =>

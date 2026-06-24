@@ -18,7 +18,7 @@ import {
     post,
     setDocTitle,
     whenReady
-} from "../../common"
+} from "fwtoolkit"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"
 import {ImageOverviewCategories} from "./categories"

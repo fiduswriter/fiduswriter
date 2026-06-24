@@ -1,4 +1,4 @@
-import {initSettings} from "./modules/common/settings.js"
+import {initSettings} from "fwtoolkit/settings.js"
 import {DocumentTemplateListAdmin} from "./modules/document_template/index.js"
 
 initSettings(window.settings)

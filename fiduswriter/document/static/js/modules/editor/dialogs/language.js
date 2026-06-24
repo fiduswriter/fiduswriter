@@ -1,6 +1,6 @@
-import {Dialog} from "../../common"
+import {Dialog} from "fwtoolkit"
 
-import {LANGUAGES} from "../../schema/const"
+import {LANGUAGES} from "@fiduswriter/document/schema/const"
 import {languageTemplate} from "./templates"
 
 export class LanguageDialog {

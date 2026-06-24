@@ -8,7 +8,7 @@ import {
     escapeText,
     findTarget,
     setCheckableLabel
-} from "../../common"
+} from "fwtoolkit"
 import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
 
 export class CitationDialog {

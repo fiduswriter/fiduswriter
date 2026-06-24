@@ -1,6 +1,6 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {escapeText, findTarget} from "../../common"
+import {escapeText, findTarget} from "fwtoolkit"
 
 const key = new PluginKey("tocRender")
 

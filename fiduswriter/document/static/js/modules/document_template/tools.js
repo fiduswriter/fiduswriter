@@ -1,4 +1,4 @@
-import {randomHeadingId} from "../schema/common"
+import {randomHeadingId} from "@fiduswriter/document/schema/common/index"
 
 // from https://codeburst.io/throttling-and-debouncing-in-javascript-646d076d0a44
 export function debounced(delay, fn) {

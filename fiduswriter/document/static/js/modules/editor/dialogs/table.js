@@ -1,4 +1,4 @@
-import {Dialog, dropdownSelect} from "../../common"
+import {Dialog, dropdownSelect} from "fwtoolkit"
 import {tableConfigurationTemplate, tableInsertTemplate} from "./templates"
 
 export class TableDialog {

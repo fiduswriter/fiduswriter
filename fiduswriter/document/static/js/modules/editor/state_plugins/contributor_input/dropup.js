@@ -1,4 +1,4 @@
-import {escapeText, noSpaceTmp} from "../../../common"
+import {escapeText, noSpaceTmp} from "fwtoolkit"
 import {ContributorDialog} from "../../dialogs"
 
 /** @typedef {{text: string, className: string, action: Function}} MenuOption */

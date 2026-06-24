@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {NodeSelection, Plugin, PluginKey} from "prosemirror-state"
-import {ContentMenu} from "../../common"
+import {ContentMenu} from "fwtoolkit"
 
 const key = new PluginKey("codeBlockMenu")
 
@@ -75,7 +75,7 @@ class CodeBlockView {
 
         if (category && id) {
             label.dataset.id = id
-            const {CATS} = require("../../schema/i18n")
+            const {CATS} = require("@fiduswriter/document/schema/i18n")
             const categoryLabel = CATS[category]?.[language] || category
             const number = categories[category] || 1
 

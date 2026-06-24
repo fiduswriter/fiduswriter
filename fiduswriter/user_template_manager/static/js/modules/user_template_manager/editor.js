@@ -6,7 +6,7 @@ import {
     postJson,
     setDocTitle,
     whenReady
-} from "../common"
+} from "fwtoolkit"
 import {
     DocumentTemplateDesigner,
     DocumentTemplateExporter

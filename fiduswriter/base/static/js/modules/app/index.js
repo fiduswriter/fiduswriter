@@ -12,8 +12,8 @@ import {
     getJson,
     postJson,
     showSystemMessage
-} from "../common"
-import {getSettings, initSettings} from "../common/settings"
+} from "fwtoolkit"
+import {getSettings, initSettings} from "fwtoolkit/settings"
 import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
 import {EmailConfirm} from "../email_confirm"

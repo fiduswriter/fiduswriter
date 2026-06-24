@@ -10,7 +10,7 @@
  * - DEK sharing: encrypt DEK with recipient's public key
  */
 
-import {getJson, post, postJson} from "../../common"
+import {getJson, post, postJson} from "fwtoolkit"
 import {E2EEKeyManager} from "./key-manager"
 import {PassphraseCrypto} from "./passphrase-crypto"
 

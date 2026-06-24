@@ -1,5 +1,5 @@
 import {dateToYear, litToText, nameToText} from "../../../bibliography/tools"
-import {escapeText} from "../../../common"
+import {escapeText} from "fwtoolkit"
 import {getInternalTargets} from "../links"
 
 /**

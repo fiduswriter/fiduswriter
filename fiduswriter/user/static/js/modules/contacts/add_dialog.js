@@ -1,4 +1,4 @@
-import {Dialog, cancelPromise, escapeText, postJson} from "../common"
+import {Dialog, cancelPromise, escapeText, postJson} from "fwtoolkit"
 import {addContactTemplate} from "./templates"
 
 //dialog for adding a user to contacts

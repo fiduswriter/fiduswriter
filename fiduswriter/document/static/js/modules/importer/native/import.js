@@ -1,7 +1,7 @@
-import {addAlert, deactivateWait, postJson, shortFileTitle} from "../../common"
+import {addAlert, deactivateWait, postJson, shortFileTitle} from "fwtoolkit"
 import {extractTemplate} from "../../document_template"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
-import {GetImages} from "./get_images"
+import {GetImages} from "@fiduswriter/document/importer/native/get_images"
 
 export class NativeImporter {
     /* Save document information into the database */

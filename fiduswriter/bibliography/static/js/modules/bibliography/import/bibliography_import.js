@@ -1,5 +1,5 @@
 import {sniffFormat} from "biblatex-csl-converter"
-import {addAlert, makeWorker} from "../../common"
+import {addAlert, makeWorker} from "fwtoolkit"
 
 const ERROR_MSG = {
     no_entries: gettext(

@@ -3,7 +3,7 @@ import {
     isActivationEvent,
     noSpaceTmp,
     setFocusIndex
-} from "../../../common"
+} from "fwtoolkit"
 import {RangeFieldForm} from "./range"
 
 export class RangeListForm {

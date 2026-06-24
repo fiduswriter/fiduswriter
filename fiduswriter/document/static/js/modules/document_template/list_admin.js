@@ -1,4 +1,4 @@
-import {ensureCSS, escapeText, findTarget, whenReady} from "../common"
+import {ensureCSS, escapeText, findTarget, whenReady} from "fwtoolkit"
 import {DocumentTemplateExporter} from "./exporter"
 import {DocumentTemplateImporter} from "./importer"
 

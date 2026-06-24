@@ -1,6 +1,6 @@
 import deepEqual from "fast-deep-equal"
 
-import {toFullJSON} from "../schema/mini_json"
+import {toFullJSON} from "@fiduswriter/document/schema/mini_json"
 
 function cleanFootnotes(node, elements, marks) {
     if (node.attrs?.footnote) {

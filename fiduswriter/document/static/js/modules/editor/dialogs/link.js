@@ -2,7 +2,7 @@ import {TextSelection} from "prosemirror-state"
 
 import {linkDialogTemplate} from "./templates"
 
-import {Dialog} from "../../common"
+import {Dialog} from "fwtoolkit"
 import {getInternalTargets} from "../state_plugins"
 
 export class LinkDialog {

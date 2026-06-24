@@ -1,4 +1,4 @@
-import {Dialog} from "../../../common"
+import {Dialog} from "fwtoolkit"
 import {keyBindingsTemplate} from "./templates"
 /* This is an adaptation of question.mark for Fidus Writer http://fiduswriter.org
  * originally by Gabriel Lopez <gabriel.marcos.lopez@gmail.com>

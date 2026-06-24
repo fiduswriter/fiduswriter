@@ -1,4 +1,4 @@
-import {escapeText} from "../../common"
+import {escapeText} from "fwtoolkit"
 
 /** A template for each category in the category list edit of the bibliography categories list. */
 const categoryFormsTemplate = ({categories}) =>

@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {NodeSelection, Plugin, PluginKey} from "prosemirror-state"
-import {ContentMenu} from "../../common"
+import {ContentMenu} from "fwtoolkit"
 
 const key = new PluginKey("figureMenu")
 

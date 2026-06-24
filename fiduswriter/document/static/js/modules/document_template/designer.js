@@ -9,10 +9,10 @@ import {tableEditing} from "prosemirror-tables"
 import {EditorView} from "prosemirror-view"
 import sortable from "sortablejs"
 
-import {ensureCSS, findTarget} from "../common"
+import {ensureCSS, findTarget} from "fwtoolkit"
 import {ContributorsPartView, TagsPartView} from "../editor/state_plugins"
-import {docSchema} from "../schema/document"
-import {toFullJSON, toMiniJSON} from "../schema/mini_json"
+import {docSchema} from "@fiduswriter/document/schema/document/index"
+import {toFullJSON, toMiniJSON} from "@fiduswriter/document/schema/mini_json"
 import {DocumentStyleDialog} from "./document_style_dialog"
 import {ExportTemplateDialog} from "./export_template_dialog"
 import {

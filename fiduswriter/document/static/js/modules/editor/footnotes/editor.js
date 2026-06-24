@@ -9,8 +9,8 @@ import {EditorState} from "prosemirror-state"
 import {Step} from "prosemirror-transform"
 import {EditorView} from "prosemirror-view"
 
-import {fnSchema} from "../../schema/footnotes"
-import {fnNodeToPmNode} from "../../schema/footnotes_convert"
+import {fnSchema} from "@fiduswriter/document/schema/footnotes"
+import {fnNodeToPmNode} from "@fiduswriter/document/schema/footnotes_convert"
 import {
     citationRenderPlugin,
     clipboardPlugin,

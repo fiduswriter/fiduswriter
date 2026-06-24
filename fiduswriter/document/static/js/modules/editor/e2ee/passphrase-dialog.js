@@ -8,7 +8,7 @@
  * 4. Recover with key - use recovery key to reset passphrase
  */
 
-import {Dialog, escapeText} from "../../common"
+import {Dialog, escapeText} from "fwtoolkit"
 import {passwordStrength, strengthInfo} from "./password-dialog"
 
 /**

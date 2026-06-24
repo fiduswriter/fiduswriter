@@ -1,4 +1,4 @@
-import {updateDoc} from "../schema/convert"
+import {updateDoc} from "@fiduswriter/document/schema/convert"
 
 export function updateTemplateFile(
     title,

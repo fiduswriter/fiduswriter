@@ -1,4 +1,4 @@
-import {addAlert, findTarget, getJson, postJson, whenReady} from "../common"
+import {addAlert, findTarget, getJson, postJson, whenReady} from "fwtoolkit"
 
 // To see how many users are currently online and send them maintenance messages
 

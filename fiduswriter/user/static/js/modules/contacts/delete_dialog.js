@@ -1,4 +1,4 @@
-import {Dialog, postJson} from "../common"
+import {Dialog, postJson} from "fwtoolkit"
 
 //dialog for removing a user from contacts
 export class DeleteContactDialog {

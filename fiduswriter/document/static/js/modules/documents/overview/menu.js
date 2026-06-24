@@ -1,4 +1,4 @@
-import {FileDialog, NewFolderDialog, addAlert} from "../../common"
+import {FileDialog, NewFolderDialog, addAlert} from "fwtoolkit"
 import {DocumentAccessRightsDialog} from "../access_rights"
 
 export const bulkMenuModel = () => ({

@@ -19,10 +19,10 @@ import {
     setDocTitle,
     shortFileTitle,
     whenReady
-} from "../../common"
+} from "fwtoolkit"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"
-import {docSchema} from "../../schema/document"
+import {docSchema} from "@fiduswriter/document/schema/document/index"
 
 import {DocumentOverviewActions} from "./actions"
 import {bulkMenuModel, menuModel} from "./menu"

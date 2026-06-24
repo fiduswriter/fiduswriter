@@ -1,4 +1,4 @@
-import {Dialog} from "../../common"
+import {Dialog} from "fwtoolkit"
 import {revisionDialogTemplate} from "./templates"
 
 export class RevisionDialog {

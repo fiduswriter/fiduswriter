@@ -1,4 +1,4 @@
-import {Dialog, addAlert, escapeText, get} from "../../common"
+import {Dialog, addAlert, escapeText, get} from "fwtoolkit"
 import {SaveCopy} from "../../exporter/native"
 import {E2EEKeyManager} from "../e2ee/key-manager"
 import {
@@ -332,7 +332,7 @@ export class ModDocumentTemplate {
                         "Export the document to a DOCX file with the given template."
                     ),
                     action: editor => {
-                        import("../../exporter/docx").then(({DOCXExporter}) => {
+                        import("@fiduswriter/document/exporter/docx/index").then(({DOCXExporter}) => {
                             const exporter = new DOCXExporter(
                                 editor.getDoc(),
                                 template.template_file,
@@ -355,7 +355,7 @@ export class ModDocumentTemplate {
                         "Export the document to an ODT file with the given template."
                     ),
                     action: editor => {
-                        import("../../exporter/odt").then(({ODTExporter}) => {
+                        import("@fiduswriter/document/exporter/odt/index").then(({ODTExporter}) => {
                             const exporter = new ODTExporter(
                                 editor.getDoc(),
                                 template.template_file,

@@ -1,5 +1,5 @@
 import {AdminConsole} from "./modules/admin_console/index.js"
-import {initSettings} from "./modules/common/settings.js"
+import {initSettings} from "fwtoolkit/settings.js"
 
 initSettings(window.settings)
 

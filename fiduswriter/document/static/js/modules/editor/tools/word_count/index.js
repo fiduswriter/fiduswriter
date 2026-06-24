@@ -1,5 +1,5 @@
-import {Dialog} from "../../../common"
-import {getNonDeletedTextContent} from "../../../schema/text"
+import {Dialog} from "fwtoolkit"
+import {getNonDeletedTextContent} from "@fiduswriter/document/schema/text"
 
 import {wordCounterDialogTemplate} from "./templates"
 

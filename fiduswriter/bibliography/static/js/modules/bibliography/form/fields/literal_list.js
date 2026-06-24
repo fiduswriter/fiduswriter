@@ -3,7 +3,7 @@ import {
     isActivationEvent,
     noSpaceTmp,
     setFocusIndex
-} from "../../../common"
+} from "fwtoolkit"
 import {LiteralFieldForm} from "./literal"
 
 export class LiteralListForm {

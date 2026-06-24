@@ -12,7 +12,7 @@ import {
     getJson,
     setDocTitle,
     whenReady
-} from "../common"
+} from "fwtoolkit"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {DocTemplatesActions} from "./actions"

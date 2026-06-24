@@ -1,4 +1,4 @@
-import {ZipAnalyzer} from "./zip_analyzer"
+import {ZipAnalyzer} from "@fiduswriter/document/importer/zip_analyzer"
 
 export class ImporterRegistry {
     constructor() {

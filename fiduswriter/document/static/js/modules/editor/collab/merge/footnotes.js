@@ -1,7 +1,7 @@
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {fnSchema} from "../../../schema/footnotes"
-import {htmlToFnNode} from "../../../schema/footnotes_convert"
+import {fnSchema} from "@fiduswriter/document/schema/footnotes"
+import {htmlToFnNode} from "@fiduswriter/document/schema/footnotes_convert"
 import {trackedTransaction} from "../../track"
 
 export class FootnoteView {

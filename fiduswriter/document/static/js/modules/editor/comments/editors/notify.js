@@ -1,4 +1,4 @@
-import {post} from "../../../common"
+import {post} from "fwtoolkit"
 import {serializeCommentNode} from "./schema"
 
 export const notifyMentionedUser = (docId, userId, comment) => {

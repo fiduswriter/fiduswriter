@@ -1,4 +1,4 @@
-import {avatarTemplate, escapeText, langName} from "../common"
+import {avatarTemplate, escapeText, langName} from "fwtoolkit"
 
 /** A template to confirm the deletion of a user avatar. */
 export const confirmDeleteAvatarTemplate = () =>

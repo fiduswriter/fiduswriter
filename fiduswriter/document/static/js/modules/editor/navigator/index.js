@@ -1,4 +1,4 @@
-import {escapeText, findTarget} from "../../common"
+import {escapeText, findTarget} from "fwtoolkit"
 export class ModNavigator {
     constructor(editor) {
         editor.mod.navigator = this

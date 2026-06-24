@@ -1,4 +1,4 @@
-import {Dialog} from "../../common"
+import {Dialog} from "fwtoolkit"
 import {sub, subChars, sup, supChars} from "./subsup"
 import {mathDialogTemplate} from "./templates"
 

@@ -16,7 +16,7 @@ import {
     toggleHeaderRow
 } from "prosemirror-tables"
 
-import {docSchema} from "../schema/document"
+import {docSchema} from "@fiduswriter/document/schema/document/index"
 const doc = {
     content: "block+",
     toDOM(_node) {

@@ -2,14 +2,14 @@ import {NodeSelection, Plugin, PluginKey} from "prosemirror-state"
 import {RemoveMarkStep} from "prosemirror-transform"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {addAlert, noSpaceTmp} from "../../common"
+import {addAlert, noSpaceTmp} from "fwtoolkit"
 import {
     randomFigureId,
     randomHeadingId,
     randomListId,
     randomTableId
-} from "../../schema/common"
-import {CATS} from "../../schema/i18n"
+} from "@fiduswriter/document/schema/common/index"
+import {CATS} from "@fiduswriter/document/schema/i18n"
 import {CitationDialog, LinkDialog} from "../dialogs"
 
 const key = new PluginKey("links")

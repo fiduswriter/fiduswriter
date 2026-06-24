@@ -11,7 +11,7 @@ import {
     longFilePath,
     post,
     shortFileTitle
-} from "../../common"
+} from "fwtoolkit"
 import {FidusFileImporter} from "../../importer/native"
 import {documentrevisionsTemplate} from "./templates"
 

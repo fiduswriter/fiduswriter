@@ -6,7 +6,7 @@ import {EditorState} from "prosemirror-state"
 import {suggestionsPlugin, triggerCharacter} from "prosemirror-suggestions"
 import {EditorView} from "prosemirror-view"
 
-import {avatarTemplate, escapeText, findTarget} from "../../../common"
+import {avatarTemplate, escapeText, findTarget} from "fwtoolkit"
 
 import {notifyMentionedUser} from "./notify"
 import {commentSchema} from "./schema"

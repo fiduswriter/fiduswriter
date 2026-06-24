@@ -3,7 +3,7 @@ import {
     isActivationEvent,
     noSpaceTmp,
     setFocusIndex
-} from "../../../common"
+} from "fwtoolkit"
 import {NameFieldForm} from "./name"
 
 export class NameListForm {

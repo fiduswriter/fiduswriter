@@ -1,5 +1,5 @@
 import {COMMENT_ONLY_ROLES, READ_ONLY_ROLES} from "../.."
-import {Dialog, addAlert} from "../../../common"
+import {Dialog, addAlert} from "fwtoolkit"
 import {
     deselectSearchMatch,
     endSearch,

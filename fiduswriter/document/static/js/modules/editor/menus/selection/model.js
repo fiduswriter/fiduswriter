@@ -1,7 +1,7 @@
 import {toggleMark} from "prosemirror-commands"
 
 import {COMMENT_ONLY_ROLES} from "../.."
-import {randomAnchorId} from "../../../schema/common"
+import {randomAnchorId} from "@fiduswriter/document/schema/common/index"
 import {checkProtectedInSelection} from "../../state_plugins"
 import {acceptAll, rejectAll} from "../../track"
 

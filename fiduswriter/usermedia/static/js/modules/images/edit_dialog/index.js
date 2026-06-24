@@ -1,4 +1,4 @@
-import {ContentMenu, Dialog, addAlert, setCheckableLabel} from "../../common"
+import {ContentMenu, Dialog, addAlert, setCheckableLabel} from "fwtoolkit"
 import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
 import {imageEditModel} from "./model"
 import {imageEditTemplate} from "./templates"

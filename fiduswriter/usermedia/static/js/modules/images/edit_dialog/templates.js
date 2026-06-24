@@ -1,4 +1,4 @@
-import {escapeText} from "../../common"
+import {escapeText} from "fwtoolkit"
 
 /* A template for the image category selection of the image selection dialog. */
 const imageEditCategoryTemplate = ({image, cats}) => {

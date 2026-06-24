@@ -1,4 +1,4 @@
-import {escapeText, localizeDate} from "../../common"
+import {escapeText, localizeDate} from "fwtoolkit"
 
 /** A template for listing the templates of a certain document */
 export const documentrevisionsTemplate = ({doc}) =>

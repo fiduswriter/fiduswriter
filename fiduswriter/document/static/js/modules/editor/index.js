@@ -18,7 +18,7 @@ import {
     postJson,
     showSystemMessage,
     whenReady
-} from "../common"
+} from "fwtoolkit"
 import {FeedbackTab} from "../feedback"
 import {E2EEEncryptor} from "./e2ee/encryptor"
 import {E2EEKeyManager} from "./e2ee/key-manager"
@@ -35,8 +35,8 @@ import {
 import {E2EESnapshotManager} from "./e2ee/snapshot-manager"
 
 import {plugins} from "../../plugins/editor"
-import {getSettings} from "../schema/convert"
-import {docSchema} from "../schema/document"
+import {getSettings} from "@fiduswriter/document/schema/convert"
+import {docSchema} from "@fiduswriter/document/schema/document/index"
 import {ModCitations} from "./citations"
 import {ModCollab} from "./collab"
 import {ModComments} from "./comments"

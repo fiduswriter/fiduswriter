@@ -6,7 +6,7 @@ import {
     escapeText,
     post,
     postJson
-} from "../common"
+} from "fwtoolkit"
 import {
     changeAvatarDialogTemplate,
     changeEmailDialogTemplate,

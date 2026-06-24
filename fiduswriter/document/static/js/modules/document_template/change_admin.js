@@ -1,5 +1,5 @@
 import {CSL} from "citeproc-plus"
-import {ensureCSS, escapeText, findTarget, postJson, whenReady} from "../common"
+import {ensureCSS, escapeText, findTarget, postJson, whenReady} from "fwtoolkit"
 import {DocumentTemplateDesigner} from "./designer"
 
 export class DocumentTemplateAdmin {

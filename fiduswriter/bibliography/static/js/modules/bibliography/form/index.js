@@ -1,5 +1,5 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
-import {Dialog, addAlert, noSpaceTmp} from "../../common"
+import {Dialog, addAlert, noSpaceTmp} from "fwtoolkit"
 import {dateToYear, litToText, nameToText} from "../tools"
 import {CatsForm} from "./cats"
 import {DateFieldForm} from "./fields/date"

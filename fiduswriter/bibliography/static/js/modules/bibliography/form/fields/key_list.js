@@ -3,7 +3,7 @@ import {
     isActivationEvent,
     noSpaceTmp,
     setFocusIndex
-} from "../../../common"
+} from "fwtoolkit"
 import {KeyFieldForm} from "./key"
 
 export class KeyListForm {

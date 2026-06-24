@@ -1,4 +1,4 @@
-import {escapeText, localizeDate} from "../../common"
+import {escapeText, localizeDate} from "fwtoolkit"
 
 /**
  * Template for the unified document import dialog.

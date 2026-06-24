@@ -6,7 +6,7 @@ import {
     cleanPath,
     escapeText,
     findTarget
-} from "../../../common"
+} from "fwtoolkit"
 
 export class HeaderbarView {
     constructor(editorView, options) {

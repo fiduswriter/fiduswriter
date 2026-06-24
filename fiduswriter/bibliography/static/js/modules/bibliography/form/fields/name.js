@@ -1,4 +1,4 @@
-import {getFocusIndex, noSpaceTmp, setFocusIndex} from "../../../common"
+import {getFocusIndex, noSpaceTmp, setFocusIndex} from "fwtoolkit"
 import {LiteralFieldForm} from "./literal"
 
 // There are only name lists, no name fields in the data format. The separation

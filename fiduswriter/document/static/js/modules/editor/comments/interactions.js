@@ -1,7 +1,7 @@
 import {GapCursor} from "prosemirror-gapcursor"
 import {TextSelection} from "prosemirror-state"
 
-import {findTarget, post} from "../../common"
+import {findTarget, post} from "fwtoolkit"
 import {
     deactivateAllSelectedChanges,
     getCommentDuringCreationDecoration

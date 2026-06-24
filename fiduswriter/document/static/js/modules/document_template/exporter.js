@@ -1,8 +1,8 @@
 import download from "downloadjs"
 
-import {postJson} from "../common"
-import {createSlug} from "../exporter/tools/file"
-import {ZipFileCreator} from "../exporter/tools/zip"
+import {postJson} from "fwtoolkit"
+import {createSlug} from "@fiduswriter/document/exporter/tools/file"
+import {ZipFileCreator} from "@fiduswriter/document/exporter/tools/zip"
 
 export class DocumentTemplateExporter {
     constructor(

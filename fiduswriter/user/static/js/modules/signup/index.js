@@ -1,4 +1,4 @@
-import {escapeText, postJson} from "../common"
+import {escapeText, postJson} from "fwtoolkit"
 import {PreloginPage} from "../prelogin"
 
 export class Signup extends PreloginPage {

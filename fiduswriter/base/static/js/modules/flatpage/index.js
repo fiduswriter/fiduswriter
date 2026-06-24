@@ -1,4 +1,4 @@
-import {ensureCSS, postJson, whenReady} from "../common"
+import {ensureCSS, postJson, whenReady} from "fwtoolkit"
 import {PreloginPage} from "../prelogin"
 
 export class FlatPage extends PreloginPage {

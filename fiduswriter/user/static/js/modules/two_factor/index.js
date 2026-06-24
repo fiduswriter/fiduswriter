@@ -5,7 +5,7 @@ import {
     addAlert,
     deactivateWait,
     postJson
-} from "../common"
+} from "fwtoolkit"
 
 export const twoFactorSetupDialog = () => {
     let secretKey = null

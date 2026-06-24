@@ -1,4 +1,4 @@
-import {escapeText, get, post} from "../common"
+import {escapeText, get, post} from "fwtoolkit"
 import {PreloginPage} from "../prelogin"
 
 export class PasswordResetChangePassword extends PreloginPage {

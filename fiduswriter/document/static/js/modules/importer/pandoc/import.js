@@ -1,7 +1,7 @@
 import {BibliographyImporter} from "../../bibliography/import"
-import {escapeText, postJson} from "../../common"
+import {escapeText, postJson} from "fwtoolkit"
 import {NativeImporter} from "../native"
-import {PandocConvert} from "./convert"
+import {PandocConvert} from "@fiduswriter/document/importer/pandoc/convert"
 
 export class PandocImporter {
     constructor(file, user, path, importId, options) {

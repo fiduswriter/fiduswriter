@@ -1,4 +1,4 @@
-import {noSpaceTmp} from "../../common"
+import {noSpaceTmp} from "fwtoolkit"
 
 const CSS_COLORS = [
     "0,119,190",

@@ -1,8 +1,8 @@
 import download from "downloadjs"
 
-import {shortFileTitle} from "../../common"
-import {createSlug} from "../tools/file"
-import {ShrinkFidus} from "./shrink"
+import {shortFileTitle} from "fwtoolkit"
+import {createSlug} from "@fiduswriter/document/exporter/tools/file"
+import {ShrinkFidus} from "@fiduswriter/document/exporter/native/shrink"
 import {ZipFidus} from "./zip"
 
 export class ExportFidusFile {

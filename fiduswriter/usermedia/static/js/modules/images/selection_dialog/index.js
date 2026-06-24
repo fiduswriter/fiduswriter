@@ -1,6 +1,6 @@
 import {DataTable} from "simple-datatables"
 
-import {Dialog, cancelPromise, escapeText, findTarget} from "../../common"
+import {Dialog, cancelPromise, escapeText, findTarget} from "fwtoolkit"
 
 export class ImageSelectionDialog {
     constructor(imageDB, userImageDB, imgId, page) {

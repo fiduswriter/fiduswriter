@@ -1,8 +1,8 @@
 import {Plugin, PluginKey} from "prosemirror-state"
 
-import {setDocTitle} from "../../common"
-import {LANGUAGES} from "../../schema/const"
-import {CATS} from "../../schema/i18n"
+import {setDocTitle} from "fwtoolkit"
+import {LANGUAGES} from "@fiduswriter/document/schema/const"
+import {CATS} from "@fiduswriter/document/schema/i18n"
 
 const key = new PluginKey("settings")
 

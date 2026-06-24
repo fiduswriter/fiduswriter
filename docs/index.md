@@ -43,6 +43,7 @@ Resources for contributors and plugin developers:
 - Plugin Development - Create custom plugins
 - Software Structure - Understanding the architecture
 - Testing Guide - Running and writing tests
+- [Upgrade Guides](development/README.md#for-plugin-developers) - Migrate existing plugins to newer Fidus Writer versions
 
 ## 🎯 Common Tasks
 

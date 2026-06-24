@@ -1,5 +1,5 @@
 import {NodeSelection} from "prosemirror-state"
-import {Dialog, addAlert} from "../../common"
+import {Dialog, addAlert} from "fwtoolkit"
 import {contributorTemplate} from "./templates"
 /*
     Source for email regexp:

@@ -1,6 +1,6 @@
 import {edtfParse} from "biblatex-csl-converter"
 import deepEqual from "fast-deep-equal"
-import {Dialog, findTarget, isActivationEvent} from "../common"
+import {Dialog, findTarget, isActivationEvent} from "fwtoolkit"
 import {
     copyrightTemplate,
     licenseInputTemplate,

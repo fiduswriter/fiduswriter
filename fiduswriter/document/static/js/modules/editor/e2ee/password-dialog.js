@@ -13,7 +13,7 @@
  * the user is shown a degree of weakness and is therefore encouraged to use a stronger password.
  */
 
-import {Dialog, escapeText} from "../../common"
+import {Dialog, escapeText} from "fwtoolkit"
 
 /**
  * Validate a password against the minimum requirements.

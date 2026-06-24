@@ -13,7 +13,7 @@ import {
     postJson,
     setDocTitle,
     whenReady
-} from "../common"
+} from "fwtoolkit"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"
 import {DeleteContactDialog} from "./delete_dialog"

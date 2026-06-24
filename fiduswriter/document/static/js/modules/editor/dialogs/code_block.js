@@ -1,6 +1,6 @@
-import {Dialog, dropdownSelect} from "../../common"
-import {randomCodeBlockId} from "../../schema/document/content"
-import {CATS} from "../../schema/i18n"
+import {Dialog, dropdownSelect} from "fwtoolkit"
+import {randomCodeBlockId} from "@fiduswriter/document/schema/document/content"
+import {CATS} from "@fiduswriter/document/schema/i18n"
 
 export class CodeBlockDialog {
     constructor(editor) {

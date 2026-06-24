@@ -1,4 +1,4 @@
-import {escapeText} from "../../common"
+import {escapeText} from "fwtoolkit"
 
 export class CatsForm {
     constructor(dom, initialValue = [], options = []) {

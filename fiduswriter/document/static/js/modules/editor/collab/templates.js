@@ -1,4 +1,4 @@
-import {avatarTemplate, escapeText, localizeDate} from "../../common"
+import {avatarTemplate, escapeText, localizeDate} from "fwtoolkit"
 export const messageTemplate = ({message, theChatter}) =>
     `<div class="message" id="m${message.id}">
         <div class="comment-user">

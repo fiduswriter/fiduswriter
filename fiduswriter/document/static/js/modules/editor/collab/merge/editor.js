@@ -21,8 +21,8 @@ import {
     ensureCSS,
     faqDialog,
     showSystemMessage
-} from "../../../common"
-import {BIBLIOGRAPHY_HEADERS} from "../../../schema/i18n"
+} from "fwtoolkit"
+import {BIBLIOGRAPHY_HEADERS} from "@fiduswriter/document/schema/i18n"
 import {buildEditorKeymap} from "../../keymap"
 import {jumpHiddenNodesPlugin, searchPlugin} from "../../state_plugins"
 import {trackedTransaction} from "../../track"

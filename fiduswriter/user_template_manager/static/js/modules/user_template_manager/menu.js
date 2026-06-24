@@ -1,4 +1,4 @@
-import {addAlert} from "../common"
+import {addAlert} from "fwtoolkit"
 
 export const menuModel = () => ({
     content: [

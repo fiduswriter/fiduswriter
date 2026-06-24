@@ -1,4 +1,4 @@
-import {escapeText} from "../common"
+import {escapeText} from "fwtoolkit"
 import {LICENSE_URLS} from "./index"
 
 export const licenseSelectTemplate = ({url}) =>

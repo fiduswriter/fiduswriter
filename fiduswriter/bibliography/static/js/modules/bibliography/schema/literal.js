@@ -9,7 +9,7 @@ import {
     sup,
     text,
     variable
-} from "./common"
+} from "@fiduswriter/document/bibliography/common"
 
 const doc = {
     content: "literal"

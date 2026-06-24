@@ -4,7 +4,7 @@ import {
     addAlert,
     deactivateWait,
     postJson
-} from "../common"
+} from "fwtoolkit"
 import {
     DocumentTemplateExporter,
     DocumentTemplateImporter

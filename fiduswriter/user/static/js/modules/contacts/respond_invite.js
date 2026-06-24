@@ -1,4 +1,4 @@
-import {Dialog, escapeText, postJson} from "../common"
+import {Dialog, escapeText, postJson} from "fwtoolkit"
 
 export class RespondInviteDialog {
     constructor(

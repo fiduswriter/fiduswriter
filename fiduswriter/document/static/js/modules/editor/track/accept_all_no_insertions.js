@@ -1,6 +1,6 @@
 import {Mapping, RemoveMarkStep, Transform} from "prosemirror-transform"
 
-import {fnSchema} from "../../schema/footnotes"
+import {fnSchema} from "@fiduswriter/document/schema/footnotes"
 
 import {deleteNode} from "./delete"
 

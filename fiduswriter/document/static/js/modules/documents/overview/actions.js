@@ -6,7 +6,7 @@ import {
     escapeText,
     longFilePath,
     postJson
-} from "../../common"
+} from "fwtoolkit"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {enterPassphraseDialog} from "../../editor/e2ee/passphrase-dialog"
 import {PassphraseManager} from "../../editor/e2ee/passphrase-manager"
@@ -862,7 +862,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("../../exporter/html").then(({HTMLExporter}) => {
+                import("@fiduswriter/document/exporter/html/index").then(({HTMLExporter}) => {
                     const exporter = new HTMLExporter(
                         doc,
                         {db: doc.bibliography},
@@ -888,7 +888,7 @@ export class DocumentOverviewActions {
                     entry => entry.id === id
                 )
                 if (templateType === "docx") {
-                    import("../../exporter/docx").then(({DOCXExporter}) => {
+                    import("@fiduswriter/document/exporter/docx/index").then(({DOCXExporter}) => {
                         const exporter = new DOCXExporter(
                             doc,
                             templateUrl,
@@ -899,7 +899,7 @@ export class DocumentOverviewActions {
                         exporter.init()
                     })
                 } else {
-                    import("../../exporter/odt").then(({ODTExporter}) => {
+                    import("@fiduswriter/document/exporter/odt/index").then(({ODTExporter}) => {
                         const exporter = new ODTExporter(
                             doc,
                             templateUrl,
@@ -924,7 +924,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("../../exporter/latex").then(({LatexExporter}) => {
+                import("@fiduswriter/document/exporter/latex/index").then(({LatexExporter}) => {
                     const exporter = new LatexExporter(
                         doc,
                         {db: doc.bibliography},
@@ -947,7 +947,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("../../exporter/jats").then(({JATSExporter}) => {
+                import("@fiduswriter/document/exporter/jats/index").then(({JATSExporter}) => {
                     const exporter = new JATSExporter(
                         doc,
                         {db: doc.bibliography},
@@ -972,7 +972,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("../../exporter/jats").then(({JATSExporter}) => {
+                import("@fiduswriter/document/exporter/jats/index").then(({JATSExporter}) => {
                     const exporter = new JATSExporter(
                         doc,
                         {db: doc.bibliography},
@@ -997,7 +997,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("../../exporter/epub").then(({EpubExporter}) => {
+                import("@fiduswriter/document/exporter/epub/index").then(({EpubExporter}) => {
                     const exporter = new EpubExporter(
                         doc,
                         {db: doc.bibliography},

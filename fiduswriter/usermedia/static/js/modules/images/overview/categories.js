@@ -4,7 +4,7 @@ import {
     addAlert,
     deactivateWait,
     postJson
-} from "../../common"
+} from "fwtoolkit"
 import {usermediaEditcategoriesTemplate} from "./templates"
 
 export class ImageOverviewCategories {

@@ -187,7 +187,7 @@ export class E2EESnapshotManager {
             E2EEKeyManager.clearKeyFromSession(this.editor.docInfo.id)
             E2EEKeyManager.clearPasswordFromSession(this.editor.docInfo.id)
             // Notify the user that the password has changed.
-            const {showSystemMessage} = await import("../../common")
+            const {showSystemMessage} = await import("fwtoolkit")
             showSystemMessage(
                 gettext(
                     "The document password was changed by another user. You will need to enter the new password to continue editing."

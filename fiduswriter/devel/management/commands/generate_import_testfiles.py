@@ -27,12 +27,11 @@ class Command(BaseCommand):
         if output_dir is None:
             output_dir = os.path.join(
                 settings.PROJECT_PATH,
-                "document",
-                "static",
-                "js",
-                "modules",
+                "..",
+                "..",
+                "fiduswriter-document",
+                "test",
                 "importer",
-                "__tests__",
                 "fixtures",
             )
         os.makedirs(output_dir, exist_ok=True)

@@ -10,13 +10,15 @@
         copy_prosemirror_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-view/style/prosemirror.css ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-menu/style/menu.css ../static-libs/css/prosemirror-menu.css && rsync -av --no-perms --checksum node_modules/prosemirror-example-setup/style/style.css ../static-libs/css/prosemirror-example-setup.css",
         copy_mathlive_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/mathlive/dist/mathlive-static.css ../static-libs/css/mathlive.css",
         copy_mathlive_fonts: "mkdir -p ../static-libs/css/fonts/ && rsync -av --no-perms --checksum node_modules/mathlive/dist/fonts/ ../static-libs/css/fonts/",
-        postinstall: "npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive_css && npm run copy_mathlive_fonts",
+        copy_schema: "mkdir -p ../static-libs/json && (test -f node_modules/@fiduswriter/document/schema.json && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json) || (node node_modules/@fiduswriter/document/scripts/export-schema.js && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json)",
+        postinstall: "npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive_css && npm run copy_mathlive_fonts && npm run copy_schema",
         "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals"
     },
     author: "Johannes Wilm",
     license: "AGPL",
     private: true,
     dependencies: {
+        "@fiduswriter/document": "^0.1.0-alpha.1",
         "file-loader": "^6.2.0",
         "diff-dom": "5.2.1",
         "downloadjs": "1.4.7",

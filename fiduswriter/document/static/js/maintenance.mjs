@@ -1,4 +1,4 @@
-import {initSettings} from "fwtoolkit/settings.js"
+import {initSettings} from "fwtoolkit/settings"
 import {DocMaintenance} from "./modules/maintenance/index.js"
 
 initSettings(window.settings)

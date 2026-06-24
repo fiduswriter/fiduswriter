@@ -30,14 +30,14 @@ All document-related conversion and schema code now lives in the
 `bibliography/static/js/modules/bibliography/schema`.
 
 The packages are published to npm (e.g. `@fiduswriter/document@^0.1.0-alpha.2`
-and `fwtoolkit@^0.1.0-alpha.3`) and declared as dependencies in
+and `fwtoolkit@^0.1.0-alpha.6`) and declared as dependencies in
 `fiduswriter/base/package.json5`:
 
 ```json5
 {
     dependencies: {
         "@fiduswriter/document": "^0.1.0-alpha.2",
-        "fwtoolkit": "^0.1.0-alpha.3",
+        "fwtoolkit": "^0.1.0-alpha.6",
         // ...
     }
 }
@@ -63,7 +63,7 @@ can depend on `fwtoolkit` alone:
 ```json5
 {
     dependencies: {
-        "fwtoolkit": "^0.1.0-alpha.3"
+        "fwtoolkit": "^0.1.0-alpha.6"
     }
 }
 ```

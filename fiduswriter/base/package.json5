@@ -11,14 +11,15 @@
         copy_mathlive_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/mathlive/dist/mathlive-static.css ../static-libs/css/mathlive.css",
         copy_mathlive_fonts: "mkdir -p ../static-libs/css/fonts/ && rsync -av --no-perms --checksum node_modules/mathlive/dist/fonts/ ../static-libs/css/fonts/",
         copy_schema: "mkdir -p ../static-libs/json && (test -f node_modules/@fiduswriter/document/schema.json && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json) || (node node_modules/@fiduswriter/document/scripts/export-schema.js && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json)",
-        postinstall: "npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive_css && npm run copy_mathlive_fonts && npm run copy_schema",
+        copy_fwtoolkit_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum --exclude=forms.css node_modules/fwtoolkit/css/ ../static-libs/css/",
+        postinstall: "npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive_css && npm run copy_mathlive_fonts && npm run copy_schema && npm run copy_fwtoolkit_css",
         "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals"
     },
     author: "Johannes Wilm",
     license: "AGPL",
     private: true,
     dependencies: {
-        "fwtoolkit": "^0.1.0-alpha.3",
+        "fwtoolkit": "^0.1.0-alpha.6",
         "@fiduswriter/document": "^0.1.0-alpha.2",
         "file-loader": "^6.2.0",
         "diff-dom": "5.2.1",

@@ -37,8 +37,13 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
     def test_template_export_import(self):
         driver = self.driver
         driver.get(f"{self.base_url}/templates/")
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-contents tbody tr")
+            )
+        )
         templates = self.driver.find_elements(
-            By.CSS_SELECTOR, ".fw-contents tbody tr .far.fa-file"
+            By.CSS_SELECTOR, ".fw-contents tbody tr .fa-file"
         )
         self.assertEqual(len(templates), 1)
         editable_templates = self.driver.find_elements(
@@ -55,6 +60,10 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         alert_element = WebDriverWait(self.driver, self.wait_time).until(
             EC.visibility_of_element_located((By.CLASS_NAME, "alerts-error"))
+        )
+        self.assertIn(
+            "You cannot delete system document templates.",
+            alert_element.text,
         )
         self.assertEqual(alert_element.is_displayed(), True)
         # Duplicate default template
@@ -205,7 +214,9 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         slim_file_path = os.path.join(self.download_dir, "slim.fidus")
         os.rename(path, slim_file_path)
         # Exit editor
-        self.driver.find_element(By.ID, "close-document-top").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#close-document-top i.fa-times"
+        ).click()
         # Delete document
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".delete-document"))
@@ -222,7 +233,7 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Templates"]'
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".delete-doc-template"
+            By.CSS_SELECTOR, ".delete-doc-template i"
         ).click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Delete"]'
@@ -231,13 +242,13 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             lambda d: len(
                 d.find_elements(
-                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-alt"
+                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-can"
                 )
             )
             == 1
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, ".delete-doc-template"
+            By.CSS_SELECTOR, ".delete-doc-template i"
         ).click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Delete"]'
@@ -246,7 +257,7 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             lambda d: len(
                 d.find_elements(
-                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-alt"
+                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-can"
                 )
             )
             == 0
@@ -300,7 +311,7 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         # Delete template
         self.driver.find_element(
-            By.CSS_SELECTOR, ".delete-doc-template"
+            By.CSS_SELECTOR, ".delete-doc-template i"
         ).click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Delete"]'
@@ -309,7 +320,7 @@ class UserTemplateManagerTest(SeleniumHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver, self.wait_time).until(
             lambda d: len(
                 d.find_elements(
-                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-alt"
+                    By.CSS_SELECTOR, ".delete-doc-template .fa-trash-can"
                 )
             )
             == 0

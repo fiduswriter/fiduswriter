@@ -73,13 +73,13 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Wait for and interact with encryption choice dialog
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
         )
         # Select "Encrypted" radio button
         self.driver.find_element(By.ID, "e2ee").click()
         # Click "Create"
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # After clicking Create, we may get a passphrase setup offer dialog
@@ -88,7 +88,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         try:
             # Look for "Skip for Now" button which would indicate passphrase offer dialog
             skip_buttons = self.driver.find_elements(
-                By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
+                By.CSS_SELECTOR, ".fw-dialog-buttonpane .fw-button"
             )
             for btn in skip_buttons:
                 if "Skip" in btn.text:
@@ -116,7 +116,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Click "Create Encrypted Document"
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # Wait for editor to load
@@ -195,7 +195,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             password
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # Wait for editor to load
@@ -247,7 +247,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "WrongPass1"
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # Wait for the error dialog
@@ -258,7 +258,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Verify both Retry and Cancel buttons exist
         buttons = self.driver.find_elements(
             By.CSS_SELECTOR,
-            "#e2ee-decryption-failed ~ .ui-dialog-buttonpane .fw-button",
+            "#e2ee-decryption-failed ~ .fw-dialog-buttonpane .fw-button",
         )
         button_texts = [b.text for b in buttons]
         self.assertTrue(
@@ -311,7 +311,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Click Cancel
         buttons = self.driver.find_elements(
             By.CSS_SELECTOR,
-            "#e2ee-enter-password ~ .ui-dialog-buttonpane .fw-button",
+            "#e2ee-enter-password ~ .fw-dialog-buttonpane .fw-button",
         )
         for b in buttons:
             if "Cancel" in b.text:
@@ -456,7 +456,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Click Change Password
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # Wait for the flag set by the MutationObserver above.
@@ -501,7 +501,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             new_password
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         WebDriverWait(self.driver, self.wait_time).until(
@@ -653,11 +653,11 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Encryption choice dialog
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
         )
         self.driver.find_element(By.ID, "e2ee").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # After clicking Create, we may get a passphrase setup offer dialog
@@ -665,7 +665,7 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
         try:
             # Look for "Skip for Now" button which would indicate passphrase offer dialog
             skip_buttons = self.driver.find_elements(
-                By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
+                By.CSS_SELECTOR, ".fw-dialog-buttonpane .fw-button"
             )
             for btn in skip_buttons:
                 if "Skip" in btn.text:
@@ -687,7 +687,7 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.ID, "e2ee-confirm-password-input"
         ).send_keys(password)
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         WebDriverWait(self.driver, self.wait_time).until(
@@ -775,7 +775,7 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Create the link
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "#create-share-token-dialog ~ .ui-dialog-buttonpane .fw-dark",
+            "#create-share-token-dialog ~ .fw-dialog-buttonpane .fw-dark",
         ).click()
 
         # Wait for the link to appear in the list
@@ -849,11 +849,11 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
 
         # Encryption choice dialog
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
         )
         self.driver.find_element(By.ID, "e2ee").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         time.sleep(1)  # Allow async operations to complete
@@ -880,7 +880,7 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
             By.ID, "e2ee-confirm-password-input"
         ).send_keys(password)
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         WebDriverWait(self.driver, self.wait_time).until(
@@ -903,7 +903,7 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
             password
         )
         self.driver2.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         WebDriverWait(self.driver2, self.wait_time).until(
@@ -977,7 +977,7 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
             password
         )
         self.driver2.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         WebDriverWait(self.driver2, self.wait_time).until(
@@ -1051,18 +1051,18 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Encryption choice dialog
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
         )
         self.driver.find_element(By.ID, "e2ee").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # Wait for passphrase setup offer dialog
         time.sleep(1)
         dialog_body = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, ".ui-dialog-content")
+                (By.CSS_SELECTOR, ".fw-dialog-content")
             )
         )
 
@@ -1075,7 +1075,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Verify there's a "Set Up Passphrase" button
         buttons = self.driver.find_elements(
-            By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane .fw-button"
         )
         button_texts = [b.text for b in buttons]
         self.assertTrue(
@@ -1446,11 +1446,11 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Encryption choice dialog
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
         )
         self.driver.find_element(By.ID, "e2ee").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # Wait for editor to load (passphrase mode creates doc immediately)
@@ -1507,7 +1507,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Click Submit
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "#access-rights-dialog ~ .ui-dialog-buttonpane .fw-dark",
+            "#access-rights-dialog ~ .fw-dialog-buttonpane .fw-dark",
         ).click()
 
         # Wait for "Share Document Password" dialog to appear (for D)
@@ -1526,7 +1526,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Close the password dialog
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "#share-password-dialog ~ .ui-dialog-buttonpane .fw-dark",
+            "#share-password-dialog ~ .fw-dialog-buttonpane .fw-dark",
         ).click()
         time.sleep(1)
 
@@ -1590,7 +1590,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Create the link
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "#create-share-token-dialog ~ .ui-dialog-buttonpane .fw-dark",
+            "#create-share-token-dialog ~ .fw-dialog-buttonpane .fw-dark",
         ).click()
 
         # Wait for link to appear
@@ -1616,7 +1616,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Close share dialog
         self.driver.find_element(
             By.CSS_SELECTOR,
-            "#access-rights-dialog ~ .ui-dialog-buttonpane .fw-light",
+            "#access-rights-dialog ~ .fw-dialog-buttonpane .fw-light",
         ).click()
         time.sleep(0.5)
 
@@ -1653,7 +1653,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
             prefilled_password
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
 
         # Wait for editor to load

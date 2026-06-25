@@ -182,6 +182,23 @@ export class App {
                 app: "usermedia",
                 requireLogin: true,
                 open: () => new ImageOverview(this.config)
+            },
+            templates: {
+                app: "user_template_manager",
+                requireLogin: true,
+                open: pathnameParts => {
+                    const id = pathnameParts[2]
+                    if (id) {
+                        return import("../user_template_manager/editor").then(
+                            ({DocTemplatesEditor}) =>
+                                new DocTemplatesEditor(this.config, id)
+                        )
+                    }
+                    return import("../user_template_manager").then(
+                        ({DocTemplatesOverview}) =>
+                            new DocTemplatesOverview(this.config)
+                    )
+                }
             }
         }
         this.openLoginPage = () => new LoginPage(this.config)

@@ -235,12 +235,14 @@ export class BibEntryForm {
                 }
             )
             const catsField = document.getElementById("categories-field")
-            this.catsForm = new CatsForm(
-                catsField,
-                this.currentValues.cats,
-                this.bibDB.cats
-            )
-            this.catsForm.init()
+            if (catsField) {
+                this.catsForm = new CatsForm(
+                    catsField,
+                    this.currentValues.cats,
+                    this.bibDB.cats
+                )
+                this.catsForm.init()
+            }
         }
         return dialogPromise
     }

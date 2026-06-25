@@ -442,9 +442,9 @@ class InlineEditorsTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR,
             (
-                "body > div.ui-dialog.ui-corner-all.ui-widget."
-                "ui-widget-content.ui-front.ui-dialog-buttons > "
-                "div.ui-dialog-buttonpane.ui-widget-content."
+                "body > div.fw-dialog.ui-corner-all.ui-widget."
+                "ui-widget-content.ui-front.fw-dialog-buttons > "
+                "div.fw-dialog-buttonpane.ui-widget-content."
                 "ui-helper-clearfix > div > button.fw-dark."
                 "fw-button.ui-button.ui-corner-all.ui-widget"
             ),

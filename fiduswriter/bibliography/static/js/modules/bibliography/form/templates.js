@@ -3,42 +3,39 @@ import {DialogTabs} from "fwtoolkit"
 import {getAllTypeTitles} from "./strings"
 
 const requiredFieldsTemplate = () =>
-    `<div id="req-fields-tab">
-        <table class="fw-dialog-table"><tbody id="eo-fields"></tbody></table>
-        <table class="fw-dialog-table"><tbody id="req-fields"></tbody></table>
-    </div>`
+    `<table class="fw-dialog-table"><tbody id="eo-fields"></tbody></table>
+    <table class="fw-dialog-table"><tbody id="req-fields"></tbody></table>`
 
 const optionalFieldsTemplate = () =>
-    `<div id="opt-fields-tab">
-        <table class="fw-dialog-table"><tbody id="opt-fields"></tbody></table>
-    </div>`
+    `<table class="fw-dialog-table"><tbody id="opt-fields"></tbody></table>`
 
 const categoriesTemplate = () =>
-    `<div id="categories-tab">
-        <table class="fw-dialog-table">
-            <tbody>
-                <tr>
-                    <th><h4 class="fw-tablerow-title">${gettext("Categories")}</h4></th>
-                    <td id="categories-field"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>`
+    `<table class="fw-dialog-table">
+        <tbody>
+            <tr>
+                <th><h4 class="fw-tablerow-title">${gettext("Categories")}</h4></th>
+                <td id="categories-field"></td>
+            </tr>
+        </tbody>
+    </table>`
 
 export const bibDialog = ({bib_type, BibTypes, hasCats}) => {
     const typeTitles = getAllTypeTitles()
     const tabs = [
         {
+            id: "req-fields-tab",
             title: gettext("Required Fields"),
             template: requiredFieldsTemplate
         },
         {
+            id: "opt-fields-tab",
             title: gettext("Optional Fields"),
             template: optionalFieldsTemplate
         }
     ]
     if (hasCats) {
         tabs.push({
+            id: "categories-tab",
             title: gettext("Categories"),
             template: categoriesTemplate
         })

@@ -223,12 +223,12 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         )
 
         dialogtitle = WebDriverWait(self.driver2, self.wait_time).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "ui-dialog-title"))
+            EC.element_to_be_clickable((By.CLASS_NAME, "fw-dialog-title"))
         )
 
         assert dialogtitle.text == "System message"
         self.driver2.find_element(
-            By.CSS_SELECTOR, ".ui-dialog button.fw-orange.fw-button"
+            By.CSS_SELECTOR, ".fw-dialog button.fw-orange.fw-button"
         ).click()
 
         change_tracking_boxes = self.driver2.find_elements(
@@ -297,12 +297,12 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         )
 
         dialogtitle = WebDriverWait(self.driver2, self.wait_time).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "ui-dialog-title"))
+            EC.element_to_be_clickable((By.CLASS_NAME, "fw-dialog-title"))
         )
 
         assert dialogtitle.text == "System message"
         self.driver2.find_element(
-            By.CSS_SELECTOR, ".ui-dialog button.fw-orange.fw-button"
+            By.CSS_SELECTOR, ".fw-dialog button.fw-orange.fw-button"
         ).click()
 
         change_tracking_boxes = self.driver2.find_elements(
@@ -370,12 +370,12 @@ class OfflineTests(EditorHelper, ChannelsLiveServerTestCase):
         )
 
         dialogtitle = WebDriverWait(self.driver2, self.wait_time).until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "ui-dialog-title"))
+            EC.element_to_be_clickable((By.CLASS_NAME, "fw-dialog-title"))
         )
 
         assert dialogtitle.text == "System message"
         self.driver2.find_element(
-            By.CSS_SELECTOR, ".ui-dialog button.fw-orange.fw-button"
+            By.CSS_SELECTOR, ".fw-dialog button.fw-orange.fw-button"
         ).click()
 
         change_tracking_boxes = self.driver2.find_elements(

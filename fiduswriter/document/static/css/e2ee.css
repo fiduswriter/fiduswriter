@@ -39,7 +39,8 @@
 .e2ee-password-input:focus {
     outline: none;
     border-color: var(--e2ee-input-focus-border-color);
-    box-shadow: 0 0 0 2px rgb(var(--cs-2-box-shadow, 60, 159, 223), 0.15);
+    box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--cs-2-box-shadow, #3c9fdf) 15%, transparent);
     background-color: var(--input-focus-background-color, #fbf9d2);
 }
 

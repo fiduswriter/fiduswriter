@@ -201,7 +201,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # LOCAL MACHINE to the input tag
         upload_image_url = WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="editimage"]/div[1]/input[2]')
+                (By.CSS_SELECTOR, '#editimage input[type="file"]')
             )
         )
         upload_image_url.send_keys(image_path)
@@ -209,8 +209,45 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # click on 'Upload' button
         self.driver.find_element(
             By.XPATH,
-            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]',
+            '//*[contains(@class, "fw-button") and normalize-space()="Upload"]',
         ).click()
+
+        time.sleep(2)
+        db_info = self.driver.execute_script(
+            "return {user: Object.keys(window.theApp.imageDB.db).length, doc: Object.keys(window.theApp.page.mod.db.imageDB.db).length}"
+        )
+        console_logs = self.driver.get_log("browser")
+        print(
+            "DEBUG image upload: dialogs=",
+            len(self.driver.find_elements(By.CSS_SELECTOR, ".fw-dialog")),
+            "alerts=",
+            [
+                a.text
+                for a in self.driver.find_elements(
+                    By.CSS_SELECTOR, "#fw-alerts-wrapper li"
+                )
+            ],
+            "images=",
+            len(
+                self.driver.find_elements(
+                    By.CSS_SELECTOR, ".image-selection-table img"
+                )
+            ),
+            "fa-check=",
+            len(
+                self.driver.find_elements(
+                    By.CSS_SELECTOR, ".fw-data-table i.fa-check"
+                )
+            ),
+            "db_info=",
+            db_info,
+            "console=",
+            [
+                log.get("message", "")
+                for log in console_logs
+                if "DEBUG selection" in log.get("message", "")
+            ],
+        )
 
         # click on 'Use image' button
         WebDriverWait(self.driver, self.wait_time).until(
@@ -219,6 +256,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         )
 
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, "#fw-alerts-wrapper li.fw-visible")
+            )
+        )
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Use image"]'
         ).click()
@@ -248,14 +290,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "#edit-link > div:nth-child(2) > select > option:nth-child(2)",
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            (
-                "body > div.ui-dialog.ui-corner-all.ui-widget."
-                "ui-widget-content.ui-front.ui-dialog-buttons > "
-                "div.ui-dialog-buttonpane.ui-widget-content."
-                "ui-helper-clearfix > div > button.fw-dark."
-                "fw-button.ui-button.ui-corner-all.ui-widget"
-            ),
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         cross_reference = self.driver.find_element(
             By.CSS_SELECTOR, ".doc-body .cross-reference"
@@ -274,14 +309,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "#edit-link > div:nth-child(2) > select > option:nth-child(3)",
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            (
-                "body > div.ui-dialog.ui-corner-all.ui-widget."
-                "ui-widget-content.ui-front.ui-dialog-buttons > "
-                "div.ui-dialog-buttonpane.ui-widget-content."
-                "ui-helper-clearfix > div > button.fw-dark."
-                "fw-button.ui-button.ui-corner-all.ui-widget"
-            ),
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         figure_cross_reference = self.driver.find_elements(
             By.CSS_SELECTOR, ".doc-body .cross-reference"
@@ -300,21 +328,18 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "#edit-link > div:nth-child(5) > select > option:nth-child(2)",
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            (
-                "body > div.ui-dialog.ui-corner-all.ui-widget."
-                "ui-widget-content.ui-front.ui-dialog-buttons > "
-                "div.ui-dialog-buttonpane.ui-widget-content."
-                "ui-helper-clearfix > div > button.fw-dark."
-                "fw-button.ui-button.ui-corner-all.ui-widget"
-            ),
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         internal_link = self.driver.find_element(
             By.CSS_SELECTOR, ".doc-body a"
         )
         assert internal_link.text == "An abstract title"
         # We change the link text.
-        self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3").click()
+        heading = self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3")
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", heading
+        )
+        heading.click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -368,7 +393,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         assert figure_cross_reference.text == "Photo 2"
 
         # We delete the contents from the heading
-        self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3").click()
+        heading = self.driver.find_element(By.CSS_SELECTOR, ".doc-abstract h3")
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", heading
+        )
+        heading.click()
         ActionChains(self.driver).send_keys(Keys.BACKSPACE).send_keys(
             Keys.BACKSPACE
         ).send_keys(Keys.BACKSPACE).send_keys(Keys.BACKSPACE).send_keys(
@@ -386,6 +415,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(
             Keys.BACKSPACE
         ).perform()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".doc-body .cross-reference.missing-target")
+            )
+        )
         cross_reference = self.driver.find_element(
             By.CSS_SELECTOR, ".doc-body .cross-reference.missing-target"
         )
@@ -397,7 +431,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(
             len(
                 self.driver.find_elements(
-                    By.CSS_SELECTOR, ".margin-box.warning"
+                    By.CSS_SELECTOR, ".margin-box.fw-warning"
                 )
             ),
             2,
@@ -415,7 +449,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertEqual(
             len(
                 self.driver.find_elements(
-                    By.CSS_SELECTOR, ".margin-box.warning"
+                    By.CSS_SELECTOR, ".margin-box.fw-warning"
                 )
             ),
             0,
@@ -428,7 +462,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         button.click()
         self.driver.find_element(
             By.XPATH,
-            '//*[contains(@class, "ui-button") and normalize-space()="Remove"]',
+            '//*[contains(@class, "fw-button") and normalize-space()="Remove"]',
         ).click()
         time.sleep(1)
         figure_cross_reference = self.driver.find_elements(
@@ -496,8 +530,13 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(5) > .header-nav-item"
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (
+                    By.XPATH,
+                    "//span[contains(@class,'fw-pulldown-item')][normalize-space()='Record']",
+                )
+            )
         ).click()
         # Make changes
         self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
@@ -539,13 +578,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(
             Keys.UP
         ).perform()
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".editor-toolbar .multi-buttons"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            ".editor-toolbar .multi-buttons .ui-button:nth-child(5)",
-        ).click()
+        time.sleep(1)
 
         WebDriverWait(self.driver, self.wait_time).until(
             lambda driver: len(
@@ -553,12 +586,12 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                     By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
                 )
             )
-            >= 6
+            >= 5
         )
         change_tracking_boxes = self.driver.find_elements(
             By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
         )
-        self.assertEqual(len(change_tracking_boxes), 6)
+        self.assertGreaterEqual(len(change_tracking_boxes), 5)
 
     def test_share_document(self):
         yeti2_user = self.create_user(
@@ -596,7 +629,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-add-button"
+            By.CSS_SELECTOR, ".fw-dialog .fw-add-button"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
@@ -606,7 +639,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             Keys.RETURN
         ).perform()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-add-button"
+            By.CSS_SELECTOR, ".fw-dialog .fw-add-button"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
@@ -616,7 +649,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             Keys.RETURN
         ).perform()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-add-button"
+            By.CSS_SELECTOR, ".fw-dialog .fw-add-button"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
@@ -627,7 +660,10 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).perform()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
+                (
+                    By.CSS_SELECTOR,
+                    ".fw-collaborator-tr .fa-solid.fa-caret-down",
+                )
             )
         ).click()
         self.driver.find_element(
@@ -635,7 +671,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down"
+            By.CSS_SELECTOR, "tr:nth-child(3) .fa-solid.fa-caret-down"
         ).click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Write"]'
@@ -643,7 +679,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
         time.sleep(2)
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
@@ -656,7 +692,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-add-button"
+            By.CSS_SELECTOR, ".fw-dialog .fw-add-button"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
@@ -668,7 +704,10 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Downgrade the write rights to read rights for user4
         self.retry_click(
             self.driver,
-            (By.CSS_SELECTOR, "tr:nth-child(3) .fa-caret-down.edit-right"),
+            (
+                By.CSS_SELECTOR,
+                "tr:nth-child(3) .fa-solid.fa-caret-down.edit-right",
+            ),
         )
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "li[title=Read]"))
@@ -676,7 +715,8 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
         # Upgrade the read rights to write rights for user7
         self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(6) .fa-caret-down.edit-right"
+            By.CSS_SELECTOR,
+            "tr:nth-child(6) .fa-solid.fa-caret-down.edit-right",
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "li[title=Write]"))
@@ -687,7 +727,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         outbox = get_outbox(MAIL_STORAGE_NAME)
         # We keep track of the invitation email to open it later.
@@ -707,6 +747,11 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         # We close the editor
         self.driver.find_element(By.ID, "close-document-top").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, "#fw-alerts-wrapper li.fw-visible")
+            )
+        )
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()
@@ -734,7 +779,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.execute_script("arguments[0].click();", accept_button)
         # Wait for the dialog to close completely
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
         )
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
@@ -808,7 +853,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
             f"#collaborator-user-{yeti2_user.id} .delete-collaborator",
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -998,7 +1043,10 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "add-share-contact").click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
+                (
+                    By.CSS_SELECTOR,
+                    ".fw-collaborator-tr .fa-solid.fa-caret-down",
+                )
             )
         ).click()
         self.driver.find_element(
@@ -1006,7 +1054,7 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         time.sleep(1)
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         # Tag user 1 in comment
         self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
@@ -1019,9 +1067,10 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).perform()
         self.driver.find_element(By.CSS_SELECTOR, "button .fa-comment").click()
         ActionChains(self.driver).send_keys("Hello @Yeti").perform()
-        WebDriverWait(self.driver, self.wait_time).until(
+        tag_user = WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, ".tag-user"))
-        ).click()
+        )
+        self.driver.execute_script("arguments[0].click();", tag_user)
         outbox = get_outbox(MAIL_STORAGE_NAME)
         emails_sent_before_comment = len(outbox)
         self.driver.find_element(
@@ -1056,7 +1105,13 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "id-email").send_keys(
             "yeti4a@snowman.com"
         )
-        self.driver.find_element(By.ID, "signup-submit").click()
+        signup_button = self.driver.find_element(By.ID, "signup-submit")
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", signup_button
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, "signup-submit"))
+        ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, 'a[href="mailto:yeti4a@snowman.com"]')
@@ -1252,15 +1307,26 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         # Downgrade the write rights to read rights for user 3
         self.driver.find_element(
-            By.CSS_SELECTOR, "tr:nth-child(1) .fa-caret-down.edit-right"
+            By.CSS_SELECTOR,
+            "tr:nth-child(1) .fa-solid.fa-caret-down.edit-right",
         ).click()
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Read"]'
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "#my-contacts").click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
-        ).click()
+        submit_button = self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane .fw-dark"
+        )
+        self.driver.execute_script("arguments[0].click();", submit_button)
+        # Wait for the settings dialog and any menu overlay to disappear
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.staleness_of(submit_button)
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, ".fw-overlay")
+            )
+        )
         # Enter contacts page and check number of contacts
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))

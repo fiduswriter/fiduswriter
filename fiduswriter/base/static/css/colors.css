@@ -1,29 +1,29 @@
 :root {
     --main-text-color: #2c2723;
     --main-background-color: #f2f2f2;
-    --overlay-color: 170, 170, 170, 0.3;
+    --overlay-color: 170 170 170 / 0.3;
     --input-focus-background-color: #fbf9d2;
     --input-background-color: #f3f3f3;
     --input-dialog-border-color: #e0e0e0;
-    --wait-active-background-color: 240, 240, 240, 0.7;
-    --wait-active-full-background-color: 240, 240, 240, 1;
-    --highcontrast-overlay-color: 255, 255, 255, 0.8;
+    --wait-active-background-color: 240 240 240 / 0.7;
+    --wait-active-full-background-color: 240 240 240 / 1;
+    --highcontrast-overlay-color: 255 255 255 / 0.8;
     --highcontrast-background-color: #ffffff;
     --highcontrast-border-color: #e0e0e0;
-    --alert-box-shadow-color: 240, 240, 240, 1;
-    --dropup-box-shadow-color: 0, 0, 0, 0.11;
+    --alert-box-shadow-color: 240 240 240 / 1;
+    --dropup-box-shadow-color: 0 0 0 / 0.11;
     --nagivation-link-text-color: #dde7e3;
     --nagivation-link-active-text-color: #ffffff;
     --tokenfield-color: #555555;
-    --tooltip-background-color: 38, 38, 38, 0.6;
+    --tooltip-background-color: 38 38 38 / 0.6;
     --chat-highlight-background-color: #6495ed;
     --info-text-color: #ffffff;
-    --info-background-color: 36, 113, 176, 0.8;
+    --info-background-color: 36 113 176 / 0.8;
     --success-text-color: #ffffff;
-    --success-background-color: 109, 164, 147, 0.8;
+    --success-background-color: 109 164 147 / 0.8;
     --warning-text-color: #ffffff;
-    --warning-background-color: 221, 208, 63, 0.8;
-    --warning-border-color: 200, 63, 27, 0.8;
+    --warning-background-color: 221 208 63 / 0.8;
+    --warning-border-color: 200 63 27 / 0.8;
     --error-border-color: #af3515;
     --error-background-color: #cc3f1a;
     --input-error-background-color: #f34141;
@@ -31,7 +31,7 @@
     --pulldown-header-text-color: #ffffff;
     --pulldown-header-background-color: #2c2723;
     --pulldown-separator-color: #f2f2f2;
-    --pulldown-box-shadow-color: 0, 0, 0, 0.2;
+    --pulldown-box-shadow-color: 0 0 0 / 0.2;
     --table-row-background-color: #bfedc1;
     --menu-cursor-border-color: #63ab0d;
 
@@ -119,8 +119,8 @@
     --cs-disabled-background: #d3d3d3;
     --cs-disabled-border: #a9a9a9;
     --overview-checkbox-color: #000000;
-    --overview-checkbox-background-color-from: 255, 255, 255, 1;
-    --overview-checkbox-background-color-to: 255, 255, 255, 0;
+    --overview-checkbox-background-color-from: 255 255 255 / 1;
+    --overview-checkbox-background-color-to: 255 255 255 / 0;
     --overview-checkbox-border: #a9a9a9;
 
     /* template manager */
@@ -134,13 +134,13 @@
     --part-toc-background-color: #985f99;
 
     /* editor */
-    --editor-track-background-color: 45, 82, 144, 0.63;
+    --editor-track-background-color: 45 82 144 / 0.63;
     --editor-track-active-background-color: #788fb4;
     --editor-track-text-color: #ffffff;
     --editor-reviewed: #81f781;
     --editor-text-content-item-background-color: #d3d3d3; /* citations, toc and other content that is a single unit */
     --editor-text-content-item-hover-background-color: #808080;
-    --editor-navigator-background-color: 0, 0, 0, 0.8;
+    --editor-navigator-background-color: 0 0 0 / 0.8;
     --editor-navigator-color: #ffffff;
     --editor-navigator-scrollbar-background-color: #181818;
     --editor-navigator-scrollbar-background-color-hover: #0f0f0f;

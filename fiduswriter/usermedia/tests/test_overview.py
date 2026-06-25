@@ -59,42 +59,33 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         fill_last_category_input("landscape")
         driver.find_element(
-            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
+            By.CSS_SELECTOR, "#editCategoryList tr:last-child .fw-add-input"
         ).click()
         fill_last_category_input("people")
         driver.find_element(
-            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
+            By.CSS_SELECTOR, "#editCategoryList tr:last-child .fw-add-input"
         ).click()
         fill_last_category_input("scientific")
         driver.find_element(
-            By.CSS_SELECTOR, "#edit-categories button.fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-dark"
         ).click()
         driver.refresh()
         driver.find_element(
             By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
-        self.assertEqual(
-            "landscape",
-            driver.find_element(By.ID, "categoryTitle_1").get_attribute(
-                "value"
-            ),
-        )
-        self.assertEqual(
-            "people",
-            driver.find_element(By.ID, "categoryTitle_2").get_attribute(
-                "value"
-            ),
-        )
-        self.assertEqual(
-            "scientific",
-            driver.find_element(By.ID, "categoryTitle_3").get_attribute(
-                "value"
-            ),
+        category_titles = [
+            el.get_attribute("value")
+            for el in driver.find_elements(
+                By.CSS_SELECTOR, "#editCategoryList input.category-form"
+            )
+            if el.get_attribute("value")
+        ]
+        self.assertCountEqual(
+            ["landscape", "people", "scientific"],
+            category_titles,
         )
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Submit'])[1]/following::button[1]",
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-orange"
         ).click()
         driver.find_element(
             By.CSS_SELECTOR, "button[title='Upload new image (Alt-u)']"
@@ -103,11 +94,11 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.NAME, "title").send_keys("An image")
         driver.find_element(
             By.XPATH,
-            "//div[@class='fw-checkable-label' and contains(text(), 'landscape')]",
+            "//div[contains(@class,'fw-checkable-label') and contains(text(), 'landscape')]",
         ).click()
         driver.find_element(
             By.XPATH,
-            "//div[@class='fw-checkable-label' and contains(text(), 'people')]",
+            "//div[contains(@class,'fw-checkable-label') and contains(text(), 'people')]",
         ).click()
         # image path
         imagePath = os.path.join(
@@ -115,12 +106,17 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         driver.find_element(By.NAME, "image").send_keys(imagePath)
         driver.find_element(
-            By.CSS_SELECTOR, "#editimage button.fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-dark"
         ).click()
-        image_title = WebDriverWait(driver, self.wait_time).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "edit-image"))
+        WebDriverWait(driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".edit-image"), "An image"
+            )
         )
-        self.assertEqual("An image", image_title.text)
+        self.assertEqual(
+            "An image",
+            driver.find_element(By.CSS_SELECTOR, ".edit-image").text,
+        )
         search_input = driver.find_element(
             By.CSS_SELECTOR,
             ".fw-overview-menu-item .fw-button input[type=search]",
@@ -141,7 +137,7 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         driver.find_element(By.CSS_SELECTOR, ".delete-image").click()
         driver.find_element(
-            By.CSS_SELECTOR, "#confirmdeletion button.fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-dark"
         ).click()
         image_placeholder = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "datatable-empty"))

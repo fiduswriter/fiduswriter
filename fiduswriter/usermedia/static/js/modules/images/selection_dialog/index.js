@@ -15,6 +15,12 @@ export class ImageSelectionDialog {
     }
 
     init() {
+        console.log(
+            "DEBUG selection init: docImages=",
+            Object.keys(this.imageDB.db).length,
+            "userImages=",
+            Object.keys(this.userImageDB.db).length
+        )
         this.images = Object.values(this.imageDB.db).map(image => {
             return {
                 image,
@@ -30,6 +36,7 @@ export class ImageSelectionDialog {
                 db: "user"
             })
         })
+        console.log("DEBUG selection images=", this.images.length)
         const buttons = []
         const p = new Promise(resolve => {
             if (!this.page.app.isOffline()) {
@@ -49,13 +56,21 @@ export class ImageSelectionDialog {
 
                             resolve(
                                 imageUpload.init().then(imageId => {
+                                    console.log(
+                                        "DEBUG upload resolved imageId=",
+                                        imageId
+                                    )
                                     this.imgId = imageId
                                     // For E2EE docs the image goes straight
                                     // into the document DB, not the user's.
                                     this.imgDb = this.isE2EE()
                                         ? "document"
                                         : "user"
+                                    console.log(
+                                        "DEBUG closing selection dialog"
+                                    )
                                     this.imageDialog.close()
+                                    console.log("DEBUG reinit selection dialog")
                                     return this.init()
                                 })
                             )

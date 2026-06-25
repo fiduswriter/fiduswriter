@@ -332,7 +332,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         ).send_keys(os.path.join(self.download_dir, et_file))
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         len_export_templates = WebDriverWait(
             self.driver, self.wait_time
@@ -419,7 +419,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-add-button"
+            By.CSS_SELECTOR, ".fw-dialog .fw-add-button"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").click()
         ActionChains(self.driver).send_keys("user2@user.com").send_keys(
@@ -434,7 +434,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Write"]'
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         self.driver.find_element(By.ID, "close-document-top").click()
         WebDriverWait(self.driver, self.wait_time).until(
@@ -462,7 +462,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.execute_script("arguments[0].click();", accept_button)
         # Wait for the dialog to close completely
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
         )
         self.driver.find_element(
             By.XPATH, '//*[normalize-space()="Documents"]'
@@ -524,13 +524,13 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "li:nth-child(5) > .fw-pulldown-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog select.fw-button"
+            By.CSS_SELECTOR, ".fw-dialog select.fw-button"
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, "option[value='standard-article']"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog button.fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog button.fw-dark"
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)

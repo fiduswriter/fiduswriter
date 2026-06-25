@@ -55,15 +55,20 @@ export class ImageEditDialog {
         })
 
         const image = this.imageId ? this.imageDB.db[this.imageId] : false
-        this.catsList = new CheckableList({
-            dom: document.getElementById("image-edit-categories"),
-            options: this.imageDB.cats.map(cat => ({
-                id: cat.id,
-                label: cat.category_title
-            })),
-            initialValue: image ? image.cats : [],
-            multiple: true
-        })
+        const catsEl = document.getElementById("image-edit-categories")
+        if (catsEl) {
+            this.catsList = new CheckableList({
+                dom: catsEl,
+                options: this.imageDB.cats.map(cat => ({
+                    id: cat.id,
+                    label: cat.category_title
+                })),
+                initialValue: image ? image.cats : [],
+                multiple: true
+            })
+        } else {
+            this.catsList = {value: []}
+        }
 
         if (!this.imageId) {
             this.bindMediaUploadEvents()

@@ -172,7 +172,7 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
             settings.PROJECT_PATH, "document/tests/uploads/image.png"
         )
         driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog input[type=file]"
+            By.CSS_SELECTOR, ".fw-dialog input[type=file]"
         ).send_keys(image_path)
         driver.find_element(
             By.XPATH, '//*[normalize-space()="Upload"]'
@@ -251,7 +251,7 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
             ".profile-email-table tbody tr:nth-child(2) .primary-email-radio",
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog-buttonset .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog-buttonset .fw-dark"
         ).click()
         self.assertInfoAlert("The primary email has been updated.")
         self.driver.find_element(

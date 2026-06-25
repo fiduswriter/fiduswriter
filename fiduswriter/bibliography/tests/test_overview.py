@@ -57,41 +57,37 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         fill_last_category_input("Fish")
         driver.find_element(
-            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
+            By.CSS_SELECTOR, "#editCategoryList tr:last-child .fw-add-input"
         ).click()
         fill_last_category_input("Table")
         driver.find_element(
-            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
+            By.CSS_SELECTOR, "#editCategoryList tr:last-child .fw-add-input"
         ).click()
         fill_last_category_input("Jungle")
         driver.find_element(
-            By.CSS_SELECTOR, "#edit-categories button.fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-dark"
         ).click()
 
         driver.find_element(
             By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
-        try:
-            self.assertEqual(
-                "Fish",
-                driver.find_element(By.ID, "categoryTitle_1").get_attribute(
-                    "value"
-                ),
+        category_titles = [
+            el.get_attribute("value")
+            for el in driver.find_elements(
+                By.CSS_SELECTOR, "#editCategoryList input.category-form"
             )
-        except AssertionError as e:
-            self.verificationErrors.append(str(e))
+            if el.get_attribute("value")
+        ]
         try:
-            self.assertEqual(
-                "Table",
-                driver.find_element(By.ID, "categoryTitle_2").get_attribute(
-                    "value"
-                ),
+            self.assertCountEqual(
+                ["Fish", "Table", "Jungle"],
+                category_titles,
             )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
         driver.find_element(
             By.CSS_SELECTOR,
-            "button.fw-dark",
+            ".fw-dialog-buttonpane button.fw-orange",
         ).click()
         driver.find_element(
             By.CSS_SELECTOR,
@@ -120,38 +116,50 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         last_name.click()
         last_name.send_keys("Hansen")
-        date_field = driver.find_element(By.CSS_SELECTOR, "input.date")
+        date_field = driver.find_element(By.CSS_SELECTOR, "input.fw-date")
         date_field.click()
         date_field.send_keys("1984")
         driver.find_element(By.LINK_TEXT, "Categories").click()
+        WebDriverWait(driver, self.wait_time).until(
+            EC.visibility_of_element_located(
+                (By.CSS_SELECTOR, "#categories-field .fw-checkable-label")
+            )
+        )
         driver.find_element(
             By.XPATH,
-            "//div[@class='fw-checkable-label' and contains(text(), 'Table')]",
+            "//div[contains(@class,'fw-checkable-label') and normalize-space(text())='Table']",
         ).click()
         driver.find_element(
             By.XPATH,
-            "//div[@class='fw-checkable-label' and contains(text(), 'Jungle')]",
+            "//div[contains(@class,'fw-checkable-label') and normalize-space(text())='Jungle']",
         ).click()
         try:
-            self.assertEqual(
+            self.assertIn(
                 "Jungle",
-                driver.find_element(
-                    By.XPATH,
-                    "//div[@class='fw-checkable-label' and contains(text(), 'Jungle')]",
-                ).text,
+                [
+                    el.text.strip()
+                    for el in driver.find_elements(
+                        By.CSS_SELECTOR,
+                        "#categories-field .fw-checkable-label.fw-checked",
+                    )
+                ],
             )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
-        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
+        self.retry_click(
+            driver, (By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-dark")
+        )
         # Make change to citation source
-        driver.find_element(By.CSS_SELECTOR, ".edit-bib").click()
+        self.retry_click(driver, (By.CSS_SELECTOR, ".edit-bib"))
         date_input = driver.find_element(
-            By.CSS_SELECTOR, ".entry-field.date input"
+            By.CSS_SELECTOR, ".fw-entry-field.date input.fw-date"
         )
         date_input.click()
         date_input.send_keys(Keys.BACKSPACE)
         date_input.send_keys("5")
-        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
+        self.retry_click(
+            driver, (By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-dark")
+        )
         # Closed citation dialog
         search_input = driver.find_element(
             By.CSS_SELECTOR,
@@ -259,7 +267,9 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(
             By.CSS_SELECTOR, ".fw-add-input.icon-addremove"
         ).click()
-        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
+        driver.find_element(
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-dark"
+        ).click()
         driver.find_element(
             By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()

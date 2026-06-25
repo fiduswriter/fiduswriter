@@ -81,7 +81,7 @@ export class HeaderbarView {
 
     onclick(event) {
         const target = event.target
-        if (target.matches("div#close-document-top a i.fa-times")) {
+        if (target.closest("div#close-document-top a i.fa-times")) {
             // If the user is offline prevent the closing of the document.
             if (this.editor.app.isOffline()) {
                 event.preventDefault()
@@ -92,12 +92,15 @@ export class HeaderbarView {
                 )
             }
         } else if (
-            target.matches("#headerbar #header-navigation .fw-pulldown-item")
+            target.closest("#headerbar #header-navigation .fw-pulldown-item")
         ) {
             // A header nav menu item was clicked. Now we just need to find
             // which one and execute the corresponding action.
+            const item = target.closest(
+                "#headerbar #header-navigation .fw-pulldown-item"
+            )
             const searchPath = []
-            let seekItem = target
+            let seekItem = item
             while (seekItem.closest("li")) {
                 let itemNumber = 0
                 seekItem = seekItem.closest("li")
@@ -124,13 +127,16 @@ export class HeaderbarView {
             }
             this.executeMenuItem(menuItem, menu)
         } else if (
-            target.matches(
+            target.closest(
                 "#headerbar #header-navigation .header-nav-item:not(.fw-disabled)"
             )
         ) {
             // A menu has been clicked, lets find out which one.
+            const item = target.closest(
+                "#headerbar #header-navigation .header-nav-item:not(.fw-disabled)"
+            )
             let menuNumber = 0
-            let seekItem = target.parentElement
+            let seekItem = item.parentElement
             while (seekItem.previousElementSibling) {
                 menuNumber++
                 seekItem = seekItem.previousElementSibling

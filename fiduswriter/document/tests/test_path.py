@@ -180,8 +180,8 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
         february_folder = self.driver.find_element(
             By.CSS_SELECTOR,
             (
-                "#move-dialog .file-selector .folder-content .folder-content "
-                ".folder-content .folder-name"
+                "#move-dialog .fw-file-selector .fw-folder-content .fw-folder-content "
+                ".fw-folder-content .fw-folder-name"
             ),
         )
         self.assertEqual(february_folder.text.strip(), "February")
@@ -197,7 +197,11 @@ class PathTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH,
             '//*[contains(@class, "fw-dark") and normalize-space()="Submit"]',
         ).click()
-        time.sleep(1)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, "#fw-alerts-outer-wrapper li")
+            )
+        )
         # Document should be gone as it is moved into the February subfolder
         documents = self.driver.find_elements(
             By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"

@@ -215,7 +215,7 @@ export class DocTemplatesOverview {
             docTemplate.added, // format?
             docTemplate.updated, // format ?
             `<span class="delete-doc-template fw-inline fw-link-text" data-id="${docTemplate.id}" data-title="${escapeText(docTemplate.title)}">
-                ${docTemplate.is_owner ? '<i class="fa fa-trash-alt"></i>' : ""}
+                ${docTemplate.is_owner ? '<i class="fa fa-trash-can"></i>' : ""}
            </span>`
         ]
     }

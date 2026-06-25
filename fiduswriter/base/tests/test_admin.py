@@ -60,6 +60,6 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).key_up(Keys.CONTROL).send_keys("Anyone out there?").perform()
         self.driver2.find_element(By.ID, "submit_user_message").click()
         self.assertEqual(
-            self.driver.find_element(By.CSS_SELECTOR, ".ui-dialog p").text,
+            self.driver.find_element(By.CSS_SELECTOR, ".fw-dialog p").text,
             "Anyone out there?",
         )

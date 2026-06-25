@@ -64,6 +64,12 @@ def set_database_connection():
     Called as a setup hook inside the server child process.
     """
     from django.conf import settings
+    from django.db import connections
+
+    # Close any inherited database connections before reconfiguring the
+    # child process so that SQLite does not treat the test database as
+    # read-only after the fork.
+    connections.close_all()
 
     test_db_name = settings.DATABASES["default"]["TEST"].get("NAME")
     if not test_db_name:
@@ -179,7 +185,6 @@ class GranianProcess(multiprocessing.Process):
                 port=port,
                 interface=Interfaces.ASGI,
                 workers=1,
-                log_enabled=False,
                 static_path_route=static_path_route,
                 static_path_mount=static_path_mount,
             ).serve(target_loader=lambda _: application, wrap_loader=True)

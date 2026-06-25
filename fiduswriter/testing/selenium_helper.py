@@ -117,6 +117,15 @@ class SeleniumHelper:
                 ).click()
                 break
             except ElementClickInterceptedException:
+                # Alerts may be overlapping the target; wait for them to clear.
+                try:
+                    WebDriverWait(driver, 6).until(
+                        EC.invisibility_of_element_located(
+                            (By.CSS_SELECTOR, "#fw-alerts-outer-wrapper li")
+                        )
+                    )
+                except TimeoutException:
+                    pass
                 count += 1
                 time.sleep(1)
 
@@ -129,9 +138,9 @@ class SeleniumHelper:
         ).click()
         try:
             WebDriverWait(driver, 2).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))
             )
-            driver.find_element(By.CSS_SELECTOR, ".ui-dialog .fw-dark").click()
+            driver.find_element(By.CSS_SELECTOR, ".fw-dialog .fw-dark").click()
         except TimeoutException:
             pass
 

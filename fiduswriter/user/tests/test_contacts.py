@@ -65,7 +65,7 @@ class ContactsTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-add-button"
+            By.CSS_SELECTOR, ".fw-dialog .fw-add-button"
         ).click()
         self.driver.find_element(By.ID, "new-contact-user-string").click()
         self.driver.find_element(By.ID, "new-contact-user-string").send_keys(
@@ -75,10 +75,12 @@ class ContactsTest(SeleniumHelper, ChannelsLiveServerTestCase):
             Keys.RETURN
         ).perform()
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+            By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
         # Close document
-        self.driver.find_element(By.ID, "close-document-top").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#close-document-top i.fa-times"
+        ).click()
         # Enter contacts page
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))

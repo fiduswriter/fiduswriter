@@ -53,7 +53,7 @@ function getCollaborators(accessRights, documentIds) {
 function collectAccessRights(container) {
     const accessRights = []
     container
-        .querySelectorAll("#share-contact .collaborator-tr")
+        .querySelectorAll("#share-contact .fw-collaborator-tr")
         .forEach(el => {
             accessRights.push({
                 holder: {
@@ -146,7 +146,7 @@ export class AccessRightsTab {
             .addEventListener("click", () => {
                 const selectedData = []
                 container
-                    .querySelectorAll("#my-contacts .fw-checkable.checked")
+                    .querySelectorAll("#my-contacts .fw-checkable.fw-checked")
                     .forEach(el => {
                         const collaboratorEl = container.querySelector(
                             `#collaborator-${el.dataset.type}-${el.dataset.id}`
@@ -156,7 +156,7 @@ export class AccessRightsTab {
                                 collaboratorEl.dataset.rights = "read"
                                 const accessRightIcon =
                                     collaboratorEl.querySelector(
-                                        ".icon-access-right"
+                                        ".fw-icon-access-right"
                                     )
                                 accessRightIcon.classList.remove(
                                     "icon-access-delete"
@@ -191,8 +191,10 @@ export class AccessRightsTab {
                     })
 
                 container
-                    .querySelectorAll("#my-contacts .checkable-label.checked")
-                    .forEach(el => el.classList.remove("checked"))
+                    .querySelectorAll(
+                        "#my-contacts .checkable-label.fw-checked"
+                    )
+                    .forEach(el => el.classList.remove("fw-checked"))
                 container
                     .querySelector("#share-contact table tbody")
                     .insertAdjacentHTML(
@@ -263,25 +265,25 @@ export class AccessRightsTab {
                     setCheckableLabel(el.target)
                     break
                 case findTarget(event, ".delete-collaborator", el): {
-                    const colRow = el.target.closest(".collaborator-tr")
+                    const colRow = el.target.closest(".fw-collaborator-tr")
                     colRow.dataset.rights = "delete"
                     colRow
-                        .querySelector(".icon-access-right")
+                        .querySelector(".fw-icon-access-right")
                         .setAttribute(
                             "class",
-                            "icon-access-right icon-access-delete"
+                            "fw-icon-access-right icon-access-delete"
                         )
                     break
                 }
                 case findTarget(event, ".edit-right", el): {
-                    const colRow = el.target.closest(".collaborator-tr")
+                    const colRow = el.target.closest(".fw-collaborator-tr")
                     const currentRight = colRow.dataset.rights
                     const menu = this.getDropdownMenu(
                         currentRight,
                         newRight => {
                             colRow.dataset.rights = newRight
                             colRow
-                                .querySelector(".icon-access-right")
+                                .querySelector(".fw-icon-access-right")
                                 .setAttribute(
                                     "class",
                                     `icon-access-right icon-access-${newRight}`
@@ -679,7 +681,7 @@ export class DocumentAccessRightsDialog {
         // Hide the share-link tab when multiple documents are selected
         if (!this.tab.singleDocumentId) {
             const shareTab = this.dialog.dialogEl.querySelector(
-                ".ui-tabs-nav .tab-link:last-child"
+                ".fw-tabs-nav .fw-tab-link:last-child"
             )
             if (shareTab) {
                 shareTab.style.display = "none"

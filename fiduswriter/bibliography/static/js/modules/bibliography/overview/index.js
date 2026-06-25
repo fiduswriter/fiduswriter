@@ -1,10 +1,8 @@
 import fixUTF8 from "fix-utf8"
-import {DataTable} from "simple-datatables"
-import {keyName} from "w3c-keyname"
 
 import {
-    DatatableBulk,
     Dialog,
+    OverviewDataTable,
     OverviewMenuView,
     addAlert,
     ensureCSS,
@@ -79,14 +77,15 @@ export class BibliographyOverview {
 
     /* Initialize the overview table */
     initTable(ids) {
-        const tableEl = document.createElement("table")
-        tableEl.id = "bibliography"
-        tableEl.classList.add("fw-data-table")
-        tableEl.classList.add("fw-large")
-        this.dom.querySelector(".fw-contents").innerHTML = ""
-        this.dom.querySelector(".fw-contents").appendChild(tableEl)
+        if (this.overviewTable) {
+            this.overviewTable.destroy()
+            this.overviewTable = null
+        }
+        this.table = null
+        this.dtBulk = null
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 1)
+        const contentsEl = this.dom.querySelector(".fw-contents")
+        contentsEl.innerHTML = ""
 
         const hiddenCols = [0]
 
@@ -97,31 +96,9 @@ export class BibliographyOverview {
             }
         }
 
-        this.table = new DataTable(tableEl, {
-            searchable: true,
-            paging: false,
-            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
-            rowNavigation: true,
-            rowSelectionKeys: ["Enter", "Delete", " "],
-            tabIndex: 1,
-            labels: {
-                noRows: gettext("No sources registered"),
-                noResults: gettext("No sources found") // Message shown when there are no search results
-            },
-            template: (options, _dom) =>
-                `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>`,
-            data: {
-                headings: [
-                    "",
-                    this.dtBulk.getHTML(),
-                    gettext("Title"),
-                    gettext("Sourcetype"),
-                    gettext("Author"),
-                    gettext("Published"),
-                    ""
-                ],
-                data: ids.map(id => this.createTableRow(id))
-            },
+        this.overviewTable = new OverviewDataTable({
+            dom: contentsEl,
+            classes: ["fw-data-table", "fw-large"],
             columns: [
                 {
                     select: 0,
@@ -139,8 +116,35 @@ export class BibliographyOverview {
                 {
                     select: 6,
                     sortable: false
+                },
+                {
+                    select: [this.lastSort.column],
+                    sort: this.lastSort.dir
                 }
             ],
+            data: ids.map(id => this.createTableRow(id)),
+            idColumn: 0,
+            checkboxColumn: 1,
+            bulkMenu: bulkMenuModel(),
+            bulkMenuPage: this,
+            searchable: true,
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
+            tabIndex: 1,
+            labels: {
+                noRows: gettext("No sources registered"),
+                noResults: gettext("No sources found") // Message shown when there are no search results
+            },
+            headings: [
+                "",
+                "",
+                gettext("Title"),
+                gettext("Sourcetype"),
+                gettext("Author"),
+                gettext("Published"),
+                ""
+            ],
+            template: (options, _dom) =>
+                `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>`,
             rowRender: (row, tr, _index) => {
                 const id = row.cells[0].data
                 const inputNode = {
@@ -164,55 +168,32 @@ export class BibliographyOverview {
                         }
                     }
                 ]
-            }
-        })
-
-        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
-            event.preventDefault()
-            if (event.type === "keydown") {
-                const key = keyName(event)
-                if (key === "Enter") {
-                    if (this.getSelected().length > 0) {
-                        // Don't open. Let the bulk menu handle it.
-                        return
-                    }
-                    const editButton = this.table.dom.querySelector(
-                        `tr[data-index="${rowIndex}"] span.edit-bib`
-                    )
-                    if (editButton) {
-                        editButton.click()
-                    }
-                } else if (key === " ") {
-                    const cell = this.table.data.data[rowIndex].cells[1]
-                    cell.data = !cell.data
-                    cell.text = String(cell.data)
-                    this.table.update()
-                } else if (key === "Delete") {
-                    const cell = this.table.data.data[rowIndex].cells[0]
-                    const bibId = cell.data
-                    this.deleteBibEntryDialog([bibId])
-                }
-            } else {
-                if (
-                    event.target.closest(
-                        "span.edit-bib, span.delete-bib, label"
-                    )
-                ) {
+            },
+            onEnter: (row, _event) => {
+                if (this.getSelected().length > 0) {
                     return
                 }
-
-                if (!focused) {
-                    this.table.dom.focus()
+                const rowIndex = this.table.data.data.indexOf(row)
+                const editButton = this.table.dom.querySelector(
+                    `tr[data-index="${rowIndex}"] span.edit-bib`
+                )
+                if (editButton) {
+                    editButton.click()
                 }
-                this.table.rows.setCursor(rowIndex)
+            },
+            onDelete: row => {
+                const bibId = row.cells[0].data
+                this.deleteBibEntryDialog([bibId])
             }
         })
+        this.overviewTable.init()
+        this.table = this.overviewTable.table
+        this.table.id = "bibliography"
+        this.dtBulk = this.overviewTable.dtBulk
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
-
-        this.dtBulk.init(this.table)
 
         this.table.dom.focus()
     }
@@ -281,7 +262,7 @@ export class BibliographyOverview {
             </span>`, // title
             getBibTypeTitle(bibInfo.bib_type), // sourcetype
             bibauthors ? nameToText(bibauthors) : "", // author
-            `<span class="date">${bibInfo.fields.date ? bibInfo.fields.date.replace("/", " ") : ""}</span>`, // published,
+            `<span class="fw-date">${bibInfo.fields.date ? bibInfo.fields.date.replace("/", " ") : ""}</span>`, // published,
             `<span class="delete-bib fw-link-text" data-id="${id}"><i class="fa fa-trash-alt">  </i></span>` // delete icon
         ]
     }

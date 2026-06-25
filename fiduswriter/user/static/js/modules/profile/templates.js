@@ -40,7 +40,7 @@ export const changeEmailDialogTemplate = () =>
                         placeholder="${gettext("Enter the new E-mail address")}" />
             </form>
         </td></tr>
-        <tr><td><span id="fw-add-email-error" class="warning"></span></td></tr>
+        <tr><td><span id="fw-add-email-error" class="fw-warning"></span></td></tr>
     </tbody></table>`
 
 /** A template for the delete email dialog of the user account. */
@@ -65,7 +65,7 @@ export const changePwdDialogTemplate = ({username}) =>
                     class="fw-profile-dialog-input"
                     placeholder="${gettext("Confirm the new password")}" />
         </form></td></tr>
-        <tr><td><span id="fw-password-change-error" class="warning"></span></td></tr>
+        <tr><td><span id="fw-password-change-error" class="fw-warning"></span></td></tr>
     </tbody></table>`
 
 export const profileContents = (
@@ -74,7 +74,7 @@ export const profileContents = (
     settings = {},
     pluginTemplates = []
 ) =>
-    `<div id="profile-wrapper" class="clearfix ui-dialog ui-dialog-fullpage">
+    `<div id="profile-wrapper" class="fw-clearfix fw-dialog ui-dialog-fullpage">
         <div id="profile-avatar">
             ${avatarTemplate({user})}
             <div id="avatar-pulldown-wrapper">

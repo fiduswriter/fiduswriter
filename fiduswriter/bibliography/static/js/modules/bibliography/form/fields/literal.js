@@ -107,9 +107,9 @@ export class LiteralFieldForm {
                         this.placeHolder
                     ) {
                         const placeHolder = document.createElement("span")
-                        placeHolder.classList.add("placeholder")
+                        placeHolder.classList.add("fw-placeholder")
                         // There is only one field, so we know the selection is there
-                        placeHolder.classList.add("selected")
+                        placeHolder.classList.add("fw-selected")
                         placeHolder.setAttribute(
                             "data-placeholder",
                             this.placeHolder

@@ -3,6 +3,7 @@ import deepEqual from "fast-deep-equal"
 import {
     DatatableBulk,
     Dialog,
+    OverviewDataTable,
     OverviewMenuView,
     activateWait,
     addAlert,
@@ -17,8 +18,7 @@ import {
     shortFileTitle,
     whenReady
 } from "fwtoolkit"
-import {DataTable} from "simple-datatables"
-import {keyName} from "w3c-keyname"
+
 import {plugins} from "../../../plugins/documents_overview"
 import {baseBodyTemplate} from "../../common/index.js"
 import {FeedbackTab} from "../../feedback"
@@ -113,7 +113,7 @@ export class DocumentOverview {
                     this.mod.actions.deleteDocumentDialog(ids, this.app)
                     break
                 }
-                case findTarget(event, ".owned-by-user.rights", el): {
+                case findTarget(event, ".fw-owned-by-user.rights", el): {
                     // Per-row access-rights icon has been removed for owners.
                     // Access rights are now edited inside the Document Settings dialog.
                     break
@@ -441,30 +441,22 @@ export class DocumentOverview {
 
     /* Initialize the overview table */
     initTable(searching = false) {
-        if (this.table) {
-            this.table.destroy()
-            this.table = null
+        if (this.overviewTable) {
+            this.overviewTable.destroy()
+            this.overviewTable = null
         }
-        if (this.dtBulk) {
-            this.dtBulk.destroy()
-            this.dtBulk = null
-        }
+        this.table = null
+        this.dtBulk = null
+
         const subdirs = {}
-        const tableEl = document.createElement("table")
-        tableEl.classList.add("fw-data-table")
-        tableEl.classList.add("fw-document-table")
-        tableEl.classList.add("fw-large")
         const contentsEl = document.querySelector(".fw-contents")
         contentsEl.innerHTML = "" // Delete any old table
-        contentsEl.appendChild(tableEl)
 
         if (this.path !== "/") {
             const headerEl = document.createElement("h1")
             headerEl.innerHTML = escapeText(this.path)
-            contentsEl.insertBefore(headerEl, tableEl)
+            contentsEl.appendChild(headerEl)
         }
-
-        this.dtBulk = new DatatableBulk(this, this.dtBulkModel, 2)
 
         const hiddenCols = [0, 1]
 
@@ -555,35 +547,67 @@ export class DocumentOverview {
                 })
             }
         }
-        this.table = new DataTable(tableEl, {
+
+        this.overviewTable = new OverviewDataTable({
+            dom: contentsEl,
+            classes: ["fw-data-table", "fw-document-table", "fw-large"],
+            columns: [
+                {
+                    select: 0,
+                    type: "number"
+                },
+                {
+                    select: 1,
+                    type: "string"
+                },
+                {
+                    select: 2,
+                    type: "boolean"
+                },
+                {
+                    select: [5, 6],
+                    type: "date"
+                },
+                {
+                    select: hiddenCols,
+                    hidden: true
+                },
+                {
+                    select: [2, 4, 8, 9],
+                    sortable: false
+                },
+                {
+                    select: [this.lastSort.column],
+                    sort: this.lastSort.dir
+                }
+            ],
+            data: fileList,
+            idColumn: 0,
+            checkboxColumn: 2,
+            bulkMenu: this.dtBulkModel,
+            bulkMenuPage: this,
             searchable: searching,
-            paging: false,
             scrollY: `${Math.max(window.innerHeight - 360, 200)}px`,
-            tableRender,
-            rowNavigation: true,
-            rowSelectionKeys: ["Enter", "Delete", " "],
             tabIndex: 1,
             labels: {
                 noRows: gettext("No documents available"), // Message shown when there are no entries
                 noResults: gettext("No documents found") // Message shown when there are no search results
             },
+            headings: [
+                "",
+                "",
+                "",
+                gettext("Title"),
+                gettext("Revisions"),
+                gettext("Created"),
+                gettext("Last changed"),
+                gettext("Owner"),
+                gettext("Settings"),
+                ""
+            ],
             template: (options, _dom) =>
                 `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
-            data: {
-                headings: [
-                    "",
-                    "",
-                    this.dtBulk.getHTML(),
-                    gettext("Title"),
-                    gettext("Revisions"),
-                    gettext("Created"),
-                    gettext("Last changed"),
-                    gettext("Owner"),
-                    gettext("Settings"),
-                    ""
-                ],
-                data: fileList
-            },
+            tableRender,
             rowRender: (row, tr, _index) => {
                 if (row.cells[1].data === "folder") {
                     tr.childNodes[0].childNodes = []
@@ -612,87 +636,31 @@ export class DocumentOverview {
                     }
                 ]
             },
-            columns: [
-                {
-                    select: 0,
-                    type: "number"
-                },
-                {
-                    select: 1,
-                    type: "string"
-                },
-                {
-                    select: 2,
-                    type: "boolean"
-                },
-                /*{
-                    select: 3,
-                    type: "string"
-                },*/
-                {
-                    select: [5, 6],
-                    type: "date"
-                },
-                {
-                    select: hiddenCols,
-                    hidden: true
-                },
-                {
-                    select: [2, 4, 8, 9],
-                    sortable: false
-                },
-                {
-                    select: [this.lastSort.column],
-                    sort: this.lastSort.dir
-                }
-            ]
-        })
-
-        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
-            event.preventDefault()
-            if (event.type === "keydown") {
-                const key = keyName(event)
-                if (key === "Enter") {
-                    if (this.getSelected().length > 0) {
-                        // Don't open the document. Let the bulk menu handle it.
-                        return
-                    }
-                    const link = this.table.dom.querySelector(
-                        `tr[data-index="${rowIndex}"] a.fw-data-table-title`
-                    )
-                    if (link) {
-                        link.click()
-                    }
-                } else if (key === " ") {
-                    const cell = this.table.data.data[rowIndex].cells[2]
-                    cell.data = !cell.data
-                    cell.text = String(cell.data)
-                    this.table.update()
-                } else if (key === "Delete") {
-                    const cell = this.table.data.data[rowIndex].cells[0]
-                    const docId = cell.data
-                    this.mod.actions.deleteDocumentDialog([docId], this.app)
-                }
-            } else {
-                if (
-                    event.target.closest(
-                        "a, span.fw-link-text, span.delete-document, span.delete-folder, span.rights, span.revisions, span.document-settings, label"
-                    )
-                ) {
+            onEnter: (row, _event) => {
+                if (this.getSelected().length > 0) {
+                    // Don't open the document. Let the bulk menu handle it.
                     return
                 }
-                if (!focused) {
-                    this.table.dom.focus()
+                const rowIndex = this.table.data.data.indexOf(row)
+                const link = this.table.dom.querySelector(
+                    `tr[data-index="${rowIndex}"] a.fw-data-table-title`
+                )
+                if (link) {
+                    link.click()
                 }
-                this.table.rows.setCursor(rowIndex)
+            },
+            onDelete: row => {
+                const docId = row.cells[0].data
+                this.mod.actions.deleteDocumentDialog([docId], this.app)
             }
         })
+        this.overviewTable.init()
+        this.table = this.overviewTable.table
+        this.dtBulk = this.overviewTable.dtBulk
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
-
-        this.dtBulk.init(this.table)
 
         this.table.dom.focus()
     }
@@ -799,7 +767,7 @@ export class DocumentOverview {
             </span>
             <span class="fw-searchable">${escapeText(doc.owner.name)}</span>`,
             `<span class="${doc.is_owner ? "document-settings fw-link-text" : "rights"}" data-id="${doc.id}" title="${doc.rights}">
-                ${doc.is_owner ? '<i class="fa-solid fa-cog"></i>' : `<i data-id="${doc.id}" class="icon-access-right icon-access-${doc.rights}"></i>`}
+                ${doc.is_owner ? '<i class="fa-solid fa-cog"></i>' : `<i data-id="${doc.id}" class="fw-icon-access-right icon-access-${doc.rights}"></i>`}
             </span>`,
             `<span class="delete-document fw-link-text" data-id="${doc.id}"
                     data-title="${escapeText(currentPath)}">
@@ -1073,14 +1041,12 @@ export class DocumentOverview {
         if (!this.active) {
             return
         }
-        if (this.table) {
-            this.table.destroy()
-            this.table = null
+        if (this.overviewTable) {
+            this.overviewTable.destroy()
+            this.overviewTable = null
         }
-        if (this.dtBulk) {
-            this.dtBulk.destroy()
-            this.dtBulk = null
-        }
+        this.table = null
+        this.dtBulk = null
         if (this.menu) {
             this.menu.destroy()
             this.menu = null

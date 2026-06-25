@@ -473,7 +473,7 @@ ${
                 dropUp.querySelectorAll(".drop-up-options li")
             )
             if (items[selectedIndex]) {
-                items[selectedIndex].classList.add("focused")
+                items[selectedIndex].classList.add("fw-focused")
             }
         }
 

@@ -18,7 +18,7 @@ export class AdminConsole {
             switch (true) {
                 case findTarget(
                     event,
-                    "input#submit_user_message:not(.disabled)",
+                    "input#submit_user_message:not(.fw-disabled)",
                     el
                 ): {
                     const message = document.querySelector(

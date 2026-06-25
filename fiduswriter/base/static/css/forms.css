@@ -39,7 +39,7 @@ input[type="number"]:focus,
 input[type="password"]:focus,
 input[type="search"]:focus,
 input[type="email"]:focus,
-div.input:focus-within,
+div.fw-input:focus-within,
 textarea:focus {
     background-color: var(--input-focus-background-color);
 }
@@ -51,18 +51,18 @@ textarea:focus {
     cursor: pointer;
 }
 
-.fw-select-container select option.placeholder {
+.fw-select-container select option.fw-placeholder {
     display: none;
 }
 
-.entry-field .ProseMirror,
-.entry-field input[type="text"],
-.entry-field input[type="number"] {
+.fw-entry-field .ProseMirror,
+.fw-entry-field input[type="text"],
+.fw-entry-field input[type="number"] {
     width: 686px;
     max-width: 80vw;
 }
 
-.entry-field select {
+.fw-entry-field select {
     padding: 0 3px 0 13px;
     border: 0 none;
     color: var(--cs-light-text);
@@ -74,19 +74,19 @@ textarea:focus {
     display: inline-block;
 }
 
-.entry-field select.fw-large {
+.fw-entry-field select.fw-large {
     width: 664px;
 }
 
-.ui-dialog input[type="text"]:not(.fw-inline),
-.ui-dialog input[type="password"]:not(.fw-inline),
-.ui-dialog input[type="search"]:not(.fw-inline),
-.ui-dialog input[type="email"]:not(.fw-inline),
-.ui-dialog input[type="number"]:not(.fw-inline),
-.ui-dialog textarea,
-.ui-dialog div[contenteditable="true"],
-.ui-dialog select,
-.ui-dialog .entry-field select {
+.fw-dialog input[type="text"]:not(.fw-inline),
+.fw-dialog input[type="password"]:not(.fw-inline),
+.fw-dialog input[type="search"]:not(.fw-inline),
+.fw-dialog input[type="email"]:not(.fw-inline),
+.fw-dialog input[type="number"]:not(.fw-inline),
+.fw-dialog textarea,
+.fw-dialog div[contenteditable="true"],
+.fw-dialog select,
+.fw-dialog .fw-entry-field select {
     border: 1px solid var(--input-dialog-border-color);
 }
 
@@ -124,8 +124,8 @@ textarea:focus {
     position: relative;
 }
 
-.fw-checkable-td.checked::after,
-tr.fw-checkable.checked > td:last-child::after {
+.fw-checkable-td.fw-checked::after,
+tr.fw-checkable.fw-checked > td:last-child::after {
     top: 17px;
 }
 
@@ -250,24 +250,24 @@ tr.fw-checkable.checked > td:last-child::after {
 
 /* bibliography and license form input */
 
-.entry-field.fw-fomt-error input[type="text"],
-.entry-field.fw-fomt-error input[type="number"] {
+.fw-entry-field.fw-fomt-error input[type="text"],
+.fw-entry-field.fw-fomt-error input[type="number"] {
     background-color: var(--input-error-background-color);
 }
 
-.entry-field input[type="checkbox"] {
+.fw-entry-field input[type="checkbox"] {
     margin-top: 12px;
 }
 
-.entry-field .selection-list {
+.fw-entry-field .selection-list {
     position: relative;
 }
 
-.entry-field .type-switch-input-inner select {
+.fw-entry-field .fw-type-switch-input-inner select {
     width: 100%;
 }
 
-.entry-field .fw-select-arrow {
+.fw-entry-field .fw-select-arrow {
     position: absolute;
     top: 14px;
     right: 16px;
@@ -277,12 +277,12 @@ tr.fw-checkable.checked > td:last-child::after {
 /* Generic type-switch styles are in fwtoolkit/css/type_switch.css. The rules
  * below are app-specific field-part sizing overrides. */
 
-.type-switch-input-inner .field-part {
+.fw-type-switch-input-inner .field-part {
     display: inline-block;
     margin-right: 5px;
 }
 
-.type-switch-input-inner .field-part:last-child {
+.fw-type-switch-input-inner .field-part:last-child {
     margin-right: 0;
 }
 
@@ -290,21 +290,21 @@ tr.fw-checkable.checked > td:last-child::after {
     width: 64px;
 }
 
-.type-switch-input-inner .field-part-huge input,
-.type-switch-input-inner .field-part-huge .ProseMirror {
+.fw-type-switch-input-inner .field-part-huge input,
+.fw-type-switch-input-inner .field-part-huge .ProseMirror {
     width: 250px;
 }
 
-.type-switch-input-inner .field-part-long input,
-.type-switch-input-inner .field-part-long .ProseMirror {
+.fw-type-switch-input-inner .field-part-long input,
+.fw-type-switch-input-inner .field-part-long .ProseMirror {
     width: 130px;
 }
 
-.type-switch-input-inner .field-part-single {
+.fw-type-switch-input-inner .field-part-single {
     width: 100% !important;
 }
 
-.type-switch-input-inner .field-part-single .ProseMirror {
+.fw-type-switch-input-inner .field-part-single .ProseMirror {
     width: 100%;
 }
 
@@ -390,13 +390,13 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 @media screen and (width <= 740px) {
-    .entry-field .ProseMirror,
-    .entry-field input[type="text"],
-    .entry-field input[type="number"] {
+    .fw-entry-field .ProseMirror,
+    .fw-entry-field input[type="text"],
+    .fw-entry-field input[type="number"] {
         max-width: 70vw;
     }
 
-    .type-switch-input-wrapper {
+    .fw-type-switch-input-wrapper {
         max-width: 70vw;
     }
 
@@ -406,13 +406,13 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 @media screen and (width <= 560px) {
-    .entry-field .ProseMirror,
-    .entry-field input[type="text"],
-    .entry-field input[type="number"] {
+    .fw-entry-field .ProseMirror,
+    .fw-entry-field input[type="text"],
+    .fw-entry-field input[type="number"] {
         max-width: 50vw;
     }
 
-    .type-switch-input-wrapper {
+    .fw-type-switch-input-wrapper {
         max-width: 50vw;
     }
 
@@ -420,24 +420,24 @@ tr.fw-checkable.checked > td:last-child::after {
         max-width: 50vw;
     }
 
-    .type-switch {
+    .fw-type-switch {
         display: block;
         margin-bottom: 5px;
     }
 
-    .type-switch-input-inner {
+    .fw-type-switch-input-inner {
         width: auto;
     }
 }
 
 @media screen and (width <= 460px) {
-    .entry-field .ProseMirror,
-    .entry-field input[type="text"],
-    .entry-field input[type="number"] {
+    .fw-entry-field .ProseMirror,
+    .fw-entry-field input[type="text"],
+    .fw-entry-field input[type="number"] {
         max-width: 40vw;
     }
 
-    .type-switch-input-wrapper {
+    .fw-type-switch-input-wrapper {
         max-width: 40vw;
     }
 
@@ -449,7 +449,7 @@ tr.fw-checkable.checked > td:last-child::after {
         width: 140px;
     }
 
-    .ui-tabs-panel {
+    .fw-tabs-panel {
         overflow-x: hidden;
     }
 }

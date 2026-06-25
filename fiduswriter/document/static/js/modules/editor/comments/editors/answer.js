@@ -15,7 +15,7 @@ export class CommentAnswerEditor extends CommentEditor {
         this.dom.insertAdjacentHTML(
             "beforeend",
             `<div class="comment-btns">
-                <button class="submit fw-button fw-dark disabled" type="submit">
+                <button class="submit fw-button fw-dark fw-disabled" type="submit">
                     ${this.options.answerId ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">

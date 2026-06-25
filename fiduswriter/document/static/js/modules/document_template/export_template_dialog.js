@@ -131,7 +131,7 @@ export class ExportTemplateDialog {
                     </td>
                 </tr>
                 </tbody></table>
-                <ul class="errorlist"></ul>`,
+                <ul class="fw-errorlist"></ul>`,
             buttons
         })
         this.dialog.open()
@@ -142,7 +142,7 @@ export class ExportTemplateDialog {
     }
 
     showErrors(errors) {
-        this.dialog.dialogEl.querySelector("ul.errorlist").innerHTML = errors
+        this.dialog.dialogEl.querySelector("ul.fw-errorlist").innerHTML = errors
             .map(error => `<li>${escapeText(error)}</li>`)
             .join("")
     }

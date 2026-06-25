@@ -121,7 +121,7 @@ export class DocumentStyleDialog {
                     </td>
                 </tr>
                 </tbody></table>
-                <ul class="errorlist"></ul>`,
+                <ul class="fw-errorlist"></ul>`,
             buttons
         })
 
@@ -130,7 +130,7 @@ export class DocumentStyleDialog {
     }
 
     showErrors(errors) {
-        this.dialog.dialogEl.querySelector("ul.errorlist").innerHTML = errors
+        this.dialog.dialogEl.querySelector("ul.fw-errorlist").innerHTML = errors
             .map(error => `<li>${escapeText(error)}</li>`)
             .join("")
     }

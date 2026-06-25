@@ -44,9 +44,9 @@ class MenuView {
 
         this.items.forEach(({dom}) => {
             if (activeMarks[dom.getAttribute("data-type")]) {
-                dom.classList.add("active")
+                dom.classList.add("fw-active")
             } else {
-                dom.classList.remove("active")
+                dom.classList.remove("fw-active")
             }
         })
     }

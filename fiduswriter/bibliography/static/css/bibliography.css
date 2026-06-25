@@ -1,4 +1,4 @@
-#bib-dialog .ui-tabs-panel {
+#bib-dialog .fw-tabs-panel {
     min-height: 0;
     height: calc(100vh - 278px);
 }

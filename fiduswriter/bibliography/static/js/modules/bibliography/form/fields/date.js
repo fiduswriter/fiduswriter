@@ -8,11 +8,11 @@ export class DateFieldForm {
     }
 
     init() {
-        this.dom.innerHTML = `<input class="date" type="text" value="${this.initialValue}" placeholder="${this.placeHolder}">`
+        this.dom.innerHTML = `<input class="fw-date" type="text" value="${this.initialValue}" placeholder="${this.placeHolder}">`
     }
 
     get value() {
-        const formValue = this.dom.querySelector("input.date").value
+        const formValue = this.dom.querySelector("input.fw-date").value
         // If the form has not been filled out, don't consider this form
         return formValue.length > 0 ? formValue : false
     }

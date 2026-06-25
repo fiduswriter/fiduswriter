@@ -178,9 +178,9 @@ export class BibEntryForm {
         )
         if (BibFieldHelp[fieldName]) {
             fieldTitle = noSpaceTmp`
-                <h4 class="fw-tablerow-title wtooltip">
+                <h4 class="fw-tablerow-title fw-wtooltip">
                     ${fieldTitleText}
-                    <span class="tooltip">${BibFieldHelp[fieldName]}</span>
+                    <span class="fw-tooltip">${BibFieldHelp[fieldName]}</span>
                 </h4>
             `
         } else {
@@ -196,7 +196,7 @@ export class BibEntryForm {
             noSpaceTmp`
                 <tr>
                     <th>${fieldTitle}</th>
-                    <td class="entry-field ${fieldName}"></td>
+                    <td class="fw-entry-field ${fieldName}"></td>
                 </tr>`
         )
         const fieldDOM = dom.lastChild.lastChild

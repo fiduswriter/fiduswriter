@@ -19,7 +19,11 @@ export class DocMaintenance {
             document.body.addEventListener("click", event => {
                 const el = {}
                 switch (true) {
-                    case findTarget(event, "input#update:not(.disabled)", el):
+                    case findTarget(
+                        event,
+                        "input#update:not(.fw-disabled)",
+                        el
+                    ):
                         document.querySelector("input#update").disabled = true
                         document.querySelector("input#update").value =
                             gettext("Updating...")

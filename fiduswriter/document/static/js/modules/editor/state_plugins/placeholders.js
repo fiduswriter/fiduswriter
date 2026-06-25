@@ -41,10 +41,10 @@ export const placeholdersPlugin = options => {
                         ? `${gettext("Title")}...`
                         : `${partElement.attrs.title}...`
                 const placeHolder = document.createElement("span")
-                placeHolder.classList.add("placeholder")
+                placeHolder.classList.add("fw-placeholder")
                 placeHolder.setAttribute("data-placeholder", text)
                 if (currentPart === partElement) {
-                    placeHolder.classList.add("selected")
+                    placeHolder.classList.add("fw-selected")
                 }
                 let position = 1 + offset
                 // position of decorator: 2 to get inside (doc (1))

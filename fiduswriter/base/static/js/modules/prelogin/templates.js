@@ -7,7 +7,7 @@ export const basePreloginTemplate = ({
     footerLinks = [],
     settings = {}
 }) => `
-<div id="wait">
+<div id="fw-wait">
    <i class="fa fa-spinner fa-pulse"></i>
 </div>
 <header class="fw-header prelogin" role="banner">

@@ -307,7 +307,7 @@ function createInlineReferenceWidget(editor, pluginState, key) {
         dropUpWrapper.appendChild(dropUp)
         // Scroll selected item into view
         const selectedItem = dropUp.querySelector(
-            ".inline-reference-drop-up-item.selected"
+            ".inline-reference-drop-up-item.fw-selected"
         )
         if (selectedItem) {
             selectedItem.scrollIntoView({block: "nearest"})

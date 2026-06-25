@@ -281,7 +281,7 @@ export class SearchReplaceDialog {
 
         this.dialog.open()
 
-        this.searchInput = this.dialog.dialogEl.querySelector(".search")
+        this.searchInput = this.dialog.dialogEl.querySelector(".fw-search")
         this.replaceInput = this.dialog.dialogEl.querySelector(".replace")
         this.resultCountEl = this.dialog.dialogEl.querySelector(
             ".search-result-count"
@@ -363,7 +363,7 @@ export class SearchReplaceDialog {
             this.editor.mod.footnotes.fnEditor.view.state
         )
         const selectedSearch = document.querySelector(
-            "#paper-editable .search.selected"
+            "#paper-editable .fw-search.fw-selected"
         )
 
         if (selectedSearch) {

@@ -63,7 +63,7 @@ export class ModCommentInteractions {
                 case findTarget(event, ".unassign-comment", el):
                     this.unassignComment(el.target.dataset.id)
                     break
-                case findTarget(event, ".delete-comment", el):
+                case findTarget(event, ".fw-delete-comment", el):
                     this.deleteComment(el.target.dataset.id)
                     break
                 case findTarget(event, ".delete-comment-answer", el):
@@ -239,7 +239,7 @@ export class ModCommentInteractions {
             // Part of a comment (answer) has been entered/changed.
             return true
         }
-        if (document.querySelector("div.marginbox-options.fw-open")) {
+        if (document.querySelector("div.fw-marginbox-options.fw-open")) {
             // A margin box options menu is open.
             return true
         }
@@ -286,9 +286,9 @@ export class ModCommentInteractions {
                         if (
                             buttons.classList &&
                             buttons.classList.contains("submit") &&
-                            buttons.classList.contains("disabled")
+                            buttons.classList.contains("fw-disabled")
                         ) {
-                            buttons.classList.remove("disabled")
+                            buttons.classList.remove("fw-disabled")
                         }
                     })
                 }

@@ -295,22 +295,22 @@ export class LinkDialog {
 
             switch (this.linkType) {
                 case "internal":
-                    externalEls.forEach(el => el.classList.add("disabled"))
+                    externalEls.forEach(el => el.classList.add("fw-disabled"))
                     crossReferenceEls.forEach(el =>
-                        el.classList.add("disabled")
+                        el.classList.add("fw-disabled")
                     )
                     radioInternal.checked = true
                     break
                 case "external":
-                    internalEls.forEach(el => el.classList.add("disabled"))
+                    internalEls.forEach(el => el.classList.add("fw-disabled"))
                     crossReferenceEls.forEach(el =>
-                        el.classList.add("disabled")
+                        el.classList.add("fw-disabled")
                     )
                     radioExternal.checked = true
                     break
                 case "cross_reference":
-                    internalEls.forEach(el => el.classList.add("disabled"))
-                    externalEls.forEach(el => el.classList.add("disabled"))
+                    internalEls.forEach(el => el.classList.add("fw-disabled"))
+                    externalEls.forEach(el => el.classList.add("fw-disabled"))
                     radioCrossReference.checked = true
                     break
                 default:
@@ -319,10 +319,12 @@ export class LinkDialog {
 
             internalSwitchers.forEach(el =>
                 el.addEventListener("click", () => {
-                    externalEls.forEach(el => el.classList.add("disabled"))
-                    internalEls.forEach(el => el.classList.remove("disabled"))
+                    externalEls.forEach(el => el.classList.add("fw-disabled"))
+                    internalEls.forEach(el =>
+                        el.classList.remove("fw-disabled")
+                    )
                     crossReferenceEls.forEach(el =>
-                        el.classList.add("disabled")
+                        el.classList.add("fw-disabled")
                     )
                     radioInternal.checked = true
                 })
@@ -330,10 +332,12 @@ export class LinkDialog {
 
             externalSwitchers.forEach(el =>
                 el.addEventListener("click", () => {
-                    internalEls.forEach(el => el.classList.add("disabled"))
-                    externalEls.forEach(el => el.classList.remove("disabled"))
+                    internalEls.forEach(el => el.classList.add("fw-disabled"))
+                    externalEls.forEach(el =>
+                        el.classList.remove("fw-disabled")
+                    )
                     crossReferenceEls.forEach(el =>
-                        el.classList.add("disabled")
+                        el.classList.add("fw-disabled")
                     )
                     radioExternal.checked = true
                 })
@@ -341,10 +345,10 @@ export class LinkDialog {
 
             crossReferenceSwitchers.forEach(el =>
                 el.addEventListener("click", () => {
-                    internalEls.forEach(el => el.classList.add("disabled"))
-                    externalEls.forEach(el => el.classList.add("disabled"))
+                    internalEls.forEach(el => el.classList.add("fw-disabled"))
+                    externalEls.forEach(el => el.classList.add("fw-disabled"))
                     crossReferenceEls.forEach(el =>
-                        el.classList.remove("disabled")
+                        el.classList.remove("fw-disabled")
                     )
                     radioCrossReference.checked = true
                 })

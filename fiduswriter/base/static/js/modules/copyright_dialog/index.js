@@ -142,7 +142,7 @@ export class CopyrightDialog {
                         onChange: () => {
                             // Restore focus to the license input after switching.
                             const focusable = el.querySelector(
-                                ".type-switch-input-inner input, .type-switch-input-inner select"
+                                ".fw-type-switch-input-inner input, .fw-type-switch-input-inner select"
                             )
                             if (focusable) {
                                 focusable.focus()
@@ -153,7 +153,7 @@ export class CopyrightDialog {
             }),
             getValue: el => {
                 const licenseInput = el.querySelector(
-                    ".type-switch-input-inner"
+                    ".fw-type-switch-input-inner"
                 )
                 const selectEl = licenseInput.querySelector("select.license")
                 let url, title

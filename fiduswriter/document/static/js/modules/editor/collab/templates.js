@@ -1,6 +1,6 @@
 import {avatarTemplate, escapeText, localizeDate} from "fwtoolkit"
 export const messageTemplate = ({message, theChatter}) =>
-    `<div class="message" id="m${message.id}">
+    `<div class="fw-message" id="m${message.id}">
         <div class="comment-user">
             ${avatarTemplate({user: theChatter})}
             <h5 class="comment-user-name">${escapeText(theChatter.name)}</h5>

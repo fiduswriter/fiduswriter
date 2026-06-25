@@ -14,7 +14,7 @@ class OrderedListView {
         this.dom.classList.add("content-container")
         this.dom.id = node.attrs.id
         this.menuButton = document.createElement("button")
-        this.menuButton.classList.add("content-menu-btn")
+        this.menuButton.classList.add("fw-content-menu-btn")
         this.menuButton.innerHTML =
             '<span class="dot-menu-icon"><i class="fa-solid fa-ellipsis-v"></i></span>'
         this.dom.appendChild(this.menuButton)

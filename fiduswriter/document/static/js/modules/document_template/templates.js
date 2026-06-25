@@ -635,7 +635,7 @@ export const bibliographyHeaderTemplate = ({
     if (!translations.length) {
         translations = [["zzz", ""]]
     }
-    return `<table class="fw-dialog-table fw-small input-list-wrapper">${translations
+    return `<table class="fw-dialog-table fw-small fw-input-list-wrapper">${translations
         .map(
             translation =>
                 `<tr>
@@ -653,7 +653,7 @@ export const bibliographyHeaderTemplate = ({
 
 export const idTypesTemplate = ({id_types = []}) => {
     const types = id_types.length ? id_types : [{label: "", regex: ""}]
-    return `<table class="fw-dialog-table fw-small input-list-wrapper id-types-value">${types
+    return `<table class="fw-dialog-table fw-small fw-input-list-wrapper id-types-value">${types
         .map(
             type =>
                 `<tr>
@@ -802,24 +802,24 @@ const templateEditorValueTemplate = ({content}) =>
 
 export const documentStylesTemplate = ({documentStyles}) => `${documentStyles
     .map(
-        style => `<button class="fw-green fw-small fw-button ui-button document-style" data-id="${style.pk}">
+        style => `<button class="fw-green fw-small fw-button fw-dialog-titlebar-button document-style" data-id="${style.pk}">
         ${escapeText(style.fields.title)}
     </button>`
     )
     .join("")}
-<button class="fw-green fw-small fw-button ui-button document-style" data-id="0">
+<button class="fw-green fw-small fw-button fw-dialog-titlebar-button document-style" data-id="0">
     <i class="fa-solid fa-plus-circle"></i>
     ${gettext("Add new document style")}
 </button>`
 
 export const exportTemplatesTemplate = ({exportTemplates}) => `${exportTemplates
     .map(
-        template => `<button class="fw-green fw-small fw-button ui-button export-template" data-id="${template.pk}">
+        template => `<button class="fw-green fw-small fw-button fw-dialog-titlebar-button export-template" data-id="${template.pk}">
         ${escapeText(template.fields.title)}
     </button>`
     )
     .join("")}
-<button class="fw-green fw-small fw-button ui-button export-template" data-id="0">
+<button class="fw-green fw-small fw-button fw-dialog-titlebar-button export-template" data-id="0">
     <i class="fa-solid fa-plus-circle"></i>
     ${gettext("Add new export template")}
 </button>`
@@ -959,7 +959,7 @@ export const documentDesignerTemplate = ({
                         ${gettext("Document styles")}
                     </td>
                     <td>
-                        <div class="ui-dialog-buttonset document-styles">
+                        <div class="fw-dialog-buttonset document-styles">
                                 ${documentStylesTemplate({documentStyles})}
                         </div>
                     </td>
@@ -969,7 +969,7 @@ export const documentDesignerTemplate = ({
                         ${gettext("Export templates")}
                     </td>
                     <td>
-                        <div class="ui-dialog-buttonset export-templates">
+                        <div class="fw-dialog-buttonset export-templates">
                                 ${exportTemplatesTemplate({exportTemplates})}
                         </div>
                     </td>

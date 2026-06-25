@@ -90,15 +90,15 @@ const helpTemplate = ({help, filterOptions}) => {
     if (!filterOptions.help || !filterOptions.info) {
         return '<div class="margin-box help hidden"></div>'
     } else {
-        return `<div class="margin-box help ${help.active ? "active" : ""}"><div class="help-text-wrapper">${serializeHelp(help.help)}</div></div>`
+        return `<div class="margin-box help ${help.active ? "fw-active" : ""}"><div class="help-text-wrapper">${serializeHelp(help.help)}</div></div>`
     }
 }
 
 const warningTemplate = ({warning, filterOptions}) => {
     if (!filterOptions.warning || !filterOptions.info) {
-        return '<div class="margin-box warning hidden"></div>'
+        return '<div class="margin-box fw-warning hidden"></div>'
     } else {
-        return `<div class="margin-box warning ${warning.active ? "active" : ""}"><div class="help-text-wrapper">${warning.warning}</div></div>`
+        return `<div class="margin-box fw-warning ${warning.active ? "fw-active" : ""}"><div class="help-text-wrapper">${warning.warning}</div></div>`
     }
 }
 
@@ -145,7 +145,7 @@ const commentTemplate = ({
         assignedUsername = assignedUser ? assignedUser.name : false
     return `
         <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
-            class="margin-box comment ${active ? "active" : "inactive"} ${comment.resolved ? "resolved" : ""} ${comment.isMajor === true ? "comment-is-major-bgc" : ""}">
+            class="margin-box comment ${active ? "fw-active" : "inactive"} ${comment.resolved ? "resolved" : ""} ${comment.isMajor === true ? "comment-is-major-bgc" : ""}">
 <div class="comment-answer-container">
 ${
     comment.comment.length === 0
@@ -286,7 +286,7 @@ const trackTemplate = ({type, data, node, active, docInfo, filterOptions}) => {
         nodeActionType = `${type}_${node.type.name}`
 
     return `
-        <div class="margin-box track ${active ? "active" : "inactive"}" data-type="${type}">
+        <div class="margin-box track ${active ? "fw-active" : "inactive"}" data-type="${type}">
             <div class="track-${type}">
                 <div class="comment-user">
                     ${author ? avatarTemplate({user: author}) : '<span class="fw-string-avatar"></span>'}
@@ -325,10 +325,10 @@ export const marginboxFilterTemplate = ({
     const warning = marginBoxes.find(box => box.type === "warning")
     let filterHTML = ""
     if (comments || filterOptions.commentsOnlyMajor) {
-        filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? "" : " disabled"}">
+        filterHTML += `<div id="margin-box-filter-comments" class="margin-box-filter-button${filterOptions.comments ? "" : " fw-disabled"}">
             <span class="label">${gettext("Comments")}</span>
             <span class="show-marginbox-options fa-solid fa-ellipsis-v"></span>
-            <div class="marginbox-options fw-pulldown fw-right"><ul>
+            <div class="fw-marginbox-options fw-pulldown fw-right"><ul>
                 <li>
                     <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext("Author")}">
                         ${gettext("Author")}
@@ -336,12 +336,12 @@ export const marginboxFilterTemplate = ({
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
-                            <li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.commentsAuthor === 0 ? " selected" : ""}" data-id="0" title="${gettext("Show comments from all authors.")}">
+                            <li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.commentsAuthor === 0 ? " fw-selected" : ""}" data-id="0" title="${gettext("Show comments from all authors.")}">
                                 ${gettext("Any")}
                             </span></li>
                         ${pastParticipants
                             .map(
-                                user => `<li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.commentsAuthor === user.id ? " selected" : ""}" data-id="${user.id}" title="${gettext("Show comments of ")} ${escapeText(user.name)}">
+                                user => `<li><span class="fw-pulldown-item margin-box-filter-comments-author${filterOptions.commentsAuthor === user.id ? " fw-selected" : ""}" data-id="${user.id}" title="${gettext("Show comments of ")} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
                             )
@@ -356,12 +356,12 @@ export const marginboxFilterTemplate = ({
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
-                            <li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === 0 ? " selected" : ""}" data-id="0" title="${gettext("Show comments from all authors.")}">
+                            <li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === 0 ? " fw-selected" : ""}" data-id="0" title="${gettext("Show comments from all authors.")}">
                                 ${gettext("Any/None")}
                             </span></li>
                         ${pastParticipants
                             .map(
-                                user => `<li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === user.id ? " selected" : ""}" data-id="${user.id}" title="${gettext("Show comments of ")} ${escapeText(user.name)}">
+                                user => `<li><span class="fw-pulldown-item margin-box-filter-comments-assigned${filterOptions.assigned === user.id ? " fw-selected" : ""}" data-id="${user.id}" title="${gettext("Show comments of ")} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
                             )
@@ -385,9 +385,9 @@ export const marginboxFilterTemplate = ({
         </div>`
     }
     if (tracks) {
-        filterHTML += `<div id="margin-box-filter-track" class="margin-box-filter-button${filterOptions.track ? "" : " disabled"}">
+        filterHTML += `<div id="margin-box-filter-track" class="margin-box-filter-button${filterOptions.track ? "" : " fw-disabled"}">
             <span class="label">${gettext("Tracking")}</span><span class="show-marginbox-options fa-solid fa-ellipsis-v"></span>
-            <div class="marginbox-options fw-pulldown fw-right"><ul>
+            <div class="fw-marginbox-options fw-pulldown fw-right"><ul>
                 <li>
                     <span class="fw-pulldown-item show-marginbox-options-submenu" title="${gettext("Author")}">
                         ${gettext("Author")}
@@ -395,12 +395,12 @@ export const marginboxFilterTemplate = ({
                     </span>
                     <div class="fw-pulldown marginbox-options-submenu">
                         <ul>
-                            <li><span class="fw-pulldown-item margin-box-filter-track-author${filterOptions.trackAuthor === 0 ? " selected" : ""}" data-id="0" title="${gettext("Show track changes from all authors.")}">
+                            <li><span class="fw-pulldown-item margin-box-filter-track-author${filterOptions.trackAuthor === 0 ? " fw-selected" : ""}" data-id="0" title="${gettext("Show track changes from all authors.")}">
                                 ${gettext("Any")}
                             </span></li>
                         ${pastParticipants
                             .map(
-                                user => `<li><span class="fw-pulldown-item margin-box-filter-track-author${filterOptions.trackAuthor === user.id ? " selected" : ""}" data-id="${user.id}" title="${gettext("Show track changes of ")} ${escapeText(user.name)}">
+                                user => `<li><span class="fw-pulldown-item margin-box-filter-track-author${filterOptions.trackAuthor === user.id ? " fw-selected" : ""}" data-id="${user.id}" title="${gettext("Show track changes of ")} ${escapeText(user.name)}">
                                     ${escapeText(user.name)}
                                 </span></li>`
                             )
@@ -412,10 +412,10 @@ export const marginboxFilterTemplate = ({
         </div>`
     }
     if (help || warning) {
-        filterHTML += `<div id="margin-box-filter-info" class="margin-box-filter-button${filterOptions.info ? "" : " disabled"}">
+        filterHTML += `<div id="margin-box-filter-info" class="margin-box-filter-button${filterOptions.info ? "" : " fw-disabled"}">
             <span class="label">${gettext("Informational")}</span>
             <span class="show-marginbox-options fa-solid fa-ellipsis-v"></span>
-            <div class="marginbox-options fw-pulldown fw-right"><ul>
+            <div class="fw-marginbox-options fw-pulldown fw-right"><ul>
                 <li>
                 <span class="fw-pulldown-item margin-box-filter-check">
                     <input type="checkbox" class="fw-check fw-label-check"${filterOptions.help ? " checked" : ""} id="margin-box-filter-info-help">
@@ -489,7 +489,7 @@ export const marginBoxesTemplate = ({
         .join("")}</div></div>`
 
 export const marginBoxOptions = (comment, user, docInfo) => {
-    return `<div class="comment-answer-options marginbox-options fw-pulldown">
+    return `<div class="comment-answer-options fw-marginbox-options fw-pulldown">
                 ${
                     !comment.answer
                         ? `<ul>
@@ -528,7 +528,7 @@ export const marginBoxOptions = (comment, user, docInfo) => {
 
                 </li>
                 <li>
-                    <span class="fw-pulldown-item delete-comment" data-id="${comment.id}" title="${gettext("Delete comment")}">${gettext("Delete")}</span>
+                    <span class="fw-pulldown-item fw-delete-comment" data-id="${comment.id}" title="${gettext("Delete comment")}">${gettext("Delete")}</span>
                 </li>
             </ul>`
                         : `<ul>

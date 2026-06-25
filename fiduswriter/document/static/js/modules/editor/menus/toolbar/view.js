@@ -87,7 +87,7 @@ export class ToolbarView {
         const target = event.target
         if (
             target.matches(
-                ".editor-toolbar .more-button li:not(.disabled), .editor-toolbar .more-button li:not(.disabled) *"
+                ".editor-toolbar .more-button li:not(.fw-disabled), .editor-toolbar .more-button li:not(.fw-disabled) *"
             )
         ) {
             let menuNumber = 0
@@ -132,7 +132,7 @@ export class ToolbarView {
             this.update()
         } else if (
             target.matches(
-                ".editor-toolbar li:not(.disabled), .editor-toolbar li:not(.disabled) *"
+                ".editor-toolbar li:not(.fw-disabled), .editor-toolbar li:not(.fw-disabled) *"
             )
         ) {
             // A toolbar menu item was clicked. We just need to
@@ -162,7 +162,7 @@ export class ToolbarView {
             }
         } else if (
             target.matches(
-                ".editor-toolbar > div:not(.disabled), .editor-toolbar > div:not(.disabled) *"
+                ".editor-toolbar > div:not(.fw-disabled), .editor-toolbar > div:not(.fw-disabled) *"
             )
         ) {
             // A menu item has been clicked, lets find out which one.
@@ -245,7 +245,7 @@ export class ToolbarView {
                     .map((menuItem, index) => {
                         if (!menuIndexToDrop || index < menuIndexToDrop) {
                             return `
-                            <div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}">
+                            <div class="ui-buttonset${menuItem.disabled && menuItem.disabled(this.editor) ? " fw-disabled" : ""}">
                                 ${this.getToolbarMenuItemHTML(menuItem, index)}
                             </div>
                         `
@@ -316,7 +316,7 @@ export class ToolbarView {
     getDropdownHTML(menuItem) {
         return `
         <div class="multi-buttons">
-            <span class="multi-buttons-cover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}">
+            <span class="multi-buttons-cover fw-button fw-white fw-large edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? " fw-disabled" : ""}">
                 ${menuItem.show(this.editor)}
             </span>
             ${this.getDropdownListHTML(menuItem)}
@@ -334,7 +334,7 @@ export class ToolbarView {
 
     getDropdownOptionHTML(menuOption) {
         return `
-        <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only${menuOption.disabled && menuOption.disabled(this.editor) ? " disabled" : ""}" role="button" aria-disabled="false">
+        <li class="fw-dialog-titlebar-button ui-widget ui-state-default ui-corner-all ui-button-text-only${menuOption.disabled && menuOption.disabled(this.editor) ? " fw-disabled" : ""}" role="button" aria-disabled="false">
             <span class="ui-button-text">
                 <input type="radio" >
                 <label class="fw-pulldown-item">${menuOption.title}</label>
@@ -345,7 +345,7 @@ export class ToolbarView {
 
     getButtonHTML(menuItem) {
         return `
-        <button aria-label="${menuItem.title}" class="fw-button fw-white fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${menuItem.selected && menuItem.selected(this.editor) ? " ui-state-active" : ""}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ""}" title="${menuItem.title}" >
+        <button aria-label="${menuItem.title}" class="fw-button fw-white fw-large fw-square edit-button${menuItem.disabled && menuItem.disabled(this.editor) ? " fw-disabled" : ""}${menuItem.selected && menuItem.selected(this.editor) ? " fw-state-active" : ""}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ""}" title="${menuItem.title}" >
             <span class="ui-button-text">
                 <i class="fa-solid fa-${typeof menuItem.icon === "function" ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>

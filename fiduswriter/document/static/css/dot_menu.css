@@ -3,7 +3,7 @@
     z-index: 5;
 }
 
-.content-menu-btn {
+.fw-content-menu-btn {
     background-color: transparent;
     background-repeat: no-repeat;
     border: 1px;
@@ -15,7 +15,7 @@
     top: 0;
 }
 
-table .content-menu-btn {
+table .fw-content-menu-btn {
     right: -7px;
 }
 

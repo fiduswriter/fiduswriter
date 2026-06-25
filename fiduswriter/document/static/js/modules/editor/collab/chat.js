@@ -94,7 +94,7 @@ export class ModCollabChat {
         // If only one machine is connected and nothing has been chatted, don't show chat
         if (
             participants.length === 1 &&
-            !document.querySelector("#chat-container .message")
+            !document.querySelector("#chat-container .fw-message")
         ) {
             document.getElementById("chat").style.display = "none"
         } else {

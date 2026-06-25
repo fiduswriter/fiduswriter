@@ -17,7 +17,7 @@ export const linkDialogTemplate = ({
         </div>
         <div class="fw-select-container">
             <select class="cross-reference-selector fw-button fw-light fw-large" required="">
-                <option class="placeholder" selected="" disabled="" value="">
+                <option class="fw-placeholder" selected="" disabled="" value="">
                     ${gettext("Select Target")}
                 </option>
                 ${internalTargets
@@ -40,7 +40,7 @@ export const linkDialogTemplate = ({
         </div>
         <div class="fw-select-container">
             <select class="internal-link-selector fw-button fw-light fw-large" required="">
-                <option class="placeholder" selected="" disabled="" value="">
+                <option class="fw-placeholder" selected="" disabled="" value="">
                     ${gettext("Select Target")}
                 </option>
                 ${internalTargets

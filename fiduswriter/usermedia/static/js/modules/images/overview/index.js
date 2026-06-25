@@ -1,9 +1,6 @@
-import {DataTable} from "simple-datatables"
-import {keyName} from "w3c-keyname"
-
 import {
-    DatatableBulk,
     Dialog,
+    OverviewDataTable,
     OverviewMenuView,
     activateWait,
     addAlert,
@@ -196,7 +193,7 @@ export class ImageOverview {
                 <span class="fw-usermedia-type">${fileType}</span>
             </span>`,
             `<span>${image.width} x ${image.height}</span>`,
-            `<span class="date">${localizeDate(image.added, "sortable-date")}</span>`,
+            `<span class="fw-date">${localizeDate(image.added, "sortable-date")}</span>`,
             `<span class="delete-image fw-link-text" data-id="${id}">
                 <i class="fa fa-trash-alt"></i>
             </span>`
@@ -231,14 +228,15 @@ export class ImageOverview {
 
     /* Initialize the overview table */
     initTable(ids) {
-        const tableEl = document.createElement("table")
-        tableEl.id = "imagelist"
-        tableEl.classList.add("fw-data-table")
-        tableEl.classList.add("fw-large")
-        this.dom.querySelector(".fw-contents").innerHTML = ""
-        this.dom.querySelector(".fw-contents").appendChild(tableEl)
+        if (this.overviewTable) {
+            this.overviewTable.destroy()
+            this.overviewTable = null
+        }
+        this.table = null
+        this.dtBulk = null
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 1)
+        const contentsEl = this.dom.querySelector(".fw-contents")
+        contentsEl.innerHTML = ""
 
         const hiddenCols = [0]
 
@@ -246,38 +244,9 @@ export class ImageOverview {
             hiddenCols.push(1)
         }
 
-        this.table = new DataTable(tableEl, {
-            searchable: true,
-            paging: false,
-            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
-            labels: {
-                noRows: gettext("No images available"), // Message shown when there are no images
-                noResults: gettext("No images found") // Message shown when no images are found after search
-            },
-            rowNavigation: true,
-            rowSelectionKeys: ["Enter", "Delete", " "],
-            tabIndex: 1,
-            template: (options, _dom) =>
-                `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
-            <div class='${options.classes.bottom}'>
-                ${
-                    options.paging
-                        ? `<div class='${options.classes.info}'></div>`
-                        : ""
-                }
-                <nav class='${options.classes.pagination}'></nav>
-            </div>`,
-            data: {
-                headings: [
-                    "",
-                    this.dtBulk.getHTML(),
-                    gettext("File"),
-                    gettext("Size (px)"),
-                    gettext("Added"),
-                    ""
-                ],
-                data: ids.map(id => this.createTableRow(id))
-            },
+        this.overviewTable = new OverviewDataTable({
+            dom: contentsEl,
+            classes: ["fw-data-table", "fw-large"],
             columns: [
                 {
                     select: 0,
@@ -294,8 +263,42 @@ export class ImageOverview {
                 {
                     select: [1, 3, 5],
                     sortable: false
+                },
+                {
+                    select: [this.lastSort.column],
+                    sort: this.lastSort.dir
                 }
             ],
+            data: ids.map(id => this.createTableRow(id)),
+            idColumn: 0,
+            checkboxColumn: 1,
+            bulkMenu: bulkMenuModel(),
+            bulkMenuPage: this,
+            searchable: true,
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
+            tabIndex: 1,
+            labels: {
+                noRows: gettext("No images available"), // Message shown when there are no images
+                noResults: gettext("No images found") // Message shown when no images are found after search
+            },
+            headings: [
+                "",
+                "",
+                gettext("File"),
+                gettext("Size (px)"),
+                gettext("Added"),
+                ""
+            ],
+            template: (options, _dom) =>
+                `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            <div class='${options.classes.bottom}'>
+                ${
+                    options.paging
+                        ? `<div class='${options.classes.info}'></div>`
+                        : ""
+                }
+                <nav class='${options.classes.pagination}'></nav>
+            </div>`,
             rowRender: (row, tr, _index) => {
                 const id = row.cells[0].data
                 const inputNode = {
@@ -319,55 +322,32 @@ export class ImageOverview {
                         }
                     }
                 ]
+            },
+            onEnter: (row, _event) => {
+                if (this.getSelected().length > 0) {
+                    return
+                }
+                const rowIndex = this.table.data.data.indexOf(row)
+                const button = this.table.dom.querySelector(
+                    `tr[data-index="${rowIndex}"] span.edit-image`
+                )
+                if (button) {
+                    button.click()
+                }
+            },
+            onDelete: row => {
+                const imageId = row.cells[0].data
+                this.deleteImageDialog([imageId])
             }
         })
+        this.overviewTable.init()
+        this.table = this.overviewTable.table
+        this.table.id = "imagelist"
+        this.dtBulk = this.overviewTable.dtBulk
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
-
-        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
-            event.preventDefault()
-            if (event.type === "keydown") {
-                const key = keyName(event)
-                if (key === "Enter") {
-                    if (this.getSelected().length > 0) {
-                        // Don't open. Let the bulk menu handle it.
-                        return
-                    }
-
-                    const button = this.table.dom.querySelector(
-                        `tr[data-index="${rowIndex}"] span.edit-image`
-                    )
-                    if (button) {
-                        button.click()
-                    }
-                } else if (key === " ") {
-                    const cell = this.table.data.data[rowIndex].cells[1]
-                    cell.data = !cell.data
-                    cell.text = String(cell.data)
-                    this.table.update()
-                } else if (key === "Delete") {
-                    const cell = this.table.data.data[rowIndex].cells[0]
-                    const imageId = cell.data
-                    this.deleteImageDialog([imageId])
-                }
-            } else {
-                if (
-                    event.target.closest(
-                        "span.edit-image, span.delete-image, label"
-                    )
-                ) {
-                    return
-                }
-                if (!focused) {
-                    this.table.dom.focus()
-                }
-                this.table.rows.setCursor(rowIndex)
-            }
-        })
-
-        this.dtBulk.init(this.table)
 
         this.table.dom.focus()
     }

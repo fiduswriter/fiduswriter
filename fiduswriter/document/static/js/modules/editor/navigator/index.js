@@ -75,7 +75,7 @@ export class ModNavigator {
                 case findTarget(event, "#navigator-filter-icon", el): {
                     const navigatorFilterEl =
                         document.getElementById("navigator-filter")
-                    if (navigatorFilterEl?.classList.contains("hide")) {
+                    if (navigatorFilterEl?.classList.contains("fw-hide")) {
                         this.showFilters()
                     } else {
                         this.hideFilters()
@@ -204,7 +204,7 @@ export class ModNavigator {
 
             // Arrow key navigation within the list
             if (
-                !navigatorListEl.classList.contains("hide") &&
+                !navigatorListEl.classList.contains("fw-hide") &&
                 (event.key === "ArrowDown" || event.key === "ArrowUp")
             ) {
                 event.preventDefault()
@@ -240,7 +240,7 @@ export class ModNavigator {
 
             // Arrow key navigation within the filter menu
             if (
-                !navigatorFilterEl.classList.contains("hide") &&
+                !navigatorFilterEl.classList.contains("fw-hide") &&
                 (event.key === "ArrowDown" || event.key === "ArrowUp")
             ) {
                 event.preventDefault()
@@ -308,10 +308,10 @@ export class ModNavigator {
             return
         }
         navigatorEl.classList.add("opened")
-        navigatorFilterEl.classList.add("hide")
-        navigatorListEl.classList.remove("hide")
-        navigatorFilterBackEl.classList.add("hide")
-        navigatorFilterIconEl.classList.remove("hide")
+        navigatorFilterEl.classList.add("fw-hide")
+        navigatorListEl.classList.remove("fw-hide")
+        navigatorFilterBackEl.classList.add("fw-hide")
+        navigatorFilterIconEl.classList.remove("fw-hide")
         navigatorButtonEl.setAttribute("aria-expanded", "true")
         this.scrollToActiveHeading()
     }
@@ -368,10 +368,10 @@ export class ModNavigator {
         ) {
             return
         }
-        navigatorFilterEl.classList.remove("hide")
-        navigatorFilterBackEl.classList.remove("hide")
-        navigatorListEl.classList.add("hide")
-        navigatorFilterIconEl.classList.add("hide")
+        navigatorFilterEl.classList.remove("fw-hide")
+        navigatorFilterBackEl.classList.remove("fw-hide")
+        navigatorListEl.classList.add("fw-hide")
+        navigatorFilterIconEl.classList.add("fw-hide")
         //populating the filter list
         navigatorFilterEl.innerHTML = this.populateNavFilter()
     }
@@ -393,10 +393,10 @@ export class ModNavigator {
         ) {
             return
         }
-        navigatorFilterEl.classList.add("hide")
-        navigatorFilterBackEl.classList.add("hide")
-        navigatorListEl.classList.remove("hide")
-        navigatorFilterIconEl.classList.remove("hide")
+        navigatorFilterEl.classList.add("fw-hide")
+        navigatorFilterBackEl.classList.add("fw-hide")
+        navigatorListEl.classList.remove("fw-hide")
+        navigatorFilterIconEl.classList.remove("fw-hide")
 
         this.scrollToActiveHeading()
     }
@@ -491,7 +491,7 @@ export class ModNavigator {
         return `
             <div id="navigator-content" role="dialog" aria-labelledby="navigator-header">
                 <div class="header-container">
-                    <button id="navigator-filter-back" class="hide" aria-label="${gettext("Back to navigator")}" tabindex="0">
+                    <button id="navigator-filter-back" class="fw-hide" aria-label="${gettext("Back to navigator")}" tabindex="0">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <h1 id="navigator-header" class="header">${gettext("Document Navigator")}</h1>
@@ -501,7 +501,7 @@ export class ModNavigator {
                 </div>
                 <div id="navigator-list" role="navigation" aria-label="${gettext("Document headings")}">
                 </div>
-                <div id="navigator-filter" class="hide" role="menu" aria-label="${gettext("Filter options")}">
+                <div id="navigator-filter" class="fw-hide" role="menu" aria-label="${gettext("Filter options")}">
                 </div>
             </div>
             <button id="navigator-button"

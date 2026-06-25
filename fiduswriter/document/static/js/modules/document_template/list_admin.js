@@ -45,7 +45,7 @@ export class DocumentTemplateListAdmin {
     }
 
     showErrors(errors) {
-        this.templateDesignerBlock.querySelector("ul.errorlist").innerHTML =
+        this.templateDesignerBlock.querySelector("ul.fw-errorlist").innerHTML =
             Object.values(errors)
                 .map(error => `<li>${escapeText(error)}</li>`)
                 .join("")
@@ -93,7 +93,7 @@ export class DocumentTemplateListAdmin {
                         event.preventDefault()
                         const ids = Array.from(
                             document.querySelectorAll(
-                                '#result_list tr.selected input[type="checkbox"]'
+                                '#result_list tr.fw-selected input[type="checkbox"]'
                             )
                         ).map(el => Number.parseInt(el.value))
                         ids.forEach(id => {

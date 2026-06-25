@@ -121,7 +121,7 @@ export class ImageEditDialog {
 
     displayCreateImageError(errors) {
         Object.keys(errors).forEach(eKey => {
-            const eMsg = `<div class="warning">${errors[eKey]}</div>`
+            const eMsg = `<div class="fw-warning">${errors[eKey]}</div>`
             if ("error" == eKey) {
                 document
                     .getElementById("editimage")
@@ -179,7 +179,7 @@ export class ImageEditDialog {
 
         // Remove old warning messages
         document
-            .querySelectorAll("#editimage .warning")
+            .querySelectorAll("#editimage .fw-warning")
             .forEach(el => el.parentElement.removeChild(el))
         return new Promise(resolve => {
             this.imageDB.saveImage(imageData).then(

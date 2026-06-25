@@ -55,16 +55,16 @@ export class LoginPage extends PreloginPage {
                 this.app.settings?.PASSWORD_LOGIN
                     ? `<div class="fw-login-right">
             <form>
-                    <ul id="non-field-errors" class="errorlist"></ul>
+                    <ul id="non-field-errors" class="fw-errorlist"></ul>
                     <div class="input-wrapper">
                         <label for="id-login">${gettext("Username")}</label>
                         <input type="text" name="login" placeholder="${gettext("Username or e-mail")}" autofocus="autofocus" required="" id="id-login" autocomplete="username">
-                        <ul id="id-login-errors" class="errorlist"></ul>
+                        <ul id="id-login-errors" class="fw-errorlist"></ul>
                     </div>
                     <div class="input-wrapper">
                         <label for="id-password">${gettext("Password")}</label>
                         <input type="password" name="password" placeholder="${gettext("Password")}" required="" id="id-password" autocomplete="current-password">
-                        <ul id="id-password-errors" class="errorlist"></ul>
+                        <ul id="id-password-errors" class="fw-errorlist"></ul>
                     </div>
                     <div class="submit-wrapper">
                         <button class="fw-button fw-dark fw-uppercase" type="submit" id="login-submit">${gettext("Log in")}</button>

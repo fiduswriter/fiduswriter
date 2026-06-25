@@ -96,7 +96,7 @@ export class DocumentTemplateAdmin {
         this.titleBlock.insertAdjacentHTML(
             "beforebegin",
             `<div class="form-row template-editor">
-                <ul class="errorlist"></ul>
+                <ul class="fw-errorlist"></ul>
                 <div id="template-editor"></div>
             </div>`
         )
@@ -117,7 +117,7 @@ export class DocumentTemplateAdmin {
     }
 
     showErrors(errors) {
-        this.templateDesignerBlock.querySelector("ul.errorlist").innerHTML =
+        this.templateDesignerBlock.querySelector("ul.fw-errorlist").innerHTML =
             Object.values(errors)
                 .map(error => `<li>${escapeText(error)}</li>`)
                 .join("")

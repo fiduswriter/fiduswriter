@@ -1,9 +1,7 @@
 import deepEqual from "fast-deep-equal"
-import {DataTable} from "simple-datatables"
-import {keyName} from "w3c-keyname"
 
 import {
-    DatatableBulk,
+    OverviewDataTable,
     OverviewMenuView,
     addAlert,
     avatarTemplate,
@@ -31,6 +29,7 @@ export class ContactsOverview {
         this.user = user
 
         this.contacts = []
+        this.lastSort = {column: 0, dir: "asc"}
     }
 
     init() {
@@ -60,46 +59,20 @@ export class ContactsOverview {
     }
 
     /* Initialize the overview table */
-    initTable() {
-        if (this.table) {
-            this.table.destroy()
-            this.table = null
+    initTable(searching = false) {
+        if (this.overviewTable) {
+            this.overviewTable.destroy()
+            this.overviewTable = null
         }
-        if (this.dtBulk) {
-            this.dtBulk.destroy()
-            this.dtBulk = null
-        }
-        const tableEl = document.createElement("table")
-        tableEl.classList.add("fw-data-table")
-        tableEl.classList.add("fw-large")
-        tableEl.classList.add("contacts-table")
+        this.table = null
+        this.dtBulk = null
+
         const contentsEl = document.querySelector(".fw-contents")
         contentsEl.innerHTML = "" // Delete any old table
-        contentsEl.appendChild(tableEl)
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 2)
-
-        this.table = new DataTable(tableEl, {
-            paging: false,
-            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
-            labels: {
-                noRows: gettext("No contacts available"),
-                noResults: gettext("No contacts found") // Message shown when there are no search results
-            },
-            template: (options, _dom) =>
-                `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
-            data: {
-                headings: [
-                    "",
-                    "",
-                    this.dtBulk.getHTML(),
-                    gettext("Name"),
-                    gettext("Type"),
-                    gettext("Email address"),
-                    ""
-                ],
-                data: this.contacts.map(contact => this.createTableRow(contact))
-            },
+        this.overviewTable = new OverviewDataTable({
+            dom: contentsEl,
+            classes: ["fw-data-table", "fw-large", "contacts-table"],
             columns: [
                 {
                     select: 0,
@@ -118,11 +91,35 @@ export class ContactsOverview {
                 {
                     select: [2, 6],
                     sortable: false
+                },
+                {
+                    select: [this.lastSort.column],
+                    sort: this.lastSort.dir
                 }
             ],
-            rowNavigation: true,
-            rowSelectionKeys: ["Enter", "Delete", " "],
+            data: this.contacts.map(contact => this.createTableRow(contact)),
+            idColumn: 0,
+            checkboxColumn: 2,
+            bulkMenu: bulkMenuModel(),
+            bulkMenuPage: this,
+            searchable: searching,
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
             tabIndex: 1,
+            labels: {
+                noRows: gettext("No contacts available"),
+                noResults: gettext("No contacts found") // Message shown when there are no search results
+            },
+            headings: [
+                "",
+                "",
+                "",
+                gettext("Name"),
+                gettext("Type"),
+                gettext("Email address"),
+                ""
+            ],
+            template: (options, _dom) =>
+                `<div class='${options.classes.container}'style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
             rowRender: (row, tr, _index) => {
                 const id = row.cells[0].data
                 const contactType = row.cells[1].data
@@ -148,38 +145,19 @@ export class ContactsOverview {
                         }
                     }
                 ]
+            },
+            onDelete: row => {
+                const id = row.cells[0].data
+                const type = row.cells[1].data
+                this.deleteContact(id, type)
             }
         })
+        this.overviewTable.init()
+        this.table = this.overviewTable.table
+        this.dtBulk = this.overviewTable.dtBulk
 
-        this.dtBulk.init(this.table)
-
-        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
-            event.preventDefault()
-            if (event.type === "keydown") {
-                const key = keyName(event)
-                if (key === " ") {
-                    const cell = this.table.data.data[rowIndex].cells[2]
-                    cell.data = !cell.data
-                    cell.text = String(cell.data)
-                    this.table.update()
-                } else if (key === "Delete") {
-                    const id = this.table.data.data[rowIndex].cells[0].data
-                    const type = this.table.data.data[rowIndex].cells[1].data
-                    this.deleteContact(id, type)
-                }
-            } else {
-                if (
-                    event.target.closest(
-                        "span.delete-single-contact, button.respond-invite, label"
-                    )
-                ) {
-                    return
-                }
-                if (!focused) {
-                    this.table.dom.focus()
-                }
-                this.table.rows.setCursor(rowIndex)
-            }
+        this.table.on("datatable.sort", (column, dir) => {
+            this.lastSort = {column, dir}
         })
 
         this.table.dom.focus()

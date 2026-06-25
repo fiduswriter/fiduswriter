@@ -1,7 +1,6 @@
-import {DataTable} from "simple-datatables"
-
 import {
     Dialog,
+    SelectionDataTable,
     addAlert,
     ensureCSS,
     escapeText,
@@ -250,35 +249,12 @@ export class CitationDialog {
     }
 
     initTable() {
-        const tableEl = document.createElement("table")
-        tableEl.classList.add("fw-data-table")
-        tableEl.classList.add("fw-large")
-        this.dialog.dialogEl.querySelector("#my-sources").appendChild(tableEl)
-        this.table = new DataTable(tableEl, {
-            searchable: true,
-            paging: false,
-            scrollY: "225px",
-            labels: {
-                noRows: gettext("No sources registered"),
-                noResults: gettext("No sources found"), // Message shown when there are no search results
-                placeholder: gettext("Search...") // placeholder for search field
-            },
-            template: (options, dom) => `<div class='${options.classes.top}'>
-                <div class='${options.classes.search}'>
-                    <input class='${options.classes.input}' placeholder='${options.labels.placeholder}' type='search' title='${options.labels.searchTitle}'${dom.id ? ` aria-controls="${dom.id}"` : ""}>
-                </div>
-            </div>
-            <div class='${options.classes.container}' style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
-            data: {
-                headings: [
-                    "",
-                    gettext("Title"),
-                    gettext("Author"),
-                    gettext("Year"),
-                    ""
-                ],
-                data: this.createAllTableRows()
-            },
+        const host = this.dialog.dialogEl.querySelector("#my-sources")
+        host.innerHTML = ""
+
+        this.selectionTable = new SelectionDataTable({
+            dom: host,
+            classes: ["fw-data-table", "fw-large"],
             columns: [
                 {
                     select: [0, 2, 3],
@@ -292,62 +268,44 @@ export class CitationDialog {
                     select: 4,
                     sortable: false
                 }
-            ]
+            ],
+            data: this.createAllTableRows(),
+            idColumn: 0,
+            multiple: true,
+            scrollY: "225px",
+            labels: {
+                noRows: gettext("No sources registered"),
+                noResults: gettext("No sources found"), // Message shown when there are no search results
+                placeholder: gettext("Search...") // placeholder for search field
+            }
         })
+        this.selectionTable.init()
+        this.table = this.selectionTable.table
+
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
         this.table.columns.sort(0, "asc")
     }
 
-    checkRow(dataIndex) {
-        const row = this.table.data.data[dataIndex]
-        if (!row) {
-            return
-        }
-
-        if (row.cells[4].data.length) {
-            row.cells[4].data = []
-        } else {
-            row.cells[4].data = [
-                {
-                    nodeName: "i",
-                    attributes: {
-                        class: "fa-solid fa-check",
-                        "aria-hidden": "true"
-                    }
-                }
-            ]
-        }
-        this.table.refresh()
-    }
-
     bind() {
-        this.table.dom.addEventListener("click", event => {
-            const el = {}
-            switch (true) {
-                case findTarget(event, "tr", el): {
-                    this.checkRow(el.target.dataset.index)
-                    break
-                }
-                default:
-                    break
-            }
-        })
-
         this.dialog.dialogEl
             .querySelector("#add-cite-source")
             .addEventListener("click", () => {
+                const selectedIds = this.selectionTable.getSelected()
                 const selectedItems = []
 
                 this.table.data.data.forEach(row => {
-                    if (!row.cells[4].data.length) {
+                    const cell = row.cells[0]
+                    const rowId = cell.text ?? cell.data
+                    if (!selectedIds.includes(rowId)) {
                         return
                     }
-                    row.cells[4].data = []
-                    const [db, id] = row.cells[0].data.split("-").map(
-                        (val, index) => (index ? Number.parseInt(val) : val) // only parseInt id (where index > 0)
-                    )
+                    const [db, id] = String(rowId)
+                        .split("-")
+                        .map(
+                            (val, index) => (index ? Number.parseInt(val) : val) // only parseInt id (where index > 0)
+                        )
                     if (
                         this.dialog.dialogEl.querySelector(
                             `#selected-source-${db}-${id}`
@@ -364,7 +322,7 @@ export class CitationDialog {
                     })
                 })
                 this.addToCitedItems(selectedItems)
-                this.table.refresh()
+                this.selectionTable.deselectAll()
             })
 
         this.dialog.dialogEl.addEventListener("click", event => {

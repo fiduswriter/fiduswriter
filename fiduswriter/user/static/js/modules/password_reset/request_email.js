@@ -22,11 +22,11 @@ export class PasswordResetRequest extends PreloginPage {
         </div>
         <div class="fw-login-right">
             <form>
-                <ul id="non-field-errors" class="errorlist"></ul>
+                <ul id="non-field-errors" class="fw-errorlist"></ul>
                 <div class="input-wrapper">
                     <label for="id-email">${gettext("E-mail address")}</label>
                     <input type="email" name="email" size="30" placeholder="${gettext("E-mail address")}" required="" id="id-email" autocomplete="email">
-                    <ul id="id-email-errors" class="errorlist"></ul>
+                    <ul id="id-email-errors" class="fw-errorlist"></ul>
                 </div>
                 <div class="submit-wrapper">
                     <button class="fw-button fw-dark fw-uppercase" id="email-submit" type="submit">${gettext("Reset My Password")}</button>

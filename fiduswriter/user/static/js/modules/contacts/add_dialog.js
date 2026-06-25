@@ -18,7 +18,7 @@ export class AddContactDialog {
                             "new-contact-user-string"
                         ).value
                         document
-                            .querySelectorAll("#add-new-contact .warning")
+                            .querySelectorAll("#add-new-contact .fw-warning")
                             .forEach(el => el.parentElement.removeChild(el))
                         const userStrings = userString.split(/[\s,;]+/)
                         let chain = Promise.resolve([])
@@ -101,7 +101,7 @@ export class AddContactDialog {
                     .getElementById("add-new-contact")
                     .insertAdjacentHTML(
                         "beforeend",
-                        `<div class="warning" style="padding: 8px;">${escapeText(userString)}: ${responseHtml}</div>`
+                        `<div class="fw-warning" style="padding: 8px;">${escapeText(userString)}: ${responseHtml}</div>`
                     )
                 return cancelPromise()
             }

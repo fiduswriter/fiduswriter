@@ -3,7 +3,7 @@ import {avatarTemplate} from "fwtoolkit/user"
 import {filterPrimaryEmail} from "./user_util.js"
 
 export const baseBodyTemplate = ({user, contents, hasOverview, app}) => `
-<div id="wait">
+<div id="fw-wait">
     <i class="fa fa-spinner fa-pulse"></i>
 </div>
 <header class="fw-header" role="banner">

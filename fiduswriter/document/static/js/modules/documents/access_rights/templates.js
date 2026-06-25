@@ -1,7 +1,7 @@
 import {DialogTabs, avatarTemplate, escapeText} from "fwtoolkit"
 
 const peopleTabTemplate = ({contacts, collaborators}) =>
-    `<div id="people" class="tab-content ui-tabs-panel">
+    `<div id="people" class="tab-content fw-tabs-panel">
         <div id="my-contacts" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My contacts")}</h3>
             <table class="fw-data-table">
@@ -30,7 +30,7 @@ const peopleTabTemplate = ({contacts, collaborators}) =>
     </div>`
 
 const shareLinkTabTemplate = () =>
-    `<div id="sharelink" class="tab-content ui-tabs-panel" style="display: none;">
+    `<div id="sharelink" class="tab-content fw-tabs-panel" style="display: none;">
         <div id="share-token-list">
             <p class="fw-ar-loading">${gettext("Loading…")}</p>
         </div>
@@ -97,7 +97,7 @@ export const createShareTokenDialogTemplate = (
         <tbody>
             <tr>
                 <th><label for="share-token-rights">${gettext("Rights")}</label></th>
-                <td class="entry-field">
+                <td class="fw-entry-field">
                     <select id="share-token-rights" class="fw-button fw-light fw-large">
                         ${
                             e2ee
@@ -118,13 +118,13 @@ export const createShareTokenDialogTemplate = (
             </tr>
             <tr>
                 <th><label for="share-token-expires">${gettext("Expires")}</label></th>
-                <td class="entry-field">
+                <td class="fw-entry-field">
                     <input id="share-token-expires" type="text" class="fw-light" placeholder="${gettext("YYYY-MM-DD or empty")}" pattern="\d{4}-\d{2}-\d{2}" />
                 </td>
             </tr>
             <tr>
                 <th><label for="share-token-note">${gettext("Note")}</label></th>
-                <td class="entry-field">
+                <td class="fw-entry-field">
                     <input id="share-token-note" type="text" class="fw-light" placeholder="${gettext('optional label, e.g. "for reviewers"')}"/>
                 </td>
             </tr>
@@ -132,7 +132,7 @@ export const createShareTokenDialogTemplate = (
                 e2ee
                     ? `<tr>
                     <th><label for="share-token-password">${gettext("Document password")}</label></th>
-                    <td class="entry-field">
+                    <td class="fw-entry-field">
                         <input id="share-token-password" type="text" class="fw-light" value="${escapeText(documentPassword)}" placeholder="${gettext("Enter the document password to include it in the link")}" autocomplete="off" />
                         <p class="e2ee-share-warning">
                             <i class="fa-solid fa-exclamation-triangle"></i>
@@ -174,7 +174,7 @@ export const collaboratorsTemplate = ({collaborators}) =>
             collaborator =>
                 `<tr id="collaborator-${collaborator.holder.type}-${collaborator.holder.id}"
     data-type="${collaborator.holder.type}" data-id="${collaborator.holder.id}"
-    class="collaborator-tr" data-rights="${collaborator.rights}">
+    class="fw-collaborator-tr" data-rights="${collaborator.rights}">
         <td width="215">
             <span>${avatarTemplate({user: collaborator.holder})}</span>
             <span class="fw-inline">${
@@ -185,7 +185,7 @@ export const collaboratorsTemplate = ({collaborators}) =>
         </td>
         <td width="50" align="center">
             <div class="fw-inline edit-right-wrapper">
-                <i class="icon-access-right icon-access-${collaborator.rights}"></i>
+                <i class="fw-icon-access-right icon-access-${collaborator.rights}"></i>
                 <i class="fa-solid fa-caret-down edit-right"></i>
             </div>
         </td>

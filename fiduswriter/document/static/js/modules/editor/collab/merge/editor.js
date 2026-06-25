@@ -183,7 +183,7 @@ export class MergeEditor {
         const dialog = new Dialog({
             id: "editor-merge-view",
             title: gettext("Merging Offline Document"),
-            body: `<div style="display:flex"><div class="offline-heading">${gettext("Common Document")}</div><div class="merged-heading">${gettext("Online Document")}</div> <div class="online-heading">${gettext("Offline Document")}</div></div><div class= "user-contents" style="display:flex;"><div id="editor-diff-common" style="float:left;padding:15px;"></div><div id="editor-diff-online" class="merged-view" style="padding:15px;"></div><div id="editor-diff-offline" style="float:right;padding:15px;"></div></div>`,
+            body: `<div style="display:flex"><div class="offline-heading">${gettext("Common Document")}</div><div class="merged-heading">${gettext("Online Document")}</div> <div class="online-heading">${gettext("Offline Document")}</div></div><div class="user-contents" style="display:flex;"><div id="editor-diff-common" style="float:left;padding:15px;"></div><div id="editor-diff-online" class="merged-view" style="padding:15px;"></div><div id="editor-diff-offline" style="float:right;padding:15px;"></div></div>`,
             fullScreen: true,
             canClose: false,
             help: () => {
@@ -233,7 +233,7 @@ export class MergeEditor {
                                 "Accepting or rejecting a change in the merge editor in the middle or the offline editor on the right causes a change in the merge editor. You can accept a change by directly clicking on the highlighted text. A dropdown menu will appear and you can then either accept or reject the change. When you click on the highlighted text, it also highlights the changes that will get accepted. %(mergeImage)s As shown in the above image one can click on a highlighted change, and click on accept change. On accepting a change it will be reflected in the merged document editor in the middle. Rejecting a change works in the same way except on reject a change the highlight of the change will be lost, with it the ability to accept, reject or copy a change."
                             ),
                             {
-                                mergeImage: `<img src="${staticUrl("img/accept_change.avif")}" class = "merge-img">`
+                                mergeImage: `<img src="${staticUrl("img/accept_change.avif")}" class="merge-img">`
                             },
                             {hasImage: true}
                         ],

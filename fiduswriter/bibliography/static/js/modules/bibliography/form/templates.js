@@ -49,7 +49,7 @@ export const bibDialog = ({bib_type, BibTypes, hasCats}) => {
                 <select id="select-bibtype" class="fw-button fw-light fw-large" required>
                     ${
                         bib_type === false
-                            ? `<option class="placeholder" selected disabled value="">${gettext("Select source type")}</option>`
+                            ? `<option class="fw-placeholder" selected disabled value="">${gettext("Select source type")}</option>`
                             : ""
                     }
                     ${Object.keys(BibTypes)

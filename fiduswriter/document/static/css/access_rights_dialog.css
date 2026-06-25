@@ -64,7 +64,7 @@
 }
 
 /* Allow overflow in create share token dialog so focus outlines aren't clipped */
-#create-share-token-dialog.ui-dialog {
+#create-share-token-dialog.fw-dialog {
     overflow: visible;
 }
 

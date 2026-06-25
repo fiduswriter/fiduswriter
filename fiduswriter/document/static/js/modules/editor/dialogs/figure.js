@@ -90,17 +90,17 @@ export class FigureDialog {
     showPlaceHolder() {
         if (
             !this.mathField.getValue().length &&
-            !this.mathliveDOM.querySelector(".placeholder")
+            !this.mathliveDOM.querySelector(".fw-placeholder")
         ) {
             this.mathliveDOM.insertAdjacentHTML(
                 "beforeend",
-                `<span class="placeholder" >${gettext("Type formula")}</span>`
+                `<span class="fw-placeholder" >${gettext("Type formula")}</span>`
             )
         }
     }
 
     hidePlaceHolder() {
-        const placeHolder = this.mathliveDOM.querySelector(".placeholder")
+        const placeHolder = this.mathliveDOM.querySelector(".fw-placeholder")
         if (placeHolder) {
             this.mathliveDOM.removeChild(placeHolder)
         }

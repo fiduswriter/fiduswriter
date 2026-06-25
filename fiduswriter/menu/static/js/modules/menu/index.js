@@ -241,6 +241,6 @@ export class SiteMenu {
         if (index === -1) {
             return text
         }
-        return `${text.substring(0, index)}<span class="access-key">${text.charAt(index)}</span>${text.substring(index + 1)}`
+        return `${text.substring(0, index)}<span class="fw-access-key">${text.charAt(index)}</span>${text.substring(index + 1)}`
     }
 }

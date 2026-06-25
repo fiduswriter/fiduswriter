@@ -69,8 +69,8 @@
     border-radius: 4px;
 }
 
-.fw-checkable.checked::after,
-tr.fw-checkable.checked > td:last-child::after {
+.fw-checkable.fw-checked::after,
+tr.fw-checkable.fw-checked > td:last-child::after {
     display: inline-block;
     font-family: "Font Awesome 7 Free", monospace;
     font-weight: 900;
@@ -108,7 +108,7 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 /* stylelint-enable selector-id-pattern */
 
-.margin-box.active::after {
+.margin-box.fw-active::after {
     display: block;
     font-family: "Font Awesome 7 Free", monospace;
     font-weight: 900;
@@ -130,8 +130,8 @@ tr.fw-checkable.checked > td:last-child::after {
     content: "\f0d7";
 }
 
-.ui-icon-closethick::before,
-.ui-icon-help::before {
+.fw-icon-close::before,
+.fw-icon-help::before {
     display: inline-block;
     font-family: "Font Awesome 7 Free", monospace;
     font-weight: 900;
@@ -154,7 +154,7 @@ tr.fw-checkable.checked > td:last-child::after {
 }
 
 .datatable-pagination-list button,
-table.datatable-table th button {
+table.fw-datatable-table th button {
     color: inherit;
     border: 0;
     background-color: inherit;
@@ -164,7 +164,7 @@ table.datatable-table th button {
     font-size: inherit;
 }
 
-table.datatable-table thead th button::after {
+table.fw-datatable-table thead th button::after {
     font-family: "Font Awesome 7 Free", monospace;
     font-weight: 900;
     font-size: 80%;
@@ -174,28 +174,28 @@ table.datatable-table thead th button::after {
     margin-left: 8px;
 }
 
-table.datatable-table
+table.fw-datatable-table
     thead
     th[data-sortable]:not([data-sortable="false"])
     button::after {
     content: "\f0dc";
 }
 
-table.datatable-table
+table.fw-datatable-table
     thead
     th[data-sortable]:not([data-sortable="false"]).asc
     button::after {
     content: "\f0de";
 }
 
-table.datatable-table
+table.fw-datatable-table
     thead
     th[data-sortable]:not([data-sortable="false"]).desc
     button::after {
     content: "\f0dd";
 }
 
-.fw-data-table-body tr.checked td.checkable::after {
+.fw-data-table-body tr.fw-checked td.checkable::after {
     display: inline-block;
     font-family: "Font Awesome 7 Free", monospace;
     font-weight: 900;

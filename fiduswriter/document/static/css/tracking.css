@@ -58,6 +58,6 @@ li [data-track]::before {
     display: none;
 }
 
-.track.active .track-ctas {
+.track.fw-active .track-ctas {
     display: block;
 }

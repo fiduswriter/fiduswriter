@@ -27,7 +27,7 @@ export const importDocumentTemplate = ({
         </div>
         ${e2eeHtml}
     </form>
-    <div class="noteEl">${supportedFormatsText}</div>`
+    <div class="fw-note-el">${supportedFormatsText}</div>`
 
 export const deleteFolderCell = ({subdir, ids}) =>
     `<span class="delete-folder fw-link-text" data-ids="${ids.join(",")}"

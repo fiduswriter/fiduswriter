@@ -125,7 +125,7 @@ export class HeaderbarView {
             this.executeMenuItem(menuItem, menu)
         } else if (
             target.matches(
-                "#headerbar #header-navigation .header-nav-item:not(.disabled)"
+                "#headerbar #header-navigation .header-nav-item:not(.fw-disabled)"
             )
         ) {
             // A menu has been clicked, lets find out which one.
@@ -440,7 +440,7 @@ export class HeaderbarView {
         if (index === -1) {
             return escapeText(title)
         }
-        return `${escapeText(title.substring(0, index))}<span class="access-key">${escapeText(title.charAt(index))}</span>${escapeText(title.substring(index + 1))}`
+        return `${escapeText(title.substring(0, index))}<span class="fw-access-key">${escapeText(title.charAt(index))}</span>${escapeText(title.substring(index + 1))}`
     }
 
     saveFileName() {
@@ -580,7 +580,7 @@ export class HeaderbarView {
             .map(
                 menu => `
                 <div class="header-menu">
-                    <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " disabled" : ""}"
+                    <span class="header-nav-item${menu.disabled && menu.disabled(this.editor) ? " fw-disabled" : ""}"
                           title="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
                           aria-label="${typeof menu.tooltip === "function" ? menu.tooltip(this.editor) : menu.tooltip}"
                           role="menuitem"
@@ -638,10 +638,10 @@ export class HeaderbarView {
     getActionMenuItemHTML(menuItem) {
         return `<span class="fw-pulldown-item${
             menuItem.selected && menuItem.selected(this.editor)
-                ? " selected"
+                ? " fw-selected"
                 : ""
-        }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
-            menuItem === this.cursorMenuItem ? " cursor" : ""
+        }${menuItem.disabled && menuItem.disabled(this.editor) ? " fw-disabled" : ""}${
+            menuItem === this.cursorMenuItem ? " fw-cursor" : ""
         }"
         role="menuitem"
         ${menuItem.disabled && menuItem.disabled(this.editor) ? 'aria-disabled="true"' : ""}
@@ -655,10 +655,10 @@ export class HeaderbarView {
     getMenuMenuItemHTML(menuItem) {
         return `<span class="fw-pulldown-item${
             menuItem.selected && menuItem.selected(this.editor)
-                ? " selected"
+                ? " fw-selected"
                 : ""
-        }${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}${
-            menuItem === this.cursorMenuItem ? " cursor" : ""
+        }${menuItem.disabled && menuItem.disabled(this.editor) ? " fw-disabled" : ""}${
+            menuItem === this.cursorMenuItem ? " fw-cursor" : ""
         }" ${menuItem.tooltip ? `title="${menuItem.tooltip}" aria-label="${menuItem.tooltip}"` : ""}>
             ${menuItem.icon ? `<i class="fa-solid fa-${menuItem.icon}"></i>` : ""}
             ${typeof menuItem.title === "function" ? menuItem.title(this.editor) : menuItem.title}

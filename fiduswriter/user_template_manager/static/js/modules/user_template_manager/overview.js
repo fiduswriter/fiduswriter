@@ -1,8 +1,5 @@
-import {DataTable} from "simple-datatables"
-import {keyName} from "w3c-keyname"
-
 import {
-    DatatableBulk,
+    OverviewDataTable,
     OverviewMenuView,
     addAlert,
     ensureCSS,
@@ -72,13 +69,15 @@ export class DocTemplatesOverview {
 
     /* Initialize the overview table */
     initTable() {
-        const tableEl = document.createElement("table")
-        tableEl.classList.add("fw-data-table")
-        tableEl.classList.add("fw-large")
-        this.dom.querySelector(".fw-contents").innerHTML = ""
-        this.dom.querySelector(".fw-contents").appendChild(tableEl)
+        if (this.overviewTable) {
+            this.overviewTable.destroy()
+            this.overviewTable = null
+        }
+        this.table = null
+        this.dtBulk = null
 
-        this.dtBulk = new DatatableBulk(this, bulkMenuModel(), 1)
+        const contentsEl = this.dom.querySelector(".fw-contents")
+        contentsEl.innerHTML = ""
 
         const hiddenCols = [0]
 
@@ -86,37 +85,9 @@ export class DocTemplatesOverview {
             hiddenCols.push(1)
         }
 
-        this.table = new DataTable(tableEl, {
-            searchable: true,
-            paging: false,
-            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
-            labels: {
-                noRows: gettext("No document templates available"),
-                noResults: gettext("No document templates found") // Message shown when there are no search results
-            },
-            rowNavigation: true,
-            rowSelectionKeys: ["Enter", "Delete", " "],
-            tabIndex: 1,
-            template: (
-                options,
-                _dom
-            ) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
-            <div class='${options.classes.bottom}'>
-                <nav class='${options.classes.pagination}'></nav>
-            </div>`,
-            data: {
-                headings: [
-                    "",
-                    this.dtBulk.getHTML(),
-                    gettext("Title"),
-                    gettext("Created"),
-                    gettext("Last changed"),
-                    ""
-                ],
-                data: this.templateList.map(docTemplate =>
-                    this.createTableRow(docTemplate)
-                )
-            },
+        this.overviewTable = new OverviewDataTable({
+            dom: contentsEl,
+            classes: ["fw-data-table", "fw-large"],
             columns: [
                 {
                     select: 0,
@@ -134,8 +105,41 @@ export class DocTemplatesOverview {
                 {
                     select: 5,
                     sortable: false
+                },
+                {
+                    select: [this.lastSort.column],
+                    sort: this.lastSort.dir
                 }
             ],
+            data: this.templateList.map(docTemplate =>
+                this.createTableRow(docTemplate)
+            ),
+            idColumn: 0,
+            checkboxColumn: 1,
+            bulkMenu: bulkMenuModel(),
+            bulkMenuPage: this,
+            searchable: true,
+            scrollY: `${Math.max(window.innerHeight - 360, 100)}px`,
+            tabIndex: 1,
+            labels: {
+                noRows: gettext("No document templates available"),
+                noResults: gettext("No document templates found") // Message shown when there are no search results
+            },
+            headings: [
+                "",
+                "",
+                gettext("Title"),
+                gettext("Created"),
+                gettext("Last changed"),
+                ""
+            ],
+            template: (
+                options,
+                _dom
+            ) => `<div class='${options.classes.container}'${options.scrollY.length ? ` style='height: ${options.scrollY}; overflow-Y: auto;'` : ""}></div>
+            <div class='${options.classes.bottom}'>
+                <nav class='${options.classes.pagination}'></nav>
+            </div>`,
             rowRender: (row, tr, _index) => {
                 const id = row.cells[0].data
                 const inputNode = {
@@ -159,52 +163,31 @@ export class DocTemplatesOverview {
                         }
                     }
                 ]
-            }
-        })
-
-        this.table.on("datatable.selectrow", (rowIndex, event, focused) => {
-            event.preventDefault()
-            if (event.type === "keydown") {
-                const key = keyName(event)
-                if (key === "Enter") {
-                    if (this.getSelected().length > 0) {
-                        // Don't open. Let the bulk menu handle it.
-                        return
-                    }
-                    const link = this.table.dom.querySelector(
-                        `tr[data-index="${rowIndex}"] a`
-                    )
-                    if (link) {
-                        link.click()
-                    }
-                } else if (key === " ") {
-                    const cell = this.table.data.data[rowIndex].cells[1]
-                    cell.data = !cell.data
-                    cell.text = String(cell.data)
-                    this.table.update()
-                } else if (key === "Delete") {
-                    const cell = this.table.data.data[rowIndex].cells[0]
-                    const imageId = cell.data
-                    this.deleteDocTemplatesDialog([imageId])
-                }
-            } else {
-                if (
-                    event.target.closest("a, span.delete-doc-template, label")
-                ) {
+            },
+            onEnter: (row, _event) => {
+                if (this.getSelected().length > 0) {
                     return
                 }
-                if (!focused) {
-                    this.table.dom.focus()
+                const rowIndex = this.table.data.data.indexOf(row)
+                const link = this.table.dom.querySelector(
+                    `tr[data-index="${rowIndex}"] a`
+                )
+                if (link) {
+                    link.click()
                 }
-                this.table.rows.setCursor(rowIndex)
+            },
+            onDelete: row => {
+                const templateId = row.cells[0].data
+                this.deleteDocTemplatesDialog([templateId])
             }
         })
+        this.overviewTable.init()
+        this.table = this.overviewTable.table
+        this.dtBulk = this.overviewTable.dtBulk
 
         this.table.on("datatable.sort", (column, dir) => {
             this.lastSort = {column, dir}
         })
-
-        this.dtBulk.init(this.table)
 
         this.table.dom.focus()
     }

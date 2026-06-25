@@ -28,7 +28,7 @@
     background-color: var(--cs-2-background-hover);
 }
 
-.inline-tools .menuicon.active {
+.inline-tools .menuicon.fw-active {
     background-color: var(--cs-2-background-selected);
 }
 

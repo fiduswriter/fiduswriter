@@ -96,7 +96,7 @@ export class CommentEditor {
                 ${this.options.isMajor ? "checked" : ""}/>
             <label>${gettext("High priority")}</label>
             <div class="comment-btns">
-                <button class="submit fw-button fw-dark disabled" type="submit">
+                <button class="submit fw-button fw-dark fw-disabled" type="submit">
                     ${this.id !== "-1" ? gettext("Edit") : gettext("Submit")}
                 </button>
                 <button class="cancel fw-button fw-orange" type="submit">
@@ -131,7 +131,7 @@ export class CommentEditor {
         this.dom.addEventListener("click", event => {
             const el = {}
             switch (true) {
-                case findTarget(event, "button.submit:not(.disabled)", el):
+                case findTarget(event, "button.submit:not(.fw-disabled)", el):
                     this.submit()
                     if (this.keepOpenAfterSubmit) {
                         this.scrollToBottom()
@@ -171,9 +171,11 @@ export class CommentEditor {
 
     updateButtons() {
         if (this.hasChanged()) {
-            this.dom.querySelector("button.submit").classList.remove("disabled")
+            this.dom
+                .querySelector("button.submit")
+                .classList.remove("fw-disabled")
         } else {
-            this.dom.querySelector("button.submit").classList.add("disabled")
+            this.dom.querySelector("button.submit").classList.add("fw-disabled")
         }
     }
 
@@ -221,7 +223,7 @@ export class CommentEditor {
         this.dom.querySelector("div.tagger").innerHTML = this.userTaggerList
             .map(
                 (user, index) =>
-                    `<div class="tag-user tag${index === this.selectedTag ? " selected" : ""}" data-index="${index}">
+                    `<div class="tag-user tag${index === this.selectedTag ? " fw-selected" : ""}" data-index="${index}">
                 ${user ? avatarTemplate({user}) : '<span class="fw-string-avatar"></span>'}
                 <h5 class="comment-user-name">${escapeText(user.name)}</h5>
             </div>`
@@ -264,7 +266,7 @@ export class CommentEditor {
 
     scrollToBottom() {
         const activeMarginBox = document.querySelector(
-            ".margin-box.comment.active .comment-answer-container"
+            ".margin-box.comment.fw-active .comment-answer-container"
         )
         if (activeMarginBox) {
             activeMarginBox.scrollTop = activeMarginBox.scrollHeight

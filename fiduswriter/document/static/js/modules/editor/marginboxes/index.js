@@ -108,7 +108,7 @@ export class ModMarginboxes {
                         )
                     ) {
                         Array.from(el.target.parentElement.children)
-                            .find(node => node.matches(".marginbox-options"))
+                            .find(node => node.matches(".fw-marginbox-options"))
                             .classList.add("fw-open")
                     } else {
                         let resolved = false
@@ -133,7 +133,7 @@ export class ModMarginboxes {
                             marginBoxOptions(comment, user, docInfo)
                         )
                         const marginboxOptions = document.body.querySelector(
-                            ".comment-answer-options.marginbox-options"
+                            ".comment-answer-options.fw-marginbox-options"
                         )
                         marginboxOptions.classList.add("fw-open")
                         this.positionMarginBoxOptions(
@@ -185,7 +185,7 @@ export class ModMarginboxes {
                 }
                 case findTarget(
                     event,
-                    ".margin-box.comment.active .show-more-less",
+                    ".margin-box.comment.fw-active .show-more-less",
                     el
                 ):
                     this.toggleShowMore(el)
@@ -230,7 +230,7 @@ export class ModMarginboxes {
     }
 
     closeAllMenus(
-        selector = ".marginbox-options-submenu.fw-open, .marginbox-options.fw-open"
+        selector = ".marginbox-options-submenu.fw-open, .fw-marginbox-options.fw-open"
     ) {
         document.querySelectorAll(selector).forEach(el => {
             if (el.classList.contains("comment-answer-options")) {
@@ -784,9 +784,9 @@ export class ModMarginboxes {
                         node => node.matches(".show-marginbox-options")
                     )
                     if (scrollTop > 50) {
-                        marginBoxOption?.classList.add("hide")
+                        marginBoxOption?.classList.add("fw-hide")
                     } else {
-                        marginBoxOption?.classList.remove("hide")
+                        marginBoxOption?.classList.remove("fw-hide")
                     }
                 })
             })

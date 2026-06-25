@@ -39,17 +39,17 @@ body.header-closed #margin-box-filter {
     background-color: var(--cs-5-background-hover);
 }
 
-.margin-box-filter-button.disabled {
+.margin-box-filter-button.fw-disabled {
     background-color: var(--cs-disabled-background);
     color: var(--cs-disabled);
 }
 
-.marginbox-options.fw-pulldown.fw-right {
+.fw-marginbox-options.fw-pulldown.fw-right {
     right: -16px;
     top: 22px;
 }
 
-.margin-box-filter-button .marginbox-options.fw-pulldown.fw-right {
+.margin-box-filter-button .fw-marginbox-options.fw-pulldown.fw-right {
     top: 27px;
 }
 
@@ -97,44 +97,44 @@ body.header-closed #margin-box-filter {
     color: var(--editor-track-text-color);
 }
 
-.margin-box.track.active {
+.margin-box.track.fw-active {
     background-color: var(--editor-track-active-background-color);
     color: var(--editor-track-text-color);
     border: 0 none;
 }
 
-.margin-box.track.active::after {
+.margin-box.track.fw-active::after {
     color: var(--editor-track-active-background-color);
     text-shadow: none;
 }
 
-#margin-box-container div.margin-box.active {
+#margin-box-container div.margin-box.fw-active {
     color: var(--cs-white-text);
     border: 1px solid var(--cs-white-border);
     left: -18px;
     z-index: 5;
 }
 
-.margin-box.comment.active {
+.margin-box.comment.fw-active {
     background-color: var(--editor-active-comment-background-color);
 }
 
-.margin-box.help.active {
+.margin-box.help.fw-active {
     background-color: var(--editor-active-help-background-color);
     left: -15px;
 }
 
-.margin-box.warning {
+.margin-box.fw-warning {
     background-color: rgb(var(--warning-background-color));
     color: var(--warning-text-color);
 }
 
-#margin-box-container div.margin-box.warning.active {
+#margin-box-container div.margin-box.fw-warning.fw-active {
     background-color: var(--error-background-color);
     color: var(--error-text-color);
 }
 
-.margin-box.active::after {
+.margin-box.fw-active::after {
     position: absolute;
     left: -11px;
     top: 30px;
@@ -144,12 +144,12 @@ body.header-closed #margin-box-filter {
     text-shadow: -1px 0 0 var(--cs-white-border);
 }
 
-.margin-box.warning.active::after {
+.margin-box.fw-warning.fw-active::after {
     top: 0;
     color: var(--cs-1-text);
 }
 
-.margin-box.help.active::after {
+.margin-box.help.fw-active::after {
     color: var(--editor-active-help-arrow-color);
     left: -13px;
     top: 10px;
@@ -163,7 +163,7 @@ body.header-closed #margin-box-filter {
     position: relative;
 }
 
-.active .comment-answer[id]::before,
+.fw-active .comment-answer[id]::before,
 .inactive .comment-answer + .comment-answer[id]::before {
     position: absolute;
     left: 10px;
@@ -312,8 +312,8 @@ body.header-closed #margin-box-filter {
     border-bottom-color: var(--editor-comment-resolved-border-color);
 }
 
-.comment-is-major-bgc.active .comment-item:first-child::after,
-.comment.resolved.active .comment-item:first-child::after {
+.comment-is-major-bgc.fw-active .comment-item:first-child::after,
+.comment.resolved.fw-active .comment-item:first-child::after {
     border-bottom-color: var(--editor-active-comment-background-color);
 }
 
@@ -337,7 +337,10 @@ body.header-closed #margin-box-filter {
     background: #777777;
 }
 
-.comment.active.resolved .comment-answer #answer-editor .ProseMirror-wrapper {
+.comment.fw-active.resolved
+    .comment-answer
+    #answer-editor
+    .ProseMirror-wrapper {
     pointer-events: none;
 }
 
@@ -374,7 +377,7 @@ body.header-closed #margin-box-filter {
     background-color: var(--editor-resolved-comment-icon-color);
 }
 
-.margin-box.active .comment-item:first-child {
+.margin-box.fw-active .comment-item:first-child {
     background-color: var(--editor-active-comment-background-color);
     padding-bottom: 10px;
 }
@@ -402,8 +405,8 @@ body.header-closed #margin-box-filter {
     cursor: pointer;
 }
 
-#comment-editor .tagger .tag.selected,
-#answer-editor .tagger .tag.selected {
+#comment-editor .tagger .tag.fw-selected,
+#answer-editor .tagger .tag.fw-selected {
     background-color: var(--cs-6-background-focus);
 }
 
@@ -458,7 +461,7 @@ body.header-closed #margin-box-filter {
     display: none;
 }
 
-.margin-box.comment.active .comment-answer-container {
+.margin-box.comment.fw-active .comment-answer-container {
     max-height: 325px;
     overflow: hidden scroll;
 }

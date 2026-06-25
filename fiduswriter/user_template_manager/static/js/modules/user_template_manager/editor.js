@@ -63,8 +63,8 @@ export class DocTemplatesEditor {
 
     render() {
         this.dom = document.createElement("body")
-        this.dom.classList.add("scrollable")
-        this.dom.innerHTML = `<div id="wait" class="">
+        this.dom.classList.add("fw-scrollable")
+        this.dom.innerHTML = `<div id="fw-wait" class="">
             <i class="fa fa-spinner fa-pulse"></i>
         </div>
         <nav id="headerbar"><div>
@@ -80,15 +80,15 @@ export class DocTemplatesEditor {
         <div>
             <div class="fw-contents template-editor-wrapper">
                 <div id="template-editor"></div>
-                <ul class="errorlist"></ul>
-                <div class="ui-dialog-buttonset">
-                    <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget save">
+                <ul class="fw-errorlist"></ul>
+                <div class="fw-dialog-buttonset">
+                    <button type="button" class="fw-dark fw-button fw-dialog-titlebar-button ui-corner-all ui-widget save">
                         ${gettext("Save")}
                     </button>
-                    <button type="button" class="fw-dark fw-button ui-button ui-corner-all ui-widget download">
+                    <button type="button" class="fw-dark fw-button fw-dialog-titlebar-button ui-corner-all ui-widget download">
                         ${gettext("Download")}
                     </button>
-                    <button type="button" class="fw-orange fw-button ui-button ui-corner-all ui-widget close">
+                    <button type="button" class="fw-orange fw-button fw-dialog-titlebar-button ui-corner-all ui-widget close">
                         ${gettext("Close")}
                     </button>
                 </div>
@@ -101,13 +101,15 @@ export class DocTemplatesEditor {
     }
 
     showErrors(errors) {
-        this.dom.querySelector(".errorlist").innerHTML = Object.values(errors)
+        this.dom.querySelector(".fw-errorlist").innerHTML = Object.values(
+            errors
+        )
             .map(error => `<li>${error}</li>`)
             .join("")
     }
 
     save() {
-        this.dom.querySelector(".errorlist").innerHTML = ""
+        this.dom.querySelector(".fw-errorlist").innerHTML = ""
         const {valid, value, errors, import_id, title} =
             this.templateDesigner.getCurrentValue()
         if (!valid) {

@@ -24,7 +24,7 @@ export class FeedbackTab {
                     ${gettext("Give a brief description of what has happened.")}</p>
                 <div id="feedback-form">
                   <form>
-                    <textarea id="message" name="message" rows="10" cols="30"></textarea>
+                    <textarea id="fw-message" name="message" rows="10" cols="30"></textarea>
                     <input type="button" value='${gettext("submit")}' id="feedbackbutton" class="fw-button fw-orange" />
                   </form>
                 </div>
@@ -85,12 +85,12 @@ export class FeedbackTab {
         this.previousActiveElement = document.activeElement
         const panelEl = document.querySelector(".feedback-panel")
         panelEl.style.display = "block"
-        document.querySelector("textarea#message").focus()
+        document.querySelector("textarea#fw-message").focus()
         panelEl.addEventListener("keydown", this.handleKeyDown)
     }
 
     sendFeedback() {
-        const messageEl = document.querySelector("textarea#message"),
+        const messageEl = document.querySelector("textarea#fw-message"),
             closeFeedbackEl = document.querySelector("#close-feedback"),
             feedbackFormEl = document.querySelector("#feedback-form"),
             responseEl = document.querySelector("#response-message")

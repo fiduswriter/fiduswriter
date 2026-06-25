@@ -1,6 +1,4 @@
-import {DataTable} from "simple-datatables"
-
-import {Dialog, cancelPromise, escapeText, findTarget} from "fwtoolkit"
+import {Dialog, SelectionDataTable, cancelPromise, escapeText} from "fwtoolkit"
 
 export class ImageSelectionDialog {
     constructor(imageDB, userImageDB, imgId, page) {
@@ -93,7 +91,6 @@ export class ImageSelectionDialog {
         this.imageDialog.open()
         this.initTable()
         this.imageDialog.centerDialog()
-        this.bindEvents()
         return p
     }
 
@@ -102,28 +99,18 @@ export class ImageSelectionDialog {
         const tableEl = document.createElement("table")
         tableEl.classList.add("fw-data-table")
         tableEl.classList.add("fw-small")
-        this.imageDialog.dialogEl
-            .querySelector("div.image-selection-table")
-            .appendChild(tableEl)
-        this.table = new DataTable(tableEl, {
-            searchable: true,
-            paging: false,
-            scrollY: "270px",
-            labels: {
-                noRows: gettext("No images available"), // Message shown when there are no images
-                noResults: gettext("No images found"), // Message shown when no images are found after search
-                placeholder: gettext("Search...") // placeholder for search field
-            },
-            template: (options, dom) => `<div class='${options.classes.top}'>
-                <div class='${options.classes.search}'>
-                    <input class='${options.classes.input}' placeholder='${options.labels.placeholder}' type='search' title='${options.labels.searchTitle}'${dom.id ? ` aria-controls="${dom.id}"` : ""}>
-                </div>
-            </div>
-            <div class='${options.classes.container}' style='height: ${options.scrollY}; overflow-Y: auto;'></div>`,
-            data: {
-                headings: ["", gettext("Image"), gettext("Title"), ""],
-                data: this.images.map(image => this.createTableRow(image))
-            },
+        const host = this.imageDialog.dialogEl.querySelector(
+            "div.image-selection-table"
+        )
+        host.innerHTML = ""
+        host.appendChild(tableEl)
+
+        const selectedIds =
+            this.imgId === false ? [] : [`${this.imgDb}-${this.imgId}`]
+
+        this.selectionTable = new SelectionDataTable({
+            dom: host,
+            classes: ["fw-data-table", "fw-small"],
             columns: [
                 {
                     select: 0,
@@ -137,13 +124,29 @@ export class ImageSelectionDialog {
                     select: [1, 3],
                     sortable: false
                 }
-            ]
+            ],
+            data: this.images.map(image => this.createTableRow(image)),
+            idColumn: 0,
+            multiple: false,
+            selectedIds,
+            scrollY: "270px",
+            labels: {
+                noRows: gettext("No images available"), // Message shown when there are no images
+                noResults: gettext("No images found"), // Message shown when no images are found after search
+                placeholder: gettext("Search...") // placeholder for search field
+            },
+            onChange: selected => {
+                if (selected.length) {
+                    const [db, id] = String(selected[0]).split("-")
+                    this.imgId = Number.parseInt(id)
+                    this.imgDb = db
+                } else {
+                    this.imgId = false
+                }
+            }
         })
-        this.lastSort = {column: 0, dir: "asc"}
-
-        this.table.on("datatable.sort", (column, dir) => {
-            this.lastSort = {column, dir}
-        })
+        this.selectionTable.init()
+        this.table = this.selectionTable.table
     }
 
     createTableRow(image) {
@@ -152,66 +155,7 @@ export class ImageSelectionDialog {
             image.image.thumbnail === undefined
                 ? `<img src="${image.image.image}" style="max-heigth:30px;max-width:30px;">`
                 : `<img src="${image.image.thumbnail}" style="max-heigth:30px;max-width:30px;">`,
-            escapeText(image.image.title),
-            image.db === this.imgDb && image.image.id === this.imgId
-                ? [
-                      {
-                          nodeName: "i",
-                          attributes: {
-                              class: "fa fa-check",
-                              "aria-hidden": "true"
-                          }
-                      }
-                  ]
-                : []
+            escapeText(image.image.title)
         ]
-    }
-
-    checkRow(dataIndex) {
-        const row = this.table.data.data[dataIndex]
-        if (!row) {
-            return
-        }
-        const cell = row.cells[0]
-        const [db, id] = cell.data.split("-").map(
-            (val, index) => (index ? Number.parseInt(val) : val) // only parseInt id (where index > 0)
-        )
-        if (id === this.imgId) {
-            this.imgId = false
-        } else {
-            this.imgId = id
-        }
-        this.imgDb = db
-        this.table.data.data.forEach((row, index) => {
-            if (index === dataIndex && this.imgId) {
-                row.cells[3].data = [
-                    {
-                        nodeName: "i",
-                        attributes: {
-                            class: "fa fa-check",
-                            "aria-hidden": "true"
-                        }
-                    }
-                ]
-            } else {
-                row.cells[3].data = []
-            }
-        })
-        this.table.refresh()
-    }
-
-    bindEvents() {
-        // functions for the image selection dialog
-        this.table.dom.addEventListener("click", event => {
-            const el = {}
-            switch (true) {
-                case findTarget(event, "tr", el): {
-                    this.checkRow(Number.parseInt(el.target.dataset.index))
-                    break
-                }
-                default:
-                    break
-            }
-        })
     }
 }

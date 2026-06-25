@@ -112,7 +112,7 @@ body.editor header {
     letter-spacing: 1px;
 }
 
-.fw-pulldown-item.cursor {
+.fw-pulldown-item.fw-cursor {
     border-left: 3px var(--menu-cursor-border-color) solid;
 }
 
@@ -125,14 +125,14 @@ body.editor header {
     text-decoration: line-through;
 }
 
-#header-navigation span.disabled,
-#toolbar span.disabled {
+#header-navigation span.fw-disabled,
+#toolbar span.fw-disabled {
     color: var(--cs-disabled) !important;
     text-shadow: none;
 }
 
-#header-navigation span.selected.disabled,
-#toolbar span.selected.disabled {
+#header-navigation span.fw-selected.fw-disabled,
+#toolbar span.fw-selected.fw-disabled {
     background-color: var(--cs-disabled-background);
     color: var(--cs-disabled) !important;
 }
@@ -174,7 +174,7 @@ body.editor header {
     vertical-align: top;
 }
 
-#comments-display.selected {
+#comments-display.fw-selected {
     background-color: var(--cs-light-background);
 }
 
@@ -182,7 +182,7 @@ body.editor header {
     background-color: var(--cs-light-background-hover);
 }
 
-#comments-display.disabled {
+#comments-display.fw-disabled {
     color: var(--cs-disabled);
     background-color: var(--cs-disabled-background);
 }
@@ -270,7 +270,7 @@ body.editor header {
     letter-spacing: 0.15px;
 }
 
-.editor-toolbar div.multi-buttons .multi-buttons-cover.disabled::after {
+.editor-toolbar div.multi-buttons .multi-buttons-cover.fw-disabled::after {
     display: none;
 }
 
@@ -311,7 +311,7 @@ body.editor header {
     width: 46px;
 }
 
-.ui-dialog-content.math {
+.fw-dialog-content.math {
     min-width: 200px;
     padding-right: 50px;
     padding-bottom: 10px;
@@ -375,11 +375,11 @@ body.header-closed #editor-content {
     background-color: var(--error-background-color);
 }
 
-#paper-editable .search {
+#paper-editable .fw-search {
     background-color: var(--cs-5-background);
 }
 
-#paper-editable .search.selected {
+#paper-editable .fw-search.fw-selected {
     background-color: var(--cs-5-background-hover);
 }
 
@@ -517,7 +517,7 @@ span.delete {
     background-color: var(--cs-white-background);
 }
 
-#flow.hide {
+#flow.fw-hide {
     display: none;
 }
 
@@ -607,7 +607,7 @@ span.delete {
     position: relative;
 }
 
-.math-field .placeholder {
+.math-field .fw-placeholder {
     position: absolute;
     top: 20px;
     left: 10px;
@@ -655,7 +655,7 @@ table.insert-table-selection td.hover {
     background-color: var(--cs-white-background-hover);
 }
 
-table.insert-table-selection td.selected {
+table.insert-table-selection td.fw-selected {
     color: var(--cs-white-selected);
     background-color: var(--cs-white-background-selected);
 }
@@ -667,12 +667,12 @@ table.insert-table-selection td.selected {
 
 /* Wide table: used for submission dialog */
 
-.fw-dialog-table-wide .entry-field input[type="text"],
-.fw-dialog-table-wide .entry-field textarea {
+.fw-dialog-table-wide .fw-entry-field input[type="text"],
+.fw-dialog-table-wide .fw-entry-field textarea {
     width: 678px;
 }
 
-.fw-dialog-table-wide .entry-field textarea {
+.fw-dialog-table-wide .fw-entry-field textarea {
     resize: none;
 }
 
@@ -786,11 +786,11 @@ table.insert-table-selection td.selected {
 }
 
 ul.drop-up-options li:hover,
-ul.drop-up-options li.focused {
+ul.drop-up-options li.fw-focused {
     background-color: var(--cs-light-background-hover);
 }
 
-ul.drop-up-options li.focused {
+ul.drop-up-options li.fw-focused {
     outline: 2px solid var(--cs-light-border);
     outline-offset: -2px;
 }
@@ -845,9 +845,9 @@ ul.drop-up-options li.focused {
 /* For users who use one of the inverted high contrast modes. Likely want
 as much black as possible. */
 
-html[hc="a3"] .ui-widget-overlay,
-html[hc="a4"] .ui-widget-overlay,
-html[hc="a5"] .ui-widget-overlay {
+html[hc="a3"] .fw-overlay,
+html[hc="a4"] .fw-overlay,
+html[hc="a5"] .fw-overlay {
     background-color: rgb(var(--highcontrast-overlay-color));
 }
 
@@ -957,8 +957,8 @@ html[hc="a5"] #toolbar {
     padding-bottom: 10px;
 }
 
-#navigator-list.hide,
-#navigator-filter.hide {
+#navigator-list.fw-hide,
+#navigator-filter.fw-hide {
     display: block;
     height: 0;
     overflow: hidden;
@@ -1097,7 +1097,7 @@ html[hc="a5"] #toolbar {
     vertical-align: middle;
 }
 
-.hide {
+.fw-hide {
     display: none;
 }
 
@@ -1215,7 +1215,7 @@ body.no-scroll {
         text-align: left !important;
     }
 
-    .margin-box.active {
+    .margin-box.fw-active {
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
@@ -1226,7 +1226,7 @@ body.no-scroll {
         margin-top: 0 !important;
     }
 
-    .margin-box.comment.active .comment-answer-container {
+    .margin-box.comment.fw-active .comment-answer-container {
         max-height: none !important;
     }
 }
@@ -1356,7 +1356,7 @@ pre[data-language] {
 }
 
 .inline-reference-drop-up-item:hover,
-.inline-reference-drop-up-item.selected {
+.inline-reference-drop-up-item.fw-selected {
     background-color: var(--cs-light-background-hover);
 }
 

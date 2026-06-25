@@ -112,7 +112,7 @@ export class PreloginPage {
     render() {
         this.dom = document.createElement("body")
         this.dom.classList.add("prelogin")
-        this.dom.classList.add("scrollable")
+        this.dom.classList.add("fw-scrollable")
         this.dom.innerHTML = basePreloginTemplate({
             language: this.language,
             headerLinks: this.headerLinks,

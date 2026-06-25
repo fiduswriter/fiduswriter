@@ -211,12 +211,12 @@ class ContributorDropUp {
         const options = this.dropUp.querySelectorAll(".drop-up-option")
         // Unfocus previous option
         if (this.focusedIndex >= 0 && this.focusedIndex < options.length) {
-            options[this.focusedIndex].classList.remove("focused")
+            options[this.focusedIndex].classList.remove("fw-focused")
         }
         // Focus new option
         this.focusedIndex = index
         if (options[index]) {
-            options[index].classList.add("focused")
+            options[index].classList.add("fw-focused")
         }
     }
 
@@ -227,7 +227,7 @@ class ContributorDropUp {
     unfocusOption(index) {
         const options = this.dropUp.querySelectorAll(".drop-up-option")
         if (options[index]) {
-            options[index].classList.remove("focused")
+            options[index].classList.remove("fw-focused")
         }
         // Only reset focusedIndex if this was the focused option
         if (this.focusedIndex === index) {
@@ -242,11 +242,11 @@ class ContributorDropUp {
         const options = this.dropUp.querySelectorAll(".drop-up-option")
         // Remove focused class from all options
         options.forEach(option => {
-            option.classList.remove("focused")
+            option.classList.remove("fw-focused")
         })
         // Add focused class to current option
         if (this.focusedIndex >= 0 && this.focusedIndex < options.length) {
-            options[this.focusedIndex].classList.add("focused")
+            options[this.focusedIndex].classList.add("fw-focused")
         }
     }
 

@@ -34,7 +34,7 @@ export function createInlineReferenceDropUp(
                 const li = document.createElement("li")
                 li.classList.add("inline-reference-drop-up-item")
                 if (index === selectedIndex) {
-                    li.classList.add("selected")
+                    li.classList.add("fw-selected")
                 }
                 const authorText = match.author ? escapeText(match.author) : ""
                 const titleText = match.title
@@ -67,7 +67,7 @@ export function createInlineReferenceDropUp(
                 const li = document.createElement("li")
                 li.classList.add("inline-reference-drop-up-item")
                 if (combinedIndex === selectedIndex) {
-                    li.classList.add("selected")
+                    li.classList.add("fw-selected")
                 }
                 li.innerHTML = `
                     <span class="citation-drop-up-key">#${escapeText(target.id)}</span>

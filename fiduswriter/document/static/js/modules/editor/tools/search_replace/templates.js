@@ -2,8 +2,8 @@ export const searchDialogTemplate = ({canWrite}) => `<table class="fw-dialog-tab
     <tbody>
         <tr>
             <th><h4 class="fw-tablerow-title">${gettext("Find")}</h4></th>
-            <td class="entry-field">
-                <input type="text" class="search">
+            <td class="fw-entry-field">
+                <input type="text" class="fw-search">
                 <div class="search-result-count"></div>
             </td>
         </tr>
@@ -11,7 +11,7 @@ export const searchDialogTemplate = ({canWrite}) => `<table class="fw-dialog-tab
             canWrite
                 ? `<tr>
                 <th><h4 class="fw-tablerow-title">${gettext("Replace with")}</h4></th>
-                <td class="entry-field"><input type="text" class="replace"></td>
+                <td class="fw-entry-field"><input type="text" class="replace"></td>
             </tr>`
                 : ""
         }

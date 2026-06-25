@@ -34,11 +34,11 @@
     overflow-y: auto;
 }
 
-#chat-container .message {
+#chat-container .fw-message {
     padding-top: 5px;
 }
 
-#chat-container .message:last-child {
+#chat-container .fw-message:last-child {
     border-bottom: 1px solid var(--cs-white-border);
     margin-bottom: 6px;
     padding-bottom: 6px;

@@ -58,7 +58,7 @@ export class SelectionMenuView {
         const target = event.target
         if (
             target.matches(
-                ".editor-selection-menu > div:not(.disabled), .editor-selection-menu > div:not(.disabled) *"
+                ".editor-selection-menu > div:not(.fw-disabled), .editor-selection-menu > div:not(.fw-disabled) *"
             )
         ) {
             // A menu item has been clicked, lets find out which one.
@@ -126,7 +126,7 @@ export class SelectionMenuView {
                 ${this.editor.menu.selectionMenuModel.content
                     .map(
                         (menuItem, index) =>
-                            `<div class="ui-buttonset${(menuItem.hidden && menuItem.hidden(this.editor)) || (menuItem.disabled && menuItem.disabled(this.editor)) ? " disabled" : ""}">
+                            `<div class="ui-buttonset${(menuItem.hidden && menuItem.hidden(this.editor)) || (menuItem.disabled && menuItem.disabled(this.editor)) ? " fw-disabled" : ""}">
                         ${this.getSelectionMenuItemHTML(menuItem, index)}
                     </div>`
                     )
@@ -145,7 +145,7 @@ export class SelectionMenuView {
 
     getButtonHTML(menuItem) {
         return `
-        <button aria-label="${menuItem.title}" class="fw-button fw-light fw-large fw-square edit-button${menuItem.selected && menuItem.selected(this.editor) ? " ui-state-active" : ""}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ""}${menuItem.disabled && menuItem.disabled(this.editor) ? " disabled" : ""}" title="${menuItem.title}" >
+        <button aria-label="${menuItem.title}" class="fw-button fw-light fw-large fw-square edit-button${menuItem.selected && menuItem.selected(this.editor) ? " fw-state-active" : ""}${menuItem.class ? ` ${menuItem.class(this.editor)}` : ""}${menuItem.disabled && menuItem.disabled(this.editor) ? " fw-disabled" : ""}" title="${menuItem.title}" >
             <span class="ui-button-text">
                 <i class="fa-solid fa-${typeof menuItem.icon === "function" ? menuItem.icon(this.editor) : menuItem.icon}"></i>
             </span>

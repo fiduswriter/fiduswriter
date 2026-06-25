@@ -45,75 +45,33 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver = self.driver
         driver.get(f"{self.base_url}/usermedia/")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'All categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
+
+        def fill_last_category_input(text):
+            inputs = driver.find_elements(
+                By.CSS_SELECTOR, "#editCategoryList input.category-form"
+            )
+            last_input = inputs[-1]
+            last_input.click()
+            last_input.clear()
+            last_input.send_keys(text)
+
+        fill_last_category_input("landscape")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]",
+            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
         ).click()
+        fill_last_category_input("people")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]",
-        ).clear()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]",
-        ).send_keys("landscape")
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::span[3]",
+            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
         ).click()
+        fill_last_category_input("scientific")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]",
-        ).clear()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]",
-        ).send_keys("people")
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::span[4]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]",
-        ).clear()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]",
-        ).send_keys("scientific")
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::button[2]",
+            By.CSS_SELECTOR, "#edit-categories button.fw-dark"
         ).click()
         driver.refresh()
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'All categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
         self.assertEqual(
             "landscape",
@@ -145,18 +103,11 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.NAME, "title").send_keys("An image")
         driver.find_element(
             By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Select categories'])[1]/following::label[1]",
+            "//div[@class='fw-checkable-label' and contains(text(), 'landscape')]",
         ).click()
         driver.find_element(
             By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'landscape'])[1]/following::label[1]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'people'])[1]/following::label[1]",
+            "//div[@class='fw-checkable-label' and contains(text(), 'people')]",
         ).click()
         # image path
         imagePath = os.path.join(
@@ -164,9 +115,7 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         driver.find_element(By.NAME, "image").send_keys(imagePath)
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'scientific'])[1]/following::button[1]",
+            By.CSS_SELECTOR, "#editimage button.fw-dark"
         ).click()
         image_title = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "edit-image"))
@@ -180,11 +129,7 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         search_input.send_keys("fish")
         self.assertEqual(
             "No images found",
-            driver.find_element(
-                By.XPATH,
-                "(.//*[normalize-space(text()) and normalize-space(.)="
-                "'Size (px)'])[1]/following::td[1]",
-            ).text,
+            driver.find_element(By.CSS_SELECTOR, ".fw-data-table td").text,
         )
         search_input.send_keys(Keys.BACKSPACE)
         search_input.send_keys(Keys.BACKSPACE)
@@ -192,21 +137,11 @@ class UsermediaOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         search_input.send_keys(Keys.BACKSPACE)
         self.assertEqual(
             "An image",
-            driver.find_element(
-                By.XPATH,
-                "(.//*[normalize-space(text()) and normalize-space(.)="
-                "'Size (px)'])[1]/following::span[3]",
-            ).text,
+            driver.find_element(By.CSS_SELECTOR, ".edit-image").text,
         )
+        driver.find_element(By.CSS_SELECTOR, ".delete-image").click()
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'PNG'])[1]/following::i[1]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Confirm deletion'])[1]/following::button[2]",
+            By.CSS_SELECTOR, "#confirmdeletion button.fw-dark"
         ).click()
         image_placeholder = WebDriverWait(driver, self.wait_time).until(
             EC.presence_of_element_located((By.CLASS_NAME, "datatable-empty"))

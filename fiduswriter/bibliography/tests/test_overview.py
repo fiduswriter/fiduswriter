@@ -43,74 +43,33 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver = self.driver
         driver.get(self.base_url + "/bibliography/")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'All categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
+
+        def fill_last_category_input(text):
+            inputs = driver.find_elements(
+                By.CSS_SELECTOR, "#editCategoryList input.category-form"
+            )
+            last_input = inputs[-1]
+            last_input.click()
+            last_input.clear()
+            last_input.send_keys(text)
+
+        fill_last_category_input("Fish")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]",
+            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
         ).click()
+        fill_last_category_input("Table")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]",
-        ).clear()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[1]",
-        ).send_keys("Fish")
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::span[3]",
+            By.CSS_SELECTOR, "#editCategoryList .fw-add-input"
         ).click()
+        fill_last_category_input("Jungle")
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]",
+            By.CSS_SELECTOR, "#edit-categories button.fw-dark"
         ).click()
+
         driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]",
-        ).clear()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[2]",
-        ).send_keys("Table")
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::span[4]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]",
-        ).clear()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::input[3]",
-        ).send_keys("Jungle")
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Edit Categories'])[1]/following::button[2]",
-        ).click()
-        driver.find_element(
-            By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'All categories'])[1]/following::button[1]",
+            By.CSS_SELECTOR, "button[title='Edit categories (Alt-e)']"
         ).click()
         try:
             self.assertEqual(
@@ -167,21 +126,18 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.LINK_TEXT, "Categories").click()
         driver.find_element(
             By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Categories'])[2]/following::div[1]",
+            "//div[@class='fw-checkable-label' and contains(text(), 'Table')]",
         ).click()
         driver.find_element(
             By.XPATH,
-            "(.//*[normalize-space(text()) and normalize-space(.)="
-            "'Table'])[1]/following::div[1]",
+            "//div[@class='fw-checkable-label' and contains(text(), 'Jungle')]",
         ).click()
         try:
             self.assertEqual(
                 "Jungle",
                 driver.find_element(
                     By.XPATH,
-                    "(.//*[normalize-space(text()) and normalize-space(.)="
-                    "'Table'])[1]/following::div[1]",
+                    "//div[@class='fw-checkable-label' and contains(text(), 'Jungle')]",
                 ).text,
             )
         except AssertionError as e:

@@ -118,21 +118,20 @@ export class CitationDialog {
                 this.createTableRow(
                     this.editor.mod.db.bibDB.db[id],
                     id,
-                    "document",
-                    false
+                    "document"
                 )
             )
         })
         Object.keys(this.editor.app.bibDB.db).forEach(id => {
             const bib = this.editor.app.bibDB.db[id]
             if (!this.editor.mod.db.bibDB.hasReference(bib)) {
-                data.push(this.createTableRow(bib, id, "user", false))
+                data.push(this.createTableRow(bib, id, "user"))
             }
         })
         return data
     }
 
-    createTableRow(bib, id, db, checked) {
+    createTableRow(bib, id, db) {
         const bibauthors = bib.fields.author || bib.fields.editor
         return [
             `${db}-${id}`,
@@ -141,10 +140,7 @@ export class CitationDialog {
                 <span class="fw-searchable">${bib.fields.title?.length ? escapeText(litToText(bib.fields.title)) : gettext("Untitled")}</span>
             </span>`,
             bibauthors ? escapeText(nameToText(bibauthors)) : "",
-            bib.fields.date ? dateToYear(bib.fields.date) : "",
-            checked
-                ? '<i class="fa-solid fa-check" aria-hidden="true"></i>'
-                : ""
+            bib.fields.date ? dateToYear(bib.fields.date) : ""
         ]
     }
 
@@ -213,8 +209,7 @@ export class CitationDialog {
                 this.createTableRow(
                     this.editor.mod.db.bibDB.db[id],
                     id,
-                    "document",
-                    false
+                    "document"
                 )
             )
         })

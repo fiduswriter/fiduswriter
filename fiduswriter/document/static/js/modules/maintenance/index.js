@@ -1,9 +1,9 @@
 import JSZip from "jszip"
 
-import {addAlert, findTarget, get, post, postJson, whenReady} from "fwtoolkit"
 import {updateFile} from "@fiduswriter/document/importer/native/update"
-import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
 import {updateDoc} from "@fiduswriter/document/schema/convert"
+import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
+import {addAlert, findTarget, get, post, postJson, whenReady} from "fwtoolkit"
 
 // To upgrade all docs and document revions to the newest version
 

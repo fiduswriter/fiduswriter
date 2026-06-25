@@ -1,13 +1,17 @@
 import {
     ContentMenu,
     Dialog,
+    DialogTabs,
     addAlert,
     enableDatePicker,
+    ensureCSS,
     findTarget,
     post,
     postJson,
     setCheckableLabel
 } from "fwtoolkit"
+
+ensureCSS(staticUrl("css/checkable_list.css"))
 import {AddContactDialog} from "../../contacts/add_dialog"
 import {
     accessRightOverviewTemplate,
@@ -200,36 +204,27 @@ export class AccessRightsTab {
             })
 
         // Inner tab switching (People / Share link)
-        container
-            .querySelectorAll(".ui-tabs-nav .tab-link a")
-            .forEach(linkEl => {
-                linkEl.addEventListener("click", event => {
-                    event.preventDefault()
-                    const href = linkEl.getAttribute("href")
-                    const tabName = href.substring(1)
-
-                    container
-                        .querySelectorAll(".tab-link")
-                        .forEach(tabLinkEl =>
-                            tabLinkEl.classList.remove("current-tab")
-                        )
-                    linkEl.parentNode.classList.add("current-tab")
-
-                    container
-                        .querySelectorAll(".tab-content")
-                        .forEach(contentEl => {
-                            if (contentEl.matches(href)) {
-                                contentEl.style.display = ""
-                            } else {
-                                contentEl.style.display = "none"
-                            }
-                        })
-
-                    if (tabName === "sharelink" && this.singleDocumentId) {
+        const dialogTabs = new DialogTabs(
+            [
+                {id: "people", title: gettext("People"), template: () => ""},
+                {
+                    id: "sharelink",
+                    title: gettext("Share link"),
+                    template: () => ""
+                }
+            ],
+            {
+                onShow: index => {
+                    if (
+                        index === 1 && // Share link tab
+                        this.singleDocumentId
+                    ) {
                         this.loadShareTokens()
                     }
-                })
-            })
+                }
+            }
+        )
+        dialogTabs.bind(container)
 
         // Share-link actions
         container.addEventListener("click", event => {

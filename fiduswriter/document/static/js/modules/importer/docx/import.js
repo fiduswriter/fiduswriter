@@ -1,6 +1,6 @@
+import {DocxConvert} from "@fiduswriter/document/importer/docx/convert"
 import {escapeText, postJson} from "fwtoolkit"
 import {NativeImporter} from "../native"
-import {DocxConvert} from "@fiduswriter/document/importer/docx/convert"
 
 export class DocxImporter {
     constructor(file, user, path, importId, options = {}) {

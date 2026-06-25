@@ -332,7 +332,9 @@ export class ModDocumentTemplate {
                         "Export the document to a DOCX file with the given template."
                     ),
                     action: editor => {
-                        import("@fiduswriter/document/exporter/docx/index").then(({DOCXExporter}) => {
+                        import(
+                            "@fiduswriter/document/exporter/docx/index"
+                        ).then(({DOCXExporter}) => {
                             const exporter = new DOCXExporter(
                                 editor.getDoc(),
                                 template.template_file,
@@ -355,16 +357,18 @@ export class ModDocumentTemplate {
                         "Export the document to an ODT file with the given template."
                     ),
                     action: editor => {
-                        import("@fiduswriter/document/exporter/odt/index").then(({ODTExporter}) => {
-                            const exporter = new ODTExporter(
-                                editor.getDoc(),
-                                template.template_file,
-                                editor.mod.db.bibDB,
-                                editor.mod.db.imageDB,
-                                editor.app.csl
-                            )
-                            exporter.init()
-                        })
+                        import("@fiduswriter/document/exporter/odt/index").then(
+                            ({ODTExporter}) => {
+                                const exporter = new ODTExporter(
+                                    editor.getDoc(),
+                                    template.template_file,
+                                    editor.mod.db.bibDB,
+                                    editor.mod.db.imageDB,
+                                    editor.app.csl
+                                )
+                                exporter.init()
+                            }
+                        )
                     },
                     disabled: editor => editor.app.isOffline()
                 }

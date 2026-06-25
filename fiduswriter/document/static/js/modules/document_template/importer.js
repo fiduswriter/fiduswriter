@@ -1,9 +1,9 @@
+import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
 import {escapeText, postJson} from "fwtoolkit"
 import {
     MAX_FW_DOCUMENT_VERSION,
     MIN_FW_DOCUMENT_VERSION
 } from "../importer/native/file"
-import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
 
 import {updateTemplateFile} from "./update"
 

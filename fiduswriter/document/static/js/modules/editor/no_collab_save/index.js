@@ -1,6 +1,6 @@
+import {addAlert, postJson} from "fwtoolkit"
 import {receiveTransaction} from "prosemirror-collab"
 import {Transform} from "prosemirror-transform"
-import {addAlert, postJson} from "fwtoolkit"
 import {recreateTransform} from "../collab/merge/recreate_transform"
 
 /**

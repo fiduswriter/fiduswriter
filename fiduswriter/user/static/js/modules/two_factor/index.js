@@ -1,4 +1,3 @@
-import QRCode from "qrcode"
 import {
     Dialog,
     activateWait,
@@ -6,6 +5,7 @@ import {
     deactivateWait,
     postJson
 } from "fwtoolkit"
+import QRCode from "qrcode"
 
 export const twoFactorSetupDialog = () => {
     let secretKey = null

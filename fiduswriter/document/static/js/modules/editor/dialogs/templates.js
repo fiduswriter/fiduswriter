@@ -1,5 +1,5 @@
-import {escapeText} from "fwtoolkit"
 import {CATS} from "@fiduswriter/document/schema/i18n"
+import {escapeText} from "fwtoolkit"
 
 export const linkDialogTemplate = ({
     defaultLink,

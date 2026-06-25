@@ -165,4 +165,46 @@
     --feedback-icon-color: #555555;
     --feedback-icon-hover-color: #999999;
     --feedback-icon-focus-color: #999999;
+
+    /* E2EE strength meter colors */
+    --e2ee-strength-very-weak-color: var(--error-border-color, #af3515);
+    --e2ee-strength-weak-color: var(--cs-3-background-from, #d3421c);
+    --e2ee-strength-fair-color: var(
+        --warning-background-color,
+        rgb(221 208 63 / 80%)
+    );
+    --e2ee-strength-strong-color: var(--cs-6-background, #5a7e73);
+    --e2ee-strength-very-strong-color: var(--cs-5-background, #4c6860);
+
+    /* E2EE badge/indicator colors */
+    --e2ee-badge-text-color: var(--cs-4-text, #4c6860);
+    --e2ee-badge-icon-color: var(--cs-6-background, #5a7e73);
+    --e2ee-badge-encrypted-background-color: var(
+        --cs-6-background-hover,
+        #96c6b8
+    );
+    --e2ee-badge-encrypted-text-color: var(--cs-6-background, #5a7e73);
+
+    /* E2EE warning colors (share link) */
+    --e2ee-warning-background-color: var(--cs-light-background, #f9f9f9);
+    --e2ee-warning-border-color: var(--cs-3-background-from, #d3421c);
+    --e2ee-warning-text-color: var(--cs-3-background-to, #b13615);
+
+    /* E2EE info colors (password reminder) */
+    --e2ee-info-background-color: var(--cs-light-background, #f9f9f9);
+    --e2ee-info-border-color: var(--cs-2-box-shadow, #3c9fdf);
+    --e2ee-info-text-color: var(--cs-2-background, #0d78be);
+
+    /* E2EE mode banner */
+    --e2ee-banner-background-color: var(--cs-6-background-hover, #96c6b8);
+    --e2ee-banner-border-color: var(--cs-6-border, #7d948e);
+    --e2ee-banner-text-color: var(--cs-6-background, #5a7e73);
+    --e2ee-banner-link-color: var(--cs-2-background, #0d78be);
+
+    /* E2EE encrypted placeholder */
+    --e2ee-encrypted-title-color: var(--cs-light-text-secondary, #6e6e6e);
+
+    /* E2EE input focus */
+    --e2ee-input-focus-border-color: var(--cs-2-background, #0d78be);
+    --e2ee-input-focus-shadow-color: var(--cs-2-box-shadow, #3c9fdf);
 }

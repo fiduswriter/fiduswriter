@@ -9,10 +9,10 @@ import {tableEditing} from "prosemirror-tables"
 import {EditorView} from "prosemirror-view"
 import sortable from "sortablejs"
 
-import {ensureCSS, findTarget} from "fwtoolkit"
-import {ContributorsPartView, TagsPartView} from "../editor/state_plugins"
 import {docSchema} from "@fiduswriter/document/schema/document/index"
 import {toFullJSON, toMiniJSON} from "@fiduswriter/document/schema/mini_json"
+import {ensureCSS, findTarget} from "fwtoolkit"
+import {ContributorsPartView, TagsPartView} from "../editor/state_plugins"
 import {DocumentStyleDialog} from "./document_style_dialog"
 import {ExportTemplateDialog} from "./export_template_dialog"
 import {
@@ -48,6 +48,7 @@ export class DocumentTemplateDesigner {
         exportTemplates,
         dom
     ) {
+        ensureCSS(staticUrl("css/input_list.css"))
         this.id = id
         this.title = title
         this.value = toFullJSON(value, docSchema)

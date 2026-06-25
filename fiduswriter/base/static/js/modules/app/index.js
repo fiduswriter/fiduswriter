@@ -1,9 +1,6 @@
 import {CSL} from "citeproc-plus"
 //import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
 
-import {plugins} from "../../plugins/app"
-import {Page404} from "../404"
-import {BibliographyDB} from "../bibliography/database"
 import {
     WebSocketConnector,
     addAlert,
@@ -14,6 +11,9 @@ import {
     showSystemMessage
 } from "fwtoolkit"
 import {getSettings, initSettings} from "fwtoolkit/settings"
+import {plugins} from "../../plugins/app"
+import {Page404} from "../404"
+import {BibliographyDB} from "../bibliography/database"
 import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
 import {EmailConfirm} from "../email_confirm"

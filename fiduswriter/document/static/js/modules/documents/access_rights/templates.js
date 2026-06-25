@@ -1,12 +1,7 @@
-import {avatarTemplate, escapeText} from "fwtoolkit"
+import {DialogTabs, avatarTemplate, escapeText} from "fwtoolkit"
 
-/** Outer wrapper with two tabs: "People" and "Share link" */
-export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
-    `<ul class="ui-tabs-nav">
-        <li class="tab-link current-tab"><a href="#people" class="tab-link-inner">${gettext("People")}</a></li>
-        <li class="tab-link"><a href="#sharelink" class="tab-link-inner">${gettext("Share link")}</a></li>
-    </ul>
-    <div id="people" class="tab-content ui-tabs-panel">
+const peopleTabTemplate = ({contacts, collaborators}) =>
+    `<div id="people" class="tab-content ui-tabs-panel">
         <div id="my-contacts" class="fw-ar-container">
             <h3 class="fw-green-title">${gettext("My contacts")}</h3>
             <table class="fw-data-table">
@@ -32,8 +27,10 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
                 </tbody>
             </table>
         </div>
-    </div>
-    <div id="sharelink" class="tab-content ui-tabs-panel" style="display: none;">
+    </div>`
+
+const shareLinkTabTemplate = () =>
+    `<div id="sharelink" class="tab-content ui-tabs-panel" style="display: none;">
         <div id="share-token-list">
             <p class="fw-ar-loading">${gettext("Loading…")}</p>
         </div>
@@ -41,6 +38,23 @@ export const accessRightOverviewTemplate = ({contacts, collaborators}) =>
             <i class="fa-solid fa-plus"></i>&nbsp;${gettext("Create new share link")}
         </button>
     </div>`
+
+/** Outer wrapper with two tabs: "People" and "Share link" */
+export const accessRightOverviewTemplate = ({contacts, collaborators}) => {
+    const dialogTabs = new DialogTabs([
+        {
+            id: "people",
+            title: gettext("People"),
+            template: () => peopleTabTemplate({contacts, collaborators})
+        },
+        {
+            id: "sharelink",
+            title: gettext("Share link"),
+            template: () => shareLinkTabTemplate()
+        }
+    ])
+    return dialogTabs.render()
+}
 
 /** The list of active share-link tokens for a single document */
 export const shareTokenListTemplate = ({tokens}) => {

@@ -1,7 +1,5 @@
+import {docSchema} from "@fiduswriter/document/schema/document/index"
 import deepEqual from "fast-deep-equal"
-import {DataTable} from "simple-datatables"
-import {keyName} from "w3c-keyname"
-import {plugins} from "../../../plugins/documents_overview"
 import {
     DatatableBulk,
     Dialog,
@@ -19,10 +17,12 @@ import {
     shortFileTitle,
     whenReady
 } from "fwtoolkit"
+import {DataTable} from "simple-datatables"
+import {keyName} from "w3c-keyname"
+import {plugins} from "../../../plugins/documents_overview"
 import {baseBodyTemplate} from "../../common/index.js"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"
-import {docSchema} from "@fiduswriter/document/schema/document/index"
 
 import {DocumentOverviewActions} from "./actions"
 import {bulkMenuModel, menuModel} from "./menu"

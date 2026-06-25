@@ -1,4 +1,3 @@
-import {plugins as pluginLoaders} from "../../plugins/confirm_account"
 import {
     activateWait,
     addAlert,
@@ -7,6 +6,7 @@ import {
     postJson,
     whenReady
 } from "fwtoolkit"
+import {plugins as pluginLoaders} from "../../plugins/confirm_account"
 import {PreloginPage} from "../prelogin"
 import {
     checkTermsTemplate,

@@ -1,5 +1,3 @@
-import {Schema} from "prosemirror-model"
-import {marks} from "prosemirror-schema-basic"
 import {
     url,
     enquote,
@@ -10,6 +8,8 @@ import {
     text,
     variable
 } from "@fiduswriter/document/bibliography/common"
+import {Schema} from "prosemirror-model"
+import {marks} from "prosemirror-schema-basic"
 
 const doc = {
     content: "literal"

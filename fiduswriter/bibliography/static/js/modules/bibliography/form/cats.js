@@ -1,33 +1,24 @@
-import {escapeText} from "fwtoolkit"
+import {CheckableList} from "fwtoolkit"
 
 export class CatsForm {
     constructor(dom, initialValue = [], options = []) {
         this.dom = dom
-        this.currentValue = initialValue
-        this.options = options
+        this.checkableList = new CheckableList({
+            dom,
+            options: options.map(option => ({
+                id: option.id,
+                label: option.category_title
+            })),
+            initialValue,
+            multiple: true
+        })
     }
 
     init() {
-        this.drawForm()
-    }
-
-    drawForm() {
-        this.options.forEach(option => {
-            this.dom.insertAdjacentHTML(
-                "beforeend",
-                `<div class="fw-checkable fw-checkable-label${this.currentValue.includes(option.id) ? " checked" : ""}" data-id="${option.id}">${escapeText(option.category_title)}</div>`
-            )
-            this.dom.lastChild.addEventListener("click", event => {
-                event.target.classList.toggle("checked")
-            })
-        })
+        // CheckableList is already rendered by the constructor.
     }
 
     get value() {
-        return Array.from(
-            this.dom.querySelectorAll(".fw-checkable.checked")
-        ).map(el => {
-            return Number.parseInt(el.getAttribute("data-id"))
-        })
+        return this.checkableList.value
     }
 }

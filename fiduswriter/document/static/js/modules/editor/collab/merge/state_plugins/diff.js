@@ -1,8 +1,8 @@
+import {noSpaceTmp} from "fwtoolkit"
 import {DOMSerializer} from "prosemirror-model"
 import {NodeSelection, Plugin, PluginKey} from "prosemirror-state"
 import {Mapping} from "prosemirror-transform"
 import {Decoration, DecorationSet} from "prosemirror-view"
-import {noSpaceTmp} from "fwtoolkit"
 import {changeSet} from "../changeset"
 import {readOnlyFnEditor} from "../footnotes"
 import {

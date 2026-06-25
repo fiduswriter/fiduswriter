@@ -1,3 +1,12 @@
+import {BIBLIOGRAPHY_HEADERS} from "@fiduswriter/document/schema/i18n"
+import {
+    Dialog,
+    activateWait,
+    deactivateWait,
+    ensureCSS,
+    faqDialog,
+    showSystemMessage
+} from "fwtoolkit"
 import {collab} from "prosemirror-collab"
 import {baseKeymap} from "prosemirror-commands"
 import {dropCursor} from "prosemirror-dropcursor"
@@ -14,15 +23,6 @@ import {
 } from "prosemirror-transform"
 import {EditorView} from "prosemirror-view"
 import {RenderCitations} from "../../../citations/render"
-import {
-    Dialog,
-    activateWait,
-    deactivateWait,
-    ensureCSS,
-    faqDialog,
-    showSystemMessage
-} from "fwtoolkit"
-import {BIBLIOGRAPHY_HEADERS} from "@fiduswriter/document/schema/i18n"
 import {buildEditorKeymap} from "../../keymap"
 import {jumpHiddenNodesPlugin, searchPlugin} from "../../state_plugins"
 import {trackedTransaction} from "../../track"

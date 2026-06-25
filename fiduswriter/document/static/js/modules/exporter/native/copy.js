@@ -1,3 +1,4 @@
+import {ShrinkFidus} from "@fiduswriter/document/exporter/native/shrink"
 import {addAlert, escapeText, longFilePath} from "fwtoolkit"
 import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
@@ -6,7 +7,6 @@ import {
     enterPasswordDialog
 } from "../../editor/e2ee/password-dialog"
 import {NativeImporter} from "../../importer/native"
-import {ShrinkFidus} from "@fiduswriter/document/exporter/native/shrink"
 
 /* Saves a copy of the document. The owner may change in that process, if the
   old document was owned by someone else than the current user.

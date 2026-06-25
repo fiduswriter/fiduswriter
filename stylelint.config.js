@@ -1,3 +1,5 @@
+const path = require("path")
+
 module.exports = {
     extends: "stylelint-config-standard",
     plugins: ["stylelint-value-no-unknown-custom-properties"],
@@ -7,7 +9,9 @@ module.exports = {
         "csstools/value-no-unknown-custom-properties": [
             true,
             {
-                importFrom: ["fiduswriter/base/static/css/colors.css"]
+                importFrom: [
+                    path.resolve("fiduswriter/base/static/css/colors.css")
+                ]
             }
         ],
         "selector-class-pattern": [

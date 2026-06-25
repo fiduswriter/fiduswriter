@@ -1,4 +1,4 @@
-import {getFocusIndex, noSpaceTmp, setFocusIndex} from "fwtoolkit"
+import {TypeSwitch, getFocusIndex, setFocusIndex} from "fwtoolkit"
 import {LiteralFieldForm} from "./literal"
 
 // There are only range lists, no range fields in the data format. The separation
@@ -18,78 +18,59 @@ export class RangeFieldForm {
     }
 
     init() {
-        this.prepareWrapper()
+        this.typeSwitch = new TypeSwitch({
+            dom: this.dom,
+            label1: gettext("Single value"),
+            label2: gettext("Range"),
+            initialMode: this.range ? 2 : 1,
+            beforeChange: () => {
+                const formValue = this.value
+                if (formValue) {
+                    Object.assign(this.currentValue, formValue)
+                }
+            },
+            onChange: mode => {
+                this.range = mode === 2
+                const focusIndex = getFocusIndex()
+                this.drawForm()
+                setFocusIndex(focusIndex)
+            }
+        })
         this.drawForm()
     }
 
-    prepareWrapper() {
-        this.dom.innerHTML = noSpaceTmp`
-                <div class="type-switch-input-wrapper">
-                    <button class="type-switch">
-                        <span class="type-switch-inner">
-                            <span class="type-switch-label">${gettext("Single value")}</span>
-                            <span class="type-switch-label">${gettext("Range")}</span>
-                        </span>
-                    </button>
-                    <div class="type-switch-input-inner"></div>
-                </div>
-            `
-
-        this.switcher = this.dom.querySelector(".type-switch")
-        this.inner = this.dom.querySelector(".type-switch-input-inner")
-
-        this.switcher.addEventListener("click", () => this.switchMode())
-    }
-
-    switchMode() {
-        const formValue = this.value
-        if (formValue) {
-            Object.assign(this.currentValue, formValue)
-        }
-        this.range = !this.range
-        this.drawForm(true)
-    }
-
-    drawForm(redraw = false) {
-        const focusIndex = redraw ? getFocusIndex() : -1
+    drawForm() {
         if (this.range) {
             this.drawRangeForm()
         } else {
             this.drawSingleValueForm()
         }
-        setFocusIndex(focusIndex)
     }
 
     drawSingleValueForm() {
-        this.switcher.classList.add("value1")
-        this.switcher.classList.remove("value2")
-
         this.fields = {}
-        this.inner.innerHTML = noSpaceTmp`<div class='single-value field-part field-part-single'></div>`
+        this.typeSwitch.innerElement.innerHTML = `<div class='single-value field-part field-part-single'></div>`
         this.fields["single"] = new LiteralFieldForm(
-            this.dom.querySelector(".single-value"),
+            this.typeSwitch.innerElement.querySelector(".single-value"),
             this.currentValue[0]
         )
         this.fields.single.init()
     }
 
     drawRangeForm() {
-        this.switcher.classList.remove("value1")
-        this.switcher.classList.add("value2")
-
         this.fields = {}
-        this.inner.innerHTML = noSpaceTmp`
+        this.typeSwitch.innerElement.innerHTML = `
                 <div class='range-from field-part field-part-huge'></div>
                 <div class='range-to field-part field-part-huge'></div>
             `
         this.fields["from"] = new LiteralFieldForm(
-            this.dom.querySelector(".range-from"),
+            this.typeSwitch.innerElement.querySelector(".range-from"),
             this.currentValue[0],
             gettext("From")
         )
         this.fields.from.init()
         this.fields["to"] = new LiteralFieldForm(
-            this.dom.querySelector(".range-to"),
+            this.typeSwitch.innerElement.querySelector(".range-to"),
             this.currentValue[1],
             gettext("To")
         )

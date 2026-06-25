@@ -1,6 +1,6 @@
-import {addAlert, post} from "fwtoolkit"
-import {createSlug} from "@fiduswriter/document/exporter/tools/file"
 import {ShrinkFidus} from "@fiduswriter/document/exporter/native/shrink"
+import {createSlug} from "@fiduswriter/document/exporter/tools/file"
+import {addAlert, post} from "fwtoolkit"
 import {ZipFidus} from "./zip"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.

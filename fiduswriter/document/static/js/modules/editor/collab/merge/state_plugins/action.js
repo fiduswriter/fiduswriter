@@ -1,6 +1,6 @@
+import {showSystemMessage} from "fwtoolkit"
 import {TextSelection} from "prosemirror-state"
 import {AddMarkStep, Mapping, RemoveMarkStep, Step} from "prosemirror-transform"
-import {showSystemMessage} from "fwtoolkit"
 import {dispatchRemoveDiffdata} from "../tools"
 
 export const copyChange = (view, from, to) => {

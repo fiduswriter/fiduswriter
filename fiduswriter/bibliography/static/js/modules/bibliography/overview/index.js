@@ -2,7 +2,6 @@ import fixUTF8 from "fix-utf8"
 import {DataTable} from "simple-datatables"
 import {keyName} from "w3c-keyname"
 
-import {plugins} from "../../../plugins/bibliography_overview"
 import {
     DatatableBulk,
     Dialog,
@@ -15,6 +14,7 @@ import {
     setDocTitle,
     whenReady
 } from "fwtoolkit"
+import {plugins} from "../../../plugins/bibliography_overview"
 import {baseBodyTemplate} from "../../common/index.js"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"

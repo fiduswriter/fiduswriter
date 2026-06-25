@@ -306,21 +306,21 @@ export const headerbarModel = () => ({
                     order: 5,
                     keys: "Ctrl-p",
                     action: editor => {
-                        import("@fiduswriter/document/exporter/print/index").then(
-                            ({PrintExporter}) => {
-                                const exporter = new PrintExporter(
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.app.csl,
-                                    editor.docInfo.updated,
-                                    editor.mod.documentTemplate.documentStyles
-                                )
-                                exporter.init()
-                            }
-                        )
+                        import(
+                            "@fiduswriter/document/exporter/print/index"
+                        ).then(({PrintExporter}) => {
+                            const exporter = new PrintExporter(
+                                editor.getDoc({
+                                    changes: "acceptAllNoInsertions"
+                                }),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated,
+                                editor.mod.documentTemplate.documentStyles
+                            )
+                            exporter.init()
+                        })
                     }
                 },
                 {
@@ -525,21 +525,21 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an HTML file."),
                     order: 0,
                     action: editor => {
-                        import("@fiduswriter/document/exporter/html/index").then(
-                            ({HTMLExporter}) => {
-                                const exporter = new HTMLExporter(
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.app.csl,
-                                    editor.docInfo.updated,
-                                    editor.mod.documentTemplate.documentStyles
-                                )
-                                exporter.init()
-                            }
-                        )
+                        import(
+                            "@fiduswriter/document/exporter/html/index"
+                        ).then(({HTMLExporter}) => {
+                            const exporter = new HTMLExporter(
+                                editor.getDoc({
+                                    changes: "acceptAllNoInsertions"
+                                }),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated,
+                                editor.mod.documentTemplate.documentStyles
+                            )
+                            exporter.init()
+                        })
                     }
                 },
                 {
@@ -550,21 +550,21 @@ export const headerbarModel = () => ({
                     ),
                     order: 1,
                     action: editor => {
-                        import("@fiduswriter/document/exporter/epub/index").then(
-                            ({EpubExporter}) => {
-                                const exporter = new EpubExporter(
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.app.csl,
-                                    editor.docInfo.updated,
-                                    editor.mod.documentTemplate.documentStyles
-                                )
-                                exporter.init()
-                            }
-                        )
+                        import(
+                            "@fiduswriter/document/exporter/epub/index"
+                        ).then(({EpubExporter}) => {
+                            const exporter = new EpubExporter(
+                                editor.getDoc({
+                                    changes: "acceptAllNoInsertions"
+                                }),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated,
+                                editor.mod.documentTemplate.documentStyles
+                            )
+                            exporter.init()
+                        })
                     },
                     disabled: editor => editor.app.isOffline()
                 },
@@ -574,19 +574,19 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Export the document to an LaTeX file."),
                     order: 2,
                     action: editor => {
-                        import("@fiduswriter/document/exporter/latex/index").then(
-                            ({LatexExporter}) => {
-                                const exporter = new LatexExporter(
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.docInfo.updated
-                                )
-                                exporter.init()
-                            }
-                        )
+                        import(
+                            "@fiduswriter/document/exporter/latex/index"
+                        ).then(({LatexExporter}) => {
+                            const exporter = new LatexExporter(
+                                editor.getDoc({
+                                    changes: "acceptAllNoInsertions"
+                                }),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.docInfo.updated
+                            )
+                            exporter.init()
+                        })
                     },
                     disabled: editor => editor.app.isOffline()
                 },
@@ -598,21 +598,21 @@ export const headerbarModel = () => ({
                     ),
                     order: 2,
                     action: editor => {
-                        import("@fiduswriter/document/exporter/jats/index").then(
-                            ({JATSExporter}) => {
-                                const exporter = new JATSExporter(
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.app.csl,
-                                    editor.docInfo.updated,
-                                    "article"
-                                )
-                                exporter.init()
-                            }
-                        )
+                        import(
+                            "@fiduswriter/document/exporter/jats/index"
+                        ).then(({JATSExporter}) => {
+                            const exporter = new JATSExporter(
+                                editor.getDoc({
+                                    changes: "acceptAllNoInsertions"
+                                }),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated,
+                                "article"
+                            )
+                            exporter.init()
+                        })
                     },
                     disabled: editor => editor.app.isOffline()
                 },
@@ -624,21 +624,21 @@ export const headerbarModel = () => ({
                     ),
                     order: 2,
                     action: editor => {
-                        import("@fiduswriter/document/exporter/jats/index").then(
-                            ({JATSExporter}) => {
-                                const exporter = new JATSExporter(
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.app.csl,
-                                    editor.docInfo.updated,
-                                    "book-part-wrapper"
-                                )
-                                exporter.init()
-                            }
-                        )
+                        import(
+                            "@fiduswriter/document/exporter/jats/index"
+                        ).then(({JATSExporter}) => {
+                            const exporter = new JATSExporter(
+                                editor.getDoc({
+                                    changes: "acceptAllNoInsertions"
+                                }),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated,
+                                "book-part-wrapper"
+                            )
+                            exporter.init()
+                        })
                     },
                     disabled: editor => editor.app.isOffline()
                 },
@@ -650,20 +650,20 @@ export const headerbarModel = () => ({
                     ),
                     order: 3,
                     action: editor => {
-                        import("@fiduswriter/document/exporter/pandoc/index").then(
-                            ({PandocExporter}) => {
-                                const exporter = new PandocExporter(
-                                    editor.getDoc({
-                                        changes: "acceptAllNoInsertions"
-                                    }),
-                                    editor.mod.db.bibDB,
-                                    editor.mod.db.imageDB,
-                                    editor.app.csl,
-                                    editor.docInfo.updated
-                                )
-                                exporter.init()
-                            }
-                        )
+                        import(
+                            "@fiduswriter/document/exporter/pandoc/index"
+                        ).then(({PandocExporter}) => {
+                            const exporter = new PandocExporter(
+                                editor.getDoc({
+                                    changes: "acceptAllNoInsertions"
+                                }),
+                                editor.mod.db.bibDB,
+                                editor.mod.db.imageDB,
+                                editor.app.csl,
+                                editor.docInfo.updated
+                            )
+                            exporter.init()
+                        })
                     },
                     disabled: editor => editor.app.isOffline()
                 },

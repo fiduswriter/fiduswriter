@@ -1,6 +1,6 @@
 import {edtfParse} from "biblatex-csl-converter"
 import deepEqual from "fast-deep-equal"
-import {Dialog, findTarget, isActivationEvent} from "fwtoolkit"
+import {Dialog, InputList, TypeSwitch} from "fwtoolkit"
 import {
     copyrightTemplate,
     licenseInputTemplate,
@@ -45,33 +45,27 @@ export class CopyrightDialog {
         const licenseStartDates = Array.from(
             this.dialog.dialogEl.querySelectorAll(".license-start")
         ).map(el => el.value)
-        this.copyright.licenses = Array.from(
-            this.dialog.dialogEl.querySelectorAll(".license")
-        )
-            .map((el, index) => {
-                if (!el.value.length) {
+        this.copyright.licenses = this.licensesList.values
+            .map((license, index) => {
+                if (!license.url.length) {
                     return false
-                } else {
-                    const url = el.value,
-                        title = el.matches("select")
-                            ? getLicenseTitle(url)
-                            : el.parentElement.parentElement.querySelector(
-                                  ".license-title"
-                              ).value,
-                        returnValue = {url, title},
-                        startDate = edtfParse(licenseStartDates[index])
-                    if (
-                        startDate.valid &&
-                        (startDate.type === "Date" ||
-                            startDate.type === "YearMonth" ||
-                            startDate.type === "Year") &&
-                        !startDate.uncertain &&
-                        !startDate.approximate
-                    ) {
-                        returnValue.start = startDate.cleanedString
-                    }
-                    return returnValue
                 }
+                const returnValue = {
+                    url: license.url,
+                    title: license.title
+                }
+                const startDate = edtfParse(licenseStartDates[index])
+                if (
+                    startDate.valid &&
+                    (startDate.type === "Date" ||
+                        startDate.type === "YearMonth" ||
+                        startDate.type === "Year") &&
+                    !startDate.uncertain &&
+                    !startDate.approximate
+                ) {
+                    returnValue.start = startDate.cleanedString
+                }
+                return returnValue
             })
             .filter(license => license)
     }
@@ -112,61 +106,71 @@ export class CopyrightDialog {
     }
 
     bind() {
-        this.dialog.dialogEl.addEventListener("click", event =>
-            this.handleActivation(event)
-        )
-        this.dialog.dialogEl.addEventListener("keydown", event =>
-            this.handleActivation(event)
-        )
-    }
+        this.licensesList = new InputList({
+            dom: this.dialog.dialogEl.querySelector(".copyright-licenses-list"),
+            initialValues: this.copyright.licenses || [],
+            emptyValue: {url: "", title: "", start: false},
+            renderItem: license => ({
+                html: `<div class="copyright-license-switch"></div>`,
+                bind: el => {
+                    const licenseContainer = el.closest("tr")
+                    const startInput =
+                        licenseContainer.querySelector(".license-start")
+                    if (license.start) {
+                        startInput.value = license.start
+                    }
 
-    handleActivation(event) {
-        if (!isActivationEvent(event)) {
-            return
-        }
-        const el = {}
-        switch (true) {
-            case findTarget(event, ".type-switch", el): {
-                const url =
-                    el.target.nextElementSibling.querySelector(".license").value
-                if (el.target.classList.contains("value1")) {
-                    el.target.classList.add("value2")
-                    el.target.classList.remove("value1")
-                    const title = getLicenseTitle(url)
-                    el.target.nextElementSibling.innerHTML =
-                        licenseInputTemplate({
-                            url,
-                            title
-                        })
-                } else {
-                    el.target.classList.add("value1")
-                    el.target.classList.remove("value2")
-                    el.target.nextElementSibling.innerHTML =
-                        licenseSelectTemplate({
-                            url
-                        })
+                    const mode =
+                        license.url === "" ||
+                        LICENSE_URLS.find(
+                            licenseUrl => licenseUrl[1] === license.url
+                        )
+                            ? 1
+                            : 2
+                    new TypeSwitch({
+                        dom: el.querySelector(".copyright-license-switch"),
+                        label1: gettext("From list"),
+                        label2: gettext("Custom"),
+                        initialMode: mode,
+                        render1: () =>
+                            licenseSelectTemplate({url: license.url}),
+                        render2: () =>
+                            licenseInputTemplate({
+                                url: license.url,
+                                title: license.title
+                            }),
+                        onChange: () => {
+                            // Restore focus to the license input after switching.
+                            const focusable = el.querySelector(
+                                ".type-switch-input-inner input, .type-switch-input-inner select"
+                            )
+                            if (focusable) {
+                                focusable.focus()
+                            }
+                        }
+                    })
                 }
-                break
+            }),
+            getValue: el => {
+                const licenseInput = el.querySelector(
+                    ".type-switch-input-inner"
+                )
+                const selectEl = licenseInput.querySelector("select.license")
+                let url, title
+                if (selectEl) {
+                    url = selectEl.value
+                    title = getLicenseTitle(url)
+                } else {
+                    url = licenseInput.querySelector("input.license").value
+                    title = licenseInput.querySelector(
+                        "input.license-title"
+                    ).value
+                }
+                const start =
+                    el.closest("tr").querySelector(".license-start").value ||
+                    false
+                return {url, title, start}
             }
-            case findTarget(event, ".fa-plus-circle", el): {
-                this.getCurrentValue()
-                this.dialog.dialogEl.querySelector(
-                    "#configure-copyright"
-                ).innerHTML = copyrightTemplate(this.copyright)
-                break
-            }
-            case findTarget(event, ".fa-minus-circle", el): {
-                const tr = el.target.closest("tr")
-                tr.parentElement.removeChild(tr)
-                this.getCurrentValue()
-
-                this.dialog.dialogEl.querySelector(
-                    "#configure-copyright"
-                ).innerHTML = copyrightTemplate(this.copyright)
-                break
-            }
-            default:
-                break
-        }
+        })
     }
 }

@@ -1,4 +1,3 @@
-import {plugins} from "../../plugins/profile"
 import {
     activateWait,
     addAlert,
@@ -10,6 +9,7 @@ import {
     setDocTitle,
     whenReady
 } from "fwtoolkit"
+import {plugins} from "../../plugins/profile"
 import {baseBodyTemplate} from "../common/index.js"
 import {FeedbackTab} from "../feedback"
 import {SiteMenu} from "../menu"

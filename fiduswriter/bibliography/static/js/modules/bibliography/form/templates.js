@@ -1,10 +1,50 @@
 /** A template for the bibliography item edit dialog. */
+import {DialogTabs} from "fwtoolkit"
 import {getAllTypeTitles} from "./strings"
 
-export const bibDialog = ({bib_type, BibTypes}) => {
+const requiredFieldsTemplate = () =>
+    `<div id="req-fields-tab">
+        <table class="fw-dialog-table"><tbody id="eo-fields"></tbody></table>
+        <table class="fw-dialog-table"><tbody id="req-fields"></tbody></table>
+    </div>`
+
+const optionalFieldsTemplate = () =>
+    `<div id="opt-fields-tab">
+        <table class="fw-dialog-table"><tbody id="opt-fields"></tbody></table>
+    </div>`
+
+const categoriesTemplate = () =>
+    `<div id="categories-tab">
+        <table class="fw-dialog-table">
+            <tbody>
+                <tr>
+                    <th><h4 class="fw-tablerow-title">${gettext("Categories")}</h4></th>
+                    <td id="categories-field"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>`
+
+export const bibDialog = ({bib_type, BibTypes, hasCats}) => {
     const typeTitles = getAllTypeTitles()
-    return `<div id="bib-dialog-tabs">
-        <div class="bib-dialog-header">
+    const tabs = [
+        {
+            title: gettext("Required Fields"),
+            template: requiredFieldsTemplate
+        },
+        {
+            title: gettext("Optional Fields"),
+            template: optionalFieldsTemplate
+        }
+    ]
+    if (hasCats) {
+        tabs.push({
+            title: gettext("Categories"),
+            template: categoriesTemplate
+        })
+    }
+    const dialogTabs = new DialogTabs(tabs, {containerId: "bib-dialog-tabs"})
+    return `<div class="bib-dialog-header">
             <div class="fw-select-container">
                 <select id="select-bibtype" class="fw-button fw-light fw-large" required>
                     ${
@@ -28,34 +68,6 @@ export const bibDialog = ({bib_type, BibTypes}) => {
                 <input type="text" id="entry-key" class="fw-button fw-light" value="" placeholder="${gettext("Citation key")}" />
                 <div id="entry-key-warning" class="entry-key-warning"></div>
             </div>
-            <ul class="ui-tabs-nav">
-                <li class="tab-link"><a href="#req-fields-tab" class="tab-link-inner">
-                    ${gettext("Required Fields")}
-                </a></li>
-                <li class="tab-link"><a href="#opt-fields-tab" class="tab-link-inner">
-                    ${gettext("Optional Fields")}
-                </a></li>
-                <li class="tab-link" id="categories-link"><a href="#categories-tab" class="tab-link-inner">
-                    ${gettext("Categories")}
-                </a></li>
-            </ul>
         </div>
-        <div class="tab-content ui-tabs-panel" id="req-fields-tab">
-            <table class="fw-dialog-table"><tbody id="eo-fields"></tbody></table>
-            <table class="fw-dialog-table"><tbody id="req-fields"></tbody></table>
-        </div>
-        <div class="tab-content ui-tabs-panel" id="opt-fields-tab">
-            <table class="fw-dialog-table"><tbody id="opt-fields"></tbody></table>
-        </div>
-        <div class="tab-content ui-tabs-panel" id="categories-tab">
-            <table class="fw-dialog-table">
-                <tbody>
-                    <tr>
-                        <th><h4 class="fw-tablerow-title">${gettext("Categories")}</h4></th>
-                        <td id="categories-field"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>`
+        ${dialogTabs.render()}`
 }

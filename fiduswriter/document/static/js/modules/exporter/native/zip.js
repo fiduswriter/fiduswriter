@@ -1,6 +1,6 @@
-import {DocumentTemplateExporter} from "../../document_template"
-import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
 import {ZipFileCreator} from "@fiduswriter/document/exporter/tools/zip"
+import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
+import {DocumentTemplateExporter} from "../../document_template"
 /** Create a zip blob for a shrunk fidus file.
  */
 

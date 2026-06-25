@@ -1,5 +1,5 @@
-import {escapeText} from "fwtoolkit"
 import {LANGUAGES, PAPER_SIZES} from "@fiduswriter/document/schema/const"
+import {escapeText} from "fwtoolkit"
 
 const allowedElementsTemplate = (
     {elements},

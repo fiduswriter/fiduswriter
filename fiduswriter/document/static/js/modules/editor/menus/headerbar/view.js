@@ -1,5 +1,4 @@
 import {DiffDOM} from "diff-dom"
-import {keyName} from "w3c-keyname"
 import {
     addAlert,
     avatarTemplate,
@@ -7,6 +6,7 @@ import {
     escapeText,
     findTarget
 } from "fwtoolkit"
+import {keyName} from "w3c-keyname"
 
 export class HeaderbarView {
     constructor(editorView, options) {

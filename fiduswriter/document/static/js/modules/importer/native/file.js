@@ -1,8 +1,8 @@
+import {updateFile} from "@fiduswriter/document/importer/native/update"
+import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
 import {escapeText} from "fwtoolkit"
 import {updateTemplateFile} from "../../document_template"
-import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema/index"
 import {NativeImporter} from "./index"
-import {updateFile} from "@fiduswriter/document/importer/native/update"
 
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.

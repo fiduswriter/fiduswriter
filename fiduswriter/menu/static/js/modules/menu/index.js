@@ -1,7 +1,7 @@
 import {keyName} from "w3c-keyname"
 
-import {plugins} from "../../plugins/menu"
 import {dropdownSelect, post, whenReady} from "fwtoolkit"
+import {plugins} from "../../plugins/menu"
 import {headerNavTemplate} from "./templates"
 
 // Bindings for the top menu on overview pages

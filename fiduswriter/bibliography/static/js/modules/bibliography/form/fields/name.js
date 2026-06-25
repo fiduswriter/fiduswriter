@@ -1,4 +1,4 @@
-import {getFocusIndex, noSpaceTmp, setFocusIndex} from "fwtoolkit"
+import {TypeSwitch, getFocusIndex, setFocusIndex} from "fwtoolkit"
 import {LiteralFieldForm} from "./literal"
 
 // There are only name lists, no name fields in the data format. The separation
@@ -28,54 +28,38 @@ export class NameFieldForm {
     }
 
     init() {
-        this.prepareWrapper()
+        this.typeSwitch = new TypeSwitch({
+            dom: this.dom,
+            label1: gettext("Person"),
+            label2: gettext("Organization"),
+            initialMode: this.realPerson ? 1 : 2,
+            beforeChange: () => {
+                const formValue = this.value
+                if (formValue) {
+                    Object.assign(this.currentValue, formValue)
+                }
+            },
+            onChange: mode => {
+                this.realPerson = mode === 1
+                const focusIndex = getFocusIndex()
+                this.drawForm()
+                setFocusIndex(focusIndex)
+            }
+        })
         this.drawForm()
     }
 
-    prepareWrapper() {
-        this.dom.innerHTML = noSpaceTmp`
-                <div class="type-switch-input-wrapper">
-                    <button class="type-switch">
-                        <span class="type-switch-inner">
-                            <span class="type-switch-label">${gettext("Person")}</span>
-                            <span class="type-switch-label">${gettext("Organization")}</span>
-                        </span>
-                    </button>
-                    <div class="type-switch-input-inner"></div>
-                </div>
-            `
-
-        this.switcher = this.dom.querySelector(".type-switch")
-        this.inner = this.dom.querySelector(".type-switch-input-inner")
-
-        this.switcher.addEventListener("click", () => this.switchMode())
-    }
-
-    switchMode() {
-        const formValue = this.value
-        if (formValue) {
-            Object.assign(this.currentValue, formValue)
-        }
-        this.realPerson = !this.realPerson
-        this.drawForm(true)
-    }
-
-    drawForm(redraw = false) {
-        const focusIndex = redraw ? getFocusIndex() : -1
+    drawForm() {
         if (this.realPerson) {
             this.drawPersonForm()
         } else {
             this.drawOrganizationForm()
         }
-        setFocusIndex(focusIndex)
     }
 
     drawPersonForm() {
-        this.switcher.classList.add("value1")
-        this.switcher.classList.remove("value2")
-
         this.fields = {}
-        this.inner.innerHTML = noSpaceTmp`
+        this.typeSwitch.innerElement.innerHTML = `
                 <div class='given field-part field-part-long'></div>
                 <div class='prefix field-part field-part-short'></div>
                 <div class='family field-part field-part-long'></div>
@@ -87,25 +71,25 @@ export class NameFieldForm {
                 </div>
             `
         this.fields["given"] = new LiteralFieldForm(
-            this.dom.querySelector(".given"),
+            this.typeSwitch.innerElement.querySelector(".given"),
             this.currentValue.given,
             gettext("First name")
         )
         this.fields.given.init()
         this.fields["prefix"] = new LiteralFieldForm(
-            this.dom.querySelector(".prefix"),
+            this.typeSwitch.innerElement.querySelector(".prefix"),
             this.currentValue.prefix,
             gettext("Prefix")
         )
         this.fields.prefix.init()
         this.fields["family"] = new LiteralFieldForm(
-            this.dom.querySelector(".family"),
+            this.typeSwitch.innerElement.querySelector(".family"),
             this.currentValue.family,
             gettext("Last name")
         )
         this.fields.family.init()
         this.fields["suffix"] = new LiteralFieldForm(
-            this.dom.querySelector(".suffix"),
+            this.typeSwitch.innerElement.querySelector(".suffix"),
             this.currentValue.suffix,
             gettext("Suffix")
         )
@@ -113,13 +97,10 @@ export class NameFieldForm {
     }
 
     drawOrganizationForm() {
-        this.switcher.classList.add("value2")
-        this.switcher.classList.remove("value1")
-
         this.fields = {}
-        this.inner.innerHTML = noSpaceTmp`<div class='literal-text field-part field-part-single'></div>`
+        this.typeSwitch.innerElement.innerHTML = `<div class='literal-text field-part field-part-single'></div>`
         this.fields["literal"] = new LiteralFieldForm(
-            this.dom.querySelector(".literal-text"),
+            this.typeSwitch.innerElement.querySelector(".literal-text"),
             this.currentValue.literal,
             gettext("Organization name")
         )
@@ -144,11 +125,12 @@ export class NameFieldForm {
             }
             if (this.fields.prefix.value) {
                 returnObject["prefix"] = this.fields.prefix.value
-                returnObject["useprefix"] = this.dom.querySelector(
-                    "input.useprefix"
-                ).checked
-                    ? true
-                    : false
+                returnObject["useprefix"] =
+                    this.typeSwitch.innerElement.querySelector(
+                        "input.useprefix"
+                    ).checked
+                        ? true
+                        : false
             }
             if (this.fields.suffix.value) {
                 returnObject["suffix"] = this.fields.suffix.value

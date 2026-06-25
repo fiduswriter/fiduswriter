@@ -1,4 +1,4 @@
-import {getFocusIndex, noSpaceTmp, setFocusIndex} from "fwtoolkit"
+import {TypeSwitch} from "fwtoolkit"
 import {getBibOptionTitle} from "../strings"
 import {LiteralFieldForm} from "./literal"
 
@@ -18,65 +18,45 @@ export class KeyFieldForm {
     }
 
     init() {
-        this.prepareWrapper()
+        this.typeSwitch = new TypeSwitch({
+            dom: this.dom,
+            label1: gettext("From list"),
+            label2: gettext("Custom"),
+            initialMode: this.predefined ? 1 : 2,
+            disabled: this.fieldType.strict,
+            beforeChange: () => {
+                const formValue = this.value
+                if (formValue) {
+                    if (this.predefined) {
+                        this.currentValue["predefined"] = formValue
+                    } else {
+                        this.currentValue["custom"] = formValue
+                    }
+                }
+            },
+            onChange: mode => {
+                this.predefined = mode === 1
+                this.drawForm()
+            }
+        })
         this.drawForm()
     }
 
-    prepareWrapper() {
-        this.dom.innerHTML = noSpaceTmp`
-                <div class="type-switch-input-wrapper">
-                    <button class="type-switch">
-                        <span class="type-switch-inner">
-                            <span class="type-switch-label">${gettext("From list")}</span>
-                            <span class="type-switch-label">${gettext("Custom")}</span>
-                        </span>
-                    </button>
-                    <div class="type-switch-input-inner"></div>
-                </div>
-            `
-
-        this.switcher = this.dom.querySelector(".type-switch")
-        this.inner = this.dom.querySelector(".type-switch-input-inner")
-
-        if (this.fieldType.strict) {
-            this.switcher.classList.add("disabled")
-        } else {
-            this.switcher.addEventListener("click", () => this.switchMode())
-        }
-    }
-
-    switchMode() {
-        const formValue = this.value
-        if (formValue) {
-            if (this.predefined) {
-                this.currentValue["predefined"] = formValue
-            } else {
-                this.currentValue["custom"] = formValue
-            }
-        }
-        this.predefined = !this.predefined
-        this.drawForm(true)
-    }
-
-    drawForm(redraw = false) {
-        const focusIndex = redraw ? getFocusIndex() : -1
+    drawForm() {
         if (this.predefined) {
             this.drawSelectionListForm()
         } else {
             this.drawCustomInputForm()
         }
-        setFocusIndex(focusIndex)
     }
 
     drawSelectionListForm() {
-        this.switcher.classList.add("value1")
-        this.switcher.classList.remove("value2")
-
-        this.inner.innerHTML = noSpaceTmp`
+        this.typeSwitch.innerElement.innerHTML = `
                 <select class='key-selection'><option value=''></option></select>
                 <div class="fw-select-arrow fa fa-caret-down"></div>
             `
-        const selectEl = this.dom.querySelector(".key-selection")
+        const selectEl =
+            this.typeSwitch.innerElement.querySelector(".key-selection")
         if (Array.isArray(this.fieldType.options)) {
             this.fieldType.options.forEach(option => {
                 selectEl.insertAdjacentHTML(
@@ -99,13 +79,10 @@ export class KeyFieldForm {
     }
 
     drawCustomInputForm() {
-        this.switcher.classList.remove("value1")
-        this.switcher.classList.add("value2")
-
         this.fields = {}
-        this.inner.innerHTML = noSpaceTmp`<div class='custom-input field-part field-part-single'></div>`
+        this.typeSwitch.innerElement.innerHTML = `<div class='custom-input field-part field-part-single'></div>`
         this.fields["custom"] = new LiteralFieldForm(
-            this.dom.querySelector(".custom-input"),
+            this.typeSwitch.innerElement.querySelector(".custom-input"),
             this.currentValue["custom"]
         )
         this.fields.custom.init()
@@ -113,7 +90,8 @@ export class KeyFieldForm {
 
     get value() {
         if (this.predefined) {
-            const selectEl = this.dom.querySelector(".key-selection")
+            const selectEl =
+                this.typeSwitch.innerElement.querySelector(".key-selection")
             const selectionValue =
                 selectEl.options[selectEl.selectedIndex].value
             if (selectionValue === "") {

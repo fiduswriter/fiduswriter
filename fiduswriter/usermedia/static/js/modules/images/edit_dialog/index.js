@@ -1,4 +1,4 @@
-import {ContentMenu, Dialog, addAlert, setCheckableLabel} from "fwtoolkit"
+import {CheckableList, ContentMenu, Dialog, addAlert} from "fwtoolkit"
 import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
 import {imageEditModel} from "./model"
 import {imageEditTemplate} from "./templates"
@@ -54,11 +54,16 @@ export class ImageEditDialog {
             this.dialog.open()
         })
 
-        document
-            .querySelectorAll(".fw-checkable-label")
-            .forEach(el =>
-                el.addEventListener("click", () => setCheckableLabel(el))
-            )
+        const image = this.imageId ? this.imageDB.db[this.imageId] : false
+        this.catsList = new CheckableList({
+            dom: document.getElementById("image-edit-categories"),
+            options: this.imageDB.cats.map(cat => ({
+                id: cat.id,
+                label: cat.category_title
+            })),
+            initialValue: image ? image.cats : [],
+            multiple: true
+        })
 
         if (!this.imageId) {
             this.bindMediaUploadEvents()
@@ -133,9 +138,7 @@ export class ImageEditDialog {
         const imageData = {
             title: document.querySelector("#editimage .fw-media-title").value,
             copyright: this.copyright,
-            cats: Array.from(
-                document.querySelectorAll("#editimage .entry-cat:checked")
-            ).map(el => Number.parseInt(el.value))
+            cats: this.catsList.value
         }
         if (this.imageId) {
             imageData.id = this.imageId

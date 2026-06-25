@@ -1,7 +1,6 @@
 import {DataTable} from "simple-datatables"
 import {keyName} from "w3c-keyname"
 
-import {plugins} from "../../../plugins/images_overview"
 import {
     DatatableBulk,
     Dialog,
@@ -18,6 +17,7 @@ import {
     setDocTitle,
     whenReady
 } from "fwtoolkit"
+import {plugins} from "../../../plugins/images_overview"
 import {baseBodyTemplate} from "../../common/index.js"
 import {FeedbackTab} from "../../feedback"
 import {SiteMenu} from "../../menu"

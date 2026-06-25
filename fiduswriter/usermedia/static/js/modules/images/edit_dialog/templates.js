@@ -1,31 +1,13 @@
 import {escapeText} from "fwtoolkit"
 
 /* A template for the image category selection of the image selection dialog. */
-const imageEditCategoryTemplate = ({image, cats}) => {
+const imageEditCategoryTemplate = ({cats}) => {
     if (!cats.length) {
         return ""
     }
     return `<div class="fw-media-category">
             <div>${gettext("Select categories")}</div>
-            ${cats
-                .map(
-                    cat =>
-                        `<label class="fw-checkable fw-checkable-label${
-                            image && image.cats.includes(cat.id)
-                                ? " checked"
-                                : ""
-                        }"
-                        for="imageCat${cat.id}">
-                    ${escapeText(cat.category_title)}
-                </label>
-                <input class="fw-checkable-input fw-media-form entry-cat" type="checkbox"
-                        id="imageCat${cat.id}" name="imageCat" value="${cat.id}" ${
-                            image && image.cats.includes(cat.id)
-                                ? " checked"
-                                : ""
-                        }>`
-                )
-                .join("")}
+            <div id="image-edit-categories"></div>
         </div>`
 }
 
@@ -56,4 +38,4 @@ export const imageEditTemplate = ({image, cats}) =>
                 : ""
         }
     </div></div>
-    ${imageEditCategoryTemplate({image, cats})}`
+    ${imageEditCategoryTemplate({cats})}`

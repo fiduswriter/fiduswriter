@@ -1,13 +1,3 @@
-import {collab, sendableSteps} from "prosemirror-collab"
-import {baseKeymap} from "prosemirror-commands"
-import {dropCursor} from "prosemirror-dropcursor"
-import {buildKeymap} from "prosemirror-example-setup"
-import {gapCursor} from "prosemirror-gapcursor"
-import {history} from "prosemirror-history"
-import {keymap} from "prosemirror-keymap"
-import {EditorState, TextSelection} from "prosemirror-state"
-import {tableEditing} from "prosemirror-tables"
-import {EditorView} from "prosemirror-view"
 import {
     Dialog,
     WebSocketConnector,
@@ -19,6 +9,16 @@ import {
     showSystemMessage,
     whenReady
 } from "fwtoolkit"
+import {collab, sendableSteps} from "prosemirror-collab"
+import {baseKeymap} from "prosemirror-commands"
+import {dropCursor} from "prosemirror-dropcursor"
+import {buildKeymap} from "prosemirror-example-setup"
+import {gapCursor} from "prosemirror-gapcursor"
+import {history} from "prosemirror-history"
+import {keymap} from "prosemirror-keymap"
+import {EditorState, TextSelection} from "prosemirror-state"
+import {tableEditing} from "prosemirror-tables"
+import {EditorView} from "prosemirror-view"
 import {FeedbackTab} from "../feedback"
 import {E2EEEncryptor} from "./e2ee/encryptor"
 import {E2EEKeyManager} from "./e2ee/key-manager"
@@ -34,9 +34,9 @@ import {
 } from "./e2ee/password-dialog"
 import {E2EESnapshotManager} from "./e2ee/snapshot-manager"
 
-import {plugins} from "../../plugins/editor"
 import {getSettings} from "@fiduswriter/document/schema/convert"
 import {docSchema} from "@fiduswriter/document/schema/document/index"
+import {plugins} from "../../plugins/editor"
 import {ModCitations} from "./citations"
 import {ModCollab} from "./collab"
 import {ModComments} from "./comments"

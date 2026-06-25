@@ -50,6 +50,16 @@ function resolveFilelocation(source, file, djangoApps) {
             /.*\/static\/js\//g,
             `${appPath}/static/js/`
         )
+        if (resolvedPath.endsWith("/index.js") && isFile(resolvedPath)) {
+            returnValue.path = resolvedPath
+            returnValue.found = true
+            return true
+        }
+        if (resolvedPath.endsWith(".js") && isFile(resolvedPath)) {
+            returnValue.path = resolvedPath
+            returnValue.found = true
+            return true
+        }
         if (isFile(`${resolvedPath}.js`)) {
             returnValue.path = `${resolvedPath}.js`
             returnValue.found = true

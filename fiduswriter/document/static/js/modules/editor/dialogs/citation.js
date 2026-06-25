@@ -1,14 +1,17 @@
 import {DataTable} from "simple-datatables"
 
-import {plugins} from "../../../plugins/citation_dialog"
-import {dateToYear, litToText, nameToText} from "../../bibliography/tools"
 import {
     Dialog,
     addAlert,
+    ensureCSS,
     escapeText,
     findTarget,
     setCheckableLabel
 } from "fwtoolkit"
+import {plugins} from "../../../plugins/citation_dialog"
+import {dateToYear, litToText, nameToText} from "../../bibliography/tools"
+
+ensureCSS(staticUrl("css/checkable_list.css"))
 import {configureCitationTemplate, selectedCitationTemplate} from "./templates"
 
 export class CitationDialog {

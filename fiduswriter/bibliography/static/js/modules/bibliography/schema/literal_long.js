@@ -1,6 +1,14 @@
+import {
+    url,
+    enquote,
+    smallcaps,
+    sub,
+    sup,
+    text,
+    variable
+} from "@fiduswriter/document/bibliography/common"
 import {Schema} from "prosemirror-model"
 import {marks} from "prosemirror-schema-basic"
-import {url, enquote, smallcaps, sub, sup, text, variable} from "@fiduswriter/document/bibliography/common"
 
 const longliteral = {
     content: "inline*",

@@ -1,5 +1,6 @@
 import {
     Dialog,
+    DialogTabs,
     activateWait,
     addAlert,
     deactivateWait,
@@ -862,17 +863,19 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("@fiduswriter/document/exporter/html/index").then(({HTMLExporter}) => {
-                    const exporter = new HTMLExporter(
-                        doc,
-                        {db: doc.bibliography},
-                        {db: doc.images},
-                        this.documentOverview.app.csl,
-                        new Date(doc.updated * 1000),
-                        this.documentOverview.documentStyles
-                    )
-                    exporter.init()
-                })
+                import("@fiduswriter/document/exporter/html/index").then(
+                    ({HTMLExporter}) => {
+                        const exporter = new HTMLExporter(
+                            doc,
+                            {db: doc.bibliography},
+                            {db: doc.images},
+                            this.documentOverview.app.csl,
+                            new Date(doc.updated * 1000),
+                            this.documentOverview.documentStyles
+                        )
+                        exporter.init()
+                    }
+                )
             })
         )
     }
@@ -888,27 +891,31 @@ export class DocumentOverviewActions {
                     entry => entry.id === id
                 )
                 if (templateType === "docx") {
-                    import("@fiduswriter/document/exporter/docx/index").then(({DOCXExporter}) => {
-                        const exporter = new DOCXExporter(
-                            doc,
-                            templateUrl,
-                            {db: doc.bibliography},
-                            {db: doc.images},
-                            this.documentOverview.app.csl
-                        )
-                        exporter.init()
-                    })
+                    import("@fiduswriter/document/exporter/docx/index").then(
+                        ({DOCXExporter}) => {
+                            const exporter = new DOCXExporter(
+                                doc,
+                                templateUrl,
+                                {db: doc.bibliography},
+                                {db: doc.images},
+                                this.documentOverview.app.csl
+                            )
+                            exporter.init()
+                        }
+                    )
                 } else {
-                    import("@fiduswriter/document/exporter/odt/index").then(({ODTExporter}) => {
-                        const exporter = new ODTExporter(
-                            doc,
-                            templateUrl,
-                            {db: doc.bibliography},
-                            {db: doc.images},
-                            this.documentOverview.app.csl
-                        )
-                        exporter.init()
-                    })
+                    import("@fiduswriter/document/exporter/odt/index").then(
+                        ({ODTExporter}) => {
+                            const exporter = new ODTExporter(
+                                doc,
+                                templateUrl,
+                                {db: doc.bibliography},
+                                {db: doc.images},
+                                this.documentOverview.app.csl
+                            )
+                            exporter.init()
+                        }
+                    )
                 }
             })
         })
@@ -924,15 +931,17 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("@fiduswriter/document/exporter/latex/index").then(({LatexExporter}) => {
-                    const exporter = new LatexExporter(
-                        doc,
-                        {db: doc.bibliography},
-                        {db: doc.images},
-                        new Date(doc.updated * 1000)
-                    )
-                    exporter.init()
-                })
+                import("@fiduswriter/document/exporter/latex/index").then(
+                    ({LatexExporter}) => {
+                        const exporter = new LatexExporter(
+                            doc,
+                            {db: doc.bibliography},
+                            {db: doc.images},
+                            new Date(doc.updated * 1000)
+                        )
+                        exporter.init()
+                    }
+                )
             })
         )
     }
@@ -947,17 +956,19 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("@fiduswriter/document/exporter/jats/index").then(({JATSExporter}) => {
-                    const exporter = new JATSExporter(
-                        doc,
-                        {db: doc.bibliography},
-                        {db: doc.images},
-                        this.documentOverview.app.csl,
-                        new Date(doc.updated * 1000),
-                        "article"
-                    )
-                    exporter.init()
-                })
+                import("@fiduswriter/document/exporter/jats/index").then(
+                    ({JATSExporter}) => {
+                        const exporter = new JATSExporter(
+                            doc,
+                            {db: doc.bibliography},
+                            {db: doc.images},
+                            this.documentOverview.app.csl,
+                            new Date(doc.updated * 1000),
+                            "article"
+                        )
+                        exporter.init()
+                    }
+                )
             })
         )
     }
@@ -972,17 +983,19 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("@fiduswriter/document/exporter/jats/index").then(({JATSExporter}) => {
-                    const exporter = new JATSExporter(
-                        doc,
-                        {db: doc.bibliography},
-                        {db: doc.images},
-                        this.documentOverview.app.csl,
-                        new Date(doc.updated * 1000),
-                        "book-part-wrapper"
-                    )
-                    exporter.init()
-                })
+                import("@fiduswriter/document/exporter/jats/index").then(
+                    ({JATSExporter}) => {
+                        const exporter = new JATSExporter(
+                            doc,
+                            {db: doc.bibliography},
+                            {db: doc.images},
+                            this.documentOverview.app.csl,
+                            new Date(doc.updated * 1000),
+                            "book-part-wrapper"
+                        )
+                        exporter.init()
+                    }
+                )
             })
         )
     }
@@ -997,17 +1010,19 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
-                import("@fiduswriter/document/exporter/epub/index").then(({EpubExporter}) => {
-                    const exporter = new EpubExporter(
-                        doc,
-                        {db: doc.bibliography},
-                        {db: doc.images},
-                        this.documentOverview.app.csl,
-                        new Date(doc.updated * 1000),
-                        this.documentOverview.documentStyles
-                    )
-                    exporter.init()
-                })
+                import("@fiduswriter/document/exporter/epub/index").then(
+                    ({EpubExporter}) => {
+                        const exporter = new EpubExporter(
+                            doc,
+                            {db: doc.bibliography},
+                            {db: doc.images},
+                            this.documentOverview.app.csl,
+                            new Date(doc.updated * 1000),
+                            this.documentOverview.documentStyles
+                        )
+                        exporter.init()
+                    }
+                )
             })
         )
     }
@@ -1044,36 +1059,16 @@ export class DocumentOverviewActions {
             ]
         })
         dialog.open()
-        dialog.dialogEl
-            .querySelectorAll("#documentoptions-tab .tab-content")
-            .forEach((el, index) => {
-                if (index) {
-                    el.style.display = "none"
-                }
-            })
-        dialog.dialogEl
-            .querySelectorAll("#documentoptions-tab .tab-link a")
-            .forEach(el =>
-                el.addEventListener("click", event => {
-                    event.preventDefault()
-
-                    el.parentNode.parentNode
-                        .querySelectorAll(".tab-link.current-tab")
-                        .forEach(el => el.classList.remove("current-tab"))
-                    el.parentNode.classList.add("current-tab")
-
-                    const link = el.getAttribute("href")
-                    dialog.dialogEl
-                        .querySelectorAll("#documentoptions-tab .tab-content")
-                        .forEach(el => {
-                            if (el.matches(link)) {
-                                el.style.display = ""
-                            } else {
-                                el.style.display = "none"
-                            }
-                        })
-                })
-            )
+        const dialogTabs = new DialogTabs(
+            this.dialogParts.map((part, index) => ({
+                id: `docOptionTab${index}`,
+                title: part.title,
+                description: part.description,
+                template: () => ""
+            })),
+            {containerId: "documentoptions-tab"}
+        )
+        dialogTabs.bind(dialog.dialogEl.querySelector("#documentoptions-tab"))
     }
 
     revisionsDialog(documentId, app) {

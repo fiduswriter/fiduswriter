@@ -1,6 +1,6 @@
+import {OdtConvert} from "@fiduswriter/document/importer/odt/convert"
 import {escapeText, postJson} from "fwtoolkit"
 import {NativeImporter} from "../native"
-import {OdtConvert} from "@fiduswriter/document/importer/odt/convert"
 
 export class OdtImporter {
     constructor(file, user, path, importId, options = {}) {

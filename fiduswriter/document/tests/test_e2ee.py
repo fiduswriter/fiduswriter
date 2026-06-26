@@ -751,7 +751,7 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Switch to "Share link" tab
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-tabs-nav .tab-link:nth-child(2) a"
+            By.CSS_SELECTOR, ".fw-tabs-nav .fw-tab-link:nth-child(2)"
         ).click()
         time.sleep(0.5)
 
@@ -1565,7 +1565,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Switch to Share link tab
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-tabs-nav .tab-link:nth-child(2) a"
+            By.CSS_SELECTOR, ".fw-tabs-nav .fw-tab-link:nth-child(2)"
         ).click()
         time.sleep(0.5)
 

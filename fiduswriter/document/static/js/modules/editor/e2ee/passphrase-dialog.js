@@ -28,7 +28,7 @@ export function setupPassphraseDialog(onSetup) {
                 <div class="e2ee-password-field">
                     <label for="e2ee-passphrase-input">${gettext("Passphrase")}</label>
                     <input type="password" id="e2ee-passphrase-input" class="e2ee-password-input"
-                           autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" autofocus />
+                           autocomplete="off" data-1p-ignore data-lp-ignore data-lpignore="true" data-bwignore data-form-type="other" />
                     <button type="button" class="e2ee-toggle-visibility" title="${gettext("Show passphrase")}">
                         <i class="fa-solid fa-eye"></i>
                     </button>
@@ -95,11 +95,21 @@ export function setupPassphraseDialog(onSetup) {
             id: dialogId,
             body: body,
             buttons: buttons,
-            canClose: true
+            canClose: true,
+            width: 450
         }
 
         const dialogInstance = new Dialog(dialog)
         dialogInstance.open()
+
+        // The dialog content is short and should not scroll. Ensure it starts
+        // at the top so the explanatory text and title are fully visible.
+        requestAnimationFrame(() => {
+            const contentEl = document.getElementById(dialogId)
+            if (contentEl) {
+                contentEl.scrollTop = 0
+            }
+        })
 
         setTimeout(() => {
             const toggleBtns = document.querySelectorAll(

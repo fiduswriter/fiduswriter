@@ -393,11 +393,15 @@ export class Dialog {
 
     nextDialogZIndex() {
         let zIndex = 100
-        document
-            .querySelectorAll("div.ui-dialog")
-            .forEach(
-                dialogEl => (zIndex = Math.max(zIndex, dialogEl.style.zIndex))
+        document.querySelectorAll("div.ui-dialog").forEach(dialogEl => {
+            const computedZIndex = parseInt(
+                window.getComputedStyle(dialogEl).zIndex
             )
+            zIndex = Math.max(
+                zIndex,
+                Number.isNaN(computedZIndex) ? 100 : computedZIndex
+            )
+        })
         zIndex += 2
         document.body.style.setProperty("--highest-dialog-z-index", zIndex)
         return zIndex

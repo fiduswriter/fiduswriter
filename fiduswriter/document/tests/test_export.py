@@ -201,7 +201,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         author_lastName.send_keys("Doe")
 
         publication_date = self.driver.find_element(
-            By.CSS_SELECTOR, ".date .date"
+            By.CSS_SELECTOR, ".date .fw-date"
         )
         publication_date.click()
         publication_date.send_keys("2012")
@@ -209,7 +209,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # click on Submit button
         self.driver.find_element(
             By.XPATH,
-            '//*[contains(@class, "ui-button") and normalize-space()="Submit"]',
+            '//*[contains(@class, "fw-button") and normalize-space()="Submit"]',
         ).click()
 
         # Wait for source to be listed
@@ -273,7 +273,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # click on 'Upload' button
         self.driver.find_element(
             By.XPATH,
-            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]',
+            '//*[contains(@class, "fw-button") and normalize-space()="Upload"]',
         ).click()
 
         # click on 'Use image' button
@@ -292,11 +292,8 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "div.figure-preview > div > span > i"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            (
-                "body > div.ui-content-menu.ui-corner-all.ui-widget."
-                "ui-widget-content.ui-front > div > div > ul > li:nth-child(1)"
-            ),
+            By.XPATH,
+            '//li[contains(@class, "fw-content-menu-item")][normalize-space()="Set Copyright"]',
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".holder").send_keys(
             "Johannes Wilm"
@@ -308,6 +305,11 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, ".license-start").send_keys(
             "1998-04-23"
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located(
+                (By.CSS_SELECTOR, "#fw-alerts-wrapper li.fw-visible")
+            )
         )
         self.driver.find_element(
             By.CSS_SELECTOR,
@@ -362,8 +364,8 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "div.table-100 > button"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR,
-            "body > div.ui-content-menu > div > div > ul > li:nth-child(16)",
+            By.XPATH,
+            '//li[contains(@class, "fw-content-menu-item")][normalize-space()="Configure ..."]',
         ).click()
         self.driver.find_element(By.CSS_SELECTOR, "div.table-category").click()
         self.driver.find_element(

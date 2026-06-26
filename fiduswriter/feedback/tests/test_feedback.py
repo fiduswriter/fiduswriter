@@ -41,8 +41,8 @@ class SendFeedbackTest(SeleniumHelper, ChannelsLiveServerTestCase):
     def test_sendfeedback(self):
         self.driver.get(self.base_url)
         self.driver.find_element(By.CSS_SELECTOR, ".feedback-tab").click()
-        self.driver.find_element(By.ID, "message").click()
-        self.driver.find_element(By.ID, "message").send_keys(
+        self.driver.find_element(By.ID, "fw-message").click()
+        self.driver.find_element(By.ID, "fw-message").send_keys(
             "I found a problem."
         )
         self.driver.find_element(By.ID, "feedbackbutton").click()
@@ -61,8 +61,8 @@ class SendFeedbackTest(SeleniumHelper, ChannelsLiveServerTestCase):
             EC.presence_of_element_located((By.ID, "preferences-btn"))
         )
         self.driver.find_element(By.CSS_SELECTOR, ".feedback-tab").click()
-        self.driver.find_element(By.ID, "message").click()
-        self.driver.find_element(By.ID, "message").send_keys(
+        self.driver.find_element(By.ID, "fw-message").click()
+        self.driver.find_element(By.ID, "fw-message").send_keys(
             "I found another problem."
         )
         self.driver.find_element(By.ID, "feedbackbutton").click()

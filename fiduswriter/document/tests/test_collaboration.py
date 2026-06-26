@@ -743,7 +743,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='7']"
         ).click()
         # close keyboard
-        driver.find_element(By.CLASS_NAME, "ui-dialog-titlebar").click()
+        driver.find_element(By.CLASS_NAME, "fw-dialog-titlebar").click()
         insert_button.click()
 
     def get_mathequation(self, driver):
@@ -924,9 +924,12 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "#answer-editor p"
         ).send_keys("\nMODIFICATION")
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".comment-answer .submit"
-        ).click()
+        self.driver.execute_script(
+            "arguments[0].click();",
+            self.driver.find_element(
+                By.CSS_SELECTOR, ".comment-answer .submit"
+            ),
+        )
         answer_addition = WebDriverWait(self.driver2, self.wait_time).until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".comment-answer .comment-text-wrapper p+p")
@@ -955,7 +958,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, ".margin-box.comment .show-marginbox-options"
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, ".delete-comment").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".fw-delete-comment").click()
         WebDriverWait(self.driver2, self.wait_time).until(
             EC.invisibility_of_element_located(
                 (By.CSS_SELECTOR, ".margin-box.comment")
@@ -998,7 +1001,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         # click on 'Upload' button
         driver.find_element(
             By.XPATH,
-            '//*[contains(@class, "ui-button") and normalize-space()="Upload"]',
+            '//*[contains(@class, "fw-button") and normalize-space()="Upload"]',
         ).click()
 
         # click on 'Use image' button
@@ -1161,7 +1164,9 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         time.sleep(1)
         author_lastName.send_keys("Doe")
 
-        publication_date = driver.find_element(By.CSS_SELECTOR, ".date .date")
+        publication_date = driver.find_element(
+            By.CSS_SELECTOR, ".date .fw-date"
+        )
         publication_date.click()
         time.sleep(1)
         publication_date.send_keys("2012")
@@ -1169,7 +1174,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         # click on Submit button
         driver.find_element(
             By.XPATH,
-            '//*[contains(@class, "ui-button") and normalize-space()="Submit"]',
+            '//*[contains(@class, "fw-button") and normalize-space()="Submit"]',
         ).click()
 
         # Wait for source to be listed

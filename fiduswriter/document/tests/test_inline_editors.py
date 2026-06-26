@@ -441,13 +441,7 @@ class InlineEditorsTest(SeleniumHelper, ChannelsLiveServerTestCase):
         # Confirm the dialog.
         self.driver.find_element(
             By.CSS_SELECTOR,
-            (
-                "body > div.fw-dialog.ui-corner-all.ui-widget."
-                "ui-widget-content.ui-front.fw-dialog-buttons > "
-                "div.fw-dialog-buttonpane.ui-widget-content."
-                "ui-helper-clearfix > div > button.fw-dark."
-                "fw-button.ui-button.ui-corner-all.ui-widget"
-            ),
+            "div.fw-dialog button.fw-dark",
         ).click()
 
         # ── Step 3: verify the inserted cross-reference ────────────────────

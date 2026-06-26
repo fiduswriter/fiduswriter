@@ -142,7 +142,7 @@ class MemoryLeakTest(EditorHelper, ChannelsLiveServerTestCase):
                     [
                         el
                         for el in d.find_elements(
-                            By.CSS_SELECTOR, ".ui-widget-overlay"
+                            By.CSS_SELECTOR, ".fw-overlay"
                         )
                         if el.is_displayed()
                     ]

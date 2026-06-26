@@ -1,3 +1,4 @@
+import os
 import time
 from random import randrange
 from selenium.webdriver.support import expected_conditions as EC
@@ -28,7 +29,15 @@ class EditorHelper(SeleniumHelper):
         self.inject_helpers(driver)
 
     def inject_helpers(self, driver):
-        with open("static-transpile/js/test_caret.js") as file:
+        test_caret_path = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "static-transpile",
+            "js",
+            "test_caret.js",
+        )
+        with open(test_caret_path) as file:
             test_caret_script = file.read()
         driver.execute_script(test_caret_script)
 

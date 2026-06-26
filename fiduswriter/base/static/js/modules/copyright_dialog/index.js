@@ -1,6 +1,6 @@
 import {edtfParse} from "biblatex-csl-converter"
 import deepEqual from "fast-deep-equal"
-import {Dialog, InputList, TypeSwitch} from "fwtoolkit"
+import {Dialog, InputList, TypeSwitch, escapeText} from "fwtoolkit"
 import {
     copyrightTemplate,
     licenseInputTemplate,
@@ -111,7 +111,10 @@ export class CopyrightDialog {
             initialValues: this.copyright.licenses || [],
             emptyValue: {url: "", title: "", start: false},
             renderItem: license => ({
-                html: `<div class="copyright-license-switch"></div>`,
+                html: `<div class="copyright-license-switch"></div>
+                    <div class="field-part field-part-small">
+                        <input type="text" class="license-start" value="${license.start ? escapeText(license.start) : ""}" placeholder="${gettext("Start date")}">
+                    </div>`,
                 bind: el => {
                     const licenseContainer = el.closest("tr")
                     const startInput =

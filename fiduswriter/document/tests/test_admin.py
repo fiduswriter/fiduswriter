@@ -9,6 +9,7 @@ from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -388,18 +389,22 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.ID, "id-password").send_keys("password")
         self.driver.find_element(By.ID, "login-submit").click()
         WebDriverWait(self.driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document.dropdown")
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#new_document-button")
             )
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            (
-                "#fw-overview-menu > li.fw-overview-menu-item.new_document."
-                "dropdown > div.fw-pulldown.fw-left > ul > li:nth-child(2) > "
-                "span"
-            ),
-        ).click()
+        )
+        self.driver.execute_script(
+            "document.querySelector('#new_document-button').click()"
+        )
+        item = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#fw-overview-menu > li.new_document .fw-pulldown li:nth-child(2) .fw-pulldown-item",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", item)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.text_to_be_present_in_element(
                 (By.CSS_SELECTOR, ".doc-body"), "Initial body"
@@ -427,11 +432,12 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(Keys.RETURN).perform()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".collaborator-tr .fa-caret-down")
+                (By.CSS_SELECTOR, ".fw-collaborator-tr .edit-right")
             )
         ).click()
         self.driver.find_element(
-            By.XPATH, '//*[normalize-space()="Write"]'
+            By.XPATH,
+            '//*[contains(@class, "fw-content-menu-item")][normalize-space()="Write"]',
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-dialog .fw-dark"
@@ -567,14 +573,11 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, "input[type=checkbox].action-select"
         ).click()
+        Select(
+            self.driver.find_element(By.CSS_SELECTOR, 'select[name="action"]')
+        ).select_by_value("download")
         self.driver.find_element(
-            By.CSS_SELECTOR, "select[name=action]"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, "option[value=download]"
-        ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button[type=submit]"
+            By.CSS_SELECTOR, "button[type=submit], input[type=submit]"
         ).click()
         path = os.path.join(
             self.download_dir, "standard-article.fidustemplate"

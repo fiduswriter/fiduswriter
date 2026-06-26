@@ -32,16 +32,20 @@ export class DocumentTemplateListAdmin {
     }
 
     modifyDOM() {
-        this.objectTools.insertAdjacentHTML(
-            "beforeend",
-            `<li>
-                <span class="link" id="upload-template">${gettext("Upload FIDUSTEMPLATE")}</span>
-            </li>`
-        )
-        this.actionDropdown.insertAdjacentHTML(
-            "beforeend",
-            `<option value="download">${gettext("Download selected as FIDUSTEMPLATE")}</option>`
-        )
+        if (this.objectTools) {
+            this.objectTools.insertAdjacentHTML(
+                "beforeend",
+                `<li>
+                    <span class="link" id="upload-template">${gettext("Upload FIDUSTEMPLATE")}</span>
+                </li>`
+            )
+        }
+        if (this.actionDropdown) {
+            this.actionDropdown.insertAdjacentHTML(
+                "beforeend",
+                `<option value="download">${gettext("Download selected as FIDUSTEMPLATE")}</option>`
+            )
+        }
     }
 
     showErrors(errors) {
@@ -88,12 +92,16 @@ export class DocumentTemplateListAdmin {
                     })
                     break
                 }
-                case findTarget(event, "button[type=submit]", el):
+                case findTarget(
+                    event,
+                    "button[type=submit], input[type=submit]",
+                    el
+                ):
                     if (this.actionDropdown.value === "download") {
                         event.preventDefault()
                         const ids = Array.from(
                             document.querySelectorAll(
-                                '#result_list tr.fw-selected input[type="checkbox"]'
+                                '#result_list tr.selected input[type="checkbox"], #result_list tr.fw-selected input[type="checkbox"]'
                             )
                         ).map(el => Number.parseInt(el.value))
                         ids.forEach(id => {

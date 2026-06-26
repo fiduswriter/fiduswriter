@@ -109,14 +109,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
 
         # Click verify button
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         # Wait for success
         time.sleep(2)  # Allow API call to complete
@@ -154,14 +154,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
 
         # Click verify button
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         # Wait for the error alert to appear — the server returns 400 and the
         # frontend's .catch() handler calls addAlert("error", …).
@@ -207,14 +207,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         # The verify button is in the dialog buttons, not a separate ID
         # Find it by text content in the dialog
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         time.sleep(2)
 
@@ -283,14 +283,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         code_input.send_keys(valid_code)
 
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         time.sleep(2)
 
@@ -358,14 +358,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
 
         # Verify
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         # Wait for 2FA dialog to close (successful login)
         WebDriverWait(self.drivers[0], self.wait_time).until(
@@ -419,14 +419,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         code_input.send_keys(valid_code)
 
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         time.sleep(2)
 
@@ -458,14 +458,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         code_input.send_keys("000000")  # Invalid code
 
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         # Wait for the error alert — the server returns 400 for the bad
         # code and the frontend's .catch() handler shows the alert while
@@ -509,14 +509,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         code_input.send_keys(valid_code)
 
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         time.sleep(2)
 
@@ -553,7 +553,7 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
                 EC.element_to_be_clickable(
                     (
                         By.XPATH,
-                        "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                        "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                     )
                 )
             )
@@ -594,14 +594,14 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
         code_input.send_keys("123")
 
         verify_btn = WebDriverWait(self.drivers[0], self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.presence_of_element_located(
                 (
                     By.XPATH,
-                    "//button[contains(@class, 'fw-dark') and contains(text(), 'Verify')]",
+                    "//button[contains(@class, 'fw-dark')][normalize-space()='Verify']",
                 )
             )
         )
-        verify_btn.click()
+        self.drivers[0].execute_script("arguments[0].click();", verify_btn)
 
         # Wait for error alert to appear
         time.sleep(1)

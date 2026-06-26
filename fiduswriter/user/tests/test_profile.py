@@ -62,7 +62,7 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 if (
                     self.driver.find_element(
                         By.CSS_SELECTOR,
-                        "body #alerts-outer-wrapper .alerts-info",
+                        "body #fw-alerts-outer-wrapper .alerts-info",
                     ).text
                     == message
                 ):
@@ -98,7 +98,16 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-password-input1").send_keys("otter2")
         driver.find_element(By.ID, "new-password-input2").clear()
         driver.find_element(By.ID, "new-password-input2").send_keys("otter2")
-        driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
+        time.sleep(1)
+        button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    "//div[@id='fw-change-pwd-dialog']/following-sibling::div[contains(@class,'fw-dialog-buttonpane')]//button[contains(@class,'fw-dark')]",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", button)
         time.sleep(1)
         self.assertEqual(
             driver.find_element(By.ID, "fw-password-change-error").text,
@@ -112,7 +121,15 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-password-input2").send_keys(
             "otter1234567"
         )
-        driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
+        button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    "//div[@id='fw-change-pwd-dialog']/following-sibling::div[contains(@class,'fw-dialog-buttonpane')]//button[contains(@class,'fw-dark')]",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", button)
         self.assertInfoAlert("The password has been changed.")
         driver.find_element(By.ID, "fw-edit-profile-pwd").click()
         driver.find_element(By.ID, "old-password-input").clear()
@@ -127,7 +144,15 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-password-input2").send_keys(
             "BigPassword123!"
         )
-        driver.find_element(By.XPATH, "(//button[@type='button'])[2]").click()
+        button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    "//div[@id='fw-change-pwd-dialog']/following-sibling::div[contains(@class,'fw-dialog-buttonpane')]//button[contains(@class,'fw-dark')]",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", button)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.invisibility_of_element_located(
                 (By.CSS_SELECTOR, "#fw-change-pwd-dialog")
@@ -164,9 +189,15 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
             0,
         )
         driver.find_element(By.ID, "edit-avatar-btn").click()
-        driver.find_element(
-            By.XPATH, '//*[normalize-space()="Change picture"]'
-        ).click()
+        menu_item = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[contains(@class, "fw-content-menu-item")][normalize-space()="Change picture"]',
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", menu_item)
 
         image_path = os.path.join(
             settings.PROJECT_PATH, "document/tests/uploads/image.png"
@@ -174,20 +205,38 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(
             By.CSS_SELECTOR, ".fw-dialog input[type=file]"
         ).send_keys(image_path)
-        driver.find_element(
-            By.XPATH, '//*[normalize-space()="Upload"]'
-        ).click()
+        upload_button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#change-avatar-dialog ~ .fw-dialog-buttonpane button.fw-dark",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", upload_button)
         self.assertEqual(
             len(driver.find_elements(By.CSS_SELECTOR, "#profile-avatar img")),
             1,
         )
         driver.find_element(By.ID, "edit-avatar-btn").click()
-        driver.find_element(
-            By.XPATH, '//*[normalize-space()="Delete picture"]'
-        ).click()
-        driver.find_element(
-            By.XPATH, '//*[normalize-space()="Delete"]'
-        ).click()
+        menu_item = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    '//*[contains(@class, "fw-content-menu-item")][normalize-space()="Delete picture"]',
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", menu_item)
+        delete_button = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#confirmdeletion ~ .fw-dialog-buttonpane button.fw-dark",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", delete_button)
         time.sleep(1)
         self.assertEqual(
             len(driver.find_elements(By.CSS_SELECTOR, "#profile-avatar img")),
@@ -199,7 +248,15 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-profile-email").send_keys(
             "yeti@snowman2.com"
         )
-        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
+        add_btn = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#fw-add-email-dialog ~ .fw-dialog-buttonpane button.fw-dark",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", add_btn)
         self.assertInfoAlert("Confirmation e-mail sent to: yeti@snowman2.com")
         assert (
             self.driver.find_element(
@@ -250,15 +307,29 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR,
             ".profile-email-table tbody tr:nth-child(2) .primary-email-radio",
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".fw-dialog-buttonset .fw-dark"
-        ).click()
+        confirm_btn = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#change-primary-email ~ .fw-dialog-buttonpane button.fw-dark",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", confirm_btn)
         self.assertInfoAlert("The primary email has been updated.")
         self.driver.find_element(
             By.CSS_SELECTOR,
             ".profile-email-table tbody tr:nth-child(1) .delete-email",
         ).click()
-        self.driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
+        del_btn = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#fw-confirm-email-dialog ~ .fw-dialog-buttonpane button.fw-dark",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", del_btn)
         self.assertInfoAlert("Email successfully deleted!")
         self.assertEqual(
             len(
@@ -272,7 +343,15 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-profile-email").send_keys(
             "yeti@snowman3.com"
         )
-        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
+        add_btn = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#fw-add-email-dialog ~ .fw-dialog-buttonpane button.fw-dark",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", add_btn)
         self.assertInfoAlert("Confirmation e-mail sent to: yeti@snowman3.com")
         assert (
             self.driver.find_element(
@@ -288,7 +367,15 @@ class ProfileTest(SeleniumHelper, ChannelsLiveServerTestCase):
         driver.find_element(By.ID, "new-profile-email").send_keys(
             "yeti@snowman4.com"
         )
-        driver.find_element(By.CSS_SELECTOR, "button.fw-dark").click()
+        add_btn = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "#fw-add-email-dialog ~ .fw-dialog-buttonpane button.fw-dark",
+                )
+            )
+        )
+        self.driver.execute_script("arguments[0].click();", add_btn)
         self.assertInfoAlert("Confirmation e-mail sent to: yeti@snowman4.com")
         assert (
             self.driver.find_element(

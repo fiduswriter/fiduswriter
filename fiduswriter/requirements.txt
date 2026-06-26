@@ -1,4 +1,4 @@
-bleach==6.3.0
+bleach==6.4.0
 channels==4.3.2
 granian[uvloop]==2.7.4
 servestatic==4.3.1

@@ -288,7 +288,9 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 session_info_msg["e2ee_iterations"] = doc_db.e2ee_iterations
             await self.send_message(session_info_msg)
             # Reconcile version: send missing diffs if client is behind
-            await self.check_version(client_version)
+            await self.check_version(
+                client_version, offline=connection_count > 0
+            )
         else:
             # Reconnecting user — send access rights for comparison
             await self.send_message(

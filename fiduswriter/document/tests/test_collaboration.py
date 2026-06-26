@@ -742,8 +742,17 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         driver.find_element(
             By.XPATH, "//div[contains(@class, 'MLK__keycap') and text()='7']"
         ).click()
-        # close keyboard
-        driver.find_element(By.CLASS_NAME, "fw-dialog-titlebar").click()
+        # Wait for MathLive to update the field value before inserting.
+        WebDriverWait(driver, self.wait_time).until(
+            lambda d: d.execute_script(
+                "return document.querySelector('math-field')?.getValue()"
+            )
+            == "2x+3=7"
+        )
+        # Hide the virtual keyboard and insert the formula.
+        driver.execute_script(
+            "if (window.mathVirtualKeyboard) { window.mathVirtualKeyboard.hide() }"
+        )
         insert_button.click()
 
     def get_mathequation(self, driver):

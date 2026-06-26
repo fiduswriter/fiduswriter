@@ -14,10 +14,11 @@ import {
 ensureCSS(staticUrl("css/checkable_list.css"))
 import {AddContactDialog} from "../../contacts/add_dialog"
 import {
-    accessRightOverviewTemplate,
     collaboratorsTemplate,
     contactsTemplate,
     createShareTokenDialogTemplate,
+    peopleTabTemplate,
+    shareLinkTabTemplate,
     shareTokenListTemplate,
     shareTokenRowTemplate
 } from "./templates"
@@ -121,12 +122,33 @@ export class AccessRightsTab {
             </div>`
             : ""
 
-        const html =
-            e2eeWarningBanner +
-            accessRightOverviewTemplate({
-                contacts: this.contacts,
-                collaborators
-            })
+        this.dialogTabs = new DialogTabs(
+            [
+                {
+                    id: "people",
+                    title: gettext("People"),
+                    template: () =>
+                        peopleTabTemplate({
+                            contacts: this.contacts,
+                            collaborators
+                        })
+                },
+                {
+                    id: "sharelink",
+                    title: gettext("Share link"),
+                    template: () => shareLinkTabTemplate()
+                }
+            ],
+            {
+                onShow: index => {
+                    if (index === 1 && this.singleDocumentId) {
+                        this.loadShareTokens()
+                    }
+                }
+            }
+        )
+
+        const html = e2eeWarningBanner + this.dialogTabs.render()
 
         if (this.container) {
             this.container.innerHTML = html
@@ -206,27 +228,7 @@ export class AccessRightsTab {
             })
 
         // Inner tab switching (People / Share link)
-        const dialogTabs = new DialogTabs(
-            [
-                {id: "people", title: gettext("People"), template: () => ""},
-                {
-                    id: "sharelink",
-                    title: gettext("Share link"),
-                    template: () => ""
-                }
-            ],
-            {
-                onShow: index => {
-                    if (
-                        index === 1 && // Share link tab
-                        this.singleDocumentId
-                    ) {
-                        this.loadShareTokens()
-                    }
-                }
-            }
-        )
-        dialogTabs.bind(container)
+        this.dialogTabs.bind(container)
 
         // Share-link actions
         container.addEventListener("click", event => {

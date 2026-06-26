@@ -1,60 +1,39 @@
-import {DialogTabs, avatarTemplate, escapeText} from "fwtoolkit"
+import {avatarTemplate, escapeText} from "fwtoolkit"
 
-const peopleTabTemplate = ({contacts, collaborators}) =>
-    `<div id="people" class="tab-content fw-tabs-panel">
-        <div id="my-contacts" class="fw-ar-container">
-            <h3 class="fw-green-title">${gettext("My contacts")}</h3>
-            <table class="fw-data-table">
-                <thead class="fw-data-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
-                <tbody class="fw-data-table-body fw-small">
-                    ${contactsTemplate({contacts})}
-                </tbody>
-            </table>
-        </div>
-        <span id="add-share-contact" class="fw-button fw-large fw-square fw-light fw-ar-button">
-            <i class="fa-solid fa-caret-right"></i>
-        </span>
-        <div id="share-contact" class="fw-ar-container">
-            <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
-            <table class="fw-data-table tablesorter">
-                <thead class="fw-data-table-header"><tr>
-                        <th width="217">${gettext("Collaborators")}</th>
-                        <th width="50" align="center">${gettext("Rights")}</th>
-                        <th width="50" align="center">${gettext("Delete")}</th>
-                </tr></thead>
-                <tbody class="fw-data-table-body fw-small">
-                    ${collaboratorsTemplate({collaborators})}
-                </tbody>
-            </table>
-        </div>
+export const peopleTabTemplate = ({contacts, collaborators}) =>
+    `<div id="my-contacts" class="fw-ar-container">
+        <h3 class="fw-green-title">${gettext("My contacts")}</h3>
+        <table class="fw-data-table">
+            <thead class="fw-data-table-header"><tr><th width="337">${gettext("Contacts")}</th></tr></thead>
+            <tbody class="fw-data-table-body fw-small">
+                ${contactsTemplate({contacts})}
+            </tbody>
+        </table>
+    </div>
+    <span id="add-share-contact" class="fw-button fw-large fw-square fw-light fw-ar-button">
+        <i class="fa-solid fa-caret-right"></i>
+    </span>
+    <div id="share-contact" class="fw-ar-container">
+        <h3 class="fw-green-title">${gettext("My collaborators")}</h3>
+        <table class="fw-data-table tablesorter">
+            <thead class="fw-data-table-header"><tr>
+                    <th width="217">${gettext("Collaborators")}</th>
+                    <th width="50" align="center">${gettext("Rights")}</th>
+                    <th width="50" align="center">${gettext("Delete")}</th>
+            </tr></thead>
+            <tbody class="fw-data-table-body fw-small">
+                ${collaboratorsTemplate({collaborators})}
+            </tbody>
+        </table>
     </div>`
 
-const shareLinkTabTemplate = () =>
-    `<div id="sharelink" class="tab-content fw-tabs-panel" style="display: none;">
-        <div id="share-token-list">
-            <p class="fw-ar-loading">${gettext("Loading…")}</p>
-        </div>
-        <button class="fw-button fw-light" id="create-share-token-btn">
-            <i class="fa-solid fa-plus"></i>&nbsp;${gettext("Create new share link")}
-        </button>
-    </div>`
-
-/** Outer wrapper with two tabs: "People" and "Share link" */
-export const accessRightOverviewTemplate = ({contacts, collaborators}) => {
-    const dialogTabs = new DialogTabs([
-        {
-            id: "people",
-            title: gettext("People"),
-            template: () => peopleTabTemplate({contacts, collaborators})
-        },
-        {
-            id: "sharelink",
-            title: gettext("Share link"),
-            template: () => shareLinkTabTemplate()
-        }
-    ])
-    return dialogTabs.render()
-}
+export const shareLinkTabTemplate = () =>
+    `<div id="share-token-list">
+        <p class="fw-ar-loading">${gettext("Loading…")}</p>
+    </div>
+    <button class="fw-button fw-light" id="create-share-token-btn">
+        <i class="fa-solid fa-plus"></i>&nbsp;${gettext("Create new share link")}
+    </button>`
 
 /** The list of active share-link tokens for a single document */
 export const shareTokenListTemplate = ({tokens}) => {

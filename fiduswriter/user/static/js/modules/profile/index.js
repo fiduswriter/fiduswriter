@@ -93,7 +93,10 @@ export class Profile {
             // Check and display two-factor authentication status
             this.postRenderHandlers.push(() => this.updateTwoFactorStatus())
         }
-        if (this.app.settings.E2EE_ENABLED) {
+        if (
+            this.app.settings.E2EE_MODE &&
+            this.app.settings.E2EE_MODE !== "disabled"
+        ) {
             this.clickTargets["#setup-e2ee-passphrase"] = (_el, _event) => {
                 this.setupE2EEPassphrase()
             }

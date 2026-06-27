@@ -20,7 +20,7 @@
     private: true,
     dependencies: {
         "fwtoolkit": "^0.1.1",
-        "@fiduswriter/document": "^0.1.0-alpha.3",
+        "@fiduswriter/document": "^0.1.0-alpha.4",
         "file-loader": "^6.2.0",
         "diff-dom": "5.2.1",
         "downloadjs": "1.4.7",

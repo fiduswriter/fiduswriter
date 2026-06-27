@@ -1,173 +1,51 @@
-import {PandocConvert} from "@fiduswriter/document/importer/pandoc/convert"
-import {escapeText, postJson} from "fwtoolkit"
+import {PandocImporter as GenericPandocImporter} from "@fiduswriter/document/importer/pandoc"
+import {postJson} from "fwtoolkit"
 import {BibliographyImporter} from "../../bibliography/import"
-import {NativeImporter} from "../native"
+import {createNativeImporterBackend} from "../native/import"
 
-export class PandocImporter {
-    constructor(file, user, path, importId, options) {
-        this.file = file
-        this.user = user
-        this.path = path
-        this.importId = importId
-        this.additionalFiles = options.files
-        this.e2eeOptions = options.e2eeOptions || null
-
-        this.template = null
-        this.output = {
-            ok: false,
-            statusText: "",
-            doc: null,
-            docInfo: null
-        }
-        this.title = gettext("Untitled")
-    }
-
-    async init() {
-        await this.getTemplate()
-        const text = await this.file.text()
-        return this.handlePandocJson(
-            text,
-            this.additionalFiles?.images,
-            this.additionalFiles?.bibliography
-        )
-    }
-
-    async getTemplate() {
-        const {json} = await postJson("/api/document/get_template/", {
-            import_id: this.importId
-        })
-        this.template = json.template
-    }
-
-    importJSON() {
-        const reader = new FileReader()
-        return new Promise(resolve => {
-            reader.onload = () =>
-                resolve(this.handlePandocJson(reader.result, {}, null))
-            reader.readAsText(this.file)
-        })
-    }
-
-    handlePandocJson(jsonString, images = {}, bibString = "") {
-        let pandocJson
-        try {
-            pandocJson = JSON.parse(jsonString)
-        } catch (error) {
-            this.output.statusText = error.message
-            return this.output
-        }
-
-        // Create a promise that will resolve with the bibliography entries
-        const bibPromise = new Promise(resolve => {
-            if (bibString) {
-                // Create a temporary bibliography database
-                const tempBibDB = {
-                    saveBibEntries: data => {
-                        // Instead of saving, just return the data
-                        return Promise.resolve(
-                            Object.entries(data).map((entry, index) => [
-                                entry[0],
-                                index + 1
-                            ])
-                        )
+export class PandocImporter extends GenericPandocImporter {
+    constructor(file, user, path, importId, options = {}) {
+        super(file, user, path, importId, {
+            getTemplate: importId =>
+                postJson("/api/document/get_template/", {
+                    import_id: importId
+                }).then(({json}) => json.template),
+            importBibliography: bibString =>
+                new Promise(resolve => {
+                    if (!bibString) {
+                        resolve({})
+                        return
                     }
-                }
-
-                // Create a temporary callback that will resolve with the bibliography data
-                const tempCallback = () => {}
-
-                // Create a temporary addToList function
-                const tempAddToList = () => {}
-
-                // Use BibliographyImporter to parse the bibliography
-                const importer = new BibliographyImporter(
-                    bibString,
-                    tempBibDB,
-                    tempAddToList,
-                    tempCallback,
-                    false // Don't show alerts
-                )
-
-                // Store the original onMessage function
-                const originalOnMessage = importer.onMessage
-
-                // Override onMessage to capture the bibliography data
-                importer.onMessage = function (message) {
-                    if (message.type === "data") {
-                        resolve(message.data)
+                    const tempBibDB = {
+                        saveBibEntries: data =>
+                            Promise.resolve(
+                                Object.entries(data).map((entry, index) => [
+                                    entry[0],
+                                    index + 1
+                                ])
+                            )
                     }
-                    originalOnMessage.call(this, message)
-                }
-
-                importer.init()
-            } else {
-                resolve({})
-            }
-        })
-
-        return bibPromise.then(bibliography => {
-            const converter = new PandocConvert(
-                pandocJson,
-                this.importId,
-                this.template,
-                bibliography
-            )
-
-            let convertedDoc
-            try {
-                convertedDoc = converter.init()
-            } catch (error) {
-                this.output.statusText = error.message
-                console.error(error)
-                return this.output
-            }
-            if (
-                ["", "Untitled"].includes(
-                    convertedDoc.content.content[0].content?.[0]?.text
-                )
-            ) {
-                convertedDoc.content.content[0].content[0].text = this.title
-            } else {
-                this.title =
-                    convertedDoc.content.content[0].content[0].text ||
-                    this.title
-            }
-
-            // Create a new NativeImporter instance
-            const nativeImporter = new NativeImporter(
-                {
-                    content: convertedDoc.content,
-                    title: this.title,
-                    comments: {},
-                    settings: convertedDoc.settings
-                },
-                bibliography,
-                converter.images, // Pass converted images
-                Object.entries(images).map(([filename, blob]) => ({
-                    filename,
-                    content: blob
-                })),
-                this.user,
-                null,
-                this.path + this.title,
-                null,
-                this.e2eeOptions
-            )
-
-            return nativeImporter
-                .init()
-                .then(({doc, docInfo}) => {
-                    this.output.ok = true
-                    this.output.doc = doc
-                    this.output.docInfo = docInfo
-                    this.output.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
-                    return this.output
-                })
-                .catch(error => {
-                    this.output.statusText = error.message
-                    console.error(error)
-                    return this.output
-                })
+                    const importer = new BibliographyImporter(
+                        bibString,
+                        tempBibDB,
+                        () => {},
+                        () => {},
+                        false
+                    )
+                    const originalOnMessage = importer.onMessage
+                    importer.onMessage = function (message) {
+                        if (message.type === "data") {
+                            resolve(message.data)
+                        }
+                        originalOnMessage.call(this, message)
+                    }
+                    importer.init()
+                }),
+            nativeBackend: createNativeImporterBackend(
+                user,
+                options.e2eeOptions
+            ),
+            e2eeOptions: options.e2eeOptions
         })
     }
 }

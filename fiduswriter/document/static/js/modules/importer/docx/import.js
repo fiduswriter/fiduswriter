@@ -1,85 +1,19 @@
-import {DocxConvert} from "@fiduswriter/document/importer/docx/convert"
-import {escapeText, postJson} from "fwtoolkit"
-import {NativeImporter} from "../native"
+import {DocxImporter as GenericDocxImporter} from "@fiduswriter/document/importer/docx"
+import {postJson} from "fwtoolkit"
+import {createNativeImporterBackend} from "../native/import"
 
-export class DocxImporter {
+export class DocxImporter extends GenericDocxImporter {
     constructor(file, user, path, importId, options = {}) {
-        this.file = file
-        this.user = user
-        this.path = path
-        this.importId = importId
-        this._options = options.files // Not used in the DOCX importer
-        this.e2eeOptions = options.e2eeOptions || null
-
-        this.template = null
-        this.output = {
-            ok: false,
-            statusText: "",
-            doc: null,
-            docInfo: null
-        }
-    }
-
-    init() {
-        return this.getTemplate().then(() => this.importDocx())
-    }
-
-    getTemplate() {
-        return postJson("/api/document/get_template/", {
-            import_id: this.importId
-        }).then(({json}) => {
-            this.template = json.template
-        })
-    }
-
-    importDocx() {
-        const bibliography = {} // Initial empty bibliography
-        return import("jszip").then(({default: JSZip}) => {
-            return JSZip.loadAsync(this.file).then(zip => {
-                const docx = new DocxConvert(
-                    zip,
-                    this.importId,
-                    this.template,
-                    bibliography
-                )
-
-                return docx.init().then(convertedDoc => {
-                    const title =
-                        convertedDoc.content.content[0].content?.[0]?.text ||
-                        gettext("Untitled")
-                    const nativeImporter = new NativeImporter(
-                        {
-                            content: convertedDoc.content,
-                            title,
-                            comments: convertedDoc.comments,
-                            settings: convertedDoc.settings
-                        },
-                        bibliography,
-                        docx.images,
-                        [], // No additional image files needed
-                        this.user,
-                        this.importId,
-                        this.path + title,
-                        null,
-                        this.e2eeOptions
-                    )
-
-                    return nativeImporter
-                        .init()
-                        .then(({doc, docInfo}) => {
-                            this.output.ok = true
-                            this.output.doc = doc
-                            this.output.docInfo = docInfo
-                            this.output.statusText = `${escapeText(doc.title)} ${gettext("successfully imported.")}`
-                            return this.output
-                        })
-                        .catch(error => {
-                            this.output.statusText = error.message
-                            console.error(error)
-                            return this.output
-                        })
-                })
-            })
+        super(file, user, path, importId, {
+            getTemplate: importId =>
+                postJson("/api/document/get_template/", {
+                    import_id: importId
+                }).then(({json}) => json.template),
+            nativeBackend: createNativeImporterBackend(
+                user,
+                options.e2eeOptions
+            ),
+            e2eeOptions: options.e2eeOptions
         })
     }
 }

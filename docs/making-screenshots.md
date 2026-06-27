@@ -2,7 +2,7 @@
 
 This document describes how to generate the organized screenshot series used for
 documentation, marketing and release notes.  The screenshots are produced by a
-Selenium test suite located in `base/tests/test_screenshots.py`.
+Selenium test suite located in `devel/tests/test_screenshots.py`.
 
 The suite is split into two runs:
 

@@ -1,5 +1,5 @@
 import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
-import {Dialog, DialogTabs, addAlert, noSpaceTmp} from "fwtoolkit"
+import {Dialog, DialogTabs, InfoRow, addAlert} from "fwtoolkit"
 import {dateToYear, litToText, nameToText} from "../tools"
 import {CatsForm} from "./cats"
 import {DateFieldForm} from "./fields/date"
@@ -171,34 +171,17 @@ export class BibEntryForm {
 
     addField(fieldName, dom) {
         const fieldType = BibFieldTypes[fieldName]
-        let fieldTitle
         const fieldTitleText = getBibFieldTitle(
             fieldName,
             this.currentValues.bib_type
         )
-        if (BibFieldHelp[fieldName]) {
-            fieldTitle = noSpaceTmp`
-                <h4 class="fw-tablerow-title fw-wtooltip">
-                    ${fieldTitleText}
-                    <span class="fw-tooltip">${BibFieldHelp[fieldName]}</span>
-                </h4>
-            `
-        } else {
-            fieldTitle = noSpaceTmp`
-                <h4 class="fw-tablerow-title">
-                    ${fieldTitleText}
-                </h4>
-            `
-        }
 
-        dom.insertAdjacentHTML(
-            "beforeend",
-            noSpaceTmp`
-                <tr>
-                    <th>${fieldTitle}</th>
-                    <td class="fw-entry-field ${fieldName}"></td>
-                </tr>`
-        )
+        const row = new InfoRow({
+            label: fieldTitleText,
+            helpText: BibFieldHelp[fieldName],
+            fieldClass: fieldName
+        })
+        dom.insertAdjacentHTML("beforeend", row.html())
         const fieldDOM = dom.lastChild.lastChild
         const FieldClass = FIELD_FORMS[fieldType.type]
         if (FieldClass) {

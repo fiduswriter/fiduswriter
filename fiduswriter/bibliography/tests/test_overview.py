@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 
 from django.conf import settings
 
@@ -85,20 +86,24 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
             )
         except AssertionError as e:
             self.verificationErrors.append(str(e))
-        driver.find_element(
-            By.CSS_SELECTOR,
-            ".fw-dialog-buttonpane button.fw-orange",
-        ).click()
+        close_btn = driver.find_element(
+            By.CSS_SELECTOR, ".fw-dialog-buttonpane button.fw-orange"
+        )
+        driver.execute_script("arguments[0].click();", close_btn)
+        WebDriverWait(driver, self.wait_time).until(
+            EC.invisibility_of_element_located((By.ID, "edit-categories"))
+        )
         driver.find_element(
             By.CSS_SELECTOR,
             "button[title='Register new source (Alt-n)']",
         ).click()
-        driver.find_element(By.ID, "select-bibtype").click()
-        driver.find_element(
-            By.CSS_SELECTOR, "#select-bibtype option[value=article]"
-        ).click()
-        title_of_publication = driver.find_element(
-            By.CSS_SELECTOR, ".journaltitle .ProseMirror"
+        Select(driver.find_element(By.ID, "select-bibtype")).select_by_value(
+            "article"
+        )
+        title_of_publication = WebDriverWait(driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".journaltitle .ProseMirror")
+            )
         )
         title_of_publication.click()
         title_of_publication.send_keys("Title of publication")

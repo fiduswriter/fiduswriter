@@ -33,6 +33,9 @@ import {Signup} from "../signup"
 
 export class App {
     constructor(settings = {}) {
+        settings.gettext = window.gettext
+        settings.staticUrl = window.staticUrl
+        settings.interpolate = window.interpolate
         initSettings(settings)
         this.settings = getSettings()
         this.config = {}

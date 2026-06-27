@@ -367,6 +367,8 @@ When `handle_e2ee_snapshot` receives new `e2ee_salt`/`e2ee_iterations`:
 
 11. **Editor can receive different identifier types**: The `Editor` class constructor accepts an `id` parameter that can be either a numeric document ID (normal flow) or a UUID string (share-token flow). Code that instantiates the Editor should be aware of both cases.
 
+12. **Keep `fwtoolkit` versions aligned across the dependency tree**: `fwtoolkit` stores app settings (API URL, CSRF token, gettext, etc.) in module-local state. If the bundle ends up with two different `fwtoolkit` versions — for example because the main app and `@fiduswriter/document` resolve `fwtoolkit` to different versions — the instance used by `@fiduswriter/document` will not have its settings initialized, and features such as document/template downloads will fail with `App settings not initialized. Call initSettings() first.`. Keep `base/package.json5`'s `fwtoolkit` requirement and `@fiduswriter/document`'s `fwtoolkit` peer requirement on the same version. If you suspect duplicate copies, delete `fiduswriter/.transpile/pnpm-lock.yaml` and re-run `python manage.py transpile --force`.
+
 ### Translation: Avoid JavaScript template literals in `gettext()`
 
 Django's `makemessages` (which uses `xgettext` under the hood) **does not support ES6 template literals** (backtick strings). Strings wrapped in template literals inside `gettext()` calls are silently skipped and never appear in `.po` files.

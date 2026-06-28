@@ -80,6 +80,8 @@ export class MergeEditor {
         // assign image DB & BibDB to be used in document schema.
         this.schema.cached.bibDB = this.editor.mod.db.bibDB
         this.schema.cached.imageDB = this.editor.mod.db.imageDB
+        // Carry over the encrypted-image decryption handler.
+        this.schema.cached.decryptImage = this.editor.schema.cached.decryptImage
     }
 
     init() {

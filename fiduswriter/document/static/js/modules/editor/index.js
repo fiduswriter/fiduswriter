@@ -144,6 +144,20 @@ export class Editor {
             this.docInfo.id = id
         }
         this.schema = docSchema
+        // Provide a handler for decrypting end-to-end encrypted images. The
+        // reusable document schema no longer includes E2EE code, so the main
+        // app injects the decryption logic here after loading the schema.
+        this.schema.cached.decryptImage = (imageEntry, _dom) => {
+            const key = this.e2ee?.key
+            if (!key) {
+                return Promise.reject(new Error("No E2EE key available"))
+            }
+            return E2EEEncryptor.decryptImageToUrl(
+                imageEntry.image,
+                key,
+                imageEntry.original_file_type || "image/png"
+            )
+        }
 
         this.menu = {
             headerbarModel: headerbarModel(),

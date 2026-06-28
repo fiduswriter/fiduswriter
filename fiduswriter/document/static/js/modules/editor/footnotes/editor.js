@@ -11,6 +11,7 @@ import {EditorView} from "prosemirror-view"
 
 import {fnSchema} from "@fiduswriter/document/schema/footnotes"
 import {fnNodeToPmNode} from "@fiduswriter/document/schema/footnotes_convert"
+import {E2EEEncryptor} from "../e2ee/encryptor"
 import {
     citationRenderPlugin,
     clipboardPlugin,
@@ -35,6 +36,19 @@ export class ModFootnoteEditor {
         mod.fnEditor = this
         this.mod = mod
         this.schema = fnSchema
+        // Decryption of end-to-end encrypted images is provided by the main
+        // app and injected into the reusable footnote schema here.
+        this.schema.cached.decryptImage = (imageEntry, _dom) => {
+            const key = this.mod.editor.e2ee?.key
+            if (!key) {
+                return Promise.reject(new Error("No E2EE key available"))
+            }
+            return E2EEEncryptor.decryptImageToUrl(
+                imageEntry.image,
+                key,
+                imageEntry.original_file_type || "image/png"
+            )
+        }
         this.fnStatePlugins = [
             [linksPlugin, () => ({editor: this.mod.editor})],
             [history],

@@ -11,7 +11,17 @@ const predefinedVariables = {
 module.exports = {
     mode: settings.DEBUG ? "development" : "production",
     devtool: settings.SOURCE_MAPS || false,
-    externals: /^node:/,
+    externals: [
+        ({request}, callback) => {
+            if (request && request.startsWith("node:")) {
+                // Leave Node.js built-ins external. They only appear in
+                // Node-only code paths guarded by process.versions.node, so
+                // this bundle never loads them in the browser.
+                return callback(null, "commonjs " + request)
+            }
+            callback()
+        }
+    ],
     module: {
         rules: [
             {

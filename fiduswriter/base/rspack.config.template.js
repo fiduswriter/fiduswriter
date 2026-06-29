@@ -19,7 +19,7 @@ module.exports = {
                 enforce: "pre"
             },
             {
-                test: /\.(json\.gz)$/,
+                test: /\.(gz)$/,
                 type: "asset/resource"
             },
             {

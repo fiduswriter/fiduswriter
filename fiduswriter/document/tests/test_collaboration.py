@@ -1226,7 +1226,7 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
         ).click()
         self.driver.find_element(
             By.XPATH,
-            '//span[normalize-space()="American Psychological Association 7th edition"]',
+            '//span[normalize-space()="APA Style 7th edition"]',
         ).click()
         time.sleep(1)
         # Exit menu by hitting ESC

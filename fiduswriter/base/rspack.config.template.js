@@ -11,12 +11,14 @@ const predefinedVariables = {
 module.exports = {
     mode: settings.DEBUG ? "development" : "production",
     devtool: settings.SOURCE_MAPS || false,
+    externals: /^node:/,
     module: {
         rules: [
             {
                 test: /\.js$/,
                 use: ["source-map-loader"],
-                enforce: "pre"
+                enforce: "pre",
+                exclude: [/citeproc-plus/]
             },
             {
                 test: /\.(gz)$/,

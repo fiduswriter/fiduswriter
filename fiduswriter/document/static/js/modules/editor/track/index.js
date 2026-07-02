@@ -1,5 +1,5 @@
+export {acceptAllNoInsertions} from "@fiduswriter/document/transform"
 export {ModTrack} from "./mod"
-export {acceptAllNoInsertions} from "./accept_all_no_insertions"
 export {
     amendTransaction,
     trackedTransaction

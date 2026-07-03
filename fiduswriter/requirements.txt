@@ -10,7 +10,7 @@ django-otp==1.7.0
 pyotp==2.9.0
 qrcode==8.2
 django-js-error-hook==1.0
-django-npm-mjs==4.1.1
+django-npm-mjs==4.1.2
 django-loginas==0.3.14
 httpx==0.28.1
 httpx-ws==0.9.0

@@ -8,11 +8,10 @@
     scripts: {
         copy_fontawesome: "mkdir -p ../static-libs/css/fontawesome/css/ && rsync -av --no-perms --checksum node_modules/@fortawesome/fontawesome-free/css/ ../static-libs/css/fontawesome/css/ && rsync -av --no-perms --checksum node_modules/@fortawesome/fontawesome-free/webfonts/ ../static-libs/css/fontawesome/webfonts/",
         copy_prosemirror_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-view/style/prosemirror.css ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-menu/style/menu.css ../static-libs/css/prosemirror-menu.css && rsync -av --no-perms --checksum node_modules/prosemirror-example-setup/style/style.css ../static-libs/css/prosemirror-example-setup.css",
-        copy_mathlive_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/mathlive/dist/mathlive-static.css ../static-libs/css/mathlive.css",
-        copy_mathlive_fonts: "mkdir -p ../static-libs/css/fonts/ && rsync -av --no-perms --checksum node_modules/mathlive/dist/fonts/ ../static-libs/css/fonts/",
+        copy_mathlive: "mkdir -p ../static-libs/css/libs/ ../static-libs/zip/ && rsync -av --no-perms --checksum node_modules/@fiduswriter/document/static-libs/css/libs/mathlive/ ../static-libs/css/libs/mathlive/ && rsync -av --no-perms --checksum node_modules/@fiduswriter/document/static-libs/zip/mathlive_style.zip ../static-libs/zip/mathlive_style.zip",
         copy_schema: "mkdir -p ../static-libs/json && (test -f node_modules/@fiduswriter/document/schema.json && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json) || (node node_modules/@fiduswriter/document/scripts/export-schema.js && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json)",
         copy_fwtoolkit_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum --exclude=forms.css --exclude=colors.css node_modules/fwtoolkit/css/ ../static-libs/css/",
-        postinstall: "npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive_css && npm run copy_mathlive_fonts && npm run copy_schema && npm run copy_fwtoolkit_css",
+        postinstall: "npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive && npm run copy_schema && npm run copy_fwtoolkit_css",
         "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals"
     },
     author: "Johannes Wilm",

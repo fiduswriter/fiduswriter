@@ -223,7 +223,7 @@ export class Editor {
 
     init() {
         ensureCSS([
-            staticUrl("css/mathlive.css"),
+            staticUrl("css/libs/mathlive/mathlive.css"),
             staticUrl("css/editor.css"),
             staticUrl("css/tags.css"),
             staticUrl("css/contributors.css"),

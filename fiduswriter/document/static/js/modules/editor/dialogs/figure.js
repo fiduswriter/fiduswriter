@@ -40,7 +40,7 @@ export class FigureDialog {
             this.dialog.dialogEl.querySelector("#insert-figure-image"),
             this.dialog.dialogEl.querySelector(".formula-or-figure")
         ]
-        import("mathlive").then(MathLive => {
+        import("@fiduswriter/document/mathlive").then(MathLive => {
             MathLive.MathfieldElement.strings = {
                 int: {
                     "keyboard.tooltip.functions": gettext("Functions"),

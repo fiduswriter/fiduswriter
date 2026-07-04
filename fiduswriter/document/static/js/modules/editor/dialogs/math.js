@@ -106,7 +106,7 @@ export class MathDialog {
 
         this.mathliveDOM = this.dialog.dialogEl.querySelector(".math-field")
 
-        import("mathlive").then(MathLive => {
+        import("@fiduswriter/document/mathlive").then(MathLive => {
             MathLive.MathfieldElement.strings = {
                 int: {
                     "keyboard.tooltip.functions": gettext("Functions"),

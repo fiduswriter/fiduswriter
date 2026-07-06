@@ -389,9 +389,11 @@ See also the `translate_all.py` management command (`fiduswriter/devel/managemen
 
 ## Monorepo context
 
-This repository is part of the larger `~/src/fiduswriter` workspace that also
-contains `fwtoolkit/`, `fiduswriter-document/`, `fiduswriter-books-document/`,
-`fiduswriter-cli/`, and `fiduswriter-books/`. See `~/src/fiduswriter/AGENTS.md`
-for a high-level map of how those repositories relate to this one, including
-which code belongs in which repository and the dependency flow between them.
+This repository is part of a larger set of Fidus Writer repositories that are
+normally checked out next to one another: `fwtoolkit/`, `fiduswriter-document/`,
+`fiduswriter-books-document/`, `fiduswriter-cli/`, and `fiduswriter-books/`. The
+exact parent directory varies by developer. See the `AGENTS.md` file in the
+sibling directory that contains all those repositories for a high-level map of
+how they relate to one another, including which code belongs in which repository
+and the dependency flow between them.
 

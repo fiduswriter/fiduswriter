@@ -386,3 +386,12 @@ interpolate(gettext('Export selected as %s (via Pandoc)'), [label])
 This applies to all JavaScript files across the project and any plugins. The `interpolate()` function is part of Django's JavaScript catalog and is available globally on pages that load JS translations.
 
 See also the `translate_all.py` management command (`fiduswriter/devel/management/commands/translate_all.py`) which automates makemessages + Google Translate for all locale files.
+
+## Monorepo context
+
+This repository is part of the larger `~/src/fiduswriter` workspace that also
+contains `fwtoolkit/`, `fiduswriter-document/`, `fiduswriter-books-document/`,
+`fiduswriter-cli/`, and `fiduswriter-books/`. See `~/src/fiduswriter/AGENTS.md`
+for a high-level map of how those repositories relate to this one, including
+which code belongs in which repository and the dependency flow between them.
+

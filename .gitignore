@@ -74,6 +74,7 @@ debian/*-stamp
 /fiduswriter/book
 /fiduswriter/citation_api_import
 /fiduswriter/languagetool
+/fiduswriter/llm
 /fiduswriter/npm_mjs
 /fiduswriter/ojs
 /fiduswriter/pandoc
@@ -94,3 +95,4 @@ debian/*-stamp
 screenshots/
 # Generated from debian/changelog.in by build-deb.sh
 debian/changelog
+node_modules/

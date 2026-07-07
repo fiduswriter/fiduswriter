@@ -132,13 +132,38 @@ export class CommentEditor {
             const el = {}
             switch (true) {
                 case findTarget(event, "button.submit:not(.fw-disabled)", el):
-                    this.submit()
-                    if (this.keepOpenAfterSubmit) {
-                        this.scrollToBottom()
-                    } else {
-                        this.mod.interactions.activeCommentId = false
-                        this.mod.interactions.deactivateAll()
-                        this.mod.interactions.collapseSelectionToEnd()
+                    {
+                        const submittedId = this.submit()
+                        if (this.keepOpenAfterSubmit) {
+                            this.scrollToBottom()
+                        } else if (this.options.isGlobal) {
+                            if (submittedId) {
+                                this.mod.interactions.deactivateAll()
+                                this.mod.interactions.activeCommentId =
+                                    submittedId
+                                this.mod.interactions.editComment = false
+                                this.mod.interactions.updateDOM()
+                                const answerEditor =
+                                    this.mod.interactions.editor
+                                if (answerEditor?.view) {
+                                    try {
+                                        answerEditor.view.dom.focus({
+                                            preventScroll: true
+                                        })
+                                    } catch {
+                                        answerEditor.view.focus()
+                                    }
+                                }
+                            } else {
+                                this.mod.interactions.activeCommentId = false
+                                this.mod.interactions.deactivateAll()
+                                this.mod.interactions.collapseSelectionToEnd()
+                            }
+                        } else {
+                            this.mod.interactions.activeCommentId = false
+                            this.mod.interactions.deactivateAll()
+                            this.mod.interactions.collapseSelectionToEnd()
+                        }
                     }
                     break
                 case findTarget(event, "button.cancel", el):
@@ -182,14 +207,16 @@ export class CommentEditor {
     submit() {
         const comment = this.view.state.doc.toJSON().content
         if (comment?.length > 0) {
-            this.mod.interactions.updateComment({
+            const id = this.mod.interactions.updateComment({
                 id: this.id,
                 comment,
                 isMajor: this.isMajor
             })
             this.sendNotifications()
+            return id
         } else {
             this.mod.interactions.deleteComment(this.id)
+            return false
         }
     }
 
@@ -272,15 +299,15 @@ export class CommentEditor {
             activeMarginBox.scrollTop = activeMarginBox.scrollHeight
         }
 
-        // scroll to bottom of the margin-box-container when new comments are added when the screens width is less
-        // than 1024px
+        // scroll to bottom of the margin-box-container or global-comment-container
+        // when new comments are added when the screens width is less than 1024px
         const currentScreenWidth =
             window.innerWidth ||
             document.documentElement.clientWidth ||
             document.body.clientWidth
         if (currentScreenWidth < 1024) {
             const activeMarginBoxContainer = document.querySelector(
-                "#margin-box-container"
+                "#margin-box-container, #global-comment-container"
             )
             if (activeMarginBoxContainer) {
                 activeMarginBoxContainer.scrollTop =

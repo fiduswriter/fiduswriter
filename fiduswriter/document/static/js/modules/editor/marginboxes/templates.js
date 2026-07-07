@@ -146,12 +146,12 @@ const commentTemplate = ({
     return `
         <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
             class="margin-box comment ${active ? "fw-active" : "inactive"} ${comment.resolved ? "resolved" : ""} ${comment.isMajor === true ? "comment-is-major-bgc" : ""} ${comment.isGlobal ? "global-comment" : ""}">
-<div class="comment-answer-container">
 ${
     comment.isGlobal
         ? `<div class="global-comment-label">${gettext("Document comment")}</div>`
         : ""
 }
+<div class="comment-answer-container">
 ${
     comment.comment.length === 0
         ? firstCommentTemplate({comment, author})
@@ -438,6 +438,30 @@ export const marginboxFilterTemplate = ({
     }
     return filterHTML
 }
+
+/** A template to display global document comments in the main column */
+export const globalCommentsTemplate = ({
+    globalComments,
+    editComment,
+    activeCommentAnswerId,
+    user,
+    docInfo,
+    filterOptions
+}) =>
+    `<div id="global-comment-container"><div>${globalComments
+        .map(mBox =>
+            commentTemplate({
+                comment: mBox.data,
+                view: mBox.view,
+                active: mBox.active,
+                activeCommentAnswerId,
+                editComment,
+                user,
+                docInfo,
+                filterOptions
+            })
+        )
+        .join("")}</div></div>`
 
 /** A template to display all the margin boxes (comments, deletion/insertion notifications) */
 export const marginBoxesTemplate = ({

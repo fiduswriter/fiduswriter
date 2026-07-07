@@ -9,6 +9,7 @@ import {
     getSelectedChanges
 } from "../state_plugins"
 import {
+    globalCommentsTemplate,
     marginBoxOptions,
     marginBoxesTemplate,
     marginboxFilterTemplate
@@ -43,6 +44,11 @@ export class ModMarginboxes {
         this.marginBoxesContainerObj = stringToObj(
             this.marginBoxesContainerString
         )
+        this.globalCommentsContainerString =
+            '<div id="global-comment-container"><div></div></div>'
+        this.globalCommentsContainerObj = stringToObj(
+            this.globalCommentsContainerString
+        )
         this.marginBoxesPlacementStyle = ""
         this.marginBoxes = []
     }
@@ -55,6 +61,9 @@ export class ModMarginboxes {
         )
         this.marginBoxesContainer = document.getElementById(
             "margin-box-container"
+        )
+        this.globalCommentsContainer = document.getElementById(
+            "global-comment-container"
         )
         this.activeCommentStyleElement = document.getElementById(
             "active-comment-style"
@@ -175,10 +184,20 @@ export class ModMarginboxes {
                     this.view(this.editor.currentView)
                     break
                 case findTarget(event, ".margin-box.comment.inactive", el):
-                    this.editor.mod.comments.interactions.deactivateSelectedChanges()
-                    this.editor.mod.comments.interactions.activateComment(
-                        el.target.dataset.id
-                    )
+                    {
+                        const commentId = el.target.dataset.id
+                        const comment =
+                            this.editor.mod.comments.store.findComment(
+                                commentId
+                            )
+                        if (!comment?.isGlobal) {
+                            this.editor.mod.comments.interactions.deactivateSelectedChanges()
+                        }
+                        this.editor.mod.comments.interactions.activateComment(
+                            commentId
+                        )
+                        this.scrollToGlobalComment(commentId)
+                    }
                     break
                 case findTarget(event, ".margin-box.track.inactive", el): {
                     let boxNumber = 0
@@ -266,6 +285,7 @@ export class ModMarginboxes {
         // DOM write phase
 
         const marginBoxes = [],
+            globalComments = [],
             referrers = [],
             selectedChanges = getSelectedChanges(this.editor.currentView.state)
         let fnIndex = 0,
@@ -335,15 +355,13 @@ export class ModMarginboxes {
             const comment =
                 this.editor.mod.comments.store.commentDuringCreation.comment
             if (comment.isGlobal) {
-                const pos = this.editor.view.state.doc.content.size
-                marginBoxes.push({
+                globalComments.push({
                     type: "comment",
                     data: comment,
                     view: "main",
-                    pos,
+                    pos: this.editor.view.state.doc.content.size,
                     active: true
                 })
-                referrers.push(pos)
                 this.activeCommentStyle +=
                     ".active-comment, .active-comment .comment {background-color: #fffacf !important;}"
             } else {
@@ -384,8 +402,7 @@ export class ModMarginboxes {
             }
         }
 
-        // Add global comments at the bottom of the margin box column.
-        const docEndPos = this.editor.view.state.doc.content.size
+        // Add global comments at the bottom of the main column.
         Object.values(this.editor.mod.comments.store.comments).forEach(
             comment => {
                 if (!comment.isGlobal) {
@@ -394,19 +411,28 @@ export class ModMarginboxes {
                 const active =
                     comment.id ===
                     this.editor.mod.comments.interactions.activeCommentId
-                marginBoxes.push({
+                globalComments.push({
                     type: "comment",
                     data: comment,
                     view: "main",
-                    pos: docEndPos,
+                    pos: this.editor.view.state.doc.content.size,
                     active
                 })
-                referrers.push(docEndPos)
             }
         )
 
         const marginBoxesHTML = marginBoxesTemplate({
             marginBoxes,
+            user: this.editor.user,
+            docInfo: this.editor.docInfo,
+            editComment: this.editor.mod.comments.interactions.editComment,
+            activeCommentAnswerId:
+                this.editor.mod.comments.interactions.activeCommentAnswerId,
+            filterOptions: this.filterOptions
+        })
+
+        const globalCommentsHTML = globalCommentsTemplate({
+            globalComments,
             user: this.editor.user,
             docInfo: this.editor.docInfo,
             editComment: this.editor.mod.comments.interactions.editComment,
@@ -426,6 +452,18 @@ export class ModMarginboxes {
             this.dd.apply(this.marginBoxesContainer, diff)
             this.marginBoxesContainerString = marginBoxesHTML
             this.marginBoxesContainerObj = newMarginBoxesContainerObj
+        }
+
+        if (this.globalCommentsContainerString !== globalCommentsHTML) {
+            const newGlobalCommentsContainerObj =
+                stringToObj(globalCommentsHTML)
+            const diff = this.dd.diff(
+                this.globalCommentsContainerObj,
+                newGlobalCommentsContainerObj
+            )
+            this.dd.apply(this.globalCommentsContainer, diff)
+            this.globalCommentsContainerString = globalCommentsHTML
+            this.globalCommentsContainerObj = newGlobalCommentsContainerObj
         }
 
         if (
@@ -535,6 +573,13 @@ export class ModMarginboxes {
                     )
                         ? 72 + 90
                         : 225 + 90
+                    const $head = this.editor.view.state.selection.$head
+                    const selectionInTitle =
+                        $head.depth > 0 &&
+                        Array.from(
+                            {length: $head.depth},
+                            (_, index) => index + 1
+                        ).some(depth => $head.node(depth).type.name === "title")
                     let totalOffset = 0
 
                     marginBoxesPlacementStyle = marginBoxPlacements
@@ -545,9 +590,12 @@ export class ModMarginboxes {
                             const pos = mboxPlacement.pos - initialOffset
                             let css = ""
                             if (pos !== totalOffset) {
-                                const topMargin = Number.parseInt(
+                                let topMargin = Number.parseInt(
                                     pos - totalOffset
                                 )
+                                if (selectionInTitle) {
+                                    topMargin = Math.max(topMargin, 0)
+                                }
                                 css += `#margin-box-container div.margin-box:nth-of-type(${index + 1}) {margin-top: ${topMargin}px;}\n`
                                 totalOffset += topMargin
                             }
@@ -818,6 +866,26 @@ export class ModMarginboxes {
 
         marginBoxDialog.style.top = `${btnTop + scrollTopOffset + 30}px`
         marginBoxDialog.style.left = `${mBoxRight - marginBoxDialog.getBoundingClientRect().width - 10}px`
+    }
+
+    scrollToGlobalComment(id) {
+        const commentDOM = document.querySelector(
+            `#global-comments #margin-box-${id}`
+        )
+        if (!commentDOM) {
+            return
+        }
+        const topMenuHeight =
+                this.editor.dom.querySelector("header").offsetHeight,
+            rect = commentDOM.getBoundingClientRect()
+        if (rect.top < topMenuHeight || rect.bottom > window.innerHeight - 30) {
+            const scrollTop = rect.top - (topMenuHeight + 90)
+            window.scrollBy({
+                left: 0,
+                top: scrollTop,
+                behavior: "smooth"
+            })
+        }
     }
 
     commentOptionsOnScroll() {

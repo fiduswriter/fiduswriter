@@ -470,8 +470,32 @@ body.header-closed #margin-box-filter {
     right: 8px;
 }
 
-#new-global-comment {
+#global-comments {
+    margin-top: 20px;
+    padding: 0 10px;
+}
+
+#global-comment-container {
     width: 100%;
+}
+
+#global-comment-container .margin-box.comment {
+    position: relative;
+    width: 100%;
+    margin: 10px 0 0;
+    border: 1px solid var(--cs-white-border);
+}
+
+#global-comment-container .margin-box.comment.fw-active {
+    left: 0;
+    border: 1px solid var(--cs-white-border);
+}
+
+#global-comment-container .comment-answer-container {
+    padding: 10px;
+}
+
+#new-global-comment {
     margin-top: 10px;
 }
 

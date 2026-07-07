@@ -988,14 +988,17 @@ export class Editor {
                         </div>
                     </div>
                     <div id="bibliography" class="doc-bibliography user-contents"></div>
+                    <div id="global-comments">
+                        <div id="global-comment-container"><div></div></div>
+                        <button id="new-global-comment" class="fw-button fw-light" type="button">
+                            ${gettext("Add document comment")}
+                        </button>
+                    </div>
                 </div>
                 <nav id="selection-menu"><div></div></nav>
                 <div id="margin-box-column">
                     <div id="margin-box-filter"></div>
                     <div id="margin-box-container"><div></div></div>
-                    <button id="new-global-comment" class="fw-button fw-light" type="button">
-                        ${gettext("Add document comment")}
-                    </button>
                 </div>
             </div>
             <div id="chat">

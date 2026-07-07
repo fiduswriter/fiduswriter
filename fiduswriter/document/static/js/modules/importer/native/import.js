@@ -30,7 +30,8 @@ export function createNativeImporterBackend(_user, _e2eeOptions) {
                 .then(({json}) => ({
                     id: json.id,
                     path: json.path,
-                    e2ee: json.e2ee
+                    e2ee: json.e2ee,
+                    template: json.template
                 }))
                 .catch(error => {
                     addAlert("error", gettext("Could not create document"))

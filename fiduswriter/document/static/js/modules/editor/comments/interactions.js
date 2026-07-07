@@ -99,18 +99,22 @@ export class ModCommentInteractions {
         const id = this.activeCommentId
         if (commentEditorDOM) {
             const value =
-                id === "-1"
-                    ? {text: [], isMajor: false}
-                    : {
-                          text: this.mod.store.comments[id].comment,
-                          isMajor: this.mod.store.comments[id].isMajor
-                      }
+                    id === "-1"
+                        ? {text: [], isMajor: false}
+                        : {
+                              text: this.mod.store.comments[id].comment,
+                              isMajor: this.mod.store.comments[id].isMajor
+                          },
+                isGlobal =
+                    id === "-1"
+                        ? this.creatingGlobalComment
+                        : this.mod.store.comments[id]?.isGlobal
             this.editor = new CommentEditor(
                 this.mod,
                 id,
                 commentEditorDOM,
                 value.text,
-                {isMajor: value.isMajor}
+                {isMajor: value.isMajor, isGlobal}
             )
         } else {
             const answerId = this.activeCommentAnswerId,
@@ -347,6 +351,7 @@ export class ModCommentInteractions {
 
     updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
+        let commentId
         if (id === "-1") {
             let username
 
@@ -361,7 +366,7 @@ export class ModCommentInteractions {
             }
 
             if (this.creatingGlobalComment) {
-                this.mod.store.addGlobalComment({
+                commentId = this.mod.store.addGlobalComment({
                     user: this.mod.editor.user.id,
                     username,
                     date: Date.now() - this.mod.editor.clientTimeAdjustment,
@@ -389,9 +394,11 @@ export class ModCommentInteractions {
             }
         } else {
             this.mod.store.updateComment({id, comment, isMajor})
+            commentId = id
         }
         this.deactivateAll()
         this.updateDOM()
+        return commentId
     }
 
     cancelSubmit() {

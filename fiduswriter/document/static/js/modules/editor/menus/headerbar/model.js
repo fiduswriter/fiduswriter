@@ -356,6 +356,7 @@ export const headerbarModel = () => ({
                         "Change the password of this encrypted document."
                     ),
                     order: 6,
+                    available: editor => editor.docInfo.e2ee,
                     action: async editor => {
                         if (!editor.e2ee?.key) {
                             addAlert(

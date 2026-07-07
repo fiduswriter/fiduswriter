@@ -145,8 +145,13 @@ const commentTemplate = ({
         assignedUsername = assignedUser ? assignedUser.name : false
     return `
         <div id="margin-box-${comment.id}" data-view="${view}" data-id="${comment.id}" data-user-id="${comment.user}"
-            class="margin-box comment ${active ? "fw-active" : "inactive"} ${comment.resolved ? "resolved" : ""} ${comment.isMajor === true ? "comment-is-major-bgc" : ""}">
+            class="margin-box comment ${active ? "fw-active" : "inactive"} ${comment.resolved ? "resolved" : ""} ${comment.isMajor === true ? "comment-is-major-bgc" : ""} ${comment.isGlobal ? "global-comment" : ""}">
 <div class="comment-answer-container">
+${
+    comment.isGlobal
+        ? `<div class="global-comment-label">${gettext("Document comment")}</div>`
+        : ""
+}
 ${
     comment.comment.length === 0
         ? firstCommentTemplate({comment, author})

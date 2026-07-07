@@ -25,6 +25,7 @@
 .footnote-container,
 .footnote-citation {
     margin-top: 10px;
+    overflow-wrap: break-word;
 }
 
 /* footnotes in footnote in print */
@@ -66,6 +67,8 @@ because PM needs some content. */
 
 #citation-footnote-box-container {
     position: absolute;
+    width: 20vw;
+    max-width: 20vw;
 }
 
 #footnote-box-container .footnote-container > *:first-child::before {

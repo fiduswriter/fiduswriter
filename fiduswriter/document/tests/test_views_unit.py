@@ -650,3 +650,38 @@ class SaveDocumentBlockedInCollaborativeModeTest(TestCase):
         self.assertEqual(response.status_code, 403)
         data = response.json()
         self.assertIn("error", data)
+
+
+class ImportCreateViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="importuser", password="pass"
+        )
+        self.client.force_login(self.owner)
+        self.template = DocumentTemplate.objects.create(
+            title="Import Template",
+            content={"type": "doc"},
+            import_id="import-template",
+        )
+
+    def test_import_create_returns_template_name(self):
+        response = json_post(
+            self.client,
+            "/api/document/import/create/",
+            {
+                "import_id": "import-template",
+                "template_title": "Import Template",
+                "template": {"type": "doc"},
+                "export_templates": [],
+                "document_styles": [],
+                "path": "",
+            },
+        )
+        self.assertEqual(response.status_code, 201)
+        data = response.json()
+        self.assertIn("template", data)
+        self.assertEqual(data["template"], "Import Template")
+        self.assertIn("id", data)
+        self.assertIn("path", data)
+        self.assertIn("e2ee", data)

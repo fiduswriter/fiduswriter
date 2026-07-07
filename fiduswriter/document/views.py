@@ -648,6 +648,7 @@ def import_create(request):
     response["id"] = document.id
     response["path"] = document.path
     response["e2ee"] = document.e2ee
+    response["template"] = document.template.title
     return JsonResponse(response, status=status)
 
 

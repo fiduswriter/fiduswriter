@@ -10,7 +10,8 @@ export class Comment {
         answers = [],
         isMajor = false,
         resolved = false,
-        hidden = false
+        hidden = false,
+        isGlobal = false
     }) {
         this.id = id
         this.user = user // User ID of user who wrote comment
@@ -23,5 +24,6 @@ export class Comment {
         this.isMajor = isMajor // boolean - Whether comment is of major importance.
         this.resolved = resolved // Whether comment is marked as resolved.
         this.hidden = hidden
+        this.isGlobal = isGlobal // Whether comment refers to the entire document.
     }
 }

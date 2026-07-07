@@ -469,3 +469,22 @@ body.header-closed #margin-box-filter {
 .comment-option {
     right: 8px;
 }
+
+#new-global-comment {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.global-comment-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 5px 10px 0;
+    color: var(--cs-disabled);
+}
+
+.global-comment {
+    border-top: 2px solid var(--cs-white-border);
+    margin-top: 10px;
+}

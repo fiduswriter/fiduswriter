@@ -993,6 +993,9 @@ export class Editor {
                 <div id="margin-box-column">
                     <div id="margin-box-filter"></div>
                     <div id="margin-box-container"><div></div></div>
+                    <button id="new-global-comment" class="fw-button fw-light" type="button">
+                        ${gettext("Add document comment")}
+                    </button>
                 </div>
             </div>
             <div id="chat">

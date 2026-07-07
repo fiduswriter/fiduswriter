@@ -2,6 +2,7 @@ import {DiffDOM, stringToObj} from "diff-dom"
 import fastdom from "fastdom"
 
 import {cancelPromise, findTarget} from "fwtoolkit"
+import {READ_ONLY_ROLES} from ".."
 import {
     getCommentDuringCreationDecoration,
     getFootnoteMarkers,
@@ -61,6 +62,14 @@ export class ModMarginboxes {
         this.trackOptionsStyleElement = document.getElementById(
             "track-options-style"
         )
+        const newGlobalCommentButton =
+            document.getElementById("new-global-comment")
+        if (
+            newGlobalCommentButton &&
+            READ_ONLY_ROLES.includes(this.editor.docInfo.access_rights)
+        ) {
+            newGlobalCommentButton.classList.add("fw-hide")
+        }
         this.bindEvents()
     }
 
@@ -69,6 +78,9 @@ export class ModMarginboxes {
         document.body.addEventListener("click", event => {
             const el = {}
             switch (true) {
+                case findTarget(event, "#new-global-comment", el):
+                    this.editor.mod.comments.interactions.createNewGlobalComment()
+                    break
                 case findTarget(event, ".margin-box-filter-check", el):
                     // do not react to clicks on checkboxes within sub menus
                     break
@@ -320,43 +332,78 @@ export class ModMarginboxes {
 
         // Add a comment that is currently under construction to the list.
         if (this.editor.mod.comments.store.commentDuringCreation) {
-            const deco = getCommentDuringCreationDecoration(
-                this.editor.view.state
-            )
-            let pos, view
-            if (deco) {
-                pos = deco.from
-                view = "main"
-            } else {
-                const fnDeco = getCommentDuringCreationDecoration(
-                    this.editor.mod.footnotes.fnEditor.view.state
-                )
-                if (fnDeco) {
-                    pos = this.fnPosToPos(fnDeco.from)
-                    view = "footnote"
-                }
-            }
-            if (pos) {
-                const comment =
-                    this.editor.mod.comments.store.commentDuringCreation.comment
-                let index = 0
-                // // We need the position of the new comment in relation to the other
-                // // comments in order to insert it in the right place
-                while (referrers.length > index && referrers[index] < pos) {
-                    index++
-                }
-                marginBoxes.splice(index, 0, {
+            const comment =
+                this.editor.mod.comments.store.commentDuringCreation.comment
+            if (comment.isGlobal) {
+                const pos = this.editor.view.state.doc.content.size
+                marginBoxes.push({
                     type: "comment",
                     data: comment,
-                    view,
+                    view: "main",
                     pos,
                     active: true
                 })
-                referrers.splice(index, 0, pos)
+                referrers.push(pos)
                 this.activeCommentStyle +=
                     ".active-comment, .active-comment .comment {background-color: #fffacf !important;}"
+            } else {
+                const deco = getCommentDuringCreationDecoration(
+                    this.editor.view.state
+                )
+                let pos, view
+                if (deco) {
+                    pos = deco.from
+                    view = "main"
+                } else {
+                    const fnDeco = getCommentDuringCreationDecoration(
+                        this.editor.mod.footnotes.fnEditor.view.state
+                    )
+                    if (fnDeco) {
+                        pos = this.fnPosToPos(fnDeco.from)
+                        view = "footnote"
+                    }
+                }
+                if (pos) {
+                    let index = 0
+                    // We need the position of the new comment in relation to the other
+                    // comments in order to insert it in the right place
+                    while (referrers.length > index && referrers[index] < pos) {
+                        index++
+                    }
+                    marginBoxes.splice(index, 0, {
+                        type: "comment",
+                        data: comment,
+                        view,
+                        pos,
+                        active: true
+                    })
+                    referrers.splice(index, 0, pos)
+                    this.activeCommentStyle +=
+                        ".active-comment, .active-comment .comment {background-color: #fffacf !important;}"
+                }
             }
         }
+
+        // Add global comments at the bottom of the margin box column.
+        const docEndPos = this.editor.view.state.doc.content.size
+        Object.values(this.editor.mod.comments.store.comments).forEach(
+            comment => {
+                if (!comment.isGlobal) {
+                    return
+                }
+                const active =
+                    comment.id ===
+                    this.editor.mod.comments.interactions.activeCommentId
+                marginBoxes.push({
+                    type: "comment",
+                    data: comment,
+                    view: "main",
+                    pos: docEndPos,
+                    active
+                })
+                referrers.push(docEndPos)
+            }
+        )
 
         const marginBoxesHTML = marginBoxesTemplate({
             marginBoxes,
@@ -498,9 +545,8 @@ export class ModMarginboxes {
                             const pos = mboxPlacement.pos - initialOffset
                             let css = ""
                             if (pos !== totalOffset) {
-                                const topMargin = Math.max(
-                                    0,
-                                    Number.parseInt(pos - totalOffset)
+                                const topMargin = Number.parseInt(
+                                    pos - totalOffset
                                 )
                                 css += `#margin-box-container div.margin-box:nth-of-type(${index + 1}) {margin-top: ${topMargin}px;}\n`
                                 totalOffset += topMargin

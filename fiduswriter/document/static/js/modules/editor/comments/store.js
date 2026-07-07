@@ -73,14 +73,47 @@ export class ModCommentStore {
         }
     }
 
+    // Create a new temporary global comment. Like addCommentDuringCreation,
+    // this is not shared until it has content.
+    addGlobalCommentDuringCreation() {
+        let username
+
+        if (
+            ["review", "review-tracked"].includes(
+                this.mod.editor.docInfo.access_rights
+            )
+        ) {
+            username = `${gettext("Reviewer")} ${this.mod.editor.user.id}`
+        } else {
+            username = this.mod.editor.user.username
+        }
+
+        this.commentDuringCreation = {
+            comment: new Comment({
+                id: "-1",
+                user: this.mod.editor.user.id,
+                username,
+                date: Date.now() - this.mod.editor.clientTimeAdjustment,
+                isGlobal: true
+            }),
+            inDOM: false,
+            view: null
+        }
+    }
+
     removeCommentDuringCreation() {
         if (this.commentDuringCreation) {
             const view = this.commentDuringCreation.view
             this.commentDuringCreation = false
-            const state = view.state
-            const tr = removeCommentDuringCreationDecoration(state, state.tr)
-            if (tr) {
-                view.dispatch(tr)
+            if (view) {
+                const state = view.state
+                const tr = removeCommentDuringCreationDecoration(
+                    state,
+                    state.tr
+                )
+                if (tr) {
+                    view.dispatch(tr)
+                }
             }
         }
     }
@@ -102,6 +135,21 @@ export class ModCommentStore {
             view.dispatch(tr)
             this.mustSend()
         }
+    }
+
+    // Add a new global comment that refers to the entire document.
+    addGlobalComment(commentData) {
+        const id = randomCommentId()
+        commentData.id = id
+        commentData.answers = []
+        commentData.isGlobal = true
+        this.addLocalComment(commentData, true)
+        this.unsent.push({
+            type: "create",
+            id
+        })
+        this.mustSend()
+        return id
     }
 
     // Add marks to leaf nodes and inline nodes.

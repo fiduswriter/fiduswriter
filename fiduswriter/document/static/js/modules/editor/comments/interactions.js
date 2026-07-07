@@ -2,6 +2,7 @@ import {GapCursor} from "prosemirror-gapcursor"
 import {TextSelection} from "prosemirror-state"
 
 import {findTarget, post} from "fwtoolkit"
+import {READ_ONLY_ROLES} from ".."
 import {
     deactivateAllSelectedChanges,
     getCommentDuringCreationDecoration
@@ -16,6 +17,7 @@ export class ModCommentInteractions {
         this.activeCommentId = false
         this.activeCommentAnswerId = false
         this.editComment = false
+        this.creatingGlobalComment = false
         this.editor = false
         this.bindEvents()
     }
@@ -181,6 +183,7 @@ export class ModCommentInteractions {
         this.activeCommentId = false
         this.editComment = false
         this.activeCommentAnswerId = false
+        this.creatingGlobalComment = false
         // If there is a comment currently under creation, remove it.
         this.mod.store.removeCommentDuringCreation()
     }
@@ -264,6 +267,21 @@ export class ModCommentInteractions {
         this.editor.view.focus()
     }
 
+    // Create a temporary empty global comment for the entire document.
+    createNewGlobalComment() {
+        if (READ_ONLY_ROLES.includes(this.mod.editor.docInfo.access_rights)) {
+            return
+        }
+        this.mod.editor.mod.marginboxes.filterOptions.comments = true
+        this.deactivateAll()
+        this.creatingGlobalComment = true
+        this.mod.store.addGlobalCommentDuringCreation()
+        this.activeCommentId = "-1"
+        this.editComment = true
+        this.updateDOM()
+        this.editor.view.focus()
+    }
+
     deleteComment(id) {
         if (id === "-1") {
             this.deactivateAll()
@@ -330,11 +348,6 @@ export class ModCommentInteractions {
     updateComment({id, comment, isMajor}) {
         // Save the change to a comment and mark that the document has been changed
         if (id === "-1") {
-            const referrer = getCommentDuringCreationDecoration(
-                this.mod.store.commentDuringCreation.view.state
-            )
-            // This is a new comment. We need to get an ID for it if it has content.
-
             let username
 
             if (
@@ -347,18 +360,33 @@ export class ModCommentInteractions {
                 username = this.mod.editor.user.username
             }
 
-            this.mod.store.addComment(
-                {
+            if (this.creatingGlobalComment) {
+                this.mod.store.addGlobalComment({
                     user: this.mod.editor.user.id,
                     username,
-                    date: Date.now() - this.mod.editor.clientTimeAdjustment, // We update the time to the time the comment was stored
+                    date: Date.now() - this.mod.editor.clientTimeAdjustment,
                     comment,
                     isMajor
-                },
-                referrer.from,
-                referrer.to,
-                this.mod.store.commentDuringCreation.view
-            )
+                })
+            } else {
+                const referrer = getCommentDuringCreationDecoration(
+                    this.mod.store.commentDuringCreation.view.state
+                )
+                // This is a new comment. We need to get an ID for it if it has content.
+
+                this.mod.store.addComment(
+                    {
+                        user: this.mod.editor.user.id,
+                        username,
+                        date: Date.now() - this.mod.editor.clientTimeAdjustment,
+                        comment,
+                        isMajor
+                    },
+                    referrer.from,
+                    referrer.to,
+                    this.mod.store.commentDuringCreation.view
+                )
+            }
         } else {
             this.mod.store.updateComment({id, comment, isMajor})
         }

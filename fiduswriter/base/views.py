@@ -23,9 +23,17 @@ from .helpers.ws import get_url_base
 from .models import Presence
 
 
+FRONTEND_SETTINGS = {}
+
+
 def get_frontend_settings():
-    """Return the settings dict to pass to the frontend as JSON."""
-    return {
+    """Return the settings dict to pass to the frontend as JSON.
+
+    Plugins can add or override frontend settings by importing
+    ``FRONTEND_SETTINGS`` during their ``AppConfig.ready()`` and updating
+    the dictionary.
+    """
+    settings_dict = {
         "E2EE_MODE": settings.E2EE_MODE,
         "TWO_FACTOR_ENABLED": "django_otp" in settings.INSTALLED_APPS,
         "BRANDING_LOGO": settings.BRANDING_LOGO,
@@ -53,6 +61,8 @@ def get_frontend_settings():
             )
         ),
     }
+    settings_dict.update(FRONTEND_SETTINGS)
+    return settings_dict
 
 
 @ensure_csrf_cookie

@@ -1,4 +1,11 @@
-import {Dialog, addAlert, escapeText, get} from "fwtoolkit"
+import {
+    Dialog,
+    addAlert,
+    addProgress,
+    escapeText,
+    get,
+    shortFileTitle
+} from "fwtoolkit"
 import {SaveCopy} from "../../exporter/native"
 import {E2EEKeyManager} from "../e2ee/key-manager"
 import {
@@ -335,13 +342,25 @@ export class ModDocumentTemplate {
                         import(
                             "@fiduswriter/document/exporter/docx/index"
                         ).then(({DOCXExporter}) => {
+                            const doc = editor.getDoc()
+                            const title = shortFileTitle(
+                                doc.title,
+                                doc.path || ""
+                            )
+                            const task = addProgress(
+                                "info",
+                                `${title}: ${gettext("Exporting DOCX...")}`,
+                                {autoClose: false}
+                            )
                             const exporter = new DOCXExporter(
-                                editor.getDoc(),
+                                doc,
                                 template.template_file,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl
                             )
+                            exporter.progressCallback = (message, percentage) =>
+                                task.update(percentage, message)
                             exporter.init()
                         })
                     },
@@ -359,13 +378,27 @@ export class ModDocumentTemplate {
                     action: editor => {
                         import("@fiduswriter/document/exporter/odt/index").then(
                             ({ODTExporter}) => {
+                                const doc = editor.getDoc()
+                                const title = shortFileTitle(
+                                    doc.title,
+                                    doc.path || ""
+                                )
+                                const task = addProgress(
+                                    "info",
+                                    `${title}: ${gettext("Exporting ODT...")}`,
+                                    {autoClose: false}
+                                )
                                 const exporter = new ODTExporter(
-                                    editor.getDoc(),
+                                    doc,
                                     template.template_file,
                                     editor.mod.db.bibDB,
                                     editor.mod.db.imageDB,
                                     editor.app.csl
                                 )
+                                exporter.progressCallback = (
+                                    message,
+                                    percentage
+                                ) => task.update(percentage, message)
                                 exporter.init()
                             }
                         )

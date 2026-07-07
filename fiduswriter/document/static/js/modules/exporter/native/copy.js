@@ -1,4 +1,5 @@
 import {SaveCopy as GenericSaveCopy} from "@fiduswriter/document/exporter/native"
+import {addProgress, gettext, shortFileTitle} from "fwtoolkit"
 import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {NativeImporter} from "../../importer/native"
@@ -12,6 +13,14 @@ export class SaveCopy extends GenericSaveCopy {
         importId = null,
         e2eeOptions = null
     ) {
+        const title = shortFileTitle(doc.title, doc.path || "")
+        const task = addProgress(
+            "info",
+            `${title}: ${gettext("Creating copy...")}`,
+            {autoClose: false}
+        )
+        const progressCallback = (message, percentage) =>
+            task.update(percentage, message)
         const e2ee = {
             decryptObject: E2EEEncryptor.decryptObject.bind(E2EEEncryptor),
             encryptObject: E2EEEncryptor.encryptObject.bind(E2EEEncryptor),
@@ -38,7 +47,8 @@ export class SaveCopy extends GenericSaveCopy {
             importId,
             e2eeOptions,
             e2ee,
-            importDocument
+            importDocument,
+            progressCallback
         })
     }
 }

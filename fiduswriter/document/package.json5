@@ -1,6 +1,6 @@
 {
     dependencies: {
-        "@fiduswriter/document": "^0.2.14",
+        "@fiduswriter/document": "^0.2.15",
         "citeproc-plus": "1.0.1",
         diff: "^5.0.0",
         fastdom: "1.0.11",

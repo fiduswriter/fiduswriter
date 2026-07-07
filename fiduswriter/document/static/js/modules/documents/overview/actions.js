@@ -3,10 +3,12 @@ import {
     DialogTabs,
     activateWait,
     addAlert,
+    addProgress,
     deactivateWait,
     escapeText,
     longFilePath,
-    postJson
+    postJson,
+    shortFileTitle
 } from "fwtoolkit"
 import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {enterPassphraseDialog} from "../../editor/e2ee/passphrase-dialog"
@@ -22,6 +24,14 @@ import {AccessRightsTab} from "../access_rights"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {documentDialogTemplate, importDocumentTemplate} from "./templates"
+
+const exportProgressCallback = doc => {
+    const title = shortFileTitle(doc.title, doc.path || "")
+    const task = addProgress("info", `${title}: ${gettext("Exporting...")}`, {
+        autoClose: false
+    })
+    return (message, percentage) => task.update(percentage, message)
+}
 
 // Returns the user-facing title for a document. For E2EE documents,
 // `doc.title` holds the encrypted ciphertext; the decrypted title (if any)
@@ -863,6 +873,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
+                const progressCallback = exportProgressCallback(doc)
                 import("@fiduswriter/document/exporter/html/index").then(
                     ({HTMLExporter}) => {
                         const exporter = new HTMLExporter(
@@ -873,6 +884,7 @@ export class DocumentOverviewActions {
                             new Date(doc.updated * 1000),
                             this.documentOverview.documentStyles
                         )
+                        exporter.progressCallback = progressCallback
                         exporter.init()
                     }
                 )
@@ -890,6 +902,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
+                const progressCallback = exportProgressCallback(doc)
                 if (templateType === "docx") {
                     import("@fiduswriter/document/exporter/docx/index").then(
                         ({DOCXExporter}) => {
@@ -900,6 +913,7 @@ export class DocumentOverviewActions {
                                 {db: doc.images},
                                 this.documentOverview.app.csl
                             )
+                            exporter.progressCallback = progressCallback
                             exporter.init()
                         }
                     )
@@ -913,6 +927,7 @@ export class DocumentOverviewActions {
                                 {db: doc.images},
                                 this.documentOverview.app.csl
                             )
+                            exporter.progressCallback = progressCallback
                             exporter.init()
                         }
                     )
@@ -931,6 +946,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
+                const progressCallback = exportProgressCallback(doc)
                 import("@fiduswriter/document/exporter/latex/index").then(
                     ({LatexExporter}) => {
                         const exporter = new LatexExporter(
@@ -939,6 +955,7 @@ export class DocumentOverviewActions {
                             {db: doc.images},
                             new Date(doc.updated * 1000)
                         )
+                        exporter.progressCallback = progressCallback
                         exporter.init()
                     }
                 )
@@ -956,6 +973,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
+                const progressCallback = exportProgressCallback(doc)
                 import("@fiduswriter/document/exporter/jats/index").then(
                     ({JATSExporter}) => {
                         const exporter = new JATSExporter(
@@ -966,6 +984,7 @@ export class DocumentOverviewActions {
                             new Date(doc.updated * 1000),
                             "article"
                         )
+                        exporter.progressCallback = progressCallback
                         exporter.init()
                     }
                 )
@@ -983,6 +1002,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
+                const progressCallback = exportProgressCallback(doc)
                 import("@fiduswriter/document/exporter/jats/index").then(
                     ({JATSExporter}) => {
                         const exporter = new JATSExporter(
@@ -993,6 +1013,7 @@ export class DocumentOverviewActions {
                             new Date(doc.updated * 1000),
                             "book-part-wrapper"
                         )
+                        exporter.progressCallback = progressCallback
                         exporter.init()
                     }
                 )
@@ -1010,6 +1031,7 @@ export class DocumentOverviewActions {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )
+                const progressCallback = exportProgressCallback(doc)
                 import("@fiduswriter/document/exporter/epub/index").then(
                     ({EpubExporter}) => {
                         const exporter = new EpubExporter(
@@ -1020,6 +1042,7 @@ export class DocumentOverviewActions {
                             new Date(doc.updated * 1000),
                             this.documentOverview.documentStyles
                         )
+                        exporter.progressCallback = progressCallback
                         exporter.init()
                     }
                 )

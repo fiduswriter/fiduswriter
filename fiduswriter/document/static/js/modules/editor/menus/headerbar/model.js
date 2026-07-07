@@ -1,4 +1,10 @@
-import {Dialog, addAlert, postJson} from "fwtoolkit"
+import {
+    Dialog,
+    addAlert,
+    addProgress,
+    postJson,
+    shortFileTitle
+} from "fwtoolkit"
 import {CopyrightDialog} from "../../../copyright_dialog"
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
@@ -12,6 +18,14 @@ import {
     SearchReplaceDialog,
     WordCountDialog
 } from "../../tools"
+
+const exportProgress = doc => {
+    const title = shortFileTitle(doc.title, doc.path || "")
+    const task = addProgress("info", `${title}: ${gettext("Exporting...")}`, {
+        autoClose: false
+    })
+    return (message, percentage) => task.update(percentage, message)
+}
 
 const languageItem = (language, name, order) => ({
     title: name,
@@ -309,15 +323,27 @@ export const headerbarModel = () => ({
                         import(
                             "@fiduswriter/document/exporter/print/index"
                         ).then(({PrintExporter}) => {
+                            const doc = editor.getDoc({
+                                changes: "acceptAllNoInsertions"
+                            })
+                            const title = shortFileTitle(
+                                doc.title,
+                                doc.path || ""
+                            )
+                            const task = addProgress(
+                                "info",
+                                `${title}: ${gettext("Preparing print view...")}`,
+                                {autoClose: false}
+                            )
                             const exporter = new PrintExporter(
-                                editor.getDoc({
-                                    changes: "acceptAllNoInsertions"
-                                }),
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl,
                                 editor.docInfo.updated,
-                                editor.mod.documentTemplate.documentStyles
+                                editor.mod.documentTemplate.documentStyles,
+                                (message, percentage) =>
+                                    task.update(percentage, message)
                             )
                             exporter.init()
                         })
@@ -528,16 +554,18 @@ export const headerbarModel = () => ({
                         import(
                             "@fiduswriter/document/exporter/html/index"
                         ).then(({HTMLExporter}) => {
+                            const doc = editor.getDoc({
+                                changes: "acceptAllNoInsertions"
+                            })
                             const exporter = new HTMLExporter(
-                                editor.getDoc({
-                                    changes: "acceptAllNoInsertions"
-                                }),
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl,
                                 editor.docInfo.updated,
                                 editor.mod.documentTemplate.documentStyles
                             )
+                            exporter.progressCallback = exportProgress(doc)
                             exporter.init()
                         })
                     }
@@ -553,16 +581,18 @@ export const headerbarModel = () => ({
                         import(
                             "@fiduswriter/document/exporter/epub/index"
                         ).then(({EpubExporter}) => {
+                            const doc = editor.getDoc({
+                                changes: "acceptAllNoInsertions"
+                            })
                             const exporter = new EpubExporter(
-                                editor.getDoc({
-                                    changes: "acceptAllNoInsertions"
-                                }),
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl,
                                 editor.docInfo.updated,
                                 editor.mod.documentTemplate.documentStyles
                             )
+                            exporter.progressCallback = exportProgress(doc)
                             exporter.init()
                         })
                     },
@@ -577,14 +607,16 @@ export const headerbarModel = () => ({
                         import(
                             "@fiduswriter/document/exporter/latex/index"
                         ).then(({LatexExporter}) => {
+                            const doc = editor.getDoc({
+                                changes: "acceptAllNoInsertions"
+                            })
                             const exporter = new LatexExporter(
-                                editor.getDoc({
-                                    changes: "acceptAllNoInsertions"
-                                }),
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.docInfo.updated
                             )
+                            exporter.progressCallback = exportProgress(doc)
                             exporter.init()
                         })
                     },
@@ -601,16 +633,18 @@ export const headerbarModel = () => ({
                         import(
                             "@fiduswriter/document/exporter/jats/index"
                         ).then(({JATSExporter}) => {
+                            const doc = editor.getDoc({
+                                changes: "acceptAllNoInsertions"
+                            })
                             const exporter = new JATSExporter(
-                                editor.getDoc({
-                                    changes: "acceptAllNoInsertions"
-                                }),
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl,
                                 editor.docInfo.updated,
                                 "article"
                             )
+                            exporter.progressCallback = exportProgress(doc)
                             exporter.init()
                         })
                     },
@@ -627,16 +661,18 @@ export const headerbarModel = () => ({
                         import(
                             "@fiduswriter/document/exporter/jats/index"
                         ).then(({JATSExporter}) => {
+                            const doc = editor.getDoc({
+                                changes: "acceptAllNoInsertions"
+                            })
                             const exporter = new JATSExporter(
-                                editor.getDoc({
-                                    changes: "acceptAllNoInsertions"
-                                }),
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl,
                                 editor.docInfo.updated,
                                 "book-part-wrapper"
                             )
+                            exporter.progressCallback = exportProgress(doc)
                             exporter.init()
                         })
                     },
@@ -653,15 +689,17 @@ export const headerbarModel = () => ({
                         import(
                             "@fiduswriter/document/exporter/pandoc/index"
                         ).then(({PandocExporter}) => {
+                            const doc = editor.getDoc({
+                                changes: "acceptAllNoInsertions"
+                            })
                             const exporter = new PandocExporter(
-                                editor.getDoc({
-                                    changes: "acceptAllNoInsertions"
-                                }),
+                                doc,
                                 editor.mod.db.bibDB,
                                 editor.mod.db.imageDB,
                                 editor.app.csl,
                                 editor.docInfo.updated
                             )
+                            exporter.progressCallback = exportProgress(doc)
                             exporter.init()
                         })
                     },

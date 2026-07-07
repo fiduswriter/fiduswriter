@@ -2,8 +2,10 @@
 
 import json
 from django.test import TestCase, Client
+from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.flatpages.models import FlatPage
+from django.test.utils import skipUnless
 
 from user.models import User
 
@@ -125,3 +127,39 @@ class ConfigurationViewTest(TestCase):
         response = ajax_get(self.client, "/api/base/configuration/")
         data = response.json()
         self.assertIn("waiting_invites", data["user"])
+
+
+# ---------------------------------------------------------------------------
+# frontend settings hook
+# ---------------------------------------------------------------------------
+
+
+class FrontendSettingsHookTest(TestCase):
+    def test_plugins_can_add_frontend_settings(self):
+        from base.views import FRONTEND_SETTINGS, get_frontend_settings
+
+        FRONTEND_SETTINGS["PLUGIN_TEST_KEY"] = "plugin-test-value"
+        try:
+            settings = get_frontend_settings()
+            self.assertEqual(settings["PLUGIN_TEST_KEY"], "plugin-test-value")
+        finally:
+            del FRONTEND_SETTINGS["PLUGIN_TEST_KEY"]
+
+    def test_plugins_can_override_frontend_settings(self):
+        from base.views import FRONTEND_SETTINGS, get_frontend_settings
+
+        FRONTEND_SETTINGS["E2EE_MODE"] = "overridden"
+        try:
+            settings = get_frontend_settings()
+            self.assertEqual(settings["E2EE_MODE"], "overridden")
+        finally:
+            del FRONTEND_SETTINGS["E2EE_MODE"]
+
+    @skipUnless("llm" in settings.INSTALLED_APPS, "llm app not installed")
+    def test_llm_plugin_adds_frontend_settings_via_hook(self):
+        from base.views import get_frontend_settings
+
+        frontend_settings = get_frontend_settings()
+        self.assertIn("LLM_URL", frontend_settings)
+        self.assertIn("LLM_MODEL", frontend_settings)
+        self.assertIn("LLM_API_KEY_CONFIGURED", frontend_settings)

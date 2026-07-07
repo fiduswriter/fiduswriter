@@ -443,6 +443,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                     "comment": cd["comment"],
                     "isMajor": cd["isMajor"],
                     "resolved": cd["resolved"],
+                    "isGlobal": cd.get("isGlobal", False),
                 }
             elif cd["type"] == "delete":
                 del self.session["doc"].comments[id]

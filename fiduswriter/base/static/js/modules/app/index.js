@@ -1,6 +1,7 @@
 import {CSL} from "citeproc-plus"
 //import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
 
+import {BibliographyDB} from "@fiduswriter/bibliography-manager/database"
 import {
     WebSocketConnector,
     addAlert,
@@ -13,7 +14,6 @@ import {
 import {getSettings, initSettings} from "fwtoolkit/settings"
 import {plugins} from "../../plugins/app"
 import {Page404} from "../404"
-import {BibliographyDB} from "../bibliography/database"
 import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
 import {EmailConfirm} from "../email_confirm"
@@ -88,7 +88,7 @@ export class App {
                 app: "bibliography",
                 requireLogin: true,
                 open: () =>
-                    import("../bibliography/overview").then(
+                    import("@fiduswriter/bibliography-manager/overview").then(
                         ({BibliographyOverview}) =>
                             new BibliographyOverview(this.config)
                     )
@@ -105,7 +105,7 @@ export class App {
                         "/" + pathnameParts.slice(2).join("/")
                     ).replace(/\/?$/, "/")
                     return import(
-                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "../editor"
+                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
                     ).then(({Editor}) => new Editor(this.config, path, id))
                 },
                 dbTables: {
@@ -125,7 +125,7 @@ export class App {
                     }
                     const path = "/"
                     return import(
-                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "../editor"
+                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
                     ).then(({Editor}) => new Editor(this.config, path, token))
                 }
             },

@@ -19,10 +19,10 @@ import {
     whenReady
 } from "fwtoolkit"
 
+import {baseBodyTemplate} from "@fiduswriter/common/common"
+import {FeedbackTab} from "@fiduswriter/common/feedback"
+import {SiteMenu} from "@fiduswriter/common/menu"
 import {plugins} from "../../../plugins/documents_overview"
-import {baseBodyTemplate} from "../../common/index.js"
-import {FeedbackTab} from "../../feedback"
-import {SiteMenu} from "../../menu"
 
 import {DocumentOverviewActions} from "./actions"
 import {bulkMenuModel, menuModel} from "./menu"
@@ -254,7 +254,7 @@ export class DocumentOverview {
             }
 
             const {PassphraseCrypto} = await import(
-                "../../editor/e2ee/passphrase-crypto.js"
+                "@fiduswriter/editor/e2ee/passphrase-crypto.js"
             )
 
             for (const keyData of response.json.keys) {
@@ -314,7 +314,7 @@ export class DocumentOverview {
             return
         }
         const {PassphraseManager} = await import(
-            "../../editor/e2ee/passphrase-manager.js"
+            "@fiduswriter/editor/e2ee/passphrase-manager.js"
         )
         this.hasPassphraseSetUp = await PassphraseManager.hasEncryptionKeys()
         if (e2eeMode === "required" && !this.hasPassphraseSetUp) {
@@ -405,8 +405,12 @@ export class DocumentOverview {
         if (!e2eeDocs.length) {
             return
         }
-        const {E2EEKeyManager} = await import("../../editor/e2ee/key-manager")
-        const {E2EEEncryptor} = await import("../../editor/e2ee/encryptor")
+        const {E2EEKeyManager} = await import(
+            "@fiduswriter/editor/e2ee/key-manager"
+        )
+        const {E2EEEncryptor} = await import(
+            "@fiduswriter/editor/e2ee/encryptor"
+        )
         for (const doc of e2eeDocs) {
             const key = await E2EEKeyManager.getKeyFromSession(doc.id)
             if (!key) {
@@ -918,7 +922,7 @@ export class DocumentOverview {
                             if (e2ee) {
                                 // Check if user has passphrase keys already
                                 const {PassphraseManager} = await import(
-                                    "../../editor/e2ee/passphrase-manager.js"
+                                    "@fiduswriter/editor/e2ee/passphrase-manager.js"
                                 )
                                 const hasPassphraseKeys =
                                     await PassphraseManager.hasEncryptionKeys()
@@ -929,7 +933,7 @@ export class DocumentOverview {
                                     // Offer to set up passphrase
                                     const {setupPassphraseDialog} =
                                         await import(
-                                            "../../editor/e2ee/passphrase-dialog.js"
+                                            "@fiduswriter/editor/e2ee/passphrase-dialog.js"
                                         )
                                     const setupConfirmed = await new Promise(
                                         resolve => {
@@ -979,7 +983,7 @@ export class DocumentOverview {
                                                     const {
                                                         showRecoveryKeyDialog
                                                     } = await import(
-                                                        "../../editor/e2ee/passphrase-dialog.js"
+                                                        "@fiduswriter/editor/e2ee/passphrase-dialog.js"
                                                     )
                                                     await showRecoveryKeyDialog(
                                                         recoveryKey

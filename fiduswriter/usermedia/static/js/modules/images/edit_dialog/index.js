@@ -1,5 +1,5 @@
+import {E2EEEncryptor} from "@fiduswriter/editor/e2ee/encryptor"
 import {CheckableList, ContentMenu, Dialog, addAlert} from "fwtoolkit"
-import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
 import {imageEditModel} from "./model"
 import {imageEditTemplate} from "./templates"
 export class ImageEditDialog {

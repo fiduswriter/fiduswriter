@@ -1,3 +1,10 @@
+import {E2EEKeyManager} from "@fiduswriter/editor/e2ee/key-manager"
+import {enterPassphraseDialog} from "@fiduswriter/editor/e2ee/passphrase-dialog"
+import {PassphraseManager} from "@fiduswriter/editor/e2ee/passphrase-manager"
+import {
+    createPasswordDialog,
+    enterPasswordDialog
+} from "@fiduswriter/editor/e2ee/password-dialog"
 import {
     Dialog,
     DialogTabs,
@@ -10,13 +17,6 @@ import {
     postJson,
     shortFileTitle
 } from "fwtoolkit"
-import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
-import {enterPassphraseDialog} from "../../editor/e2ee/passphrase-dialog"
-import {PassphraseManager} from "../../editor/e2ee/passphrase-manager"
-import {
-    createPasswordDialog,
-    enterPasswordDialog
-} from "../../editor/e2ee/password-dialog"
 import {ExportFidusFile, SaveCopy} from "../../exporter/native"
 import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
@@ -551,7 +551,7 @@ export class DocumentOverviewActions {
                                             recoverWithKeyDialog,
                                             showRecoveryKeyDialog
                                         } = await import(
-                                            "../../editor/e2ee/passphrase-dialog.js"
+                                            "@fiduswriter/editor/e2ee/passphrase-dialog.js"
                                         )
                                         const recoverResult = await new Promise(
                                             resolve => {

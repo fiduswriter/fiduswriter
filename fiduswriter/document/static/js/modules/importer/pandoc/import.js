@@ -1,6 +1,6 @@
+import {BibliographyImporter} from "@fiduswriter/bibliography-manager/import"
 import {PandocImporter as GenericPandocImporter} from "@fiduswriter/document/importer/pandoc"
 import {postJson} from "fwtoolkit"
-import {BibliographyImporter} from "../../bibliography/import"
 import {createNativeImporterBackend} from "../native/import"
 
 export class PandocImporter extends GenericPandocImporter {

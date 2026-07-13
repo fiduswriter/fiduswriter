@@ -10,7 +10,7 @@ import {
     OdtCitationsParser,
     RISParser,
     sniffFormat
-} from "biblatex-csl-converter"
+} from "bibliojson"
 
 export class BibliographyImportWorker {
     constructor(fileContents, sendMessage, format = null) {

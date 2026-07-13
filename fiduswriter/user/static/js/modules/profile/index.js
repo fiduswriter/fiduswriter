@@ -1,3 +1,6 @@
+import {baseBodyTemplate} from "@fiduswriter/common/common"
+import {FeedbackTab} from "@fiduswriter/common/feedback"
+import {SiteMenu} from "@fiduswriter/common/menu"
 import {
     activateWait,
     addAlert,
@@ -10,9 +13,6 @@ import {
     whenReady
 } from "fwtoolkit"
 import {plugins} from "../../plugins/profile"
-import {baseBodyTemplate} from "../common/index.js"
-import {FeedbackTab} from "../feedback"
-import {SiteMenu} from "../menu"
 import {
     checkTwoFactorStatus,
     twoFactorDisableDialog,
@@ -207,7 +207,7 @@ export class Profile {
     }
 
     updateE2EEPassphraseStatus() {
-        import("../editor/e2ee/passphrase-manager.js").then(
+        import("@fiduswriter/editor/e2ee/passphrase-manager.js").then(
             ({PassphraseManager}) => {
                 PassphraseManager.hasEncryptionKeys().then(hasKeys => {
                     const enabledStatus = this.dom.querySelector(
@@ -246,10 +246,10 @@ export class Profile {
 
     async setupE2EEPassphrase() {
         const {PassphraseManager} = await import(
-            "../editor/e2ee/passphrase-manager.js"
+            "@fiduswriter/editor/e2ee/passphrase-manager.js"
         )
         const {setupPassphraseDialog} = await import(
-            "../editor/e2ee/passphrase-dialog.js"
+            "@fiduswriter/editor/e2ee/passphrase-dialog.js"
         )
 
         setupPassphraseDialog(async passphrase => {
@@ -257,7 +257,7 @@ export class Profile {
                 const {recoveryKey} =
                     await PassphraseManager.setupEncryption(passphrase)
                 const {showRecoveryKeyDialog} = await import(
-                    "../editor/e2ee/passphrase-dialog.js"
+                    "@fiduswriter/editor/e2ee/passphrase-dialog.js"
                 )
                 await showRecoveryKeyDialog(recoveryKey)
                 this.updateE2EEPassphraseStatus()
@@ -272,10 +272,10 @@ export class Profile {
 
     async recoverE2EEPassphrase() {
         const {PassphraseManager} = await import(
-            "../editor/e2ee/passphrase-manager.js"
+            "@fiduswriter/editor/e2ee/passphrase-manager.js"
         )
         const {recoverWithKeyDialog, showRecoveryKeyDialog} = await import(
-            "../editor/e2ee/passphrase-dialog.js"
+            "@fiduswriter/editor/e2ee/passphrase-dialog.js"
         )
 
         const recoverResult = await new Promise(resolve => {
@@ -301,10 +301,10 @@ export class Profile {
 
     async changeE2EEPassphrase() {
         const {PassphraseManager} = await import(
-            "../editor/e2ee/passphrase-manager.js"
+            "@fiduswriter/editor/e2ee/passphrase-manager.js"
         )
         const {changePassphraseDialog} = await import(
-            "../editor/e2ee/passphrase-dialog.js"
+            "@fiduswriter/editor/e2ee/passphrase-dialog.js"
         )
 
         const changeResult = await new Promise(resolve => {

@@ -1,3 +1,6 @@
+import {baseBodyTemplate} from "@fiduswriter/common/common"
+import {FeedbackTab} from "@fiduswriter/common/feedback"
+import {SiteMenu} from "@fiduswriter/common/menu"
 import {
     Dialog,
     OverviewDataTable,
@@ -15,9 +18,6 @@ import {
     whenReady
 } from "fwtoolkit"
 import {plugins} from "../../../plugins/images_overview"
-import {baseBodyTemplate} from "../../common/index.js"
-import {FeedbackTab} from "../../feedback"
-import {SiteMenu} from "../../menu"
 import {ImageOverviewCategories} from "./categories"
 import {bulkMenuModel, menuModel} from "./menu"
 /** Helper functions for user added images/SVGs.*/

@@ -11,8 +11,11 @@ import sortable from "sortablejs"
 
 import {docSchema} from "@fiduswriter/document/schema/document/index"
 import {toFullJSON, toMiniJSON} from "@fiduswriter/document/schema/mini_json"
+import {
+    ContributorsPartView,
+    TagsPartView
+} from "@fiduswriter/editor/state_plugins"
 import {ensureCSS, findTarget} from "fwtoolkit"
-import {ContributorsPartView, TagsPartView} from "../editor/state_plugins"
 import {DocumentStyleDialog} from "./document_style_dialog"
 import {ExportTemplateDialog} from "./export_template_dialog"
 import {

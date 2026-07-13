@@ -1,7 +1,7 @@
 import {SaveCopy as GenericSaveCopy} from "@fiduswriter/document/exporter/native"
+import {E2EEEncryptor} from "@fiduswriter/editor/e2ee/encryptor"
+import {E2EEKeyManager} from "@fiduswriter/editor/e2ee/key-manager"
 import {addProgress, gettext, shortFileTitle} from "fwtoolkit"
-import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
-import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 import {NativeImporter} from "../../importer/native"
 
 export class SaveCopy extends GenericSaveCopy {

@@ -1,8 +1,8 @@
 import {NativeImporter as GenericNativeImporter} from "@fiduswriter/document/importer/native"
+import {E2EEEncryptor} from "@fiduswriter/editor/e2ee/encryptor"
+import {E2EEKeyManager} from "@fiduswriter/editor/e2ee/key-manager"
 import {addAlert, postJson, shortFileTitle} from "fwtoolkit"
 import {extractTemplate} from "../../document_template"
-import {E2EEEncryptor} from "../../editor/e2ee/encryptor"
-import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
 
 export function createNativeImporterBackend(_user, _e2eeOptions) {
     return {

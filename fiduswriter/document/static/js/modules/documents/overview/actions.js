@@ -551,7 +551,7 @@ export class DocumentOverviewActions {
                                             recoverWithKeyDialog,
                                             showRecoveryKeyDialog
                                         } = await import(
-                                            "@fiduswriter/editor/e2ee/passphrase-dialog.js"
+                                            "@fiduswriter/editor/e2ee/passphrase-dialog"
                                         )
                                         const recoverResult = await new Promise(
                                             resolve => {

@@ -254,7 +254,7 @@ export class DocumentOverview {
             }
 
             const {PassphraseCrypto} = await import(
-                "@fiduswriter/editor/e2ee/passphrase-crypto.js"
+                "@fiduswriter/editor/e2ee/passphrase-crypto"
             )
 
             for (const keyData of response.json.keys) {
@@ -314,7 +314,7 @@ export class DocumentOverview {
             return
         }
         const {PassphraseManager} = await import(
-            "@fiduswriter/editor/e2ee/passphrase-manager.js"
+            "@fiduswriter/editor/e2ee/passphrase-manager"
         )
         this.hasPassphraseSetUp = await PassphraseManager.hasEncryptionKeys()
         if (e2eeMode === "required" && !this.hasPassphraseSetUp) {
@@ -922,7 +922,7 @@ export class DocumentOverview {
                             if (e2ee) {
                                 // Check if user has passphrase keys already
                                 const {PassphraseManager} = await import(
-                                    "@fiduswriter/editor/e2ee/passphrase-manager.js"
+                                    "@fiduswriter/editor/e2ee/passphrase-manager"
                                 )
                                 const hasPassphraseKeys =
                                     await PassphraseManager.hasEncryptionKeys()
@@ -933,7 +933,7 @@ export class DocumentOverview {
                                     // Offer to set up passphrase
                                     const {setupPassphraseDialog} =
                                         await import(
-                                            "@fiduswriter/editor/e2ee/passphrase-dialog.js"
+                                            "@fiduswriter/editor/e2ee/passphrase-dialog"
                                         )
                                     const setupConfirmed = await new Promise(
                                         resolve => {
@@ -983,7 +983,7 @@ export class DocumentOverview {
                                                     const {
                                                         showRecoveryKeyDialog
                                                     } = await import(
-                                                        "@fiduswriter/editor/e2ee/passphrase-dialog.js"
+                                                        "@fiduswriter/editor/e2ee/passphrase-dialog"
                                                     )
                                                     await showRecoveryKeyDialog(
                                                         recoveryKey

@@ -1,6 +1,6 @@
 {
     dependencies: {
-        "@fiduswriter/bibliography-manager": "^0.1.6",
+        "@fiduswriter/bibliography-manager": "^0.1.7",
         "@fiduswriter/common": "^0.1.4",
         bibliojson: "4.0.0",
         "fix-utf8": "2.0.1",

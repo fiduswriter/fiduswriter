@@ -15,6 +15,7 @@ import {
 } from "fwtoolkit"
 import {getSettings, initSettings} from "fwtoolkit/settings"
 import {plugins} from "../../plugins/app"
+import {plugins as bibPlugins} from "../../plugins/bibliography_overview/index.js"
 import {plugins as editorPlugins} from "../../plugins/editor/index.js"
 import {plugins as menuPlugins} from "../../plugins/menu"
 import {Page404} from "../404"
@@ -93,7 +94,7 @@ export class App {
                 open: () =>
                     import("@fiduswriter/bibliography-manager/overview").then(
                         ({BibliographyOverview}) =>
-                            new BibliographyOverview(this.config)
+                            new BibliographyOverview(this.config, bibPlugins)
                     )
             },
             document: {

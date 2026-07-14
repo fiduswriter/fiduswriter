@@ -16,6 +16,7 @@ import {
 import {getSettings, initSettings} from "fwtoolkit/settings"
 import {plugins} from "../../plugins/app"
 import {plugins as bibPlugins} from "../../plugins/bibliography_overview/index.js"
+import {plugins as citationDialogPlugins} from "../../plugins/citation_dialog/index.js"
 import {plugins as editorPlugins} from "../../plugins/editor/index.js"
 import {plugins as menuPlugins} from "../../plugins/menu"
 import {Page404} from "../404"
@@ -112,7 +113,13 @@ export class App {
                         /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
                     ).then(
                         ({Editor}) =>
-                            new Editor(this.config, path, id, editorPlugins)
+                            new Editor(
+                                this.config,
+                                path,
+                                id,
+                                editorPlugins,
+                                citationDialogPlugins
+                            )
                     )
                 },
                 dbTables: {
@@ -135,7 +142,13 @@ export class App {
                         /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
                     ).then(
                         ({Editor}) =>
-                            new Editor(this.config, path, token, editorPlugins)
+                            new Editor(
+                                this.config,
+                                path,
+                                token,
+                                editorPlugins,
+                                citationDialogPlugins
+                            )
                     )
                 }
             },

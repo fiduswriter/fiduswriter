@@ -1,5 +1,5 @@
+import {DocumentAccessRightsDialog} from "@fiduswriter/editor/documents/access_rights/index"
 import {FileDialog, NewFolderDialog, addAlert} from "fwtoolkit"
-import {DocumentAccessRightsDialog} from "../access_rights"
 
 export const bulkMenuModel = () => ({
     content: [

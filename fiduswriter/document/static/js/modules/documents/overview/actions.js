@@ -1,3 +1,4 @@
+import {AccessRightsTab} from "@fiduswriter/editor/documents/access_rights/index"
 import {
     ExportFidusFile,
     SaveCopy
@@ -23,7 +24,6 @@ import {
 } from "fwtoolkit/e2ee/password-dialog"
 import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
-import {AccessRightsTab} from "../access_rights"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {documentDialogTemplate, importDocumentTemplate} from "./templates"

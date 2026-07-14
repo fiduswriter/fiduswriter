@@ -8,7 +8,7 @@ import {
 import {
     DocumentTemplateExporter,
     DocumentTemplateImporter
-} from "../document_template"
+} from "@fiduswriter/document-template-editor"
 
 import {importFidusTemplateTemplate} from "./templates"
 

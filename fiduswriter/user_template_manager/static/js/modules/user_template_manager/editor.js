@@ -11,7 +11,7 @@ import {
 import {
     DocumentTemplateDesigner,
     DocumentTemplateExporter
-} from "../document_template"
+} from "@fiduswriter/document-template-editor"
 
 export class DocTemplatesEditor {
     constructor({app, user}, idString) {

@@ -2,6 +2,7 @@
     dependencies: {
         "@fiduswriter/common": "^0.1.4",
         "@fiduswriter/document": "^0.2.20",
+        "@fiduswriter/document-template-editor": "^0.1.1",
         "@fiduswriter/editor": "^0.1.13",
         "citeproc-plus": "1.0.2",
         diff: "^5.0.0",

@@ -1,5 +1,5 @@
 import {initSettings} from "fwtoolkit/settings"
-import {DocumentTemplateAdmin} from "./modules/document_template/index.js"
+import {DocumentTemplateAdmin} from "@fiduswriter/document-template-editor"
 
 window.settings.gettext = window.gettext
 window.settings.staticUrl = window.staticUrl

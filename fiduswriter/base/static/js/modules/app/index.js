@@ -15,6 +15,7 @@ import {
 } from "fwtoolkit"
 import {getSettings, initSettings} from "fwtoolkit/settings"
 import {plugins} from "../../plugins/app"
+import {plugins as editorPlugins} from "../../plugins/editor/index.js"
 import {plugins as menuPlugins} from "../../plugins/menu"
 import {Page404} from "../404"
 import {ContactsOverview} from "../contacts"
@@ -108,7 +109,10 @@ export class App {
                     ).replace(/\/?$/, "/")
                     return import(
                         /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
-                    ).then(({Editor}) => new Editor(this.config, path, id))
+                    ).then(
+                        ({Editor}) =>
+                            new Editor(this.config, path, id, editorPlugins)
+                    )
                 },
                 dbTables: {
                     data: {
@@ -128,7 +132,10 @@ export class App {
                     const path = "/"
                     return import(
                         /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
-                    ).then(({Editor}) => new Editor(this.config, path, token))
+                    ).then(
+                        ({Editor}) =>
+                            new Editor(this.config, path, token, editorPlugins)
+                    )
                 }
             },
             documents: {

@@ -18,7 +18,7 @@
     license: "AGPL",
     private: true,
     dependencies: {
-        "@fiduswriter/common": "^0.1.4",
+        "@fiduswriter/common": "^0.1.5",
         "@fiduswriter/image-manager": "^0.1.4",
         "fwtoolkit": "^0.1.9",
         "file-loader": "^6.2.0",

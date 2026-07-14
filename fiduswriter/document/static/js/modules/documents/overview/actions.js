@@ -6,6 +6,10 @@ import {
     enterPasswordDialog
 } from "@fiduswriter/editor/e2ee/password-dialog"
 import {
+    ExportFidusFile,
+    SaveCopy
+} from "@fiduswriter/editor/exporter/native/index"
+import {
     Dialog,
     DialogTabs,
     activateWait,
@@ -17,7 +21,6 @@ import {
     postJson,
     shortFileTitle
 } from "fwtoolkit"
-import {ExportFidusFile, SaveCopy} from "../../exporter/native"
 import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
 import {AccessRightsTab} from "../access_rights"
@@ -28,7 +31,7 @@ import {documentDialogTemplate, importDocumentTemplate} from "./templates"
 const exportProgressCallback = doc => {
     const title = shortFileTitle(doc.title, doc.path || "")
     const task = addProgress("info", `${title}: ${gettext("Exporting...")}`, {
-        autoClose: false
+        autoClose: 6000
     })
     return (message, percentage) => task.update(percentage, message)
 }

@@ -24,7 +24,24 @@ const BASE_PACKAGES = new Set([
     "qrcode",
     "tokenfield",
     "fix-utf8",
-    "@lcdp/offline-plugin"
+    "@lcdp/offline-plugin",
+    "prosemirror-changeset",
+    "prosemirror-collab",
+    "prosemirror-commands",
+    "prosemirror-dropcursor",
+    "prosemirror-example-setup",
+    "prosemirror-gapcursor",
+    "prosemirror-history",
+    "prosemirror-keymap",
+    "prosemirror-menu",
+    "prosemirror-model",
+    "prosemirror-schema-basic",
+    "prosemirror-schema-list",
+    "prosemirror-state",
+    "prosemirror-tables",
+    "prosemirror-transform",
+    "prosemirror-view",
+    "prosemirror-suggestions"
 ])
 
 // Common Fidus Writer app names. Used to identify cross-app imports when the

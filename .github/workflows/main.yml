@@ -139,7 +139,11 @@ jobs:
               run: |
                 cd fiduswriter
                 coverage combine
-                coveralls --service=github
+                for attempt in 1 2 3; do
+                  coveralls --service=github && break
+                  echo "Coveralls upload failed (attempt $attempt), retrying in 30s..."
+                  sleep 30
+                done
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 COVERALLS_PARALLEL: true

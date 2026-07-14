@@ -1,6 +1,6 @@
 import {recreateTransform} from "@fiduswriter/editor/collab/merge/recreate_transform"
 
-import {adjustDocToTemplate} from "@fiduswriter/document-template-editor"
+import {adjustDocToTemplate} from "@fiduswriter/document-template-editor/fix_doc"
 
 import {Schema} from "prosemirror-model"
 

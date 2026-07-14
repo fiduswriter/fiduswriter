@@ -1,8 +1,8 @@
 {
     dependencies: {
         "@fiduswriter/common": "^0.1.4",
-        "@fiduswriter/document": "^0.2.17",
-        "@fiduswriter/editor": "^0.1.8",
+        "@fiduswriter/document": "^0.2.20",
+        "@fiduswriter/editor": "^0.1.12",
         "citeproc-plus": "1.0.2",
         diff: "^5.0.0",
         fastdom: "1.0.11",

@@ -207,7 +207,7 @@ export class Profile {
     }
 
     updateE2EEPassphraseStatus() {
-        import("@fiduswriter/editor/e2ee/passphrase-manager").then(
+        import("fwtoolkit/e2ee/passphrase-manager").then(
             ({PassphraseManager}) => {
                 PassphraseManager.hasEncryptionKeys().then(hasKeys => {
                     const enabledStatus = this.dom.querySelector(
@@ -246,10 +246,10 @@ export class Profile {
 
     async setupE2EEPassphrase() {
         const {PassphraseManager} = await import(
-            "@fiduswriter/editor/e2ee/passphrase-manager"
+            "fwtoolkit/e2ee/passphrase-manager"
         )
         const {setupPassphraseDialog} = await import(
-            "@fiduswriter/editor/e2ee/passphrase-dialog"
+            "fwtoolkit/e2ee/passphrase-dialog"
         )
 
         setupPassphraseDialog(async passphrase => {
@@ -257,7 +257,7 @@ export class Profile {
                 const {recoveryKey} =
                     await PassphraseManager.setupEncryption(passphrase)
                 const {showRecoveryKeyDialog} = await import(
-                    "@fiduswriter/editor/e2ee/passphrase-dialog"
+                    "fwtoolkit/e2ee/passphrase-dialog"
                 )
                 await showRecoveryKeyDialog(recoveryKey)
                 this.updateE2EEPassphraseStatus()
@@ -272,10 +272,10 @@ export class Profile {
 
     async recoverE2EEPassphrase() {
         const {PassphraseManager} = await import(
-            "@fiduswriter/editor/e2ee/passphrase-manager"
+            "fwtoolkit/e2ee/passphrase-manager"
         )
         const {recoverWithKeyDialog, showRecoveryKeyDialog} = await import(
-            "@fiduswriter/editor/e2ee/passphrase-dialog"
+            "fwtoolkit/e2ee/passphrase-dialog"
         )
 
         const recoverResult = await new Promise(resolve => {
@@ -301,10 +301,10 @@ export class Profile {
 
     async changeE2EEPassphrase() {
         const {PassphraseManager} = await import(
-            "@fiduswriter/editor/e2ee/passphrase-manager"
+            "fwtoolkit/e2ee/passphrase-manager"
         )
         const {changePassphraseDialog} = await import(
-            "@fiduswriter/editor/e2ee/passphrase-dialog"
+            "fwtoolkit/e2ee/passphrase-dialog"
         )
 
         const changeResult = await new Promise(resolve => {

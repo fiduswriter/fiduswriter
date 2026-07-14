@@ -13,6 +13,7 @@ import {
 } from "fwtoolkit"
 import {getSettings, initSettings} from "fwtoolkit/settings"
 import {plugins} from "../../plugins/app"
+import {plugins as menuPlugins} from "../../plugins/menu"
 import {Page404} from "../404"
 import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
@@ -41,6 +42,7 @@ export class App {
         this.config = {}
         this.name = "Fidus Writer"
         this.config.app = this
+        this.menuPlugins = menuPlugins
         this.routes = {
             "": {
                 app: "document",

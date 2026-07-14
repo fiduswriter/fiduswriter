@@ -1,6 +1,6 @@
 {
     dependencies: {
-        "@fiduswriter/common": "^0.1.3",
+        "@fiduswriter/common": "^0.1.4",
         "@fiduswriter/document": "^0.2.17",
         "@fiduswriter/editor": "^0.1.4",
         "citeproc-plus": "1.0.2",

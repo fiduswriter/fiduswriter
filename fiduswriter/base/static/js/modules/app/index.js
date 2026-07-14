@@ -2,6 +2,8 @@ import {CSL} from "citeproc-plus"
 //import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
 
 import {BibliographyDB} from "@fiduswriter/bibliography-manager/database"
+import {ImageDB} from "@fiduswriter/image-manager"
+import {ImageOverview} from "@fiduswriter/image-manager"
 import {
     WebSocketConnector,
     addAlert,
@@ -19,8 +21,6 @@ import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
 import {EmailConfirm} from "../email_confirm"
 import {FlatPage} from "../flatpage"
-import {ImageDB} from "@fiduswriter/image-manager"
-import {ImageOverview} from "@fiduswriter/image-manager"
 import {IndexedDB} from "../indexed_db"
 import {LoginPage} from "../login"
 import {OfflinePage} from "../offline"

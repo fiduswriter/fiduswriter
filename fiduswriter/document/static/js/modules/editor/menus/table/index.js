@@ -1,1 +1,0 @@
-export {tableMenuModel} from "./model"

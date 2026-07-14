@@ -1,14 +1,14 @@
 import {
+    DocumentTemplateExporter,
+    DocumentTemplateImporter
+} from "@fiduswriter/document-template-editor"
+import {
     Dialog,
     activateWait,
     addAlert,
     deactivateWait,
     postJson
 } from "fwtoolkit"
-import {
-    DocumentTemplateExporter,
-    DocumentTemplateImporter
-} from "../document_template"
 
 import {importFidusTemplateTemplate} from "./templates"
 

@@ -1,3 +1,8 @@
+import {FeedbackTab} from "@fiduswriter/common/feedback"
+import {
+    DocumentTemplateDesigner,
+    DocumentTemplateExporter
+} from "@fiduswriter/document-template-editor"
 import {
     addAlert,
     ensureCSS,
@@ -7,11 +12,6 @@ import {
     setDocTitle,
     whenReady
 } from "fwtoolkit"
-import {
-    DocumentTemplateDesigner,
-    DocumentTemplateExporter
-} from "../document_template"
-import {FeedbackTab} from "../feedback"
 
 export class DocTemplatesEditor {
     constructor({app, user}, idString) {

@@ -1,6 +1,8 @@
 {
     dependencies: {
-        "biblatex-csl-converter": "3.6.0",
+        "@fiduswriter/bibliography-manager": "^0.1.7",
+        "@fiduswriter/common": "^0.1.5",
+        bibliojson: "4.0.0",
         "fix-utf8": "2.0.1",
         tokenfield: "^1.2.2"
     }

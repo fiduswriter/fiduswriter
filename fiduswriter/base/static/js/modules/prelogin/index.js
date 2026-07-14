@@ -1,6 +1,6 @@
+import {FeedbackTab} from "@fiduswriter/common/feedback"
 import {ensureCSS, setDocTitle, setLanguage, whenReady} from "fwtoolkit"
 import {plugins} from "../../plugins/prelogin"
-import {FeedbackTab} from "../feedback"
 
 import {basePreloginTemplate} from "./templates"
 

@@ -1,1 +1,0 @@
-export {imageMenuModel} from "./model"

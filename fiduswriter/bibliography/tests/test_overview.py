@@ -101,7 +101,7 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "article"
         )
         title_of_publication = WebDriverWait(driver, self.wait_time).until(
-            EC.element_to_be_clickable(
+            EC.visibility_of_element_located(
                 (By.CSS_SELECTOR, ".journaltitle .ProseMirror")
             )
         )

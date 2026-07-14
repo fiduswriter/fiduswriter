@@ -1,3 +1,8 @@
+import {AccessRightsTab} from "@fiduswriter/editor/documents/access_rights/index"
+import {
+    ExportFidusFile,
+    SaveCopy
+} from "@fiduswriter/editor/exporter/native/index"
 import {
     Dialog,
     DialogTabs,
@@ -10,17 +15,15 @@ import {
     postJson,
     shortFileTitle
 } from "fwtoolkit"
-import {E2EEKeyManager} from "../../editor/e2ee/key-manager"
-import {enterPassphraseDialog} from "../../editor/e2ee/passphrase-dialog"
-import {PassphraseManager} from "../../editor/e2ee/passphrase-manager"
+import {E2EEKeyManager} from "fwtoolkit/e2ee/key-manager"
+import {enterPassphraseDialog} from "fwtoolkit/e2ee/passphrase-dialog"
+import {PassphraseManager} from "fwtoolkit/e2ee/passphrase-manager"
 import {
     createPasswordDialog,
     enterPasswordDialog
-} from "../../editor/e2ee/password-dialog"
-import {ExportFidusFile, SaveCopy} from "../../exporter/native"
+} from "fwtoolkit/e2ee/password-dialog"
 import {FidusFileImporter} from "../../importer/native"
 import {importerRegistry} from "../../importer/register"
-import {AccessRightsTab} from "../access_rights"
 import {DocumentRevisionsDialog} from "../revisions"
 import {getMissingDocumentListData} from "../tools"
 import {documentDialogTemplate, importDocumentTemplate} from "./templates"
@@ -28,7 +31,7 @@ import {documentDialogTemplate, importDocumentTemplate} from "./templates"
 const exportProgressCallback = doc => {
     const title = shortFileTitle(doc.title, doc.path || "")
     const task = addProgress("info", `${title}: ${gettext("Exporting...")}`, {
-        autoClose: false
+        autoClose: 6000
     })
     return (message, percentage) => task.update(percentage, message)
 }
@@ -551,7 +554,7 @@ export class DocumentOverviewActions {
                                             recoverWithKeyDialog,
                                             showRecoveryKeyDialog
                                         } = await import(
-                                            "../../editor/e2ee/passphrase-dialog.js"
+                                            "fwtoolkit/e2ee/passphrase-dialog"
                                         )
                                         const recoverResult = await new Promise(
                                             resolve => {

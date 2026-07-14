@@ -1,6 +1,9 @@
 import {CSL} from "citeproc-plus"
 //import * as OfflinePluginRuntime from "@lcdp/offline-plugin/runtime"
 
+import {BibliographyDB} from "@fiduswriter/bibliography-manager/database"
+import {ImageDB} from "@fiduswriter/image-manager"
+import {ImageOverview} from "@fiduswriter/image-manager"
 import {
     WebSocketConnector,
     addAlert,
@@ -12,14 +15,14 @@ import {
 } from "fwtoolkit"
 import {getSettings, initSettings} from "fwtoolkit/settings"
 import {plugins} from "../../plugins/app"
+import {plugins as bibPlugins} from "../../plugins/bibliography_overview/index.js"
+import {plugins as editorPlugins} from "../../plugins/editor/index.js"
+import {plugins as menuPlugins} from "../../plugins/menu"
 import {Page404} from "../404"
-import {BibliographyDB} from "../bibliography/database"
 import {ContactsOverview} from "../contacts"
 import {ContactInvite} from "../contacts/invite"
 import {EmailConfirm} from "../email_confirm"
 import {FlatPage} from "../flatpage"
-import {ImageDB} from "../images/database"
-import {ImageOverview} from "../images/overview"
 import {IndexedDB} from "../indexed_db"
 import {LoginPage} from "../login"
 import {OfflinePage} from "../offline"
@@ -41,6 +44,7 @@ export class App {
         this.config = {}
         this.name = "Fidus Writer"
         this.config.app = this
+        this.menuPlugins = menuPlugins
         this.routes = {
             "": {
                 app: "document",
@@ -88,9 +92,9 @@ export class App {
                 app: "bibliography",
                 requireLogin: true,
                 open: () =>
-                    import("../bibliography/overview").then(
+                    import("@fiduswriter/bibliography-manager/overview").then(
                         ({BibliographyOverview}) =>
-                            new BibliographyOverview(this.config)
+                            new BibliographyOverview(this.config, bibPlugins)
                     )
             },
             document: {
@@ -105,8 +109,11 @@ export class App {
                         "/" + pathnameParts.slice(2).join("/")
                     ).replace(/\/?$/, "/")
                     return import(
-                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "../editor"
-                    ).then(({Editor}) => new Editor(this.config, path, id))
+                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
+                    ).then(
+                        ({Editor}) =>
+                            new Editor(this.config, path, id, editorPlugins)
+                    )
                 },
                 dbTables: {
                     data: {
@@ -125,8 +132,11 @@ export class App {
                     }
                     const path = "/"
                     return import(
-                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "../editor"
-                    ).then(({Editor}) => new Editor(this.config, path, token))
+                        /* webpackPrefetch: true */ /* webpackChunkName: "editor" */ "@fiduswriter/editor"
+                    ).then(
+                        ({Editor}) =>
+                            new Editor(this.config, path, token, editorPlugins)
+                    )
                 }
             },
             documents: {

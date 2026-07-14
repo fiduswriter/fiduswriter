@@ -386,7 +386,7 @@ class Command(BaseCommand):
         """Add a citation field to a DOCX paragraph.
 
         This creates a field code that mimics Zotero/Mendeley style citations
-        so that biblatex-csl-converter can parse it.
+        so that bibliojson can parse it.
         """
         from docx.oxml import OxmlElement
         from docx.oxml.ns import qn

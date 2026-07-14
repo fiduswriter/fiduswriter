@@ -83,6 +83,26 @@ function getPackageName(source) {
     return source.split("/")[0]
 }
 
+function extractJson5Deps(content) {
+    const deps = []
+    const depBlocks = [
+        /dependencies\s*:\s*\{([^}]*)\}/,
+        /peerDependencies\s*:\s*\{([^}]*)\}/
+    ]
+    depBlocks.forEach(pattern => {
+        const match = content.match(pattern)
+        if (match) {
+            const block = match[1]
+            const keyRegex = /(?:^|,)\s*["']?([A-Za-z0-9@_\-/.]+)["']?\s*:/g
+            let keyMatch
+            while ((keyMatch = keyRegex.exec(block)) !== null) {
+                deps.push(keyMatch[1])
+            }
+        }
+    })
+    return deps
+}
+
 function loadPackageDeps(packageFile) {
     try {
         const output = execSync(
@@ -91,7 +111,14 @@ function loadPackageDeps(packageFile) {
         )
         return JSON.parse(output.trim())
     } catch {
-        return []
+        // Pre-commit environments may not have npm_mjs installed; fall back
+        // to a simple regex-based parser for package.json5 files.
+        try {
+            const content = fs.readFileSync(packageFile, "utf-8")
+            return extractJson5Deps(content)
+        } catch {
+            return []
+        }
     }
 }
 

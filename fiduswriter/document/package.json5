@@ -1,10 +1,10 @@
 {
     dependencies: {
-        "@fiduswriter/common": "^0.1.5",
-        "@fiduswriter/document": "^0.2.20",
-        "@fiduswriter/document-template-editor": "^0.1.3",
-        "@fiduswriter/editor": "^0.1.20",
-        "citeproc-plus": "1.0.2",
+        "@fiduswriter/common": "^0.1.7",
+        "@fiduswriter/document": "^0.2.24",
+        "@fiduswriter/document-template-editor": "^0.1.5",
+        "@fiduswriter/editor": "^0.1.22",
+        "citeproc-plus": "^1.0.3",
         diff: "^5.0.0",
         fastdom: "1.0.11",
         "fast-deep-equal": "3.1.3",

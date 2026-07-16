@@ -146,7 +146,7 @@ def images(request):
 def save_category(request):
     response = {}
     response["entries"] = []
-    ids = request.JSON["ids"]
+    ids = [int(id_str) for id_str in request.JSON["ids"]]
     titles = request.JSON["titles"]
     ImageCategory.objects.filter(category_owner=request.user).exclude(
         id__in=ids
@@ -155,14 +155,14 @@ def save_category(request):
     for the_id in ids:
         the_title = titles[x]
         x += 1
-        if 0 == the_id:
+        if 0 == int(the_id):
             # if the category is new, then create new
             the_cat = ImageCategory(
                 category_title=the_title, category_owner=request.user
             )
         else:
             # if the category already exists, update the title
-            the_cat = ImageCategory.objects.get(pk=the_id)
+            the_cat = ImageCategory.objects.get(pk=int(the_id))
             the_cat.category_title = the_title
         the_cat.save()
         response["entries"].append(

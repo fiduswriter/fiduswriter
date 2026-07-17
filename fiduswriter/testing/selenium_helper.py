@@ -131,11 +131,18 @@ class SeleniumHelper:
 
     def click_new_document_button(self, driver):
         """Click the new document button and handle the encryption choice dialog if present."""
-        WebDriverWait(driver, self.wait_time).until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".new_document button")
-            )
-        ).click()
+        from selenium.common.exceptions import StaleElementReferenceException
+
+        for _attempt in range(3):
+            try:
+                WebDriverWait(driver, self.wait_time).until(
+                    EC.element_to_be_clickable(
+                        (By.CSS_SELECTOR, ".new_document button")
+                    )
+                ).click()
+                break
+            except StaleElementReferenceException:
+                time.sleep(0.5)
         try:
             WebDriverWait(driver, 2).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".fw-dialog"))

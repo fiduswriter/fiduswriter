@@ -34,6 +34,22 @@ body.editor header {
     cursor: text;
 }
 
+.ProseMirror span.placeholder::before {
+    color: var(--cs-white-placeholder-text);
+    content: attr(data-placeholder);
+    cursor: text;
+}
+
+.ProseMirror-focused span.placeholder.selected {
+    display: none;
+}
+
+.ProseMirror-focused
+    .ProseMirror:not(.ProseMirror-focused)
+    span.placeholder.selected {
+    display: inline;
+}
+
 .user-contents a,
 .user-contents a:hover {
     color: var(--cs-1-text);

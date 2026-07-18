@@ -14,7 +14,7 @@ from django.utils import timezone
 # Also defined in frontend
 # document/static/js/modules/schema/index.js
 
-FW_DOCUMENT_VERSION = 3.6
+FW_DOCUMENT_VERSION = 3.7
 
 
 class DocumentTemplate(models.Model):

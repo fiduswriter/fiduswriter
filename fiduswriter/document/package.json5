@@ -1,6 +1,6 @@
 {
     dependencies: {
-        "@fiduswriter/frontend": "^0.1.9",
+        "@fiduswriter/frontend": "^0.1.14",
         "@fiduswriter/document": "^0.2.26",
         "@fiduswriter/document-template-editor": "^0.1.6",
         "@fiduswriter/editor": "^0.1.46",

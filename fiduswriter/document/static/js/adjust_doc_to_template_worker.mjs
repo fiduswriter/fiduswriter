@@ -1,4 +1,4 @@
-import {AdjustDocToTemplateWorker} from "./workers/document_template/adjust_doc.js"
+import {AdjustDocToTemplateWorker} from "@fiduswriter/frontend/workers/adjust-doc"
 
 addEventListener("message", message => {
     const adjuster = new AdjustDocToTemplateWorker(

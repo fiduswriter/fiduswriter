@@ -1,5 +1,5 @@
+import {AdminConsole} from "@fiduswriter/frontend/admin_console"
 import {initSettings} from "fwtoolkit/settings"
-import {AdminConsole} from "./modules/admin_console/index.js"
 
 window.settings.gettext = window.gettext
 window.settings.staticUrl = window.staticUrl

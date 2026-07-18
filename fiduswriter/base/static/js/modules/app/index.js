@@ -14,26 +14,38 @@ import {
     showSystemMessage
 } from "fwtoolkit"
 import {getSettings, initSettings} from "fwtoolkit/settings"
+
+import {ContactInvite} from "@fiduswriter/frontend"
+import {
+    EmailConfirm,
+    LoginPage,
+    PasswordResetChangePassword,
+    PasswordResetRequest,
+    Signup
+} from "@fiduswriter/frontend"
+import {
+    DocTemplatesEditor,
+    DocTemplatesOverview
+} from "@fiduswriter/frontend/document_templates"
+// Frontend SPA modules from @fiduswriter/frontend
+import {DocumentOverview} from "@fiduswriter/frontend/documents/overview"
+import {IndexedDB} from "@fiduswriter/frontend/indexed_db"
+import {Page404} from "@fiduswriter/frontend/pages/404"
+import {FlatPage} from "@fiduswriter/frontend/pages/flatpage"
+import {OfflinePage} from "@fiduswriter/frontend/pages/offline"
+import {SetupPage} from "@fiduswriter/frontend/pages/setup"
+import {ContactsOverview} from "@fiduswriter/frontend/user/contacts"
+import {Profile} from "@fiduswriter/frontend/user/profile"
+
+// Django API adapters
+import {djangoApiConnectors} from "../api_adapters/index.js"
+
+// Plugins
 import {plugins} from "../../plugins/app"
 import {plugins as bibPlugins} from "../../plugins/bibliography_overview/index.js"
 import {plugins as citationDialogPlugins} from "../../plugins/citation_dialog/index.js"
 import {plugins as editorPlugins} from "../../plugins/editor/index.js"
 import {plugins as menuPlugins} from "../../plugins/menu"
-import {Page404} from "../404"
-import {ContactsOverview} from "../contacts"
-import {ContactInvite} from "../contacts/invite"
-import {EmailConfirm} from "../email_confirm"
-import {FlatPage} from "../flatpage"
-import {IndexedDB} from "../indexed_db"
-import {LoginPage} from "../login"
-import {OfflinePage} from "../offline"
-import {
-    PasswordResetChangePassword,
-    PasswordResetRequest
-} from "../password_reset"
-import {Profile} from "../profile"
-import {SetupPage} from "../setup"
-import {Signup} from "../signup"
 
 export class App {
     constructor(settings = {}) {
@@ -46,17 +58,15 @@ export class App {
         this.name = "Fidus Writer"
         this.config.app = this
         this.menuPlugins = menuPlugins
+        this.apiConnectors = djangoApiConnectors
         this.routes = {
             "": {
                 app: "document",
                 requireLogin: true,
-                open: () =>
-                    import(
-                        /* webpackPrefetch: true */ "../documents/overview"
-                    ).then(
-                        ({DocumentOverview}) =>
-                            new DocumentOverview(this.config)
-                    )
+                open: () => {
+                    const overview = new DocumentOverview(this.config, "/")
+                    return Promise.resolve(overview)
+                }
             },
             account: {
                 app: "user",
@@ -159,12 +169,8 @@ export class App {
                     const path = (
                         "/" + pathnameParts.slice(2).join("/")
                     ).replace(/\/?$/, "/")
-                    return import(
-                        /* webpackPrefetch: true */ "../documents/overview"
-                    ).then(
-                        ({DocumentOverview}) =>
-                            new DocumentOverview(this.config, path)
-                    )
+                    const overview = new DocumentOverview(this.config, path)
+                    return Promise.resolve(overview)
                 }
             },
             pages: {
@@ -215,15 +221,11 @@ export class App {
                 open: pathnameParts => {
                     const id = pathnameParts[2]
                     if (id) {
-                        return import("../user_template_manager/editor").then(
-                            ({DocTemplatesEditor}) =>
-                                new DocTemplatesEditor(this.config, id)
-                        )
+                        const editor = new DocTemplatesEditor(this.config, id)
+                        return Promise.resolve(editor)
                     }
-                    return import("../user_template_manager").then(
-                        ({DocTemplatesOverview}) =>
-                            new DocTemplatesOverview(this.config)
-                    )
+                    const overview = new DocTemplatesOverview(this.config)
+                    return Promise.resolve(overview)
                 }
             }
         }
@@ -336,7 +338,10 @@ export class App {
             .then(() => {
                 this.activateFidusPlugins()
                 // Initialize the indexedDB after the plugins have loaded.
-                this.indexedDB = new IndexedDB(this)
+                this.indexedDB = new IndexedDB(
+                    this.config.user.username,
+                    this.routes
+                )
                 return this.indexedDB.init()
             })
             .then(() => this.selectPage())

@@ -1,4 +1,4 @@
-import {ErrorHook} from "./modules/error_hook/index.js"
+import {ErrorHook} from "@fiduswriter/frontend/error_hook"
 
 const theErrorHook = new ErrorHook()
 theErrorHook.init()

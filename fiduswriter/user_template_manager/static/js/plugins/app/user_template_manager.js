@@ -1,4 +1,9 @@
 // Adds the templates overview page to the app routing table
+import {
+    DocTemplatesEditor,
+    DocTemplatesOverview
+} from "@fiduswriter/frontend/document_templates"
+
 export class DocTemplatesAppItem {
     constructor(app) {
         this.app = app
@@ -9,19 +14,13 @@ export class DocTemplatesAppItem {
             requireLogin: true,
             open: pathnameParts => {
                 if (pathnameParts.length < 4) {
-                    return import(
-                        "../../modules/user_template_manager/overview"
-                    ).then(
-                        ({DocTemplatesOverview}) =>
-                            new DocTemplatesOverview(this.app.config)
+                    return Promise.resolve(
+                        new DocTemplatesOverview(this.app.config)
                     )
                 } else {
                     const id = pathnameParts[2]
-                    return import(
-                        "../../modules/user_template_manager/editor"
-                    ).then(
-                        ({DocTemplatesEditor}) =>
-                            new DocTemplatesEditor(this.app.config, id)
+                    return Promise.resolve(
+                        new DocTemplatesEditor(this.app.config, id)
                     )
                 }
             },

@@ -6,10 +6,6 @@ button {
     outline-width: 0;
 }
 
-input[type="text"].category-form {
-    width: calc(100% - 38px);
-}
-
 textarea {
     padding: 2px;
 }
@@ -32,6 +28,12 @@ textarea {
     color: var(--cs-white-text);
     background-color: var(--input-background-color);
     border: 0 none;
+}
+
+input[type="text"].category-form {
+    width: calc(100% - 38px);
+    display: inline-block;
+    vertical-align: middle;
 }
 
 input[type="text"]:focus,

@@ -18,8 +18,8 @@
     license: "AGPL",
     private: true,
     dependencies: {
-        "@fiduswriter/frontend": "^0.1.7",
-        "@fiduswriter/image-manager": "^0.1.6",
+        "@fiduswriter/frontend": "^0.1.9",
+        "@fiduswriter/image-manager": "^0.1.7",
         "fwtoolkit": "^0.1.11",
         "file-loader": "^6.2.0",
         "diff-dom": "5.2.1",

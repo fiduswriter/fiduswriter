@@ -18,6 +18,9 @@ migrating a plugin from Fidus Writer 4.1.x to 5.0.0.
 | **Test fixture generation** | `generate_import_testfiles` now writes fixtures into the `@fiduswriter/document` package tree |
 | **CSS classes / IDs** | All fwtoolkit classes and IDs now use a single `fw-` prefix |
 | **Dependencies** | `@fiduswriter/document` and `fwtoolkit` are installed from npm |
+| **@fiduswriter/common → @fiduswriter/frontend** | `@fiduswriter/common` has been renamed to `@fiduswriter/frontend` and expanded to contain the full SPA shell (router, pages, document overview, profile, auth, contacts, templates) |
+| **API connector pattern** | All direct `postJson`/`getJson` calls in the frontend package have been replaced with injectable `ApiConnectors`. The main app provides `djangoApiConnectors` in `base/static/js/modules/api_adapters/index.js`. |
+| **Page chrome decoupling** | `@fiduswriter/editor`, `@fiduswriter/bibliography-manager`, and `@fiduswriter/image-manager` no longer import from `@fiduswriter/frontend`. They accept `container: HTMLElement` and render into it, leaving page chrome (SiteMenu, FeedbackTab, baseBodyTemplate) to the SPA shell. |
 
 ---
 

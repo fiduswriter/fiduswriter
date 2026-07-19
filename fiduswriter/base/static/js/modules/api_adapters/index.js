@@ -273,7 +273,7 @@ export class DjangoFlatPageApi {
 // ---- SystemMessageApi ----
 export class DjangoSystemMessageApi {
     get() {
-        return getJson("/api/base/system_message/")
+        return getJson("/api/base/connection_info/")
     }
 
     send(data) {

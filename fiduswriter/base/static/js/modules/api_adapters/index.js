@@ -228,9 +228,7 @@ export class DjangoContactsApi {
 // ---- DocumentTemplateApi ----
 export class DjangoDocumentTemplateApi {
     list() {
-        return postJson("/api/user_template_manager/list/").then(
-            ({json}) => json
-        )
+        return getJson("/api/user_template_manager/list/")
     }
 
     get(data) {

@@ -3,23 +3,27 @@ import {get, getJson, post, postBare, postJson} from "fwtoolkit"
 // ---- DocumentListApi ----
 export class DjangoDocumentListApi {
     getDocumentList() {
-        return postJson("/api/document/documentlist/")
+        return postJson("/api/document/documentlist/").then(({json}) => json)
     }
 
     getDocumentListExtra(ids) {
-        return postJson("/api/document/documentlist/extra/", {ids})
+        return postJson("/api/document/documentlist/extra/", {ids}).then(
+            ({json}) => json
+        )
     }
 
     deleteDocument(data) {
-        return postJson("/api/document/delete/", data)
+        return postJson("/api/document/delete/", data).then(({json}) => json)
     }
 
     moveDocument(data) {
-        return postJson("/api/document/move/", data)
+        return postJson("/api/document/move/", data).then(({json}) => json)
     }
 
     getEncryptionKeys() {
-        return postJson("/api/document/encryption_key/get_all/", {})
+        return postJson("/api/document/encryption_key/get_all/", {}).then(
+            ({json}) => json
+        )
     }
 }
 
@@ -27,25 +31,36 @@ export class DjangoDocumentListApi {
 export class DjangoDocumentImportApi {
     createDoc(data, files) {
         if (files) {
-            return postJson("/api/document/create/", data, null, files)
+            return postJson("/api/document/create/", data, null, files).then(
+                ({json}) => json
+            )
         }
-        return postJson("/api/document/create/", data)
+        return postJson("/api/document/create/", data).then(({json}) => json)
     }
 
     saveImage(data, files) {
-        return postJson("/api/usermedia/save/", data, null, files)
+        return postJson("/api/usermedia/save/", data, null, files).then(
+            ({json}) => json
+        )
     }
 
     saveE2EEImage(data, files) {
-        return postJson("/api/usermedia/save_e2ee_image/", data, null, files)
+        return postJson(
+            "/api/usermedia/save_e2ee_image/",
+            data,
+            null,
+            files
+        ).then(({json}) => json)
     }
 
     saveDocument(data) {
-        return postJson("/api/document/save/", data)
+        return postJson("/api/document/save/", data).then(({json}) => json)
     }
 
     getTemplate(importId) {
-        return postJson("/api/document/import/template/", {import_id: importId})
+        return postJson("/api/document/import/template/", {
+            import_id: importId
+        }).then(({json}) => json)
     }
 }
 
@@ -100,7 +115,9 @@ export class DjangoUserProfileApi {
     }
 
     getConfirmKeyData(data) {
-        return postJson("/api/user/email/get_confirm_key_data/", data)
+        return postJson("/api/user/email/get_confirm_key_data/", data).then(
+            ({json}) => json
+        )
     }
 
     confirmEmail(key) {
@@ -149,30 +166,34 @@ export class DjangoAuthApi {
     }
 
     twoFactorSetup() {
-        return postJson("/api/user/two_factor/setup/")
+        return postJson("/api/user/two_factor/setup/").then(({json}) => json)
     }
 
     twoFactorVerify(data) {
-        return postJson("/api/user/two_factor/verify/", data)
+        return postJson("/api/user/two_factor/verify/", data).then(
+            ({json}) => json
+        )
     }
 
     twoFactorLogin(data) {
-        return postJson("/api/user/two_factor/login/", data)
+        return postJson("/api/user/two_factor/login/", data).then(
+            ({json}) => json
+        )
     }
 
     twoFactorDisable() {
-        return postJson("/api/user/two_factor/disable/")
+        return postJson("/api/user/two_factor/disable/").then(({json}) => json)
     }
 
     twoFactorStatus() {
-        return postJson("/api/user/two_factor/status/")
+        return postJson("/api/user/two_factor/status/").then(({json}) => json)
     }
 }
 
 // ---- ContactsApi ----
 export class DjangoContactsApi {
     list() {
-        return postJson("/api/user/contacts/list/")
+        return postJson("/api/user/contacts/list/").then(({json}) => json)
     }
 
     delete(data) {
@@ -200,18 +221,22 @@ export class DjangoContactsApi {
     }
 
     invite(data) {
-        return postJson("/api/user/invite/", data)
+        return postJson("/api/user/invite/", data).then(({json}) => json)
     }
 }
 
 // ---- DocumentTemplateApi ----
 export class DjangoDocumentTemplateApi {
     list() {
-        return postJson("/api/user_template_manager/list/")
+        return postJson("/api/user_template_manager/list/").then(
+            ({json}) => json
+        )
     }
 
     get(data) {
-        return postJson("/api/user_template_manager/get/", data)
+        return postJson("/api/user_template_manager/get/", data).then(
+            ({json}) => json
+        )
     }
 
     save(data) {
@@ -219,7 +244,9 @@ export class DjangoDocumentTemplateApi {
     }
 
     delete(data) {
-        return postJson("/api/user_template_manager/delete/", data)
+        return postJson("/api/user_template_manager/delete/", data).then(
+            ({json}) => json
+        )
     }
 
     create(data, files) {
@@ -230,14 +257,18 @@ export class DjangoDocumentTemplateApi {
     }
 
     copy(data) {
-        return postJson("/api/user_template_manager/copy/", data)
+        return postJson("/api/user_template_manager/copy/", data).then(
+            ({json}) => json
+        )
     }
 }
 
 // ---- FlatPageApi ----
 export class DjangoFlatPageApi {
     get(key) {
-        return postJson("/api/base/flatpage/", {url: key})
+        return postJson("/api/base/flatpage/", {url: key}).then(
+            ({json}) => json
+        )
     }
 }
 
@@ -248,7 +279,9 @@ export class DjangoSystemMessageApi {
     }
 
     send(data) {
-        return postJson("/api/base/send_system_message/", data)
+        return postJson("/api/base/send_system_message/", data).then(
+            ({json}) => json
+        )
     }
 }
 
@@ -279,11 +312,15 @@ export class DjangoConfigApi {
 // ---- MaintenanceApi ----
 export class DjangoMaintenanceApi {
     getAllOldDocs() {
-        return postJson("/api/document/admin/get_all_old/")
+        return postJson("/api/document/admin/get_all_old/").then(
+            ({json}) => json
+        )
     }
 
     getUserBibList(data) {
-        return postJson("/api/document/admin/get_user_biblist/", data)
+        return postJson("/api/document/admin/get_user_biblist/", data).then(
+            ({json}) => json
+        )
     }
 
     saveDoc(data) {
@@ -295,11 +332,15 @@ export class DjangoMaintenanceApi {
     }
 
     getAllTemplateIds() {
-        return postJson("/api/document/admin/get_all_template_ids/")
+        return postJson("/api/document/admin/get_all_template_ids/").then(
+            ({json}) => json
+        )
     }
 
     getTemplateBase(data) {
-        return postJson("/api/document/admin/get_template/base/", data)
+        return postJson("/api/document/admin/get_template/base/", data).then(
+            ({json}) => json
+        )
     }
 
     saveTemplate(data) {
@@ -307,7 +348,9 @@ export class DjangoMaintenanceApi {
     }
 
     getAllRevisionIds() {
-        return postJson("/api/document/admin/get_all_revision_ids/")
+        return postJson("/api/document/admin/get_all_revision_ids/").then(
+            ({json}) => json
+        )
     }
 
     getRevision(id) {

@@ -1,6 +1,6 @@
 import {DocMaintenance} from "@fiduswriter/frontend/maintenance"
 import {initSettings} from "fwtoolkit/settings"
-import {djangoApiConnectors} from "../../base/static/js/modules/api_adapters/index.js"
+import {djangoApiConnectors} from "./modules/api_adapters/index.js"
 
 window.settings.gettext = window.gettext
 window.settings.staticUrl = window.staticUrl

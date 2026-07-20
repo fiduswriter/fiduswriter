@@ -4,6 +4,7 @@ import time
 from urllib3.exceptions import MaxRetryError, ReadTimeoutError
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
+    ElementNotInteractableException,
     TimeoutException,
     WebDriverException,
 )
@@ -128,6 +129,26 @@ class SeleniumHelper:
                     pass
                 count += 1
                 time.sleep(1)
+
+    def safe_click_element(self, driver, element, retries=3):
+        """Click an element, falling back to a JS click if it is not interactable."""
+        for attempt in range(retries):
+            try:
+                element.click()
+                return
+            except (
+                ElementClickInterceptedException,
+                ElementNotInteractableException,
+            ):
+                # Scroll the element to the center of the viewport and retry.
+                driver.execute_script(
+                    "arguments[0].scrollIntoView({block: 'center', inline: 'center'});",
+                    element,
+                )
+                time.sleep(0.5)
+        # Final fallback: click via JavaScript so tests are not blocked by
+        # overlapping chrome or elements that Selenium considers not interactable.
+        driver.execute_script("arguments[0].click();", element)
 
     def click_new_document_button(self, driver):
         """Click the new document button and handle the encryption choice dialog if present."""

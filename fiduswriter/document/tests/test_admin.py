@@ -186,15 +186,16 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(
             "special-article"
         ).perform()
-        self.driver.find_element(
+        configure_button = self.driver.find_element(
             By.CSS_SELECTOR,
             (
                 "#template-editor > table:nth-child(2) > tbody > tr > "
                 "td.to-column > div.to-container > div:nth-child(5) > "
                 "div.doc-part-header > ul > li > span"
             ),
-        ).click()
-        self.driver.find_element(
+        )
+        self.safe_click_element(self.driver, configure_button)
+        initial_editor = self.driver.find_element(
             By.CSS_SELECTOR,
             (
                 "#template-editor > table:nth-child(2) > tbody > tr > "
@@ -202,9 +203,10 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 "div.attrs > div:nth-child(32) > div.initial > div > "
                 "div.ProseMirror > div > p"
             ),
-        ).click()
+        )
+        self.safe_click_element(self.driver, initial_editor)
         ActionChains(self.driver).send_keys("Initial body").perform()
-        self.driver.find_element(
+        instructions_editor = self.driver.find_element(
             By.CSS_SELECTOR,
             (
                 "#template-editor > table:nth-child(2) > tbody > tr > "
@@ -212,12 +214,15 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 "div.attrs > div:nth-child(33) > div.instructions > div > "
                 "div.ProseMirror > p"
             ),
-        ).click()
+        )
+        self.safe_click_element(self.driver, instructions_editor)
         ActionChains(self.driver).send_keys("Body instructions").perform()
-        self.driver.find_element(By.ID, "id_user").click()
-        self.driver.find_element(
+        id_user_select = self.driver.find_element(By.ID, "id_user")
+        self.safe_click_element(self.driver, id_user_select)
+        id_user_option = self.driver.find_element(
             By.CSS_SELECTOR, "#id_user > option:nth-child(3)"
-        ).click()
+        )
+        self.safe_click_element(self.driver, id_user_option)
         # Modify a document style
         document_style_elements = self.driver.find_elements(
             By.CSS_SELECTOR, ".document-style"

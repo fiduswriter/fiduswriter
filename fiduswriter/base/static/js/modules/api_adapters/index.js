@@ -53,7 +53,7 @@ export class DjangoDocumentImportApi {
     }
 
     saveDocument(data) {
-        return postJson("/api/document/save/", data).then(({json}) => json)
+        return postJson("/api/document/import/", data).then(({json}) => json)
     }
 
     getTemplate(importId) {

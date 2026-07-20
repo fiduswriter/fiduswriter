@@ -46,7 +46,7 @@ declare -A PACKAGE_DIRS=(
     ["@fiduswriter/document"]="fiduswriter-document-js"
     ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-js"
     ["@fiduswriter/editor"]="fiduswriter-editor-js"
-    ["@fiduswriter/frontend"]="fiduswriter-common-js"
+    ["@fiduswriter/frontend"]="fiduswriter-frontend-js"
 )
 
 MAIN_FILES=(
@@ -60,7 +60,7 @@ SIBLING_PACKAGES=(
     "fiduswriter-document-js:@fiduswriter/bibliography-manager"
     "fiduswriter-document-template-editor-js:@fiduswriter/document"
     "fiduswriter-editor-js:@fiduswriter/bibliography-manager,@fiduswriter/document"
-    "fiduswriter-common-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor"
+    "fiduswriter-frontend-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor"
 )
 
 update_file() {
@@ -115,6 +115,10 @@ handle_bibliography_manager() {
     local pkg="@fiduswriter/bibliography-manager"
     local dir_name="${PACKAGE_DIRS[$pkg]}"
     local sibling_path="$SIBLINGS_DIR/$dir_name"
+
+    if [[ ! -f "$file" ]]; then
+        return
+    fi
 
     if [[ "$MODE" == "local" ]]; then
         if [[ ! -d "$sibling_path" ]]; then

@@ -123,7 +123,10 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
         )
         response = dict()
         response["type"] = "welcome"
-        await self.send_message(response)
+        if not await self.send_message(response):
+            # Client disconnected before the welcome message could be sent.
+            # Channels will clean up the closed transport.
+            return False
         return True
 
     def _extract_token_from_scope(self):
@@ -241,7 +244,16 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
             f"ParticipantID:{self.id} Type:{message['type']} "
             f"S count server:{message['s']} C count server:{message['c']}"
         )
-        await self.send(text_data=json.dumps(message))
+        try:
+            await self.send(text_data=json.dumps(message))
+            return True
+        except RuntimeError:
+            # Transport closed; message will be resent when the client reconnects.
+            logger.warning(
+                f"WebSocket send failed: transport closed for "
+                f"{self.endpoint} user {self.user.id}"
+            )
+            return False
 
     async def unfixable(self):
         pass
@@ -268,4 +280,10 @@ class BaseWebsocketConsumer(AsyncWebsocketConsumer):
             await self.send_message(message)
 
     async def send_pong(self):
-        await self.send(text_data='{"type": "pong"}')
+        try:
+            await self.send(text_data='{"type": "pong"}')
+        except RuntimeError:
+            logger.warning(
+                f"WebSocket pong failed: transport closed for "
+                f"{self.endpoint} user {self.user.id}"
+            )

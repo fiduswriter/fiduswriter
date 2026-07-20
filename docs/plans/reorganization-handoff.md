@@ -178,6 +178,57 @@ replaced with the hashed chunk filename, causing a 404.
    - `document/`: `@fiduswriter/document`, `@fiduswriter/document-template-editor`, `@fiduswriter/editor`
    - `bibliography/`: `@fiduswriter/bibliography-manager`
 
+## Remaining direct network calls to route through API adapters
+
+The API-connector migration replaced all direct `postJson`/`getJson` calls in
+`@fiduswriter/frontend`. The following backend-agnostic packages still call
+`fwtoolkit`'s `postJson`/`getJson` directly. These should be refactored to
+accept injectable connectors (or at least reviewed) so the packages stay
+backend-agnostic.
+
+### `@fiduswriter/editor`
+
+| File | Endpoint(s) | Note |
+|------|-------------|------|
+| `src/index.ts` | `/api/document/create_doc/`, `/api/document/get_ws_base/`, `/api/document/get_doc_data/` | Document creation / loading |
+| `src/no_collab_save/index.ts` | `/api/document/save/` | Non-collaborative save |
+| `src/databases/images.ts` | `/api/document/e2ee_image/`, `/api/usermedia/save/`, `/api/usermedia/images/` | Image DB sync |
+| `src/exporter/native/copy.ts` | `/api/document/import/create/`, `/api/document/import/` | Import/copy flow |
+| `src/documents/access_rights/index.ts` | `/api/document/get_access_rights/`, `/api/document/share_token/*` | Access rights & share tokens |
+| `src/menus/headerbar/model.ts` | `/api/document/request_access/` | Access request |
+| `src/contacts/add_dialog.ts` | `/api/user/invites/add/` | Contact invite |
+| `src/document_template/exporter.ts` | (dynamic `this.getUrl`) | Template export |
+
+### `@fiduswriter/bibliography-manager`
+
+| File | Endpoint(s) | Note |
+|------|-------------|------|
+| `src/database/server_connector.ts` | `/api/bibliography/biblist/`, `/api/bibliography/save/`, `/api/bibliography/save_category/` | Main server connector |
+
+### `@fiduswriter/image-manager`
+
+| File | Endpoint(s) | Note |
+|------|-------------|------|
+| `src/database.ts` | `/api/usermedia/images/`, `/api/usermedia/save/` | Image DB |
+| `src/overview/categories.ts` | `/api/usermedia/save_category/` | Category save |
+
+### `@fiduswriter/document-template-editor`
+
+| File | Endpoint(s) | Note |
+|------|-------------|------|
+| `src/export_template_dialog.ts` | `/api/style/delete_export_template/`, `/api/style/save_export_template/` | Export templates |
+| `src/document_style_dialog.ts` | `/api/style/delete_document_style/`, `/api/style/save_document_style/` | Document styles |
+| `src/importer.ts` | `/api/style/import_document_style/` | Style import |
+| `src/exporter.ts` | (dynamic `this.getUrl`) | Style export |
+| `src/change_admin.ts` | `/api/document/admin/get_template/extras/` | Admin extras |
+
+### Lower-level utilities (likely acceptable)
+
+`fwtoolkit` itself still exposes `postJson`/`getJson` and uses them internally
+for E2EE passphrase management (`src/e2ee/passphrase-manager.ts`) and file
+move helpers (`src/file/tools.ts`). These are foundational utilities, not
+page-level code, so they do not need adapter injection.
+
 ## Lessons learned
 
 1. **rspack worker bundling**: The `new URL("./worker.js", import.meta.url)`

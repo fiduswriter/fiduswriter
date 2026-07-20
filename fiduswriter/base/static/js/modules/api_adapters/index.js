@@ -31,7 +31,7 @@ export class DjangoDocumentListApi {
 export class DjangoDocumentImportApi {
     createDoc(data, files) {
         if (files) {
-            return postJson("/api/document/create/", data, null, files).then(
+            return postJson("/api/document/create/", data, files).then(
                 ({json}) => json
             )
         }
@@ -39,18 +39,15 @@ export class DjangoDocumentImportApi {
     }
 
     saveImage(data, files) {
-        return postJson("/api/usermedia/save/", data, null, files).then(
+        return postJson("/api/usermedia/save/", data, files).then(
             ({json}) => json
         )
     }
 
     saveE2EEImage(data, files) {
-        return postJson(
-            "/api/usermedia/save_e2ee_image/",
-            data,
-            null,
-            files
-        ).then(({json}) => json)
+        return postJson("/api/usermedia/save_e2ee_image/", data, files).then(
+            ({json}) => json
+        )
     }
 
     saveDocument(data) {
@@ -75,7 +72,7 @@ export class DjangoUserProfileApi {
     }
 
     avatarUpload(files) {
-        return post("/api/user/avatar/upload/", {}, null, files)
+        return post("/api/user/avatar/upload/", {}, files)
     }
 
     avatarDelete() {
@@ -115,40 +112,24 @@ export class DjangoUserProfileApi {
     }
 
     getConfirmKeyData(data) {
-        return postJson("/api/user/email/get_confirm_key_data/", data).then(
+        return postJson("/api/user/get_confirmkey_data/", data).then(
             ({json}) => json
         )
     }
 
     confirmEmail(key) {
-        return post("/api/user/email/confirm/", {key})
+        return post(`/api/user/confirm-email/${key}/`)
     }
 }
 
 // ---- AuthApi ----
 export class DjangoAuthApi {
     login(data) {
-        return postBare("/api/user/login/", data)
-            .then(response =>
-                response.json().then(json => ({json, status: response.status}))
-            )
-            .catch(response => {
-                if (
-                    !(response instanceof Response) ||
-                    response.status !== 400
-                ) {
-                    return Promise.reject(response)
-                }
-                return response
-                    .json()
-                    .then(json => ({json, status: response.status}))
-            })
+        return postJson("/api/user/login/", data)
     }
 
     signup(data) {
-        return postBare("/api/user/signup/", data).then(response =>
-            response.json().then(json => ({json}))
-        )
+        return postJson("/api/user/signup/", data).then(({json}) => ({json}))
     }
 
     passwordReset(data) {
@@ -156,9 +137,11 @@ export class DjangoAuthApi {
     }
 
     passwordResetKeyGet(key) {
-        return getJson(`/api/user/password/reset/key/${key}/`).then(json => ({
-            url: json.url || `/api/user/password/reset/key/${key}/`
-        }))
+        return get(`/api/account/password/reset/key/${key}/`).then(
+            response => ({
+                url: response.url
+            })
+        )
     }
 
     passwordResetKeyPost(url, data) {
@@ -166,27 +149,25 @@ export class DjangoAuthApi {
     }
 
     twoFactorSetup() {
-        return postJson("/api/user/two_factor/setup/").then(({json}) => json)
+        return postJson("/api/user/two-factor/setup/").then(({json}) => json)
     }
 
     twoFactorVerify(data) {
-        return postJson("/api/user/two_factor/verify/", data).then(
+        return postJson("/api/user/two-factor/verify/", data).then(
             ({json}) => json
         )
     }
 
     twoFactorLogin(data) {
-        return postJson("/api/user/two_factor/login/", data).then(
-            ({json}) => json
-        )
+        return postJson("/api/user/login/", data).then(({json}) => json)
     }
 
     twoFactorDisable() {
-        return postJson("/api/user/two_factor/disable/").then(({json}) => json)
+        return postJson("/api/user/two-factor/disable/").then(({json}) => json)
     }
 
     twoFactorStatus() {
-        return postJson("/api/user/two_factor/status/").then(({json}) => json)
+        return postJson("/api/user/two-factor/status/").then(({json}) => json)
     }
 }
 
@@ -249,7 +230,7 @@ export class DjangoDocumentTemplateApi {
 
     create(data, files) {
         if (files) {
-            return post("/api/user_template_manager/create/", data, null, files)
+            return post("/api/user_template_manager/create/", data, files)
         }
         return post("/api/user_template_manager/create/", data)
     }
@@ -356,12 +337,16 @@ export class DjangoMaintenanceApi {
     }
 
     updateRevision(id, blob) {
-        return post("/api/document/admin/update_revision/", {id}, null, {
-            file: {
-                file: blob,
-                filename: "some_file.fidus"
+        return post(
+            "/api/document/admin/update_revision/",
+            {id},
+            {
+                file: {
+                    file: blob,
+                    filename: "some_file.fidus"
+                }
             }
-        })
+        )
     }
 }
 

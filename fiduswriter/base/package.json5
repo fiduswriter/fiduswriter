@@ -21,37 +21,9 @@
         "@fiduswriter/frontend": "^0.1.28",
         "@fiduswriter/image-manager": "^0.1.13",
         "fwtoolkit": "^0.2.0",
-        "file-loader": "^6.2.0",
-        "diff-dom": "5.2.1",
-        "downloadjs": "1.4.7",
         "@fortawesome/fontawesome-free": "^7.2.0",
-        "simple-datatables": "^10.2.0",
-        "@vivliostyle/print": "^2.42.0",
-        "w3c-keyname": "2.2.8",
         "source-map-loader": "5.0.0",
-        "stacktrace-js": "2.0.2",
         "regenerator-runtime": "0.14.1",
-        "@aaroon/workbox-rspack-plugin": "0.3.3",
-        "qrcode": "^1.5.4"
-    },
-    overrides: {
-        "fwtoolkit": "^0.2.0",
-        "prosemirror-changeset": "2.2.1",
-        "prosemirror-collab": "1.3.1",
-        "prosemirror-commands": "1.7.0",
-        "prosemirror-dropcursor": "1.8.1",
-        "prosemirror-example-setup": "1.2.3",
-        "prosemirror-gapcursor": "1.3.2",
-        "prosemirror-history": "1.3.2",
-        "prosemirror-keymap": "1.2.2",
-        "prosemirror-menu": "1.2.4",
-        "prosemirror-model": "1.25.0",
-        "prosemirror-schema-basic": "1.2.4",
-        "prosemirror-schema-list": "1.5.1",
-        "prosemirror-state": "1.4.3",
-        "prosemirror-tables": "1.6.4",
-        "prosemirror-transform": "1.10.3",
-        "prosemirror-view": "1.38.1",
-        "prosemirror-suggestions": "0.2.0"
+        "@aaroon/workbox-rspack-plugin": "0.3.3"
     }
 }

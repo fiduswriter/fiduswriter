@@ -31,11 +31,13 @@ export class DjangoDocumentListApi {
 export class DjangoDocumentImportApi {
     createDoc(data, files) {
         if (files) {
-            return postJson("/api/document/create/", data, files).then(
+            return postJson("/api/document/import/create/", data, files).then(
                 ({json}) => json
             )
         }
-        return postJson("/api/document/create/", data).then(({json}) => json)
+        return postJson("/api/document/import/create/", data).then(
+            ({json}) => json
+        )
     }
 
     saveImage(data, files) {
@@ -45,7 +47,7 @@ export class DjangoDocumentImportApi {
     }
 
     saveE2EEImage(data, files) {
-        return postJson("/api/usermedia/save_e2ee_image/", data, files).then(
+        return postJson("/api/document/e2ee_image/", data, files).then(
             ({json}) => json
         )
     }
@@ -55,7 +57,7 @@ export class DjangoDocumentImportApi {
     }
 
     getTemplate(importId) {
-        return postJson("/api/document/import/template/", {
+        return postJson("/api/document/get_template/", {
             import_id: importId
         }).then(({json}) => json)
     }
@@ -146,6 +148,10 @@ export class DjangoAuthApi {
 
     passwordResetKeyPost(url, data) {
         return post(url, data)
+    }
+
+    logout() {
+        return post("/api/user/logout/")
     }
 
     twoFactorSetup() {
@@ -281,6 +287,13 @@ export class DjangoErrorHookApi {
     }
 }
 
+// ---- FeedbackApi ----
+export class DjangoFeedbackApi {
+    send(data) {
+        return post("/api/feedback/feedback/", data)
+    }
+}
+
 // ---- ConfigApi ----
 export class DjangoConfigApi {
     getConfiguration() {
@@ -374,6 +387,7 @@ export const djangoApiConnectors = {
     flatPage: new DjangoFlatPageApi(),
     systemMessage: new DjangoSystemMessageApi(),
     errorHook: new DjangoErrorHookApi(),
+    feedback: new DjangoFeedbackApi(),
     config: new DjangoConfigApi(),
     maintenance: new DjangoMaintenanceApi(),
     revision: new DjangoRevisionApi()

@@ -14,7 +14,7 @@ class DocumentStyle(models.Model):
         default="default",
     )
     contents = models.TextField(
-        help_text="The CSS style definiton.", default=""
+        help_text="The CSS style definition.", default=""
     )
     document_template = models.ForeignKey(
         "document.DocumentTemplate", on_delete=models.deletion.CASCADE

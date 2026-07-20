@@ -20,7 +20,7 @@
     dependencies: {
         "@fiduswriter/frontend": "^0.1.24",
         "@fiduswriter/image-manager": "^0.1.13",
-        "fwtoolkit": "^0.1.11",
+        "fwtoolkit": "^0.2.0",
         "file-loader": "^6.2.0",
         "diff-dom": "5.2.1",
         "downloadjs": "1.4.7",
@@ -35,6 +35,7 @@
         "qrcode": "^1.5.4"
     },
     overrides: {
+        "fwtoolkit": "^0.2.0",
         "prosemirror-changeset": "2.2.1",
         "prosemirror-collab": "1.3.1",
         "prosemirror-commands": "1.7.0",

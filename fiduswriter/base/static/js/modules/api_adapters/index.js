@@ -279,11 +279,28 @@ export class DjangoUserProfileApi {
 // ---- AuthApi ----
 export class DjangoAuthApi {
     login(data) {
-        return postJson("/api/user/login/", data)
+        return postJson("/api/user/login/", data).then(({json, status}) => {
+            let requiresEmailConfirmation = false
+            if (json.html && typeof json.html === "string") {
+                try {
+                    const htmlValues = JSON.parse(json.html)
+                    if (htmlValues.Location === "/api/account/confirm-email/") {
+                        requiresEmailConfirmation = true
+                    }
+                } catch {
+                    // ignore malformed html payload
+                }
+            }
+            return {json, status, requiresEmailConfirmation}
+        })
     }
 
     signup(data) {
-        return postJson("/api/user/signup/", data).then(({json}) => ({json}))
+        return postJson("/api/user/signup/", data).then(({json}) => ({
+            json,
+            requiresEmailConfirmation:
+                json.location === "/api/account/confirm-email/"
+        }))
     }
 
     passwordReset(data) {

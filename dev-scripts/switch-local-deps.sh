@@ -60,11 +60,12 @@ MAIN_FILES=(
 # Sibling packages that depend on other sibling packages.
 # Format: "sibling-dir:dep1,dep2,..."
 SIBLING_PACKAGES=(
+    "fiduswriter-bibliography-manager-js:fwtoolkit"
     "fiduswriter-books-document-js:@fiduswriter/document,fwtoolkit"
-    "fiduswriter-document-js:@fiduswriter/bibliography-manager"
-    "fiduswriter-document-template-editor-js:@fiduswriter/document"
-    "fiduswriter-editor-js:@fiduswriter/bibliography-manager,@fiduswriter/document"
-    "fiduswriter-frontend-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor"
+    "fiduswriter-document-js:fwtoolkit"
+    "fiduswriter-document-template-editor-js:@fiduswriter/document,fwtoolkit"
+    "fiduswriter-editor-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/image-manager,fwtoolkit"
+    "fiduswriter-frontend-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-image-manager-js:fwtoolkit"
 )
 

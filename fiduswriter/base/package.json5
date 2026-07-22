@@ -18,9 +18,9 @@
     license: "AGPL",
     private: true,
     dependencies: {
-        "@fiduswriter/frontend": "^0.1.28",
-        "@fiduswriter/image-manager": "file:../../../fiduswriter-image-manager-js",
-        "fwtoolkit": "file:../../../fwtoolkit",
+        "@fiduswriter/frontend": "^0.1.29",
+        "@fiduswriter/image-manager": "^0.1.14",
+        "fwtoolkit": "^0.2.1",
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",
         "regenerator-runtime": "0.14.1",

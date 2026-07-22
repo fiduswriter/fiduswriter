@@ -43,10 +43,13 @@ fi
 
 declare -A PACKAGE_DIRS=(
     ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-js"
+    ["@fiduswriter/books-document"]="fiduswriter-books-document-js"
     ["@fiduswriter/document"]="fiduswriter-document-js"
     ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-js"
     ["@fiduswriter/editor"]="fiduswriter-editor-js"
     ["@fiduswriter/frontend"]="fiduswriter-frontend-js"
+    ["@fiduswriter/image-manager"]="fiduswriter-image-manager-js"
+    ["fwtoolkit"]="fwtoolkit"
 )
 
 MAIN_FILES=(
@@ -57,10 +60,12 @@ MAIN_FILES=(
 # Sibling packages that depend on other sibling packages.
 # Format: "sibling-dir:dep1,dep2,..."
 SIBLING_PACKAGES=(
+    "fiduswriter-books-document-js:@fiduswriter/document,fwtoolkit"
     "fiduswriter-document-js:@fiduswriter/bibliography-manager"
     "fiduswriter-document-template-editor-js:@fiduswriter/document"
     "fiduswriter-editor-js:@fiduswriter/bibliography-manager,@fiduswriter/document"
     "fiduswriter-frontend-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor"
+    "fiduswriter-image-manager-js:fwtoolkit"
 )
 
 update_file() {

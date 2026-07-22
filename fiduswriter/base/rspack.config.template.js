@@ -1,3 +1,4 @@
+const path = require("path")
 const rspack = require("@rspack/core")
 const WorkboxPlugin = require("@aaroon/workbox-rspack-plugin")
 
@@ -22,6 +23,9 @@ module.exports = {
             callback()
         }
     ],
+    resolve: {
+        modules: [path.resolve(__dirname, "node_modules"), "node_modules"]
+    },
     module: {
         rules: [
             {

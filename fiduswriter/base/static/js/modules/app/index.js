@@ -34,6 +34,21 @@ const menuPluginList = [
     ["user_template_manager", userTemplateManagerMenuPlugins]
 ]
 
+const djangoApiUrlMap = {
+    "i18n.setLang": "/api/i18n/setlang/",
+    "e2ee.user_encryption_key": "/api/user/encryption_key/",
+    "e2ee.user_encryption_key_save": "/api/user/encryption_key/save/",
+    "e2ee.user_public_key": "/api/user/encryption_public_key/{userId}/",
+    "user.preferences": "/api/user/preferences/get/",
+    "user.preferences_update": "/api/user/preferences/update/",
+    "e2ee.document_encryption_key_get": "/api/document/encryption_key/get/",
+    "e2ee.document_encryption_key_update":
+        "/api/document/encryption_key/update/",
+    "e2ee.document_encryption_key_save": "/api/document/encryption_key/save/"
+}
+
+window.settings.apiUrlMap = djangoApiUrlMap
+
 const theApp = new App(djangoApiConnectors, window.settings, {
     appPlugins,
     menuPlugins: menuPluginList,

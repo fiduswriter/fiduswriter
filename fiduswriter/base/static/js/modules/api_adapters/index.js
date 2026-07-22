@@ -1,7 +1,7 @@
 import {get, getJson, post, postBare, postJson} from "fwtoolkit"
 
-// ---- DocumentListApi ----
-export class DjangoDocumentListApi {
+// ---- DocumentApi ----
+export class DjangoDocumentApi {
     getDocumentList() {
         return postJson("/api/document/documentlist/").then(({json}) => json)
     }
@@ -25,19 +25,107 @@ export class DjangoDocumentListApi {
             ({json}) => json
         )
     }
+
+    createDocument(data) {
+        return postJson("/api/document/create_doc/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    getWebSocketBase(data) {
+        return postJson("/api/document/get_ws_base/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    getDocumentStyles(data) {
+        return postJson("/api/document/get_doc_styles/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    getDocumentData(data) {
+        return postJson("/api/document/get_doc_data/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    saveDocument(data, options = {}) {
+        return postJson("/api/document/save/", data, {}, options).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    commentNotify(data) {
+        return post("/api/document/comment_notify/", data)
+    }
+
+    requestAccess(data) {
+        return postJson("/api/document/request_access/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    validateShareToken(token) {
+        return postJson(`/api/document/share_token/validate/${token}/`).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    listShareTokens(document_id) {
+        return postJson("/api/document/share_token/list/", {document_id}).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    createShareToken(data) {
+        return postJson("/api/document/share_token/create/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    revokeShareToken(token_id) {
+        return postJson("/api/document/share_token/revoke/", {token_id}).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    getAccessRights(data) {
+        return postJson("/api/document/get_access_rights/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    saveAccessRights(data) {
+        return post("/api/document/save_access_rights/", data)
+    }
+
+    saveE2EEImage(data, files) {
+        return postJson("/api/document/e2ee_image/", data, files).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    deleteE2EEImage(data) {
+        return post("/api/document/delete_e2ee_image/", data)
+    }
+
+    uploadRevision(data, files) {
+        return post("/api/document/upload/", data, files)
+    }
+
+    getTemplateForDoc(id, token) {
+        return postJson(
+            "/api/document/get_template_for_doc/",
+            token ? {id, token} : {id}
+        ).then(({json, status}) => ({json, status}))
+    }
 }
 
-// ---- DocumentImportApi ----
-export class DjangoDocumentImportApi {
-    createDoc(data, files) {
-        if (files) {
-            return postJson("/api/document/import/create/", data, files).then(
-                ({json}) => json
-            )
-        }
-        return postJson("/api/document/import/create/", data).then(
-            ({json}) => json
-        )
+// ---- ImageApi ----
+export class DjangoImageApi {
+    getImages() {
+        return postJson("/api/usermedia/images/").then(({json}) => json)
     }
 
     saveImage(data, files) {
@@ -46,14 +134,78 @@ export class DjangoDocumentImportApi {
         )
     }
 
-    saveE2EEImage(data, files) {
-        return postJson("/api/document/e2ee_image/", data, files).then(
+    saveCategories(cats) {
+        return postJson("/api/usermedia/save_category/", cats).then(
             ({json}) => json
         )
     }
 
+    deleteImages(ids) {
+        return post("/api/usermedia/delete/", {ids})
+    }
+}
+
+// ---- BibliographyApi ----
+export class DjangoBibliographyApi {
+    getDB(lastModified, numberOfEntries, localStorageOwnerId) {
+        return postJson("/api/bibliography/biblist/", {
+            last_modified: lastModified,
+            number_of_entries: numberOfEntries,
+            user_id: localStorageOwnerId
+        }).then(({json}) => json)
+    }
+
+    saveBibEntries(tmpDB, isNew) {
+        return postJson("/api/bibliography/save/", {
+            is_new: isNew,
+            bibs: tmpDB
+        }).then(({json}) => json)
+    }
+
+    saveCategories(cats) {
+        return postJson("/api/bibliography/save_category/", cats).then(
+            ({json}) => json
+        )
+    }
+
+    deleteCategory(ids) {
+        return post("/api/bibliography/delete_category/", {ids})
+    }
+
+    deleteBibEntries(ids) {
+        return post("/api/bibliography/delete/", {ids})
+    }
+}
+
+// ---- DocumentImportApi ----
+export class DjangoDocumentImportApi {
+    createDoc(data, files) {
+        if (files) {
+            return postJson("/api/document/import/create/", data, files).then(
+                ({json, status}) => ({json, status})
+            )
+        }
+        return postJson("/api/document/import/create/", data).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    saveImage(data, files) {
+        return postJson("/api/usermedia/save/", data, files).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
+    saveE2EEImage(data, files) {
+        return postJson("/api/document/e2ee_image/", data, files).then(
+            ({json, status}) => ({json, status})
+        )
+    }
+
     saveDocument(data) {
-        return postJson("/api/document/import/", data).then(({json}) => json)
+        return postJson("/api/document/import/", data).then(
+            ({json, status}) => ({json, status})
+        )
     }
 
     getTemplate(importId) {
@@ -219,9 +371,10 @@ export class DjangoDocumentTemplateApi {
     }
 
     get(data) {
-        return postJson("/api/user_template_manager/get/", data).then(
-            ({json}) => json
-        )
+        return postJson(
+            "/api/user_template_manager/get/",
+            data.token ? data : {id: data.id}
+        ).then(({json}) => json)
     }
 
     save(data) {
@@ -243,6 +396,57 @@ export class DjangoDocumentTemplateApi {
 
     copy(data) {
         return postJson("/api/user_template_manager/copy/", data).then(
+            ({json}) => json
+        )
+    }
+
+    getTemplate(id, token) {
+        return postJson(
+            "/api/document/admin/get_template/",
+            token ? {id, token} : {id}
+        ).then(({json}) => json)
+    }
+
+    createTemplate(data, files) {
+        return postJson(
+            "/api/document/admin/create_template/",
+            data,
+            files
+        ).then(({json}) => json)
+    }
+
+    saveExportTemplate(data, files) {
+        return postJson("/api/style/save_export_template/", data, files).then(
+            ({json}) => json
+        )
+    }
+
+    deleteExportTemplate(id) {
+        return postJson("/api/style/delete_export_template/", {id}).then(
+            ({json}) => json
+        )
+    }
+
+    saveDocumentStyle(data, files) {
+        return postJson("/api/style/save_document_style/", data, files).then(
+            ({json}) => json
+        )
+    }
+
+    deleteDocumentStyle(id) {
+        return postJson("/api/style/delete_document_style/", {id}).then(
+            ({json}) => json
+        )
+    }
+
+    importDocumentStyle(data, files) {
+        return postJson("/api/style/import_document_style/", data, files).then(
+            ({json}) => json
+        )
+    }
+
+    getTemplateExtras(data) {
+        return postJson("/api/document/admin/get_template/extras/", data).then(
             ({json}) => json
         )
     }
@@ -378,7 +582,7 @@ export class DjangoRevisionApi {
 
 // ---- Bundled connectors ----
 export const djangoApiConnectors = {
-    documentList: new DjangoDocumentListApi(),
+    document: new DjangoDocumentApi(),
     documentImport: new DjangoDocumentImportApi(),
     userProfile: new DjangoUserProfileApi(),
     auth: new DjangoAuthApi(),
@@ -390,5 +594,7 @@ export const djangoApiConnectors = {
     feedback: new DjangoFeedbackApi(),
     config: new DjangoConfigApi(),
     maintenance: new DjangoMaintenanceApi(),
-    revision: new DjangoRevisionApi()
+    revision: new DjangoRevisionApi(),
+    bibliography: new DjangoBibliographyApi(),
+    image: new DjangoImageApi()
 }

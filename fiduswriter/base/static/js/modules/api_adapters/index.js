@@ -419,7 +419,7 @@ export class DjangoDocumentTemplateApi {
 
     getTemplate(id, token) {
         return postJson(
-            "/api/document/admin/get_template/",
+            "/api/user_template_manager/get/",
             token ? {id, token} : {id}
         ).then(({json}) => json)
     }

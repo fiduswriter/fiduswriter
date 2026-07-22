@@ -18,7 +18,7 @@
     license: "AGPL",
     private: true,
     dependencies: {
-        "@fiduswriter/frontend": "^0.1.29",
+        "@fiduswriter/frontend": "^0.1.30",
         "@fiduswriter/image-manager": "^0.1.16",
         "fwtoolkit": "^0.2.1",
         "@fortawesome/fontawesome-free": "^7.2.0",

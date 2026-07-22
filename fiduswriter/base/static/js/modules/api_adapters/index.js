@@ -425,11 +425,9 @@ export class DjangoDocumentTemplateApi {
     }
 
     createTemplate(data, files) {
-        return postJson(
-            "/api/document/admin/create_template/",
-            data,
-            files
-        ).then(({json}) => json)
+        return postJson("/api/user_template_manager/create/", data, files).then(
+            ({json}) => json
+        )
     }
 
     saveExportTemplate(data, files) {

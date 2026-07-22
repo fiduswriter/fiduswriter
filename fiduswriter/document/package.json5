@@ -1,8 +1,8 @@
 {
     dependencies: {
-        "@fiduswriter/document": "file:../../../fiduswriter-document-js",
-        "@fiduswriter/document-template-editor": "file:../../../fiduswriter-document-template-editor-js",
-        "@fiduswriter/editor": "file:../../../fiduswriter-editor-js",
+        "@fiduswriter/document": "^0.2.29",
+        "@fiduswriter/document-template-editor": "^0.1.7",
+        "@fiduswriter/editor": "^0.1.49",
         "prosemirror-view": "1.38.1",
         "prosemirror-menu": "1.2.4",
         "prosemirror-state": "1.4.3",

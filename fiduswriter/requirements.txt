@@ -14,7 +14,7 @@ django-npm-mjs==4.1.1
 django-loginas==0.3.14
 httpx==0.28.1
 httpx-ws==0.9.0
-Pillow==12.2.0
+Pillow==12.3.0
 python-magic==0.4.27
 prosemirror==0.6.1
 prosemirror-rs==0.5.2

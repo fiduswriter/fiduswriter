@@ -124,6 +124,11 @@ USE_L10N = True
 # If you set this to False, the server will not use timezone-aware datetimes.
 USE_TZ = True
 
+# Whether to serve CSS, fonts, and images from npm packages (via static-libs/)
+# or from the deprecated Django assets/.  Set to False to test with the old
+# asset tree.  The assets/ tree will be deleted after one release cycle.
+USE_NPM_ASSETS = True
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # The default is the media folder in the directory above this file.
 MEDIA_ROOT = os.path.join(PROJECT_PATH, "media/")
@@ -152,6 +157,12 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_PATH, "static-transpile"),
     os.path.join(PROJECT_PATH, "static-libs"),
 )
+
+# When USE_NPM_ASSETS is False, add the deprecated assets/ tree so the old
+# CSS / font / image paths still resolve.  The content is identical to what
+# was previously in the individual Django apps' static/ directories.
+if not USE_NPM_ASSETS:
+    STATICFILES_DIRS += (os.path.join(PROJECT_PATH, "assets"),)
 
 LOGIN_URL = "/"
 SOCIALACCOUNT_LOGIN_ON_GET = True

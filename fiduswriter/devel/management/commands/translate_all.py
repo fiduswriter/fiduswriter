@@ -36,6 +36,46 @@ def _discover_languages(locale_dir):
     ]
 
 
+# Known TypeScript package directories (checked out next to the monorepo).
+# Maps directory name → human-readable label.
+_KNOWN_TS_PACKAGES = {
+    "fwtoolkit": "fwtoolkit",
+    "fiduswriter-frontend-js": "@fiduswriter/frontend",
+    "fiduswriter-editor-js": "@fiduswriter/editor",
+    "fiduswriter-document-js": "@fiduswriter/document",
+    "fiduswriter-bibliography-manager-js": "@fiduswriter/bibliography-manager",
+    "fiduswriter-image-manager-js": "@fiduswriter/image-manager",
+    "fiduswriter-document-template-editor-js": (
+        "@fiduswriter/document-template-editor"
+    ),
+    "fiduswriter-books-document-js": "@fiduswriter/books-document",
+    "fiduswriter-cli-js": "@fiduswriter/cli",
+}
+
+
+def _is_ts_package(label):
+    """Return True if *label* identifies a TypeScript (npm) package rather than
+    a Django plugin."""
+    return label.startswith("@") or label == "fwtoolkit"
+
+
+def _discover_typescript_package_locales():
+    """Find TypeScript package locale directories next to the main repo.
+
+    SRC_PATH is <parent>/fiduswriter/fiduswriter/ (the Django project root).
+    os.path.dirname(os.path.dirname(SRC_PATH)) is <parent>/ — the directory
+    that contains the main fiduswriter repo and all TypeScript package repos.
+    """
+    parent = os.path.dirname(os.path.dirname(settings.SRC_PATH))
+    ts_package_locales = []
+
+    for dirname, label in _KNOWN_TS_PACKAGES.items():
+        locale_dir = os.path.join(parent, dirname, "locale")
+        if os.path.isdir(locale_dir):
+            ts_package_locales.append((locale_dir, label))
+    return ts_package_locales
+
+
 class Command(BaseCommand):
     help = "Translate all PO files for all languages"
 
@@ -80,6 +120,24 @@ class Command(BaseCommand):
             "--no-symlinks",
             action="store_true",
             help="Do not follow symlinks when running makemessages.",
+        )
+        parser.add_argument(
+            "--ts-packages",
+            nargs="*",
+            default=None,
+            help=(
+                "Names of TypeScript package directories in the parent of "
+                "SRC_PATH whose locale files should also be translated. "
+                "Use directory names (e.g. fwtoolkit, fiduswriter-editor-js). "
+                "If not specified and --no-ts-packages is not set, all known "
+                "TypeScript packages with a locale/ subdirectory are "
+                "auto-discovered."
+            ),
+        )
+        parser.add_argument(
+            "--no-ts-packages",
+            action="store_true",
+            help="Skip translation of TypeScript package locales entirely.",
         )
 
     def handle(self, *args, **options):
@@ -133,6 +191,54 @@ class Command(BaseCommand):
                     "No symlinked plugin directories with locale/ found."
                 )
 
+        # ---- gather TypeScript package locale directories --------------------------
+        ts_package_locales = []
+        if not options["no_ts_packages"]:
+            if options["ts_packages"] is not None:
+                # Explicit list given — look up by directory name.
+                for ts_dirname in options["ts_packages"]:
+                    label = _KNOWN_TS_PACKAGES.get(ts_dirname, ts_dirname)
+                    parent = os.path.dirname(
+                        os.path.dirname(settings.SRC_PATH)
+                    )
+                    locale = os.path.join(parent, ts_dirname, "locale")
+                    if os.path.isdir(locale):
+                        ts_package_locales.append((locale, label))
+                        self.stdout.write(
+                            self.style.NOTICE(
+                                f"TS package locale found: {locale} ({label})"
+                            )
+                        )
+                    else:
+                        self.stdout.write(
+                            self.style.WARNING(
+                                f"TS package '{ts_dirname}' has no locale "
+                                f"directory ({locale}) – skipping."
+                            )
+                        )
+            else:
+                # Auto-discover.
+                ts_package_locales = _discover_typescript_package_locales()
+                for locale_dir, label in ts_package_locales:
+                    self.stdout.write(
+                        self.style.NOTICE(
+                            f"Auto-discovered TS package locale: "
+                            f"{locale_dir} ({label})"
+                        )
+                    )
+                if not ts_package_locales:
+                    self.stdout.write(
+                        "No TypeScript package locale/ directories found."
+                    )
+        else:
+            self.stdout.write(
+                "Skipping TypeScript packages (--no-ts-packages)."
+            )
+
+        # ---- warn about stale TS package POT files ---------------------------------
+        if ts_package_locales:
+            self._warn_stale_ts_templates(ts_package_locales, languages)
+
         domains = options["domain"]
         skip_fuzzy = options["no_fuzzy"]
         delay = options["delay"]
@@ -177,16 +283,15 @@ class Command(BaseCommand):
 
         total_translated = 0
 
-        # Process the main app's locale directory + all plugin locale directories.
-        all_locale_dirs = [locale_dir] + plugin_locale_dirs
+        # Process the main app's locale directory + all plugin locale directories
+        # + all TypeScript package locale directories.
+        django_locale_dirs = [(locale_dir, "main app")] + [
+            (d, f"plugin ({os.path.relpath(d, settings.SRC_PATH)})")
+            for d in plugin_locale_dirs
+        ]
+        all_locale_dirs = django_locale_dirs + ts_package_locales
 
-        for locale_root in all_locale_dirs:
-            if locale_root == locale_dir:
-                label = "main app"
-            else:
-                # Show relative path from SRC_PATH for readability.
-                rel = os.path.relpath(locale_root, settings.SRC_PATH)
-                label = f"plugin ({rel})"
+        for locale_root, label in all_locale_dirs:
 
             self.stdout.write(
                 self.style.NOTICE(
@@ -201,7 +306,14 @@ class Command(BaseCommand):
 
                 target_lang = self.get_target_lang(lang)
 
-                for domain in domains:
+                # TypeScript packages use a single "messages" domain instead
+                # of Django's "django"/"djangojs" split.
+                if _is_ts_package(label):
+                    effective_domains = ["messages"]
+                else:
+                    effective_domains = domains
+
+                for domain in effective_domains:
                     po_file = os.path.join(lang_dir, f"{domain}.po")
                     if not os.path.exists(po_file):
                         continue
@@ -406,3 +518,42 @@ class Command(BaseCommand):
         self.stdout.write(f"  Rate limit pauses: {rate_limit_pauses}")
 
         return translated
+
+    def _warn_stale_ts_templates(self, ts_package_locales, languages):
+        """Warn if a TypeScript package's messages.pot template is newer than
+        its messages.po files, suggesting the developer needs to run
+        ``npm run extract-i18n`` before translation."""
+
+        for locale_root, label in ts_package_locales:
+            # Check for messages.pot in the locale root (some tools place it
+            # there) or in a template/ subdirectory.
+            pot_candidates = [
+                os.path.join(locale_root, "messages.pot"),
+                os.path.join(locale_root, "templates", "messages.pot"),
+            ]
+            pot_file = None
+            for candidate in pot_candidates:
+                if os.path.isfile(candidate):
+                    pot_file = candidate
+                    break
+
+            if not pot_file:
+                continue
+
+            pot_mtime = os.path.getmtime(pot_file)
+
+            for lang in languages:
+                po_file = os.path.join(
+                    locale_root, lang, "LC_MESSAGES", "messages.po"
+                )
+                if os.path.isfile(po_file):
+                    po_mtime = os.path.getmtime(po_file)
+                    if pot_mtime > po_mtime:
+                        self.stdout.write(
+                            self.style.WARNING(
+                                f"Stale: {label} {lang} messages.po is older "
+                                f"than messages.pot. Run "
+                                f"'cd $(dirname $(dirname {locale_root})) && "
+                                f"npm run extract-i18n' to refresh."
+                            )
+                        )

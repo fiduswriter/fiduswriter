@@ -12,27 +12,68 @@
         <meta name="theme-color" content="#4c6860">
         <link rel="shortcut icon" href="{% static "img/favicon.avif" %}" type="image/png"/>
         <link rel="manifest" href="/manifest.json">
-        <!-- commons styles -->
-        <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/colors.css" %}" />
+        {% if use_npm_assets %}
+        <!-- npm mode: layered CSS loading from npm packages via static-libs/ -->
+        <!-- Layer 1: Design tokens (fwtoolkit base custom properties) -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/colors.css" %}" />
+        <!-- Layer 2: Typography & icons (SPA shell) -->
         <link type="text/css" rel="stylesheet" href="{% static "css/fonts.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/text.css" %}" />
+        <!-- Layer 3: fwtoolkit component CSS -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/forms.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/buttons.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/dialog.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/loader.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/alerts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/pulldown.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/data_table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/overview_menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/progress_task.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/ui_tabs.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/content_menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/dialog_table.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/common.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/drop_up.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/faq_dialog.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/file_selector.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/inline_tools.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/input_list.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/two_pane_selector.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/type_switch.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/checkable_list.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/pulldown_menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/add_remove_dialog.css" %}" />
+        <!-- ProseMirror editor CSS -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror-menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/prosemirror-example-setup.css" %}" />
+        <!-- Layer 4: Additive overrides -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/colors.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/editor/colors.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/bibliography/colors.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/forms.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/buttons.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/pulldown.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/loader.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/alerts.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/progress_task.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/overview_menu.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/data_table.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/dialog_table.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/ui_tabs.css" %}" />
+        <!-- Layer 5: SPA Chrome -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/reset.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/figure.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/dialog.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/content_menu.css" %}" />
-        <!-- layout styles -->
-        <link type="text/css" rel="stylesheet" href="{% static "css/common.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/header_menu.css" %}" />
+        {% else %}
+        <!-- legacy mode: CSS loaded from deprecated Django assets/ directory -->
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/reset.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/colors.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/fonts.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/text.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/forms.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/document/editor.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/document/document.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/figure.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/header_menu.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/inline_tools.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/admin.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/flatpage.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/prelogin.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/document/document_overview.css" %}" />
+        <link type="text/css" rel="stylesheet" href="{% static "css/base/figure.css" %}" />
+        {% endif %}
         {% include "includes/frontend_settings.html" %}
         <!-- Check browser -->
         <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous" defer async></script>

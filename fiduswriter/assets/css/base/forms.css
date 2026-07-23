@@ -1,3 +1,7 @@
+/* SUPERSEDED — Moved to npm packages (see docs/plans/static-assets-and-frontend-unification-plan.md).
+ * New location: @fiduswriter/frontend/css/ and @fiduswriter/editor/css/ (additive layers).
+ * This file is kept for backward compatibility during the transition. */
+
 input,
 textarea,
 button {

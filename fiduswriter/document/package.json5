@@ -1,8 +1,5 @@
 {
     dependencies: {
-        "@fiduswriter/document": "^0.2.30",
-        "@fiduswriter/document-template-editor": "^0.1.10",
-        "@fiduswriter/editor": "^0.1.52",
         "prosemirror-view": "1.38.1",
         "prosemirror-menu": "1.2.4",
         "prosemirror-state": "1.4.3",

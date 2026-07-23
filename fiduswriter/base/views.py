@@ -77,6 +77,7 @@ def app(request):
         {
             "version": get_version(),
             "settings": json.dumps(get_frontend_settings()),
+            "use_npm_assets": getattr(settings, "USE_NPM_ASSETS", True),
         },
     )
 

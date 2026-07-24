@@ -3,102 +3,102 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 16:59+0000\n"
+"POT-Creation-Date: 2026-07-23 07:08+0000\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 
-#: base/settings.py:326
+#: base/settings.py:347
 msgid "Arabic"
 msgstr "арабски"
 
-#: base/settings.py:327
+#: base/settings.py:348
 msgid "Bulgarian"
 msgstr "Български"
 
-#: base/settings.py:328
+#: base/settings.py:349
 msgid "Czech"
 msgstr "чешки"
 
-#: base/settings.py:329
+#: base/settings.py:350
 msgid "Danish"
 msgstr "датски"
 
-#: base/settings.py:330
+#: base/settings.py:351
 msgid "German"
 msgstr "Немски"
 
-#: base/settings.py:331
+#: base/settings.py:352
 msgid "English"
 msgstr "Английски"
 
-#: base/settings.py:332
+#: base/settings.py:353
 msgid "Spanish"
 msgstr "Испански"
 
-#: base/settings.py:333
+#: base/settings.py:354
 msgid "French"
 msgstr "Френски"
 
-#: base/settings.py:334
+#: base/settings.py:355
 msgid "Italian"
 msgstr "Италиански"
 
-#: base/settings.py:335
+#: base/settings.py:356
 msgid "Japanese"
 msgstr "японски"
 
-#: base/settings.py:336
+#: base/settings.py:357
 msgid "Korean"
 msgstr "корейски"
 
-#: base/settings.py:337
+#: base/settings.py:358
 msgid "Norwegian Bokmål"
 msgstr "норвежки букмол"
 
-#: base/settings.py:338
+#: base/settings.py:359
 msgid "Dutch"
 msgstr "холандски"
 
-#: base/settings.py:339
+#: base/settings.py:360
 msgid "Polish"
 msgstr "полски"
 
-#: base/settings.py:340
+#: base/settings.py:361
 msgid "Portuguese (Brazil)"
 msgstr "Португалски (Бразилия)"
 
-#: base/settings.py:341
+#: base/settings.py:362
 msgid "Portuguese (Portugal)"
 msgstr "португалски (Португалия)"
 
-#: base/settings.py:342
+#: base/settings.py:363
 msgid "Russian"
 msgstr "руски"
 
-#: base/settings.py:343
+#: base/settings.py:364
 msgid "Swedish"
 msgstr "шведски"
 
-#: base/settings.py:344
+#: base/settings.py:365
 msgid "Turkish"
 msgstr "турски"
 
-#: base/settings.py:345
+#: base/settings.py:366
 msgid "Chinese (Simplified)"
 msgstr "китайски (опростен)"
 
-#: base/settings.py:461
+#: base/settings.py:482
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer Admin"
 
-#: base/settings.py:462
+#: base/settings.py:483
 msgid "Fidus Writer Administration Site"
 msgstr "Сайт за администрация на Fidus Writer"
 
-#: base/settings.py:463
+#: base/settings.py:484
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Добре дошли в сайта за администрация на Fidus Writer"
 
@@ -114,28 +114,28 @@ msgstr ""
 "Съжаляваме, но възникна грешка в сървъра. Екипът ни ще разгледа въпроса "
 "скоро."
 
-#: base/templates/admin/console.html:4 base/templates/admin/console.html:20
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:21
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "Административна конзола"
 
-#: base/templates/admin/console.html:22
+#: base/templates/admin/console.html:23
 msgid "Current number of users:"
 msgstr "Текущ брой потребители:"
 
-#: base/templates/admin/console.html:25
+#: base/templates/admin/console.html:26
 msgid "Current number of user sessions:"
 msgstr "Текущ брой потребителски сесии:"
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:28
 msgid "Send a system message to all connected users:"
 msgstr "Изпратете системно съобщение до всички свързани потребители:"
 
-#: base/templates/admin/console.html:31
+#: base/templates/admin/console.html:32
 msgid "Message"
 msgstr "съобщение"
 
-#: base/templates/admin/console.html:33
+#: base/templates/admin/console.html:34
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
@@ -143,7 +143,7 @@ msgstr ""
 "Тази система ще премине офлайн за планирана поддръжка след 30 минути. Цялата"
 " ви работа ще бъде запазена автоматично и скоро ще се върнем."
 
-#: base/templates/admin/console.html:40
+#: base/templates/admin/console.html:41
 msgid "Send to connected users"
 msgstr "Изпращане на свързани потребители"
 
@@ -168,11 +168,11 @@ msgstr "Съжаляваме, но тази страница не беше на�
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Комплексно решение за съвместно създаване на академични документи."
 
-#: base/templates/app.html:46
+#: base/templates/app.html:87
 msgid "JavaScript disabled"
 msgstr "JavaScript е деактивиран"
 
-#: base/templates/app.html:47
+#: base/templates/app.html:88
 msgid "Fidus Writer requires you to enable JavaScript."
 msgstr "Fidus Writer изисква от вас да активирате JavaScript."
 
@@ -201,7 +201,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "Дублирайте избраните шаблони за документи"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:985
+#: document/emails.py:18 document/emails.py:236 document/views.py:986
 msgid "Untitled"
 msgstr "неозаглавен"
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fidus Writer backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 16:59+0000\n"
+"POT-Creation-Date: 2026-07-23 07:08+0000\n"
 "PO-Revision-Date: 2025-05-03 10:00+0800\n"
 "Last-Translator: Johannes Wilm <johannes@fiduswriter.org>\n"
 "Language-Team: <johannes@fiduswriter.org>\n"
@@ -15,95 +15,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Manual\n"
 
-#: base/settings.py:326
+#: base/settings.py:347
 msgid "Arabic"
 msgstr "阿拉伯"
 
-#: base/settings.py:327
+#: base/settings.py:348
 msgid "Bulgarian"
 msgstr "保加利亚语"
 
-#: base/settings.py:328
+#: base/settings.py:349
 msgid "Czech"
 msgstr "捷克语"
 
-#: base/settings.py:329
+#: base/settings.py:350
 msgid "Danish"
 msgstr "丹麦语"
 
-#: base/settings.py:330
+#: base/settings.py:351
 msgid "German"
 msgstr "德语"
 
-#: base/settings.py:331
+#: base/settings.py:352
 msgid "English"
 msgstr "英语"
 
-#: base/settings.py:332
+#: base/settings.py:353
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: base/settings.py:333
+#: base/settings.py:354
 msgid "French"
 msgstr "法语"
 
-#: base/settings.py:334
+#: base/settings.py:355
 msgid "Italian"
 msgstr "意大利语"
 
-#: base/settings.py:335
+#: base/settings.py:356
 msgid "Japanese"
 msgstr "日语"
 
-#: base/settings.py:336
+#: base/settings.py:357
 msgid "Korean"
 msgstr "韩语"
 
-#: base/settings.py:337
+#: base/settings.py:358
 msgid "Norwegian Bokmål"
 msgstr "挪威博克马尔语"
 
-#: base/settings.py:338
+#: base/settings.py:359
 msgid "Dutch"
 msgstr "荷兰语"
 
-#: base/settings.py:339
+#: base/settings.py:360
 msgid "Polish"
 msgstr "波兰语"
 
-#: base/settings.py:340
+#: base/settings.py:361
 msgid "Portuguese (Brazil)"
 msgstr "葡萄牙语（巴西）"
 
-#: base/settings.py:341
+#: base/settings.py:362
 msgid "Portuguese (Portugal)"
 msgstr "葡萄牙语（葡萄牙）"
 
-#: base/settings.py:342
+#: base/settings.py:363
 msgid "Russian"
 msgstr "俄语"
 
-#: base/settings.py:343
+#: base/settings.py:364
 msgid "Swedish"
 msgstr "瑞典语"
 
-#: base/settings.py:344
+#: base/settings.py:365
 msgid "Turkish"
 msgstr "土耳其语"
 
-#: base/settings.py:345
+#: base/settings.py:366
 msgid "Chinese (Simplified)"
 msgstr "中文（简体）"
 
-#: base/settings.py:461
+#: base/settings.py:482
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer 管理"
 
-#: base/settings.py:462
+#: base/settings.py:483
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer 管理站点"
 
-#: base/settings.py:463
+#: base/settings.py:484
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "欢迎访问 Fidus Writer 管理站点"
 
@@ -117,34 +117,34 @@ msgid ""
 "issue shortly."
 msgstr "抱歉，服务器发生错误。我们的团队将很快调查此问题。"
 
-#: base/templates/admin/console.html:4 base/templates/admin/console.html:20
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:21
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "管理控制台"
 
-#: base/templates/admin/console.html:22
+#: base/templates/admin/console.html:23
 msgid "Current number of users:"
 msgstr "当前用户数量："
 
-#: base/templates/admin/console.html:25
+#: base/templates/admin/console.html:26
 msgid "Current number of user sessions:"
 msgstr "当前用户会话数量："
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:28
 msgid "Send a system message to all connected users:"
 msgstr "向所有连接的用户发送系统消息："
 
-#: base/templates/admin/console.html:31
+#: base/templates/admin/console.html:32
 msgid "Message"
 msgstr "消息"
 
-#: base/templates/admin/console.html:33
+#: base/templates/admin/console.html:34
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
 msgstr "系统将在 30 分钟后离线进行计划维护。您的所有工作将自动保存，我们很快会回来。"
 
-#: base/templates/admin/console.html:40
+#: base/templates/admin/console.html:41
 msgid "Send to connected users"
 msgstr "发送给已连接的用户"
 
@@ -169,11 +169,11 @@ msgstr "很抱歉，找不到该页面。"
 msgid "The all in one solution for collaborative academic writing."
 msgstr "协作学术写作的多合一解决方案。"
 
-#: base/templates/app.html:46
+#: base/templates/app.html:87
 msgid "JavaScript disabled"
 msgstr "JavaScript 已禁用"
 
-#: base/templates/app.html:47
+#: base/templates/app.html:88
 msgid "Fidus Writer requires you to enable JavaScript."
 msgstr "Fidus Writer 要求您启用 JavaScript。"
 
@@ -201,7 +201,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "复制选定的文档模板"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:985
+#: document/emails.py:18 document/emails.py:236 document/views.py:986
 msgid "Untitled"
 msgstr "无题"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 16:59+0000\n"
+"POT-Creation-Date: 2026-07-23 07:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,95 +18,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: base/settings.py:326
+#: base/settings.py:347
 msgid "Arabic"
 msgstr "아랍어"
 
-#: base/settings.py:327
+#: base/settings.py:348
 msgid "Bulgarian"
 msgstr "불가리아어"
 
-#: base/settings.py:328
+#: base/settings.py:349
 msgid "Czech"
 msgstr "체코어"
 
-#: base/settings.py:329
+#: base/settings.py:350
 msgid "Danish"
 msgstr "덴마크어"
 
-#: base/settings.py:330
+#: base/settings.py:351
 msgid "German"
 msgstr "독일어"
 
-#: base/settings.py:331
+#: base/settings.py:352
 msgid "English"
 msgstr "영어"
 
-#: base/settings.py:332
+#: base/settings.py:353
 msgid "Spanish"
 msgstr "스페인어"
 
-#: base/settings.py:333
+#: base/settings.py:354
 msgid "French"
 msgstr "프랑스어"
 
-#: base/settings.py:334
+#: base/settings.py:355
 msgid "Italian"
 msgstr "이탈리아어"
 
-#: base/settings.py:335
+#: base/settings.py:356
 msgid "Japanese"
 msgstr "일본어"
 
-#: base/settings.py:336
+#: base/settings.py:357
 msgid "Korean"
 msgstr "한국어"
 
-#: base/settings.py:337
+#: base/settings.py:358
 msgid "Norwegian Bokmål"
 msgstr "노르웨이어 복몰어"
 
-#: base/settings.py:338
+#: base/settings.py:359
 msgid "Dutch"
 msgstr "네덜란드어"
 
-#: base/settings.py:339
+#: base/settings.py:360
 msgid "Polish"
 msgstr "폴란드어"
 
-#: base/settings.py:340
+#: base/settings.py:361
 msgid "Portuguese (Brazil)"
 msgstr "포르투갈어(브라질)"
 
-#: base/settings.py:341
+#: base/settings.py:362
 msgid "Portuguese (Portugal)"
 msgstr "포르투갈어(포르투갈)"
 
-#: base/settings.py:342
+#: base/settings.py:363
 msgid "Russian"
 msgstr "러시아어"
 
-#: base/settings.py:343
+#: base/settings.py:364
 msgid "Swedish"
 msgstr "스웨덴어"
 
-#: base/settings.py:344
+#: base/settings.py:365
 msgid "Turkish"
 msgstr "터키어"
 
-#: base/settings.py:345
+#: base/settings.py:366
 msgid "Chinese (Simplified)"
 msgstr "중국어(간체)"
 
-#: base/settings.py:461
+#: base/settings.py:482
 msgid "Fidus Writer Admin"
 msgstr "Fidus Writer 관리자"
 
-#: base/settings.py:462
+#: base/settings.py:483
 msgid "Fidus Writer Administration Site"
 msgstr "Fidus Writer 관리 사이트"
 
-#: base/settings.py:463
+#: base/settings.py:484
 msgid "Welcome to the Fidus Writer Administration Site"
 msgstr "Fidus Writer 관리 사이트에 오신 것을 환영합니다."
 
@@ -120,28 +120,28 @@ msgid ""
 "issue shortly."
 msgstr "죄송합니다. 서버 오류가 발생했습니다. 우리 팀에서 곧 문제를 조사할 것입니다."
 
-#: base/templates/admin/console.html:4 base/templates/admin/console.html:20
+#: base/templates/admin/console.html:4 base/templates/admin/console.html:21
 #: base/templates/admin/overview.html:14
 msgid "Admin Console"
 msgstr "관리 콘솔"
 
-#: base/templates/admin/console.html:22
+#: base/templates/admin/console.html:23
 msgid "Current number of users:"
 msgstr "현재 사용자 수:"
 
-#: base/templates/admin/console.html:25
+#: base/templates/admin/console.html:26
 msgid "Current number of user sessions:"
 msgstr "현재 사용자 세션 수:"
 
-#: base/templates/admin/console.html:27
+#: base/templates/admin/console.html:28
 msgid "Send a system message to all connected users:"
 msgstr "연결된 모든 사용자에게 시스템 메시지를 보냅니다."
 
-#: base/templates/admin/console.html:31
+#: base/templates/admin/console.html:32
 msgid "Message"
 msgstr "메시지"
 
-#: base/templates/admin/console.html:33
+#: base/templates/admin/console.html:34
 msgid ""
 "This system will go offline for scheduled maintenance in 30 minutes. All "
 "your work will be saved automatically and we will be back shortly."
@@ -149,7 +149,7 @@ msgstr ""
 "이 시스템은 예약된 유지 관리를 위해 30분 후에 오프라인 상태가 됩니다. 귀하의 모든 작업은 자동으로 저장되며 곧 다시 "
 "연락드리겠습니다."
 
-#: base/templates/admin/console.html:40
+#: base/templates/admin/console.html:41
 msgid "Send to connected users"
 msgstr "연결된 사용자에게 보내기"
 
@@ -174,11 +174,11 @@ msgstr "죄송합니다. 이 페이지를 찾을 수 없습니다."
 msgid "The all in one solution for collaborative academic writing."
 msgstr "학술 공동 저술을 위한 올인원 솔루션입니다."
 
-#: base/templates/app.html:46
+#: base/templates/app.html:87
 msgid "JavaScript disabled"
 msgstr "자바스크립트가 비활성화되었습니다."
 
-#: base/templates/app.html:47
+#: base/templates/app.html:88
 msgid "Fidus Writer requires you to enable JavaScript."
 msgstr "Fidus Writer를 사용하려면 JavaScript를 활성화해야 합니다."
 
@@ -206,7 +206,7 @@ msgstr ""
 msgid "Duplicate selected document templates"
 msgstr "선택한 문서 템플릿 복제"
 
-#: document/emails.py:18 document/emails.py:236 document/views.py:985
+#: document/emails.py:18 document/emails.py:236 document/views.py:986
 msgid "Untitled"
 msgstr "제목 없음"
 

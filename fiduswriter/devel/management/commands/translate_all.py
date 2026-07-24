@@ -122,22 +122,9 @@ class Command(BaseCommand):
             help="Do not follow symlinks when running makemessages.",
         )
         parser.add_argument(
-            "--ts-packages",
-            nargs="*",
-            default=None,
-            help=(
-                "Names of TypeScript package directories in the parent of "
-                "SRC_PATH whose locale files should also be translated. "
-                "Use directory names (e.g. fwtoolkit, fiduswriter-editor-js). "
-                "If not specified and --no-ts-packages is not set, all known "
-                "TypeScript packages with a locale/ subdirectory are "
-                "auto-discovered."
-            ),
-        )
-        parser.add_argument(
             "--no-ts-packages",
             action="store_true",
-            help="Skip translation of TypeScript package locales entirely.",
+            help="Skip translation of TypeScript package locales.",
         )
 
     def handle(self, *args, **options):
@@ -194,42 +181,18 @@ class Command(BaseCommand):
         # ---- gather TypeScript package locale directories --------------------------
         ts_package_locales = []
         if not options["no_ts_packages"]:
-            if options["ts_packages"] is not None:
-                # Explicit list given — look up by directory name.
-                for ts_dirname in options["ts_packages"]:
-                    label = _KNOWN_TS_PACKAGES.get(ts_dirname, ts_dirname)
-                    parent = os.path.dirname(
-                        os.path.dirname(settings.SRC_PATH)
+            ts_package_locales = _discover_typescript_package_locales()
+            for locale_dir, label in ts_package_locales:
+                self.stdout.write(
+                    self.style.NOTICE(
+                        f"Auto-discovered TS package locale: "
+                        f"{locale_dir} ({label})"
                     )
-                    locale = os.path.join(parent, ts_dirname, "locale")
-                    if os.path.isdir(locale):
-                        ts_package_locales.append((locale, label))
-                        self.stdout.write(
-                            self.style.NOTICE(
-                                f"TS package locale found: {locale} ({label})"
-                            )
-                        )
-                    else:
-                        self.stdout.write(
-                            self.style.WARNING(
-                                f"TS package '{ts_dirname}' has no locale "
-                                f"directory ({locale}) – skipping."
-                            )
-                        )
-            else:
-                # Auto-discover.
-                ts_package_locales = _discover_typescript_package_locales()
-                for locale_dir, label in ts_package_locales:
-                    self.stdout.write(
-                        self.style.NOTICE(
-                            f"Auto-discovered TS package locale: "
-                            f"{locale_dir} ({label})"
-                        )
-                    )
-                if not ts_package_locales:
-                    self.stdout.write(
-                        "No TypeScript package locale/ directories found."
-                    )
+                )
+            if not ts_package_locales:
+                self.stdout.write(
+                    "No TypeScript package locale/ directories found."
+                )
         else:
             self.stdout.write(
                 "Skipping TypeScript packages (--no-ts-packages)."

@@ -26,6 +26,7 @@
         "@fiduswriter/editor": "^0.1.53",
         "@fiduswriter/bibliography-manager": "^0.1.24",
         "@fiduswriter/document-template-editor": "^0.1.11",
+        "@fiduswriter/document": "^0.2.31",
         "fwtoolkit": "^0.2.3",
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",

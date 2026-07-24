@@ -179,6 +179,14 @@ STATICFILES_FINDERS = (
 # explicitly listed in INSTALLED_APPS.
 NPM_MJS_PACKAGE_NAMESPACES = ["fiduswriter"]
 
+# Patterns for pnpm's public-hoist-pattern. Ensures @fiduswriter/* and
+# fwtoolkit packages are hoisted to root node_modules/ so postinstall
+# copy scripts can find them even when they are only transitive deps.
+NPM_MJS_PUBLIC_HOIST_PATTERNS = [
+    "*@fiduswriter*",
+    "fwtoolkit",
+]
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {

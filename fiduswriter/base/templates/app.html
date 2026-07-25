@@ -12,7 +12,6 @@
         <meta name="theme-color" content="#4c6860">
         <link rel="shortcut icon" href="{% static "img/favicon.avif" %}" type="image/png"/>
         <link rel="manifest" href="/manifest.json">
-        {% if use_npm_assets %}
         <!-- npm mode: layered CSS loading from npm packages via static-libs/ -->
         <!-- Layer 1: Design tokens (fwtoolkit base custom properties) -->
         <link type="text/css" rel="stylesheet" href="{% static "css/fwtoolkit/colors.css" %}" />
@@ -89,24 +88,6 @@
         <link type="text/css" rel="stylesheet" href="{% static "css/bibliography/bibliography.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/dialog_usermedia.css" %}" />
         <link type="text/css" rel="stylesheet" href="{% static "css/document_template_designer.css" %}" />
-        {% else %}
-        <!-- legacy mode: CSS loaded from deprecated Django assets/ directory -->
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/reset.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/colors.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/fonts.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/text.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/forms.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/document/editor.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/document/document.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/figure.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/header_menu.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/inline_tools.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/admin.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/flatpage.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/prelogin.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/document/document_overview.css" %}" />
-        <link type="text/css" rel="stylesheet" href="{% static "css/base/figure.css" %}" />
-        {% endif %}
         {% include "includes/frontend_settings.html" %}
         <!-- Check browser -->
         <script type="text/javascript" src="{% static "js/browser_check.mjs" %}" crossorigin="anonymous" defer async></script>

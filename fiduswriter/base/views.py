@@ -1,10 +1,14 @@
 from base.json_util import json
+import os
 import random
+from functools import lru_cache
 from httpx_ws import connect_ws
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.shortcuts import render
+from django.utils.translation import get_language
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.i18n import JavaScriptCatalog
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.flatpages.models import FlatPage
 from django.http import JsonResponse
@@ -24,6 +28,68 @@ from .models import Presence
 
 
 FRONTEND_SETTINGS = {}
+
+
+def _merge_json_catalog(path, catalog):
+    """Read a messages.json file at *path* and merge its entries into
+    *catalog*.  The ``""`` language-code key is skipped."""
+    if not os.path.isfile(path):
+        return
+    with open(path) as fh:
+        pkg_catalog = json.load(fh)
+    for msgid, msgstr in pkg_catalog.items():
+        if msgid:
+            catalog[msgid] = msgstr
+
+
+@lru_cache(maxsize=32)
+def _load_npm_catalog(locale):
+    """Build and return a dict of npm package translations for *locale*.
+
+    The result is cached in memory so the JSON files are only read once
+    per locale after a server restart.  Adding or updating npm packages
+    requires a server restart (or a new transpile run) to pick up changes.
+    """
+    catalog = {}
+    json_root = os.path.join(settings.PROJECT_PATH, "static-libs", "json")
+    if os.path.isdir(json_root):
+        for pkg_name in sorted(os.listdir(json_root)):
+            _merge_json_catalog(
+                os.path.join(
+                    json_root,
+                    pkg_name,
+                    "locale",
+                    locale,
+                    "messages.json",
+                ),
+                catalog,
+            )
+    return catalog
+
+
+class FidusJavaScriptCatalog(JavaScriptCatalog):
+    """JavaScriptCatalog that includes translations from npm packages.
+
+    On top of Django's own djangojs translations, this view reads the
+    per-package locale files that were aggregated to
+    ``static-libs/json/<pkg>/locale/<lang>/messages.json`` by the
+    postinstall script in base/package.json5.
+
+    Discovery is dynamic: every subdirectory under
+    ``static-libs/json/`` that contains a ``locale/<lang>/messages.json``
+    file is merged automatically.  Adding or removing an npm package
+    requires no code changes here — only a ``transpile`` run so the
+    postinstall script picks up the new package.
+
+    The npm catalog is cached in memory (``functools.lru_cache``), so
+    each locale's JSON files are read and parsed only once after a
+    server restart.
+    """
+
+    def get_catalog(self):
+        catalog = super().get_catalog()
+        catalog.update(_load_npm_catalog(get_language()))
+        return catalog
 
 
 def get_frontend_settings():

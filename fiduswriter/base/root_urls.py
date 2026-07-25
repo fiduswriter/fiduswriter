@@ -9,13 +9,13 @@ from django.http import HttpResponse
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
-from django.views.i18n import JavaScriptCatalog
 from django.views.static import serve as static_serve
 
 from user.views import FidusPasswordResetFromKeyView
 
 from .views import app as app_view, api_404 as api_404_view
 from .views import admin_console as admin_console_view
+from .views import FidusJavaScriptCatalog
 from .views import manifest_json, set_language as set_language_view
 
 
@@ -70,7 +70,7 @@ urlpatterns = [
     # I18n Javascript translations
     re_path(
         r"^api/jsi18n/$",
-        JavaScriptCatalog.as_view(),
+        FidusJavaScriptCatalog.as_view(),
         name="javascript-catalog",
     ),
     # Admin interface

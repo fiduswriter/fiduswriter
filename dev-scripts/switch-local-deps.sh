@@ -107,7 +107,21 @@ switch_main_file() {
             return
         fi
         local version
-        version="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version'])" "$sibling_path/package.json")"
+        version="$(python3 -c "
+        import sys
+        try:
+            import json5 as json_mod
+        except ImportError:
+            import json as json_mod
+        path = sys.argv[1]
+        try:
+            with open(path) as fh:
+                data = json_mod.load(fh)
+            print(data['version'])
+        except Exception as e:
+            sys.stderr.write(f'ERROR reading {path}: {e}\n')
+            sys.exit(1)
+        " "$sibling_path/package.json")"
         update_file "$file" "$pkg" "^$version"
     fi
 }

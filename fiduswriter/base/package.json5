@@ -15,19 +15,27 @@
         copy_prosemirror_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-view/style/prosemirror.css ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-menu/style/menu.css ../static-libs/css/prosemirror-menu.css && rsync -av --no-perms --checksum node_modules/prosemirror-example-setup/style/style.css ../static-libs/css/prosemirror-example-setup.css",
         copy_mathlive: "mkdir -p ../static-libs/css/libs/ ../static-libs/zip/ && (rsync -av --no-perms --checksum node_modules/@fiduswriter/document/static-libs/css/libs/mathlive/ ../static-libs/css/libs/mathlive/ 2>/dev/null || echo 'MathLive CSS not found (transitive dep not hoisted), skipping.') && (rsync -av --no-perms --checksum node_modules/@fiduswriter/document/static-libs/zip/mathlive_style.zip ../static-libs/zip/mathlive_style.zip 2>/dev/null || echo 'MathLive zip not found, skipping.')",
         copy_schema: "mkdir -p ../static-libs/json && (test -f node_modules/@fiduswriter/document/schema.json && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json) || (node node_modules/@fiduswriter/document/scripts/export-schema.js 2>/dev/null && cp node_modules/@fiduswriter/document/schema.json ../static-libs/json/schema.json) || echo 'Schema not found (transitive dep not hoisted), skipping.'",
-        postinstall: "npm run copy_fwtoolkit_css && npm run copy_frontend_css && npm run copy_editor_css && npm run copy_bibliography_css && npm run copy_frontend_static && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive && npm run copy_schema",
+        // Aggregate per-package locale JSON files into static-libs/json/ so the
+        // /api/jsi18n/ view can read them at runtime.  Scans all @fiduswriter/*
+        // packages and fwtoolkit dynamically — no hardcoded package list needed.
+        // Each package's locale/<lang>/messages.json is copied to
+        // static-libs/json/<pkg-name>/locale/<lang>/messages.json.
+        // Fix url("../static/...") references in CSS files that were written
+        // for the npm package layout.  The postinstall scripts copy fonts/images
+        // from <pkg>/static/ into static-libs/ (stripping the "static/" prefix),
+        // so url("../static/fonts/...") must become url("../fonts/...") for
+        // top-level CSS files and url("../../img/...") for files one level deep.
+        fix_css_urls: "find ../static-libs/css -maxdepth 1 -name '*.css' -exec sed -i 's|url(\"../static/|url(\"../|g' {} \\; 2>/dev/null; find ../static-libs/css -mindepth 2 -maxdepth 2 -name '*.css' -exec sed -i 's|url(\"../static/|url(\"../../|g' {} \\; 2>/dev/null; echo '  fixed CSS url() paths' || true",
+        copy_locale_json: "mkdir -p ../static-libs/json/ && for pkg_dir in node_modules/fwtoolkit node_modules/@fiduswriter/*/; do [ -d \"$pkg_dir\" ] || continue; pkg_name=$(basename \"$pkg_dir\"); if [ -d \"$pkg_dir/locale\" ]; then mkdir -p \"../static-libs/json/$pkg_name/\" && rsync -av --no-perms --checksum \"$pkg_dir/locale/\" \"../static-libs/json/$pkg_name/locale/\" 2>/dev/null && echo \"  copied locale for $pkg_name\"; fi; done",
+        postinstall: "npm run copy_fwtoolkit_css && npm run copy_frontend_css && npm run copy_editor_css && npm run copy_bibliography_css && npm run copy_frontend_static && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive && npm run copy_schema && npm run copy_locale_json && npm run fix_css_urls",
         "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals"
     },
     author: "Johannes Wilm",
     license: "AGPL",
     private: true,
     dependencies: {
-        "@fiduswriter/frontend": "^0.1.32",
-        "@fiduswriter/editor": "^0.1.53",
-        "@fiduswriter/bibliography-manager": "^0.1.24",
-        "@fiduswriter/document-template-editor": "^0.1.11",
-        "@fiduswriter/document": "^0.2.31",
-        "fwtoolkit": "^0.2.3",
+        "@fiduswriter/frontend": "^0.1.33",
+        "fwtoolkit": "^0.2.4",
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",
         "regenerator-runtime": "0.14.1",

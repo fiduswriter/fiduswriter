@@ -110,6 +110,39 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         print("DEBUG element state:", info, file=sys.stderr)
 
+    def _debug_overlapping_elements(self, selector):
+        """Log elements overlapping the center of the given selector."""
+        info = self.driver.execute_script(
+            """
+            const el = document.querySelector(arguments[0]);
+            if (!el) {
+                return {error: 'element not found for selector', selector: arguments[0]};
+            }
+            const rect = el.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const elements = document.elementsFromPoint(cx, cy);
+            return {
+                selector: arguments[0],
+                targetRect: rect,
+                center: {x: cx, y: cy},
+                stack: elements.slice(0, 10).map(e => ({
+                    tagName: e.tagName,
+                    id: e.id,
+                    className: e.className,
+                    computed: {
+                        zIndex: window.getComputedStyle(e).zIndex,
+                        position: window.getComputedStyle(e).position,
+                        display: window.getComputedStyle(e).display,
+                        visibility: window.getComputedStyle(e).visibility
+                    }
+                }))
+            };
+            """,
+            selector,
+        )
+        print("DEBUG overlapping elements:", info, file=sys.stderr)
+
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
@@ -284,6 +317,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         document_style_element.click()
         self.driver.find_element(By.CSS_SELECTOR, "input.slug").send_keys(
             "fish"
+        )
+        print("DEBUG: before document-style submit click")
+        self._debug_dialog_state()
+        self._debug_overlapping_elements(
+            "[aria-describedby=document-style-dialog] button.fw-dark"
+        )
+        self.driver.save_screenshot(
+            "screenshots/debug-before-docstyle-submit.png"
         )
         self.driver.find_element(
             By.CSS_SELECTOR,

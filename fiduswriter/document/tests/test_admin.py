@@ -63,6 +63,53 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             # Cool down
             time.sleep(self.wait_time / 3)
 
+    def _debug_dialog_state(self):
+        """Log the current state of all fw-dialog elements."""
+        info = self.driver.execute_script(
+            """
+            return Array.from(document.querySelectorAll('div.fw-dialog')).map(d => ({
+                id: d.id,
+                ariaDescribedBy: d.getAttribute('aria-describedby'),
+                style: d.getAttribute('style'),
+                rect: d.getBoundingClientRect(),
+                computed: {
+                    display: window.getComputedStyle(d).display,
+                    visibility: window.getComputedStyle(d).visibility,
+                    zIndex: window.getComputedStyle(d).zIndex,
+                    position: window.getComputedStyle(d).position,
+                    top: window.getComputedStyle(d).top,
+                    left: window.getComputedStyle(d).left
+                },
+                html: d.outerHTML.substring(0, 800)
+            }));
+            """
+        )
+        print("DEBUG dialog state:", info, file=sys.stderr)
+
+    def _debug_element_state(self, element):
+        """Log the computed state of a single element."""
+        info = self.driver.execute_script(
+            """
+            const el = arguments[0];
+            return {
+                tagName: el.tagName,
+                id: el.id,
+                className: el.className,
+                rect: el.getBoundingClientRect(),
+                computed: {
+                    display: window.getComputedStyle(el).display,
+                    visibility: window.getComputedStyle(el).visibility,
+                    zIndex: window.getComputedStyle(el).zIndex,
+                    position: window.getComputedStyle(el).position,
+                    pointerEvents: window.getComputedStyle(el).pointerEvents
+                },
+                html: el.outerHTML.substring(0, 800)
+            };
+            """,
+            element,
+        )
+        print("DEBUG element state:", info, file=sys.stderr)
+
     def test_maintenance(self):
         self.driver.get(self.base_admin_url)
         username = self.driver.find_element(By.ID, "id_username")
@@ -278,9 +325,25 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "arguments[0].scrollIntoView(true);", export_template_element
         )
         time.sleep(0.5)
+        print("DEBUG: before .export-template click")
+        self._debug_dialog_state()
+        self.driver.save_screenshot(
+            "screenshots/debug-before-export-template-click.png"
+        )
         export_template_element.click()
+        time.sleep(0.5)
+        print("DEBUG: after .export-template click")
+        self._debug_dialog_state()
+        self.driver.save_screenshot(
+            "screenshots/debug-after-export-template-click.png"
+        )
         export_template_link = self.driver.find_element(
             By.CSS_SELECTOR, ".export-template-file a"
+        )
+        print("DEBUG: before .export-template-file a click")
+        self._debug_element_state(export_template_link)
+        self.driver.save_screenshot(
+            "screenshots/debug-before-export-template-link-click.png"
         )
         et_file = export_template_link.get_attribute("href").split("/")[-1]
         export_template_link.click()

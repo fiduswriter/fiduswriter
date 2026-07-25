@@ -267,10 +267,11 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             "[aria-describedby=document-style-dialog] button.fw-orange",
         )
         self.safe_click_element(self.driver, delete_button)
-        self.driver.find_element(
+        confirm_delete_button = self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark",
-        ).click()
+        )
+        self.safe_click_element(self.driver, confirm_delete_button)
         WebDriverWait(self.driver, self.wait_time).until(
             lambda driver: len(
                 driver.find_elements(By.CSS_SELECTOR, ".document-style")
@@ -299,14 +300,16 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         old_len_export_templates = len(
             self.driver.find_elements(By.CSS_SELECTOR, ".export-template")
         )
-        self.driver.find_element(
+        export_delete_button = self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=export-template-dialog] button.fw-orange",
-        ).click()
-        self.driver.find_element(
+        )
+        self.safe_click_element(self.driver, export_delete_button)
+        confirm_export_delete_button = self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark",
-        ).click()
+        )
+        self.safe_click_element(self.driver, confirm_export_delete_button)
         len_export_templates = WebDriverWait(
             self.driver, self.wait_time
         ).until(

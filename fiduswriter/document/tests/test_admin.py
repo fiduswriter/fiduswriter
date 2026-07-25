@@ -291,7 +291,7 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".export-template-file a"
         )
         et_file = export_template_link.get_attribute("href").split("/")[-1]
-        self.safe_click_element(self.driver, export_template_link)
+        export_template_link.click()
         self.wait_until_file_exists(
             os.path.join(self.download_dir, et_file), self.wait_time
         )

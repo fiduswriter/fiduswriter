@@ -243,11 +243,10 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "input.slug").send_keys(
             "fish"
         )
-        submit_button = self.driver.find_element(
+        self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=document-style-dialog] button.fw-dark",
-        )
-        self.safe_click_element(self.driver, submit_button)
+        ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.invisibility_of_element_located(
                 (By.CSS_SELECTOR, "[aria-describedby=document-style-dialog]")
@@ -262,16 +261,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         time.sleep(0.5)
         document_style_element.click()
-        delete_button = self.driver.find_element(
+        self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=document-style-dialog] button.fw-orange",
-        )
-        self.safe_click_element(self.driver, delete_button)
-        confirm_delete_button = self.driver.find_element(
+        ).click()
+        self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark",
-        )
-        self.safe_click_element(self.driver, confirm_delete_button)
+        ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             lambda driver: len(
                 driver.find_elements(By.CSS_SELECTOR, ".document-style")
@@ -300,16 +297,14 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         old_len_export_templates = len(
             self.driver.find_elements(By.CSS_SELECTOR, ".export-template")
         )
-        export_delete_button = self.driver.find_element(
+        self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=export-template-dialog] button.fw-orange",
-        )
-        self.safe_click_element(self.driver, export_delete_button)
-        confirm_export_delete_button = self.driver.find_element(
+        ).click()
+        self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark",
-        )
-        self.safe_click_element(self.driver, confirm_export_delete_button)
+        ).click()
         len_export_templates = WebDriverWait(
             self.driver, self.wait_time
         ).until(

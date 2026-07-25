@@ -42,7 +42,7 @@
         "@fiduswriter/bibliography-manager": "^0.1.26",
         "@fiduswriter/image-manager": "^0.1.20",
         "@fiduswriter/document-template-editor": "^0.1.13",
-        "fwtoolkit": "^0.2.4",
+        "fwtoolkit": "^0.2.5",
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",
         "regenerator-runtime": "0.14.1",

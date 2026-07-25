@@ -324,7 +324,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 (By.CSS_SELECTOR, "div.doc-body figure figcaption")
             )
         )
-        self.safe_click_element(self.driver, caption)
+        caption.click()
         caption.send_keys("Figure")
 
         ActionChains(self.driver).send_keys(Keys.RIGHT).perform()

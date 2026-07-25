@@ -10,6 +10,8 @@
         copy_frontend_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/@fiduswriter/frontend/css/ ../static-libs/css/",
         copy_editor_css: "mkdir -p ../static-libs/css/editor/ && (rsync -av --no-perms --checksum node_modules/@fiduswriter/editor/css/ ../static-libs/css/editor/ 2>/dev/null || echo 'Editor CSS not found, skipping.')",
         copy_bibliography_css: "mkdir -p ../static-libs/css/bibliography/ && (rsync -av --no-perms --checksum node_modules/@fiduswriter/bibliography-manager/css/ ../static-libs/css/bibliography/ 2>/dev/null || echo 'Bibliography CSS not found, skipping.')",
+        copy_image_manager_css: "mkdir -p ../static-libs/css/ && (rsync -av --no-perms --checksum node_modules/@fiduswriter/image-manager/css/ ../static-libs/css/ 2>/dev/null || echo 'Image manager CSS not found, skipping.')",
+        copy_document_template_editor_css: "mkdir -p ../static-libs/css/ && (rsync -av --no-perms --checksum node_modules/@fiduswriter/document-template-editor/css/ ../static-libs/css/ 2>/dev/null || echo 'Document template editor CSS not found, skipping.')",
         copy_frontend_static: "mkdir -p ../static-libs/ && rsync -av --no-perms --checksum node_modules/@fiduswriter/frontend/static/ ../static-libs/",
         copy_fontawesome: "mkdir -p ../static-libs/css/fontawesome/css/ && rsync -av --no-perms --checksum node_modules/@fortawesome/fontawesome-free/css/ ../static-libs/css/fontawesome/css/ && rsync -av --no-perms --checksum node_modules/@fortawesome/fontawesome-free/webfonts/ ../static-libs/css/fontawesome/webfonts/",
         copy_prosemirror_css: "mkdir -p ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-view/style/prosemirror.css ../static-libs/css/ && rsync -av --no-perms --checksum node_modules/prosemirror-menu/style/menu.css ../static-libs/css/prosemirror-menu.css && rsync -av --no-perms --checksum node_modules/prosemirror-example-setup/style/style.css ../static-libs/css/prosemirror-example-setup.css",
@@ -27,7 +29,7 @@
         // top-level CSS files and url("../../img/...") for files one level deep.
         fix_css_urls: "find ../static-libs/css -maxdepth 1 -name '*.css' -exec sed -i 's|url(\"../static/|url(\"../|g' {} \\; 2>/dev/null; find ../static-libs/css -mindepth 2 -maxdepth 2 -name '*.css' -exec sed -i 's|url(\"../static/|url(\"../../|g' {} \\; 2>/dev/null; echo '  fixed CSS url() paths' || true",
         copy_locale_json: "mkdir -p ../static-libs/json/ && for pkg_dir in node_modules/fwtoolkit node_modules/@fiduswriter/*/; do [ -d \"$pkg_dir\" ] || continue; pkg_name=$(basename \"$pkg_dir\"); if [ -d \"$pkg_dir/locale\" ]; then mkdir -p \"../static-libs/json/$pkg_name/\" && rsync -av --no-perms --checksum \"$pkg_dir/locale/\" \"../static-libs/json/$pkg_name/locale/\" 2>/dev/null && echo \"  copied locale for $pkg_name\"; fi; done",
-        postinstall: "npm run copy_fwtoolkit_css && npm run copy_frontend_css && npm run copy_editor_css && npm run copy_bibliography_css && npm run copy_frontend_static && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive && npm run copy_schema && npm run copy_locale_json && npm run fix_css_urls",
+        postinstall: "npm run copy_fwtoolkit_css && npm run copy_frontend_css && npm run copy_editor_css && npm run copy_bibliography_css && npm run copy_image_manager_css && npm run copy_document_template_editor_css && npm run copy_frontend_static && npm run copy_fontawesome && npm run copy_prosemirror_css && npm run copy_mathlive && npm run copy_schema && npm run copy_locale_json && npm run fix_css_urls",
         "babel-transform-template-literals": "babel --plugins @babel/plugin-transform-template-literals"
     },
     author: "Johannes Wilm",
@@ -35,6 +37,10 @@
     private: true,
     dependencies: {
         "@fiduswriter/frontend": "^0.1.33",
+        "@fiduswriter/editor": "^0.1.55",
+        "@fiduswriter/bibliography-manager": "^0.1.25",
+        "@fiduswriter/image-manager": "^0.1.19",
+        "@fiduswriter/document-template-editor": "^0.1.13",
         "fwtoolkit": "^0.2.4",
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",

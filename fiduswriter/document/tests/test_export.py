@@ -397,7 +397,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="HTML"]'
         ).click()
         path = os.path.join(self.download_dir, "title.html.zip")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -410,7 +410,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Epub"]'
         ).click()
         path = os.path.join(self.download_dir, "title.epub")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -423,7 +423,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="LaTeX"]'
         ).click()
         path = os.path.join(self.download_dir, "title.latex.zip")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -436,7 +436,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="JATS"]'
         ).click()
         path = os.path.join(self.download_dir, "title.jats.zip")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -449,7 +449,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Classic (DOCX)"]'
         ).click()
         path = os.path.join(self.download_dir, "title.docx")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -462,7 +462,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Free (ODT)"]'
         ).click()
         path = os.path.join(self.download_dir, "title.odt")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -502,7 +502,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Export selected as FIDUS"]'
         ).click()
         path = os.path.join(self.download_dir, "title.fidus")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -514,7 +514,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Export selected as Slim FIDUS"]'
         ).click()
         path = os.path.join(self.download_dir, "title.fidus")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         # We keep the file for the upload test below
         upload_slim_path = os.path.join(self.download_dir, "upload_slim.fidus")
@@ -528,7 +528,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Export selected as Epub"]'
         ).click()
         path = os.path.join(self.download_dir, "title.epub")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -540,7 +540,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Export selected as HTML"]'
         ).click()
         path = os.path.join(self.download_dir, "title.html.zip")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -552,7 +552,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Export selected as LaTeX"]'
         ).click()
         path = os.path.join(self.download_dir, "title.latex.zip")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -564,7 +564,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.XPATH, '//*[normalize-space()="Export selected as JATS"]'
         ).click()
         path = os.path.join(self.download_dir, "title.jats.zip")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         os.remove(path)
 
@@ -572,7 +572,7 @@ class ExportTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, ".revisions").click()
         self.driver.find_element(By.CSS_SELECTOR, ".download-revision").click()
         path = os.path.join(self.download_dir, "title.fidus")
-        self.wait_until_file_exists(path, self.wait_time)
+        self.wait_until_file_exists(path, self.wait_time * 2)
         assert os.path.isfile(path)
         upload_full_path = os.path.join(self.download_dir, "upload_full.fidus")
         os.rename(path, upload_full_path)

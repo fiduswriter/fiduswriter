@@ -32,13 +32,15 @@ FRONTEND_SETTINGS = {}
 
 def _merge_json_catalog(path, catalog):
     """Read a messages.json file at *path* and merge its entries into
-    *catalog*.  The ``""`` language-code key is skipped."""
+    *catalog*.  The ``""`` language-code key is skipped, and empty
+    translations are ignored so that the source string is used unchanged
+    (matching Django's gettext behavior for untranslated entries)."""
     if not os.path.isfile(path):
         return
     with open(path) as fh:
         pkg_catalog = json.load(fh)
     for msgid, msgstr in pkg_catalog.items():
-        if msgid:
+        if msgid and msgstr:
             catalog[msgid] = msgstr
 
 

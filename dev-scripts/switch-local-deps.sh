@@ -55,6 +55,7 @@ declare -A PACKAGE_DIRS=(
 MAIN_FILES=(
     "$REPO_ROOT/fiduswriter/document/package.json5"
     "$REPO_ROOT/fiduswriter/base/package.json5"
+    "$REPO_ROOT/fiduswriter/book/package.json5"
 )
 
 # Sibling packages that depend on other sibling packages.

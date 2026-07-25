@@ -243,10 +243,11 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "input.slug").send_keys(
             "fish"
         )
-        self.driver.find_element(
+        submit_button = self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=document-style-dialog] button.fw-dark",
-        ).click()
+        )
+        self.safe_click_element(self.driver, submit_button)
         WebDriverWait(self.driver, self.wait_time).until(
             EC.invisibility_of_element_located(
                 (By.CSS_SELECTOR, "[aria-describedby=document-style-dialog]")
@@ -261,10 +262,11 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
         time.sleep(0.5)
         document_style_element.click()
-        self.driver.find_element(
+        delete_button = self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=document-style-dialog] button.fw-orange",
-        ).click()
+        )
+        self.safe_click_element(self.driver, delete_button)
         self.driver.find_element(
             By.CSS_SELECTOR,
             "[aria-describedby=confirmdeletion] button.fw-dark",

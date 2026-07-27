@@ -37,8 +37,8 @@
     license: "AGPL",
     private: true,
     dependencies: {
-        "@fiduswriter/frontend": "^0.1.37",
-        "@fiduswriter/editor": "^0.1.66",
+        "@fiduswriter/frontend": "^0.1.38",
+        "@fiduswriter/editor": "^0.1.67",
         "@fiduswriter/bibliography-manager": "^0.1.28",
         "@fiduswriter/image-manager": "^0.1.22",
         "@fiduswriter/document-template-editor": "^0.1.15",

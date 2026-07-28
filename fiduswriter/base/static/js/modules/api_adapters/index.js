@@ -191,7 +191,7 @@ export class DjangoDocumentImportApi {
     }
 
     saveImage(data, files) {
-        return postJson("/api/usermedia/save/", data, files).then(
+        return postJson("/api/document/import/image/", data, files).then(
             ({json, status}) => ({json, status})
         )
     }

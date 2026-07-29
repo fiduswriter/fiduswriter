@@ -37,13 +37,13 @@
     license: "AGPL",
     private: true,
     dependencies: {
-        "@fiduswriter/frontend": "^0.1.39",
-        "@fiduswriter/editor": "^0.1.68",
+        "@fiduswriter/frontend": "^0.1.40",
+        "@fiduswriter/editor": "^0.1.71",
         "@fiduswriter/bibliography-manager": "^0.1.28",
         "@fiduswriter/image-manager": "^0.1.22",
         "@fiduswriter/document-template-editor": "^0.1.15",
         "@fiduswriter/document": "^0.2.37",
-        "fwtoolkit": "^0.2.5",
+        "fwtoolkit": "^0.2.6",
 
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",

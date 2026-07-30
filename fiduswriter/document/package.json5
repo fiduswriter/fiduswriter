@@ -1,8 +1,0 @@
-{
-    dependencies: {
-        "prosemirror-view": "1.38.1",
-        "prosemirror-menu": "1.2.4",
-        "prosemirror-state": "1.4.3",
-        "prosemirror-example-setup": "1.2.3"
-    }
-}

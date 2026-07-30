@@ -38,16 +38,20 @@
     private: true,
     dependencies: {
         "@fiduswriter/frontend": "^0.1.41",
+        "fwtoolkit": "^0.2.6",
+        // Remaining dependencies are listed here to ensure they are hoisted to
+        // to the top as static files need to be copied from them (see above)
         "@fiduswriter/editor": "^0.1.75",
         "@fiduswriter/bibliography-manager": "^0.1.28",
         "@fiduswriter/image-manager": "^0.1.22",
         "@fiduswriter/document-template-editor": "^0.1.15",
         "@fiduswriter/document": "^0.2.38",
-        "fwtoolkit": "^0.2.6",
-
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",
         "regenerator-runtime": "0.14.1",
         "@aaroon/workbox-rspack-plugin": "0.3.3"
+        "prosemirror-view": "1.38.1",
+        "prosemirror-menu": "1.2.4",
+        "prosemirror-example-setup": "1.2.3"
     }
 }

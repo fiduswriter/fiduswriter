@@ -49,7 +49,7 @@
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "5.0.0",
         "regenerator-runtime": "0.14.1",
-        "@aaroon/workbox-rspack-plugin": "0.3.3"
+        "@aaroon/workbox-rspack-plugin": "0.3.3",
         "prosemirror-view": "1.38.1",
         "prosemirror-menu": "1.2.4",
         "prosemirror-example-setup": "1.2.3"

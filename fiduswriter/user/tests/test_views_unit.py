@@ -211,7 +211,9 @@ class SaveEncryptionKeyViewTest(TestCase):
         self.assertEqual(key.encrypted_master_key, "encmk_updated")
         self.assertEqual(key.encrypted_private_key, "encpriv_updated")
         self.assertEqual(key.user_salt, self.salt_bytes)
-        self.assertEqual(key.encrypted_master_key_backup, "encmkbackup_updated")
+        self.assertEqual(
+            key.encrypted_master_key_backup, "encmkbackup_updated"
+        )
 
     def test_returns_key_id(self):
         response = json_post(

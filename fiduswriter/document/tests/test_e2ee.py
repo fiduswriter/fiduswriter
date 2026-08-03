@@ -1156,7 +1156,8 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Click "Set Up Encryption"
         self.driver.find_element(
-            By.CSS_SELECTOR, "#e2ee-setup-passphrase ~ .ui-dialog-buttonpane .fw-dark"
+            By.CSS_SELECTOR,
+            "#e2ee-setup-passphrase ~ .ui-dialog-buttonpane .fw-dark",
         ).click()
 
         # Wait for recovery key dialog
@@ -1188,19 +1189,22 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
 
         # Click "I have saved it"
         self.driver.find_element(
-            By.CSS_SELECTOR, "#e2ee-recovery-key ~ .ui-dialog-buttonpane .fw-dark"
+            By.CSS_SELECTOR,
+            "#e2ee-recovery-key ~ .ui-dialog-buttonpane .fw-dark",
         ).click()
 
         # Wait for editor to load (the E2EE document is created automatically)
         try:
             WebDriverWait(self.driver, self.wait_time).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "editor-toolbar")
+                )
             )
         except TimeoutException:
             current_url = self.driver.current_url
-            body_text = self.driver.find_element(
-                By.TAG_NAME, "body"
-            ).text[:500]
+            body_text = self.driver.find_element(By.TAG_NAME, "body").text[
+                :500
+            ]
             dialogs = self.driver.find_elements(
                 By.CSS_SELECTOR, ".ui-dialog-content"
             )
@@ -1258,7 +1262,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         passphrase again.
         """
         passphrase = "UnlockPassphrase456"
-        doc_id = self._complete_passphrase_setup(passphrase=passphrase)
+        self._complete_passphrase_setup(passphrase=passphrase)
 
         # Add content so we can verify decryption after unlock
         title_el = self.driver.find_element(By.CSS_SELECTOR, ".doc-title")
@@ -1315,7 +1319,8 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
             passphrase
         )
         self.driver.find_element(
-            By.CSS_SELECTOR, "#e2ee-enter-passphrase ~ .ui-dialog-buttonpane .fw-dark"
+            By.CSS_SELECTOR,
+            "#e2ee-enter-passphrase ~ .ui-dialog-buttonpane .fw-dark",
         ).click()
 
         # Wait for editor to load

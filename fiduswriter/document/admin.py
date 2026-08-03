@@ -119,6 +119,4 @@ class DocumentEncryptionKeyAdmin(admin.ModelAdmin):
     list_filter = ("encrypted_with_master_key",)
 
 
-admin.site.register(
-    models.DocumentEncryptionKey, DocumentEncryptionKeyAdmin
-)
+admin.site.register(models.DocumentEncryptionKey, DocumentEncryptionKeyAdmin)

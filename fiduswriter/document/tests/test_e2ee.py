@@ -434,19 +434,26 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(new_password)
 
         # Plant a MutationObserver *before* clicking so we cannot miss the
-        # success alert even if it appears and disappears between two Selenium
-        # polls.  The observer sets a persistent JS flag the moment any
-        # .alerts-success node is inserted anywhere under document.body.
+        # success or error alert even if it appears and disappears between two
+        # Selenium polls. The observer sets persistent JS flags the moment any
+        # .alerts-success or .alerts-error node is inserted anywhere under
+        # document.body.
         self.driver.execute_script(
             """
             window._e2eeSuccessAlertSeen = false;
+            window._e2eeErrorAlertSeen = false;
+            window._e2eeAlertText = '';
             (new MutationObserver(function(mutations) {
                 mutations.forEach(function(m) {
                     m.addedNodes.forEach(function(node) {
-                        if (node.nodeType === 1 &&
-                                node.classList &&
-                                node.classList.contains('alerts-success')) {
-                            window._e2eeSuccessAlertSeen = true;
+                        if (node.nodeType === 1 && node.classList) {
+                            if (node.classList.contains('alerts-success')) {
+                                window._e2eeSuccessAlertSeen = true;
+                            }
+                            if (node.classList.contains('alerts-error')) {
+                                window._e2eeErrorAlertSeen = true;
+                                window._e2eeAlertText = node.textContent || '';
+                            }
                         }
                     });
                 });
@@ -455,19 +462,34 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Click Change Password
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".ui-dialog .fw-dark")
+            )
         ).click()
 
         # Wait for the flag set by the MutationObserver above.
-        # Use a generous timeout: even with the JS optimisation that skips the
-        # current-password PBKDF2, deriving the new key at 600 000 iterations
-        # can take 10-20 s on a slow CI runner, so wait_time * 4 is needed.
-        WebDriverWait(self.driver, self.wait_time * 4).until(
-            lambda d: d.execute_script(
-                "return window._e2eeSuccessAlertSeen === true"
+        # Password change involves deriving the new key at 600 000 iterations,
+        # which can take 20-30 s on a slow CI runner, so use a generous timeout.
+        try:
+            WebDriverWait(self.driver, self.wait_time * 6).until(
+                lambda d: d.execute_script(
+                    "return window._e2eeSuccessAlertSeen === true || "
+                    "window._e2eeErrorAlertSeen === true"
+                )
             )
+        except TimeoutException:
+            self.fail(
+                "Password change did not produce a success or error alert "
+                "within the timeout."
+            )
+
+        error_seen = self.driver.execute_script(
+            "return window._e2eeErrorAlertSeen"
         )
+        error_text = self.driver.execute_script("return window._e2eeAlertText")
+        if error_seen:
+            self.fail(f"Password change failed with error alert: {error_text}")
 
         # Now poll the database until the server consumer has received the
         # WebSocket snapshot and committed the new salt.  This is the
@@ -1099,6 +1121,27 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
             EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
         )
 
+    def _wait_for_dialog_or_alert(self, dialog_id, message):
+        """
+        Wait for a dialog to appear, failing fast with a clear message if an
+        error alert is shown instead. Crypto-heavy flows can take a while on
+        slow CI runners, so use a generous timeout.
+        """
+        try:
+            WebDriverWait(self.driver, self.wait_time * 5).until(
+                EC.presence_of_element_located((By.ID, dialog_id))
+            )
+        except TimeoutException:
+            alerts = self.driver.find_elements(
+                By.CSS_SELECTOR, ".alerts-error"
+            )
+            alert_texts = [a.text for a in alerts if a.text]
+            if alert_texts:
+                self.fail(
+                    f"{message} failed with error alert: {alert_texts[0]}"
+                )
+            self.fail(f"{message} timed out waiting for dialog #{dialog_id}")
+
     def _complete_passphrase_setup(self, passphrase="MySecurePassphrase123"):
         """
         Helper to go through the full passphrase setup UI flow.
@@ -1120,24 +1163,21 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
             EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
         )
         self.driver.find_element(By.ID, "e2ee").click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".ui-dialog .fw-dark")
+            )
         ).click()
 
         # Wait for passphrase setup offer dialog and click "Set Up Passphrase"
-        time.sleep(1)
-        buttons = WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_all_elements_located(
-                (By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button")
+        setup_btn = WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.XPATH,
+                    "//div[contains(@class, 'ui-dialog')]//button["
+                    "contains(text(), 'Set Up Passphrase')]",
+                )
             )
-        )
-        setup_btn = None
-        for btn in buttons:
-            if "Set Up Passphrase" in btn.text:
-                setup_btn = btn
-                break
-        self.assertIsNotNone(
-            setup_btn, "Should have 'Set Up Passphrase' button"
         )
         setup_btn.click()
 
@@ -1155,14 +1195,20 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(passphrase)
 
         # Click "Set Up Encryption"
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#e2ee-setup-passphrase ~ .ui-dialog-buttonpane .fw-dark",
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    "#e2ee-setup-passphrase ~ .ui-dialog-buttonpane .fw-dark",
+                )
+            )
         ).click()
 
-        # Wait for recovery key dialog
-        WebDriverWait(self.driver, self.wait_time).until(
-            EC.presence_of_element_located((By.ID, "e2ee-recovery-key"))
+        # Wait for recovery key dialog. Setup involves PBKDF2 at 600k
+        # iterations plus several encryption operations, so this can be slow.
+        self._wait_for_dialog_or_alert(
+            "e2ee-recovery-key",
+            "Passphrase setup",
         )
 
         # Verify a recovery key was generated and shown
@@ -1188,14 +1234,18 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.assertTrue(len(key_record.user_salt) > 0)
 
         # Click "I have saved it"
-        self.driver.find_element(
-            By.CSS_SELECTOR,
-            "#e2ee-recovery-key ~ .ui-dialog-buttonpane .fw-dark",
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    "#e2ee-recovery-key ~ .ui-dialog-buttonpane .fw-dark",
+                )
+            )
         ).click()
 
         # Wait for editor to load (the E2EE document is created automatically)
         try:
-            WebDriverWait(self.driver, self.wait_time).until(
+            WebDriverWait(self.driver, self.wait_time * 3).until(
                 EC.presence_of_element_located(
                     (By.CLASS_NAME, "editor-toolbar")
                 )

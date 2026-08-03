@@ -474,7 +474,7 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
             {
                 text: gettext("Change Password"),
                 classes: "fw-button fw-dark",
-                click: () => {
+                click: async () => {
                     const currentInput = document.getElementById(
                         "e2ee-current-password-input"
                     )
@@ -536,7 +536,7 @@ export function changePasswordDialog(onPasswordChange, options = {}) {
                     }
 
                     dialogInstance.close()
-                    onPasswordChange({
+                    await onPasswordChange({
                         currentPassword: currentPasswordValue,
                         newPassword
                     })

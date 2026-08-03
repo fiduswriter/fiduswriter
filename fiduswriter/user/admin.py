@@ -16,9 +16,18 @@ class UserInviteAdmin(admin.ModelAdmin):
     pass
 
 
+class UserEncryptionKeyAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "created_at",
+        "updated_at",
+    )
+
+
 # Register models with the default admin site
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.UserInvite, UserInviteAdmin)
+admin.site.register(models.UserEncryptionKey, UserEncryptionKeyAdmin)
 
 # If django_otp is enabled, replace the default TOTPDevice admin with our custom one
 if "django_otp" in getattr(settings, "INSTALLED_APPS", []):

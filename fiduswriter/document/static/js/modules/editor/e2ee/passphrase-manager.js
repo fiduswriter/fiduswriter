@@ -96,14 +96,12 @@ export class PassphraseManager {
 
         // 6. Send to server
         const saveData = {
-            data: JSON.stringify({
-                public_key: publicKeyJwk,
-                encrypted_master_key: encryptedMasterKey,
-                encrypted_private_key: encryptedPrivateKey,
-                user_salt: PassphraseCrypto._bytesToBase64(salt),
-                user_iterations: 600000,
-                encrypted_master_key_backup: encryptedMasterKeyBackup
-            })
+            public_key: publicKeyJwk,
+            encrypted_master_key: encryptedMasterKey,
+            encrypted_private_key: encryptedPrivateKey,
+            user_salt: PassphraseCrypto._bytesToBase64(salt),
+            user_iterations: 600000,
+            encrypted_master_key_backup: encryptedMasterKeyBackup
         }
         const {status} = await postJson(
             "/api/user/encryption_key/save/",
@@ -208,14 +206,12 @@ export class PassphraseManager {
 
         // 6. Send updated keys to server
         const saveData = {
-            data: JSON.stringify({
-                public_key: data.public_key,
-                encrypted_master_key: encryptedMasterKey,
-                encrypted_private_key: encryptedPrivateKey,
-                user_salt: PassphraseCrypto._bytesToBase64(newSalt),
-                user_iterations: 600000,
-                encrypted_master_key_backup: encryptedMasterKeyBackup
-            })
+            public_key: data.public_key,
+            encrypted_master_key: encryptedMasterKey,
+            encrypted_private_key: encryptedPrivateKey,
+            user_salt: PassphraseCrypto._bytesToBase64(newSalt),
+            user_iterations: 600000,
+            encrypted_master_key_backup: encryptedMasterKeyBackup
         }
         const {status} = await postJson(
             "/api/user/encryption_key/save/",
@@ -298,14 +294,12 @@ export class PassphraseManager {
 
         // 8. Send updated keys to server
         const saveData = {
-            data: JSON.stringify({
-                public_key: publicKeyJwk,
-                encrypted_master_key: encryptedMasterKey,
-                encrypted_private_key: encryptedPrivateKey,
-                user_salt: PassphraseCrypto._bytesToBase64(newSalt),
-                user_iterations: 600000,
-                encrypted_master_key_backup: encryptedMasterKeyBackup
-            })
+            public_key: publicKeyJwk,
+            encrypted_master_key: encryptedMasterKey,
+            encrypted_private_key: encryptedPrivateKey,
+            user_salt: PassphraseCrypto._bytesToBase64(newSalt),
+            user_iterations: 600000,
+            encrypted_master_key_backup: encryptedMasterKeyBackup
         }
         const {status} = await postJson(
             "/api/user/encryption_key/save/",

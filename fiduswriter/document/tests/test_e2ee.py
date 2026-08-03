@@ -1099,6 +1099,236 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
             EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
         )
 
+    def _complete_passphrase_setup(self, passphrase="MySecurePassphrase123"):
+        """
+        Helper to go through the full passphrase setup UI flow.
+        Returns the document ID of the E2EE document created after setup.
+        """
+        from user.models import UserEncryptionKey
+
+        self.driver.get(self.base_url)
+
+        # Click "Create new document"
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".new_document button")
+            )
+        ).click()
+
+        # Encryption choice dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
+        self.driver.find_element(By.ID, "e2ee").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".ui-dialog .fw-dark"
+        ).click()
+
+        # Wait for passphrase setup offer dialog and click "Set Up Passphrase"
+        time.sleep(1)
+        buttons = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_all_elements_located(
+                (By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button")
+            )
+        )
+        setup_btn = None
+        for btn in buttons:
+            if "Set Up Passphrase" in btn.text:
+                setup_btn = btn
+                break
+        self.assertIsNotNone(
+            setup_btn, "Should have 'Set Up Passphrase' button"
+        )
+        setup_btn.click()
+
+        # Wait for passphrase setup dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "e2ee-setup-passphrase"))
+        )
+
+        # Enter passphrase and confirmation
+        self.driver.find_element(By.ID, "e2ee-passphrase-input").send_keys(
+            passphrase
+        )
+        self.driver.find_element(
+            By.ID, "e2ee-confirm-passphrase-input"
+        ).send_keys(passphrase)
+
+        # Click "Set Up Encryption"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#e2ee-setup-passphrase ~ .ui-dialog-buttonpane .fw-dark"
+        ).click()
+
+        # Wait for recovery key dialog
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "e2ee-recovery-key"))
+        )
+
+        # Verify a recovery key was generated and shown
+        recovery_key = self.driver.find_element(
+            By.ID, "e2ee-recovery-key-value"
+        ).text
+        self.assertTrue(
+            len(recovery_key) > 0,
+            "Recovery key should be displayed after setup",
+        )
+
+        # Verify UserEncryptionKey was persisted in the backend.
+        # This catches regressions where the frontend wraps the payload in a
+        # "data" field or the backend reads from the wrong key.
+        key_record = UserEncryptionKey.objects.filter(user=self.user).first()
+        self.assertIsNotNone(
+            key_record,
+            "UserEncryptionKey should be created after passphrase setup",
+        )
+        self.assertTrue(len(key_record.public_key) > 0)
+        self.assertTrue(len(key_record.encrypted_master_key) > 0)
+        self.assertTrue(len(key_record.encrypted_private_key) > 0)
+        self.assertTrue(len(key_record.user_salt) > 0)
+
+        # Click "I have saved it"
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#e2ee-recovery-key ~ .ui-dialog-buttonpane .fw-dark"
+        ).click()
+
+        # Wait for editor to load (the E2EE document is created automatically)
+        try:
+            WebDriverWait(self.driver, self.wait_time).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
+            )
+        except TimeoutException:
+            current_url = self.driver.current_url
+            body_text = self.driver.find_element(
+                By.TAG_NAME, "body"
+            ).text[:500]
+            dialogs = self.driver.find_elements(
+                By.CSS_SELECTOR, ".ui-dialog-content"
+            )
+            dialog_titles = [
+                d.get_attribute("id") or d.text[:60] for d in dialogs
+            ]
+            has_key = self.driver.execute_script(
+                "return (async () => {"
+                "  try {"
+                "    const r = await fetch('/api/user/encryption_key/', "
+                "      {headers: {'X-Requested-With': 'XMLHttpRequest'}});"
+                "    const j = await r.json();"
+                "    return j.has_key;"
+                "  } catch (e) { return e.message; }"
+                "})();"
+            )
+            session_keys = self.driver.execute_script(
+                "return Object.keys(sessionStorage).filter(k => k.startsWith('e2ee_'));"
+            )
+            self.fail(
+                f"Editor did not load after passphrase setup. "
+                f"URL: {current_url}, body: {body_text}, "
+                f"dialogs: {dialog_titles}, api_has_key: {has_key}, "
+                f"session_keys: {session_keys}"
+            )
+
+        doc_id = int(
+            self.driver.current_url.split("/document/")[1].split("/")[0]
+        )
+
+        return doc_id
+
+    def test_passphrase_setup_creates_encryption_keys(self):
+        """
+        Test completing the passphrase setup flow creates a valid
+        UserEncryptionKey record on the server.
+        """
+        doc_id = self._complete_passphrase_setup()
+
+        # The E2EE document created after setup should have a DocumentEncryptionKey
+        # stored for the owner (encrypted with the master key).
+        dek = DocumentEncryptionKey.objects.filter(
+            document_id=doc_id, holder=self.user
+        ).first()
+        self.assertIsNotNone(
+            dek,
+            "DocumentEncryptionKey should be created for passphrase E2EE document",
+        )
+        self.assertTrue(dek.encrypted_with_master_key)
+
+    def test_unlock_e2ee_document_with_passphrase(self):
+        """
+        Test that after setting up a passphrase, logging out clears the
+        cached keys and the user can unlock documents by entering the
+        passphrase again.
+        """
+        passphrase = "UnlockPassphrase456"
+        doc_id = self._complete_passphrase_setup(passphrase=passphrase)
+
+        # Add content so we can verify decryption after unlock
+        title_el = self.driver.find_element(By.CSS_SELECTOR, ".doc-title")
+        title_el.click()
+        title_el.send_keys("Passphrase Unlock Test")
+        body_el = self.driver.find_element(By.CSS_SELECTOR, ".doc-body")
+        body_el.click()
+        body_el.send_keys("Unlocked body content")
+        # Allow time for encryption and snapshot to be saved
+        time.sleep(3)
+
+        # Log out via the UI so sessionStorage is cleared
+        self.driver.find_element(By.ID, "close-document-top").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, "preferences-btn"))
+        )
+        self.driver.find_element(By.ID, "preferences-btn").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//*[normalize-space()="Log out"]')
+            )
+        ).click()
+
+        # Wait for redirect to login page
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "id-login"))
+        )
+
+        # Log in again
+        self.login_user(self.user, self.driver, self.client)
+
+        # Clear sessionStorage to force passphrase entry (login should already
+        # have cleared it, but be explicit to ensure we test the unlock flow).
+        self.driver.execute_script("window.sessionStorage.clear()")
+
+        # Navigate to overview and open the document
+        self.driver.get(self.base_url)
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".fw-contents tbody tr")
+            )
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".fw-contents tbody tr a.fw-data-table-title"
+        ).click()
+
+        # Passphrase unlock dialog should appear
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.ID, "e2ee-enter-passphrase"))
+        )
+
+        # Enter passphrase and unlock
+        self.driver.find_element(By.ID, "e2ee-passphrase-input").send_keys(
+            passphrase
+        )
+        self.driver.find_element(
+            By.CSS_SELECTOR, "#e2ee-enter-passphrase ~ .ui-dialog-buttonpane .fw-dark"
+        ).click()
+
+        # Wait for editor to load
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "editor-toolbar"))
+        )
+
+        # Verify content is decrypted and visible
+        title_text = self.driver.execute_script(
+            "return window.theApp.page.view.state.doc.firstChild.textContent;"
+        )
+        self.assertIn("Passphrase Unlock Test", title_text)
+
     def test_user_encryption_key_model_persists(self):
         """
         Test that the UserEncryptionKey model correctly stores and retrieves

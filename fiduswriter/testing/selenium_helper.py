@@ -162,6 +162,13 @@ class SeleniumHelper:
             options.binary_location = "/usr/bin/google-chrome-stable"
             if os.getenv("DEBUG_MODE") != "1":
                 options.add_argument("--headless=new")
+                # HeadlessChrome does not pass the app's browser-check regex,
+                # so use a standard Chrome user agent for automated tests.
+                options.add_argument(
+                    "user-agent=Mozilla/5.0 (X11; Linux x86_64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/150.0.0.0 Safari/537.36"
+                )
             options.add_argument("--disable-gpu")
             wait_time = 20
         else:

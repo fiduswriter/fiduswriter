@@ -50,7 +50,7 @@ export function setupPassphraseDialog(onSetup) {
             {
                 text: gettext("Set Up Encryption"),
                 classes: "fw-button fw-dark",
-                click: () => {
+                click: async () => {
                     const input = document.getElementById(
                         "e2ee-passphrase-input"
                     )
@@ -84,7 +84,7 @@ export function setupPassphraseDialog(onSetup) {
                     }
 
                     dialogInstance.close()
-                    onSetup(passphrase)
+                    await onSetup(passphrase)
                     resolve()
                 }
             }

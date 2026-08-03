@@ -1,4 +1,4 @@
-setuptools==82.0.1
+setuptools==83.0.0
 twine==6.2.0
 pre-commit==4.6.0
 deep-translator==1.11.4

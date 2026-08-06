@@ -547,6 +547,8 @@ sudo snap refresh --list
 sudo snap refresh fiduswriter
 ```
 
+**Note on `DEBUG=True`:** Snap refreshes do not re-run `collectstatic` automatically. If you set `DEBUG = True` and also rely on collected static files (for example, when serving `/static/` from `static-collected/` behind NGINX), static files may become stale after an update. For production deployments, always use `DEBUG = False` so static files are collected during initial setup and served consistently.
+
 ### Hold Updates
 
 To prevent automatic updates:
@@ -795,6 +797,7 @@ If you want to use Redis for caching or sessions (not required):
 8. ✅ **Restrict ALLOWED_HOSTS** to actual domains
 9. ✅ **Use MySQL** for production (default with snap, already configured)
 10. ✅ **Monitor logs** for suspicious activity
+11. ✅ **Set `DEBUG = False`** in production so static files are collected and served correctly
 
 ## Getting Help
 

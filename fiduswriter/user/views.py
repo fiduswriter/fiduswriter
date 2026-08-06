@@ -893,7 +893,7 @@ def save_encryption_key(request):
     """Create or update the user's encryption keys."""
     response = {}
     status = 200
-    data = request.JSON.get("data", {})
+    data = request.JSON
     key_record, created = UserEncryptionKey.objects.get_or_create(
         user=request.user,
         defaults={

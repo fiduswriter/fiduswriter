@@ -91,3 +91,32 @@ class DocumentRevisionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.DocumentRevision, DocumentRevisionAdmin)
+
+
+class ShareTokenAdmin(admin.ModelAdmin):
+    list_display = (
+        "token",
+        "document",
+        "rights",
+        "created_by",
+        "expires_at",
+        "is_active",
+    )
+    list_filter = ("rights", "is_active")
+
+
+admin.site.register(models.ShareToken, ShareTokenAdmin)
+
+
+class DocumentEncryptionKeyAdmin(admin.ModelAdmin):
+    list_display = (
+        "document",
+        "holder",
+        "encrypted_with_master_key",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = ("encrypted_with_master_key",)
+
+
+admin.site.register(models.DocumentEncryptionKey, DocumentEncryptionKeyAdmin)

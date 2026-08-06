@@ -1,5 +1,6 @@
 import os
 import time
+import zipfile
 from tempfile import mkdtemp
 
 from selenium.webdriver.common.keys import Keys
@@ -225,10 +226,12 @@ class BibliographyOverviewTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, "li.content-menu-item:nth-child(2)"
         ).click()
         time.sleep(1)
-        assert os.path.isfile(
-            os.path.join(self.download_dir, "bibliography.zip")
-        )
-        os.remove(os.path.join(self.download_dir, "bibliography.zip"))
+        zip_path = os.path.join(self.download_dir, "bibliography.zip")
+        assert os.path.isfile(zip_path)
+        with zipfile.ZipFile(zip_path, "r") as z:
+            bib_content = z.read("bibliography.bib").decode("utf-8")
+        self.assertIn("@", bib_content)
+        os.remove(zip_path)
 
         # Delete bib entry
         entries = self.driver.find_elements(

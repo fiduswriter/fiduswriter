@@ -176,7 +176,7 @@ class SaveEncryptionKeyViewTest(TestCase):
         response = json_post(
             self.client,
             "/api/user/encryption_key/save/",
-            {"data": self._key_data()},
+            self._key_data(),
         )
         self.assertEqual(response.status_code, 200)
         data = response.json()
@@ -184,30 +184,42 @@ class SaveEncryptionKeyViewTest(TestCase):
         self.assertTrue(
             UserEncryptionKey.objects.filter(user=self.user).exists()
         )
+        key = UserEncryptionKey.objects.get(user=self.user)
+        self.assertEqual(key.public_key, "pubkey")
+        self.assertEqual(key.encrypted_private_key, "encpriv")
+        self.assertEqual(key.encrypted_master_key, "encmk")
+        self.assertEqual(key.user_salt, self.salt_bytes)
+        self.assertEqual(key.user_iterations, 600000)
+        self.assertEqual(key.encrypted_master_key_backup, "encmkbackup")
 
     def test_updates_existing_key_record(self):
         # First create
         json_post(
             self.client,
             "/api/user/encryption_key/save/",
-            {"data": self._key_data()},
+            self._key_data(),
         )
         # Then update
         response = json_post(
             self.client,
             "/api/user/encryption_key/save/",
-            {"data": self._key_data(suffix="_updated")},
+            self._key_data(suffix="_updated"),
         )
         self.assertEqual(response.status_code, 200)
         key = UserEncryptionKey.objects.get(user=self.user)
         self.assertEqual(key.public_key, "pubkey_updated")
         self.assertEqual(key.encrypted_master_key, "encmk_updated")
+        self.assertEqual(key.encrypted_private_key, "encpriv_updated")
+        self.assertEqual(key.user_salt, self.salt_bytes)
+        self.assertEqual(
+            key.encrypted_master_key_backup, "encmkbackup_updated"
+        )
 
     def test_returns_key_id(self):
         response = json_post(
             self.client,
             "/api/user/encryption_key/save/",
-            {"data": self._key_data()},
+            self._key_data(),
         )
         data = response.json()
         key = UserEncryptionKey.objects.get(user=self.user)

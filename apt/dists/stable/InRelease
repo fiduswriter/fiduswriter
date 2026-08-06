@@ -6,44 +6,44 @@ Label: Fidus Writer
 Suite: stable
 Codename: stable
 Version: 1.0
-Date: Mon, 03 Aug 2026 13:38:38 UTC
+Date: Thu, 06 Aug 2026 14:53:03 UTC
 Architectures: amd64 arm64
 Components: main
 Description: Fidus Writer APT repository
 MD5Sum:
- 2e6485ab353878dcaa37420f673dc3bd 3567 main/binary-amd64/Packages
- 77c7104f708d59b9edf0ec3fbacdecbe 1663 main/binary-amd64/Packages.gz
+ f54c34b754112e20114b0089e278868e 3567 main/binary-amd64/Packages
+ a4e3cd24d3fd621527a13472488a24d6 1660 main/binary-amd64/Packages.gz
  ddbf96606d4feb912bc45430753f38ec 147 main/binary-amd64/Release
- deae45119a1ce3b8cb145e701d18b591 3567 main/binary-arm64/Packages
- a3775d15143270cb19d73a00964c727d 1663 main/binary-arm64/Packages.gz
+ 6863e05cd1f6d7f172b6538c7260bc1e 3567 main/binary-arm64/Packages
+ bf6cd0068dbef3b71e12e907f84c9eff 1663 main/binary-arm64/Packages.gz
  d14f450e2fbfb75fd33aced59fffcb51 147 main/binary-arm64/Release
 SHA1:
- a91f0a137b8c5131d6693947e081ed1587c2c572 3567 main/binary-amd64/Packages
- 49b744d860d5dada47c1de21a1b33ea19e3148f9 1663 main/binary-amd64/Packages.gz
+ 5d3d5517f2bb13ef24046ae0b9434e9bc3c3ce51 3567 main/binary-amd64/Packages
+ 728868334efa65a932020e1fc024dca4d2a2edf1 1660 main/binary-amd64/Packages.gz
  dea92890f1d01ee12a1f4b9a79f9304423437399 147 main/binary-amd64/Release
- 2f69799d85d9dc8ef77eac6faab22032193efb2b 3567 main/binary-arm64/Packages
- f4d8d9ba8132ffa3616004a326d001686012ee3b 1663 main/binary-arm64/Packages.gz
+ 04cb8cd8a40366a61a26bb8c0c259bfe15e62d1d 3567 main/binary-arm64/Packages
+ eed66dcea58297b5effea2a5ac144aef9de23fbd 1663 main/binary-arm64/Packages.gz
  fa08bc790e113179256c6f4d603ad9964b070c22 147 main/binary-arm64/Release
 SHA256:
- 970786a39abd17884043e2a61e15d60ea5dbb2023f1a8ec075e58554b715e459 3567 main/binary-amd64/Packages
- ac2e5af9ec11b48a57420c9a5067dcfbd1c3e97c6ab619776f42b57b09ec30c2 1663 main/binary-amd64/Packages.gz
+ 28ab8b07d1f173536f2582431dff73bfd9cb66a63f3b17709fdd5a957c4c8ff9 3567 main/binary-amd64/Packages
+ fb07bea3af7fc5f7a4b58011799b8027d743c484e47e4676984cca5a05abb377 1660 main/binary-amd64/Packages.gz
  27cc0987f207e3394d2ecbd3f27ad9a963b57fd249572caab75fa816d358009f 147 main/binary-amd64/Release
- 350525382c24a2c6b69b245f04aad2d364644744af1a07ac01bd828d4345e895 3567 main/binary-arm64/Packages
- 87a40c9a5547abf5a75189fda5d8a89662db3709ad6a25946be60367dc738aaf 1663 main/binary-arm64/Packages.gz
+ 20d184b0cdb70c95cfb267d232da7a261da15a7af2c069bd2b7b75b2e5a8dc20 3567 main/binary-arm64/Packages
+ eab99ce9d5abc8cf749844e966d4507db91d053977c4a878e26b27e861f1f5e9 1663 main/binary-arm64/Packages.gz
  e329cf31c76f5a409e63cd245f376851d63a575bb7da89eff0d9d1294fe5f6f3 147 main/binary-arm64/Release
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEp5WCJZ6F+hXWrymcaFw0zeeBM50FAmpwmd4ACgkQaFw0zeeB
-M5327BAAia5j0z1G1wtRFRPwEtPcUe+n8tQWCPgwiv5El2BXzYu+hhzZCSLYm+NC
-E7B5JdGtJLczlSemRHwkB9N8kai25OsNq1niK0AM+FCf6i2qrY7lwwagSklM5Pdv
-UZf/ZBosJVx7V1Z13/diQwe9sKcNDbcIkDFufkPOmxNqxU5Si0Zlje5/WSSIiuE1
-FaAXGuEC5Mzodb0ujEZvCD0V7I04VAPpi85c6PeYaRc8hyLgtq/Aczi1Hf90BKko
-kYayXmPfrGjQ0TZZoGvIgqUNBmYKoxkAQtSXPr9519lagelYQ2jJscmM+TYiQmyQ
-u46q1BRewZZR1QRtXM4xKHiza4l7qOj2OkkW+DZ5RdHm9xJdD+D7D7mX2D4A11Xp
-vsjQb6nj+YwLTYEyHil/pqCFJP6ZTvHCIhcOxd1ten2MhrXNvwlvhBqqDR+5SmjW
-DHITG6OnJuLW/0Yrka7qRo6zCw+wGRZjP4t2Q3sJwmyCm6Y08wlZEyX8SkrwmU47
-jCcgQgxdcuXxxuawTEK9iEj/WHv2Sv4DsKZx3EMcGuiQEU6LbuYfPV0Iamv8vqih
-qJHQET3qBLPOIm4Be2x9ekcsoscd/6nPKWkKhcwMG2PTBpZPP4gPxdkouW/yZB++
-fFYhuD5F4v65bFXGQG5z2PA1dNShYo+8hWG8ptlPsw6mzI4YTEE=
-=avIR
+iQIzBAEBCgAdFiEEp5WCJZ6F+hXWrymcaFw0zeeBM50FAmp0n88ACgkQaFw0zeeB
+M52MkA/+Poq7jGR114wZ5k/t46SUlxsrtzCL/jc+u1Nccd5x6fyUmSA+Tsim7bUZ
+tvEOFkns3HJkd4nNmCF7ljmRtryFn1iwOCLEs+7Fi903+gVimcD1Hn780v2reL4H
+uht+kezBLttbHZA5gB3KdouGzsJZj10Pp1vBHWTzPYEgZQYH0Ig8QX3CY1xoeLtj
+vU4w9w23eeNfktc1z3ZB0mBw5z+xqGov2l6WEFfElag4f4tsbQ28grJRVlfYgaad
+nvgEcylBYirPysTnklb90BRf7ujyr3obCiKYIVf0P3GekY5+qD4GEtAHHRCKETSF
+cCUTHHQqzFMHMf5ct+UvbaaNkLcg/Z3OwdQskY1kSC9GCvYYjgMNQessHDM+H6lx
+3ZT0bOoo5v30pCpopt8JzQka//Van7lWjDthmlCgWYqMt/fRDjqJ8Jeh+WSrcLIa
+Qi/0ow+3xtA+TNLXLtg0O6QHDFyq4TladyBuCQBaTuHzeyXkJ7idke9snzps5HQu
+xFsv/sLBS8orIk8ptp/I5pMMrk9d1Uvr1IDR808aFV8QuaGt+RbKAutS24w0FAbN
+2rEm0RPkOO8WAguNS/a50+vMhMEztS+ir3seh1GldtwPsNNIkZQH8aCIaoTBXG8j
+u+8D1t9zLy+HKrBu7rNwlSJaRdL7UVgup7U3ZFTbPEeoHARE7Wg=
+=/uL6
 -----END PGP SIGNATURE-----

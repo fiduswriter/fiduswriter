@@ -23,7 +23,7 @@ from django.db import connections
 from django.db.backends.base.creation import TEST_DATABASE_PREFIX
 from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
 from django.test.testcases import TransactionTestCase
-from django.test.utils import modify_settings
+from django.test.utils import modify_settings, override_settings
 
 from channels.routing import get_default_application
 
@@ -339,6 +339,18 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
         )
         cls._live_server_modified_settings.enable()
 
+        # Use a non-manifest staticfiles storage for tests so that running
+        # collectstatic is not required before live-server tests.
+        cls._staticfiles_override = override_settings(
+            STORAGES={
+                **settings.STORAGES,
+                "staticfiles": {
+                    "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+                },
+            }
+        )
+        cls._staticfiles_override.enable()
+
         # Ensure MEDIA_ROOT exists so Granian's static mount doesn't crash.
         # On a fresh CI checkout the media/ directory is in .gitignore and
         # has never been created.  Create it here as an empty placeholder;
@@ -383,6 +395,7 @@ class ChannelsLiveServerTestCase(TransactionTestCase):
     def tearDownClass(cls):
         cls._server_process.terminate()
         cls._server_process.join()
+        cls._staticfiles_override.disable()
         cls._live_server_modified_settings.disable()
         super().tearDownClass()
 

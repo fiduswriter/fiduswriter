@@ -14,7 +14,7 @@ export class BibLatexFileExporter {
             const zipper = new ZipFileCreator([
                 {
                     filename: "bibliography.bib",
-                    contents: exporter.output
+                    contents: exporter.parse()
                 }
             ])
             zipper

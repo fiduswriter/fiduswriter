@@ -257,6 +257,17 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
                 "fw-button.ui-button.ui-corner-all.ui-widget"
             ),
         ).click()
+        cross_reference = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".doc-body .cross-reference")
+            )
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".doc-body .cross-reference"),
+                "An abstract title",
+            )
+        )
         cross_reference = self.driver.find_element(
             By.CSS_SELECTOR, ".doc-body .cross-reference"
         )
@@ -386,8 +397,10 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         ).send_keys(
             Keys.BACKSPACE
         ).perform()
-        cross_reference = self.driver.find_element(
-            By.CSS_SELECTOR, ".doc-body .cross-reference.missing-target"
+        cross_reference = WebDriverWait(self.driver, self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".doc-body .cross-reference.missing-target")
+            )
         )
         assert cross_reference.text == "MISSING TARGET"
         internal_link = self.driver.find_element(

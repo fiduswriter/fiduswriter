@@ -439,7 +439,12 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
-        self.driver.find_element(By.ID, "close-document-top").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, "close-document-top"))
+        ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()

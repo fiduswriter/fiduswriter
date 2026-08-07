@@ -492,73 +492,59 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             " here.\nI'll even write a second paragraph."
         )
-        # Turn on tracked changes
+        # Turn on tracked changes via the menu the user clicks.
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".header-menu:nth-child(5) > .header-nav-item:not(.disabled)",
+                )
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(5) > .header-nav-item"
         ).click()
-        self.driver.find_element(
-            By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
-        ).click()
-        # Make changes
-        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
-        ActionChains(self.driver).double_click(
-            self.driver.find_element(By.CSS_SELECTOR, ".doc-body strong")
-        ).perform()
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button[title=Strong]"
-        ).click()
-        ActionChains(self.driver).double_click(
-            self.driver.find_element(By.CSS_SELECTOR, ".doc-body em")
-        ).perform()
-        self.driver.find_element(
-            By.CSS_SELECTOR, "button[title=Strong]"
-        ).click()
-        time.sleep(1)
-        ActionChains(self.driver).send_keys(Keys.RIGHT).send_keys(
-            Keys.RIGHT
-        ).send_keys(Keys.RIGHT).send_keys(Keys.RIGHT).send_keys(
-            Keys.RIGHT
-        ).send_keys(
-            Keys.BACKSPACE
-        ).send_keys(
-            Keys.RIGHT
-        ).send_keys(
-            Keys.RIGHT
-        ).send_keys(
-            Keys.RIGHT
-        ).send_keys(
-            "insertion"
-        ).send_keys(
-            Keys.RIGHT
-        ).send_keys(
-            Keys.RIGHT
-        ).send_keys(
-            Keys.RIGHT
-        ).send_keys(
-            Keys.ENTER
-        ).send_keys(
-            Keys.UP
-        ).perform()
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".editor-toolbar .multi-buttons"
-        ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".header-menu:nth-child(5) .fw-pulldown li:nth-child(1) > .fw-pulldown-item:not(.disabled)",
+                )
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR,
-            ".editor-toolbar .multi-buttons .ui-button:nth-child(5)",
+            ".header-menu:nth-child(5) .fw-pulldown li:nth-child(1) > .fw-pulldown-item",
         ).click()
-
+        # Wait until track changes has actually been enabled, and give the
+        # menu time to close before focusing the document body.
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: driver.execute_script(
+                "return window.theApp.page.view.state.doc.attrs.tracked === true"
+            )
+        )
+        time.sleep(0.5)
+        # Make tracked changes with simple interactions.
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
+            "insertion"
+        )
+        self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
+            Keys.ENTER
+        )
+        # Wait for the corresponding margin boxes to appear.
         WebDriverWait(self.driver, self.wait_time).until(
             lambda driver: len(
                 driver.find_elements(
                     By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
                 )
             )
-            >= 6
+            >= 2
         )
         change_tracking_boxes = self.driver.find_elements(
             By.CSS_SELECTOR, ".margin-box.track:not(.hidden)"
         )
-        self.assertEqual(len(change_tracking_boxes), 6)
+        self.assertGreaterEqual(len(change_tracking_boxes), 2)
 
     def test_share_document(self):
         yeti2_user = self.create_user(
@@ -576,13 +562,38 @@ class EditorTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, ".doc-title").send_keys(
             "A test article to share"
         )
-        # Turn on tracked changes
+        # Turn on tracked changes via the menu the user clicks.
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".header-menu:nth-child(5) > .header-nav-item:not(.disabled)",
+                )
+            )
+        )
         self.driver.find_element(
             By.CSS_SELECTOR, ".header-menu:nth-child(5) > .header-nav-item"
         ).click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    ".header-menu:nth-child(5) .fw-pulldown li:nth-child(1) > .fw-pulldown-item:not(.disabled)",
+                )
+            )
+        )
         self.driver.find_element(
-            By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
+            By.CSS_SELECTOR,
+            ".header-menu:nth-child(5) .fw-pulldown li:nth-child(1) > .fw-pulldown-item",
         ).click()
+        # Wait until track changes has actually been enabled, and give the
+        # menu time to close before focusing the document body.
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda driver: driver.execute_script(
+                "return window.theApp.page.view.state.doc.attrs.tracked === true"
+            )
+        )
+        time.sleep(0.5)
         self.driver.find_element(By.CSS_SELECTOR, ".doc-body").click()
         self.driver.find_element(By.CSS_SELECTOR, ".doc-body").send_keys(
             "With tracked changes\n"

@@ -166,15 +166,22 @@ export const headerbarModel = () => ({
                         if (editor.docInfo.token) {
                             return true
                         }
+                        // Keep the item in the menu while the document is still
+                        // loading; remove it only for confirmed write collaborators
+                        // who cannot share or request higher access.
                         if (!editor.docInfo.access_rights) {
-                            return false
+                            return true
                         }
                         return editor.docInfo.access_rights !== "write"
                     },
                     disabled: editor => {
                         return (
                             editor.app.isOffline() ||
-                            !editor.user.is_authenticated
+                            !editor.user.is_authenticated ||
+                            !editor.docInfo.owner ||
+                            (!editor.docInfo.is_owner &&
+                                !editor.docInfo.token &&
+                                editor.docInfo.access_rights === "write")
                         )
                     }
                 },

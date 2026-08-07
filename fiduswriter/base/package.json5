@@ -38,11 +38,11 @@
     private: true,
     dependencies: {
         "@fiduswriter/frontend": "^0.1.42",
-        "fwtoolkit": "^0.2.6",
+        "fwtoolkit": "^0.2.8",
         // Remaining dependencies are listed here to ensure they are hoisted to
         // to the top as static files need to be copied from them (see above)
         "@fiduswriter/editor": "^0.1.76",
-        "@fiduswriter/bibliography-manager": "^0.1.28",
+        "@fiduswriter/bibliography-manager": "^0.1.29",
         "@fiduswriter/image-manager": "^0.1.22",
         "@fiduswriter/document-template-editor": "^0.1.15",
         "@fiduswriter/document": "^0.2.38",

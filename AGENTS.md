@@ -387,7 +387,7 @@ This applies to all JavaScript files across the project and any plugins. The `in
 
 See also the `translate_all.py` management command (`fiduswriter/devel/management/commands/translate_all.py`) which automates makemessages + Google Translate for all locale files.
 
-## Monorepo context
+## Working with local sibling packages
 
 This repository is part of a larger set of Fidus Writer repositories that are
 normally checked out next to one another: `fwtoolkit/`, `fiduswriter-document/`,
@@ -398,4 +398,42 @@ developer. See the `AGENTS.md` file in the sibling directory that contains all
 those repositories for a high-level map of how they relate to one another,
 including which code belongs in which repository and the dependency flow between
 them.
+
+The `dev-scripts/` directory contains helpers for switching between published
+npm versions of these sibling packages and the local checkouts:
+
+- `dev-scripts/switch-local-deps.sh local` — Rewrite `base/package.json5`,
+  `book/package.json5`, and the sibling `package.json` files to use local
+  `file:` paths instead of npm versions. Run this when you want to test changes
+  made in a sibling repository (for example `@fiduswriter/document` from
+  `fiduswriter-document-js/`).
+
+- `dev-scripts/switch-local-deps.sh npm` — Revert the above, pointing
+  everything back to the published npm versions.
+
+- `dev-scripts/publish-sibling-packages.sh` — Publish all sibling packages from
+  their local checkouts. Use `--dry-run` to preview.
+
+Typical workflow for testing a change in `@fiduswriter/document`:
+
+```bash
+# 1. Switch the main app and siblings to local sources
+./dev-scripts/switch-local-deps.sh local
+
+# 2. Install/build the sibling you changed
+cd ../fiduswriter-document-js
+pnpm install
+pnpm run build
+
+# 3. Rebuild the main app's bundle
+cd ../fiduswriter/fiduswriter
+python manage.py transpile --force
+
+# 4. When done, revert to npm versions
+./dev-scripts/switch-local-deps.sh npm
+```
+
+Note: `switch-local-deps.sh` modifies `package.json5`/`package.json` files in
+place. Make sure to revert to npm mode before committing if you do not intend
+to keep the local dependency paths in the repository.
 

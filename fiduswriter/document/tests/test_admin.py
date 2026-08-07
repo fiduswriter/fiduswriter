@@ -4,6 +4,7 @@ import sys
 from tempfile import mkdtemp
 
 from django.conf import settings
+from django.test import override_settings
 from testing.live_server import ChannelsLiveServerTestCase
 from testing.selenium_helper import SeleniumHelper
 from selenium.webdriver.common.by import By
@@ -14,6 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 
+@override_settings(E2EE_MODE="disabled")
 class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
     fixtures = [
         "initial_documenttemplates.json",
@@ -421,7 +423,8 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "li:nth-child(1) > .fw-pulldown-item"
+            By.XPATH,
+            '//*[contains(@class, "fw-pulldown-item") and normalize-space()="Share"]',
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-dialog .fw-add-button"
@@ -442,7 +445,12 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-dialog .fw-dark"
         ).click()
-        self.driver.find_element(By.ID, "close-document-top").click()
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".ui-dialog"))
+        )
+        WebDriverWait(self.driver, self.wait_time).until(
+            EC.element_to_be_clickable((By.ID, "close-document-top"))
+        ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.element_to_be_clickable((By.ID, "preferences-btn"))
         ).click()
@@ -505,7 +513,8 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "li:nth-child(4) > .fw-pulldown-item"
+            By.XPATH,
+            '//*[contains(@class, "fw-pulldown-item") and normalize-space()="Create copy"]',
         ).click()
         WebDriverWait(self.driver, self.wait_time).until(
             EC.staleness_of(old_body)
@@ -527,7 +536,8 @@ class AdminTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".header-menu:nth-child(1) > .header-nav-item"
         ).click()
         self.driver.find_element(
-            By.CSS_SELECTOR, "li:nth-child(5) > .fw-pulldown-item"
+            By.XPATH,
+            '//*[contains(@class, "fw-pulldown-item") and normalize-space()="Create copy as ..."]',
         ).click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".fw-dialog select.fw-button"

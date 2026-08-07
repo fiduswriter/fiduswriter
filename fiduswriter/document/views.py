@@ -1107,6 +1107,8 @@ def get_doc_styles(request):
         )
         # is_owner = doc and doc.owner_id == request.user.id
         if not doc:
+            if not token_str:
+                return JsonResponse({}, status=401)
             # Check token access for authenticated users
             token_doc, rights = get_token_access(token_str)
             if token_doc and str(token_doc.id) == str(doc_id):
@@ -1115,6 +1117,8 @@ def get_doc_styles(request):
                 return JsonResponse({}, status=401)
     else:
         # Unauthenticated user — must use token
+        if not token_str:
+            return JsonResponse({}, status=401)
         token_doc, rights = get_token_access(token_str)
         if token_doc and str(token_doc.id) == str(doc_id):
             doc = token_doc
@@ -1547,7 +1551,6 @@ def request_access(request):
     wants to be added as a collaborator.
     """
 
-    response = {}
     document_id = request.JSON.get("document_id")
     requested_rights = request.JSON.get("rights", "read")
 
@@ -1560,22 +1563,17 @@ def request_access(request):
         Document.objects.select_related("owner").filter(id=document_id).first()
     )
     if not document:
-        return JsonResponse({"error": "Document not found"}, status=404)
+        # Don't reveal whether a document with this ID exists.
+        return JsonResponse({"success": True}, status=201)
 
-    # Check if user already has access
-    user_access = AccessRight.objects.filter(
-        document=document, user=request.user
-    ).first()
-
-    if user_access:
-        # User already has access, no need to request
-        return JsonResponse(
-            {"success": True, "message": "You already have access"}
-        )
-
-    # Check if user is the owner
+    # Don't reveal whether the user is the owner or already has access.
     if document.owner == request.user:
-        return JsonResponse({"error": "You are the owner of this document"})
+        return JsonResponse({"success": True}, status=201)
+
+    if AccessRight.objects.filter(
+        document=document, user=request.user
+    ).exists():
+        return JsonResponse({"success": True}, status=201)
 
     # Send notification to the document owner
     owner = document.owner
@@ -1591,7 +1589,7 @@ def request_access(request):
         requested_rights=requested_rights,
     )
 
-    response["success"] = True
+    response = {"success": True}
     return JsonResponse(response, status=201)
 
 

@@ -652,6 +652,93 @@ class SaveDocumentBlockedInCollaborativeModeTest(TestCase):
         self.assertIn("error", data)
 
 
+class RequestAccessViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="raowner", password="pass"
+        )
+        self.requester = User.objects.create_user(
+            username="rarequester", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template, title="Test"
+        )
+
+    def test_request_access_for_existing_document(self):
+        self.client.force_login(self.requester)
+        response = json_post(
+            self.client,
+            "/api/document/request_access/",
+            {"document_id": self.doc.id, "rights": "write"},
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json()["success"])
+
+    def test_request_access_for_nonexistent_document_does_not_reveal_existence(
+        self,
+    ):
+        self.client.force_login(self.requester)
+        response = json_post(
+            self.client,
+            "/api/document/request_access/",
+            {"document_id": 999999, "rights": "write"},
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json()["success"])
+
+    def test_request_access_by_owner_does_not_reveal_ownership(self):
+        self.client.force_login(self.owner)
+        response = json_post(
+            self.client,
+            "/api/document/request_access/",
+            {"document_id": self.doc.id, "rights": "write"},
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json()["success"])
+
+    def test_request_access_when_already_has_access_does_not_reveal_access(
+        self,
+    ):
+        from django.contrib.contenttypes.models import ContentType
+
+        user_type = ContentType.objects.get_for_model(User)
+        AccessRight.objects.create(
+            document=self.doc,
+            holder_type=user_type,
+            holder_id=self.requester.id,
+            rights="read",
+        )
+        self.client.force_login(self.requester)
+        response = json_post(
+            self.client,
+            "/api/document/request_access/",
+            {"document_id": self.doc.id, "rights": "write"},
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json()["success"])
+
+    def test_request_access_by_guest_is_rejected(self):
+        response = json_post(
+            self.client,
+            "/api/document/request_access/",
+            {"document_id": self.doc.id, "rights": "write"},
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_request_access_with_invalid_rights(self):
+        self.client.force_login(self.requester)
+        response = json_post(
+            self.client,
+            "/api/document/request_access/",
+            {"document_id": self.doc.id, "rights": "admin"},
+        )
+        self.assertEqual(response.status_code, 400)
+
+
 class ImportCreateViewTest(TestCase):
     def setUp(self):
         self.client = Client()

@@ -1014,7 +1014,8 @@ export class DocumentOverview {
                                                         "../../editor/e2ee/passphrase-dialog.js"
                                                     )
                                                     await showRecoveryKeyDialog(
-                                                        recoveryKey
+                                                        recoveryKey,
+                                                        () => {}
                                                     )
                                                 } catch (e) {
                                                     addAlert(

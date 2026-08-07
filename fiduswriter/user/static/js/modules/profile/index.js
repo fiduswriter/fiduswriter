@@ -259,7 +259,7 @@ export class Profile {
                 const {showRecoveryKeyDialog} = await import(
                     "../editor/e2ee/passphrase-dialog.js"
                 )
-                await showRecoveryKeyDialog(recoveryKey)
+                await showRecoveryKeyDialog(recoveryKey, () => {})
                 this.updateE2EEPassphraseStatus()
             } catch (e) {
                 addAlert(

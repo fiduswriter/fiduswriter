@@ -1,6 +1,7 @@
 import {Dialog, addAlert, postJson} from "../../../common"
 import {CopyrightDialog} from "../../../copyright_dialog"
 import {DocumentAccessRightsDialog} from "../../../documents/access_rights"
+import {RequestAccessDialog} from "../../../documents/access_rights/request_access_dialog"
 import {SaveCopy, SaveRevision} from "../../../exporter/native"
 import {ExportFidusFile} from "../../../exporter/native/file"
 import {LanguageDialog, RevisionDialog} from "../../dialogs"
@@ -32,6 +33,13 @@ const languageItem = (language, name, order) => ({
     }
 })
 
+const showRequestAccess = editor =>
+    editor.user.is_authenticated &&
+    !editor.docInfo.is_owner &&
+    (editor.docInfo.token ||
+        (editor.docInfo.access_rights &&
+            editor.docInfo.access_rights !== "write"))
+
 export const headerbarModel = () => ({
     open: window.innerWidth > 500, // Whether the menu is shown at all.
     content: [
@@ -45,57 +53,26 @@ export const headerbarModel = () => ({
             content: [
                 {
                     title: editor =>
-                        editor.user.is_authenticated &&
-                        editor.docInfo.token &&
-                        !editor.docInfo.is_owner
+                        showRequestAccess(editor)
                             ? gettext("Request Access")
                             : gettext("Share"),
                     type: "action",
                     //icon: 'share',
                     tooltip: editor =>
-                        editor.user.is_authenticated &&
-                        editor.docInfo.token &&
-                        !editor.docInfo.is_owner
+                        showRequestAccess(editor)
                             ? gettext("Request to be added as a collaborator.")
                             : gettext("Share the document with other users."),
                     order: 0,
                     action: editor => {
-                        if (
-                            editor.user.is_authenticated &&
-                            editor.docInfo.token &&
-                            !editor.docInfo.is_owner
-                        ) {
-                            // TokenUser requesting access
-                            postJson("/api/document/request_access/", {
-                                document_id: editor.docInfo.id,
-                                rights: "write"
-                            })
-                                .then(({json}) => {
-                                    if (json.success) {
-                                        addAlert(
-                                            "success",
-                                            gettext(
-                                                "Your access request has been sent to the document owner."
-                                            )
-                                        )
-                                    } else {
-                                        addAlert(
-                                            "error",
-                                            json.error ||
-                                                gettext(
-                                                    "Could not send access request."
-                                                )
-                                        )
-                                    }
-                                })
-                                .catch(() => {
-                                    addAlert(
-                                        "error",
-                                        gettext(
-                                            "Could not send access request."
-                                        )
-                                    )
-                                })
+                        if (showRequestAccess(editor)) {
+                            // Request higher access rights from the document owner
+                            const requestAccessDialog = new RequestAccessDialog(
+                                editor.docInfo.id,
+                                editor.docInfo.access_rights,
+                                editor.app.settings,
+                                Boolean(editor.docInfo.token)
+                            )
+                            requestAccessDialog.open()
                             return
                         }
                         const onShareSuccess = async newAccessRights => {
@@ -174,9 +151,25 @@ export const headerbarModel = () => ({
                             editor.e2ee?.encrypted,
                             editor.e2ee?.password || "",
                             onShareSuccess,
-                            editor.app.settings
+                            editor.app.settings,
+                            editor.docInfo.is_owner
                         )
                         dialog.init()
+                    },
+                    available: editor => {
+                        if (!editor.user.is_authenticated) {
+                            return true
+                        }
+                        if (editor.docInfo.is_owner) {
+                            return true
+                        }
+                        if (editor.docInfo.token) {
+                            return true
+                        }
+                        if (!editor.docInfo.access_rights) {
+                            return false
+                        }
+                        return editor.docInfo.access_rights !== "write"
                     },
                     disabled: editor => {
                         return (

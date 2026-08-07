@@ -64,7 +64,8 @@ export const bulkMenuModel = () => ({
                         e2ee,
                         "",
                         null,
-                        overview.app.settings
+                        overview.app.settings,
+                        true
                     )
                     dialog.init()
                 }

@@ -77,7 +77,8 @@ export class AccessRightsTab {
         documentPassword,
         onShareSuccess,
         settings,
-        container = null
+        container = null,
+        isOwner = false
     }) {
         this.documentIds = documentIds
         this.contacts = contacts
@@ -88,6 +89,7 @@ export class AccessRightsTab {
         this.onShareSuccess = onShareSuccess
         this.settings = settings
         this.container = container
+        this.isOwner = isOwner
         this.accessRights = []
     }
 
@@ -121,7 +123,8 @@ export class AccessRightsTab {
             e2eeWarningBanner +
             accessRightOverviewTemplate({
                 contacts: this.contacts,
-                collaborators
+                collaborators,
+                isOwner: this.isOwner
             })
 
         if (this.container) {
@@ -572,7 +575,8 @@ export class DocumentAccessRightsDialog {
         e2ee,
         documentPassword,
         onShareSuccess,
-        settings
+        settings,
+        isOwner = false
     ) {
         this.documentIds = documentIds
         this.contacts = contacts
@@ -581,6 +585,7 @@ export class DocumentAccessRightsDialog {
         this.documentPassword = documentPassword
         this.onShareSuccess = onShareSuccess
         this.settings = settings
+        this.isOwner = isOwner
     }
 
     init() {
@@ -591,7 +596,8 @@ export class DocumentAccessRightsDialog {
             e2ee: this.e2ee,
             documentPassword: this.documentPassword,
             onShareSuccess: this.onShareSuccess,
-            settings: this.settings
+            settings: this.settings,
+            isOwner: this.isOwner
         })
         this.tab.load().then(() => this.createDialog())
     }
@@ -684,8 +690,8 @@ export class DocumentAccessRightsDialog {
         // Hide the share-link tab when multiple documents are selected
         if (!this.tab.singleDocumentId) {
             const shareTab = this.dialog.dialogEl.querySelector(
-                ".ui-tabs-nav .tab-link:last-child"
-            )
+                ".ui-tabs-nav .tab-link a[href='#sharelink']"
+            )?.parentNode
             if (shareTab) {
                 shareTab.style.display = "none"
             }

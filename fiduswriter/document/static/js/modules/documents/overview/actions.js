@@ -87,7 +87,8 @@ export class DocumentOverviewActions {
             newContactCall: memberDetails =>
                 this.documentOverview.contacts.push(memberDetails),
             e2ee: doc.e2ee,
-            settings: this.documentOverview.app.settings
+            settings: this.documentOverview.app.settings,
+            isOwner: doc.is_owner
         })
         this.accessRightsTab
             .load()

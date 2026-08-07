@@ -19,6 +19,7 @@ import {
     showSystemMessage,
     whenReady
 } from "../common"
+import {RequestAccessDialog} from "../documents/access_rights/request_access_dialog"
 import {FeedbackTab} from "../feedback"
 import {E2EEEncryptor} from "./e2ee/encryptor"
 import {E2EEKeyManager} from "./e2ee/key-manager"
@@ -314,47 +315,65 @@ export class Editor {
                 const stylesPromise = postJson(
                     "/api/document/get_doc_styles/",
                     stylesPayload
-                )
+                ).catch(() => {
+                    return {json: {}}
+                })
                 const docDataPromise = postJson(
                     "/api/document/get_doc_data/",
                     stylesPayload
-                )
+                ).catch(error => {
+                    // Only show "Invalid Share Link" for token validation errors.
+                    // For authenticated users without access, offer to request access.
+                    // This is also shown when the document does not exist so that we
+                    // do not reveal whether a document with the given ID exists.
+                    if (error.message === "Invalid or expired share link") {
+                        deactivateWait()
+                        const errorDialog = new Dialog({
+                            title: gettext("Invalid Share Link"),
+                            id: "invalid_share_link_dialog",
+                            body: gettext(
+                                "This share link has expired or is invalid. Please ask the document owner for a new link."
+                            ),
+                            buttons: [
+                                {
+                                    text: gettext("OK"),
+                                    classes: "fw-dark",
+                                    click: () => {
+                                        window.location.href = "/"
+                                    }
+                                }
+                            ],
+                            canClose: false
+                        })
+                        errorDialog.open()
+                        return Promise.reject(false)
+                    } else if (
+                        error.status === 401 &&
+                        this.user.is_authenticated
+                    ) {
+                        deactivateWait()
+                        const requestAccessDialog = new RequestAccessDialog(
+                            this.docInfo.id,
+                            "",
+                            this.app.settings,
+                            Boolean(this.docInfo.token)
+                        )
+                        requestAccessDialog.open()
+                        return Promise.reject(false)
+                    } else {
+                        deactivateWait()
+                        console.error("Editor initialization failed:", error)
+                    }
+                    return Promise.reject(error)
+                })
                 return Promise.all([
                     wsBasePromise,
                     stylesPromise,
                     docDataPromise
                 ])
             })
-            .catch(error => {
-                // Only show "Invalid Share Link" for token validation errors.
-                // Other errors (REST failures, etc.) should not show this dialog.
-                if (error.message === "Invalid or expired share link") {
-                    deactivateWait()
-                    const errorDialog = new Dialog({
-                        title: gettext("Invalid Share Link"),
-                        id: "invalid_share_link_dialog",
-                        body: gettext(
-                            "This share link has expired or is invalid. Please ask the document owner for a new link."
-                        ),
-                        buttons: [
-                            {
-                                text: gettext("OK"),
-                                classes: "fw-dark",
-                                click: () => {
-                                    window.location.href = "/"
-                                }
-                            }
-                        ],
-                        canClose: false
-                    })
-                    errorDialog.open()
-                } else {
-                    deactivateWait()
-                    console.error("Editor initialization failed:", error)
-                }
-                return Promise.reject(error)
-            })
             .then(([wsResult, stylesResult, docResult]) => {
+                console.log("Editor initialization succeeded")
                 let resubScribed = false
                 this.render()
                 this.initEditor()

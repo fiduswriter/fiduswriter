@@ -207,9 +207,9 @@ export class DOCXExporterFootnotes {
     createXml() {
         this.richtext = new DOCXExporterRichtext(
             this.doc,
+            this.settings,
             this.lists,
             this,
-            this.settings,
             this.math,
             this.tables,
             this.fnRels,

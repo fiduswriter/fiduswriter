@@ -60,8 +60,11 @@ export class DOCXExporterCitations {
         return this.citFm.init().then(() => {
             this.citationTexts = this.citFm.citationTexts
             if (this.origCitInfos.length) {
-                // Remove all citation texts originating from original starting citInfos
+                // Remove all citation texts and citInfos originating from
+                // original starting citInfos so that the remaining arrays are
+                // parallel to the pmCits produced by convertCitations().
                 this.citationTexts.splice(0, this.origCitInfos.length)
+                this.citInfos.splice(0, this.origCitInfos.length)
             }
             this.convertCitations()
             return Promise.resolve()

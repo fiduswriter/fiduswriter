@@ -106,7 +106,8 @@ export class ODTExporterRichtext {
         this.categoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
         this.fnCategoryCounter = {} // counters for each type of table/figure category (figure/table/photo)
         this.zIndex = 0
-        this.citationCounter = 0 // Track which citation we're processing
+        this.bodyCitationCounter = 0 // Track which body citation we're processing
+        this.footnoteCitationCounter = 0 // Track which footnote citation we're processing
     }
 
     run(node, options = {}, parent = null, siblingIndex = 0) {
@@ -463,26 +464,28 @@ export class ODTExporterRichtext {
                 break
             }
             case "citation": {
-                let cit
                 // We take the first citation from the stack and remove it.
-                if (options.inFootnote) {
-                    cit = this.footnotes.citations.pmCits.shift()
-                } else {
-                    cit = this.citations.pmCits.shift()
-                }
+                const citations = options.inFootnote
+                    ? this.footnotes.citations
+                    : this.citations
+                const cit = citations.pmCits.shift()
 
-                // Get citation info and formatted text for Zotero export
-                const citInfo = this.citations.citInfos[this.citationCounter]
-                const formattedText =
-                    this.citations.citationTexts[this.citationCounter]
-                this.citationCounter++
+                // Get citation info and formatted text for Zotero export.
+                // Body citations and footnote citations each have their own
+                // parallel citInfos/citationTexts/pmCits arrays, so we keep
+                // separate counters for the two contexts.
+                const citationCounter = options.inFootnote
+                    ? this.footnoteCitationCounter++
+                    : this.bodyCitationCounter++
+                const citInfo = citations.citInfos[citationCounter]
+                const formattedText = citations.citationTexts[citationCounter]
 
                 // Create Zotero citation data on-the-fly
                 const markName =
                     citInfo && formattedText
                         ? createZoteroCitationMark(
                               citInfo.references,
-                              this.citations.bibDB,
+                              citations.bibDB,
                               formattedText
                           )
                         : null

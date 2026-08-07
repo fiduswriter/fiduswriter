@@ -1,18 +1,18 @@
 Package: fiduswriter-server
-Version: 4.1.14-1
+Version: 4.1.15-1
 Architecture: amd64
 Maintainer: Lund Info AB <mail@lundinfo.com>
-Installed-Size: 233446
+Installed-Size: 233456
 Depends: adduser, lsb-base, gettext, libmagic1, libjpeg62-turbo | libjpeg8, libssl3 | libssl1.1, libffi8 | libffi7, libbz2-1.0, libreadline8 | libreadline7, libsqlite3-0, libncurses6 | libncurses5, liblzma5, nodejs (>= 22) | fiduswriter-server-nodejs
 Recommends: nginx | apache2, postgresql | mysql-server | mariadb-server, python3-psycopg2 | python3-mysqlclient, languagetool, pandoc, git
 Homepage: https://www.fiduswriter.org
 Priority: optional
 Section: web
-Filename: pool/main/f/fiduswriter-server/fiduswriter-server_4.1.14-1_amd64.deb
-Size: 46698024
-SHA256: 5d4ecccce39944b5b5ff8377c0f74f2c127c822d00c67cca38e55329dff1d25d
-SHA1: f0b6d5f732a1d89e9a5ac83f0e98db33a43cc37f
-MD5sum: 0149232276b0a53ab575d8cfb14c770a
+Filename: pool/main/f/fiduswriter-server/fiduswriter-server_4.1.15-1_amd64.deb
+Size: 46845052
+SHA256: 04dd48d2b7255c9d930e36f64888cee7a02386476b2fce820aca88d25f3f728d
+SHA1: b51fe7f6cc9360144e8843a2d4f1acb44beb94b7
+MD5sum: bee09f9fa606ce2f7bb6d970acc3320e
 Description: Collaborative academic word processor (bundled)
  Fidus Writer is an online collaborative editor especially made for academics
  who need to use citations and/or formulas. The editor focuses on the content
@@ -51,18 +51,18 @@ Description: Collaborative academic word processor (bundled)
 
 Package: fiduswriter-server-nodejs
 Source: fiduswriter-server
-Version: 4.1.14-1
+Version: 4.1.15-1
 Architecture: amd64
 Maintainer: Lund Info AB <mail@lundinfo.com>
 Installed-Size: 136694
 Homepage: https://www.fiduswriter.org
 Priority: optional
 Section: web
-Filename: pool/main/f/fiduswriter-server/fiduswriter-server-nodejs_4.1.14-1_amd64.deb
-Size: 31293200
-SHA256: a4cab34574d580dfe45448157552934ebdc3837aaa535e69627130a7e3bad379
-SHA1: 1e7af7304ae880859559df4666ab1ae5a07df155
-MD5sum: 5300b601ebd7731a3a4d0c1ebad224bc
+Filename: pool/main/f/fiduswriter-server/fiduswriter-server-nodejs_4.1.15-1_amd64.deb
+Size: 31294028
+SHA256: 14c4697e54243658588a14f7aadc4198c6343635668c72b2bda1a9b5a0c85f8a
+SHA1: 1c3ac9d887953b1c211c04f56f17ae3700a6f795
+MD5sum: d12092946f5f8f067c792bb5174bd272
 Description: Bundled Node.js runtime for Fidus Writer
  This package provides a bundled Node.js runtime (via nodejs-wheel)
  for Fidus Writer on systems where the distribution's Node.js package

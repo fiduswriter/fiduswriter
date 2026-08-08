@@ -674,7 +674,7 @@ export class DOCXExporterRichtext {
                                     <w:fldChar w:fldCharType="begin"/>
                                 </w:r>
                                 <w:r>
-                                    <w:instrText xml:space="preserve">${fieldInstruction}</w:instrText>
+                                    <w:instrText xml:space="preserve">${escapeText(fieldInstruction)}</w:instrText>
                                 </w:r>
                                 <w:r>
                                     <w:fldChar w:fldCharType="separate"/>
@@ -721,7 +721,7 @@ export class DOCXExporterRichtext {
                                 <w:fldChar w:fldCharType="begin"/>
                             </w:r>
                             <w:r>
-                                <w:instrText xml:space="preserve">${fieldInstruction}</w:instrText>
+                                <w:instrText xml:space="preserve">${escapeText(fieldInstruction)}</w:instrText>
                             </w:r>
                             <w:r>
                                 <w:fldChar w:fldCharType="separate"/>

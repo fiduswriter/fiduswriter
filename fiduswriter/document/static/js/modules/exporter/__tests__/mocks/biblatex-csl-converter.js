@@ -6,6 +6,9 @@ export class CSLExporter {
     addEntry(entry) {
         this.items.push(entry)
     }
+    parse() {
+        return {}
+    }
 }
 
 export class BibLatexExporter {

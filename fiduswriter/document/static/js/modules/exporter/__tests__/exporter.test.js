@@ -197,6 +197,60 @@ describe("DOCX exporter modules", () => {
         expect(commentMarks).toContain(1001)
     })
 
+    it("escapes XML chars in Zotero citation field instructions", async () => {
+        const {DOCXExporterRichtext} = await import(
+            "../../exporter/docx/richtext.js"
+        )
+        const {xmlDOM} = await import("../../exporter/tools/xml.js")
+
+        const citationNode = {
+            type: "citation",
+            attrs: {
+                references: [
+                    {
+                        id: 1,
+                        item: {
+                            title: "Test with <jats:p>tag</jats:p> content",
+                            abstract: "Less than < 2 and more > 1"
+                        }
+                    }
+                ]
+            }
+        }
+
+        const richtext = new DOCXExporterRichtext(
+            {comments: {}},
+            {language: "en-US"},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {
+                pmCits: [citationNode],
+                citInfos: [citationNode.attrs],
+                citationTexts: ["(Author 2024)"],
+                bibDB: {
+                    db: {
+                        1: {entry_key: "test2024"}
+                    }
+                }
+            },
+            {}
+        )
+
+        const output = richtext.run(citationNode, {citationType: "author-date"})
+
+        // The output must not contain raw XML-like tags inside the instruction JSON.
+        expect(output).not.toMatch(/<jats:p>/)
+        expect(output).not.toMatch(/< 2/)
+        // The JSON special characters must be escaped as XML entities.
+        expect(output).toMatch(/&lt;jats:p&gt;/)
+        expect(output).toMatch(/&lt; 2/)
+        // fast-xml-parser must be able to parse the generated fragment.
+        expect(() => xmlDOM(output)).not.toThrow()
+    })
+
     describe("Lists", () => {
         it("DOCXExporterLists detects all list types in sample doc", async () => {
             const {descendantNodes} = await import(

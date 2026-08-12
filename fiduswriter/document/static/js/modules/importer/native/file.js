@@ -195,6 +195,7 @@ export class FidusFileImporter {
                     file => !this.template.files.includes(file)
                 )
             }
+            const safeTitle = doc.title.replace(/\//g, "")
             const importer = new NativeImporter(
                 doc,
                 bibliography,
@@ -202,7 +203,7 @@ export class FidusFileImporter {
                 this.otherFiles,
                 this.user,
                 null,
-                this.path.endsWith("/") ? this.path + doc.title : this.path,
+                this.path.endsWith("/") ? this.path + safeTitle : this.path,
                 this.template,
                 this.e2eeOptions
             )

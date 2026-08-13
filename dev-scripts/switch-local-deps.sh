@@ -49,6 +49,7 @@ declare -A PACKAGE_DIRS=(
     ["@fiduswriter/editor"]="fiduswriter-editor-js"
     ["@fiduswriter/frontend"]="fiduswriter-frontend-js"
     ["@fiduswriter/image-manager"]="fiduswriter-image-manager-js"
+    ["@fiduswriter/pandoc"]="fiduswriter-pandoc-plugin-ts"
     ["fwtoolkit"]="fwtoolkit"
 )
 
@@ -56,6 +57,7 @@ MAIN_FILES=(
     "$REPO_ROOT/fiduswriter/document/package.json5"
     "$REPO_ROOT/fiduswriter/base/package.json5"
     "$REPO_ROOT/fiduswriter/book/package.json5"
+    "$REPO_ROOT/fiduswriter/pandoc/package.json5"
 )
 
 # Sibling packages that depend on other sibling packages.
@@ -68,6 +70,7 @@ SIBLING_PACKAGES=(
     "fiduswriter-editor-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-frontend-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-image-manager-js:fwtoolkit"
+    "fiduswriter-pandoc-plugin-ts:@fiduswriter/document,@fiduswriter/books-document,fwtoolkit"
 )
 
 update_file() {

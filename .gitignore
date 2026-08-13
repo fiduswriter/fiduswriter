@@ -1,4 +1,5 @@
 /dist/
+/docs/plans/
 /fiduswriter.egg-info/
 __pycache__/
 *.py[cod]

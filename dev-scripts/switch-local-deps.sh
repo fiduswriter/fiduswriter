@@ -57,7 +57,16 @@ MAIN_FILES=(
     "$REPO_ROOT/fiduswriter/document/package.json5"
     "$REPO_ROOT/fiduswriter/base/package.json5"
     "$REPO_ROOT/fiduswriter/book/package.json5"
+    "$REPO_ROOT/fiduswriter/citation_api_import/package.json5"
+    "$REPO_ROOT/fiduswriter/gitrepo_export/package.json5"
+    "$REPO_ROOT/fiduswriter/languagetool/package.json5"
+    "$REPO_ROOT/fiduswriter/llm/package.json5"
+    "$REPO_ROOT/fiduswriter/ojs/package.json5"
     "$REPO_ROOT/fiduswriter/pandoc/package.json5"
+    "$REPO_ROOT/fiduswriter/payment/package.json5"
+    "$REPO_ROOT/fiduswriter/phplist/package.json5"
+    "$REPO_ROOT/fiduswriter/tum/package.json5"
+    "$REPO_ROOT/fiduswriter/website/package.json5"
 )
 
 # Sibling packages that depend on other sibling packages.

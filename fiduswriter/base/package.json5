@@ -45,7 +45,7 @@
         "@fiduswriter/bibliography-manager": "^0.1.29",
         "@fiduswriter/image-manager": "^0.1.22",
         "@fiduswriter/document-template-editor": "^0.1.15",
-        "@fiduswriter/document": "^0.2.39",
+        "@fiduswriter/document": "^0.2.40",
         "@fortawesome/fontawesome-free": "^7.2.0",
         "source-map-loader": "^5.0.0",
         "regenerator-runtime": "^0.14.1",

@@ -63,6 +63,8 @@ MAIN_FILES=(
     "$REPO_ROOT/fiduswriter/ojs/package.json5"
     "$REPO_ROOT/fiduswriter/pandoc/package.json5"
     "$REPO_ROOT/fiduswriter/payment/package.json5"
+    "$REPO_ROOT/fiduswriter/phplist/package.json5"
+    "$REPO_ROOT/fiduswriter/tum/package.json5"
     "$REPO_ROOT/fiduswriter/website/package.json5"
 )
 

@@ -148,6 +148,107 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 COVERALLS_PARALLEL: true
                 COVERALLS_FLAG_NAME: ${{ matrix.test }}
+    plugin-tests:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                include:
+                    - test: "book.tests.test_book book.tests.test_book_e2ee book.tests.test_book_native book.tests.test_book_template_save"
+                      repos: "fiduswriter-books-plugin"
+                      apps: '"book"'
+                    - test: "pandoc.tests.test_pandoc pandoc.tests.test_book"
+                      repos: "fiduswriter-pandoc fiduswriter-books-plugin"
+                      apps: '"pandoc", "book"'
+                    - test: "citation_api_import.tests.test_citation_api_import"
+                      repos: "fiduswriter-citation-api-import"
+                      apps: '"citation_api_import"'
+                    - test: "gitrepo_export.tests.test_gitrepo_export"
+                      repos: "fiduswriter-gitrepo-export"
+                      apps: '"gitrepo_export"'
+                    - test: "languagetool.tests.test_languagetool"
+                      repos: "fiduswriter-languagetool"
+                      apps: '"languagetool"'
+                    - test: "llm.tests.test_llm"
+                      repos: "fiduswriter-llm"
+                      apps: '"llm"'
+                    - test: "ojs.tests.test_ojs"
+                      repos: "fiduswriter-ojs"
+                      apps: '"ojs"'
+                    - test: "payment.tests.test_payment"
+                      repos: "fiduswriter-payment-paddle"
+                      apps: '"payment"'
+                    - test: "phplist.tests.test_phplist"
+                      repos: "fiduswriter-phplist"
+                      apps: '"phplist"'
+        steps:
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              with:
+                  python-version: "3.14"
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 26
+            - uses: actions/checkout@v7
+            - uses: nanasess/setup-chromedriver@v3
+            - name: Check out plugin repositories
+              run: |
+                  for repo in ${{ matrix.repos }}; do
+                      git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${repo}.git" "${repo}" 2>/dev/null \
+                          || git clone --depth 1 "https://github.com/fiduswriter/${repo}.git" "${repo}"
+                  done
+            - name: Symlink plugin apps into the main app
+              run: |
+                  read -ra repo_arr <<< "${{ matrix.repos }}"
+                  read -ra app_arr <<< "$(echo ${{ matrix.apps }} | tr -d '",')"
+                  for i in "${!repo_arr[@]}"; do
+                      repo="${repo_arr[$i]}"
+                      app="${app_arr[$i]}"
+                      ln -s "../../${repo}/fiduswriter/${app}" "fiduswriter/fiduswriter/${app}"
+                  done
+            - name: Install dependencies
+              run: |
+                  sudo apt update
+                  sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
+                  cd fiduswriter
+                  cat > configuration.py <<EOF
+                  INSTALLED_APPS = [
+                      "user_template_manager",
+                      ${{ matrix.apps }}
+                  ]
+
+                  # Disable axes for testing to reduce console output and avoid lockout issues
+                  REMOVED_APPS = [
+                      "axes",
+                  ]
+
+                  STORAGES = {
+                      "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+                      "staticfiles": {
+                          "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+                      },
+                  }
+                  EOF
+                  pip install requests[security]
+                  pip install -r requirements.txt
+                  pip install -r test-requirements.txt
+                  pip install orjson
+                  coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
+            - name: Run plugin test ${{ matrix.test }}
+              uses: nick-invision/retry@v4
+              with:
+                timeout_minutes: 10
+                max_attempts: 3
+                retry_on: error
+                command: |
+                  cd fiduswriter
+                  coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
+            - name: Upload failed test screenshots
+              if: ${{ failure() }}
+              uses: actions/upload-artifact@v4.3.4
+              with:
+                name: failure-artifacts
+                path: ${{ github.workspace }}/fiduswriter/screenshots/
     finish:
         needs: test
         runs-on: ubuntu-latest

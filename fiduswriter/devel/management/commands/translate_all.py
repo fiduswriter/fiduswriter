@@ -48,7 +48,7 @@ _KNOWN_TS_PACKAGES = {
     "fiduswriter-document-template-editor-js": (
         "@fiduswriter/document-template-editor"
     ),
-    "fiduswriter-books-document-js": "@fiduswriter/books-document",
+    "fiduswriter-books-plugin-ts": "@fiduswriter/books-document",
     "fiduswriter-cli-js": "@fiduswriter/cli",
 }
 

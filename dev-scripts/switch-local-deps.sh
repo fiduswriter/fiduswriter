@@ -43,7 +43,7 @@ fi
 
 declare -A PACKAGE_DIRS=(
     ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-js"
-    ["@fiduswriter/books-document"]="fiduswriter-books-document-js"
+    ["@fiduswriter/books-document"]="fiduswriter-books-plugin-ts"
     ["@fiduswriter/document"]="fiduswriter-document-js"
     ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-js"
     ["@fiduswriter/editor"]="fiduswriter-editor-js"
@@ -72,7 +72,7 @@ MAIN_FILES=(
 # Format: "sibling-dir:dep1,dep2,..."
 SIBLING_PACKAGES=(
     "fiduswriter-bibliography-manager-js:fwtoolkit"
-    "fiduswriter-books-document-js:@fiduswriter/document,fwtoolkit"
+    "fiduswriter-books-plugin-ts:@fiduswriter/document,fwtoolkit"
     "fiduswriter-document-js:fwtoolkit"
     "fiduswriter-document-template-editor-js:@fiduswriter/document,fwtoolkit"
     "fiduswriter-editor-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/image-manager,fwtoolkit"

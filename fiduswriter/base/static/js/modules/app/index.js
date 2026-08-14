@@ -17,8 +17,10 @@ import {djangoApiConnectors} from "../api_adapters/index.js"
 import {plugins as appPlugins} from "../../plugins/app/index.js"
 import {plugins as bibliographyOverviewPlugins} from "../../plugins/bibliography_overview/index.js"
 import {plugins as citationDialogPlugins} from "../../plugins/citation_dialog/index.js"
+import {plugins as confirmAccountPlugins} from "../../plugins/confirm_account/index.js"
 import {plugins as editorPlugins} from "../../plugins/editor/index.js"
 import {plugins as menuPlugins} from "../../plugins/menu/index.js"
+import {plugins as profilePlugins} from "../../plugins/profile/index.js"
 
 const djangoApiUrlMap = {
     "i18n.setLang": "/api/i18n/setlang/",
@@ -40,7 +42,9 @@ const theApp = new App(djangoApiConnectors, window.settings, {
     menuPlugins,
     editorPlugins,
     citationDialogPlugins,
-    bibliographyOverviewPlugins
+    bibliographyOverviewPlugins,
+    profilePlugins,
+    confirmAccountPlugins
 })
 theApp.init()
 window.theApp = theApp

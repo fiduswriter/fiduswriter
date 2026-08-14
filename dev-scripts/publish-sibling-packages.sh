@@ -24,11 +24,11 @@ if [[ "$DRY_RUN" == "--dry-run" ]]; then
 fi
 
 PACKAGES=(
-    fiduswriter-editor-js
-    fiduswriter-frontend-js
-    fiduswriter-document-template-editor-js
-    fiduswriter-bibliography-manager-js
-    fiduswriter-image-manager-js
+    fiduswriter-editor-ts
+    fiduswriter-frontend-ts
+    fiduswriter-document-template-editor-ts
+    fiduswriter-bibliography-manager-ts
+    fiduswriter-image-manager-ts
     fiduswriter-books-plugin-ts
 )
 

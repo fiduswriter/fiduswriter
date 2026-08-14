@@ -42,13 +42,13 @@ EOF
 fi
 
 declare -A PACKAGE_DIRS=(
-    ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-js"
+    ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-ts"
     ["@fiduswriter/books-document"]="fiduswriter-books-plugin-ts"
-    ["@fiduswriter/document"]="fiduswriter-document-js"
-    ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-js"
-    ["@fiduswriter/editor"]="fiduswriter-editor-js"
-    ["@fiduswriter/frontend"]="fiduswriter-frontend-js"
-    ["@fiduswriter/image-manager"]="fiduswriter-image-manager-js"
+    ["@fiduswriter/document"]="fiduswriter-document-ts"
+    ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-ts"
+    ["@fiduswriter/editor"]="fiduswriter-editor-ts"
+    ["@fiduswriter/frontend"]="fiduswriter-frontend-ts"
+    ["@fiduswriter/image-manager"]="fiduswriter-image-manager-ts"
     ["@fiduswriter/pandoc"]="fiduswriter-pandoc-plugin-ts"
     ["fwtoolkit"]="fwtoolkit"
 )
@@ -71,13 +71,13 @@ MAIN_FILES=(
 # Sibling packages that depend on other sibling packages.
 # Format: "sibling-dir:dep1,dep2,..."
 SIBLING_PACKAGES=(
-    "fiduswriter-bibliography-manager-js:fwtoolkit"
+    "fiduswriter-bibliography-manager-ts:fwtoolkit"
     "fiduswriter-books-plugin-ts:@fiduswriter/document,fwtoolkit"
-    "fiduswriter-document-js:fwtoolkit"
-    "fiduswriter-document-template-editor-js:@fiduswriter/document,fwtoolkit"
-    "fiduswriter-editor-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/image-manager,fwtoolkit"
-    "fiduswriter-frontend-js:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
-    "fiduswriter-image-manager-js:fwtoolkit"
+    "fiduswriter-document-ts:fwtoolkit"
+    "fiduswriter-document-template-editor-ts:@fiduswriter/document,fwtoolkit"
+    "fiduswriter-editor-ts:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/image-manager,fwtoolkit"
+    "fiduswriter-frontend-ts:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
+    "fiduswriter-image-manager-ts:fwtoolkit"
     "fiduswriter-pandoc-plugin-ts:@fiduswriter/document,@fiduswriter/books-document,fwtoolkit"
 )
 
@@ -252,10 +252,10 @@ if [[ "$MODE" == "local" ]]; then
 
 Next steps:
   1. Run npm install in any sibling packages whose transitive deps changed
-     (fiduswriter-document-js, fiduswriter-editor-js, fiduswriter-common-js)
+     (fiduswriter-document-ts, fiduswriter-editor-ts)
      if you will be building them directly.
   2. Rebuild any sibling packages you modified (e.g. npm run build in
-     fiduswriter-bibliography-manager-js).
+     fiduswriter-bibliography-manager-ts).
   3. Run python fiduswriter/manage.py transpile --force
   4. Hard-reload the browser (disable cache in dev tools).
 EOF

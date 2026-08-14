@@ -157,28 +157,28 @@ jobs:
                       repos: "fiduswriter-books-plugin"
                       apps: '"book"'
                     - test: "pandoc.tests.test_pandoc pandoc.tests.test_book"
-                      repos: "fiduswriter-pandoc fiduswriter-books-plugin"
+                      repos: "fiduswriter-pandoc-plugin fiduswriter-books-plugin"
                       apps: '"pandoc", "book"'
                     - test: "citation_api_import.tests.test_citation_api_import"
-                      repos: "fiduswriter-citation-api-import"
+                      repos: "fiduswriter-citation-api-import-plugin"
                       apps: '"citation_api_import"'
                     - test: "gitrepo_export.tests.test_gitrepo_export"
-                      repos: "fiduswriter-gitrepo-export"
+                      repos: "fiduswriter-gitrepo-export-plugin"
                       apps: '"gitrepo_export"'
                     - test: "languagetool.tests.test_languagetool"
-                      repos: "fiduswriter-languagetool"
+                      repos: "fiduswriter-languagetool-plugin"
                       apps: '"languagetool"'
                     - test: "llm.tests.test_llm"
-                      repos: "fiduswriter-llm"
+                      repos: "fiduswriter-llm-plugin"
                       apps: '"llm"'
                     - test: "ojs.tests.test_ojs"
-                      repos: "fiduswriter-ojs"
+                      repos: "fiduswriter-ojs-plugin"
                       apps: '"ojs"'
                     - test: "payment.tests.test_payment"
-                      repos: "fiduswriter-payment-paddle"
+                      repos: "fiduswriter-payment-plugin"
                       apps: '"payment"'
                     - test: "phplist.tests.test_phplist"
-                      repos: "fiduswriter-phplist"
+                      repos: "fiduswriter-phplist-plugin"
                       apps: '"phplist"'
         steps:
             - name: Set up Python

@@ -40,16 +40,16 @@ def _discover_languages(locale_dir):
 # Maps directory name → human-readable label.
 _KNOWN_TS_PACKAGES = {
     "fwtoolkit": "fwtoolkit",
-    "fiduswriter-frontend-js": "@fiduswriter/frontend",
-    "fiduswriter-editor-js": "@fiduswriter/editor",
-    "fiduswriter-document-js": "@fiduswriter/document",
-    "fiduswriter-bibliography-manager-js": "@fiduswriter/bibliography-manager",
-    "fiduswriter-image-manager-js": "@fiduswriter/image-manager",
-    "fiduswriter-document-template-editor-js": (
+    "fiduswriter-frontend-ts": "@fiduswriter/frontend",
+    "fiduswriter-editor-ts": "@fiduswriter/editor",
+    "fiduswriter-document-ts": "@fiduswriter/document",
+    "fiduswriter-bibliography-manager-ts": "@fiduswriter/bibliography-manager",
+    "fiduswriter-image-manager-ts": "@fiduswriter/image-manager",
+    "fiduswriter-document-template-editor-ts": (
         "@fiduswriter/document-template-editor"
     ),
     "fiduswriter-books-plugin-ts": "@fiduswriter/books-document",
-    "fiduswriter-cli-js": "@fiduswriter/cli",
+    "fiduswriter-cli-ts": "@fiduswriter/cli",
 }
 
 

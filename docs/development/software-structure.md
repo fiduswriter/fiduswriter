@@ -28,12 +28,12 @@ fiduswriter/
 │   ├── usermedia/        # File uploads / image manager
 │   ├── user/             # User management
 │   └── ...               # Other apps
-├── fiduswriter-common-js/    # @fiduswriter/frontend npm package
-├── fiduswriter-document-js/  # @fiduswriter/document npm package
-├── fiduswriter-editor-js/    # @fiduswriter/editor npm package
+├── fiduswriter-frontend-ts/  # @fiduswriter/frontend npm package
+├── fiduswriter-document-ts/  # @fiduswriter/document npm package
+├── fiduswriter-editor-ts/    # @fiduswriter/editor npm package
 ├── fwtoolkit/                # fwtoolkit npm package
-├── fiduswriter-bibliography-manager-js/
-├── fiduswriter-image-manager-js/
+├── fiduswriter-bibliography-manager-ts/
+├── fiduswriter-image-manager-ts/
 ├── docs/                 # Documentation
 ├── requirements.txt      # Python dependencies
 └── manage.py            # Django management script
@@ -66,7 +66,7 @@ File upload and management.
 ### SPA Shell (`@fiduswriter/frontend`)
 
 The SPA shell lives in the `@fiduswriter/frontend` npm package (repository:
-`fiduswriter-common-js/`). It contains:
+`fiduswriter-frontend-ts/`). It contains:
 
 - **App router** (`src/app/`) — Client-side URL routing that maps paths to page
   modules. Each route defines which Django app a page belongs to, whether login

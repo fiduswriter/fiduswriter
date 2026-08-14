@@ -390,10 +390,10 @@ See also the `translate_all.py` management command (`fiduswriter/devel/managemen
 ## Working with local sibling packages
 
 This repository is part of a larger set of Fidus Writer repositories that are
-normally checked out next to one another: `fwtoolkit/`, `fiduswriter-document/`,
-`fiduswriter-books-plugin-ts/`, `fiduswriter-cli/`, `fiduswriter-books-plugin/`,
-`fiduswriter-common-js/`, `fiduswriter-editor-js/`, and
-`fiduswriter-bibliography-manager-js/`. The exact parent directory varies by
+normally checked out next to one another: `fwtoolkit/`, `fiduswriter-document-ts/`,
+`fiduswriter-books-plugin-ts/`, `fiduswriter-cli-ts/`, `fiduswriter-books-plugin/`,
+`fiduswriter-editor-ts/`, and
+`fiduswriter-bibliography-manager-ts/`. The exact parent directory varies by
 developer. See the `AGENTS.md` file in the sibling directory that contains all
 those repositories for a high-level map of how they relate to one another,
 including which code belongs in which repository and the dependency flow between
@@ -406,7 +406,7 @@ npm versions of these sibling packages and the local checkouts:
   `book/package.json5`, and the sibling `package.json` files to use local
   `file:` paths instead of npm versions. Run this when you want to test changes
   made in a sibling repository (for example `@fiduswriter/document` from
-  `fiduswriter-document-js/`).
+  `fiduswriter-document-ts/`).
 
 - `dev-scripts/switch-local-deps.sh npm` — Revert the above, pointing
   everything back to the published npm versions.
@@ -421,7 +421,7 @@ Typical workflow for testing a change in `@fiduswriter/document`:
 ./dev-scripts/switch-local-deps.sh local
 
 # 2. Install/build the sibling you changed
-cd ../fiduswriter-document-js
+cd ../fiduswriter-document-ts
 pnpm install
 pnpm run build
 

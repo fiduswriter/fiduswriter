@@ -912,13 +912,21 @@ def get_revision(request, revision_id):
             rights__in=CAN_COMMUNICATE,
         ).first()
     ):
+        filename = revision.file_name or f"revision-{revision.id}.fidus"
+        if not filename.lower().endswith(".fidus"):
+            filename += ".fidus"
+        # Avoid breaking the Content-Disposition header with quotes or line
+        # breaks present in an uploaded filename.
+        filename = (
+            filename.replace('"', "").replace("\r", "").replace("\n", "")
+        )
         http_response = HttpResponse(
             revision.file_object.file,
-            content_type="application/zip; charset=x-user-defined",
+            content_type="application/vnd.fiduswriter+zip",
             status=200,
         )
         http_response["Content-Disposition"] = (
-            "attachment; filename=some_name.zip"
+            f'attachment; filename="{filename}"'
         )
     else:
         http_response = HttpResponse(status=404)

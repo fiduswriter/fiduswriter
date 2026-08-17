@@ -3,6 +3,7 @@
 import json
 import base64
 from django.test import TestCase, Client, override_settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from user.models import User, UserEncryptionKey
 from document.models import (
@@ -11,6 +12,7 @@ from document.models import (
     DocumentTemplate,
     DocumentEncryptionKey,
     ShareToken,
+    DocumentRevision,
 )
 from document.views import _handle_automatic_key_sharing
 
@@ -772,3 +774,62 @@ class ImportCreateViewTest(TestCase):
         self.assertIn("id", data)
         self.assertIn("path", data)
         self.assertIn("e2ee", data)
+
+
+class GetRevisionViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="revisionuser", password="pass"
+        )
+        self.other = User.objects.create_user(
+            username="revisionother", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template, title="Test"
+        )
+        self.revision = DocumentRevision.objects.create(
+            document=self.doc,
+            note="first",
+            file_name="mydoc.fidus",
+            file_object=SimpleUploadedFile(
+                "mydoc.fidus",
+                b"PK\x03\x04fidus",
+                content_type="application/vnd.fiduswriter+zip",
+            ),
+        )
+        self.client.force_login(self.owner)
+
+    def test_owner_downloads_revision_with_fidus_mime(self):
+        response = self.client.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "application/vnd.fiduswriter+zip", response["Content-Type"]
+        )
+        self.assertIn(
+            'filename="mydoc.fidus"', response["Content-Disposition"]
+        )
+
+    def test_revision_without_filename_defaults_to_id(self):
+        self.revision.file_name = ""
+        self.revision.save()
+        response = self.client.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            f'filename="revision-{self.revision.id}.fidus"',
+            response["Content-Disposition"],
+        )
+
+    def test_unauthenticated_cannot_download_revision(self):
+        anonymous = Client()
+        response = anonymous.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 302)

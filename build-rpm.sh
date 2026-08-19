@@ -1,8 +1,34 @@
 #!/bin/bash
 # Script to build Fidus Writer RPM packages with bundled dependencies
 # Usage: ./build-rpm.sh
+#
+# The Python/Django source now lives in the fiduswriter-server-backend
+# repository; this repository only holds packaging, docs and dev-scripts.
+# This script stages the backend source together with the local rpm/
+# packaging directory into a scratch tree and builds there.
 
 set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Locate (or clone) the backend checkout.
+if [ -n "${FIDUSWRITER_BACKEND_DIR:-}" ]; then
+    BACKEND_DIR="$FIDUSWRITER_BACKEND_DIR"
+else
+    BACKEND_DIR="$SCRIPT_DIR/fiduswriter-server-backend"
+fi
+if [ ! -d "$BACKEND_DIR" ]; then
+    echo "Cloning fiduswriter-server-backend into $BACKEND_DIR..."
+    git clone --depth 1 https://github.com/fiduswriter/fiduswriter-server-backend.git "$BACKEND_DIR"
+fi
+
+# Stage backend source + rpm/ packaging into a scratch tree.
+STAGE_DIR="$SCRIPT_DIR/rpm-build/stage"
+rm -rf "$STAGE_DIR"
+mkdir -p "$STAGE_DIR"
+cp -a "$BACKEND_DIR"/. "$STAGE_DIR"/
+cp -a "$SCRIPT_DIR/rpm" "$STAGE_DIR/rpm"
+cd "$STAGE_DIR"
 
 echo "======================================"
 echo "Fidus Writer RPM Package Builder"
@@ -117,3 +143,8 @@ echo "  User guide:  /usr/share/doc/fiduswriter-server/README.RPM (after install
 echo ""
 echo "Package includes all optional modules: books, ojs, pandoc, languagetool, etc."
 echo ""
+
+# Copy build artifacts back into this repository's build directory.
+mkdir -p "$SCRIPT_DIR/rpm-build"
+find "$STAGE_DIR"/rpm-build -name "*.rpm" -exec cp {} "$SCRIPT_DIR/rpm-build/" \; 2>/dev/null || true
+echo "Artifacts copied to $SCRIPT_DIR/rpm-build/"

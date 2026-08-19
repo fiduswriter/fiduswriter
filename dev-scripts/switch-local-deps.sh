@@ -12,9 +12,14 @@
 #                                 package repositories.
 #                                 Default: parent directory of this git repo.
 #
+#   FIDUSWRITER_BACKEND_DIR       Directory of the fiduswriter-server-backend
+#                                 checkout whose package.json5 files should be
+#                                 updated.
+#                                 Default: <siblings-dir>/fiduswriter-server-backend
+#
 #   FIDUSWRITER_INSTALL_DIR       Directory where pnpm/npm install is run
 #                                 (the merged package.json location).
-#                                 Default: <repo-root>/fiduswriter/.transpile
+#                                 Default: <backend-root>/.transpile
 
 set -euo pipefail
 
@@ -22,7 +27,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && git rev-parse --show-toplevel)"
 
 SIBLINGS_DIR="${FIDUSWRITER_SIBLINGS_DIR:-$REPO_ROOT/..}"
-INSTALL_DIR="${FIDUSWRITER_INSTALL_DIR:-$REPO_ROOT/fiduswriter/.transpile}"
+BACKEND_DIR="${FIDUSWRITER_BACKEND_DIR:-$SIBLINGS_DIR/fiduswriter-server-backend}"
+INSTALL_DIR="${FIDUSWRITER_INSTALL_DIR:-$BACKEND_DIR/.transpile}"
 
 MODE="${1:-}"
 
@@ -54,18 +60,18 @@ declare -A PACKAGE_DIRS=(
 )
 
 MAIN_FILES=(
-    "$REPO_ROOT/fiduswriter/base/package.json5"
-    "$REPO_ROOT/fiduswriter/book/package.json5"
-    "$REPO_ROOT/fiduswriter/citation_api_import/package.json5"
-    "$REPO_ROOT/fiduswriter/gitrepo_export/package.json5"
-    "$REPO_ROOT/fiduswriter/languagetool/package.json5"
-    "$REPO_ROOT/fiduswriter/llm/package.json5"
-    "$REPO_ROOT/fiduswriter/ojs/package.json5"
-    "$REPO_ROOT/fiduswriter/pandoc/package.json5"
-    "$REPO_ROOT/fiduswriter/payment/package.json5"
-    "$REPO_ROOT/fiduswriter/phplist/package.json5"
-    "$REPO_ROOT/fiduswriter/tum/package.json5"
-    "$REPO_ROOT/fiduswriter/website/package.json5"
+    "$BACKEND_DIR/base/package.json5"
+    "$BACKEND_DIR/book/package.json5"
+    "$BACKEND_DIR/citation_api_import/package.json5"
+    "$BACKEND_DIR/gitrepo_export/package.json5"
+    "$BACKEND_DIR/languagetool/package.json5"
+    "$BACKEND_DIR/llm/package.json5"
+    "$BACKEND_DIR/ojs/package.json5"
+    "$BACKEND_DIR/pandoc/package.json5"
+    "$BACKEND_DIR/payment/package.json5"
+    "$BACKEND_DIR/phplist/package.json5"
+    "$BACKEND_DIR/tum/package.json5"
+    "$BACKEND_DIR/website/package.json5"
 )
 
 # Sibling packages that depend on other sibling packages.
@@ -143,7 +149,7 @@ handle_bibliography_manager() {
     # but it must be a root dependency in local mode so pnpm installs the local
     # package at the top level. The sibling package.json files then ensure the
     # transitive dependency chain also uses the local copy.
-    local file="$REPO_ROOT/fiduswriter/bibliography/package.json5"
+    local file="$BACKEND_DIR/bibliography/package.json5"
     local pkg="@fiduswriter/bibliography-manager"
     local dir_name="${PACKAGE_DIRS[$pkg]}"
     local sibling_path="$SIBLINGS_DIR/$dir_name"

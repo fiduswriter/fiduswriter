@@ -1,0 +1,56 @@
+--- a/fiduswriter/base/settings.py
++++ b/fiduswriter/base/settings.py
+@@ -4,7 +4,7 @@
+ # For multi-server setups, this must be the FULL list of ports/connections
+ # across all servers so that document routing is consistent everywhere.
+ PORTS = [
+-    8000,
++    4386,
+ ]
+ 
+ # Ports this server instance actually binds to. Defaults to PORTS.
+@@ -16,12 +16,12 @@
+ LISTEN_TO_ALL_INTERFACES = False
+ 
+ # If you want to show debug messages, set DEBUG to True.
+-DEBUG = True
++DEBUG = False
+ SOURCE_MAPS = False
+ 
+ # This determines whether the server is used for testing and will let the
+ # users know upon signup know that their documents may disappear.
+-TEST_SERVER = True
++TEST_SERVER = False
+ # This is the contact email that will be shown in various places all over
+ # the site.
+ CONTACT_EMAIL = "mail@email.com"
+@@ -53,15 +53,25 @@
+ # SRC_PATH is the root path of the FW sources.
+ SRC_PATH = os.environ.get("SRC_PATH")
+ 
++SNAP_DATA = os.environ.get("SNAP_DATA")
++DATABASE_PASSWORD = ""
++PASSWORD_PATH = "{}/mysql/fiduswriter_password".format(SNAP_DATA)
++if os.path.isfile(PASSWORD_PATH):
++    with open(PASSWORD_PATH, "r") as f:
++        DATABASE_PASSWORD = f.read().strip()
++
+ DATABASES = {
+     "default": {
+-        "ENGINE": "django.db.backends.sqlite3",
+-        "NAME": os.path.join(PROJECT_PATH, "fiduswriter.sqlite3"),
+-        "CONN_MAX_AGE": None,
+-        "TEST": {"NAME": "testdb.sqlite3"},
++        "ENGINE": "django.db.backends.mysql",
++        "NAME": "fiduswriter",
++        "USER": "fiduswriter",
++        "PASSWORD": DATABASE_PASSWORD,
++        "HOST": "/tmp/sockets/mysql.sock"
+     }
+ }
+ 
++AUTO_SETUP = True
++
+ # Will let any user not delete more than 5000 bibliography entries
+ # simultaneously
+ DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000

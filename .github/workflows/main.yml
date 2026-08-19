@@ -25,6 +25,11 @@ on:
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
 
+env:
+    # The Python/Django source lives in the fiduswriter-server-backend
+    # repository; this repo only orchestrates CI.
+    BACKEND_REPO: fiduswriter-server-backend
+
 jobs:
     pre-commit:
         runs-on: ubuntu-latest
@@ -33,7 +38,15 @@ jobs:
         - uses: actions/setup-python@v6
           with:
             python-version: "3.14"
-        - uses: pre-commit/action@v3.0.1
+        - name: Check out backend repository
+          run: |
+              git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+                  || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
+        - name: Run pre-commit
+          working-directory: ${{ env.BACKEND_REPO }}
+          run: |
+              python -m pip install pre-commit
+              pre-commit run --all-files
     test:
         runs-on: ubuntu-latest
         strategy:
@@ -71,12 +84,17 @@ jobs:
                   node-version: 26
             - uses: actions/checkout@v7
             - uses: nanasess/setup-chromedriver@v3
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
             - name: Install dependencies
               run: |
                   sudo apt update
                   sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
+                  cd ${{ env.BACKEND_REPO }}
+                  mv ci/configuration.py fiduswriter/configuration.py
                   cd fiduswriter
-                  mv ../ci/configuration.py ./
                   pip install requests[security]
                   pip install -r requirements.txt
                   pip install -r test-requirements.txt
@@ -107,12 +125,12 @@ jobs:
                 max_attempts: 3
                 retry_on: error
                 command: |
-                  cd fiduswriter
+                  cd ${{ env.BACKEND_REPO }}/fiduswriter
                   coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
             - name: Run test ${{ matrix.test }} with debug mode
               if: runner.debug == '1'
               run: |
-                cd fiduswriter
+                cd ${{ env.BACKEND_REPO }}/fiduswriter
                 export DEBUG_MODE=1
                 coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2 --debug-mode
             - name: Kill FFMPEG processes
@@ -134,10 +152,10 @@ jobs:
               uses: actions/upload-artifact@v4.3.4
               with:
                 name: failure-artifacts
-                path: ${{ github.workspace }}/fiduswriter/screenshots/
+                path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
             - name: Coveralls
               run: |
-                cd fiduswriter
+                cd ${{ env.BACKEND_REPO }}/fiduswriter
                 coverage combine
                 for attempt in 1 2 3; do
                   coveralls --service=github && break
@@ -191,6 +209,10 @@ jobs:
                   node-version: 26
             - uses: actions/checkout@v7
             - uses: nanasess/setup-chromedriver@v3
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
             - name: Check out plugin repositories
               run: |
                   for repo in ${{ matrix.repos }}; do
@@ -204,13 +226,13 @@ jobs:
                   for i in "${!repo_arr[@]}"; do
                       repo="${repo_arr[$i]}"
                       app="${app_arr[$i]}"
-                      ln -s "../../${repo}/fiduswriter/${app}" "fiduswriter/fiduswriter/${app}"
+                      ln -s "../../${repo}/fiduswriter/${app}" "${{ env.BACKEND_REPO }}/fiduswriter/${app}"
                   done
             - name: Install dependencies
               run: |
                   sudo apt update
                   sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
-                  cd fiduswriter
+                  cd ${{ env.BACKEND_REPO }}/fiduswriter
                   cat > configuration.py <<EOF
                   INSTALLED_APPS = [
                       "user_template_manager",
@@ -241,14 +263,14 @@ jobs:
                 max_attempts: 3
                 retry_on: error
                 command: |
-                  cd fiduswriter
+                  cd ${{ env.BACKEND_REPO }}/fiduswriter
                   coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
             - name: Upload failed test screenshots
               if: ${{ failure() }}
               uses: actions/upload-artifact@v4.3.4
               with:
                 name: failure-artifacts
-                path: ${{ github.workspace }}/fiduswriter/screenshots/
+                path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
     finish:
         needs: test
         runs-on: ubuntu-latest

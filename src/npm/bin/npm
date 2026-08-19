@@ -1,0 +1,4 @@
+#!/bin/sh
+unset SUDO_GID
+unset SUDO_UID
+npm-inner $@ --unsafe-perm

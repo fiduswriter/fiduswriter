@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# shellcheck source=src/common/utilities/common-utilities
+. "$SNAP/utilities/common-utilities"
+
+# SNAP_DATA_CURRENT is the path to the current revision's data directory
+# This is different from SNAP_DATA which points to the revision-specific directory
+export SNAP_DATA_CURRENT="$(realpath -s "$SNAP_DATA/../current")"
+
+export LOGROTATE_STATUS_FILE="$SNAP_DATA/logrotate/status"
+
+mkdir -p "$(dirname "$LOGROTATE_STATUS_FILE")"
+chmod 750 "$(dirname "$LOGROTATE_STATUS_FILE")"

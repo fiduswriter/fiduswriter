@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+import os
+import sys
+import subprocess
+
+SNAP = os.environ.get("SNAP")
+
+try:
+    subprocess.check_output(
+        [
+            f"{SNAP}/bin/set-initial-snap-version",
+        ],
+        stderr=subprocess.STDOUT,
+    )
+except subprocess.CalledProcessError as e:
+    print(e.output)
+    sys.exit(1)

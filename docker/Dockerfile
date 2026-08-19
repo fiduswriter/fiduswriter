@@ -84,7 +84,12 @@ RUN python3 -m venv venv
 RUN chown -R ${EXECUTING_USER}:${EXECUTING_GROUP} /fiduswriter
 
 # Copy source and install from local path
-COPY --chown=${EXECUTING_USER}:${EXECUTING_GROUP} . /src
+# The Python/Django source now lives in the fiduswriter-server-backend
+# repository; clone it here at build time (this repo only holds packaging).
+ARG FIDUSWRITER_BACKEND_BRANCH=main
+RUN git clone --depth 1 --branch ${FIDUSWRITER_BACKEND_BRANCH} \
+        https://github.com/fiduswriter/fiduswriter-server-backend.git /src \
+    && rm -rf /src/.git
 
 RUN venv/bin/pip install --upgrade setuptools pip wheel \
     && venv/bin/pip install /src[books,citation-api-import,languagetool,ojs,pandoc,gitrepo-export,phplist,payment-paddle,website]

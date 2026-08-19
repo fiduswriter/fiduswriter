@@ -6,19 +6,11 @@ on:
       - main
     paths:
       - 'docker/**'
-      - 'fiduswriter/**'
-      - 'pyproject.toml'
-      - 'setup.py'
-      - 'setup.cfg'
   pull_request:
     branches:
       - main
     paths:
       - 'docker/**'
-      - 'fiduswriter/**'
-      - 'pyproject.toml'
-      - 'setup.py'
-      - 'setup.cfg'
   workflow_dispatch:
 
 jobs:
@@ -32,7 +24,7 @@ jobs:
       - name: Determine version
         id: version
         run: |
-          VERSION=$(tr -d '[:space:]' < fiduswriter/version.txt)
+          VERSION=$(curl -fsSL https://raw.githubusercontent.com/fiduswriter/fiduswriter-server-backend/main/fiduswriter/version.txt | tr -d '[:space:]')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU

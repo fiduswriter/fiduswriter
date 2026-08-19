@@ -1,8 +1,38 @@
 #!/bin/bash
 # Script to build Fidus Writer Debian packages with bundled dependencies
 # Usage: ./build-deb.sh
+#
+# The Python/Django source now lives in the fiduswriter-server-backend
+# repository; this repository only holds packaging, docs and dev-scripts.
+# This script stages the backend source together with the local debian/
+# packaging directory into a scratch tree and builds there.
 
 set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Locate (or clone) the backend checkout.
+if [ -n "${FIDUSWRITER_BACKEND_DIR:-}" ]; then
+    BACKEND_DIR="$FIDUSWRITER_BACKEND_DIR"
+else
+    BACKEND_DIR="$SCRIPT_DIR/fiduswriter-server-backend"
+fi
+if [ ! -d "$BACKEND_DIR" ]; then
+    echo "Cloning fiduswriter-server-backend into $BACKEND_DIR..."
+    git clone --depth 1 https://github.com/fiduswriter/fiduswriter-server-backend.git "$BACKEND_DIR"
+fi
+
+# Stage backend source + debian/ packaging into a scratch tree.
+STAGE_DIR="$SCRIPT_DIR/debian-build/stage"
+rm -rf "$STAGE_DIR"
+mkdir -p "$STAGE_DIR"
+cp -a "$BACKEND_DIR"/. "$STAGE_DIR"/
+cp -a "$SCRIPT_DIR/debian" "$STAGE_DIR/debian"
+# Reuse the Python build cache from the previous build if present.
+if [ -d "$SCRIPT_DIR/.python-build-cache" ]; then
+    ln -s "$SCRIPT_DIR/.python-build-cache" "$STAGE_DIR/.python-build-cache"
+fi
+cd "$STAGE_DIR"
 
 echo "======================================"
 echo "Fidus Writer Debian Package Builder"
@@ -199,4 +229,12 @@ echo ""
 echo "Package includes all optional modules: books, ojs, pandoc, languagetool, etc."
 echo ""
 echo "Works on all versions of Ubuntu and Debian that have not reached EOL."
+echo ""
+
+# Copy build artifacts back into this repository's build directory.
+mkdir -p "$SCRIPT_DIR/debian-build"
+cp "$STAGE_DIR"/debian-build/*.deb "$SCRIPT_DIR/debian-build/" 2>/dev/null || true
+cp "$STAGE_DIR"/debian-build/*.changes "$SCRIPT_DIR/debian-build/" 2>/dev/null || true
+cp "$STAGE_DIR"/debian-build/*.buildinfo "$SCRIPT_DIR/debian-build/" 2>/dev/null || true
+echo "Artifacts copied to $SCRIPT_DIR/debian-build/"
 echo ""

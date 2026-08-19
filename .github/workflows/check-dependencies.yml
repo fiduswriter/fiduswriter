@@ -12,6 +12,9 @@ on:
         type: boolean
         default: false
 
+env:
+  BACKEND_REPO: fiduswriter-server-backend
+
 jobs:
   check-python-dependencies:
     name: Check Python Dependencies
@@ -21,6 +24,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
+      - name: Check out backend repository
+        run: |
+          git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+              || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -28,13 +36,14 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Check for outdated Python packages
         id: check_python
         run: |
-          cd fiduswriter
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python manage.py check_dependencies --python-only > check_output.txt 2>&1 || true
           cat check_output.txt
 
@@ -49,7 +58,7 @@ jobs:
       - name: Update Python dependencies
         if: github.event.inputs.update_dependencies == 'true' && steps.check_python.outputs.outdated == 'true'
         run: |
-          cd fiduswriter
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python manage.py update_dependencies --python-only
 
       - name: Upload Python dependency report
@@ -57,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-dependency-report
-          path: fiduswriter/check_output.txt
+          path: ${{ env.BACKEND_REPO }}/fiduswriter/check_output.txt
           retention-days: 30
 
   check-javascript-dependencies:
@@ -67,6 +76,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+
+      - name: Check out backend repository
+        run: |
+          git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+              || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -80,13 +94,14 @@ jobs:
 
       - name: Install Python dependencies
         run: |
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Check for outdated JavaScript packages
         id: check_js
         run: |
-          cd fiduswriter
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python manage.py check_dependencies --js-only > check_output_js.txt 2>&1 || true
           cat check_output_js.txt
 
@@ -101,7 +116,7 @@ jobs:
       - name: Update JavaScript dependencies
         if: github.event.inputs.update_dependencies == 'true' && steps.check_js.outputs.outdated == 'true'
         run: |
-          cd fiduswriter
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python manage.py update_dependencies --js-only
 
       - name: Upload JavaScript dependency report
@@ -109,7 +124,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: javascript-dependency-report
-          path: fiduswriter/check_output_js.txt
+          path: ${{ env.BACKEND_REPO }}/fiduswriter/check_output_js.txt
           retention-days: 30
 
   create-pr:
@@ -121,6 +136,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+
+      - name: Check out backend repository
+        run: |
+          git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+              || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -134,12 +154,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Update all dependencies
         run: |
-          cd fiduswriter
+          cd ${{ env.BACKEND_REPO }}/fiduswriter
           python manage.py update_dependencies
 
       - name: Create Pull Request

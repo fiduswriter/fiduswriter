@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+import os
+import sys
+from subprocess import check_output, CalledProcessError
+
+SNAP = os.environ.get("SNAP")
+SNAP_DATA = os.environ.get("SNAP_DATA")
+CONFIGURE_PATH = f"{SNAP_DATA}/configuration.py"
+# Fix: due to https://bugs.launchpad.net/snapcraft/+bug/1824255
+# we need to set the paths here.
+
+MULTI_ARCH_PATHS = {
+    "x86_64": "x86_64-linux-gnu",
+    "arm": "arm-linux-gnueabihf",
+    "aarch64": "aarch64-linux-gnu",
+}
+os.environ["PATH"] = (
+    f"{SNAP}/usr/sbin"
+    + f":{SNAP}/usr/bin"
+    + f":{SNAP}/sbin"
+    + f":{SNAP}/bin"
+    + ":{}".format(os.environ["PATH"])
+)
+
+LD_LIBRARY_PATH = (
+    "{}".format(os.environ.get("SNAP_LIBRARY_PATH"))
+    + f":{SNAP}/lib"
+    + f":{SNAP}/usr/lib"
+)
+arch = check_output(["arch"]).strip().decode("utf-8")
+if arch in MULTI_ARCH_PATHS:
+    LD_LIBRARY_PATH += (
+        f":{SNAP}/lib/{MULTI_ARCH_PATHS[arch]}"
+        + f":{SNAP}/usr/lib/{MULTI_ARCH_PATHS[arch]}"
+    )
+os.environ["LD_LIBRARY_PATH"] = LD_LIBRARY_PATH
+os.environ["PYTHONPATH"] = f"{SNAP}/lib/python3.14/site-packages"
+
+# end fix
+
+if os.path.isfile(CONFIGURE_PATH):
+    try:
+        check_output(
+            [
+                f"{SNAP}/bin/fiduswriter",
+                "help",
+                "--pythonpath",
+                SNAP_DATA,
+            ]
+        )
+    except CalledProcessError:
+        sys.exit(1)

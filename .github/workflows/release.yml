@@ -115,6 +115,11 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v7
 
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${GITHUB_REF_NAME}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
+
             - name: Set up Python
               uses: actions/setup-python@v6
               with:
@@ -124,13 +129,14 @@ jobs:
               run: pip install build
 
             - name: Build package
+              working-directory: fiduswriter-server-backend
               run: python -m build
 
             - name: Upload artifact
               uses: actions/upload-artifact@v7
               with:
                   name: pypi-package
-                  path: dist/*
+                  path: fiduswriter-server-backend/dist/*
 
             - name: Publish to PyPI
               uses: pypa/gh-action-pypi-publish@release/v1
@@ -138,6 +144,7 @@ jobs:
                   password: ${{ secrets.PYPI_API_TOKEN }}
                   skip-existing: true
                   attestations: false
+                  packages-dir: fiduswriter-server-backend/dist/
 
     build-docker:
         name: Build and Push Docker Image
@@ -150,10 +157,15 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v7
 
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${GITHUB_REF_NAME}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
+
             - name: Determine version
               id: version
               run: |
-                  VERSION=$(tr -d '[:space:]' < fiduswriter/version.txt)
+                  VERSION=$(tr -d '[:space:]' < fiduswriter-server-backend/fiduswriter/version.txt)
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
                   echo "Building version: $VERSION"
                   IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
@@ -457,10 +469,15 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v7
 
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${GITHUB_REF_NAME}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
+
             - name: Determine version
               id: version
               run: |
-                  VERSION=$(tr -d '[:space:]' < fiduswriter/version.txt)
+                  VERSION=$(tr -d '[:space:]' < fiduswriter-server-backend/fiduswriter/version.txt)
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
 
             - name: Download debian amd64 artifact

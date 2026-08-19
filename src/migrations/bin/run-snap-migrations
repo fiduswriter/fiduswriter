@@ -1,0 +1,43 @@
+#!/bin/sh -e
+
+# shellcheck source=src/common/utilities/common-utilities
+. "$SNAP/utilities/common-utilities"
+
+previous_version="$(get_data_version)"
+
+echo "Checking if upgrade is possible..."
+# Before we do any migrations, check Fidus Writer upgrade rules for validity.
+if ! is_supported_fiduswriter_upgrade "$previous_version" "$SNAP_VERSION"; then
+	exit 2
+fi
+
+# Now run the version-specific migrations
+migrations_directory="$SNAP/migrations"
+version_migrations="$(find "$migrations_directory" -maxdepth 1 -mindepth 1 -type d | sort -V)"
+for directory in $version_migrations; do
+	version="$(basename "$directory")"
+	if version_less_than "$previous_version" "$version"; then
+		echo "Running migrations for version $version..."
+
+		# Process each file individually to handle Python files differently
+		for file in "$directory"/*; do
+			if [ -f "$file" ] && [ -x "$file" ]; then
+				case "$file" in
+					*.py)
+						echo "Running Python migration: $file"
+						PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$SNAP_DATA" python3 "$file"
+						;;
+					*.sh)
+						echo "Running shell migration: $file"
+						"$file"
+						;;
+					*)
+						# Skip files that don't match our patterns
+						;;
+				esac
+			fi
+		done
+	fi
+done
+
+set_data_version "$SNAP_VERSION"

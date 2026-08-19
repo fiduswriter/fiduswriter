@@ -1,0 +1,10 @@
+{
+    "name": "fiduswriter",
+    "version": "1.0.0",
+    "dependencies": {
+        "npm": "*"
+    },
+    "bin": {
+        "npm-inner": "node_modules/.bin/npm"
+    }
+}

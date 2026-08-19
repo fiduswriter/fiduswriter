@@ -1,5 +1,11 @@
-# Read version from the main project's version.txt (one level up, in fiduswriter/)
-VERSION := $(shell cat ../fiduswriter/version.txt | tr -d '[:space:]')
+# Read version from the backend repo's version.txt (sibling checkout of
+# fiduswriter-server-backend, or FIDUSWRITER_BACKEND_DIR).
+BACKEND_DIR ?= $(abspath $(CURDIR)/../fiduswriter-server-backend)
+ifeq ($(shell test -d $(BACKEND_DIR) && echo yes),yes)
+VERSION := $(shell cat $(BACKEND_DIR)/fiduswriter/version.txt | tr -d '[:space:]')
+else
+VERSION := $(shell curl -fsSL https://raw.githubusercontent.com/fiduswriter/fiduswriter-server-backend/main/fiduswriter/version.txt | tr -d '[:space:]')
+endif
 
 .PHONY: help build up down logs shell superuser
 

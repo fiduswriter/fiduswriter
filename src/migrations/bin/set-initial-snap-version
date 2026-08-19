@@ -1,0 +1,6 @@
+#!/bin/sh -e
+
+# shellcheck source=src/common/utilities/common-utilities
+. "$SNAP/utilities/common-utilities"
+
+set_data_version "$SNAP_VERSION"

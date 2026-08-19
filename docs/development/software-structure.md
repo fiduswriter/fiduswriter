@@ -20,23 +20,30 @@ migration guide.
 ## Directory Structure
 
 ```
-fiduswriter/
-├── fiduswriter/           # Main Django project
-│   ├── base/             # Base app, SPA router wrapper, API adapters
-│   ├── document/         # Document editing
-│   ├── bibliography/     # Bibliography management
-│   ├── usermedia/        # File uploads / image manager
-│   ├── user/             # User management
-│   └── ...               # Other apps
-├── fiduswriter-frontend-ts/  # @fiduswriter/frontend npm package
-├── fiduswriter-document-ts/  # @fiduswriter/document npm package
-├── fiduswriter-editor-ts/    # @fiduswriter/editor npm package
-├── fwtoolkit/                # fwtoolkit npm package
-├── fiduswriter-bibliography-manager-ts/
-├── fiduswriter-image-manager-ts/
-├── docs/                 # Documentation
-├── requirements.txt      # Python dependencies
-└── manage.py            # Django management script
+fiduswriter/                 # Main repo: packaging, docs, dev-scripts, CI
+├── docker/                  # Docker packaging
+├── debian/ rpm/ snap/       # Debian/RPM/Snap packaging
+├── dev-scripts/             # switch-local-deps.sh, publish-sibling-packages.sh
+├── docs/                    # Documentation
+└── .github/workflows/       # CI/CD (orchestrates the backend repo)
+
+fiduswriter-server-backend/  # Python/Django server (PyPI package "fiduswriter")
+├── fiduswriter/             # Main Django project
+│   ├── base/                # Base app, settings, API adapters
+│   ├── document/            # Document editing
+│   ├── bibliography/        # Bibliography management
+│   ├── usermedia/           # File uploads / image manager
+│   ├── user/                # User management
+│   └── ...                  # Other apps
+├── setup.py
+└── pyproject.toml
+
+fiduswriter-frontend-ts/  # @fiduswriter/frontend npm package
+fiduswriter-document-ts/  # @fiduswriter/document npm package
+fiduswriter-editor-ts/    # @fiduswriter/editor npm package
+fwtoolkit/                # fwtoolkit npm package
+fiduswriter-bibliography-manager-ts/
+fiduswriter-image-manager-ts/
 ```
 
 ## Apps

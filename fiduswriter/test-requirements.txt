@@ -1,4 +1,0 @@
-webdriver-manager
-selenium==4.43.0
-packaging
-psutil==7.2.2

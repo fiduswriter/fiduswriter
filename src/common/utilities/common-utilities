@@ -1,0 +1,166 @@
+#!/bin/sh
+
+stdout_is_a_terminal()
+{
+	[ -t 1 ]
+}
+
+stderr_is_a_terminal()
+{
+	[ -t 2 ]
+}
+
+run_command()
+{
+	# Ideally we could output these all on one line, but that only works with a
+	# terminal. Support both.
+	if stdout_is_a_terminal; then
+		printf "%s... " "$1"
+	else
+		echo "$1..."
+	fi
+
+	shift
+	if output="$("$@" 2>&1)"; then
+		echo "done"
+		return 0
+	else
+		echo "error"
+		echo "$output"
+		return 1
+	fi
+}
+
+wait_for_command()
+{
+	message="$1"
+	shift
+	if ! "$@"; then
+		# Ideally we could output these all on one line, but that only works with a
+		# terminal. Support both.
+		if stdout_is_a_terminal; then
+			printf "%s... " "$message"
+		else
+			echo "$message..."
+		fi
+		while ! "$@"; do
+			sleep 1
+		done
+		echo "done"
+	fi
+}
+
+get_data_version()
+{
+	version_file="$SNAP_DATA/version.txt"
+	if [ -f "$version_file" ]
+	then
+		version="`head -1 $version_file`"
+	else
+		version="4.x.x"
+	fi
+	echo $version
+}
+
+set_data_version()
+{
+	version_file="$SNAP_DATA/version.txt"
+	printf "%s\n" "$1" > "$version_file"
+}
+
+enable_maintenance_mode()
+{
+	if run_command "Enabling maintenance mode" occ -n maintenance:mode --on; then
+		# The cache might cache changes for one second. Wait for two to be safe.
+		sleep 2
+		return 0
+	fi
+	return 1
+}
+
+disable_maintenance_mode()
+{
+	if run_command "Disabling maintenance mode" occ -n maintenance:mode --off; then
+		# The cache might cache changes for one second. Wait for two to be safe.
+		sleep 2
+		return 0
+	fi
+	return 1
+}
+
+version_less_than()
+{
+	if [ "$1" = "$2" ]; then
+		return 1
+	fi
+
+	printf "%s\n%s" "$1" "$2" | sort -VC
+}
+
+major_version()
+{
+	echo "$1" | sed -r 's/([0-9]+)[.-].*/\1/'
+}
+
+is_integer()
+{
+	expr "$1" : '^[0-9]\+$' > /dev/null
+}
+
+is_semver()
+{
+	expr "$1" : '^[0-9]\+\.[0-9]\+\.[0-9]\+.*$' > /dev/null
+}
+
+# Fidus Writer copies the rules about what makes for a valid
+# upgrade from Nextcloud:
+#
+# 1. A minor version upgrade (i.e. with the same major version).
+# 2. A single major version upgrade (e.g. 18 to 19, not 18 to 20).
+# 3. No downgrades are supported.
+is_supported_fiduswriter_upgrade()
+{
+	previous_version="$1"
+	current_version="$2"
+
+	# Before we can compare versions, we must first confirm we HAVE them both
+	if [ -z "$previous_version" ] || [ -z "$current_version" ]; then
+		return 0
+	fi
+
+	# Attempt to extract the major version
+	previous_major_version="$(major_version "$previous_version")"
+	current_major_version="$(major_version "$current_version")"
+
+	# Before we can compare versions, we must first confirm the major versions
+	# are numberic (not all versions work this way, e.g. some daily builds).
+	# This isn't an error, we just can't reliably compare without numbers.
+	if ! (is_integer "$previous_major_version" && is_integer "$current_major_version"); then
+		return 0
+	fi
+
+	previous_version_is_semver=false
+	if is_semver "$previous_version"; then
+		previous_version_is_semver=true
+	fi
+
+	current_version_is_semver=false
+	if is_semver "$current_version"; then
+		current_version_is_semver=true
+	fi
+
+	# First of all, let's make sure that the new version is actually newer than the
+	# previous one. If it's not, we already know there are problems. We can only do
+	# this if both versioning schemes are the same though.
+	if [ $previous_version_is_semver = $current_version_is_semver ] && version_less_than "$current_version" "$previous_version"; then
+		echo "Fidus Writer doesn't support downgrades, but you can revert. See 'snap revert -h' for details." >&2
+		return 1
+	fi
+
+	# Now make sure the major version jump is less than or equal to 1
+	if [ "$((current_major_version-previous_major_version))" -gt "1" ]; then
+		next_major_version="$((previous_major_version+1))"
+		echo "Fidus Writer doesn't support skipping major versions, you must upgrade to Fidus Writer $next_major_version first. Try 'sudo snap refresh fiduswriter --channel=$next_major_version'" >&2
+		return 1
+	fi
+}

@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+# shellcheck source=src/mysql/utilities/mysql-utilities
+. "$SNAP/utilities/mysql-utilities"
+
+if [ "$1" = "--defaults" ]; then
+    mysqlcheck --defaults-file="$MYSQL_ROOT_OPTION_FILE" --all-databases --auto-repair
+    mysqlcheck --defaults-file="$MYSQL_ROOT_OPTION_FILE" --all-databases --optimize
+else
+    mysqlcheck --defaults-file="$MYSQL_ROOT_OPTION_FILE" "$@"
+fi

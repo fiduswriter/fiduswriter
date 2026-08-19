@@ -1,3 +1,0 @@
-"""
-Tests (python and javascript)
-"""

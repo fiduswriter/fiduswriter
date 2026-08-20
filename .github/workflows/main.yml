@@ -255,6 +255,14 @@ jobs:
                   pip install -r requirements.txt
                   pip install -r test-requirements.txt
                   pip install orjson
+                  pip install coverage
+                  # Install optional Python requirements shipped with the
+                  # plugins under test (e.g. pycryptodome for the payment plugin).
+                  for repo in ${{ matrix.repos }}; do
+                      if [ -f "../../${repo}/requirements.txt" ]; then
+                          pip install -r "../../${repo}/requirements.txt"
+                      fi
+                  done
                   coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
             - name: Run plugin test ${{ matrix.test }}
               uses: nick-invision/retry@v4

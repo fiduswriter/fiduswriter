@@ -28,7 +28,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && git rev-parse --show-toplevel)"
 
 SIBLINGS_DIR="${FIDUSWRITER_SIBLINGS_DIR:-$REPO_ROOT/..}"
 BACKEND_DIR="${FIDUSWRITER_BACKEND_DIR:-$SIBLINGS_DIR/fiduswriter-server-backend}"
-INSTALL_DIR="${FIDUSWRITER_INSTALL_DIR:-$BACKEND_DIR/.transpile}"
+INSTALL_DIR="${FIDUSWRITER_INSTALL_DIR:-$BACKEND_DIR/fiduswriter/.transpile}"
 
 MODE="${1:-}"
 
@@ -60,18 +60,18 @@ declare -A PACKAGE_DIRS=(
 )
 
 MAIN_FILES=(
-    "$BACKEND_DIR/base/package.json5"
-    "$BACKEND_DIR/book/package.json5"
-    "$BACKEND_DIR/citation_api_import/package.json5"
-    "$BACKEND_DIR/gitrepo_export/package.json5"
-    "$BACKEND_DIR/languagetool/package.json5"
-    "$BACKEND_DIR/llm/package.json5"
-    "$BACKEND_DIR/ojs/package.json5"
-    "$BACKEND_DIR/pandoc/package.json5"
-    "$BACKEND_DIR/payment/package.json5"
-    "$BACKEND_DIR/phplist/package.json5"
-    "$BACKEND_DIR/tum/package.json5"
-    "$BACKEND_DIR/website/package.json5"
+    "$BACKEND_DIR/fiduswriter/base/package.json5"
+    "$BACKEND_DIR/fiduswriter/book/package.json5"
+    "$BACKEND_DIR/fiduswriter/citation_api_import/package.json5"
+    "$BACKEND_DIR/fiduswriter/gitrepo_export/package.json5"
+    "$BACKEND_DIR/fiduswriter/languagetool/package.json5"
+    "$BACKEND_DIR/fiduswriter/llm/package.json5"
+    "$BACKEND_DIR/fiduswriter/ojs/package.json5"
+    "$BACKEND_DIR/fiduswriter/pandoc/package.json5"
+    "$BACKEND_DIR/fiduswriter/payment/package.json5"
+    "$BACKEND_DIR/fiduswriter/phplist/package.json5"
+    "$BACKEND_DIR/fiduswriter/tum/package.json5"
+    "$BACKEND_DIR/fiduswriter/website/package.json5"
 )
 
 # Sibling packages that depend on other sibling packages.

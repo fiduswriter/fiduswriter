@@ -181,8 +181,8 @@ jobs:
                       repos: "fiduswriter-citation-api-import-plugin"
                       apps: '"citation_api_import"'
                     - test: "gitrepo_export.tests.test_gitrepo_export"
-                      repos: "fiduswriter-gitrepo-export-plugin"
-                      apps: '"gitrepo_export"'
+                      repos: "fiduswriter-gitrepo-export-plugin fiduswriter-books-plugin"
+                      apps: '"gitrepo_export", "book"'
                     - test: "languagetool.tests.test_languagetool"
                       repos: "fiduswriter-languagetool-plugin"
                       apps: '"languagetool"'

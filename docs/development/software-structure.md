@@ -86,7 +86,7 @@ The SPA shell lives in the `@fiduswriter/frontend` npm package (repository:
   backend API calls go through, making the SPA shell backend-agnostic.
 
 The main Django app provides the Django implementations of these connectors in
-`base/static/js/modules/api_adapters/index.js`.
+`base/assets/js/modules/api_adapters/index.ts`.
 
 ### Decoupled UI Modules
 

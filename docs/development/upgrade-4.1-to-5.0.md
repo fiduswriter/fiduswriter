@@ -19,8 +19,9 @@ migrating a plugin from Fidus Writer 4.1.x to 5.0.0.
 | **CSS classes / IDs** | All fwtoolkit classes and IDs now use a single `fw-` prefix |
 | **Dependencies** | `@fiduswriter/document` and `fwtoolkit` are installed from npm |
 | **@fiduswriter/common → @fiduswriter/frontend** | `@fiduswriter/common` has been renamed to `@fiduswriter/frontend` and expanded to contain the full SPA shell (router, pages, document overview, profile, auth, contacts, templates) |
-| **API connector pattern** | All direct `postJson`/`getJson` calls in the frontend package have been replaced with injectable `ApiConnectors`. The main app provides `djangoApiConnectors` in `base/static/js/modules/api_adapters/index.js`. |
+| **API connector pattern** | All direct `postJson`/`getJson` calls in the frontend package have been replaced with injectable `ApiConnectors`. The main app provides `djangoApiConnectors` in `base/assets/js/modules/api_adapters/index.ts`. |
 | **Page chrome decoupling** | `@fiduswriter/editor`, `@fiduswriter/bibliography-manager`, and `@fiduswriter/image-manager` no longer import from `@fiduswriter/frontend`. They accept `container: HTMLElement` and render into it, leaving page chrome (SiteMenu, FeedbackTab, baseBodyTemplate) to the SPA shell. |
+| **JS/TS source location** | django-npm-mjs 5.0 reads JavaScript/TypeScript sources from each app's `assets/js/` and `assets/ts/` folders instead of `static/js/`. The `static/` folders now only contain files that need no transpilation (CSS, images, fonts). All remaining plain `.js` files in core apps and official plugins have been converted to TypeScript (`.ts`). Entry points remain `.mjs`. |
 
 ---
 
@@ -342,6 +343,84 @@ Common renames:
 
 ---
 
+## 8. JavaScript/TypeScript sources move from `static/js` to `assets/`
+
+### What changed
+
+django-npm-mjs 5.0.0 separates **sources** from **served static files**:
+
+| Content | Old location (≤ 4.1) | New location (5.0) |
+|---|---|---|
+| JS modules and entry points | `my_app/static/js/…` | `my_app/assets/js/…` |
+| TypeScript modules (optional split) | `my_app/static/js/…` | `my_app/assets/ts/…` |
+| Plugin hooks | `my_app/static/js/plugins/<type>/f.js` | `my_app/assets/js/plugins/<type>/f.ts` |
+| Transpiled bundle output | `static-transpile/` (unchanged) | `static-transpile/` |
+| CSS, images, fonts | `my_app/static/…` | `my_app/static/…` (unchanged — `assets/` may take over other file types in a future release) |
+
+The transpiler reads from both `assets/js/` and `assets/ts/`. If a relative
+path exists in both folders of the same app, the file from `assets/js/` wins.
+As before, an app listed earlier in `INSTALLED_APPS` overrides apps listed
+later.
+
+Additionally, all remaining plain `.js` files in the core apps and the official
+plugins have been converted to TypeScript (`.ts`). Entry point files keep their
+`.mjs` endings. Extensionless imports continue to work: the rspack configs now
+set `resolve.extensions` and `resolve.extensionAlias`, so imports such as
+`import {templates} from "./templates"` resolve to `./templates.ts` after the
+rename without any code change.
+
+### What you need to do
+
+1. Require django-npm-mjs 5.0 or higher:
+
+   ```
+   django-npm-mjs>=5.0
+   ```
+
+2. Move your sources out of the static folder:
+
+   ```bash
+   mkdir -p my_plugin/assets
+   git mv my_plugin/static/js my_plugin/assets/js
+   # optionally split TypeScript modules into a separate folder:
+   # git mv my_plugin/assets/js/modules my_plugin/assets/ts/modules
+   ```
+
+3. Convert plain `.js` files to `.ts` (recommended; plain `.js` inside
+   `assets/js/` still works):
+
+   ```bash
+   find my_plugin/assets/js -name '*.js' -exec sh -c \
+       'git mv "$1" "${1%.js}.ts"' _ {} \;
+   ```
+
+4. Update import specifiers that reached into another app's source tree via
+   the old path:
+
+   ```javascript
+   // Old (4.1.x)
+   import {djangoApiConnectors} from "../../base/static/js/modules/api_adapters/index.js"
+
+   // New (5.0.0)
+   import {djangoApiConnectors} from "../../base/assets/js/modules/api_adapters/index.ts"
+   ```
+
+   Imports within your own plugin only need updating if they spelled out the
+   full old path.
+
+5. If you generated entry files into the project's `static-libs/js/` folder,
+   generate them into one of your app's `assets/js/` folders instead —
+   `static-libs/js/` is no longer scanned.
+
+6. Rebuild from a clean state:
+
+   ```bash
+   rm -rf .transpile static-transpile
+   python manage.py transpile --force
+   ```
+
+---
+
 ## Checklist
 
 - [ ] Replace all relative imports that pointed to
@@ -359,3 +438,9 @@ Common renames:
 - [ ] Update CI/plugin test commands to run `npm test` inside
       `fiduswriter-document` instead of the removed Django test case.
 - [ ] If you regenerate import test fixtures, use the new package fixture path.
+- [ ] Move JS/TS sources from `static/js/` to `assets/js/` (and optionally
+      `assets/ts/`) and require `django-npm-mjs>=5.0`.
+- [ ] Convert plain `.js` files to `.ts` and update any import specifiers that
+      spelled out old `static/js/…` paths.
+- [ ] Remove stale caches (`rm -rf .transpile static-transpile`) and rebuild
+      with `python manage.py transpile --force`.

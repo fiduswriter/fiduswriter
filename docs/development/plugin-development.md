@@ -26,12 +26,18 @@ my_plugin/
 ├── package.json5         # npm dependencies (if needed)
 ├── templates/
 │   └── my_plugin/        # Django templates (if needed)
-└── static/
-    └── js/
-        └── modules/
-            └── my_plugin/
-                └── index.js   # Frontend entry point
+├── assets/
+│   └── js/
+│       └── modules/
+│           └── my_plugin/
+│               └── index.ts   # Frontend entry point
+└── static/               # Non-transpiled files only (CSS, images, …)
 ```
+
+> Since Fidus Writer 5.0, JavaScript and TypeScript sources live in the app's
+> `assets/js/` (and optionally `assets/ts/`) folder. The `static/` folder is
+> reserved for generated output and files that need no transpilation. See the
+> [4.1 → 5.0 upgrade guide](upgrade-4.1-to-5.0.md#8-javascripttypescript-sources-move-from-static-js-to-assets).
 
 ---
 
@@ -344,14 +350,14 @@ documented in the Font Awesome v7 docs.
 
 Fidus Writer is a single-page application. Django `urls.py` files handle only
 API endpoints; all page-level navigation is handled client-side by the router
-in `base/static/js/modules/app/index.js`.
+in `base/assets/js/modules/app/index.ts`.
 
 To add a new page route for your plugin, extend the `routes` map on the `App`
 instance. The cleanest way to do this from a plugin is to register an
 `activateFidusPlugins` hook. A minimal plugin that adds a `/my-plugin/` route:
 
 ```/dev/null/plugin-route.js#L1-40
-// my_plugin/static/js/modules/my_plugin/index.js
+// my_plugin/assets/js/modules/my_plugin/index.ts
 
 export class MyPlugin {
     constructor(app) {
@@ -394,23 +400,23 @@ Page instances must implement an `init()` method that returns a Promise.
 
 The core discovers plugins automatically — you do **not** need to edit any core
 file. Place a JavaScript file inside your Django app's
-`static/js/plugins/<type>/` directory, where `<type>` matches the hook point you
+`assets/js/plugins/<type>/` directory, where `<type>` matches the hook point you
 want to attach to:
 
 | Plugin type directory | Loaded by | Typical use |
 |---|---|---|
-| `static/js/plugins/app/` | `App.activateFidusPlugins()` | Add SPA routes, app-level services |
-| `static/js/plugins/editor/` | `Editor.activateFidusPlugins()` | Editor extensions (toolbars, sidebars, exporters) |
-| `static/js/plugins/documents_overview/` | `DocumentOverview.activateFidusPlugins()` | Document overview extensions (bulk actions, extra columns) |
-| `static/js/plugins/menu/` | `SiteMenu.activatePlugins()` | Extra top-level navigation items |
-| `static/js/plugins/prelogin/` | `PreloginPage.activateFidusPlugins()` | Public page plugins (login, signup, password reset) |
-| `static/js/plugins/login/` | `LoginPage` | Login-specific plugins |
-| `static/js/plugins/profile/` | `Profile.activateFidusPlugins()` | User profile page extensions |
+| `assets/js/plugins/app/` | `App.activateFidusPlugins()` | Add SPA routes, app-level services |
+| `assets/js/plugins/editor/` | `Editor.activateFidusPlugins()` | Editor extensions (toolbars, sidebars, exporters) |
+| `assets/js/plugins/documents_overview/` | `DocumentOverview.activateFidusPlugins()` | Document overview extensions (bulk actions, extra columns) |
+| `assets/js/plugins/menu/` | `SiteMenu.activatePlugins()` | Extra top-level navigation items |
+| `assets/js/plugins/prelogin/` | `PreloginPage.activateFidusPlugins()` | Public page plugins (login, signup, password reset) |
+| `assets/js/plugins/login/` | `LoginPage` | Login-specific plugins |
+| `assets/js/plugins/profile/` | `Profile.activateFidusPlugins()` | User profile page extensions |
 
 Export your plugin class from that file:
 
 ```/dev/null/plugin-registration.js#L1-8
-// my_plugin/static/js/plugins/app/my_plugin.js
+// my_plugin/assets/js/plugins/app/my_plugin.ts
 export class MyPlugin {
     constructor(app) { … }
     init() { … }
@@ -428,8 +434,8 @@ You only need one file per hook point; if you need to register both an app
 route and a menu item, create two files:
 
 ```
-my_plugin/static/js/plugins/app/my_plugin.js
-my_plugin/static/js/plugins/menu/my_plugin.js
+my_plugin/assets/js/plugins/app/my_plugin.ts
+my_plugin/assets/js/plugins/menu/my_plugin.ts
 ```
 
 ---
@@ -556,7 +562,7 @@ def get_note(request):
         return JsonResponse({"text": ""})
 ```
 
-**`my_plugin/static/js/modules/my_plugin/notes.js`**
+**`my_plugin/assets/js/modules/my_plugin/notes.ts`**
 
 ```/dev/null/example-notes.js#L1-28
 import {postJson} from "fwtoolkit"

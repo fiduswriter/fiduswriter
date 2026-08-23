@@ -28,6 +28,9 @@ rm -rf "$STAGE_DIR"
 mkdir -p "$STAGE_DIR"
 cp -a "$BACKEND_DIR"/. "$STAGE_DIR"/
 cp -a "$SCRIPT_DIR/rpm" "$STAGE_DIR/rpm"
+# The spec's %install section customizes the systemd unit that lives next
+# to the Debian packaging files.
+cp -a "$SCRIPT_DIR/debian" "$STAGE_DIR/debian"
 cd "$STAGE_DIR"
 
 echo "======================================"

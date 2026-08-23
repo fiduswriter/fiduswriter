@@ -50,6 +50,9 @@ jobs:
     test:
         runs-on: ubuntu-latest
         strategy:
+            # Run all matrix jobs even when one fails, so a single failing
+            # test does not hide the results of the others.
+            fail-fast: false
             matrix:
                 test:
                     - "browser_check base style"
@@ -169,6 +172,7 @@ jobs:
     plugin-tests:
         runs-on: ubuntu-latest
         strategy:
+            fail-fast: false
             matrix:
                 include:
                     - test: "book.tests.test_book book.tests.test_book_e2ee book.tests.test_book_native book.tests.test_book_template_save"

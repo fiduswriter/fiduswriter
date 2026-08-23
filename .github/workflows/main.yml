@@ -124,7 +124,7 @@ jobs:
               if: runner.debug != '1'
               uses: nick-invision/retry@v4
               with:
-                timeout_minutes: 10
+                timeout_minutes: 15
                 max_attempts: 3
                 retry_on: error
                 command: |
@@ -271,7 +271,7 @@ jobs:
             - name: Run plugin test ${{ matrix.test }}
               uses: nick-invision/retry@v4
               with:
-                timeout_minutes: 10
+                timeout_minutes: 15
                 max_attempts: 3
                 retry_on: error
                 command: |

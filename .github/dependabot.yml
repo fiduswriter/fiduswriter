@@ -1,0 +1,19 @@
+# GitHub-native Dependabot dependency updates are disabled for this
+# repository.
+#
+# Since the repository split, Python dependencies live in the
+# fiduswriter-server-backend repository and JavaScript dependencies are
+# updated by Renovate on git.fiduswriter.org.
+#
+# To re-enable updates, delete this file or set open-pull-requests-limit
+# to a value above 0 and add entries pointing at the manifests you want
+# updated (e.g. package-ecosystem "pip" + directory "/fiduswriter" in the
+# pre-split layout).
+version: 2
+updates:
+    - package-ecosystem: "pip"
+      directory: "/"
+      schedule:
+          interval: "weekly"
+      # 0 = never open dependency update pull requests.
+      open-pull-requests-limit: 0

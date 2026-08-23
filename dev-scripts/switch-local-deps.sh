@@ -13,9 +13,13 @@
 #                                 Default: parent directory of this git repo.
 #
 #   FIDUSWRITER_BACKEND_DIR       Directory of the fiduswriter-server-backend
-#                                 checkout whose package.json5 files should be
-#                                 updated.
+#                                 checkout. Its core app package.json5 files
+#                                 (e.g. base) are updated.
 #                                 Default: <siblings-dir>/fiduswriter-server-backend
+#
+#   Plugin app package.json5 files are resolved from their sibling plugin
+#   repos under $SIBLINGS_DIR (e.g. fiduswriter-tum-plugin/fiduswriter/tum),
+#   independent of whether the app is symlinked into the backend repo.
 #
 #   FIDUSWRITER_INSTALL_DIR       Directory where pnpm/npm install is run
 #                                 (the merged package.json location).
@@ -51,6 +55,7 @@ declare -A PACKAGE_DIRS=(
     ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-ts"
     ["@fiduswriter/books-document"]="fiduswriter-books-plugin-ts"
     ["@fiduswriter/document"]="fiduswriter-document-ts"
+    ["@fiduswriter/cli"]="fiduswriter-cli-ts"
     ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-ts"
     ["@fiduswriter/editor"]="fiduswriter-editor-ts"
     ["@fiduswriter/frontend"]="fiduswriter-frontend-ts"
@@ -59,20 +64,34 @@ declare -A PACKAGE_DIRS=(
     ["fwtoolkit"]="fwtoolkit"
 )
 
+# Core backend apps whose package.json5 lives directly in the backend repo.
 MAIN_FILES=(
     "$BACKEND_DIR/fiduswriter/base/package.json5"
-    "$BACKEND_DIR/fiduswriter/book/package.json5"
-    "$BACKEND_DIR/fiduswriter/citation_api_import/package.json5"
-    "$BACKEND_DIR/fiduswriter/gitrepo_export/package.json5"
-    "$BACKEND_DIR/fiduswriter/languagetool/package.json5"
-    "$BACKEND_DIR/fiduswriter/llm/package.json5"
-    "$BACKEND_DIR/fiduswriter/ojs/package.json5"
-    "$BACKEND_DIR/fiduswriter/pandoc/package.json5"
-    "$BACKEND_DIR/fiduswriter/payment/package.json5"
-    "$BACKEND_DIR/fiduswriter/phplist/package.json5"
-    "$BACKEND_DIR/fiduswriter/tum/package.json5"
-    "$BACKEND_DIR/fiduswriter/website/package.json5"
 )
+
+# Django plugin apps and their sibling plugin repos. Each plugin's package.json5
+# lives in its own sibling repo under <repo>/fiduswriter/<app>/package.json5,
+# independent of whether the app is currently symlinked into the backend repo.
+PLUGIN_APPS=(
+    "book:fiduswriter-books-plugin"
+    "citation_api_import:fiduswriter-citation-api-import-plugin"
+    "gitrepo_export:fiduswriter-gitrepo-export-plugin"
+    "languagetool:fiduswriter-languagetool-plugin"
+    "llm:fiduswriter-llm-plugin"
+    "ojs:fiduswriter-ojs-plugin"
+    "pandoc:fiduswriter-pandoc-plugin"
+    "payment:fiduswriter-payment-plugin"
+    "phplist:fiduswriter-phplist-plugin"
+    "tum:fiduswriter-tum-plugin"
+    "website:fiduswriter-website-plugin"
+)
+
+PLUGIN_FILES=()
+for entry in "${PLUGIN_APPS[@]}"; do
+    app="${entry%%:*}"
+    repo="${entry#*:}"
+    PLUGIN_FILES+=("$SIBLINGS_DIR/$repo/fiduswriter/$app/package.json5")
+done
 
 # Sibling packages that depend on other sibling packages.
 # Format: "sibling-dir:dep1,dep2,..."
@@ -80,6 +99,7 @@ SIBLING_PACKAGES=(
     "fiduswriter-bibliography-manager-ts:fwtoolkit"
     "fiduswriter-books-plugin-ts:@fiduswriter/document,fwtoolkit"
     "fiduswriter-document-ts:fwtoolkit"
+    "fiduswriter-cli-ts:fwtoolkit,@fiduswriter/document,@fiduswriter/books-document"
     "fiduswriter-document-template-editor-ts:@fiduswriter/document,fwtoolkit"
     "fiduswriter-editor-ts:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-frontend-ts:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
@@ -235,7 +255,7 @@ echo "Switching @fiduswriter dependencies to $MODE mode..."
 
 handle_bibliography_manager
 
-for file in "${MAIN_FILES[@]}"; do
+for file in "${MAIN_FILES[@]}" "${PLUGIN_FILES[@]}"; do
     if [[ ! -f "$file" ]]; then
         echo "Warning: file not found: $file" >&2
         continue

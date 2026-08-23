@@ -222,10 +222,13 @@ jobs:
               with:
                   images: ${{ steps.images.outputs.list }}
                   tags: |
-                    type=raw,value=latest
+                    # Floating tags (latest, major, major.minor) only move for
+                    # stable releases — pre-release tags get the exact version
+                    # tag only.
+                    type=raw,value=latest,enable=${{ !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc') && !contains(github.ref_name, 'RC') && !contains(github.ref_name, 'dev') }}
                     type=raw,value=${{ steps.version.outputs.version }}
-                    type=raw,value=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}
-                    type=raw,value=${{ steps.version.outputs.major }}
+                    type=raw,value=${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }},enable=${{ !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc') && !contains(github.ref_name, 'RC') && !contains(github.ref_name, 'dev') }}
+                    type=raw,value=${{ steps.version.outputs.major }},enable=${{ !contains(github.ref_name, 'alpha') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'rc') && !contains(github.ref_name, 'RC') && !contains(github.ref_name, 'dev') }}
 
             - name: Build and push Docker image
               uses: docker/build-push-action@v6
@@ -526,6 +529,9 @@ jobs:
               uses: softprops/action-gh-release@v3
               with:
                   files: release-assets/*
+                  # Mark pre-releases as such so they are clearly separated
+                  # from stable releases.
+                  prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') || contains(github.ref_name, 'RC') || contains(github.ref_name, 'dev') }}
                   body: |
                       ## Fidus Writer ${{ steps.version.outputs.version }}
 

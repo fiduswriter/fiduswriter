@@ -29,10 +29,9 @@ jobs:
           git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
               || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.14'
+      # The ubuntu-latest runner image (nikolaik/python-nodejs) ships
+      # Python 3.14 directly, and actions/setup-python has no 3.14 build
+      # for its Debian 13 base — so we use the preinstalled interpreter.
 
       - name: Install dependencies
         run: |
@@ -87,10 +86,9 @@ jobs:
         with:
           node-version: '26'
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.14'
+      # The ubuntu-latest runner image (nikolaik/python-nodejs) ships
+      # Python 3.14 directly, and actions/setup-python has no 3.14 build
+      # for its Debian 13 base — so we use the preinstalled interpreter.
 
       - name: Install Python dependencies
         run: |
@@ -142,10 +140,9 @@ jobs:
           git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
               || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.14'
+      # The ubuntu-latest runner image (nikolaik/python-nodejs) ships
+      # Python 3.14 directly, and actions/setup-python has no 3.14 build
+      # for its Debian 13 base — so we use the preinstalled interpreter.
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

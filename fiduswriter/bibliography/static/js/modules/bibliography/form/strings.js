@@ -7,7 +7,7 @@ import {
     getLocale,
     getOtherOptionTitle,
     getTypeTitle
-} from "biblatex-csl-converter"
+} from "bibliojson"
 
 // Cache for the current locale to avoid repeated lookups
 let cachedLocale = null
@@ -22,7 +22,7 @@ function getCachedLocale() {
     return cachedLocale
 }
 
-// Dynamic field title getter that uses biblatex-csl-converter's i18n
+// Dynamic field title getter that uses BiblioJSON's i18n
 export function getBibFieldTitle(fieldKey, bibType = null) {
     const locale = getCachedLocale()
     if (bibType && BibTypes[bibType]) {

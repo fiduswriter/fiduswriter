@@ -1,4 +1,4 @@
-import {sniffFormat} from "biblatex-csl-converter"
+import {sniffFormat} from "bibliojson"
 import {addAlert, makeWorker} from "../../common"
 
 const ERROR_MSG = {

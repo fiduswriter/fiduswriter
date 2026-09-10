@@ -1,4 +1,4 @@
-import {BibLatexExporter} from "biblatex-csl-converter"
+import {BibLatexExporter} from "bibliojson"
 import download from "downloadjs"
 
 import {shortFileTitle} from "../../common"

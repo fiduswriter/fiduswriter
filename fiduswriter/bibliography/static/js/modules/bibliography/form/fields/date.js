@@ -1,4 +1,4 @@
-import {edtfParse} from "biblatex-csl-converter"
+import {edtfParse} from "bibliojson"
 
 export class DateFieldForm {
     constructor(dom, initialValue = "", placeHolder = "") {

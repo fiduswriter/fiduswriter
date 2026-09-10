@@ -1,4 +1,4 @@
-import {OdtCitationsParser} from "biblatex-csl-converter"
+import {OdtCitationsParser} from "bibliojson"
 import {citationResultToNode} from "../citations"
 
 /**

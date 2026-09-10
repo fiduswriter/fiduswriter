@@ -1,4 +1,4 @@
-import {parseCSL} from "biblatex-csl-converter"
+import {parseCSL} from "bibliojson"
 
 import {applyAnnotation, applyMarkToNodes, mergeTextNodes} from "./helpers"
 

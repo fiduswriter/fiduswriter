@@ -8,7 +8,7 @@ export class BibLatexFileExporter {
     }
 
     init() {
-        import("biblatex-csl-converter").then(({BibLatexExporter}) => {
+        import("bibliojson").then(({BibLatexExporter}) => {
             const exporter = new BibLatexExporter(this.bibDB.db, this.pks)
 
             const zipper = new ZipFileCreator([

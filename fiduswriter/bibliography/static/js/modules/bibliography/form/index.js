@@ -1,4 +1,4 @@
-import {BibFieldTypes, BibTypes} from "biblatex-csl-converter"
+import {BibFieldTypes, BibTypes} from "bibliojson"
 import {Dialog, addAlert, noSpaceTmp} from "../../common"
 import {dateToYear, litToText, nameToText} from "../tools"
 import {CatsForm} from "./cats"

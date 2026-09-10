@@ -19,7 +19,7 @@ export default {
         "^mathml2omml$": m("mathml2omml.js"),
         "^@vivliostyle/print$": m("vivliostyle.js"),
         "^pretty$": m("pretty.js"),
-        "^biblatex-csl-converter$": m("biblatex-csl-converter.js"),
+        "^bibliojson$": m("bibliojson.js"),
         "../common$": m("common.js"),
         "../../common$": m("common.js"),
         "../../citations/format$": m("citations-format.js"),

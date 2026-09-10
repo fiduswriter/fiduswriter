@@ -1,5 +1,5 @@
 /* Connects Fidus Writer citation system with citeproc */
-import {CSLExporter} from "biblatex-csl-converter"
+import {CSLExporter} from "bibliojson"
 
 export class citeprocSys {
     constructor(bibDB) {

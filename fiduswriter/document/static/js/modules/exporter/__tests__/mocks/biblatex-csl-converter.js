@@ -1,4 +1,4 @@
-// Mock for biblatex-csl-converter
+// Mock for BiblioJSON
 export class CSLExporter {
     constructor() {
         this.items = []

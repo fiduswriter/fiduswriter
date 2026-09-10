@@ -1,10 +1,10 @@
 /**
  * Helper functions for creating Zotero-compatible citation data.
- * Uses CSLExporter from biblatex-csl-converter to convert Fidus Writer's
+ * Uses CSLExporter from BiblioJSON to convert Fidus Writer's
  * internal BibLaTeX format to CSL-JSON.
  */
 
-import {CSLExporter} from "biblatex-csl-converter"
+import {CSLExporter} from "bibliojson"
 
 /**
  * Generate a random citation ID similar to Zotero's format.

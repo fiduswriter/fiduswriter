@@ -1,4 +1,4 @@
-import {DocxCitationsParser} from "biblatex-csl-converter"
+import {DocxCitationsParser} from "bibliojson"
 import {citationResultToNode} from "../citations"
 
 /**

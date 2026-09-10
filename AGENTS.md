@@ -28,7 +28,7 @@
 - **Package Manager**: npm
 
 ### Key Dependencies
-- `django-npm-mjs==3.3.0` - Handles JavaScript transpilation and npm integration
+- `django-npm-mjs==4.1.8` - Handles JavaScript transpilation and npm integration
 - `prosemirror==0.5.0` - Python bindings for ProseMirror
 - `channels==4.3.2` - WebSocket support for real-time collaboration
 - `Pillow==11.3.0` - Image processing

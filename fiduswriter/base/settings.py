@@ -1,5 +1,11 @@
 import os
 
+# pnpm 11+ fails installs with ERR_PNPM_IGNORED_BUILDS when a dependency has
+# an unapproved build script (e.g. core-js-pure's postinstall). Turn the hard
+# error back into a warning so that `manage.py setup`/transpile keeps working
+# with any pnpm version. Can be overridden by setting the variable beforehand.
+os.environ.setdefault("PNPM_CONFIG_STRICT_DEP_BUILDS", "false")
+
 # The ports Fidus Writer is running on:
 # For multi-server setups, this must be the FULL list of ports/connections
 # across all servers so that document routing is consistent everywhere.

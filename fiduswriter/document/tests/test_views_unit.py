@@ -1,8 +1,14 @@
 """Unit tests for document views that don't require a browser."""
 
+import importlib
 import json
 import base64
+import os
+import shutil
+import tempfile
 from django.test import TestCase, Client, override_settings
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.conf import settings
 
 from user.models import User, UserEncryptionKey
 from document.models import (
@@ -11,8 +17,16 @@ from document.models import (
     DocumentTemplate,
     DocumentEncryptionKey,
     ShareToken,
+    DocumentRevision,
 )
 from document.views import _handle_automatic_key_sharing
+
+_revision_migration = importlib.import_module(
+    "document.migrations.0027_move_revisions_to_app_storage"
+)
+move_revisions_to_app_storage = (
+    _revision_migration.move_revisions_to_app_storage
+)
 
 
 AJAX_HEADERS = {"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
@@ -737,3 +751,189 @@ class RequestAccessViewTest(TestCase):
             {"document_id": self.doc.id, "rights": "admin"},
         )
         self.assertEqual(response.status_code, 400)
+
+
+class GetRevisionViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="revisionuser", password="pass"
+        )
+        self.other = User.objects.create_user(
+            username="revisionother", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template, title="Test"
+        )
+        self.revision = DocumentRevision.objects.create(
+            document=self.doc,
+            note="first",
+            file_object=SimpleUploadedFile(
+                "mydoc.fidus",
+                b"PK\x03\x04fidus",
+                content_type="application/zip",
+            ),
+        )
+        self.client.force_login(self.owner)
+
+    def test_owner_downloads_revision(self):
+        response = self.client.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("application/zip", response["Content-Type"])
+
+    def test_unauthenticated_cannot_download_revision(self):
+        anonymous = Client()
+        response = anonymous.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_revision_file_stored_in_app_storage(self):
+        name = self.revision.file_object.name
+        self.assertTrue(name.startswith("document-revisions/"))
+        self.assertTrue(
+            os.path.isfile(os.path.join(settings.APP_STORAGE_ROOT, name))
+        )
+        self.assertFalse(
+            os.path.isfile(os.path.join(settings.MEDIA_ROOT, name))
+        )
+
+    def test_legacy_file_in_media_folder_is_moved_on_download(self):
+        name = self.revision.file_object.name
+        current_path = self.revision.file_object.storage.path(name)
+        legacy_dir = os.path.join(settings.MEDIA_ROOT, "document-revisions")
+        os.makedirs(legacy_dir, exist_ok=True)
+        legacy_path = os.path.join(legacy_dir, name.split("/")[-1])
+        os.remove(current_path)
+        with open(legacy_path, "wb") as f:
+            f.write(b"PK\x03\x04legacy")
+        response = self.client.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b"PK\x03\x04legacy")
+        self.assertTrue(os.path.isfile(current_path))
+        self.assertFalse(os.path.isfile(legacy_path))
+
+    def test_legacy_file_with_bare_name_is_moved_on_download(self):
+        name = self.revision.file_object.name
+        bare_name = name.split("/")[-1]
+        current_path = self.revision.file_object.storage.path(name)
+        os.remove(current_path)
+        DocumentRevision.objects.filter(pk=self.revision.pk).update(
+            file_object=bare_name
+        )
+        legacy_path = os.path.join(settings.MEDIA_ROOT, bare_name)
+        with open(legacy_path, "wb") as f:
+            f.write(b"PK\x03\x04bare")
+        response = self.client.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b"PK\x03\x04bare")
+        self.assertTrue(
+            os.path.isfile(os.path.join(settings.APP_STORAGE_ROOT, bare_name))
+        )
+        self.assertFalse(os.path.isfile(legacy_path))
+
+    def test_missing_revision_file_returns_404(self):
+        name = self.revision.file_object.name
+        os.remove(self.revision.file_object.storage.path(name))
+        response = self.client.get(
+            f"/api/document/get_revision/{self.revision.id}/"
+        )
+        self.assertEqual(response.status_code, 404)
+
+
+class MoveRevisionsToAppStorageTest(TestCase):
+    """Tests for the data migration moving revision files."""
+
+    def setUp(self):
+        self.owner = User.objects.create_user(
+            username="migrationuser", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template, title="Test"
+        )
+        self.media_root = tempfile.mkdtemp()
+        self.app_storage_root = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.media_root, ignore_errors=True)
+        shutil.rmtree(self.app_storage_root, ignore_errors=True)
+
+    def _create_revision_row(self, name):
+        revision = DocumentRevision.objects.create(
+            document=self.doc, note="", file_object=""
+        )
+        DocumentRevision.objects.filter(pk=revision.pk).update(
+            file_object=name
+        )
+        return revision
+
+    def _run_migration(self):
+        class AppsShim:
+            @staticmethod
+            def get_model(app_label, model_name):
+                return DocumentRevision
+
+        with override_settings(
+            MEDIA_ROOT=self.media_root,
+            APP_STORAGE_ROOT=self.app_storage_root,
+        ):
+            move_revisions_to_app_storage(AppsShim, None)
+
+    def test_moves_prefixed_and_bare_files(self):
+        self._create_revision_row("document-revisions/11.fidus")
+        self._create_revision_row("12.fidus")
+        legacy_dir = os.path.join(self.media_root, "document-revisions")
+        os.makedirs(legacy_dir)
+        with open(os.path.join(legacy_dir, "11.fidus"), "wb") as f:
+            f.write(b"data11")
+        with open(os.path.join(self.media_root, "12.fidus"), "wb") as f:
+            f.write(b"data12")
+        self._run_migration()
+        self.assertEqual(
+            open(
+                os.path.join(
+                    self.app_storage_root, "document-revisions", "11.fidus"
+                ),
+                "rb",
+            ).read(),
+            b"data11",
+        )
+        self.assertEqual(
+            open(os.path.join(self.app_storage_root, "12.fidus"), "rb").read(),
+            b"data12",
+        )
+        self.assertFalse(os.path.exists(legacy_dir))
+
+    def test_migration_is_idempotent(self):
+        self._create_revision_row("document-revisions/13.fidus")
+        legacy_dir = os.path.join(self.media_root, "document-revisions")
+        os.makedirs(legacy_dir)
+        with open(os.path.join(legacy_dir, "13.fidus"), "wb") as f:
+            f.write(b"data13")
+        self._run_migration()
+        self._run_migration()
+        self.assertEqual(
+            open(
+                os.path.join(
+                    self.app_storage_root, "document-revisions", "13.fidus"
+                ),
+                "rb",
+            ).read(),
+            b"data13",
+        )
+
+    def test_missing_files_are_tolerated(self):
+        self._create_revision_row("document-revisions/14.fidus")
+        self._run_migration()

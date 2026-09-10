@@ -30,6 +30,7 @@ from document.models import (
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
+    ensure_revision_file,
 )
 from usermedia.models import DocumentImage, EncryptedDocumentImage, Image
 from bibliography.models import Entry
@@ -911,14 +912,17 @@ def get_revision(request, revision_id):
             rights__in=CAN_COMMUNICATE,
         ).first()
     ):
-        http_response = HttpResponse(
-            revision.file_object.file,
-            content_type="application/zip; charset=x-user-defined",
-            status=200,
-        )
-        http_response["Content-Disposition"] = (
-            "attachment; filename=some_name.zip"
-        )
+        if ensure_revision_file(revision):
+            http_response = HttpResponse(
+                revision.file_object.file,
+                content_type="application/zip; charset=x-user-defined",
+                status=200,
+            )
+            http_response["Content-Disposition"] = (
+                "attachment; filename=some_name.zip"
+            )
+        else:
+            http_response = HttpResponse(status=404)
     else:
         http_response = HttpResponse(status=404)
     return http_response

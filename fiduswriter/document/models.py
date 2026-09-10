@@ -1,7 +1,10 @@
+import os
+import shutil
 import uuid
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
 from django.core import checks
+from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -354,6 +357,41 @@ def revision_filename(instance, filename):
     return f"document-revisions/{instance.pk}.fidus"
 
 
+def create_revision_storage():
+    return FileSystemStorage(location=settings.APP_STORAGE_ROOT)
+
+
+def ensure_revision_file(revision):
+    """Make sure the file of a revision is available in the revision storage.
+
+    Revisions used to be stored inside the media folder. If the file is
+    still in the old location, move it into the revision storage. Returns
+    False if no file can be found in either location.
+    """
+    name = revision.file_object.name
+    if not name:
+        return False
+    storage = revision.file_object.storage
+    if storage.exists(name):
+        return True
+    base_name = name.split("/")[-1]
+    legacy_paths = [
+        os.path.join(settings.MEDIA_ROOT, name),
+        os.path.join(settings.MEDIA_ROOT, "document-revisions", base_name),
+    ]
+    for legacy_path in legacy_paths:
+        if os.path.isfile(legacy_path):
+            target_path = storage.path(name)
+            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+            try:
+                os.rename(legacy_path, target_path)
+            except OSError:
+                shutil.copyfile(legacy_path, target_path)
+                os.remove(legacy_path)
+            return True
+    return False
+
+
 class DocumentEncryptionKey(models.Model):
     document = models.ForeignKey(
         Document,
@@ -388,7 +426,9 @@ class DocumentRevision(models.Model):
     )
     note = models.CharField(max_length=255, default="", blank=True)
     date = models.DateTimeField(auto_now=True)
-    file_object = models.FileField(upload_to=revision_filename)
+    file_object = models.FileField(
+        storage=create_revision_storage, upload_to=revision_filename
+    )
     file_name = models.CharField(max_length=255, default="", blank=True)
 
     def save(self, *args, **kwargs):

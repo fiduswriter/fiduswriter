@@ -132,6 +132,11 @@ MEDIA_ROOT = os.path.join(PROJECT_PATH, "media/")
 # trailing slash.
 MEDIA_URL = "/media/"
 
+# Absolute filesystem path to the directory that holds files managed by the
+# application itself, such as document revisions. Unlike MEDIA_ROOT, this
+# directory is not served over HTTP.
+APP_STORAGE_ROOT = os.path.join(PROJECT_PATH, "app-data/")
+
 # The maximum size of user uploaded images in bytes. If you use NGINX, note
 # that also it needs to support at least this size.
 MEDIA_MAX_SIZE = False

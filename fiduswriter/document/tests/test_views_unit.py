@@ -1153,3 +1153,57 @@ class CleanupRevisionsCommandTest(TestCase):
     def test_confirm_requires_delete(self):
         with self.assertRaises(CommandError):
             call_command("cleanup_revisions", "--confirm", stdout=StringIO())
+
+
+class RevisionFileDeletionTest(TestCase):
+    """Deleting a revision must remove its file from the revision storage."""
+
+    def setUp(self):
+        self.owner = User.objects.create_user(
+            username="deletionuser", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template, title="Test"
+        )
+        self.revision = DocumentRevision.objects.create(
+            document=self.doc,
+            note="first",
+            file_object=SimpleUploadedFile(
+                "rev.fidus",
+                b"PK\x03\x04fidus",
+                content_type="application/zip",
+            ),
+        )
+
+    def _file_path(self, revision):
+        return revision.file_object.storage.path(revision.file_object.name)
+
+    def test_deleting_revision_removes_file(self):
+        path = self._file_path(self.revision)
+        self.assertTrue(os.path.isfile(path))
+        with self.captureOnCommitCallbacks(execute=True):
+            self.revision.delete()
+        self.assertFalse(os.path.isfile(path))
+        self.assertFalse(
+            DocumentRevision.objects.filter(pk=self.revision.pk).exists()
+        )
+
+    def test_deleting_document_removes_revision_files(self):
+        path = self._file_path(self.revision)
+        self.assertTrue(os.path.isfile(path))
+        with self.captureOnCommitCallbacks(execute=True):
+            self.doc.delete()
+        self.assertFalse(os.path.isfile(path))
+
+    def test_deleting_revision_without_file_does_not_error(self):
+        revision = DocumentRevision.objects.create(
+            document=self.doc, note="", file_object=""
+        )
+        with self.captureOnCommitCallbacks(execute=True):
+            revision.delete()
+        self.assertFalse(
+            DocumentRevision.objects.filter(pk=revision.pk).exists()
+        )

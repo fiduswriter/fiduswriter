@@ -16,24 +16,25 @@ class Command(BaseCommand):
         "deleted documents and revisions) and move them into an "
         "'orphaned-revisions' folder inside the app storage directory. "
         "With --delete: only consider the files already in that folder - "
-        "the first run shows a warning, and the files are only deleted "
-        "when --delete --confirm is run afterwards."
+        "a warning is shown and confirmation is asked for interactively "
+        "(or given non-interactively via --confirm)."
     )
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--delete",
             action="store_true",
-            help="Delete the files in the orphaned-revisions folder. The "
-            "first run only shows a warning; add --confirm to actually "
-            "delete. No scanning or moving is performed in this mode.",
+            help="Delete the files in the orphaned-revisions folder. A "
+            "warning with the number of affected files is shown and "
+            "confirmation is asked for interactively; add --confirm to "
+            "delete without prompting. No scanning or moving is performed "
+            "in this mode.",
         )
         parser.add_argument(
             "--confirm",
             action="store_true",
-            help="Actually delete the files. Only valid together with "
-            "--delete, and only after the warning of a previous --delete "
-            "run has been inspected.",
+            help="Skip the interactive confirmation of --delete. Only "
+            "valid together with --delete.",
         )
 
     def _orphan_dir(self):
@@ -107,11 +108,21 @@ class Command(BaseCommand):
                     f"WARNING: this will permanently delete "
                     f"{len(quarantined)} file(s) "
                     f"({self._mb(quarantined):.1f} MB) from "
-                    f"{orphan_dir}. Re-run with --delete --confirm to "
-                    "proceed."
+                    f"{orphan_dir}."
                 )
             )
-            return
+            try:
+                answer = input(
+                    "Type 'yes' to permanently delete these files: "
+                )
+            except EOFError:
+                answer = ""
+            if answer.strip().lower() not in ("y", "yes"):
+                self.stdout.write(
+                    "Aborted. Re-run with --delete --confirm to delete "
+                    "without prompting."
+                )
+                return
         count = len(quarantined)
         freed = self._mb(quarantined)
         for path in quarantined:

@@ -49,6 +49,39 @@ def move_revisions_to_app_storage(apps, schema_editor):
             "downloadable.",
             flush=True,
         )
+    # Move any leftover revision files into the app-data folder. These are
+    # orphaned files that are no longer referenced by any revision in the
+    # database, for example because the corresponding document was deleted.
+    # They are kept in an "orphaned-revisions" folder inside the app storage
+    # so that nothing that is not user media remains in the served media
+    # folder.
+    orphan_dir = os.path.join(settings.APP_STORAGE_ROOT, "orphaned-revisions")
+    legacy_dirs = [
+        os.path.join(settings.MEDIA_ROOT, "document-revisions"),
+        settings.MEDIA_ROOT,
+    ]
+    for legacy_dir in legacy_dirs:
+        if not os.path.isdir(legacy_dir):
+            continue
+        for file_name in os.listdir(legacy_dir):
+            if not file_name.endswith(".fidus"):
+                continue
+            legacy_path = os.path.join(legacy_dir, file_name)
+            if not os.path.isfile(legacy_path):
+                continue
+            os.makedirs(orphan_dir, exist_ok=True)
+            orphan_path = os.path.join(orphan_dir, file_name)
+            counter = 0
+            while os.path.exists(orphan_path):
+                counter += 1
+                orphan_path = os.path.join(
+                    orphan_dir, f"{counter}-{file_name}"
+                )
+            try:
+                os.rename(legacy_path, orphan_path)
+            except OSError:
+                shutil.copyfile(legacy_path, orphan_path)
+                os.remove(legacy_path)
     legacy_dir = os.path.join(settings.MEDIA_ROOT, "document-revisions")
     try:
         os.rmdir(legacy_dir)

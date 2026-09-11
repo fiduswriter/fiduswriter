@@ -6,8 +6,12 @@ import base64
 import os
 import shutil
 import tempfile
+from io import StringIO
+from unittest.mock import patch
 from django.test import TestCase, Client, override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.conf import settings
 
 from user.models import User, UserEncryptionKey
@@ -937,3 +941,215 @@ class MoveRevisionsToAppStorageTest(TestCase):
     def test_missing_files_are_tolerated(self):
         self._create_revision_row("document-revisions/14.fidus")
         self._run_migration()
+
+    def test_leftover_orphan_files_are_moved_out_of_media(self):
+        self._create_revision_row("document-revisions/15.fidus")
+        legacy_dir = os.path.join(self.media_root, "document-revisions")
+        os.makedirs(legacy_dir)
+        with open(os.path.join(legacy_dir, "15.fidus"), "wb") as f:
+            f.write(b"live")
+        # Orphaned files without a database row, in both possible locations:
+        with open(os.path.join(legacy_dir, "16.fidus"), "wb") as f:
+            f.write(b"orphan1")
+        with open(os.path.join(self.media_root, "17.fidus"), "wb") as f:
+            f.write(b"orphan2")
+        self._run_migration()
+        orphan_dir = os.path.join(self.app_storage_root, "orphaned-revisions")
+        self.assertFalse(os.path.exists(legacy_dir))
+        self.assertEqual(
+            open(os.path.join(orphan_dir, "16.fidus"), "rb").read(),
+            b"orphan1",
+        )
+        self.assertEqual(
+            open(os.path.join(orphan_dir, "17.fidus"), "rb").read(),
+            b"orphan2",
+        )
+        # The referenced file is moved into the revision storage, not the
+        # orphan folder.
+        self.assertEqual(
+            open(
+                os.path.join(
+                    self.app_storage_root, "document-revisions", "15.fidus"
+                ),
+                "rb",
+            ).read(),
+            b"live",
+        )
+        self.assertFalse(os.path.exists(os.path.join(orphan_dir, "15.fidus")))
+
+
+class CleanupRevisionsCommandTest(TestCase):
+    """Tests for the cleanup_revisions management command."""
+
+    def setUp(self):
+        self.owner = User.objects.create_user(
+            username="cleanupuser", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Default Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template, title="Test"
+        )
+        self.media_root = tempfile.mkdtemp()
+        self.app_storage_root = tempfile.mkdtemp()
+        self.override = override_settings(
+            MEDIA_ROOT=self.media_root,
+            APP_STORAGE_ROOT=self.app_storage_root,
+        )
+        self.override.enable()
+
+    def tearDown(self):
+        self.override.disable()
+        shutil.rmtree(self.media_root, ignore_errors=True)
+        shutil.rmtree(self.app_storage_root, ignore_errors=True)
+
+    def _write(self, path, content=b"x"):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "wb") as f:
+            f.write(content)
+
+    def _create_revision_row(self, name):
+        revision = DocumentRevision.objects.create(
+            document=self.doc, note="", file_object=""
+        )
+        DocumentRevision.objects.filter(pk=revision.pk).update(
+            file_object=name
+        )
+        return revision
+
+    def test_default_moves_unreferenced_files_to_orphan_folder(self):
+        self._create_revision_row("document-revisions/31.fidus")
+        # Referenced file in app storage: keep.
+        self._write(
+            os.path.join(
+                self.app_storage_root, "document-revisions", "31.fidus"
+            )
+        )
+        # Referenced bare-name file in media root: keep.
+        self._create_revision_row("32.fidus")
+        self._write(os.path.join(self.media_root, "32.fidus"))
+        # Orphans: move into the orphan folder.
+        self._write(
+            os.path.join(self.media_root, "document-revisions", "41.fidus")
+        )
+        self._write(os.path.join(self.media_root, "42.fidus"))
+        self._write(
+            os.path.join(
+                self.app_storage_root, "document-revisions", "43.fidus"
+            )
+        )
+        # Non-fidus files are never touched.
+        self._write(os.path.join(self.media_root, "image.png"))
+        out = StringIO()
+        call_command("cleanup_revisions", stdout=out)
+        orphan_dir = os.path.join(self.app_storage_root, "orphaned-revisions")
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(
+                    self.app_storage_root, "document-revisions", "31.fidus"
+                )
+            )
+        )
+        self.assertTrue(
+            os.path.isfile(os.path.join(self.media_root, "32.fidus"))
+        )
+        for file_name in ["41.fidus", "42.fidus", "43.fidus"]:
+            self.assertTrue(
+                os.path.isfile(os.path.join(orphan_dir, file_name))
+            )
+        self.assertTrue(
+            os.path.isfile(os.path.join(self.media_root, "image.png"))
+        )
+        self.assertIn("Moved 3 orphaned", out.getvalue())
+        # A second run finds nothing new to move.
+        out2 = StringIO()
+        call_command("cleanup_revisions", stdout=out2)
+        self.assertIn("No orphaned revision files found", out2.getvalue())
+
+    def test_delete_only_considers_orphan_folder(self):
+        # An orphan outside the orphan folder is NOT touched by --delete.
+        self._write(
+            os.path.join(self.media_root, "document-revisions", "61.fidus")
+        )
+        out = StringIO()
+        call_command("cleanup_revisions", "--delete", stdout=out)
+        self.assertIn("Nothing to delete", out.getvalue())
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(self.media_root, "document-revisions", "61.fidus")
+            )
+        )
+
+    def test_delete_prompts_and_aborts_on_no(self):
+        self._write(
+            os.path.join(self.media_root, "document-revisions", "71.fidus")
+        )
+        call_command("cleanup_revisions", stdout=StringIO())
+        out = StringIO()
+        with patch("sys.stdin", StringIO("no\n")):
+            call_command("cleanup_revisions", "--delete", stdout=out)
+        self.assertIn("WARNING", out.getvalue())
+        self.assertIn("Aborted", out.getvalue())
+        # Nothing was deleted.
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(
+                    self.app_storage_root, "orphaned-revisions", "71.fidus"
+                )
+            )
+        )
+
+    def test_delete_prompts_and_deletes_on_yes(self):
+        self._write(
+            os.path.join(self.media_root, "document-revisions", "72.fidus")
+        )
+        call_command("cleanup_revisions", stdout=StringIO())
+        out = StringIO()
+        with patch("sys.stdin", StringIO("yes\n")):
+            call_command("cleanup_revisions", "--delete", stdout=out)
+        self.assertIn("Deleted 1 orphaned", out.getvalue())
+        self.assertFalse(
+            os.path.isfile(
+                os.path.join(
+                    self.app_storage_root, "orphaned-revisions", "72.fidus"
+                )
+            )
+        )
+
+    def test_delete_prompt_aborts_on_eof(self):
+        self._write(
+            os.path.join(self.media_root, "document-revisions", "73.fidus")
+        )
+        call_command("cleanup_revisions", stdout=StringIO())
+        out = StringIO()
+        with patch("sys.stdin", StringIO("")):
+            call_command("cleanup_revisions", "--delete", stdout=out)
+        self.assertIn("Aborted", out.getvalue())
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(
+                    self.app_storage_root, "orphaned-revisions", "73.fidus"
+                )
+            )
+        )
+
+    def test_delete_with_confirm_removes_orphan_folder(self):
+        self._write(
+            os.path.join(self.media_root, "document-revisions", "81.fidus")
+        )
+        call_command("cleanup_revisions", stdout=StringIO())
+        out = StringIO()
+        call_command("cleanup_revisions", "--delete", "--confirm", stdout=out)
+        self.assertIn("Deleted 1 orphaned", out.getvalue())
+        self.assertFalse(
+            os.path.isfile(
+                os.path.join(
+                    self.app_storage_root, "orphaned-revisions", "81.fidus"
+                )
+            )
+        )
+
+    def test_confirm_requires_delete(self):
+        with self.assertRaises(CommandError):
+            call_command("cleanup_revisions", "--confirm", stdout=StringIO())

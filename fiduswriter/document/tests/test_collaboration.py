@@ -1021,6 +1021,14 @@ class OneUserTwoBrowsersTests(EditorHelper, ChannelsLiveServerTestCase):
             )
         )
         caption.click()
+        # Wait for the figure to be synced to the other browser before
+        # typing the caption. Otherwise the caption's typing steps may
+        # reach the other editor before its figure node does and the
+        # text ends up in the document body instead of the caption.
+        other_driver = self.driver2 if driver is self.driver else self.driver
+        WebDriverWait(other_driver, self.wait_time).until(
+            lambda _: len(self.get_images(other_driver)) > 0
+        )
         self.input_text(caption, "My figure")
 
     def get_images(self, driver):

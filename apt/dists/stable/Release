@@ -3,28 +3,28 @@ Label: Fidus Writer
 Suite: stable
 Codename: stable
 Version: 1.0
-Date: Fri, 11 Sep 2026 09:07:59 UTC
+Date: Fri, 11 Sep 2026 22:08:14 UTC
 Architectures: amd64 arm64
 Components: main
 Description: Fidus Writer APT repository
 MD5Sum:
- 55932628dc77a85980aa15e8d47d607f 3567 main/binary-amd64/Packages
- 15ffb65a74ad6914473fc31585eb9ab7 1664 main/binary-amd64/Packages.gz
+ 7bf32e25657b6a06f65291bc371acc6e 3567 main/binary-amd64/Packages
+ ded30244887850fee98499931e68757a 1663 main/binary-amd64/Packages.gz
  ddbf96606d4feb912bc45430753f38ec 147 main/binary-amd64/Release
- d672a7a5f5cf15612d5c9a538d23d1bc 3567 main/binary-arm64/Packages
- 6f7d60c11b98156c4ccacba0e7a668d6 1658 main/binary-arm64/Packages.gz
+ 9fb26c3f55475127d53a952e1f143889 3567 main/binary-arm64/Packages
+ 38f7300164e5dad1509facaab857d4a4 1660 main/binary-arm64/Packages.gz
  d14f450e2fbfb75fd33aced59fffcb51 147 main/binary-arm64/Release
 SHA1:
- 63607bf8ec8ddabcf09affef72bf189918ea061f 3567 main/binary-amd64/Packages
- 66c2cd039eb56515e6bd525ed329b17f4b23abd9 1664 main/binary-amd64/Packages.gz
+ 7fbc785e9dae19f8facd80cf27c5627a0d92cdde 3567 main/binary-amd64/Packages
+ 4c46d3902ffefd0e2bc7fce184b467f3568d9ddd 1663 main/binary-amd64/Packages.gz
  dea92890f1d01ee12a1f4b9a79f9304423437399 147 main/binary-amd64/Release
- ddb9c9843b48b4c6465a0b6901c8553ca8a6f8fb 3567 main/binary-arm64/Packages
- 4bd68d96253f504004f176180d4987066bb53791 1658 main/binary-arm64/Packages.gz
+ ee7dbb799ea8d7aa6451a5d38b616a746a0918e9 3567 main/binary-arm64/Packages
+ ce0d5d2e4403a29a2676c97b4cc51369e01d4d61 1660 main/binary-arm64/Packages.gz
  fa08bc790e113179256c6f4d603ad9964b070c22 147 main/binary-arm64/Release
 SHA256:
- e7d1ea0683de3d8987ed0b04a86551141fc4ebfcb33de18629612d55ef759b01 3567 main/binary-amd64/Packages
- 417fe1e2d403ee8993c1bd42d15133888133f81f41fe4add406e96bada9ce373 1664 main/binary-amd64/Packages.gz
+ dc53aed8a0ceb6befb1767d55f3b55db7e410e41d453fec7373d78b3f55c6624 3567 main/binary-amd64/Packages
+ e0b6f3143e6fa647b1bf563059dcc51d8edc397c8bb4e4e070b06a4455516858 1663 main/binary-amd64/Packages.gz
  27cc0987f207e3394d2ecbd3f27ad9a963b57fd249572caab75fa816d358009f 147 main/binary-amd64/Release
- 3cb3c7216a434a1e671c610f4e6676d1f960d48af65d19850b658d2bcfbccc54 3567 main/binary-arm64/Packages
- 12897af406efecf4d30ef1e53dbbb3bd7c45eb655810173fcd2f12142e65603b 1658 main/binary-arm64/Packages.gz
+ b1d414f7d0603f1ac4ac6f5aa4d13c3c2705a23e1b1031045786a55c8304e25d 3567 main/binary-arm64/Packages
+ 9f555c0fe16a2f42e771579f1936a9be608cb74a5b6562a440e4b1fff0220bd7 1660 main/binary-arm64/Packages.gz
  e329cf31c76f5a409e63cd245f376851d63a575bb7da89eff0d9d1294fe5f6f3 147 main/binary-arm64/Release

@@ -56,6 +56,44 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         if "coverage" in sys.modules.keys():
             time.sleep(self.wait_time / 3)
 
+    def _fill_input(self, element_id, text, driver=None):
+        """
+        Type text into an input and verify the value stuck, retrying with a
+        re-located element if the browser driver dropped or duplicated
+        keystrokes (which happens on heavily loaded CI runners).
+        """
+        driver = driver or self.driver
+        for _attempt in range(5):
+            input_el = driver.find_element(By.ID, element_id)
+            input_el.clear()
+            input_el.send_keys(text)
+            if input_el.get_attribute("value") == text:
+                return input_el
+        self.fail(f"Could not reliably enter text into #{element_id}")
+
+    def _skip_passphrase_offer_if_present(self):
+        """
+        After choosing to create an encrypted document, an async check may show
+        a personal-passphrase setup offer before the password dialog. Wait for
+        either dialog and dismiss the offer if it appears.
+        """
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: d.find_elements(By.ID, "e2ee-new-password-input")
+            or d.find_elements(
+                By.XPATH, "//button[contains(., 'Skip for Now')]"
+            )
+        )
+        skip_buttons = self.driver.find_elements(
+            By.XPATH, "//button[contains(., 'Skip for Now')]"
+        )
+        if skip_buttons:
+            skip_buttons[0].click()
+            WebDriverWait(self.driver, self.wait_time).until(
+                EC.presence_of_element_located(
+                    (By.ID, "e2ee-new-password-input")
+                )
+            )
+
     def create_e2ee_document_via_ui(self, password="SecurePass123"):
         """
         Create a new E2EE document through the UI.
@@ -82,23 +120,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
-        # After clicking Create, we may get a passphrase setup offer dialog
-        # or directly the password dialog. Try to handle the passphrase offer first.
-        time.sleep(1)
-        try:
-            # Look for "Skip for Now" button which would indicate passphrase offer dialog
-            skip_buttons = self.driver.find_elements(
-                By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
-            )
-            for btn in skip_buttons:
-                if "Skip" in btn.text:
-                    # This is the passphrase offer dialog, skip it
-                    btn.click()
-                    time.sleep(0.5)
-                    break
-        except Exception:
-            # No passphrase offer dialog, that's fine
-            pass
+        self._skip_passphrase_offer_if_present()
 
         # Now wait for the password creation dialog
         WebDriverWait(self.driver, self.wait_time).until(
@@ -107,12 +129,8 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter password and confirmation
-        self.driver.find_element(By.ID, "e2ee-new-password-input").send_keys(
-            password
-        )
-        self.driver.find_element(
-            By.ID, "e2ee-confirm-password-input"
-        ).send_keys(password)
+        self._fill_input("e2ee-new-password-input", password)
+        self._fill_input("e2ee-confirm-password-input", password)
 
         # Click "Create Encrypted Document"
         self.driver.find_element(
@@ -191,9 +209,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter the password
-        self.driver.find_element(By.ID, "e2ee-password-input").send_keys(
-            password
-        )
+        self._fill_input("e2ee-password-input", password)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
@@ -243,9 +259,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter wrong password
-        self.driver.find_element(By.ID, "e2ee-password-input").send_keys(
-            "WrongPass1"
-        )
+        self._fill_input("e2ee-password-input", "WrongPass1")
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
@@ -419,19 +433,9 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter current and new passwords
-        # The current password field may be prefilled from sessionStorage,
-        # so clear it first before entering the test password.
-        current_pass_input = self.driver.find_element(
-            By.ID, "e2ee-current-password-input"
-        )
-        current_pass_input.clear()
-        current_pass_input.send_keys(old_password)
-        self.driver.find_element(By.ID, "e2ee-new-password-input").send_keys(
-            new_password
-        )
-        self.driver.find_element(
-            By.ID, "e2ee-confirm-password-input"
-        ).send_keys(new_password)
+        self._fill_input("e2ee-current-password-input", old_password)
+        self._fill_input("e2ee-new-password-input", new_password)
+        self._fill_input("e2ee-confirm-password-input", new_password)
 
         # Plant a MutationObserver *before* clicking so we cannot miss the
         # success or error alert even if it appears and disappears between two
@@ -519,9 +523,7 @@ class E2EEBasicTest(SeleniumHelper, ChannelsLiveServerTestCase):
             EC.presence_of_element_located((By.ID, "e2ee-password-input"))
         )
 
-        self.driver.find_element(By.ID, "e2ee-password-input").send_keys(
-            new_password
-        )
+        self._fill_input("e2ee-password-input", new_password)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
@@ -664,6 +666,44 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
         if "coverage" in sys.modules.keys():
             time.sleep(self.wait_time / 3)
 
+    def _fill_input(self, element_id, text, driver=None):
+        """
+        Type text into an input and verify the value stuck, retrying with a
+        re-located element if the browser driver dropped or duplicated
+        keystrokes (which happens on heavily loaded CI runners).
+        """
+        driver = driver or self.driver
+        for _attempt in range(5):
+            input_el = driver.find_element(By.ID, element_id)
+            input_el.clear()
+            input_el.send_keys(text)
+            if input_el.get_attribute("value") == text:
+                return input_el
+        self.fail(f"Could not reliably enter text into #{element_id}")
+
+    def _skip_passphrase_offer_if_present(self):
+        """
+        After choosing to create an encrypted document, an async check may show
+        a personal-passphrase setup offer before the password dialog. Wait for
+        either dialog and dismiss the offer if it appears.
+        """
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: d.find_elements(By.ID, "e2ee-new-password-input")
+            or d.find_elements(
+                By.XPATH, "//button[contains(., 'Skip for Now')]"
+            )
+        )
+        skip_buttons = self.driver.find_elements(
+            By.XPATH, "//button[contains(., 'Skip for Now')]"
+        )
+        if skip_buttons:
+            skip_buttons[0].click()
+            WebDriverWait(self.driver, self.wait_time).until(
+                EC.presence_of_element_located(
+                    (By.ID, "e2ee-new-password-input")
+                )
+            )
+
     def create_e2ee_document_via_ui(self, password="SecurePass123"):
         """Helper to create an E2EE document through the UI."""
         self.driver.get(self.base_url)
@@ -682,32 +722,13 @@ class E2EEAccessRightsTest(SeleniumHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
-        # After clicking Create, we may get a passphrase setup offer dialog
-        time.sleep(1)
-        try:
-            # Look for "Skip for Now" button which would indicate passphrase offer dialog
-            skip_buttons = self.driver.find_elements(
-                By.CSS_SELECTOR, ".ui-dialog-buttonpane .fw-button"
-            )
-            for btn in skip_buttons:
-                if "Skip" in btn.text:
-                    # This is the passphrase offer dialog, skip it
-                    btn.click()
-                    time.sleep(0.5)
-                    break
-        except Exception:
-            # No passphrase offer dialog, that's fine
-            pass
+        self._skip_passphrase_offer_if_present()
 
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
         )
-        self.driver.find_element(By.ID, "e2ee-new-password-input").send_keys(
-            password
-        )
-        self.driver.find_element(
-            By.ID, "e2ee-confirm-password-input"
-        ).send_keys(password)
+        self._fill_input("e2ee-new-password-input", password)
+        self._fill_input("e2ee-confirm-password-input", password)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
@@ -856,6 +877,44 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
         if "coverage" in sys.modules.keys():
             time.sleep(self.wait_time / 3)
 
+    def _fill_input(self, element_id, text, driver=None):
+        """
+        Type text into an input and verify the value stuck, retrying with a
+        re-located element if the browser driver dropped or duplicated
+        keystrokes (which happens on heavily loaded CI runners).
+        """
+        driver = driver or self.driver
+        for _attempt in range(5):
+            input_el = driver.find_element(By.ID, element_id)
+            input_el.clear()
+            input_el.send_keys(text)
+            if input_el.get_attribute("value") == text:
+                return input_el
+        self.fail(f"Could not reliably enter text into #{element_id}")
+
+    def _skip_passphrase_offer_if_present(self):
+        """
+        After choosing to create an encrypted document, an async check may show
+        a personal-passphrase setup offer before the password dialog. Wait for
+        either dialog and dismiss the offer if it appears.
+        """
+        WebDriverWait(self.driver, self.wait_time).until(
+            lambda d: d.find_elements(By.ID, "e2ee-new-password-input")
+            or d.find_elements(
+                By.XPATH, "//button[contains(., 'Skip for Now')]"
+            )
+        )
+        skip_buttons = self.driver.find_elements(
+            By.XPATH, "//button[contains(., 'Skip for Now')]"
+        )
+        if skip_buttons:
+            skip_buttons[0].click()
+            WebDriverWait(self.driver, self.wait_time).until(
+                EC.presence_of_element_located(
+                    (By.ID, "e2ee-new-password-input")
+                )
+            )
+
     def create_e2ee_document_and_load_in_both(self, password="CollabPass1"):
         """
         Create an E2EE document in driver1 and load it in both drivers.
@@ -878,29 +937,13 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
 
-        time.sleep(1)  # Allow async operations to complete
-
-        # Check if passphrase setup offer dialog appears and skip it
-        try:
-            skip_button = WebDriverWait(self.driver, 2).until(
-                EC.element_to_be_clickable(
-                    (By.XPATH, "//button[contains(text(), 'Skip for Now')]")
-                )
-            )
-            skip_button.click()
-        except TimeoutException:
-            # Dialog didn't appear, proceed normally
-            pass
+        self._skip_passphrase_offer_if_present()
 
         WebDriverWait(self.driver, self.wait_time).until(
             EC.presence_of_element_located((By.ID, "e2ee-new-password-input"))
         )
-        self.driver.find_element(By.ID, "e2ee-new-password-input").send_keys(
-            password
-        )
-        self.driver.find_element(
-            By.ID, "e2ee-confirm-password-input"
-        ).send_keys(password)
+        self._fill_input("e2ee-new-password-input", password)
+        self._fill_input("e2ee-confirm-password-input", password)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
@@ -921,9 +964,7 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver2, self.wait_time).until(
             EC.presence_of_element_located((By.ID, "e2ee-password-input"))
         )
-        self.driver2.find_element(By.ID, "e2ee-password-input").send_keys(
-            password
-        )
+        self._fill_input("e2ee-password-input", password, driver=self.driver2)
         self.driver2.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
@@ -995,9 +1036,7 @@ class E2EECollaborationTest(EditorHelper, ChannelsLiveServerTestCase):
         WebDriverWait(self.driver2, self.wait_time).until(
             EC.presence_of_element_located((By.ID, "e2ee-password-input"))
         )
-        self.driver2.find_element(By.ID, "e2ee-password-input").send_keys(
-            password
-        )
+        self._fill_input("e2ee-password-input", password, driver=self.driver2)
         self.driver2.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()
@@ -1056,6 +1095,21 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         super().tearDown()
         if "coverage" in sys.modules.keys():
             time.sleep(self.wait_time / 3)
+
+    def _fill_input(self, element_id, text, driver=None):
+        """
+        Type text into an input and verify the value stuck, retrying with a
+        re-located element if the browser driver dropped or duplicated
+        keystrokes (which happens on heavily loaded CI runners).
+        """
+        driver = driver or self.driver
+        for _attempt in range(5):
+            input_el = driver.find_element(By.ID, element_id)
+            input_el.clear()
+            input_el.send_keys(text)
+            if input_el.get_attribute("value") == text:
+                return input_el
+        self.fail(f"Could not reliably enter text into #{element_id}")
 
     def test_passphrase_setup_offer_appears_on_e2ee_creation(self):
         """
@@ -1187,12 +1241,8 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter passphrase and confirmation
-        self.driver.find_element(By.ID, "e2ee-passphrase-input").send_keys(
-            passphrase
-        )
-        self.driver.find_element(
-            By.ID, "e2ee-confirm-passphrase-input"
-        ).send_keys(passphrase)
+        self._fill_input("e2ee-passphrase-input", passphrase)
+        self._fill_input("e2ee-confirm-passphrase-input", passphrase)
 
         # Click "Set Up Encryption"
         WebDriverWait(self.driver, self.wait_time).until(
@@ -1365,9 +1415,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter passphrase and unlock
-        self.driver.find_element(By.ID, "e2ee-passphrase-input").send_keys(
-            passphrase
-        )
+        self._fill_input("e2ee-passphrase-input", passphrase)
         self.driver.find_element(
             By.CSS_SELECTOR,
             "#e2ee-enter-passphrase ~ .ui-dialog-buttonpane .fw-dark",
@@ -1934,9 +1982,7 @@ class E2EEPersonalPassphraseTest(SeleniumHelper, ChannelsLiveServerTestCase):
         )
 
         # Enter the document password
-        self.driver.find_element(By.ID, "e2ee-password-input").send_keys(
-            prefilled_password
-        )
+        self._fill_input("e2ee-password-input", prefilled_password)
         self.driver.find_element(
             By.CSS_SELECTOR, ".ui-dialog .fw-dark"
         ).click()

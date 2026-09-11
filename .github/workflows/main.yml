@@ -37,6 +37,9 @@ jobs:
     test:
         runs-on: ubuntu-latest
         strategy:
+            # Let each job's own retry attempts decide its fate; a single
+            # flaky job must not cancel all the others.
+            fail-fast: false
             matrix:
                 test:
                     - "browser_check base style"

@@ -33,11 +33,11 @@ homepage = "https://www.fiduswriter.org"
 repository = "https://www.github.com/fiduswriter/fiduswriter"
 
 [project.optional-dependencies]
-books = ["fiduswriter-books ~= 4.1.4"]
-citation-api-import = ["fiduswriter-citation-api-import ~= 4.1.0"]
+books = ["fiduswriter-books ~= 4.1.5"]
+citation-api-import = ["fiduswriter-citation-api-import ~= 4.1.1"]
 languagetool = ["fiduswriter-languagetool ~= 4.1.0"]
 ojs = ["fiduswriter-ojs ~= 4.1.0"]
-pandoc = ["fiduswriter-pandoc ~= 4.1.5"]
+pandoc = ["fiduswriter-pandoc ~= 4.1.6"]
 phplist = ["fiduswriter-phplist ~= 4.1.0"]
 gitrepo-export = ["fiduswriter-gitrepo-export ~= 4.1.2"]
 payment-paddle = ["fiduswriter-payment-paddle ~= 4.1.3"]

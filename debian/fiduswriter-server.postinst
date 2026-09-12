@@ -20,6 +20,7 @@ case "$1" in
         # Set up directory permissions
         install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter
         install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter/media
+        install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter/app-data
         install -d -o fiduswriter -g fiduswriter -m 0750 /var/log/fiduswriter
 
         # Create configuration directory if it doesn't exist

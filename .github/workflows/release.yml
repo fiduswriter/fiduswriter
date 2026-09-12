@@ -529,6 +529,9 @@ jobs:
               uses: softprops/action-gh-release@v3
               with:
                   files: release-assets/*
+                  # Explicitly publish: if a draft release for the tag already
+                  # exists, an update alone would leave it as a draft.
+                  draft: false
                   # Mark pre-releases as such so they are clearly separated
                   # from stable releases.
                   prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') || contains(github.ref_name, 'RC') || contains(github.ref_name, 'dev') }}

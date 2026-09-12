@@ -144,6 +144,7 @@ install -D -m 644 fiduswriter/requirements.txt \
 # Create necessary directories
 mkdir -p %{buildroot}/var/lib/fiduswriter
 mkdir -p %{buildroot}/var/lib/fiduswriter/media
+mkdir -p %{buildroot}/var/lib/fiduswriter/app-data
 mkdir -p %{buildroot}/var/log/fiduswriter
 mkdir -p %{buildroot}/usr/share/fiduswriter
 
@@ -166,6 +167,7 @@ getent passwd fiduswriter >/dev/null || useradd -r -g fiduswriter -d /var/lib/fi
 # Set up directory permissions
 install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter
 install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter/media
+install -d -o fiduswriter -g fiduswriter -m 0750 /var/lib/fiduswriter/app-data
 install -d -o fiduswriter -g fiduswriter -m 0750 /var/log/fiduswriter
 install -d -o root -g root -m 0755 /etc/fiduswriter
 

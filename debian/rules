@@ -165,6 +165,7 @@ override_dh_auto_install:
 	# Create necessary directories
 	install -d debian/fiduswriter-server/var/lib/fiduswriter
 	install -d debian/fiduswriter-server/var/lib/fiduswriter/media
+	install -d debian/fiduswriter-server/var/lib/fiduswriter/app-data
 	install -d debian/fiduswriter-server/var/log/fiduswriter
 	install -d debian/fiduswriter-server/usr/share/fiduswriter
 	

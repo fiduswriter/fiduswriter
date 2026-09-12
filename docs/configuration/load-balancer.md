@@ -113,6 +113,14 @@ sudo apt install nfs-common
 sudo mount server:/media /var/fiduswriter/media
 ```
 
+The application storage directory (`APP_STORAGE_ROOT`, default
+`/var/fiduswriter/app-data/`) holds document revisions and must be shared
+between all servers as well:
+
+```bash
+sudo mount server:/app-data /var/fiduswriter/app-data
+```
+
 ### Using S3
 
 Configure all servers to use S3:
@@ -121,6 +129,10 @@ Configure all servers to use S3:
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = 'fiduswriter-shared'
 ```
+
+Note: `DEFAULT_FILE_STORAGE` does not cover document revisions, which are
+stored in `APP_STORAGE_ROOT` on the local filesystem. When running multiple
+servers, share that directory (e.g. via NFS) as shown above.
 
 ## Important Limitations
 

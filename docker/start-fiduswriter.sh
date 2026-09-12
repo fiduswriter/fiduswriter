@@ -36,6 +36,21 @@ if ! [ -L /fiduswriter/media ] ; then
   ln -sf /data/media /fiduswriter
 fi
 
+# Handle app-data directory (document revisions and other application files)
+if [ -d /fiduswriter/app-data ] ; then
+  if ! [ -L /fiduswriter/app-data ] ; then
+    if [ -d /data/app-data ] ; then
+        rm -rf /fiduswriter/app-data
+    else
+        mv /fiduswriter/app-data /data/app-data
+    fi
+  fi
+fi
+if ! [ -L /fiduswriter/app-data ] ; then
+  mkdir -p /data/app-data
+  ln -sf /data/app-data /fiduswriter
+fi
+
 # Handle configuration file
 if [ -f /fiduswriter/configuration.py ] ; then
   if ! [ -L /fiduswriter/configuration.py ] ; then

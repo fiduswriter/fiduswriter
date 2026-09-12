@@ -102,6 +102,7 @@ Python bin dir:    /opt/fiduswriter/python3.14/bin/
 Configuration:     /etc/fiduswriter/configuration.py
 Data directory:    /var/lib/fiduswriter/  (PROJECT_PATH)
 Media files:       /var/lib/fiduswriter/media/
+App data:          /var/lib/fiduswriter/app-data/  (document revisions)
 Static files:      /var/lib/fiduswriter/static-collected/  (STATIC_ROOT)
 Transpiled JS:     /var/lib/fiduswriter/static-transpile/
 Log files:         /var/log/fiduswriter/
@@ -190,20 +191,20 @@ HTTPS Setup with Let's Encrypt
 Database Backup
 ---------------
 
-To backup the database and media files:
+To backup the database and data files:
 
 PostgreSQL:
   $ sudo -u postgres pg_dump fiduswriter > fiduswriter-backup.sql
-  $ sudo tar -czf media-backup.tar.gz /var/lib/fiduswriter/media/
+  $ sudo tar -czf data-backup.tar.gz /var/lib/fiduswriter/media/ /var/lib/fiduswriter/app-data/
 
 MySQL:
   $ mysqldump -u fiduswriter -p fiduswriter > fiduswriter-backup.sql
-  $ sudo tar -czf media-backup.tar.gz /var/lib/fiduswriter/media/
+  $ sudo tar -czf data-backup.tar.gz /var/lib/fiduswriter/media/ /var/lib/fiduswriter/app-data/
 
 Restore:
   $ sudo -u postgres psql fiduswriter < fiduswriter-backup.sql
-  $ sudo tar -xzf media-backup.tar.gz -C /
-  $ sudo chown -R fiduswriter:fiduswriter /var/lib/fiduswriter/media/
+  $ sudo tar -xzf data-backup.tar.gz -C /
+  $ sudo chown -R fiduswriter:fiduswriter /var/lib/fiduswriter/media/ /var/lib/fiduswriter/app-data/
 
 Troubleshooting
 ---------------

@@ -53,6 +53,21 @@ tar -czf media-backup-$(date +%Y%m%d).tar.gz /var/fiduswriter/media/
 tar -xzf media-backup.tar.gz -C /var/fiduswriter/
 ```
 
+## Application Data Backup
+
+Document revisions and other application-managed files are stored in
+`APP_STORAGE_ROOT` (default: the `app-data/` directory next to the `media/`
+folder) and are not part of the media backup. Back it up alongside the media
+files:
+
+```bash
+# Backup
+tar -czf app-data-backup-$(date +%Y%m%d).tar.gz /var/fiduswriter/app-data/
+
+# Restore
+tar -xzf app-data-backup.tar.gz -C /var/fiduswriter/
+```
+
 ## Automated Backups
 
 ### Cron Job
@@ -79,6 +94,9 @@ pg_dump -U fiduswriter fiduswriter | gzip > "$BACKUP_DIR/db-$DATE.sql.gz"
 
 # Media backup
 tar -czf "$BACKUP_DIR/media-$DATE.tar.gz" /var/fiduswriter/media/
+
+# Application data backup (document revisions)
+tar -czf "$BACKUP_DIR/app-data-$DATE.tar.gz" /var/fiduswriter/app-data/
 
 # Keep only last 7 days
 find $BACKUP_DIR -name "*.gz" -mtime +7 -delete

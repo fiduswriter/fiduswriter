@@ -7,6 +7,15 @@
 #   ./dev-scripts/switch-local-deps.sh local
 #   ./dev-scripts/switch-local-deps.sh npm
 #
+# Covers:
+#   - the Django backend's core apps (fiduswriter-server-backend) and the
+#     Django plugin apps (plugin repos under the siblings dir),
+#   - the sibling packages' own package.json files (file: deps between
+#     siblings, including fiduswriter-dav-ts),
+#   - the standalone repos fiduswriter-nextcloud (npm) and
+#     fiduswriter-wordpress (pnpm), whose package.json lives in the repo
+#     root and is installed there.
+#
 # Environment variables:
 #   FIDUSWRITER_SIBLINGS_DIR      Directory containing the sibling @fiduswriter
 #                                 package repositories.
@@ -22,8 +31,10 @@
 #   independent of whether the app is symlinked into the backend repo.
 #
 #   FIDUSWRITER_INSTALL_DIR       Directory where pnpm/npm install is run
-#                                 (the merged package.json location).
+#                                 for the merged Django backend package.json.
 #                                 Default: <backend-root>/.transpile
+#                                 (Not used by the standalone repos, which
+#                                 install in their own root.)
 
 set -euo pipefail
 
@@ -54,6 +65,7 @@ fi
 declare -A PACKAGE_DIRS=(
     ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-ts"
     ["@fiduswriter/books-document"]="fiduswriter-books-plugin-ts"
+    ["@fiduswriter/dav"]="fiduswriter-dav-ts"
     ["@fiduswriter/document"]="fiduswriter-document-ts"
     ["@fiduswriter/cli"]="fiduswriter-cli-ts"
     ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-ts"
@@ -98,6 +110,7 @@ done
 SIBLING_PACKAGES=(
     "fiduswriter-bibliography-manager-ts:fwtoolkit"
     "fiduswriter-books-plugin-ts:@fiduswriter/document,fwtoolkit"
+    "fiduswriter-dav-ts:@fiduswriter/document,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-document-ts:fwtoolkit"
     "fiduswriter-cli-ts:fwtoolkit,@fiduswriter/document,@fiduswriter/books-document"
     "fiduswriter-document-template-editor-ts:@fiduswriter/document,fwtoolkit"
@@ -105,6 +118,15 @@ SIBLING_PACKAGES=(
     "fiduswriter-frontend-ts:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-image-manager-ts:fwtoolkit"
     "fiduswriter-pandoc-plugin-ts:@fiduswriter/document,@fiduswriter/books-document,fwtoolkit"
+)
+
+# Standalone repos with a plain package.json that is installed in its own
+# root (npm/pnpm install run inside the repo, not through the Django
+# backend's merged .transpile install): the Nextcloud app and the WordPress
+# plugin.
+STANDALONE_REPOS=(
+    "fiduswriter-nextcloud"
+    "fiduswriter-wordpress"
 )
 
 update_file() {
@@ -251,6 +273,41 @@ switch_sibling_file() {
     done
 }
 
+# Same switching as switch_sibling_file, but for the standalone repos:
+# the file: path must be relative to the consuming repo's own root, because
+# npm/pnpm install runs there (not in the backend's merged .transpile dir).
+switch_standalone_repo() {
+    local repo_dir_name="$1"
+    local repo_path="$SIBLINGS_DIR/$repo_dir_name"
+    local pkg_file="$repo_path/package.json"
+
+    if [[ ! -f "$pkg_file" ]]; then
+        echo "Warning: standalone package.json not found: $pkg_file" >&2
+        return
+    fi
+
+    for pkg in "${!PACKAGE_DIRS[@]}"; do
+        local dep_dir_name="${PACKAGE_DIRS[$pkg]}"
+        local dep_path="$SIBLINGS_DIR/$dep_dir_name"
+
+        if [[ "$MODE" == "local" ]]; then
+            if [[ ! -d "$dep_path" ]]; then
+                continue
+            fi
+            local rel_path
+            rel_path="$(python3 -c "import os,sys; print(os.path.relpath(sys.argv[1], sys.argv[2]))" "$dep_path" "$repo_path")"
+            update_file "$pkg_file" "$pkg" "file:$rel_path"
+        else
+            if [[ ! -f "$dep_path/package.json" ]]; then
+                continue
+            fi
+            local version
+            version="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version'])" "$dep_path/package.json")"
+            update_file "$pkg_file" "$pkg" "^$version"
+        fi
+    done
+}
+
 echo "Switching @fiduswriter dependencies to $MODE mode..."
 
 handle_bibliography_manager
@@ -271,6 +328,10 @@ for entry in "${SIBLING_PACKAGES[@]}"; do
     switch_sibling_file "$sibling_dir_name" "$deps_spec"
 done
 
+for repo_dir_name in "${STANDALONE_REPOS[@]}"; do
+    switch_standalone_repo "$repo_dir_name"
+done
+
 echo "Done."
 
 if [[ "$MODE" == "local" ]]; then
@@ -278,11 +339,23 @@ if [[ "$MODE" == "local" ]]; then
 
 Next steps:
   1. Run npm install in any sibling packages whose transitive deps changed
-     (fiduswriter-document-ts, fiduswriter-editor-ts)
+     (fiduswriter-document-ts, fiduswriter-editor-ts, fiduswriter-dav-ts)
      if you will be building them directly.
   2. Rebuild any sibling packages you modified (e.g. npm run build in
      fiduswriter-bibliography-manager-ts).
   3. Run python fiduswriter/manage.py transpile --force
-  4. Hard-reload the browser (disable cache in dev tools).
+  4. Run npm install in fiduswriter-nextcloud and pnpm install in
+     fiduswriter-wordpress to link the local file: dependencies.
+  5. Hard-reload the browser (disable cache in dev tools).
+EOF
+else
+    cat <<EOF
+
+Next steps:
+  1. Run npm install in fiduswriter-nextcloud and pnpm install in
+     fiduswriter-wordpress to fetch the published packages (and
+     npm/pnpm install in any sibling packages that were switched).
+  2. Rebuild the standalone repos (npm run build in fiduswriter-nextcloud,
+     npm run build in fiduswriter-wordpress).
 EOF
 fi

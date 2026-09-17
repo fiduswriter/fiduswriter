@@ -98,7 +98,6 @@ jobs:
               with:
                   node-version: 26
             - uses: actions/checkout@v7
-            - uses: nanasess/setup-chromedriver@v3
             - name: Check out backend repository
               run: |
                   git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
@@ -240,7 +239,6 @@ jobs:
               with:
                   node-version: 26
             - uses: actions/checkout@v7
-            - uses: nanasess/setup-chromedriver@v3
             - name: Check out backend repository
               run: |
                   git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \

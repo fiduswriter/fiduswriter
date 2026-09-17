@@ -16,6 +16,9 @@ on:
 jobs:
   build:
     name: Build Docker Image
+    # The Forgejo runner containers have neither the Docker CLI nor access to
+    # the host Docker socket, so the image is only built on GitHub runners.
+    if: github.server_url == 'https://github.com'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

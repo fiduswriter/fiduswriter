@@ -36,6 +36,7 @@ jobs:
         steps:
         - uses: actions/checkout@v7
         - uses: actions/setup-python@v6
+          if: github.server_url == 'https://github.com'
           with:
             python-version: "3.14"
         - name: Check out backend repository
@@ -77,8 +78,19 @@ jobs:
                     - usermedia
                     - user_template_manager
         steps:
+            - name: Install Chrome (Forgejo runners)
+              if: github.server_url != 'https://github.com'
+              run: |
+                  apt-get update
+                  apt-get install -y wget gnupg ca-certificates
+                  wget -q -O /tmp/google-chrome.gpg https://dl.google.com/linux/linux_signing_key.pub
+                  gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg /tmp/google-chrome.gpg
+                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+                  apt-get update
+                  apt-get install -y google-chrome-stable
             - name: Set up Python
               uses: actions/setup-python@v6
+              if: github.server_url == 'https://github.com'
               with:
                   python-version: "3.14"
             - name: Set up Node
@@ -93,8 +105,10 @@ jobs:
                       || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
             - name: Install dependencies
               run: |
-                  sudo apt update
-                  sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
+                  SUDO=""
+                  if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
+                  $SUDO apt-get update
+                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
                   cd ${{ env.BACKEND_REPO }}
                   mv ci/configuration.py fiduswriter/configuration.py
                   cd fiduswriter
@@ -108,8 +122,10 @@ jobs:
             - name: Set up Xvfb and ffmpeg
               if: runner.debug == '1'
               run: |
-                sudo apt update
-                sudo apt install -y xvfb ffmpeg
+                SUDO=""
+                if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
+                $SUDO apt-get update
+                $SUDO apt-get install -y xvfb ffmpeg
                 # Start two Xvfb instances on different displays
                 Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
                 Xvfb :98 -screen 0 1920x1080x24 > /dev/null 2>&1 &
@@ -122,7 +138,7 @@ jobs:
                 echo "FFMPEG_PID2=$!" >> $GITHUB_ENV
             - name: Run test ${{ matrix.test }} without debug mode
               if: runner.debug != '1'
-              uses: nick-invision/retry@v4
+              uses: nick-fields/retry@v4
               with:
                 timeout_minutes: 15
                 max_attempts: 3
@@ -157,6 +173,7 @@ jobs:
                 name: failure-artifacts
                 path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
             - name: Coveralls
+              if: github.server_url == 'https://github.com'
               run: |
                 cd ${{ env.BACKEND_REPO }}/fiduswriter
                 coverage combine
@@ -203,8 +220,19 @@ jobs:
                       repos: "fiduswriter-phplist-plugin"
                       apps: '"phplist"'
         steps:
+            - name: Install Chrome (Forgejo runners)
+              if: github.server_url != 'https://github.com'
+              run: |
+                  apt-get update
+                  apt-get install -y wget gnupg ca-certificates
+                  wget -q -O /tmp/google-chrome.gpg https://dl.google.com/linux/linux_signing_key.pub
+                  gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg /tmp/google-chrome.gpg
+                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+                  apt-get update
+                  apt-get install -y google-chrome-stable
             - name: Set up Python
               uses: actions/setup-python@v6
+              if: github.server_url == 'https://github.com'
               with:
                   python-version: "3.14"
             - name: Set up Node
@@ -234,8 +262,10 @@ jobs:
                   done
             - name: Install dependencies
               run: |
-                  sudo apt update
-                  sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
+                  SUDO=""
+                  if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
+                  $SUDO apt-get update
+                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
                   cd ${{ env.BACKEND_REPO }}/fiduswriter
                   cat > configuration.py <<EOF
                   INSTALLED_APPS = [
@@ -269,7 +299,7 @@ jobs:
                   done
                   coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
             - name: Run plugin test ${{ matrix.test }}
-              uses: nick-invision/retry@v4
+              uses: nick-fields/retry@v4
               with:
                 timeout_minutes: 15
                 max_attempts: 3
@@ -284,6 +314,7 @@ jobs:
                 name: failure-artifacts
                 path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
     finish:
+        if: github.server_url == 'https://github.com'
         needs: test
         runs-on: ubuntu-latest
         steps:

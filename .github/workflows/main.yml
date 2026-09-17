@@ -31,6 +31,7 @@ jobs:
         steps:
         - uses: actions/checkout@v6
         - uses: actions/setup-python@v6
+          if: github.server_url == 'https://github.com'
           with:
             python-version: "3.14"
         - uses: pre-commit/action@v3.0.1
@@ -65,8 +66,19 @@ jobs:
                     - user_template_manager
                     - document.tests.test_import_export
         steps:
+            - name: Install Chrome (Forgejo runners)
+              if: github.server_url != 'https://github.com'
+              run: |
+                  apt-get update
+                  apt-get install -y wget gnupg ca-certificates
+                  wget -q -O /tmp/google-chrome.gpg https://dl.google.com/linux/linux_signing_key.pub
+                  gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg /tmp/google-chrome.gpg
+                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+                  apt-get update
+                  apt-get install -y google-chrome-stable
             - name: Set up Python
               uses: actions/setup-python@v6
+              if: github.server_url == 'https://github.com'
               with:
                   python-version: "3.14"
             - name: Set up Node
@@ -77,8 +89,10 @@ jobs:
             - uses: nanasess/setup-chromedriver@v3
             - name: Install dependencies
               run: |
-                  sudo apt update
-                  sudo apt install libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
+                  SUDO=""
+                  if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
+                  $SUDO apt-get update
+                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
                   cd fiduswriter
                   mv ../ci/configuration.py ./
                   pip install requests[security]
@@ -91,8 +105,10 @@ jobs:
             - name: Set up Xvfb and ffmpeg
               if: runner.debug == '1'
               run: |
-                sudo apt update
-                sudo apt install -y xvfb ffmpeg
+                SUDO=""
+                if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
+                $SUDO apt-get update
+                $SUDO apt-get install -y xvfb ffmpeg
                 # Start two Xvfb instances on different displays
                 Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
                 Xvfb :98 -screen 0 1920x1080x24 > /dev/null 2>&1 &
@@ -105,7 +121,7 @@ jobs:
                 echo "FFMPEG_PID2=$!" >> $GITHUB_ENV
             - name: Run test ${{ matrix.test }} without debug mode
               if: runner.debug != '1'
-              uses: nick-invision/retry@v4
+              uses: nick-fields/retry@v4
               with:
                 timeout_minutes: 10
                 max_attempts: 3
@@ -140,6 +156,7 @@ jobs:
                 name: failure-artifacts
                 path: ${{ github.workspace }}/fiduswriter/screenshots/
             - name: Coveralls
+              if: github.server_url == 'https://github.com'
               run: |
                 cd fiduswriter
                 coverage combine
@@ -149,6 +166,7 @@ jobs:
                 COVERALLS_PARALLEL: true
                 COVERALLS_FLAG_NAME: ${{ matrix.test }}
     finish:
+        if: github.server_url == 'https://github.com'
         needs: test
         runs-on: ubuntu-latest
         steps:

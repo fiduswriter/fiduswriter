@@ -170,6 +170,13 @@ class SeleniumHelper:
                         "Chrome/150.0.0.0 Safari/537.36"
                     )
             options.add_argument("--disable-gpu")
+            # Containers and busy runners can have a small /dev/shm, which
+            # makes Chrome hang during startup.
+            options.add_argument("--disable-dev-shm-usage")
+            if os.geteuid() == 0:
+                # Chrome cannot use its sandbox when running as root, which is
+                # the case inside the Forgejo runner containers.
+                options.add_argument("--no-sandbox")
             wait_time = 20
         else:
 
@@ -194,6 +201,13 @@ class SeleniumHelper:
             # Set sizes of browsers so that all buttons are visible.
             driver.set_window_position(0, 0)
             driver.set_window_size(1920, 1080)
+            # The File System Access API's save picker cannot be completed in
+            # automated test runs (there is no interactive user), so disable it
+            # and let exporters fall back to a regular browser download.
+            driver.execute_cdp_cmd(
+                "Page.addScriptToEvaluateOnNewDocument",
+                {"source": "window.showSaveFilePicker = undefined;"},
+            )
             drivers.append(driver)
         cls.drivers = drivers
         return {"clients": clients, "drivers": drivers, "wait_time": wait_time}

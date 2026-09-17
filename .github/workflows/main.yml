@@ -86,7 +86,6 @@ jobs:
               with:
                   node-version: 26
             - uses: actions/checkout@v6
-            - uses: nanasess/setup-chromedriver@v3
             - name: Install dependencies
               run: |
                   SUDO=""

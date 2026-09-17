@@ -166,7 +166,7 @@ jobs:
                   video-browser1.mp4
                   video-browser2.mp4
             - name: Upload failed test screenshots
-              if: ${{ failure() }}
+              if: ${{ github.server_url == 'https://github.com' && failure() }}
               uses: actions/upload-artifact@v4.3.4
               with:
                 name: failure-artifacts
@@ -306,7 +306,7 @@ jobs:
                   cd ${{ env.BACKEND_REPO }}/fiduswriter
                   coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
             - name: Upload failed test screenshots
-              if: ${{ failure() }}
+              if: ${{ github.server_url == 'https://github.com' && failure() }}
               uses: actions/upload-artifact@v4.3.4
               with:
                 name: failure-artifacts

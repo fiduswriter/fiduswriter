@@ -611,11 +611,11 @@ DOC_SAVE_INTERVAL = 30  # seconds; applies in 'collaborative' mode only
 
 ### `"direct"`
 
-The editor saves the full document state via REST every 10 seconds whenever there are unsaved changes, and also on page unload for non-E2EE documents. There is no real-time synchronisation between clients — users can still open the same document in multiple tabs or browsers, but changes are not merged in real time. Conflicts are resolved with a last-write-wins strategy backed by optimistic version checking.
+The editor saves the full document state via REST with an adaptive cadence — roughly every 10 seconds while the user is editing, slower while idle or unfocused, and paused while the tab is hidden or offline — and also on page unload for non-E2EE documents. Pending changes are flushed when the tab is hidden, and returning to the tab or coming back online triggers an immediate check for remote changes. There is no real-time synchronisation between clients, but several users can edit the same document at the same time: each save sends the version it is based on, and a save that conflicts with a newer server version is rejected with `409`. The editor then reconstructs the changes made by the other session (from the covering steps stored by the save endpoint when available, otherwise with `recreateTransform`), rebases its own unsaved changes on top, and retries the save. While idle, each editor probes the document version through the lightweight `get_doc_version` endpoint and only downloads the document when the version changed, then merges in the changes made by others, so the editors do not diverge.
 
 This mode is useful for simpler deployments that do not require real-time multi-user collaboration and prefer to avoid a persistent WebSocket layer.
 
-> **Note:** `DOC_SAVE_INTERVAL` is irrelevant in `"direct"` mode; the client-driven 10-second interval takes precedence.
+> **Note:** `DOC_SAVE_INTERVAL` is irrelevant in `"direct"` mode; the client-driven adaptive save/check cadence takes precedence.
 
 ### `"external"`
 

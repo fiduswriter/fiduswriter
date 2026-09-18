@@ -12,9 +12,13 @@
 #     Django plugin apps (plugin repos under the siblings dir),
 #   - the sibling packages' own package.json files (file: deps between
 #     siblings, including fiduswriter-dav-ts),
-#   - the standalone repos fiduswriter-nextcloud (npm) and
-#     fiduswriter-wordpress (pnpm), whose package.json lives in the repo
-#     root and is installed there.
+#   - the standalone repos fiduswriter-nextcloud and fiduswriter-wordpress,
+#     whose package.json lives in the repo root and is installed there.
+#
+# Whenever a package.json is rewritten, `pnpm install` is run in that package
+# afterwards so its lockfile stays in sync with package.json. (The Django
+# apps' package.json5 files are merged and installed through
+# `manage.py transpile` instead.)
 #
 # Environment variables:
 #   FIDUSWRITER_SIBLINGS_DIR      Directory containing the sibling @fiduswriter
@@ -30,7 +34,7 @@
 #   repos under $SIBLINGS_DIR (e.g. fiduswriter-tum-plugin/fiduswriter/tum),
 #   independent of whether the app is symlinked into the backend repo.
 #
-#   FIDUSWRITER_INSTALL_DIR       Directory where pnpm/npm install is run
+#   FIDUSWRITER_INSTALL_DIR       Directory where pnpm install is run
 #                                 for the merged Django backend package.json.
 #                                 Default: <backend-root>/.transpile
 #                                 (Not used by the standalone repos, which
@@ -61,6 +65,42 @@ Environment variables:
 EOF
     exit 1
 fi
+
+# Directories whose package.json was rewritten. After switching, `pnpm
+# install` runs in each (in dependency order) so the lockfile and
+# package.json stay in sync.
+CHANGED_DIRS_FILE="$(mktemp)"
+trap 'rm -f "$CHANGED_DIRS_FILE"' EXIT
+
+record_changed_dir() {
+    local dir="$1"
+    [[ -n "$dir" ]] || return 0
+    if ! grep -qxF -- "$dir" "$CHANGED_DIRS_FILE" 2>/dev/null; then
+        printf '%s\n' "$dir" >> "$CHANGED_DIRS_FILE"
+    fi
+}
+
+is_changed_dir() {
+    grep -qxF -- "$1" "$CHANGED_DIRS_FILE" 2>/dev/null
+}
+
+# Local-install order: dependencies before dependents, so a package's
+# `prepare` script can build against packages that were installed first.
+INSTALL_ORDER=(
+    "fwtoolkit"
+    "fiduswriter-document-ts"
+    "fiduswriter-image-manager-ts"
+    "fiduswriter-bibliography-manager-ts"
+    "fiduswriter-document-template-editor-ts"
+    "fiduswriter-editor-ts"
+    "fiduswriter-dav-ts"
+    "fiduswriter-frontend-ts"
+    "fiduswriter-books-plugin-ts"
+    "fiduswriter-pandoc-plugin-ts"
+    "fiduswriter-cli-ts"
+    "fiduswriter-nextcloud"
+    "fiduswriter-wordpress"
+)
 
 declare -A PACKAGE_DIRS=(
     ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-ts"
@@ -121,7 +161,7 @@ SIBLING_PACKAGES=(
 )
 
 # Standalone repos with a plain package.json that is installed in its own
-# root (npm/pnpm install run inside the repo, not through the Django
+# root (pnpm install runs inside the repo, not through the Django
 # backend's merged .transpile install): the Nextcloud app and the WordPress
 # plugin.
 STANDALONE_REPOS=(
@@ -134,19 +174,35 @@ update_file() {
     local pkg="$2"
     local new_value="$3"
 
-    python3 - "$file" "$pkg" "$new_value" <<'PY'
+    if python3 - "$file" "$pkg" "$new_value" <<'PY'
 import sys, re
 path, pkg, new_value = sys.argv[1:4]
 with open(path) as fh:
     content = fh.read()
-pattern = rf'("{re.escape(pkg)}")\s*:\s*"[^"]*"'
-replacement = rf'\1: "{new_value}"'
-new_content, n = re.subn(pattern, replacement, content)
-if n:
+pattern = rf'("{re.escape(pkg)}"\s*:\s*)"([^"]*)"'
+changed = False
+
+
+def repl(match):
+    global changed
+    if match.group(2) == new_value:
+        return match.group(0)
+    changed = True
+    return match.group(1) + '"' + new_value + '"'
+
+
+new_content = re.sub(pattern, repl, content)
+if changed:
     with open(path, "w") as fh:
         fh.write(new_content)
-    print(f"  {path}: {pkg} -> {new_value}")
+sys.exit(0 if changed else 1)
 PY
+    then
+        echo "  $file: $pkg -> $new_value"
+        if [[ "$(basename "$file")" == "package.json" ]]; then
+            record_changed_dir "$(dirname "$file")"
+        fi
+    fi
 }
 
 switch_main_file() {
@@ -275,7 +331,7 @@ switch_sibling_file() {
 
 # Same switching as switch_sibling_file, but for the standalone repos:
 # the file: path must be relative to the consuming repo's own root, because
-# npm/pnpm install runs there (not in the backend's merged .transpile dir).
+# pnpm install runs there (not in the backend's merged .transpile dir).
 switch_standalone_repo() {
     local repo_dir_name="$1"
     local repo_path="$SIBLINGS_DIR/$repo_dir_name"
@@ -332,30 +388,73 @@ for repo_dir_name in "${STANDALONE_REPOS[@]}"; do
     switch_standalone_repo "$repo_dir_name"
 done
 
+# Keep package.json and the lockfile in sync: run pnpm install in every
+# package whose package.json was rewritten (dependencies before dependents).
+if [[ -s "$CHANGED_DIRS_FILE" ]]; then
+    if ! command -v pnpm >/dev/null 2>&1; then
+        echo "ERROR: pnpm is required to sync lockfiles after switching dependencies." >&2
+        exit 1
+    fi
+
+    echo
+    echo "Running pnpm install in changed packages (lockfile sync)..."
+
+    install_failed=0
+    declare -A installed_dirs=()
+
+    install_dir() {
+        local dir="$1"
+        if [[ ! -f "$dir/package.json" ]]; then
+            return 0
+        fi
+        echo "  -> $dir"
+        if ! (cd "$dir" && pnpm install); then
+            echo "ERROR: pnpm install failed in $dir" >&2
+            install_failed=1
+        fi
+    }
+
+    for dir_name in "${INSTALL_ORDER[@]}"; do
+        candidate="$SIBLINGS_DIR/$dir_name"
+        if is_changed_dir "$candidate"; then
+            installed_dirs["$candidate"]=1
+            install_dir "$candidate"
+        fi
+    done
+
+    # Defensive: install anything recorded outside INSTALL_ORDER as well, so
+    # no rewritten package.json is left without a lockfile refresh.
+    while IFS= read -r changed_dir; do
+        if [[ -z "$changed_dir" ]]; then
+            continue
+        fi
+        if [[ -n "${installed_dirs[$changed_dir]:-}" ]]; then
+            continue
+        fi
+        install_dir "$changed_dir"
+    done < "$CHANGED_DIRS_FILE"
+
+    if [[ "$install_failed" -ne 0 ]]; then
+        echo "ERROR: some pnpm installs failed; lockfiles may be out of sync." >&2
+        exit 1
+    fi
+fi
+
 echo "Done."
 
 if [[ "$MODE" == "local" ]]; then
     cat <<EOF
 
 Next steps:
-  1. Run npm install in any sibling packages whose transitive deps changed
-     (fiduswriter-document-ts, fiduswriter-editor-ts, fiduswriter-dav-ts)
-     if you will be building them directly.
-  2. Rebuild any sibling packages you modified (e.g. npm run build in
-     fiduswriter-bibliography-manager-ts).
-  3. Run python fiduswriter/manage.py transpile --force
-  4. Run npm install in fiduswriter-nextcloud and pnpm install in
-     fiduswriter-wordpress to link the local file: dependencies.
-  5. Hard-reload the browser (disable cache in dev tools).
+  1. Rebuild any packages you modified (e.g. pnpm run build in
+     fiduswriter-editor-ts).
+  2. Run python fiduswriter/manage.py transpile --force
+  3. Hard-reload the browser (disable cache in dev tools).
 EOF
 else
     cat <<EOF
 
 Next steps:
-  1. Run npm install in fiduswriter-nextcloud and pnpm install in
-     fiduswriter-wordpress to fetch the published packages (and
-     npm/pnpm install in any sibling packages that were switched).
-  2. Rebuild the standalone repos (npm run build in fiduswriter-nextcloud,
-     npm run build in fiduswriter-wordpress).
+  1. Rebuild any packages you modified (pnpm run build).
 EOF
 fi

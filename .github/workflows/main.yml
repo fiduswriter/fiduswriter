@@ -167,7 +167,7 @@ jobs:
                   video-browser2.mp4
             - name: Upload failed test screenshots
               if: ${{ github.server_url == 'https://github.com' && failure() }}
-              uses: actions/upload-artifact@v4.3.4
+              uses: actions/upload-artifact@v4.6.2
               with:
                 name: failure-artifacts
                 path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
@@ -307,7 +307,7 @@ jobs:
                   coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
             - name: Upload failed test screenshots
               if: ${{ github.server_url == 'https://github.com' && failure() }}
-              uses: actions/upload-artifact@v4.3.4
+              uses: actions/upload-artifact@v4.6.2
               with:
                 name: failure-artifacts
                 path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/

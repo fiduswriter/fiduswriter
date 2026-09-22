@@ -13,7 +13,10 @@
 #   - the sibling packages' own package.json files (file: deps between
 #     siblings, including fiduswriter-dav-ts),
 #   - the standalone repos fiduswriter-nextcloud and fiduswriter-wordpress,
-#     whose package.json lives in the repo root and is installed there.
+#     whose package.json lives in the repo root and is installed there,
+#   - the pagination packages (paged-with-floats, pages-to-pdf,
+#     vivliostyle-pdf) in fiduswriter-document-ts and in the
+#     fiduswriter-vivliostyle plugin repo, from the pagination dir.
 #
 # Whenever a package.json is rewritten, `pnpm install` is run in that package
 # afterwards so its lockfile stays in sync with package.json. (The Django
@@ -39,6 +42,11 @@
 #                                 Default: <backend-root>/.transpile
 #                                 (Not used by the standalone repos, which
 #                                 install in their own root.)
+#
+#   FIDUSWRITER_PAGINATION_DIR    Directory containing the pagination package
+#                                 checkouts (paged-with-floats, pages-to-pdf,
+#                                 vivliostyle-pdf).
+#                                 Default: <siblings-dir>/../pagination
 
 set -euo pipefail
 
@@ -48,6 +56,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && git rev-parse --show-toplevel)"
 SIBLINGS_DIR="${FIDUSWRITER_SIBLINGS_DIR:-$REPO_ROOT/..}"
 BACKEND_DIR="${FIDUSWRITER_BACKEND_DIR:-$SIBLINGS_DIR/fiduswriter-server-backend}"
 INSTALL_DIR="${FIDUSWRITER_INSTALL_DIR:-$BACKEND_DIR/fiduswriter/.transpile}"
+PAGINATION_DIR="${FIDUSWRITER_PAGINATION_DIR:-$SIBLINGS_DIR/../pagination}"
 
 MODE="${1:-}"
 
@@ -135,6 +144,7 @@ PLUGIN_APPS=(
     "payment:fiduswriter-payment-plugin"
     "phplist:fiduswriter-phplist-plugin"
     "tum:fiduswriter-tum-plugin"
+    "vivliostyle:fiduswriter-vivliostyle-plugin"
     "website:fiduswriter-website-plugin"
 )
 
@@ -167,6 +177,26 @@ SIBLING_PACKAGES=(
 STANDALONE_REPOS=(
     "fiduswriter-nextcloud"
     "fiduswriter-wordpress"
+)
+
+# Pagination packages (npm dependencies of @fiduswriter/document and, for
+# vivliostyle-pdf, of the fiduswriter-vivliostyle plugin) that can be
+# switched to the local checkouts in $PAGINATION_DIR.
+PAGINATION_PACKAGES=(
+    "paged-with-floats"
+    "pages-to-pdf"
+    "vivliostyle-pdf"
+)
+
+# Files that may declare pagination-package dependencies, with the directory
+# pnpm install runs in for that file (used to compute relative file: paths):
+#   "file:install-context-dir"
+# The backend's own package.json5 declares no pagination packages (they come
+# transitively through @fiduswriter/document); switching document-ts to the
+# local checkouts is what makes the backend bundle use them.
+PAGINATION_TARGETS=(
+    "$SIBLINGS_DIR/fiduswriter-vivliostyle-plugin/fiduswriter/vivliostyle/package.json5:$INSTALL_DIR"
+    "$SIBLINGS_DIR/fiduswriter-document-ts/package.json:$SIBLINGS_DIR/fiduswriter-document-ts"
 )
 
 update_file() {
@@ -364,6 +394,35 @@ switch_standalone_repo() {
     done
 }
 
+# Switch the pagination-package dependencies (see PAGINATION_PACKAGES) in
+# the files listed in PAGINATION_TARGETS. In local mode the file: paths are
+# computed relative to each file's install context; in npm mode the version
+# is read from the pagination checkout's package.json.
+switch_pagination_deps() {
+    local file="$1"
+    local install_dir="$2"
+
+    if [[ ! -f "$file" ]]; then
+        return
+    fi
+
+    for pkg in "${PAGINATION_PACKAGES[@]}"; do
+        local dep_path="$PAGINATION_DIR/$pkg"
+        if [[ ! -f "$dep_path/package.json" ]]; then
+            continue
+        fi
+        if [[ "$MODE" == "local" ]]; then
+            local rel_path
+            rel_path="$(python3 -c "import os,sys; print(os.path.relpath(sys.argv[1], sys.argv[2]))" "$dep_path" "$install_dir")"
+            update_file "$file" "$pkg" "file:$rel_path"
+        else
+            local version
+            version="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version'])" "$dep_path/package.json")"
+            update_file "$file" "$pkg" "^$version"
+        fi
+    done
+}
+
 echo "Switching @fiduswriter dependencies to $MODE mode..."
 
 handle_bibliography_manager
@@ -386,6 +445,12 @@ done
 
 for repo_dir_name in "${STANDALONE_REPOS[@]}"; do
     switch_standalone_repo "$repo_dir_name"
+done
+
+for target in "${PAGINATION_TARGETS[@]}"; do
+    file="${target%%:*}"
+    install_dir="${target#*:}"
+    switch_pagination_deps "$file" "$install_dir"
 done
 
 # Keep package.json and the lockfile in sync: run pnpm install in every

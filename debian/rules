@@ -27,7 +27,12 @@ PYTHON_EXEC = LD_LIBRARY_PATH=$(PYTHON_BUILDLIB):$$LD_LIBRARY_PATH $(CURDIR)/deb
 # [project.optional-dependencies].  Lines look like:
 #   books = ["fiduswriter-books ~= 4.1.4"]
 # We extract the quoted spec and collapse the space around ~= so pip is happy.
+# The vivliostyle extra is deliberately left out: Debian keeps the default
+# paged-with-floats print engine. Users who want the AGPL licensed
+# vivliostyle-print engine can pip install the fiduswriter-vivliostyle
+# package into their virtualenv themselves.
 PLUGIN_PKGS := $(shell grep '"fiduswriter-' pyproject.toml | \
+	grep -v 'fiduswriter-vivliostyle' | \
 	sed 's/.*"\(fiduswriter-[^"]*\)".*/\1/' | \
 	tr -d ' ' | tr '\n' ' ')
 

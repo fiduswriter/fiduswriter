@@ -60,13 +60,15 @@ The Fidus Writer snap includes all generic plugins from the fiduswriter organiza
        # 'user_template_manager',
        'book',  # Uncommented - enabled
        # 'citation_api_import',
-       # 'languagetool',
        'ojs',  # Uncommented - enabled
        # 'phplist',
        # 'gitrepo_export',
        # 'website',
    ]
    ```
+
+   Spell and grammar checking is not a plugin — it is built into the
+   editor itself (client-side, no Java server needed).
 
 3. Save and exit (CTRL+X, then Y to confirm)
 
@@ -77,11 +79,14 @@ The Fidus Writer snap includes all generic plugins from the fiduswriter organiza
 - **user_template_manager** - Custom document templates
 - **book** - Book document type support
 - **citation_api_import** - Import citations from external APIs
-- **languagetool** - Grammar and spell checking
 - **ojs** - Open Journal Systems integration
 - **phplist** - PHPList newsletter integration
 - **gitrepo_export** - Export to Git repositories
 - **website** - Website generation from documents
+
+Note: Spell and grammar checking is built into the editor (via
+`lingotweaker-wasm`, running entirely in the browser) and is always
+available.
 
 ## Network Access Configuration
 
@@ -371,56 +376,17 @@ When 2FA is enabled:
 - You can add multiple backup devices for redundancy
 - 2FA adds an important layer of security to protect your documents and data
 
-## LanguageTool Configuration
+## Spell and Grammar Checking
 
-### Disable LanguageTool
+Spell and grammar checking is built into the editor and runs entirely in the
+browser using WebAssembly (`lingotweaker-wasm`).
 
-If you don't want to run LanguageTool on this machine:
-
-```bash
-sudo fiduswriter.configure
-```
-
-Remove or set to False:
-
-```python
-LT_PORT = False
-```
-
-Also remove the plugin from `INSTALLED_APPS`:
-
-```python
-INSTALLED_APPS = [
-    # ... other apps ...
-    # 'languagetool',  # Commented out
-    # ... other apps ...
-]
-```
-
-### Use External LanguageTool Server
-
-To use LanguageTool running on another server:
-
-```bash
-sudo fiduswriter.configure
-```
-
-Remove or disable `LT_PORT` and add `LT_URL`:
-
-```python
-LT_PORT = False
-LT_URL = 'https://languagetool.example.com'
-```
-
-Keep the plugin enabled in `INSTALLED_APPS`:
-
-```python
-INSTALLED_APPS = [
-    # ... other apps ...
-    'languagetool',
-    # ... other apps ...
-]
-```
+The checker appears as **Tools → Spell/grammar checker → Check text** in the
+editor. On first use it downloads the rule pack for the document language
+(roughly 1–40 MB depending on the language); checking itself is local and
+works offline afterwards. Users can opt into continuous checking while typing
+via the "Continuous spell and grammar checking" preference on their profile
+page.
 
 ## Management Commands
 
@@ -626,10 +592,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'your-email@example.com'
 EMAIL_HOST_PASSWORD = 'your-password'
-
-# LanguageTool
-LT_PORT = 8081  # Port for local LanguageTool, or False to disable
-LT_URL = None  # URL for external LanguageTool server
 
 # Plugins
 INSTALLED_APPS = [

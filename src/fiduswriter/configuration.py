@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     "user_template_manager",
     "book",
     "citation_api_import",
-    "languagetool",
     "pandoc",
     # "ojs",
     # "phplist",
@@ -96,11 +95,6 @@ INSTALLED_APPS = [
 #   "direct"        - Periodic REST saves without real-time collaboration.
 #   "external"      - No built-in saving; external plugins handle persistence.
 # EDITOR_SAVE_MODE = "collaborative"
-
-# Languatool settings. If LT_PORT isn't a valid port number, the languagetool
-# daemon will not run.
-LT_PORT = 4385
-LT_URL = "http://localhost:" + str(LT_PORT)
 
 # Gitrepo export settings
 #

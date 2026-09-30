@@ -119,7 +119,7 @@ This package bundles a recent **Python**, **Node.js** (via nodejs-wheel), **data
 - ✅ Works on recent Ubuntu, Debian (even with older Python)
 - ✅ Isolated from system Python (no conflicts)
 - ✅ Fast and modern Python with optimizations enabled
-- ✅ All modules included: books, ojs, pandoc, languagetool, etc.
+- ✅ All modules included: books, ojs, pandoc, etc.
 - 📦 Package size (~250-300 MB)
 
 ## Quick Start
@@ -368,7 +368,6 @@ Add modules to INSTALLED_APPS:
 INSTALLED_APPS = [
     'book',              # Book document type support
     'citation_api_import',  # Import citations from external APIs
-    'languagetool',      # Grammar and spell checking
     'ojs',               # Open Journal Systems integration
     'pandoc',            # Additional export formats
     'phplist',           # PHPList newsletter integration
@@ -377,6 +376,9 @@ INSTALLED_APPS = [
     'website',           # Static website generation
 ]
 ```
+
+Spell and grammar checking is built into the editor (client-side
+`lingotweaker-wasm`, no Java server) and needs no module.
 
 ```bash
 # Restart service to apply changes

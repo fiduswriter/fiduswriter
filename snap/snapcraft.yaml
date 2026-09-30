@@ -98,7 +98,7 @@ parts:
             git apply $CRAFT_PROJECT_DIR/src/fiduswriter-patches/fiduswriter-set-defaults.patch
             craftctl set version="$(cat fiduswriter/version.txt)"
         python-packages:
-            - .[books,citation-api-import,languagetool,ojs,phplist,gitrepo-export,payment-paddle,website,pandoc]
+            - .[books,citation-api-import,ojs,phplist,gitrepo-export,payment-paddle,website,pandoc]
             - django-otp
             - qrcode
             - wheel
@@ -144,29 +144,6 @@ parts:
         after: [fiduswriter]
         organize:
             configuration.py: lib/python3.14/site-packages/fiduswriter/configuration-default.py
-
-    languagetool:
-        plugin: nil
-        override-build: |
-            wget -O $CRAFT_PART_BUILD/LanguageTool-6.4.zip https://languagetool.org/download/LanguageTool-6.4.zip
-            unzip $CRAFT_PART_BUILD/LanguageTool-6.4.zip
-            mv $CRAFT_PART_BUILD/LanguageTool-6.4 $CRAFT_PART_INSTALL/lt
-            rm $CRAFT_PART_INSTALL/usr/lib/jvm/java-17-openjdk-$SNAP_ARCH/lib/security/cacerts
-        #    rm $CRAFT_PART_INSTALL/usr/lib/jvm/java-17-openjdk-$SNAP_ARCH/lib/security/blacklisted.certs
-        # mv $CRAFT_PART_INSTALL/usr/lib/jvm/java-17-openjdk-* $CRAFT_PART_INSTALL/usr/lib/jvm/java-11-openjdk
-        build-packages:
-            - wget
-            - unzip
-        stage-packages:
-            - openjdk-17-jre
-            - ca-certificates
-            - ca-certificates-java
-        # stage:
-        #  - -usr/lib/jvm/java-17-openjdk-$SNAP_ARCH/lib/security/cacerts
-
-    languagetool-script:
-        plugin: dump
-        source: src/languagetool/
 
     npm:
         plugin: npm
@@ -379,17 +356,6 @@ apps:
         daemon: simple
         restart-condition: on-failure
         timer: 00:00 # Run once a day at midnight
-
-    languagetool:
-        command: bin/run-languagetool.py
-        environment:
-            JAVA_HOME: $SNAP/usr/lib/jvm/java-17-openjdk-$SNAP_ARCH
-            JAVA_BIN: $SNAP/usr/lib/jvm/java-17-openjdk-$SNAP_ARCH/bin/java
-            PATH: $JAVA_HOME/bin:$PATH
-            PYTHONPATH: $SNAP/lib/python3.14/site-packages
-        daemon: simple
-        restart-condition: always
-        plugs: [network-bind]
 
 layout:
     /etc/magic:

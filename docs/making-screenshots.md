@@ -26,7 +26,7 @@ The suite is split into two runs:
 | `10-plugin-features` | Plugin features in core views | bulk menu with plugins, editor git-repository settings |
 | `11-other` | Misc | 404, offline page, admin login |
 | `12-citation-api-import` | Citation API Import plugin | bibliography import, editor import dialog |
-| `13-languagetool` | LanguageTool plugin | tools submenu |
+| `13-lingotweaker` | Built-in spell/grammar checker | tools submenu |
 | `14-website` | Website plugin | public website overview, editor website menu |
 | `15-phplist` | PHPList plugin | sign-up with newsletter opt-in |
 | `16-payment` | Payment plugin | pricing page, modify subscription, subscription warning |
@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     "pandoc",
     "book",
     "citation_api_import",
-    "languagetool",
     "ojs",
     "website",
     "phplist",
@@ -66,6 +65,8 @@ INSTALLED_APPS = [
     "gitrepo_export",
 ]
 ```
+
+The spell/grammar checker is built into the editor and does not need an app.
 
 ### Disable axes
 
@@ -177,12 +178,11 @@ frontend toolkit (`fwtoolkit`) contains the dialog `z-index` fix that inspects
 the computed `z-index` of existing dialogs and bumps new dialogs above them.
 Also ensure the profile page frontend settings expose `E2EE_ENABLED`.
 
-### LanguageTool screenshot shows an error
+### Grammar check submenu does not mark any errors
 
-The LanguageTool tools submenu calls `/api/languagetool/languages/`, which in
-turn contacts the external LanguageTool server configured by `LT_URL`.  In an
-offline environment this request fails and a server error is logged, but the
-screenshot of the menu itself is still captured.
+The built-in checker downloads its language rule pack on first use. In an
+offline environment the pack cannot be fetched, so no underlines appear, but
+the screenshot of the tools submenu itself is still captured.
 
 ### Stale test database
 

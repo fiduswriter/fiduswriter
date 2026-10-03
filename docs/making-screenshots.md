@@ -49,7 +49,10 @@ adjustments for a screenshot run.
 
 ### Enable optional apps
 
-Uncomment or add the apps whose screenshots you want to capture:
+Uncomment or add the apps whose screenshots you want to capture. `book` and
+`user_template_manager` ship with Fidus Writer itself, so they need no symlink
+into `fiduswriter/`; the rest are separate plugin repositories that have to be
+symlinked in (see the backend repository's `AGENTS.md`):
 
 ```python
 INSTALLED_APPS = [

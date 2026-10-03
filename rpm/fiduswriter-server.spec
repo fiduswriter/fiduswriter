@@ -46,7 +46,6 @@ dependencies bundled, making it self-contained and working on different
 versions of RHEL-compatible distributions without requiring a modern system Python.
 .
 This package includes all optional modules:
-  * fiduswriter-books - Book document type support
   * fiduswriter-citation-api-import - Import citations from external APIs
   * fiduswriter-languagetool - Grammar and spell checking
   * fiduswriter-ojs - Open Journal Systems integration

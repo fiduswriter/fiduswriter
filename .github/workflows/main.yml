@@ -77,6 +77,9 @@ jobs:
                     - bibliography
                     - usermedia
                     - user_template_manager
+                    # The book app is bundled with the backend but optional; it
+                    # is listed in ci/configuration.py.
+                    - "book.tests.test_book book.tests.test_book_e2ee book.tests.test_book_native book.tests.test_book_template_save"
         steps:
             - name: Install Chrome (Forgejo runners)
               if: github.server_url != 'https://github.com'
@@ -191,17 +194,14 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - test: "book.tests.test_book book.tests.test_book_e2ee book.tests.test_book_native book.tests.test_book_template_save"
-                      repos: "fiduswriter-books-plugin"
-                      apps: '"book"'
                     - test: "pandoc.tests.test_pandoc pandoc.tests.test_book"
-                      repos: "fiduswriter-pandoc-plugin fiduswriter-books-plugin"
+                      repos: "fiduswriter-pandoc-plugin"
                       apps: '"pandoc", "book"'
                     - test: "citation_api_import.tests.test_citation_api_import"
                       repos: "fiduswriter-citation-api-import-plugin"
                       apps: '"citation_api_import"'
                     - test: "gitrepo_export.tests.test_gitrepo_export"
-                      repos: "fiduswriter-gitrepo-export-plugin fiduswriter-books-plugin"
+                      repos: "fiduswriter-gitrepo-export-plugin"
                       apps: '"gitrepo_export", "book"'
                     - test: "languagetool.tests.test_languagetool"
                       repos: "fiduswriter-languagetool-plugin"
@@ -251,12 +251,20 @@ jobs:
                   done
             - name: Symlink plugin apps into the main app
               run: |
-                  read -ra repo_arr <<< "${{ matrix.repos }}"
-                  read -ra app_arr <<< "$(echo ${{ matrix.apps }} | tr -d '",')"
-                  for i in "${!repo_arr[@]}"; do
-                      repo="${repo_arr[$i]}"
-                      app="${app_arr[$i]}"
-                      ln -s "../../${repo}/fiduswriter/${app}" "${{ env.BACKEND_REPO }}/fiduswriter/${app}"
+                  # Derive the app directories from the cloned repositories
+                  # rather than pairing `repos` and `apps` positionally: the
+                  # `apps` list may also name apps that are bundled with the
+                  # backend (e.g. "book") and therefore have no repository.
+                  for repo in ${{ matrix.repos }}; do
+                      for app_path in "${repo}"/fiduswriter/*/; do
+                          app="$(basename "${app_path}")"
+                          target="${{ env.BACKEND_REPO }}/fiduswriter/${app}"
+                          if [ -e "${target}" ]; then
+                              echo "${app} is bundled with the backend, not symlinking"
+                          else
+                              ln -s "../../${repo}/fiduswriter/${app}" "${target}"
+                          fi
+                      done
                   done
             - name: Install dependencies
               run: |

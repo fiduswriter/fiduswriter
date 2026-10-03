@@ -14,7 +14,7 @@
 #     siblings, including fiduswriter-dav-ts),
 #   - the standalone repos fiduswriter-nextcloud and fiduswriter-wordpress,
 #     whose package.json lives in the repo root and is installed there,
-#   - the pagination packages (paged-with-floats, pages-to-pdf,
+#   - the pagination packages (paginate-for-print, pages-to-pdf,
 #     vivliostyle-pdf) in fiduswriter-document-ts and in the
 #     fiduswriter-vivliostyle plugin repo, from the pagination dir.
 #
@@ -44,7 +44,7 @@
 #                                 install in their own root.)
 #
 #   FIDUSWRITER_PAGINATION_DIR    Directory containing the pagination package
-#                                 checkouts (paged-with-floats, pages-to-pdf,
+#                                 checkouts (paginate-for-print, pages-to-pdf,
 #                                 vivliostyle-pdf).
 #                                 Default: <siblings-dir>/../pagination
 
@@ -104,7 +104,7 @@ INSTALL_ORDER=(
     "fiduswriter-editor-ts"
     "fiduswriter-dav-ts"
     "fiduswriter-frontend-ts"
-    "fiduswriter-books-plugin-ts"
+    "fiduswriter-books-ts"
     "fiduswriter-pandoc-plugin-ts"
     "fiduswriter-cli-ts"
     "fiduswriter-nextcloud"
@@ -113,7 +113,7 @@ INSTALL_ORDER=(
 
 declare -A PACKAGE_DIRS=(
     ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-ts"
-    ["@fiduswriter/books-document"]="fiduswriter-books-plugin-ts"
+    ["@fiduswriter/books-document"]="fiduswriter-books-ts"
     ["@fiduswriter/dav"]="fiduswriter-dav-ts"
     ["@fiduswriter/document"]="fiduswriter-document-ts"
     ["@fiduswriter/cli"]="fiduswriter-cli-ts"
@@ -126,18 +126,19 @@ declare -A PACKAGE_DIRS=(
 )
 
 # Core backend apps whose package.json5 lives directly in the backend repo.
+# This includes the apps that ship with the backend but stay optional
+# (user_template_manager, book).
 MAIN_FILES=(
     "$BACKEND_DIR/fiduswriter/base/package.json5"
+    "$BACKEND_DIR/fiduswriter/book/package.json5"
 )
 
 # Django plugin apps and their sibling plugin repos. Each plugin's package.json5
 # lives in its own sibling repo under <repo>/fiduswriter/<app>/package.json5,
 # independent of whether the app is currently symlinked into the backend repo.
 PLUGIN_APPS=(
-    "book:fiduswriter-books-plugin"
     "citation_api_import:fiduswriter-citation-api-import-plugin"
     "gitrepo_export:fiduswriter-gitrepo-export-plugin"
-    "languagetool:fiduswriter-languagetool-plugin"
     "llm:fiduswriter-llm-plugin"
     "ojs:fiduswriter-ojs-plugin"
     "pandoc:fiduswriter-pandoc-plugin"
@@ -159,8 +160,8 @@ done
 # Format: "sibling-dir:dep1,dep2,..."
 SIBLING_PACKAGES=(
     "fiduswriter-bibliography-manager-ts:fwtoolkit"
-    "fiduswriter-books-plugin-ts:@fiduswriter/document,fwtoolkit"
-    "fiduswriter-dav-ts:@fiduswriter/document,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
+    "fiduswriter-books-ts:@fiduswriter/document,fwtoolkit"
+    "fiduswriter-dav-ts:@fiduswriter/books-document,@fiduswriter/document,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-document-ts:fwtoolkit"
     "fiduswriter-cli-ts:fwtoolkit,@fiduswriter/document,@fiduswriter/books-document"
     "fiduswriter-document-template-editor-ts:@fiduswriter/document,fwtoolkit"
@@ -183,7 +184,7 @@ STANDALONE_REPOS=(
 # vivliostyle-pdf, of the fiduswriter-vivliostyle plugin) that can be
 # switched to the local checkouts in $PAGINATION_DIR.
 PAGINATION_PACKAGES=(
-    "paged-with-floats"
+    "paginate-for-print"
     "pages-to-pdf"
     "vivliostyle-pdf"
 )

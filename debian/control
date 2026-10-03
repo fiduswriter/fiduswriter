@@ -79,7 +79,6 @@ Description: Collaborative academic word processor (bundled)
  installed automatically to provide a bundled Node.js runtime.
  .
  This package includes all optional modules:
-  * fiduswriter-books - Book document type support
   * fiduswriter-citation-api-import - Import citations from external APIs
   * fiduswriter-languagetool - Grammar and spell checking
   * fiduswriter-ojs - Open Journal Systems integration

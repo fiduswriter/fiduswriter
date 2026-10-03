@@ -482,8 +482,12 @@ INSTALLED_APPS = [
     'usermedia',
     'user',
     
-    # Optional plugins
-    'book',
+    # Bundled but optional apps. These ship with Fidus Writer itself — remove
+    # the line to disable the feature (and its pages and API endpoints).
+    'user_template_manager',  # document template manager
+    'book',  # book composer, chapter management and book export
+    
+    # Optional plugins (separate pip packages)
     'ojs',
     'citation_api_import',
 ]

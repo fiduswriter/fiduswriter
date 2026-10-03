@@ -116,7 +116,6 @@ Plugin Packages
 
 The following optional plugin packages are available:
 
-- fiduswriter-books              Book document type support
 - fiduswriter-citation-api-import  Import citations from external APIs
 - fiduswriter-languagetool       Grammar and spell checking integration
 - fiduswriter-ojs                Open Journal Systems integration
@@ -127,7 +126,7 @@ The following optional plugin packages are available:
 - fiduswriter-website            Generate static websites from documents
 
 Install plugins with apt:
-  $ sudo apt install fiduswriter-books fiduswriter-citation-api-import
+  $ sudo apt install fiduswriter-citation-api-import
 
 After installing a plugin, enable it by adding the app name to INSTALLED_APPS
 in /etc/fiduswriter/configuration.py and restart the service.

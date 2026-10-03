@@ -5,7 +5,6 @@ fiduswriter-server (4.1.7-1) unstable; urgency=medium
   * Single package with all modules included
   * Bundled Python 3.14.5 compiled from source
   * All dependencies and optional modules included:
-    - fiduswriter-books
     - fiduswriter-citation-api-import
     - fiduswriter-languagetool
     - fiduswriter-ojs

@@ -97,3 +97,4 @@ screenshots/
 # Generated from debian/changelog.in by build-deb.sh
 debian/changelog
 node_modules/
+rpm-build/

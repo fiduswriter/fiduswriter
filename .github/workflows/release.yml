@@ -149,6 +149,14 @@ jobs:
               with:
                   package_json_file: fiduswriter-desktop/package.json
 
+            # scripts/build.js resolves fiduswriter-file-types as a sibling of
+            # the fiduswriter-desktop checkout (it owns the artwork and the
+            # file type declarations; it is not on npm).
+            - name: Check out file type definitions
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types 2>/dev/null \
+                      || git clone --depth 1 "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types
+
             # Ubuntu 22.04 is the oldest supported baseline: it provides
             # libwebkit2gtk-4.1-dev, which Tauri 2 requires. Building on the
             # oldest supported system keeps the AppImage portable.
@@ -223,6 +231,15 @@ jobs:
                   git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
                       || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
 
+            # scripts/build.js resolves fiduswriter-file-types as a sibling of
+            # the fiduswriter-desktop checkout (it owns the artwork and the
+            # file type declarations; it is not on npm), and build-macos.sh
+            # reads it via FIDUSWRITER_FILE_TYPES_DIR below.
+            - name: Check out file type definitions
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types 2>/dev/null \
+                      || git clone --depth 1 "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types
+
             - name: Cache Rust build
               uses: Swatinem/rust-cache@v2
               with:
@@ -250,6 +267,7 @@ jobs:
               env:
                   FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}/fiduswriter-server-backend
                   FIDUSWRITER_DESKTOP_DIR: ${{ github.workspace }}/fiduswriter-desktop
+                  FIDUSWRITER_FILE_TYPES_DIR: ${{ github.workspace }}/fiduswriter-file-types
 
             # Signing credentials are optional, so forks and manual runs still
             # produce an artifact; without them the bundle ships unsigned and
@@ -287,6 +305,7 @@ jobs:
                   NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
                   FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}/fiduswriter-server-backend
                   FIDUSWRITER_DESKTOP_DIR: ${{ github.workspace }}/fiduswriter-desktop
+                  FIDUSWRITER_FILE_TYPES_DIR: ${{ github.workspace }}/fiduswriter-file-types
 
             - name: Upload artifact
               uses: actions/upload-artifact@v7
@@ -330,6 +349,9 @@ jobs:
                       git checkout "${{ github.ref_name || 'main' }}"
                   fi
                   git log -1 --format='Desktop source: %H %s'
+              # The clone uses bash continuations; the windows runner defaults
+              # to pwsh, which cannot parse them.
+              shell: bash
 
             - name: Set up Rust
               uses: dtolnay/rust-toolchain@stable
@@ -351,6 +373,15 @@ jobs:
               uses: pnpm/action-setup@v4
               with:
                   package_json_file: fiduswriter-desktop/package.json
+
+            # scripts/build.js resolves fiduswriter-file-types as a sibling of
+            # the fiduswriter-desktop checkout (it owns the artwork and the
+            # file type declarations; it is not on npm).
+            - name: Check out file type definitions
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types 2>/dev/null \
+                      || git clone --depth 1 "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types
+              shell: bash
 
             # Tauri's own NSIS bundler produces the installer; the extra
             # Inno Setup script in desktop/windows/ registers the Fidus file

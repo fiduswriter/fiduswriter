@@ -55,7 +55,10 @@ fi
 # UTIs and takes Owner rank in LaunchServices. The declarations are maintained in
 # the fiduswriter-file-types repository and merged here rather than duplicated,
 # so the two cannot drift. See that repository's macos/INTEGRATION.md.
-UTI_PLIST="$REPO/../fiduswriter-file-types/macos/UTI-declarations.plist"
+# FIDUSWRITER_FILE_TYPES_DIR overrides the location (CI clones it next to
+# fiduswriter-desktop; build.js resolves it there too).
+FILE_TYPES_DIR="${FIDUSWRITER_FILE_TYPES_DIR:-$REPO/../fiduswriter-file-types}"
+UTI_PLIST="$FILE_TYPES_DIR/macos/UTI-declarations.plist"
 if [[ -f "$UTI_PLIST" ]]; then
     echo "Merging file type declarations into Info.plist"
     /usr/libexec/PlistBuddy -c "Merge $UTI_PLIST" "$APP_PATH/Contents/Info.plist"
@@ -65,7 +68,7 @@ else
 fi
 
 # --- Icon ------------------------------------------------------------------
-ICNS_SRC="$REPO/../fiduswriter-file-types/icons/hicolor/512x512/apps/fiduswriter.png"
+ICNS_SRC="$FILE_TYPES_DIR/icons/hicolor/512x512/apps/fiduswriter.png"
 if [[ -f "$ICNS_SRC" ]]; then
     ICONSET="$(mktemp -d)/FidusWriter.iconset"
     mkdir -p "$ICONSET"

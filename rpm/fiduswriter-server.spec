@@ -107,7 +107,11 @@ LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN -m pip install --n
 LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN -m pip install --no-cache-dir psycopg2-binary mysqlclient
 
 # Install all optional dependencies (plugins)
-PLUGIN_PKGS=$(grep '"fiduswriter-' pyproject.toml | sed 's/.*"\(fiduswriter-[^"]*\)".*/\1/' | tr -d ' ' | tr '\n' ' ')
+# The vivliostyle extra is deliberately left out, mirroring debian/rules: the
+# RPM keeps the default paginate-for-print print engine, and users who want
+# the AGPL licensed vivliostyle-print engine can pip install
+# fiduswriter-vivliostyle into their virtualenv themselves.
+PLUGIN_PKGS=$(grep '"fiduswriter-' pyproject.toml | grep -v 'fiduswriter-vivliostyle' | sed 's/.*"\(fiduswriter-[^"]*\)".*/\1/' | tr -d ' ' | tr '\n' ' ')
 LD_LIBRARY_PATH=$PYTHON_BUILDLIB:$LD_LIBRARY_PATH $PYTHON_BIN -m pip install --no-cache-dir --upgrade $PLUGIN_PKGS
 
 # Install fiduswriter package itself

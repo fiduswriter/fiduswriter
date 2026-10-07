@@ -136,6 +136,19 @@ jobs:
                     librsvg2-dev libssl-dev libxdo-dev \
                     desktop-file-utils rpm
 
+            # The desktop application builds with pnpm (see its
+            # packageManager field); neither the ubuntu-22.04 nor the arm
+            # runners ship it.
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 26
+
+            - name: Set up pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  package_json_file: fiduswriter-desktop/package.json
+
             # Ubuntu 22.04 is the oldest supported baseline: it provides
             # libwebkit2gtk-4.1-dev, which Tauri 2 requires. Building on the
             # oldest supported system keeps the AppImage portable.
@@ -215,6 +228,18 @@ jobs:
               with:
                   workspaces: fiduswriter-desktop/src-tauri -> target
                   key: desktop-macos-${{ matrix.arch }}
+
+            # The desktop application builds with pnpm (see its
+            # packageManager field).
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 26
+
+            - name: Set up pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  package_json_file: fiduswriter-desktop/package.json
 
             - name: Build unsigned bundle
               run: pnpm run tauri build --bundles app
@@ -314,6 +339,18 @@ jobs:
               with:
                   workspaces: fiduswriter-desktop/src-tauri -> target
                   key: desktop-windows-x64
+
+            # The desktop application builds with pnpm (see its
+            # packageManager field).
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 26
+
+            - name: Set up pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  package_json_file: fiduswriter-desktop/package.json
 
             # Tauri's own NSIS bundler produces the installer; the extra
             # Inno Setup script in desktop/windows/ registers the Fidus file

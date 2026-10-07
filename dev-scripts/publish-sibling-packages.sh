@@ -29,7 +29,7 @@ PACKAGES=(
     fiduswriter-document-template-editor-ts
     fiduswriter-bibliography-manager-ts
     fiduswriter-image-manager-ts
-    fiduswriter-books-plugin-ts
+    fiduswriter-books-ts
 )
 
 for pkg in "${PACKAGES[@]}"; do

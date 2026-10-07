@@ -98,6 +98,11 @@ jobs:
                   python-version: "3.14"
             - name: Set up Node
               uses: actions/setup-node@v6
+              # Only needed on GitHub. The Forgejo runner image
+              # (nikolaik/python-nodejs:python3.14-nodejs26) already ships
+              # Node 26, and setup-node would download a second copy into
+              # the job container's writable layer on every run.
+              if: github.server_url == 'https://github.com'
               with:
                   node-version: 26
             - uses: actions/checkout@v7
@@ -110,7 +115,7 @@ jobs:
                   SUDO=""
                   if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
                   $SUDO apt-get update
-                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
+                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git build-essential
                   cd ${{ env.BACKEND_REPO }}
                   mv ci/configuration.py fiduswriter/configuration.py
                   cd fiduswriter
@@ -236,6 +241,11 @@ jobs:
                   python-version: "3.14"
             - name: Set up Node
               uses: actions/setup-node@v6
+              # Only needed on GitHub. The Forgejo runner image
+              # (nikolaik/python-nodejs:python3.14-nodejs26) already ships
+              # Node 26, and setup-node would download a second copy into
+              # the job container's writable layer on every run.
+              if: github.server_url == 'https://github.com'
               with:
                   node-version: 26
             - uses: actions/checkout@v7
@@ -271,7 +281,7 @@ jobs:
                   SUDO=""
                   if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
                   $SUDO apt-get update
-                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git nodejs build-essential
+                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git build-essential
                   cd ${{ env.BACKEND_REPO }}/fiduswriter
                   cat > configuration.py <<EOF
                   INSTALLED_APPS = [

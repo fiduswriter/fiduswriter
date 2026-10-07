@@ -21,10 +21,43 @@ packages, and the release/propagation workflow.
 | `rpm/`, `build-rpm.sh` | RPM packaging (builds from the backend repo) |
 | `snap/`, `build_clean.sh` | Snap packaging (builds from the backend repo) |
 | `docker/` | Docker image build + compose |
+| `desktop/` | **Desktop application** packaging: Linux AppImage/deb + `.desktop` entry, macOS `.dmg` (+ sign/notarize), Windows Inno Setup script |
 | `docs/` | User + developer documentation, plans |
 | `dev-scripts/` | `switch-local-deps.sh`, `publish-sibling-packages.sh` |
 | `.github/workflows/` | CI/CD: tests + releases (orchestrate the backend repo) |
 | `ci/` | CI helpers (`retry.bash`) |
+
+## Desktop application
+
+The desktop app's **source** lives in its own repository,
+`fiduswriter-desktop/`, next to this one (it is a TypeScript/Rust project and
+needs its own toolchain). This repository owns only its **packaging**, in
+`desktop/`:
+
+| File | Purpose |
+|------|---------|
+| `desktop/version.sh` | Prints the version from the backend's `version.txt` — the single source of truth |
+| `desktop/linux/build-linux.sh` | Builds AppImage + deb, validates and emits the `.desktop` entry |
+| `desktop/linux/fiduswriter-desktop.desktop` | `.desktop` entry whose `Exec` is the real binary |
+| `desktop/macos/build-macos.sh` | Merges the UTI declarations, builds the icon and `.dmg`, optionally signs + notarizes |
+| `desktop/windows/fiduswriter-desktop.iss` | Inno Setup script: installs the app and registers the file types |
+
+Notes:
+
+- **File-type declarations are not duplicated.** The macOS script merges
+  `fiduswriter-file-types/macos/UTI-declarations.plist` into `Info.plist`, and
+  the Inno Setup script's registry rows are copied from
+  `fiduswriter-file-types/windows/fiduswriter.iss`. Change them there.
+- **Linux builds against Ubuntu 22.04**, the oldest supported baseline, because
+  Tauri 2 requires WebKitGTK **4.1** (`libwebkit2gtk-4.1-dev`), which 22.04
+  provides. Building on the oldest supported system keeps the AppImage
+  portable. Do not target anything older.
+- `desktop/` deb and rpm packages should `Depends: fiduswriter-file-types` for
+  the MIME definitions and icons; the `.desktop` entry here provides the
+  executable.
+- Snap packaging (`snap/`) is **currently stale**: `snapcraft.yaml` references
+  `src/fiduswriter/`, `src/npm/` and `src/mysql/`, which do not exist in this
+  repository. It is not built by CI. Do not use it as a template.
 
 ## Build / test commands
 
@@ -38,14 +71,21 @@ packages, and the release/propagation workflow.
   backend repo at build time).
 - **Snap build**: `snapcraft` from the `snap/` directory (the
   `snapcraft.yaml` fetches the backend repo).
+- **Desktop build**: `./desktop/linux/build-linux.sh` (Linux),
+  `./desktop/macos/build-macos.sh [--sign]` (macOS),
+  `iscc desktop\windows\fiduswriter-desktop.iss` (Windows). Artifacts land in
+  `desktop-build/`.
 
 ## Environment variables
 
 - `FIDUSWRITER_BACKEND_DIR` — where the backend checkout is expected
   (defaults to `<this-repo>/fiduswriter-server-backend`). Used by
-  `build-deb.sh`, `build-rpm.sh`, and `dev-scripts/switch-local-deps.sh`.
+  `build-deb.sh`, `build-rpm.sh`, `desktop/version.sh` and
+  `dev-scripts/switch-local-deps.sh`.
 - `FIDUSWRITER_SIBLINGS_DIR` — sibling npm package directory (defaults to the
   parent directory of this repo).
+- `FIDUSWRITER_DESKTOP_DIR` — the `fiduswriter-desktop` checkout (defaults to
+  `<parent>/fiduswriter-desktop`). Used by the desktop build scripts.
 
 ## Notes
 

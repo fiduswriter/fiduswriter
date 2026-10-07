@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Name=Fidus Writer
+Name[de]=Fidus Writer
+GenericName=Word Processor
+GenericName[de]=Textverarbeitung
+Comment=Academic editor with citations and formulas
+Comment[de]=Wissenschaftlicher Editor mit Zitaten und Formeln
+Comment[fr]=Éditeur académique avec citations et formules
+# The real application. `fiduswriter-file-types` ships a second .desktop entry
+# whose Exec opens the web app; that package provides the MIME definitions and
+# the icons, this package provides the executable.
+Exec=fiduswriter-desktop %U
+TryExec=fiduswriter-desktop
+Icon=fiduswriter
+Terminal=false
+Categories=Office;WordProcessor;
+MimeType=application/vnd.fiduswriter+zip;application/vnd.fiduswriter.book+zip;application/vnd.fiduswriter.template+zip;application/x-bibtex;application/json;
+StartupNotify=true
+StartupWMClass=Fidus Writer

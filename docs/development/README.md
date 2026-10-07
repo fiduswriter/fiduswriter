@@ -87,6 +87,15 @@ Comprehensive testing documentation:
 - Coverage reports
 - Continuous integration
 
+#### [Release Process](release.md)
+
+How to cut a release (server, packages, desktop):
+
+- Version numbers and tags
+- What the release pipeline builds
+- Step-by-step release checklist
+- The separate Nextcloud/WordPress app releases
+
 #### [Anonymous Document Access](anonymous-access.md)
 
 Share documents and allow editing without an account using secure share tokens.

@@ -28,6 +28,10 @@ build
 /venv/
 /fiduswriter/venv/
 
+# Local checkout used by build-deb.sh/build-rpm.sh (FIDUSWRITER_BACKEND_DIR).
+# Never commit this: CI clones its own copy at the release tag.
+/fiduswriter-server-backend/
+
 # Python build cache for Debian packaging
 /.python-build-cache/
 

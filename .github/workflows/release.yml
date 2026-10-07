@@ -48,6 +48,14 @@ jobs:
                     xz-utils tk-dev liblzma-dev libjpeg-dev zlib1g-dev \
                     libmagic1 wget curl devscripts equivs
 
+            # build-deb.sh stages this checkout together with debian/ into a
+            # scratch tree; clone at the release tag (falling back to main)
+            # like the PyPI/Docker jobs do.
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
+
             - name: Build Debian package
               run: ./build-deb.sh
 
@@ -104,8 +112,16 @@ jobs:
                   fi
                   git log -1 --format='Desktop source: %H %s'
 
+            # version.sh reads fiduswriter/version.txt from the backend
+            # checkout, so the desktop artifacts carry the same version as the
+            # server release.
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
+
             - name: Cache Rust build
-              uses: actions/swemix/rust-cache@v2
+              uses: Swatinem/rust-cache@v2
               with:
                   workspaces: fiduswriter-desktop/src-tauri -> target
                   key: desktop-linux-${{ matrix.arch }}
@@ -127,7 +143,7 @@ jobs:
               run: |
                   ./desktop/linux/build-linux.sh --appimage --deb
               env:
-                  FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}
+                  FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}/fiduswriter-server-backend
                   FIDUSWRITER_DESKTOP_DIR: ${{ github.workspace }}/fiduswriter-desktop
 
             - name: Upload artifact
@@ -186,8 +202,16 @@ jobs:
                   fi
                   git log -1 --format='Desktop source: %H %s'
 
+            # version.sh reads fiduswriter/version.txt from the backend
+            # checkout, so the desktop artifacts carry the same version as the
+            # server release.
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
+
             - name: Cache Rust build
-              uses: actions/swemix/rust-cache@v2
+              uses: Swatinem/rust-cache@v2
               with:
                   workspaces: fiduswriter-desktop/src-tauri -> target
                   key: desktop-macos-${{ matrix.arch }}
@@ -199,7 +223,7 @@ jobs:
             - name: Merge file type declarations and create dmg
               run: ./desktop/macos/build-macos.sh
               env:
-                  FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}
+                  FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}/fiduswriter-server-backend
                   FIDUSWRITER_DESKTOP_DIR: ${{ github.workspace }}/fiduswriter-desktop
 
             # Signing credentials are optional, so forks and manual runs still
@@ -236,7 +260,7 @@ jobs:
                   SIGNING_IDENTITY: ${{ secrets.SIGNING_IDENTITY }}
                   NOTARY_PROFILE: ${{ secrets.NOTARY_PROFILE }}
                   NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
-                  FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}
+                  FIDUSWRITER_BACKEND_DIR: ${{ github.workspace }}/fiduswriter-server-backend
                   FIDUSWRITER_DESKTOP_DIR: ${{ github.workspace }}/fiduswriter-desktop
 
             - name: Upload artifact
@@ -286,7 +310,7 @@ jobs:
               uses: dtolnay/rust-toolchain@stable
 
             - name: Cache Rust build
-              uses: actions/swemix/rust-cache@v2
+              uses: Swatinem/rust-cache@v2
               with:
                   workspaces: fiduswriter-desktop/src-tauri -> target
                   key: desktop-windows-x64
@@ -326,6 +350,14 @@ jobs:
                   key: rpm-python-build-${{ matrix.arch }}-${{ hashFiles('rpm/fiduswriter-server.spec') }}
                   restore-keys: |
                       rpm-python-build-${{ matrix.arch }}-
+
+            # build-rpm.sh stages this checkout together with rpm/ and debian/
+            # into a scratch tree; clone at the release tag (falling back to
+            # main).
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
 
             - name: Build RPM in Rocky Linux container
               run: |

@@ -258,6 +258,13 @@ jobs:
               with:
                   package_json_file: fiduswriter-desktop/package.json
 
+            # The Linux build script runs this itself; the direct tauri
+            # invocations here need the dependencies installed first, or
+            # `pnpm run tauri build` cannot find the tauri binary.
+            - name: Install desktop dependencies
+              run: pnpm install --frozen-lockfile
+              working-directory: fiduswriter-desktop
+
             - name: Build unsigned bundle
               run: pnpm run tauri build --bundles app
               working-directory: fiduswriter-desktop
@@ -382,6 +389,13 @@ jobs:
                   git clone --depth 1 --branch "${{ github.ref_name }}" "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types 2>/dev/null \
                       || git clone --depth 1 "https://git.fiduswriter.org/fiduswriter/fiduswriter-file-types.git" fiduswriter-file-types
               shell: bash
+
+            # The Linux build script runs this itself; the direct tauri
+            # invocation here needs the dependencies installed first, or
+            # `pnpm run tauri build` cannot find the tauri binary.
+            - name: Install desktop dependencies
+              run: pnpm install --frozen-lockfile
+              working-directory: fiduswriter-desktop
 
             # Tauri's own NSIS bundler produces the installer; the extra
             # Inno Setup script in desktop/windows/ registers the Fidus file

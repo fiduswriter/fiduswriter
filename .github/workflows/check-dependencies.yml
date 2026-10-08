@@ -62,7 +62,7 @@ jobs:
 
       - name: Upload Python dependency report
         if: steps.check_python.outputs.outdated == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-dependency-report
           path: ${{ env.BACKEND_REPO }}/fiduswriter/check_output.txt
@@ -119,7 +119,7 @@ jobs:
 
       - name: Upload JavaScript dependency report
         if: steps.check_js.outputs.outdated == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: javascript-dependency-report
           path: ${{ env.BACKEND_REPO }}/fiduswriter/check_output_js.txt
@@ -194,7 +194,7 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         continue-on-error: true
 
       - name: Send notification summary

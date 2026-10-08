@@ -186,8 +186,11 @@ jobs:
                 include:
                     - arch: aarch64
                       runs-on: macos-15
+                    # The last Intel runner label: macos-13 is no longer
+                    # provisioned by GitHub, so jobs asking for it queue
+                    # forever. macos-15-intel is its documented replacement.
                     - arch: x86_64
-                      runs-on: macos-13
+                      runs-on: macos-15-intel
         runs-on: ${{ matrix.runs-on }}
         steps:
             - name: Checkout

@@ -98,16 +98,29 @@ mkdir -p "$DMG_DIR"
 # The runner's architecture is the build target (both matrix entries build
 # natively), and it goes into the file name: both macOS jobs would otherwise
 # produce identically named disk images that overwrite each other in the
-# release assets.
+# release assets. `uname -m` reports arm64 on Apple Silicon; normalize to
+# aarch64 to match the architecture names used by the other artifacts.
 ARCH="$(uname -m)"
+[[ "$ARCH" == "arm64" ]] && ARCH="aarch64"
 DMG_PATH="$DMG_DIR/fiduswriter-desktop-$(${HERE}/../version.sh)_${ARCH}.dmg"
 rm -f "$DMG_PATH"
 
 echo "Creating $DMG_PATH"
-hdiutil create \
+# hdiutil intermittently fails with "Resource busy" on the hosted runners
+# (a stale disk-images service); retry instead of failing the release.
+DMG_ATTEMPTS=3
+until hdiutil create \
     -volname "$APP_NAME" \
     -srcfolder "$APP_PATH" \
-    -ov -format UDZO "$DMG_PATH"
+    -ov -format UDZO "$DMG_PATH"; do
+    DMG_ATTEMPTS=$((DMG_ATTEMPTS-1))
+    if [[ "$DMG_ATTEMPTS" -le 0 ]]; then
+        echo "ERROR: hdiutil create kept failing." >&2
+        exit 1
+    fi
+    echo "hdiutil create failed - retrying in 15s ($DMG_ATTEMPTS attempt(s) left)"
+    sleep 15
+done
 
 # --- Sign and notarize ------------------------------------------------------
 if [[ "$SIGN" == "1" ]]; then

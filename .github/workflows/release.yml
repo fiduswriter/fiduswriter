@@ -108,7 +108,13 @@ jobs:
                           echo "::warning::Desktop repository has no tag $TAG; building main."
                       fi
                   else
-                      git checkout "${{ github.ref_name || 'main' }}"
+                      BRANCH="${{ github.ref_name || 'main' }}"
+                      if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+                          git checkout "$BRANCH"
+                          echo "Building desktop application at branch $BRANCH"
+                      else
+                          echo "::warning::Desktop repository has no branch $BRANCH; building main."
+                      fi
                   fi
                   git log -1 --format='Desktop source: %H %s'
 
@@ -222,7 +228,13 @@ jobs:
                           echo "::warning::Desktop repository has no tag $TAG; building main."
                       fi
                   else
-                      git checkout "${{ github.ref_name || 'main' }}"
+                      BRANCH="${{ github.ref_name || 'main' }}"
+                      if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+                          git checkout "$BRANCH"
+                          echo "Building desktop application at branch $BRANCH"
+                      else
+                          echo "::warning::Desktop repository has no branch $BRANCH; building main."
+                      fi
                   fi
                   git log -1 --format='Desktop source: %H %s'
 
@@ -356,7 +368,13 @@ jobs:
                           echo "::warning::Desktop repository has no tag $TAG; building main."
                       fi
                   else
-                      git checkout "${{ github.ref_name || 'main' }}"
+                      BRANCH="${{ github.ref_name || 'main' }}"
+                      if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+                          git checkout "$BRANCH"
+                          echo "Building desktop application at branch $BRANCH"
+                      else
+                          echo "::warning::Desktop repository has no branch $BRANCH; building main."
+                      fi
                   fi
                   git log -1 --format='Desktop source: %H %s'
               # The clone uses bash continuations; the windows runner defaults

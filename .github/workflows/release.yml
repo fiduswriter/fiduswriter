@@ -140,7 +140,7 @@ jobs:
             # packageManager field); neither the ubuntu-22.04 nor the arm
             # runners ship it.
             - name: Set up Node
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@v7
               with:
                   node-version: 26
 
@@ -249,7 +249,7 @@ jobs:
             # The desktop application builds with pnpm (see its
             # packageManager field).
             - name: Set up Node
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@v7
               with:
                   node-version: 26
 
@@ -365,7 +365,7 @@ jobs:
             # The desktop application builds with pnpm (see its
             # packageManager field).
             - name: Set up Node
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@v7
               with:
                   node-version: 26
 

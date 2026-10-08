@@ -97,7 +97,7 @@ jobs:
               with:
                   python-version: "3.14"
             - name: Set up Node
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@v7
               # Only needed on GitHub. The Forgejo runner image
               # (nikolaik/python-nodejs:python3.14-nodejs26) already ships
               # Node 26, and setup-node would download a second copy into
@@ -240,7 +240,7 @@ jobs:
               with:
                   python-version: "3.14"
             - name: Set up Node
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@v7
               # Only needed on GitHub. The Forgejo runner image
               # (nikolaik/python-nodejs:python3.14-nodejs26) already ships
               # Node 26, and setup-node would download a second copy into

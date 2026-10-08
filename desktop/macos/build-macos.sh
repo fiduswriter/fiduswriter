@@ -95,7 +95,12 @@ fi
 # --- Create the disk image --------------------------------------------------
 DMG_DIR="$REPO/desktop-build"
 mkdir -p "$DMG_DIR"
-DMG_PATH="$DMG_DIR/fiduswriter-desktop-$(${HERE}/../version.sh).dmg"
+# The runner's architecture is the build target (both matrix entries build
+# natively), and it goes into the file name: both macOS jobs would otherwise
+# produce identically named disk images that overwrite each other in the
+# release assets.
+ARCH="$(uname -m)"
+DMG_PATH="$DMG_DIR/fiduswriter-desktop-$(${HERE}/../version.sh)_${ARCH}.dmg"
 rm -f "$DMG_PATH"
 
 echo "Creating $DMG_PATH"

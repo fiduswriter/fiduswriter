@@ -384,6 +384,14 @@ jobs:
             - name: Set up Rust
               uses: dtolnay/rust-toolchain@stable
 
+            # scripts/sync-release.js (run by the tauri package script)
+            # reads the release version from the backend's version.txt.
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/fiduswriter-server-backend.git" fiduswriter-server-backend
+              shell: bash
+
             - name: Cache Rust build
               uses: Swatinem/rust-cache@v2
               with:

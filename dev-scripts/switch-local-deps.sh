@@ -114,9 +114,9 @@ INSTALL_ORDER=(
 
 declare -A PACKAGE_DIRS=(
     ["@fiduswriter/bibliography-manager"]="fiduswriter-bibliography-manager-ts"
-    ["@fiduswriter/books-document"]="fiduswriter-books-ts"
+    ["@fiduswriter/books"]="fiduswriter-books-ts"
     ["@fiduswriter/dav"]="fiduswriter-dav-ts"
-    ["@fiduswriter/books-document"]="fiduswriter-books-ts"
+    ["@fiduswriter/books"]="fiduswriter-books-ts"
     ["@fiduswriter/document"]="fiduswriter-document-ts"
     ["@fiduswriter/cli"]="fiduswriter-cli-ts"
     ["@fiduswriter/document-template-editor"]="fiduswriter-document-template-editor-ts"
@@ -163,15 +163,15 @@ done
 SIBLING_PACKAGES=(
     "fiduswriter-bibliography-manager-ts:fwtoolkit"
     "fiduswriter-books-ts:@fiduswriter/document,fwtoolkit"
-    "fiduswriter-dav-ts:@fiduswriter/books-document,@fiduswriter/document,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
-    "fiduswriter-desktop:@fiduswriter/bibliography-manager,@fiduswriter/books-document,@fiduswriter/dav,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/frontend,@fiduswriter/image-manager,fwtoolkit"
+    "fiduswriter-dav-ts:@fiduswriter/books,@fiduswriter/document,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
+    "fiduswriter-desktop:@fiduswriter/bibliography-manager,@fiduswriter/books,@fiduswriter/dav,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/frontend,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-document-ts:fwtoolkit"
-    "fiduswriter-cli-ts:fwtoolkit,@fiduswriter/document,@fiduswriter/books-document"
+    "fiduswriter-cli-ts:fwtoolkit,@fiduswriter/document,@fiduswriter/books"
     "fiduswriter-document-template-editor-ts:@fiduswriter/document,fwtoolkit"
     "fiduswriter-editor-ts:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-frontend-ts:@fiduswriter/bibliography-manager,@fiduswriter/document,@fiduswriter/document-template-editor,@fiduswriter/editor,@fiduswriter/image-manager,fwtoolkit"
     "fiduswriter-image-manager-ts:fwtoolkit"
-    "fiduswriter-pandoc-plugin-ts:@fiduswriter/document,@fiduswriter/books-document,fwtoolkit"
+    "fiduswriter-pandoc-plugin-ts:@fiduswriter/document,@fiduswriter/books,fwtoolkit"
 )
 
 # Standalone repos with a plain package.json that is installed in its own

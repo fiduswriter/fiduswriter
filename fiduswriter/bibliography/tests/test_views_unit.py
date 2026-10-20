@@ -199,6 +199,88 @@ class BibSaveViewTest(TestCase):
         self.assertEqual(entry.bib_type, "book")
         self.assertEqual(entry.fields["title"], "New Title")
 
+    def test_update_nonexistent_entry_creates_new(self):
+        response = json_post(
+            self.client,
+            "/api/bibliography/save/",
+            {
+                "is_new": False,
+                "bibs": {
+                    "9999": {
+                        "entry_key": "ghost",
+                        "bib_type": "book",
+                        "cats": [],
+                        "fields": {"title": "No entry"},
+                    }
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        client_id, server_id = data["id_translations"][0]
+        self.assertEqual(client_id, "9999")
+        new_entry = Entry.objects.get(id=server_id)
+        self.assertEqual(new_entry.entry_owner, self.user)
+        self.assertEqual(new_entry.entry_key, "ghost")
+        self.assertEqual(new_entry.fields["title"], "No entry")
+
+    def test_update_other_users_entry_creates_own_copy(self):
+        other_user = User.objects.create_user(
+            username="otheruser_save", password="pass"
+        )
+        entry = Entry.objects.create(
+            entry_key="notMine",
+            entry_owner=other_user,
+            bib_type="misc",
+            cats=[],
+            fields={"title": "Original title"},
+        )
+        response = json_post(
+            self.client,
+            "/api/bibliography/save/",
+            {
+                "is_new": False,
+                "bibs": {
+                    str(entry.id): {
+                        "entry_key": "hijacked",
+                        "bib_type": "book",
+                        "cats": [],
+                        "fields": {"title": "Hijacked title"},
+                    }
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        # The other user's entry is left untouched
+        entry.refresh_from_db()
+        self.assertEqual(entry.entry_key, "notMine")
+        self.assertEqual(entry.fields["title"], "Original title")
+        # A new entry owned by the current user is created instead
+        data = response.json()
+        client_id, server_id = data["id_translations"][0]
+        self.assertEqual(client_id, str(entry.id))
+        new_entry = Entry.objects.get(id=server_id)
+        self.assertEqual(new_entry.entry_owner, self.user)
+        self.assertEqual(new_entry.entry_key, "hijacked")
+        self.assertEqual(new_entry.fields["title"], "Hijacked title")
+
+    def test_update_with_non_numeric_id_creates_new(self):
+        response = json_post(
+            self.client,
+            "/api/bibliography/save/",
+            {
+                "is_new": False,
+                "bibs": {"client_0": self._bib_entry("clientref")},
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        client_id, server_id = data["id_translations"][0]
+        self.assertEqual(client_id, "client_0")
+        new_entry = Entry.objects.get(id=server_id)
+        self.assertEqual(new_entry.entry_owner, self.user)
+        self.assertEqual(new_entry.entry_key, "clientref")
+
 
 class BibDeleteViewTest(TestCase):
     def setUp(self):

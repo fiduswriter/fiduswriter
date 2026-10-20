@@ -82,7 +82,24 @@ def save(request):
     response["id_translations"] = []
     for b_id in list(bibs.keys()):
         bib = bibs[b_id]
-        if request.JSON["is_new"]:
+        the_entry = None
+        if not request.JSON["is_new"]:
+            try:
+                the_entry = Entry.objects.filter(
+                    id=b_id, entry_owner=request.user
+                ).first()
+            except (TypeError, ValueError):
+                # b_id is not a valid entry id (e.g. a client-side
+                # temporary key); a new entry is created below.
+                pass
+        if the_entry:
+            the_entry.entry_key = sanitize_entry_key(bib["entry_key"])[-64:]
+            the_entry.bib_type = bib["bib_type"]
+            the_entry.cats = bib["cats"]
+            the_entry.fields = bib["fields"]
+            the_entry.save()
+            response["id_translations"].append([b_id, the_entry.id])
+        else:
             inserting_obj = {
                 "entry_owner_id": request.user.id,
                 "entry_key": sanitize_entry_key(bib["entry_key"])[-64:],
@@ -97,15 +114,6 @@ def save(request):
                 the_entry = Entry(**inserting_obj)
                 the_entry.save()
                 response["id_translations"].append([b_id, the_entry.id])
-
-        else:
-            the_entry = Entry.objects.get(id=b_id)
-            the_entry.entry_key = sanitize_entry_key(bib["entry_key"])[-64:]
-            the_entry.bib_type = bib["bib_type"]
-            the_entry.cats = bib["cats"]
-            the_entry.fields = bib["fields"]
-            the_entry.save()
-            response["id_translations"].append([b_id, the_entry.id])
     return JsonResponse(response, status=status)
 
 

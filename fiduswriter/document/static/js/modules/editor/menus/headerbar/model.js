@@ -250,7 +250,8 @@ export const headerbarModel = () => ({
                     disabled: editor =>
                         editor.docInfo.access_rights !== "write" ||
                         editor.app.isOffline() ||
-                        !!editor.docInfo.token
+                        !!editor.docInfo.token ||
+                        !!(editor.e2ee && editor.e2ee.encrypted)
                 },
                 {
                     title: gettext("Create copy"),

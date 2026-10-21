@@ -1027,6 +1027,16 @@ def upload_revision(request):
     can_save = False
     document_id = request.JSON["document_id"]
     document = Document.objects.filter(id=int(document_id)).first()
+    if document and document.e2ee:
+        # Revision archives contain plaintext document state.
+        # Uploading them for an encrypted document would declassify it.
+        response["error"] = (
+            "Revisions are not available for encrypted documents"
+        )
+        return JsonResponse(response, status=403)
+    if document and not e2ee_write_guard(document):
+        response["error"] = "Document is read-only on this server"
+        return JsonResponse(response, status=403)
     if document:
         if document.owner == request.user:
             can_save = True

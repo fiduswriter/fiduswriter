@@ -20,6 +20,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
 
+from datetime import datetime
+
+from django.utils import timezone
+from django.utils.dateparse import parse_date, parse_datetime
 from document.models import (
     Document,
     AccessRight,
@@ -27,6 +31,7 @@ from document.models import (
     DocumentTemplate,
     ShareToken,
     DocumentEncryptionKey,
+    RIGHTS_CHOICES,
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
@@ -1453,6 +1458,30 @@ def get_doc_data(request):
     return JsonResponse(response, status=200)
 
 
+def parse_share_token_expiry(value):
+    """Parse a client-supplied share token expiry timestamp.
+
+    Accepts ISO 8601 datetimes (naive values are interpreted as UTC) and
+    plain ISO dates. Raises ValueError for anything else.
+    """
+    if value in (None, ""):
+        return None
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        parsed = datetime.fromtimestamp(float(value), tz=timezone.utc)
+    else:
+        parsed = parse_datetime(str(value))
+        if parsed is None:
+            parsed_date = parse_date(str(value))
+            if parsed_date is None:
+                raise ValueError(f"Invalid expires_at value: {value}")
+            parsed = datetime(
+                parsed_date.year, parsed_date.month, parsed_date.day
+            )
+    if timezone.is_naive(parsed):
+        parsed = timezone.make_aware(parsed, timezone.utc)
+    return parsed
+
+
 @login_required
 @ajax_required
 @require_POST
@@ -1471,6 +1500,35 @@ def create_share_token(request):
         return JsonResponse(
             {"error": "Document not found or access denied"}, status=403
         )
+    # Validate the requested rights before anything else.
+    valid_rights = {choice[0] for choice in RIGHTS_CHOICES}
+    if rights not in valid_rights:
+        return JsonResponse({"error": "Invalid rights"}, status=400)
+    from document.models import E2EE_ALLOWED_RIGHTS
+
+    if document.e2ee and rights not in E2EE_ALLOWED_RIGHTS:
+        return JsonResponse(
+            {
+                "error": (
+                    "Share token rights not allowed for encrypted documents"
+                )
+            },
+            status=400,
+        )
+    if expires_at is None:
+        # Share tokens never live forever by default.
+        expires_at = timezone.now() + timezone.timedelta(
+            days=getattr(settings, "SHARE_TOKEN_DEFAULT_EXPIRY_DAYS", 90)
+        )
+    else:
+        try:
+            expires_at = parse_share_token_expiry(expires_at)
+        except ValueError:
+            return JsonResponse({"error": "Invalid expires_at"}, status=400)
+        if expires_at is not None and expires_at <= timezone.now():
+            return JsonResponse(
+                {"error": "expires_at must be in the future"}, status=400
+            )
 
     share_token = ShareToken.objects.create(
         document_id=document_id,

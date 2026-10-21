@@ -27,6 +27,12 @@ def get_token_access(token_str):
     Look up a share token and return (document, rights) if valid,
     or (None, None) if the token is unknown, inactive, or expired.
     """
+    try:
+        uuid.UUID(str(token_str))
+    except (ValueError, TypeError, AttributeError):
+        # Not a UUID at all (e.g. someone replaying a guest participant
+        # id they observed) — can never be a valid token.
+        return None, None
     share_token = (
         ShareToken.objects.select_related("document")
         .filter(

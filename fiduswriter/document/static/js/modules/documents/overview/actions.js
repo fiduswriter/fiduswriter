@@ -613,7 +613,20 @@ export class DocumentOverviewActions {
             this.documentOverview.documentList,
             this.documentOverview.schema
         ).then(() => {
-            ids.forEach(id => {
+            // E2EE documents must not be copied through the unencrypted
+            // path; route those through the copy-as flow, which handles
+            // source decryption and a fresh target DEK.
+            const e2eeIds = ids.filter(id => {
+                const doc = this.documentOverview.documentList.find(
+                    entry => entry.id === id
+                )
+                return !!doc.e2ee
+            })
+            const plainIds = ids.filter(id => !e2eeIds.includes(id))
+            if (e2eeIds.length) {
+                this.copyFilesAs(e2eeIds)
+            }
+            plainIds.forEach(id => {
                 const doc = this.documentOverview.documentList.find(
                     entry => entry.id === id
                 )

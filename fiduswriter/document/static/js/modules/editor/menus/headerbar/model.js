@@ -260,6 +260,15 @@ export const headerbarModel = () => ({
                     tooltip: gettext("Create a copy of the document."),
                     order: 3,
                     action: editor => {
+                        if (editor.docInfo.e2ee) {
+                            // An E2EE document must never be copied through
+                            // the unencrypted path. Route through the
+                            // copy-as dialog, which defaults to an encrypted
+                            // copy with a fresh DEK and requires explicit
+                            // consent for plaintext.
+                            editor.mod.documentTemplate.openCreateCopyAsDialog()
+                            return
+                        }
                         const copier = new SaveCopy(
                             editor.getDoc(),
                             editor.mod.db.bibDB,
@@ -438,11 +447,28 @@ export const headerbarModel = () => ({
                                         )
 
                                     // Re-encrypt the document with the new key
-                                    await editor.e2ee.snapshotManager.reEncryptWithNewKey(
-                                        newKey,
-                                        newSaltBase64,
-                                        newIterations
-                                    )
+                                    // and re-share the wrapped document key
+                                    // with every current holder. The server
+                                    // only accepts this as one atomic re-key.
+                                    try {
+                                        await editor.e2ee.snapshotManager.reEncryptWithNewKey(
+                                            newKey,
+                                            newSaltBase64,
+                                            newIterations,
+                                            newPassword
+                                        )
+                                    } catch (error) {
+                                        addAlert(
+                                            "danger",
+                                            interpolate(
+                                                gettext(
+                                                    "The document password could not be changed: %s"
+                                                ),
+                                                [error.message]
+                                            )
+                                        )
+                                        return
+                                    }
 
                                     // Update local E2EE state
                                     editor.e2ee.encryptionSalt = newSaltBase64

@@ -1370,6 +1370,71 @@ class RevisionFileDeletionTest(TestCase):
 
 
 # ---------------------------------------------------------------------------
+# Import_create requires an explicit e2ee flag
+# ---------------------------------------------------------------------------
+
+
+class ImportCreateE2EEFlagTest(TestCase):
+    URL = "/api/document/import/create/"
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="import_user", password="pass"
+        )
+        self.client.force_login(self.user)
+
+    def _payload(self, **extra):
+        data = {
+            "import_id": "unit-import-template",
+            "template_title": "Unit Import Template",
+            "template": {},
+            "path": "copied document",
+            "document_styles": [],
+            "export_templates": [],
+        }
+        data.update(extra)
+        return data
+
+    @override_settings(E2EE_MODE="enabled")
+    def test_missing_e2ee_flag_rejected(self):
+        response = json_post(self.client, self.URL, self._payload())
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Document.objects.filter(owner=self.user).exists())
+
+    @override_settings(E2EE_MODE="enabled")
+    def test_non_boolean_e2ee_flag_rejected(self):
+        response = json_post(self.client, self.URL, self._payload(e2ee="true"))
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Document.objects.filter(owner=self.user).exists())
+
+    @override_settings(E2EE_MODE="enabled")
+    def test_explicit_plaintext_copy_allowed(self):
+        response = json_post(self.client, self.URL, self._payload(e2ee=False))
+        self.assertEqual(response.status_code, 201)
+        document = Document.objects.get(owner=self.user)
+        self.assertFalse(document.e2ee)
+
+    @override_settings(E2EE_MODE="enabled")
+    def test_explicit_e2ee_copy_requires_valid_params(self):
+        payload = self._payload(e2ee=True)
+        response = json_post(self.client, self.URL, payload)
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Document.objects.filter(owner=self.user).exists())
+        salt = base64.b64encode(b"\x01" * 16).decode("ascii")
+        response = json_post(
+            self.client,
+            self.URL,
+            self._payload(e2ee=True, e2ee_salt=salt, e2ee_iterations=600000),
+        )
+        self.assertEqual(response.status_code, 201)
+        document = Document.objects.get(owner=self.user)
+        self.assertTrue(document.e2ee)
+
+
+# ---------------------------------------------------------------------------
+# Structured audit trail
+# ---------------------------------------------------------------------------
 
 
 class AuditTrailDocumentTest(TestCase):

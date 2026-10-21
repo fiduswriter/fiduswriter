@@ -614,8 +614,17 @@ def import_create(request):
     response = {}
     status = 201
 
-    # Check E2EE mode
-    e2ee = request.JSON.get("e2ee", False)
+    # Check E2EE mode. Callers must state the encryption intent of the
+    # created document explicitly; an omitted flag must not silently
+    # Default to plaintext.
+    if "e2ee" not in request.JSON or not isinstance(
+        request.JSON.get("e2ee"), bool
+    ):
+        return JsonResponse(
+            {"error": "The e2ee flag must be provided explicitly"},
+            status=400,
+        )
+    e2ee = request.JSON["e2ee"]
     e2ee_mode = getattr(settings, "E2EE_MODE", "disabled")
     if e2ee and e2ee_mode == "disabled":
         return JsonResponse(

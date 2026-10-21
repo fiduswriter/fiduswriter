@@ -220,8 +220,8 @@ export class NativeImporter {
             path: this.requestedPath
         }
 
+        jsonData.e2ee = !!(this.e2eeOptions && this.e2eeOptions.enabled)
         if (this.e2eeOptions && this.e2eeOptions.enabled) {
-            jsonData.e2ee = true
             if (this.e2eeOptions.salt) {
                 jsonData.e2ee_salt = this.e2eeOptions.salt
             }

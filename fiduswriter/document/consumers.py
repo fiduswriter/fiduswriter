@@ -35,6 +35,9 @@ from document.helpers.token_access import (
 )
 from user.helpers import Avatars
 
+# Rights that may only touch their own comments.
+OWN_COMMENTS_ONLY_RIGHTS = ("review", "review-tracked")
+
 logger = logging.getLogger(__name__)
 
 
@@ -545,17 +548,51 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             )
 
     # Checks if the diff only contains changes to comments.
-    def only_comments(self, message):
+    # title/bibliography/image updates are sidecar changes to
+    # the document and are never comment-only. For non-E2EE documents a
+    # diff without document steps is not comment-only either.
+    def only_comments(self, message, e2ee=False):
         allowed_operations = ["addMark", "removeMark"]
-        only_comment = True
-        if "ds" in message:  # ds = document steps
-            for step in message["ds"]:
-                if not (
-                    step["stepType"] in allowed_operations
-                    and step["mark"]["type"] == "comment"
-                ):
-                    only_comment = False
-        return only_comment
+        if "ti" in message or "bu" in message or "iu" in message:
+            return False
+        if e2ee:
+            return True
+        if "ds" not in message:
+            return False
+        for step in message["ds"]:
+            if not (
+                step.get("stepType") in allowed_operations
+                and step.get("mark", {}).get("type") == "comment"
+            ):
+                return False
+        return True
+
+    def can_manage_comment(self, comment_id):
+        """review roles may only modify comments that belong
+        to themselves."""
+        my_id = str(self.user_info.user.id)
+        entry = self.session["doc"].comments.get(comment_id)
+        if entry is None:
+            return True
+        return str(entry.get("user")) == my_id
+
+    def owns_comment_updates(self, comment_updates):
+        """all comment update operations must reference only
+        the caller's own user id (top level and answers)."""
+        my_id = str(self.user_info.user.id)
+        for entry in comment_updates:
+            if not isinstance(entry, dict):
+                return False
+            if entry.get("type") == "delete":
+                if not self.can_manage_comment(entry.get("id")):
+                    return False
+                continue
+            if str(entry.get("user")) != my_id:
+                return False
+            for answer in entry.get("answers", []):
+                if str(answer.get("user")) != my_id:
+                    return False
+        return True
 
     async def handle_diff(self, message):
         pv = message["v"]
@@ -567,7 +604,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         )
         if (
             self.user_info.access_rights in COMMENT_ONLY
-            and not self.only_comments(message)
+            and not self.only_comments(message, bool(self.session["doc"].e2ee))
         ):
             # Note: For E2EE documents, the diff content is encrypted
             # (has "ep" field instead of "ds"), so only_comments() will
@@ -577,6 +614,18 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             logger.error(
                 f"Action:Received non-comment diff from comment-only "
                 f"collaborator.Discarding URL:{self.endpoint} "
+                f"User:{self.user.id} ParticipantID:{self.id}"
+            )
+            return
+        if (
+            self.user_info.access_rights in OWN_COMMENTS_ONLY_RIGHTS
+            and "cu" in message
+            and not self.owns_comment_updates(message["cu"])
+        ):
+            # review roles may only manage their own comments.
+            logger.error(
+                f"Action:Received foreign comment update from review "
+                f"collaborator. Discarding URL:{self.endpoint} "
                 f"User:{self.user.id} ParticipantID:{self.id}"
             )
             return

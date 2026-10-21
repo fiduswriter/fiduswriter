@@ -116,6 +116,24 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
 
     async def handle_message(self, message):
         if message["type"] == "system_message":
+            # Second control beside @staff_member_required on
+            # send_system_message. Only an authenticated internal relay
+            # connection or a staff user may trigger fan-out.
+            allowed = getattr(self, "is_broadcast_relay", False)
+            if not allowed:
+                user = getattr(self, "original_user", self.user)
+                allowed = bool(
+                    user
+                    and getattr(user, "is_authenticated", False)
+                    and getattr(user, "is_staff", False)
+                )
+            if not allowed:
+                logger.warning(
+                    f"Rejected system_message fan-out from unauthorized "
+                    f"source. URL:{self.endpoint} User:{self.user.id} "
+                    f"ParticipantID:{self.id}"
+                )
+                return
             for client in SystemMessageConsumer.clients:
                 await client.send_message(message)
 

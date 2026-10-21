@@ -1,23 +1,79 @@
 import atexit
+import logging
+import secrets
+
+from django.conf import settings
 
 from base.models import Presence
 from base.base_consumer import BaseWebsocketConsumer
+from base.helpers.ws import get_broadcast_secret
+
+logger = logging.getLogger(__name__)
 
 
 class SystemMessageConsumer(BaseWebsocketConsumer):
     clients = []
 
+    def _get_local_port(self):
+        server = self.scope.get("server")
+        port = None
+        if server and len(server) > 1:
+            try:
+                port = int(server[1])
+            except (TypeError, ValueError):
+                port = None
+        if port is None:
+            ports = getattr(settings, "LOCAL_PORTS", None) or getattr(
+                settings, "PORTS", []
+            )
+            if len(ports) == 1:
+                first = ports[0]
+                if isinstance(first, dict):
+                    first = first.get("internal")
+                try:
+                    port = int(first)
+                except (TypeError, ValueError, KeyError):
+                    port = None
+        return port
+
+    def _make_server_url(self):
+        """The server_url stored in Presence is built only from
+        server-known information, never from the client-supplied Host
+        header."""
+        port = self._get_local_port()
+        template = getattr(settings, "INTERNAL_WS_BROADCAST_URL", None)
+        if template:
+            return template.replace("{port}", str(port or "")).replace(
+                "{path}", self.scope["path"]
+            )
+        if port is None:
+            return None
+        return f"ws://127.0.0.1:{port}{self.scope['path']}"
+
     async def connect(self):
         if not await super().connect():
             return
-        SystemMessageConsumer.clients.append(self)
+
         headers = dict(self.scope["headers"])
         user_agent = headers.get(b"user-agent", b"").decode("utf-8")
+        self.is_broadcast_relay = False
         if user_agent == "Fidus Writer":
+            # Server-to-server relay connection (see base.views.send_to_server).
+            # It must present the service credential, otherwise it is rejected.
+            authorization = headers.get(b"authorization", b"").decode("utf-8")
+            if not secrets.compare_digest(
+                authorization, "Bearer " + get_broadcast_secret()
+            ):
+                logger.warning(
+                    "Rejected unauthenticated Fidus Writer relay connection."
+                )
+                await self.close()
+                return
+            self.is_broadcast_relay = True
+            SystemMessageConsumer.clients.append(self)
             return
-        host = headers.get(b"host", b"").decode("utf-8")
-        origin = headers.get(b"origin", b"").decode("utf-8")
-        protocol = "wss://" if origin.startswith("https") else "ws://"
+
+        SystemMessageConsumer.clients.append(self)
 
         # Only create Presence for authenticated Django users.
         # Skip for GuestUser/TokenUser/anonymous users - they cannot be assigned to ForeignKey.
@@ -27,9 +83,18 @@ class SystemMessageConsumer(BaseWebsocketConsumer):
         if isinstance(self.user, (GuestUser, TokenUser, AnonymousUser)):
             return
 
+        server_url = self._make_server_url()
+        if not server_url:
+            logger.warning(
+                "Could not determine internal broadcast address; "
+                "not storing presence for this connection. Set "
+                "INTERNAL_WS_BROADCAST_URL or LOCAL_PORTS for this instance."
+            )
+            return
+
         self.presence = await Presence.objects.acreate(
             user=self.original_user,
-            server_url=protocol + host + self.scope["path"],
+            server_url=server_url,
         )
 
     async def disconnect(self, close_code):

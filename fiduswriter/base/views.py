@@ -1,5 +1,8 @@
 from base.json_util import json
+import logging
 import random
+from urllib.parse import urlparse
+
 from httpx_ws import connect_ws
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -19,8 +22,14 @@ from allauth.socialaccount.models import SocialApp
 from user.helpers import Avatars
 from .decorators import ajax_required
 from . import get_version
-from .helpers.ws import get_url_base
+from .helpers.ws import (
+    broadcast_url_is_safe,
+    get_broadcast_secret,
+    get_url_base,
+)
 from .models import Presence
+
+logger = logging.getLogger(__name__)
 
 
 def get_frontend_settings():
@@ -200,12 +209,14 @@ def connection_info(request):
     return JsonResponse(response, status=200)
 
 
-def send_to_server(server_url, message, headers):
+def send_to_server(server_url, message, origin_header):
+    # Send only a cookie-less service credential. The client's
+    # headers (cookies, spoofed host values) are never passed on.
     with connect_ws(
         server_url,
         headers={
-            "Origin": headers["Origin"],
-            "Cookie": headers["Cookie"],
+            "Origin": origin_header,
+            "Authorization": f"Bearer {get_broadcast_secret()}",
             "User-Agent": "Fidus Writer",
         },
     ) as websocket:
@@ -214,6 +225,40 @@ def send_to_server(server_url, message, headers):
                 {"type": "system_message", "message": message, "s": 1, "c": 1}
             )
         )
+
+
+def _safe_is_same_domain(host, pattern):
+    from django.utils.http import is_same_domain
+
+    try:
+        return is_same_domain(host, pattern)
+    except ValueError:
+        return False
+
+
+def _relay_origin_header(server_url):
+    """Origin header for a relay connection handshake. Built only from
+    server-side values (stored broadcast URL / configured ALLOWED_HOSTS),
+    never from client headers. Must pass the AllowedHostsOriginValidator
+    on the receiving end."""
+    parsed = urlparse(server_url)
+    host = parsed.hostname or ""
+    patterns = []
+    for pattern in settings.ALLOWED_HOSTS or []:
+        pattern = str(pattern).lower()
+        parsed_pattern = urlparse(
+            pattern if "//" in pattern else f"//{pattern}"
+        )
+        patterns.append(parsed_pattern.hostname or pattern)
+    if "*" in patterns:
+        return f"http://{host or 'localhost'}"
+    if host and any(
+        _safe_is_same_domain(host, p.lstrip(".")) for p in patterns if p
+    ):
+        chosen = host
+    else:
+        chosen = next((p for p in patterns if p and p != "*"), "localhost")
+    return f"http://{chosen}"
 
 
 @ajax_required
@@ -231,7 +276,16 @@ def send_system_message(request):
     )
 
     for server in servers:
-        send_to_server(server, message, dict(request.headers))
+        # Validate the stored URL immediately before connecting;
+        # drop (self-heal) any row that does not point at a server-known
+        # broadcast address.
+        if not broadcast_url_is_safe(server):
+            logger.warning(
+                f"Removed presence with unsafe server_url: {server}"
+            )
+            Presence.objects.filter(server_url=server).delete()
+            continue
+        send_to_server(server, message, _relay_origin_header(server))
 
     return JsonResponse(response, status=200)
 

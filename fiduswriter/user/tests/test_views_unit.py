@@ -152,6 +152,7 @@ class GetEncryptionKeyViewTest(TestCase):
         self.assertEqual(data["encrypted_private_key"], "encpriv")
         self.assertEqual(data["encrypted_master_key"], "encmk")
         self.assertEqual(data["user_iterations"], 600000)
+        self.assertEqual(data["version"], 0)
         # user_salt is returned as base64
         decoded_salt = base64.b64decode(data["user_salt"])
         self.assertEqual(decoded_salt, salt)
@@ -210,10 +211,18 @@ class SaveEncryptionKeyViewTest(TestCase):
             self._key_data(),
         )
         # Then update
+        update = self._key_data(suffix="_updated")
+        update.update(
+            {
+                "password": "pass",
+                "expected_version": 0,
+                "old_public_key": "pubkey",
+            }
+        )
         response = json_post(
             self.client,
             "/api/user/encryption_key/save/",
-            self._key_data(suffix="_updated"),
+            update,
         )
         self.assertEqual(response.status_code, 200)
         key = UserEncryptionKey.objects.get(user=self.user)
@@ -234,6 +243,85 @@ class SaveEncryptionKeyViewTest(TestCase):
         data = response.json()
         key = UserEncryptionKey.objects.get(user=self.user)
         self.assertEqual(data["id"], key.id)
+
+    def _rotate(self, changes=None, base_changes=None):
+        """Create an initial key and attempt an authenticated rotation."""
+        json_post(
+            self.client,
+            "/api/user/encryption_key/save/",
+            self._key_data(),
+        )
+        update = self._key_data(suffix="_rotated")
+        update.update(
+            {
+                "password": "pass",
+                "expected_version": 0,
+                "old_public_key": "pubkey",
+            }
+        )
+        if base_changes:
+            update.update(base_changes)
+        if changes:
+            update.update(changes)
+        return json_post(
+            self.client,
+            "/api/user/encryption_key/save/",
+            update,
+        )
+
+    # Rotating the user's E2EE trust root requires step-up
+    # password verification, an optimistic-concurrency version, and a
+    # continuity proof of the previous public key.
+
+    def test_rotation_without_password_rejected(self):
+        response = self._rotate(changes={"password": ""})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            UserEncryptionKey.objects.get(user=self.user).public_key, "pubkey"
+        )
+
+    def test_rotation_with_wrong_password_rejected(self):
+        response = self._rotate(changes={"password": "notmypassword"})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            UserEncryptionKey.objects.get(user=self.user).public_key, "pubkey"
+        )
+
+    def test_rotation_without_expected_version_rejected(self):
+        response = self._rotate(changes={"expected_version": None})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            UserEncryptionKey.objects.get(user=self.user).public_key, "pubkey"
+        )
+
+    def test_rotation_version_conflict_rejected(self):
+        response = self._rotate(changes={"expected_version": 7})
+        self.assertEqual(response.status_code, 409)
+        key = UserEncryptionKey.objects.get(user=self.user)
+        self.assertEqual(key.public_key, "pubkey")
+        self.assertEqual(key.version, 0)
+
+    def test_rotation_without_continuity_proof_rejected(self):
+        response = self._rotate(changes={"old_public_key": "attackerpubkey"})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            UserEncryptionKey.objects.get(user=self.user).public_key, "pubkey"
+        )
+
+    def test_rotation_missing_continuity_proof_rejected(self):
+        response = self._rotate(changes={"old_public_key": None})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            UserEncryptionKey.objects.get(user=self.user).public_key, "pubkey"
+        )
+
+    def test_rotation_bumps_version(self):
+        response = self._rotate()
+        self.assertEqual(response.status_code, 200)
+        key = UserEncryptionKey.objects.get(user=self.user)
+        self.assertEqual(key.public_key, "pubkey_rotated")
+        self.assertEqual(key.version, 1)
+        self.assertEqual(response.json()["version"], 1)
 
 
 # ---------------------------------------------------------------------------

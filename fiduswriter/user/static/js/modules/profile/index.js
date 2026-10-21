@@ -288,7 +288,8 @@ export class Profile {
             const {newRecoveryKey} =
                 await PassphraseManager.recoverWithRecoveryKey(
                     recoverResult.recoveryKey,
-                    recoverResult.newPassphrase
+                    recoverResult.newPassphrase,
+                    recoverResult.accountPassword
                 )
             await new Promise(resolve => {
                 showRecoveryKeyDialog(newRecoveryKey, resolve)
@@ -316,7 +317,8 @@ export class Profile {
         try {
             await PassphraseManager.changePassphrase(
                 changeResult.oldPassphrase,
-                changeResult.newPassphrase
+                changeResult.newPassphrase,
+                changeResult.accountPassword
             )
             addAlert("success", gettext("Passphrase changed successfully."))
         } catch (e) {

@@ -322,7 +322,8 @@ export class ModCollabDoc {
                                 const {newRecoveryKey} =
                                     await PassphraseManager.recoverWithRecoveryKey(
                                         recoverResult.recoveryKey,
-                                        recoverResult.newPassphrase
+                                        recoverResult.newPassphrase,
+                                        recoverResult.accountPassword
                                     )
                                 const {showRecoveryKeyDialog} = await import(
                                     "../e2ee/passphrase-dialog.js"

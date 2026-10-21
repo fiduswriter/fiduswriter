@@ -989,6 +989,7 @@ def get_encryption_key(request):
         response["encrypted_master_key_backup"] = (
             key_record.encrypted_master_key_backup
         )
+        response["version"] = key_record.version
     else:
         response["has_key"] = False
     return JsonResponse(response, status=status)
@@ -998,41 +999,154 @@ def get_encryption_key(request):
 @ajax_required
 @require_POST
 def save_encryption_key(request):
-    """Create or update the user's encryption keys."""
+    """Create or update the user's encryption keys.
+
+    Replacing an existing key (the user's E2EE trust root) is treated as a
+    Sensitive operation. It requires step-up re-authentication
+    with the account password, an optimistic compare-and-swap against the
+    client-observed ``expected_version``, and a continuity proof echoing
+    the previous ``public_key``. This prevents a hijacked session from
+    silently swapping the key material while collaborators keep trusting
+    the old key.
+    """
     response = {}
     status = 200
     data = request.JSON
-    key_record, created = UserEncryptionKey.objects.get_or_create(
-        user=request.user,
-        defaults={
-            "public_key": data.get("public_key", ""),
-            "encrypted_private_key": data.get("encrypted_private_key", ""),
-            "encrypted_master_key": data.get("encrypted_master_key", ""),
-            "user_salt": base64.b64decode(data.get("user_salt", "")),
-            "user_iterations": data.get("user_iterations", 600000),
-            "encrypted_master_key_backup": data.get(
-                "encrypted_master_key_backup", ""
-            ),
+    existing = UserEncryptionKey.objects.filter(user=request.user).first()
+
+    if existing is None:
+        key_record, created = UserEncryptionKey.objects.get_or_create(
+            user=request.user,
+            defaults={
+                "public_key": data.get("public_key", ""),
+                "encrypted_private_key": data.get("encrypted_private_key", ""),
+                "encrypted_master_key": data.get("encrypted_master_key", ""),
+                "user_salt": base64.b64decode(data.get("user_salt", "")),
+                "user_iterations": data.get("user_iterations", 600000),
+                "encrypted_master_key_backup": data.get(
+                    "encrypted_master_key_backup", ""
+                ),
+            },
+        )
+        log_security_event(
+            "encryption_key.create",
+            "user",
+            request.user.pk,
+            actor=request.user,
+            new_state={"version": key_record.version},
+        )
+        response["id"] = key_record.id
+        response["version"] = key_record.version
+        return JsonResponse(response, status=status)
+
+    old_public_key = data.get("old_public_key")
+    if old_public_key is None or not isinstance(old_public_key, str):
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "old_public_key is required to update encryption keys.",
+            },
+            status=400,
+        )
+
+    password = data.get("password", "")
+    if not password or not request.user.check_password(password):
+        log_security_event(
+            "encryption_key.replace",
+            "user",
+            request.user.pk,
+            actor=request.user,
+            outcome="denied",
+            new_state={"reason": "password"},
+        )
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Password confirmation is required to change encryption keys.",
+            },
+            status=403,
+        )
+
+    if old_public_key != existing.public_key:
+        log_security_event(
+            "encryption_key.replace",
+            "user",
+            request.user.pk,
+            actor=request.user,
+            outcome="denied",
+            new_state={"reason": "continuity"},
+        )
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Encryption key continuity check failed.",
+            },
+            status=403,
+        )
+
+    expected_version = data.get("expected_version")
+    if isinstance(expected_version, bool) or not isinstance(
+        expected_version, int
+    ):
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "expected_version is required to update encryption keys.",
+            },
+            status=400,
+        )
+
+    update_fields = {}
+    for field in (
+        "public_key",
+        "encrypted_private_key",
+        "encrypted_master_key",
+        "encrypted_master_key_backup",
+    ):
+        if field in data and isinstance(data[field], str):
+            update_fields[field] = data[field]
+    if "user_salt" in data:
+        update_fields["user_salt"] = base64.b64decode(data["user_salt"])
+    if isinstance(data.get("user_iterations"), int) and not isinstance(
+        data.get("user_iterations"), bool
+    ):
+        update_fields["user_iterations"] = data["user_iterations"]
+    update_fields["version"] = expected_version + 1
+
+    updated = UserEncryptionKey.objects.filter(
+        pk=existing.pk, version=expected_version
+    ).update(**update_fields)
+    if not updated:
+        log_security_event(
+            "encryption_key.replace",
+            "user",
+            request.user.pk,
+            actor=request.user,
+            outcome="denied",
+            new_state={"reason": "version_conflict"},
+        )
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Encryption key version conflict. Reload the page and try again.",
+            },
+            status=409,
+        )
+
+    key_changed = data.get("public_key") != existing.public_key
+    log_security_event(
+        "encryption_key.rotate" if key_changed else "encryption_key.reencrypt",
+        "user",
+        request.user.pk,
+        actor=request.user,
+        old_state={"version": expected_version},
+        new_state={
+            "version": expected_version + 1,
+            "public_key_changed": key_changed,
         },
     )
-    if not created:
-        key_record.public_key = data.get("public_key", key_record.public_key)
-        key_record.encrypted_private_key = data.get(
-            "encrypted_private_key", key_record.encrypted_private_key
-        )
-        key_record.encrypted_master_key = data.get(
-            "encrypted_master_key", key_record.encrypted_master_key
-        )
-        if "user_salt" in data:
-            key_record.user_salt = base64.b64decode(data["user_salt"])
-        if "user_iterations" in data:
-            key_record.user_iterations = data["user_iterations"]
-        key_record.encrypted_master_key_backup = data.get(
-            "encrypted_master_key_backup",
-            key_record.encrypted_master_key_backup,
-        )
-        key_record.save()
-    response["id"] = key_record.id
+    response["id"] = existing.id
+    response["version"] = expected_version + 1
     return JsonResponse(response, status=status)
 
 

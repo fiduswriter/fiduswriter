@@ -14,6 +14,31 @@ import {getJson, post, postJson} from "../../common"
 import {E2EEKeyManager} from "./key-manager"
 import {PassphraseCrypto} from "./passphrase-crypto"
 
+/**
+ * POST the encryption-key save payload without throwing on HTTP error
+ * responses, so callers can surface the server-provided rejection message.
+ */
+async function postEncryptionKeySave(saveData) {
+    try {
+        const {json, status} = await postJson(
+            "/api/user/encryption_key/save/",
+            saveData
+        )
+        return {json, status}
+    } catch (errorResponse) {
+        let json = null
+        try {
+            if (errorResponse && typeof errorResponse.json === "function") {
+                json = await errorResponse.json()
+            }
+        } catch {
+            json = null
+        }
+        const status = (errorResponse && errorResponse.status) || 500
+        return {json, status}
+    }
+}
+
 export class PassphraseManager {
     /**
      * Check if the user has set up encryption keys on the server.
@@ -159,9 +184,15 @@ export class PassphraseManager {
      *
      * @param {string} oldPassphrase - Current passphrase
      * @param {string} newPassphrase - New passphrase
+     * @param {string} accountPassword - Account password for step-up
+     *     verification (the server refuses a key rotation without it)
      * @returns {Promise<boolean>} true if successful
      */
-    static async changePassphrase(oldPassphrase, newPassphrase) {
+    static async changePassphrase(
+        oldPassphrase,
+        newPassphrase,
+        accountPassword
+    ) {
         // 1. Fetch encrypted keys from server
         const data = await getJson("/api/user/encryption_key/")
         if (!data.has_key) {
@@ -211,14 +242,17 @@ export class PassphraseManager {
             encrypted_private_key: encryptedPrivateKey,
             user_salt: PassphraseCrypto._bytesToBase64(newSalt),
             user_iterations: 600000,
-            encrypted_master_key_backup: encryptedMasterKeyBackup
+            encrypted_master_key_backup: encryptedMasterKeyBackup,
+            password: accountPassword,
+            expected_version: data.version,
+            old_public_key: data.public_key
         }
-        const {status} = await postJson(
-            "/api/user/encryption_key/save/",
-            saveData
-        )
+        const {json, status} = await postEncryptionKeySave(saveData)
         if (status >= 400) {
-            throw new Error("Failed to save updated encryption keys")
+            throw new Error(
+                (json && json.message) ||
+                    "Failed to save updated encryption keys"
+            )
         }
 
         // 7. Update sessionStorage
@@ -232,9 +266,15 @@ export class PassphraseManager {
      *
      * @param {string} recoveryKey - The recovery key (hex string)
      * @param {string} newPassphrase - The new passphrase to set
+     * @param {string} accountPassword - Account password for step-up
+     *     verification (the server refuses a key rotation without it)
      * @returns {Promise<Object>} {newRecoveryKey: string}
      */
-    static async recoverWithRecoveryKey(recoveryKey, newPassphrase) {
+    static async recoverWithRecoveryKey(
+        recoveryKey,
+        newPassphrase,
+        accountPassword
+    ) {
         // 1. Fetch encrypted keys from server
         const data = await getJson("/api/user/encryption_key/")
         if (!data.has_key) {
@@ -299,14 +339,17 @@ export class PassphraseManager {
             encrypted_private_key: encryptedPrivateKey,
             user_salt: PassphraseCrypto._bytesToBase64(newSalt),
             user_iterations: 600000,
-            encrypted_master_key_backup: encryptedMasterKeyBackup
+            encrypted_master_key_backup: encryptedMasterKeyBackup,
+            password: accountPassword,
+            expected_version: data.version,
+            old_public_key: data.public_key
         }
-        const {status} = await postJson(
-            "/api/user/encryption_key/save/",
-            saveData
-        )
+        const {json, status} = await postEncryptionKeySave(saveData)
         if (status >= 400) {
-            throw new Error("Failed to save updated encryption keys")
+            throw new Error(
+                (json && json.message) ||
+                    "Failed to save updated encryption keys"
+            )
         }
 
         // 9. Store in sessionStorage

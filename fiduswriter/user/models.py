@@ -100,6 +100,7 @@ class UserEncryptionKey(models.Model):
     encrypted_master_key_backup = (
         models.TextField()
     )  # Base64, encrypted with RK
+    version = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

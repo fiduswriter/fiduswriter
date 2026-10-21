@@ -554,7 +554,8 @@ export class DocumentOverviewActions {
                                                 const {newRecoveryKey} =
                                                     await PassphraseManager.recoverWithRecoveryKey(
                                                         recoverResult.recoveryKey,
-                                                        recoverResult.newPassphrase
+                                                        recoverResult.newPassphrase,
+                                                        recoverResult.accountPassword
                                                     )
                                                 await new Promise(resolve =>
                                                     showRecoveryKeyDialog(

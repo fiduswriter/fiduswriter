@@ -1110,7 +1110,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             return
 
         keys = message.get("keys")
-        if not isinstance(keys, list) or not keys:
+        if not isinstance(keys, list):
             await self.reject_message(message)
             return
         for entry in keys:

@@ -303,51 +303,65 @@ export class E2EESnapshotManager {
                 `/api/document/encryption_key/holders/?document_id=${docInfo.id}`
             )
             const holders = holdersResponse.holders || []
-            let ownerWrappedWithMasterKey = false
+            // Wrap the new key for a holder with their public key.
+            const wrapWithPublicKey = async holderId => {
+                const pkJson = await getJson(
+                    `/api/user/encryption_public_key/${holderId}/`
+                )
+                if (!pkJson || !pkJson.public_key) {
+                    return null
+                }
+                const recipientPublicKey =
+                    await PassphraseCrypto.importPublicKey(pkJson.public_key)
+                const encryptedData =
+                    await PassphraseCrypto.encryptStringWithPublicKey(
+                        newPassword,
+                        recipientPublicKey
+                    )
+                return {
+                    holder_id: holderId,
+                    encrypted_key: `${encryptedData.ephemeralPublicKeyJwk}:${encryptedData.encryptedData}`,
+                    encrypted_with_master_key: false
+                }
+            }
+            let ownerWrapped = false
             for (const holder of holders) {
                 if (holder.holder_id === currentUserId) {
                     const {masterKey} =
                         await PassphraseCrypto.getKeysFromSession()
-                    if (!masterKey) {
-                        throw new Error(
-                            "Master key not available in session - cannot re-encrypt document key"
-                        )
+                    if (masterKey) {
+                        keys.push({
+                            holder_id: holder.holder_id,
+                            encrypted_key: await PassphraseCrypto.encryptString(
+                                newPassword,
+                                masterKey
+                            ),
+                            encrypted_with_master_key: true
+                        })
+                        ownerWrapped = true
+                        continue
                     }
-                    keys.push({
-                        holder_id: holder.holder_id,
-                        encrypted_key: await PassphraseCrypto.encryptString(
-                            newPassword,
-                            masterKey
-                        ),
-                        encrypted_with_master_key: true
-                    })
-                    ownerWrappedWithMasterKey = true
-                } else {
-                    if (!holder.has_public_key) {
-                        throw new Error(
-                            "One of the collaborators has not set up encryption - the document password cannot be changed without re-sharing the key"
-                        )
-                    }
-                    const pkJson = await getJson(
-                        `/api/user/encryption_public_key/${holder.holder_id}/`
+                    // Without a master key the owner receives the new key
+                    // through their own public key, like everybody else.
+                }
+                if (!holder.has_public_key) {
+                    throw new Error(
+                        "One of the collaborators has not set up encryption - the document password cannot be changed without re-sharing the key"
                     )
-                    const recipientPublicKey =
-                        await PassphraseCrypto.importPublicKey(
-                            pkJson.public_key
-                        )
-                    const encryptedData =
-                        await PassphraseCrypto.encryptStringWithPublicKey(
-                            newPassword,
-                            recipientPublicKey
-                        )
-                    keys.push({
-                        holder_id: holder.holder_id,
-                        encrypted_key: `${encryptedData.ephemeralPublicKeyJwk}:${encryptedData.encryptedData}`,
-                        encrypted_with_master_key: false
-                    })
+                }
+                const envelope = await wrapWithPublicKey(holder.holder_id)
+                if (envelope) {
+                    keys.push(envelope)
+                }
+                if (holder.holder_id === currentUserId) {
+                    ownerWrapped = true
                 }
             }
-            if (!ownerWrappedWithMasterKey) {
+            if (!ownerWrapped) {
+                // The owner must always be able to open the document, so the
+                // new key is wrapped for them even when the document has no
+                // stored key envelopes yet. Without a master key or a public
+                // key the owner keeps access through the new password.
                 const {masterKey} = await PassphraseCrypto.getKeysFromSession()
                 if (masterKey) {
                     keys.push({
@@ -358,6 +372,11 @@ export class E2EESnapshotManager {
                         ),
                         encrypted_with_master_key: true
                     })
+                } else {
+                    const envelope = await wrapWithPublicKey(currentUserId)
+                    if (envelope) {
+                        keys.push(envelope)
+                    }
                 }
             }
 

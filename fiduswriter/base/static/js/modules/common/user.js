@@ -1,3 +1,4 @@
+import {escapeText} from "./basic"
 import {post} from "./network"
 
 export const setLanguage = (_config, language) =>
@@ -36,11 +37,16 @@ const userColor = string => {
 
 /** A template for the default round avatar view. */
 export const avatarTemplate = ({user}) => {
-    const name = user.username || user.name || "A"
+    // User-controlled names and avatar URLs are escaped before
+    // being interpolated into HTML strings.
+    const rawName = user.username || user.name || "A"
+    const name = escapeText(String(rawName))
+    const firstChar = escapeText(String(rawName).slice(0, 1))
     if (user.avatar) {
-        return `<img class="fw-avatar" src="${user.avatar}" alt="${name}">`
+        const src = escapeText(String(user.avatar))
+        return `<img class="fw-avatar" src="${src}" alt="${name}">`
     } else {
-        const color = userColor(name)
-        return `<span class="fw-string-avatar" style="background-color: ${color};"><span>${name[0]}</span></span>`
+        const color = userColor(String(rawName))
+        return `<span class="fw-string-avatar" style="background-color: ${color};"><span>${firstChar}</span></span>`
     }
 }

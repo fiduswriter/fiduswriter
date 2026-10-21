@@ -1,4 +1,4 @@
-import {localizeDate, whenReady} from "../../common"
+import {addAlert, localizeDate, whenReady} from "../../common"
 import {E2EEEncryptor} from "../e2ee/encryptor"
 import {messageTemplate} from "./templates"
 
@@ -103,18 +103,23 @@ export class ModCollabChat {
     }
 
     async sendMessage(messageText) {
-        // For E2EE documents, encrypt the chat message body.
-        // The server relays encrypted messages without reading them.
-        const isE2EE =
-            this.mod.editor.e2ee &&
-            this.mod.editor.e2ee.encrypted &&
-            this.mod.editor.e2ee.key
-
-        if (isE2EE) {
+        // E2EE rooms fail closed. Without a usable document
+        // key the chat is never sent unencrypted.
+        const e2ee = this.mod.editor.e2ee
+        if (e2ee && e2ee.encrypted) {
+            if (!e2ee.key) {
+                addAlert(
+                    "danger",
+                    gettext(
+                        "This document is encrypted but no encryption key is available. The chat message was not sent."
+                    )
+                )
+                return
+            }
             try {
                 const encryptedBody = await E2EEEncryptor.encrypt(
                     messageText,
-                    this.mod.editor.e2ee.key
+                    e2ee.key
                 )
                 this.mod.editor.ws.send(() => ({
                     type: "chat",
@@ -123,19 +128,19 @@ export class ModCollabChat {
                 }))
             } catch (error) {
                 console.error("E2EE: Failed to encrypt chat message", error)
-                // Fall back to sending unencrypted (should not happen
-                // in normal operation)
-                this.mod.editor.ws.send(() => ({
-                    type: "chat",
-                    body: messageText
-                }))
+                addAlert(
+                    "danger",
+                    gettext(
+                        "The chat message could not be encrypted and was not sent."
+                    )
+                )
             }
-        } else {
-            this.mod.editor.ws.send(() => ({
-                type: "chat",
-                body: messageText
-            }))
+            return
         }
+        this.mod.editor.ws.send(() => ({
+            type: "chat",
+            body: messageText
+        }))
     }
 
     init() {

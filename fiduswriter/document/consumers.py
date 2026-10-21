@@ -635,6 +635,26 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         )
 
     async def handle_chat(self, message):
+        # in E2EE rooms chat must arrive encrypted. Fail
+        # closed: never relay a plaintext chat body.
+        session = WebsocketConsumer.get_session(self.user_info.document_id)
+        if (
+            session
+            and session["doc"].e2ee
+            and (
+                not message.get("e2ee")
+                or not isinstance(message.get("body"), str)
+            )
+        ):
+            logger.debug(
+                f"Action:Plaintext chat in E2EE room dropped (fail-closed)."
+                f" URL:{self.endpoint} User:{self.user.id}"
+                f" ParticipantID:{self.id}"
+            )
+            await self.send_message(
+                {"type": "chat_rejected", "reason": "e2ee-mode"}
+            )
+            return
         chat = {
             "id": str(uuid.uuid4()),
             "body": message["body"],

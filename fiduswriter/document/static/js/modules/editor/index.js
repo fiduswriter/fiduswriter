@@ -557,6 +557,24 @@ export class Editor {
                                 case "reject_diff":
                                     this.mod.collab.doc.rejectDiff(data["rid"])
                                     break
+                                case "e2ee_rekey_done":
+                                    if (
+                                        this.e2ee &&
+                                        this.e2ee.snapshotManager
+                                    ) {
+                                        this.e2ee.snapshotManager.handleRekeyDone(
+                                            data
+                                        )
+                                    }
+                                    break
+                                case "chat_rejected":
+                                    addAlert(
+                                        "danger",
+                                        gettext(
+                                            "The chat message was rejected by the server because this document is encrypted."
+                                        )
+                                    )
+                                    break
                                 case "patch_error":
                                     showSystemMessage(
                                         gettext(

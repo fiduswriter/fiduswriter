@@ -294,6 +294,7 @@ export class ModDocumentTemplate {
                 }
             ]
         })
+        selectTemplateDialog.open()
     }
 
     addExportTemplateMenuEntries() {

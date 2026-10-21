@@ -754,31 +754,50 @@ def import_doc(request):
     doc_id = request.JSON["id"]
     # There is a doc_id, so we overwrite an existing doc rather than
     # creating a new one.
-    document = Document.objects.get(id=int(doc_id))
+    try:
+        document = Document.objects.get(id=int(doc_id))
+    except (Document.DoesNotExist, TypeError, ValueError):
+        response["error"] = "Document not found"
+        return JsonResponse(response, status=404)
     if (
         document.owner != request.user
         and not AccessRight.objects.filter(
             document_id=doc_id,
             user=request.user,
-            rights__in=CAN_UPDATE_DOCUMENT,
+            rights__in=("write", "write-tracked"),
         ).first()
     ):
+        # Comment/review roles must not be able to replace
+        # the whole document content via import.
         response["error"] = "No access to file"
         status = 403
         return JsonResponse(response, status=status)
     document.title = request.JSON["title"]
+    payload = {}
+    for field in ("content", "comments", "bibliography"):
+        value = request.JSON.get(field)
+        if document.e2ee:
+            # For E2EE documents, content/comments/bibliography must
+            # be encrypted strings (opaque Base64 ciphertext).
+            if not isinstance(value, str):
+                response["error"] = f"Invalid value for {field}"
+                return JsonResponse(response, status=400)
+        else:
+            # Reject E2EE (string-valued) states for plaintext documents.
+            if not isinstance(value, (dict, list)):
+                response["error"] = f"Invalid value for {field}"
+                return JsonResponse(response, status=400)
+        payload[field] = value
     if document.e2ee:
-        # For E2EE documents, content/comments/bibliography are
-        # encrypted strings (opaque Base64 ciphertext). Store as-is
-        # and record that a snapshot exists at version 0.
-        document.content = request.JSON["content"]
-        document.comments = request.JSON["comments"]
-        document.bibliography = request.JSON["bibliography"]
+        # Store as-is and record that a snapshot exists at version 0.
+        document.content = payload["content"]
+        document.comments = payload["comments"]
+        document.bibliography = payload["bibliography"]
         document.e2ee_snapshot_version = 0
     else:
-        document.content = request.JSON["content"]
-        document.comments = request.JSON["comments"]
-        document.bibliography = request.JSON["bibliography"]
+        document.content = payload["content"]
+        document.comments = payload["comments"]
+        document.bibliography = payload["bibliography"]
     # document.doc_version should always be the current version, so don't
     # bother about it.
     document.save()

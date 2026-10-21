@@ -256,6 +256,165 @@ class DeleteDocViewTest(TestCase):
         )
 
 
+class ImportDocViewTest(TestCase):
+    """Replacing an existing document via import requires
+    write or write-tracked rights; comment/review roles must not be able
+    to overwrite the document content."""
+
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="importowner", password="pass"
+        )
+        self.commenter = User.objects.create_user(
+            username="importcommenter", password="pass"
+        )
+        self.reviewer = User.objects.create_user(
+            username="importreviewer", password="pass"
+        )
+        self.tracked_writer = User.objects.create_user(
+            username="importtracked", password="pass"
+        )
+        self.stranger = User.objects.create_user(
+            username="importstranger", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Import Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner,
+            template=self.template,
+            title="Original",
+            content={"type": "doc", "content": [{"type": "title"}]},
+            comments={},
+            bibliography={},
+        )
+
+    def _grant(self, user, rights):
+        AccessRight.objects.create(
+            document=self.doc, holder_obj=user, rights=rights
+        )
+
+    def _import(self, client, doc=None, title="Replaced", **overrides):
+        doc = doc or self.doc
+        data = {
+            "id": doc.id,
+            "title": title,
+            "content": {
+                "type": "doc",
+                "content": [{"type": "title", "content": [{"text": title}]}],
+            },
+            "comments": {},
+            "bibliography": {},
+        }
+        data.update(overrides)
+        return json_post(client, "/api/document/import/", data)
+
+    def test_comment_role_cannot_replace_document(self):
+        self._grant(self.commenter, "comment")
+        self.client.force_login(self.commenter)
+        response = self._import(self.client)
+        self.assertEqual(response.status_code, 403)
+        self.doc.refresh_from_db()
+        self.assertEqual(self.doc.title, "Original")
+
+    def test_review_role_cannot_replace_document(self):
+        self._grant(self.reviewer, "review")
+        self.client.force_login(self.reviewer)
+        response = self._import(self.client)
+        self.assertEqual(response.status_code, 403)
+        self.doc.refresh_from_db()
+        self.assertEqual(self.doc.title, "Original")
+
+    def test_review_tracked_role_cannot_replace_document(self):
+        # review-tracked only writes tracked changes; a whole-document
+        # replace is not allowed.
+        self._grant(self.reviewer, "review-tracked")
+        self.client.force_login(self.reviewer)
+        response = self._import(self.client)
+        self.assertEqual(response.status_code, 403)
+        self.doc.refresh_from_db()
+        self.assertEqual(self.doc.title, "Original")
+
+    def test_write_tracked_can_replace_document(self):
+        self._grant(self.tracked_writer, "write-tracked")
+        self.client.force_login(self.tracked_writer)
+        response = self._import(self.client)
+        self.assertEqual(response.status_code, 200)
+        self.doc.refresh_from_db()
+        self.assertEqual(self.doc.title, "Replaced")
+
+    def test_write_role_can_replace_document(self):
+        self._grant(self.stranger, "write")
+        self.client.force_login(self.stranger)
+        response = self._import(self.client)
+        self.assertEqual(response.status_code, 200)
+
+    def test_no_access_returns_403(self):
+        self.client.force_login(self.stranger)
+        response = self._import(self.client)
+        self.assertEqual(response.status_code, 403)
+        self.doc.refresh_from_db()
+        self.assertEqual(self.doc.title, "Original")
+
+    def test_owner_can_replace_document(self):
+        self.client.force_login(self.owner)
+        response = self._import(self.client)
+        self.assertEqual(response.status_code, 200)
+
+    def test_nonexistent_document_returns_404(self):
+        self.client.force_login(self.owner)
+        response = self._import(self.client, doc=None, id=999999)
+        self.assertEqual(response.status_code, 404)
+
+    def test_e2ee_document_rejects_plain_object_payload(self):
+        doc = Document.objects.create(
+            owner=self.owner,
+            template=self.template,
+            title="Encrypted",
+            e2ee=True,
+            e2ee_snapshot_version=0,
+        )
+        self.client.force_login(self.owner)
+        response = self._import(self.client, doc=doc)
+        self.assertEqual(response.status_code, 400)
+        doc.refresh_from_db()
+        self.assertEqual(doc.content, {})
+
+    def test_e2ee_document_accepts_string_payload(self):
+        doc = Document.objects.create(
+            owner=self.owner,
+            template=self.template,
+            title="Encrypted",
+            e2ee=True,
+        )
+        self.client.force_login(self.owner)
+        response = self._import(
+            self.client,
+            doc=doc,
+            title="ciphertext-title",
+            content="ciphertext-content",
+            comments="ciphertext-comments",
+            bibliography="ciphertext-bibliography",
+        )
+        self.assertEqual(response.status_code, 200)
+        doc.refresh_from_db()
+        self.assertEqual(doc.content, "ciphertext-content")
+        self.assertEqual(doc.e2ee_snapshot_version, 0)
+
+    def test_plaintext_document_rejects_string_payload(self):
+        self.client.force_login(self.owner)
+        response = self._import(
+            self.client,
+            content="ciphertext-content",
+            comments="ciphertext-comments",
+            bibliography="ciphertext-bibliography",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.doc.refresh_from_db()
+        self.assertEqual(self.doc.title, "Original")
+
+
 class ShareTokenViewTest(TestCase):
     def setUp(self):
         self.client = Client()

@@ -19,4 +19,4 @@ python-magic==0.4.27
 prosemirror==0.6.1
 prosemirror-rs==0.5.2
 watchdog==6.0.0
-autobahn==25.12.2
+autobahn==26.7.1

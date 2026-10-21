@@ -198,8 +198,9 @@ export class CommentEditor {
         if (newUserTags.length) {
             const comment = this.view.state.doc,
                 docId = this.mod.editor.docInfo.id
+            const e2ee = this.mod.editor.e2ee && this.mod.editor.e2ee.encrypted
             newUserTags.forEach(userId =>
-                notifyMentionedUser(docId, userId, comment)
+                notifyMentionedUser(docId, userId, comment, e2ee)
             )
         }
     }

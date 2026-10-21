@@ -1154,16 +1154,39 @@ def comment_notify(request):
     if (
         not document
         or not collaborator
-        or not comment_text
-        or not comment_html
-        or not has_doc_access(document, request.user)
         or not notification_type
+        or notification_type not in ("mention", "assign")
+        or not has_doc_access(document, request.user)
     ):
         return JsonResponse(response, status=403)
+    if not document.e2ee and (not comment_text or not comment_html):
+        return JsonResponse(response, status=403)
+    # The notifying user must hold comment-capable rights,
+    # not merely membership.
+    if document.owner_id != request.user.id:
+        commenter_right = AccessRight.objects.filter(
+            document=document, user=request.user
+        ).first()
+        if not commenter_right or commenter_right.rights in (
+            "read",
+            "read-without-comments",
+        ):
+            return JsonResponse(response, status=403)
     if not has_doc_access(document, collaborator):
         # Tagged user has no access to document and will therefore not be
         # notified
         return JsonResponse(response, status=200)
+    if document.e2ee:
+        # Never transport encrypted comment content over
+        # unencrypted email.
+        comment_text = _(
+            "This document is end-to-end encrypted. "
+            "Open it in Fidus Writer to read the comment."
+        )
+        comment_html = f"<p>{comment_text}</p>"
+    else:
+        comment_text = str(comment_text)[:2000]
+        comment_html = comment_html[:4000]
     commentator = request.user.readable_name
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email

@@ -316,7 +316,12 @@ export class ModCommentInteractions {
 
     notifyAssignedUser(user, id) {
         const comment = this.mod.store.findComment(id)
-        const {html, text} = serializeComment(comment.comment)
+        const e2ee = this.mod.editor.e2ee && this.mod.editor.e2ee.encrypted
+        // comment content is never sent to the notification
+        // endpoint for encrypted documents.
+        const {html, text} = e2ee
+            ? {html: "", text: ""}
+            : serializeComment(comment.comment)
 
         post("/api/document/comment_notify/", {
             doc_id: this.mod.editor.docInfo.id,

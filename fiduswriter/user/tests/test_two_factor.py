@@ -234,6 +234,27 @@ class TwoFactorTests(SeleniumHelper, StaticLiveServerTestCase):
 
         time.sleep(1)
 
+        # Step-up re-authentication: enter account password and a fresh
+        # TOTP code. Wait for the next time step to avoid the server-side
+        # replay guard (codes at or before the last verified step are
+        # rejected).
+        seconds_into_window = int(datetime.datetime.now().timestamp()) % 30
+        time.sleep(30 - seconds_into_window + 1)
+
+        password_input = WebDriverWait(self.drivers[0], self.wait_time).until(
+            EC.presence_of_element_located(
+                (By.ID, "two-factor-disable-password")
+            )
+        )
+        password_input.clear()
+        password_input.send_keys("testpass123")
+
+        disable_code_input = self.drivers[0].find_element(
+            By.ID, "two-factor-disable-code"
+        )
+        disable_code_input.clear()
+        disable_code_input.send_keys(totp.now())
+
         # Click confirm disable button in dialog (also by text content)
         disable_confirm_btn = WebDriverWait(
             self.drivers[0], self.wait_time

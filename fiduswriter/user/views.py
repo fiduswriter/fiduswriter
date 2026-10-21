@@ -1,20 +1,27 @@
 from base.json_util import json
 import base64
+from importlib import import_module
 
 from django.http import JsonResponse, HttpRequest
 from django.db import IntegrityError
 from django.db.models import Q
-from django.contrib.auth import logout, update_session_auth_hash
+from django.contrib.auth import (
+    logout,
+    update_session_auth_hash,
+    SESSION_KEY,
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
 from django.conf import settings
 from django.shortcuts import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model
+from django.contrib.sessions.models import Session
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.utils.translation import gettext as _
+from django.utils import timezone
 
 from django_otp import user_has_device
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -826,19 +833,17 @@ def two_factor_verify(request):
 def two_factor_disable(request):
     """
     Disable 2FA for the user by removing all TOTP devices.
+    Requires step-up re-authentication: the account password plus a valid
+    Token from a confirmed TOTP device. After disabling, all
+    other sessions of the user are expired.
     """
+    password = request.JSON.get("password", "")
+    code = str(request.JSON.get("code", "")).strip()
 
-    # Delete all TOTP devices for this user
-    deleted_count = TOTPDevice.objects.filter(user=request.user).delete()[0]
-
-    if deleted_count > 0:
-        return JsonResponse(
-            {
-                "status": "success",
-                "message": "Two-factor authentication has been disabled.",
-            }
-        )
-    else:
+    device = TOTPDevice.objects.filter(
+        user=request.user, confirmed=True
+    ).first()
+    if device is None:
         return JsonResponse(
             {
                 "status": "error",
@@ -846,6 +851,59 @@ def two_factor_disable(request):
             },
             status=400,
         )
+
+    if not password or not request.user.check_password(password):
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Password or code is incorrect.",
+            },
+            status=403,
+        )
+
+    if not code or not device.verify_token(code):
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Password or code is incorrect.",
+            },
+            status=403,
+        )
+
+    # Delete all TOTP devices for this user
+    TOTPDevice.objects.filter(user=request.user).delete()
+
+    # Expire all sessions of this user except the current one
+    current_session_key = (
+        request.session.session_key
+        if hasattr(request, "session") and request.session.session_key
+        else None
+    )
+    engine = import_module(settings.SESSION_ENGINE)
+    for store in Session.objects.filter(expire_date__gte=timezone.now()).only(
+        "session_key", "session_data"
+    ):
+        if store.session_key == current_session_key:
+            continue
+        candidate = engine.SessionStore(store.session_key)
+        try:
+            session_data = candidate.decode(store.session_data)
+        except Exception:
+            continue
+        session_user_id = (
+            session_data.get(SESSION_KEY) if session_data else None
+        )
+        if session_user_id is not None and str(session_user_id) == str(
+            request.user.pk
+        ):
+            Session.objects.filter(session_key=store.session_key).delete()
+
+    return JsonResponse(
+        {
+            "status": "success",
+            "message": "Two-factor authentication has been disabled.",
+        }
+    )
 
 
 @login_required

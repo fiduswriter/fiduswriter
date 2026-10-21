@@ -2,7 +2,16 @@
 
 import json
 import base64
+import hashlib
+import hmac
+import struct
+import time
+from importlib import import_module
+
+from django.conf import settings
+from django.contrib.auth import SESSION_KEY
 from django.test import TestCase, Client
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from user.models import User, UserEncryptionKey, UserInvite
 from user.views import is_email, invites_connect
@@ -464,3 +473,128 @@ class InvitesConnectTest(TestCase):
         )
         result = invites_connect(self.invitee)
         self.assertFalse(result)
+
+
+# ---------------------------------------------------------------------------
+# Two_factor_disable step-up re-authentication
+# ---------------------------------------------------------------------------
+
+
+class TwoFactorDisableStepUpTest(TestCase):
+    DISABLE_URL = "/api/user/two-factor/disable/"
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="2fa_user", password="topsecret"
+        )
+        self.client.force_login(self.user)
+        self.client.session.save()
+        self.device = TOTPDevice.objects.create(
+            user=self.user,
+            name="test device",
+            confirmed=True,
+            step=30,
+            t0=0,
+            digits=6,
+        )
+
+    def _totp_now(self):
+        """RFC 6238 token computed from the unix epoch.
+
+        Deliberately avoids pyotp.TOTP.now(), which derives the counter via
+        a naive-datetime/``time.mktime`` round trip that is not reliable
+        when the environment's TZ state is inconsistent with the C library's
+        cached timezone. This matches the epoch arithmetic django_otp uses
+        server-side.
+        """
+        key = self.device.bin_key
+        counter = int(time.time()) // self.device.step
+        digest = hmac.new(
+            key, struct.pack(">Q", counter), hashlib.sha1
+        ).digest()
+        offset = digest[-1] & 0xF
+        code = (
+            (digest[offset] & 0x7F) << 24
+            | digest[offset + 1] << 16
+            | digest[offset + 2] << 8
+            | digest[offset + 3]
+        ) % 10**self.device.digits
+        return "%0*d" % (self.device.digits, code)
+
+    def _create_other_session(self):
+        engine = import_module(settings.SESSION_ENGINE)
+        store = engine.SessionStore()
+        store[SESSION_KEY] = str(self.user.pk)
+        store.save()
+        return store.session_key
+
+    def test_disable_without_credentials_rejected(self):
+        response = json_post(self.client, self.DISABLE_URL, {})
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(
+            TOTPDevice.objects.filter(user=self.user, confirmed=True).exists()
+        )
+
+    def test_disable_with_wrong_password_rejected(self):
+        response = json_post(
+            self.client,
+            self.DISABLE_URL,
+            {"password": "wrong", "code": self._totp_now()},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(
+            TOTPDevice.objects.filter(user=self.user, confirmed=True).exists()
+        )
+
+    def test_disable_with_wrong_code_rejected(self):
+        response = json_post(
+            self.client,
+            self.DISABLE_URL,
+            {"password": "topsecret", "code": "000000"},
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(
+            TOTPDevice.objects.filter(user=self.user, confirmed=True).exists()
+        )
+
+    def test_disable_without_code_rejected(self):
+        response = json_post(
+            self.client, self.DISABLE_URL, {"password": "topsecret"}
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(
+            TOTPDevice.objects.filter(user=self.user, confirmed=True).exists()
+        )
+
+    def test_disable_with_password_and_code_succeeds(self):
+        key = self._create_other_session()
+        response = json_post(
+            self.client,
+            self.DISABLE_URL,
+            {"password": "topsecret", "code": self._totp_now()},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["status"], "success")
+        self.assertFalse(TOTPDevice.objects.filter(user=self.user).exists())
+        from django.contrib.sessions.models import Session
+
+        self.assertFalse(Session.objects.filter(session_key=key).exists())
+
+    def test_disable_expires_other_sessions(self):
+        other_session_key = self._create_other_session()
+        current_session_key = self.client.session.session_key
+        response = json_post(
+            self.client,
+            self.DISABLE_URL,
+            {"password": "topsecret", "code": self._totp_now()},
+        )
+        self.assertEqual(response.status_code, 200)
+        from django.contrib.sessions.models import Session
+
+        self.assertFalse(
+            Session.objects.filter(session_key=other_session_key).exists()
+        )
+        self.assertTrue(
+            Session.objects.filter(session_key=current_session_key).exists()
+        )

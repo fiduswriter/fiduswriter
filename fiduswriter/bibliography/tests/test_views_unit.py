@@ -395,3 +395,42 @@ class BibSaveCategoryViewTest(TestCase):
         self.assertFalse(
             EntryCategory.objects.filter(id=cat_delete.id).exists()
         )
+
+    def test_cannot_rename_another_users_category(self):
+        """Passing another user's category id must not rename it."""
+        other = User.objects.create_user(
+            username="bibcatother", password="pass"
+        )
+        other_cat = EntryCategory.objects.create(
+            category_title="Victim", category_owner=other
+        )
+        response = json_post(
+            self.client,
+            "/api/bibliography/save_category/",
+            {"ids": [other_cat.id], "titles": ["Hijacked"]},
+        )
+        other_cat.refresh_from_db()
+        self.assertEqual(other_cat.category_title, "Victim")
+        self.assertEqual(other_cat.category_owner, other)
+        self.assertTrue(response.status_code in (201, 400, 404))
+
+    def test_delete_category_only_deletes_own(self):
+        """delete_category used entry_owner (FieldError bug) — must filter
+        on category_owner and only delete the requester's categories."""
+        other = User.objects.create_user(
+            username="bibcatdeleteother", password="pass"
+        )
+        own_cat = EntryCategory.objects.create(
+            category_title="Own", category_owner=self.user
+        )
+        other_cat = EntryCategory.objects.create(
+            category_title="Other", category_owner=other
+        )
+        response = json_post(
+            self.client,
+            "/api/bibliography/delete_category/",
+            {"ids": [own_cat.id, other_cat.id]},
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertFalse(EntryCategory.objects.filter(id=own_cat.id).exists())
+        self.assertTrue(EntryCategory.objects.filter(id=other_cat.id).exists())

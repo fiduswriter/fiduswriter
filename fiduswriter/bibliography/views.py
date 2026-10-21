@@ -155,9 +155,17 @@ def save_category(request):
                 category_title=the_title, category_owner=request.user
             )
         else:
-            # if the category already exists, update the title
-            the_cat = EntryCategory.objects.get(pk=the_id)
-            the_cat.category_title = the_title
+            # If the category already exists, update the title — but only
+            # if it belongs to the current user.
+            the_cat = EntryCategory.objects.filter(
+                pk=the_id, category_owner=request.user
+            ).first()
+            if not the_cat:
+                the_cat = EntryCategory(
+                    category_title=the_title, category_owner=request.user
+                )
+            else:
+                the_cat.category_title = the_title
         the_cat.save()
         response["entries"].append(
             {"id": the_cat.id, "category_title": the_cat.category_title}
@@ -175,5 +183,7 @@ def delete_category(request):
     response = {}
     status = 201
     ids = request.JSON["ids"]
-    EntryCategory.objects.filter(pk__in=ids, entry_owner=request.user).delete()
+    EntryCategory.objects.filter(
+        pk__in=ids, category_owner=request.user
+    ).delete()
     return JsonResponse(response, status=status)

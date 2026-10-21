@@ -32,6 +32,7 @@ from base.mixins import JsonFormMixin
 from base.views import apply_language_cookie
 from .forms import UserForm, FidusLoginForm
 from document.models import AccessRight
+from document.models import DocumentEncryptionKey
 from .models import UserInvite, UserEncryptionKey
 from .helpers import Avatars
 from . import emails
@@ -568,6 +569,15 @@ def delete_contacts(request):
             # Revoke all permissions received from this user
             AccessRight.objects.filter(
                 user=request.user, document__owner_id=former_contact["id"]
+            ).delete()
+            # Revoked holders must not keep the wrapped key.
+            DocumentEncryptionKey.objects.filter(
+                document__owner=request.user,
+                holder_id=former_contact["id"],
+            ).delete()
+            DocumentEncryptionKey.objects.filter(
+                holder=request.user,
+                document__owner_id=former_contact["id"],
             ).delete()
             # Remove the user from the contacts
             request.user.contacts.remove(

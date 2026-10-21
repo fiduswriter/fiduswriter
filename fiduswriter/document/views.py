@@ -295,6 +295,10 @@ def _handle_automatic_key_sharing(document, user):
 @ajax_required
 @require_POST
 @transaction.atomic
+def holder_type_id_matches_user(holder_type):
+    return holder_type.app_label == "user" and holder_type.model == "user"
+
+
 def notify_access_change(document_id):
     """Tell live WebSocket participants of a document that their
     access rights were changed so they (re-)evaluate immediately."""
@@ -354,11 +358,20 @@ def save_access_rights(request):
             if right["rights"] == "delete":
                 # Status 'delete' means the access right is marked for
                 # deletion.
-                AccessRight.objects.filter(
+                deleted, _count = AccessRight.objects.filter(
                     document_id=doc_id,
                     holder_id=right["holder"]["id"],
                     holder_type=holder_type,
                 ).delete()
+                if deleted and _count:
+                    changed = True
+                # A revoked holder must not keep receiving the
+                # wrapped document key.
+                if holder_type_id_matches_user(holder_type):
+                    DocumentEncryptionKey.objects.filter(
+                        document_id=doc_id,
+                        holder_id=right["holder"]["id"],
+                    ).delete()
             else:
                 owner = request.user.readable_name
                 link = HttpRequest.build_absolute_uri(
@@ -2190,8 +2203,21 @@ def get_user_document_encryption_keys(request):
         holder=request.user
     ).select_related("document")
 
+    # Only hand out DEKs for documents the holder currently
+    # has access to (owner or a live AccessRight) — same predicate as
+    # the single-document getter. Revoked grants must not keep
+    # receiving the wrapped key.
+    allowed_document_ids = set(
+        Document.objects.filter(
+            Q(owner=request.user) | Q(accessright__user=request.user),
+            pk__in=[dek.document_id for dek in dek_records],
+        ).values_list("id", flat=True)
+    )
+
     response["keys"] = []
     for dek in dek_records:
+        if dek.document_id not in allowed_document_ids:
+            continue
         response["keys"].append(
             {
                 "id": dek.id,

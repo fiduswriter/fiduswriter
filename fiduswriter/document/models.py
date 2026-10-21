@@ -293,7 +293,10 @@ RIGHTS_CHOICES = (
     # Has no access to revisions.
 )
 
-E2EE_ALLOWED_RIGHTS = ["write", "read-without-comments", "read"]
+# "read-without-comments" is not offerable on E2EE documents —
+# comments are part of the encrypted state and any permission that can
+# decrypt the document can read them.
+E2EE_ALLOWED_RIGHTS = ["write", "read"]
 
 # Editor and Reviewer can only comment and not edit document
 COMMENT_ONLY = ("review", "comment")

@@ -286,6 +286,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             f"Action:Participant ID Assigned. URL:{self.endpoint} "
             f"User:{self.user.id} ParticipantID:{self.id}"
         )
+        await self.join_document_group()
         await self.send_message({"type": "subscribed"})
         if connection_count < 1:
             # Send session_id so the client knows its participant ID
@@ -401,6 +402,106 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 {"type": "reject_diff", "rid": message["rid"]}
             )
 
+    DOCUMENT_GROUP_PREFIX = "document_"
+
+    async def _document_group(self):
+        return f"{self.DOCUMENT_GROUP_PREFIX}{self.user_info.document_id}"
+
+    async def _channel_layer(self):
+        layer = getattr(self, "channel_layer", None)
+        if layer is None:
+            from channels.layers import get_channel_layer
+
+            layer = get_channel_layer()
+        return layer
+
+    async def join_document_group(self):
+        try:
+            layer = await self._channel_layer()
+            if layer is None:
+                return
+            await layer.group_add(
+                await self._document_group(), self.channel_name
+            )
+        except Exception:
+            pass
+
+    async def leave_document_group(self):
+        try:
+            layer = await self._channel_layer()
+            if layer is None:
+                return
+            await layer.group_discard(
+                await self._document_group(), self.channel_name
+            )
+        except Exception:
+            pass
+
+    async def access_changed(self, event=None):
+        """re-resolve authorization when access rights or share
+        tokens changed (triggered by group message from views) and close
+        the connection if it no longer authorizes."""
+        if not hasattr(self, "user_info"):
+            return
+        still_ok = await self.refresh_authorization()
+        if not still_ok:
+            await self.access_denied()
+
+    async def refresh_authorization(self):
+        """Re-read current rights from the database. Returns False when
+        access was revoked."""
+        if not hasattr(self, "user_info"):
+            return False
+        user = self.user
+        document_id = self.user_info.document_id
+        if isinstance(user, GuestUser):
+            doc, rights = await sync_to_async(get_token_access)(user.token)
+            if not doc or doc.id != document_id:
+                return False
+            self.user_info.access_rights = rights
+            user.token_rights = rights
+            return True
+        if not user.is_authenticated:
+            return False
+        token_rights = None
+        if isinstance(user, TokenUser):
+            doc, token_rights = await sync_to_async(get_token_access)(
+                user.token
+            )
+            if not doc or doc.id != document_id:
+                # Token revoked; fall back to direct rights below if any.
+                token_rights = None
+        if getattr(self.user_info, "is_owner", False):
+            return True
+        access_right = await AccessRight.objects.filter(
+            document_id=document_id, user=user
+        ).afirst()
+        if not access_right:
+            # Direct access revoked. If the session came in via a share
+            # token, the token check above already closed the connection
+            # when the token was also revoked.
+            if token_rights is None:
+                return False
+            self.user_info.access_rights = token_rights
+            return True
+        rights = access_right.rights
+        if token_rights:
+            order = [
+                "write",
+                "write-tracked",
+                "comment",
+                "review-tracked",
+                "review",
+                "read",
+                "read-without-comments",
+            ]
+            if order.index(token_rights) < order.index(rights):
+                rights = token_rights
+        self.user_info.access_rights = rights
+        self.user_info.path_object = access_right
+        self.user_info.path = access_right.path
+        return True
+
     async def handle_message(self, message):
         if not WebsocketConsumer.get_session(self.user_info.document_id):
             logger.debug(
@@ -409,6 +510,25 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 f"ParticipantID:{self.id}"
             )
             return
+        mutating_types = (
+            "diff",
+            "chat",
+            "e2ee_snapshot",
+            "e2ee_rekey",
+            "participant_update",
+            "path_change",
+        )
+        if message["type"] in mutating_types:
+            # never act on stale rights. Re-resolve current
+            # authorization before processing a mutating frame.
+            if not await self.refresh_authorization():
+                logger.debug(
+                    f"Action:Authorization revoked during session. "
+                    f"URL:{self.endpoint} User:{self.user.id} "
+                    f"ParticipantID:{self.id}"
+                )
+                await self.access_denied()
+                return
         if (
             message["type"] == "participant_update"
             and await self.can_communicate()
@@ -1070,6 +1190,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         return self.user_info.access_rights in CAN_COMMUNICATE
 
     async def disconnect(self, code):
+        await self.leave_document_group()
         if (
             hasattr(self, "endpoint")
             and hasattr(self, "user")
@@ -1166,7 +1287,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
 
             # Get all avatars in parallel
             if avatar_tasks:
-                avatar_urls = await asyncio.gather(*avatar_tasks)
+                avatar_urls = await asyncio.gather(
+                    *avatar_tasks, return_exceptions=True
+                )
+                avatar_urls = [
+                    None if isinstance(url, BaseException) else url
+                    for url in avatar_urls
+                ]
 
                 # Now build the participant list with avatars
                 for i, data in enumerate(participants_data):

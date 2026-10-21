@@ -1,5 +1,6 @@
 import time
 import os
+import logging
 import bleach
 import base64
 from copy import deepcopy
@@ -21,6 +22,9 @@ from django.contrib.auth import get_user_model
 
 
 from datetime import datetime
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
@@ -55,6 +59,8 @@ from document.helpers.e2ee_guards import (
     validate_e2ee_params,
     e2ee_write_guard,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -271,6 +277,26 @@ def _handle_automatic_key_sharing(document, user):
 @ajax_required
 @require_POST
 @transaction.atomic
+def notify_access_change(document_id):
+    """Tell live WebSocket participants of a document that their
+    access rights were changed so they (re-)evaluate immediately."""
+    try:
+        channel_layer = get_channel_layer()
+    except Exception:
+        channel_layer = None
+    if not channel_layer:
+        return
+    try:
+        async_to_sync(channel_layer.group_send)(
+            f"document_{document_id}",
+            {"type": "access.changed"},
+        )
+    except Exception:
+        logger.warning(
+            f"Could not publish access change for document {document_id}"
+        )
+
+
 def save_access_rights(request):
     User = get_user_model()
     response = {}
@@ -280,6 +306,7 @@ def save_access_rights(request):
         doc = Document.objects.filter(pk=doc_id, owner=request.user).first()
         if not doc:
             continue
+        changed = False
         from document.models import E2EE_ALLOWED_RIGHTS
 
         for right in rights:
@@ -365,12 +392,15 @@ def save_access_rights(request):
                             False,
                         )
                 access_right.save()
+                changed = True
 
                 # For new access rights on E2EE documents with User holders,
                 # attempt automatic key sharing if user has passphrase keys
                 if right["holder"]["type"] == "user" and doc.e2ee:
                     _handle_automatic_key_sharing(doc, holder)
 
+        if changed:
+            notify_access_change(doc_id)
     status = 201
     return JsonResponse(response, status=status)
 

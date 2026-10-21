@@ -17,6 +17,33 @@ PORTS = [
 # For multi-server setups, set this to only the port(s) served locally.
 # LOCAL_PORTS = [8000]
 
+# Channel layer used for in-process pub/sub (group messages
+# that revoke access for live WebSocket participants). InMemoryChannelLayer
+# only works for a single process. For multi-process or multi-server
+# deployments replace this with e.g. RedisChannelLayer in configuration.py.
+try:
+    CHANNEL_LAYERS
+except NameError:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
+    }
+
+# The address used for the WebSocket connections the server instances open
+# to each other to relay system messages. This is only ever built from
+# server-side information, never from client-supplied Host headers.
+# By default the relay stays on the local machine at the internal port of
+# the connection. Set this (e.g. "ws://ws.internal.example.net/{port}/ws")
+# for multi-machine setups. "{port}" is replaced by the internal port.
+INTERNAL_WS_BROADCAST_URL = None
+
+# Shared secret used to authenticate server-to-server system message
+# relays. Leave empty to use a random per-process secret, which only works
+# for relaying inside one process. For multi-process/multi-server setups,
+# set the SAME value on all instances.
+WS_BROADCAST_SHARED_SECRET = ""
+
 # Allow the server to listen to all network interfaces (0.0.0.0) instead of just localhost
 # SECURITY WARNING: Setting this to True in production environments could expose your server
 LISTEN_TO_ALL_INTERFACES = False

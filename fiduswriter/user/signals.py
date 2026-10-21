@@ -7,8 +7,14 @@ from django.dispatch import receiver
 from django.conf import settings
 
 from avatar.models import Avatar
-from allauth.account.signals import user_signed_up, email_confirmed
+from allauth.account.signals import (
+    user_signed_up,
+    email_confirmed,
+    password_changed,
+    password_reset,
+)
 
+from base.helpers.audit import log_security_event
 from user.views import invites_connect
 
 # This file is split of from django-allauth and is licensed as:
@@ -88,3 +94,24 @@ def on_user_signed_up(sender, request, user, *args, **kwargs):
 @receiver(email_confirmed)
 def on_email_confirmed(sender, request, email_address, *args, **kwargs):
     invites_connect(email_address.user)
+
+
+@receiver(password_changed)
+def on_password_changed(sender, request, user, *args, **kwargs):
+    log_security_event(
+        "password.change",
+        "user",
+        user.pk,
+        actor=user,
+    )
+
+
+@receiver(password_reset)
+def on_password_reset(sender, request, user=None, *args, **kwargs):
+    log_security_event(
+        "password.reset",
+        "user",
+        user.pk if user else "",
+        actor=user,
+        outcome="success" if user else "error",
+    )

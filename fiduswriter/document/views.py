@@ -47,6 +47,7 @@ from document.helpers.serializers import PythonWithURLSerializer
 from bibliography.views import serializer
 from style.models import DocumentStyle, DocumentStyleFile, ExportTemplate
 from base.decorators import ajax_required
+from base.helpers.audit import log_security_event
 from base.helpers.ws import get_url_base
 from user.models import UserInvite
 from . import emails
@@ -297,6 +298,19 @@ def notify_access_change(document_id):
         )
 
 
+def _access_right_snapshot(document_id):
+    return [
+        {
+            "holder_type": access_right.holder_type.model,
+            "holder_id": access_right.holder_id,
+            "rights": access_right.rights,
+        }
+        for access_right in AccessRight.objects.filter(
+            document_id=document_id
+        ).select_related("holder_type")
+    ]
+
+
 def save_access_rights(request):
     User = get_user_model()
     response = {}
@@ -306,6 +320,7 @@ def save_access_rights(request):
         doc = Document.objects.filter(pk=doc_id, owner=request.user).first()
         if not doc:
             continue
+        old_snapshot = _access_right_snapshot(doc_id)
         changed = False
         from document.models import E2EE_ALLOWED_RIGHTS
 
@@ -400,7 +415,16 @@ def save_access_rights(request):
                     _handle_automatic_key_sharing(doc, holder)
 
         if changed:
+            log_security_event(
+                "access_rights.change",
+                "document",
+                doc_id,
+                actor=request.user,
+                old_state=old_snapshot,
+                new_state=_access_right_snapshot(doc_id),
+            )
             notify_access_change(doc_id)
+
     status = 201
     return JsonResponse(response, status=status)
 
@@ -1036,7 +1060,23 @@ def delete_revision(request):
         document = revision.document
         if document.owner == request.user:
             status = 200
+            revision_document_id = document.id
             revision.delete()
+            log_security_event(
+                "revision.delete",
+                "document",
+                revision_document_id,
+                actor=request.user,
+                new_state={"revision_id": revision_id},
+            )
+        else:
+            log_security_event(
+                "revision.delete",
+                "document_revision",
+                revision_id,
+                actor=request.user,
+                outcome="denied",
+            )
     return JsonResponse(response, status=status)
 
 
@@ -1607,6 +1647,21 @@ def create_share_token(request):
         note=note,
         created_by=request.user,
     )
+    log_security_event(
+        "share_token.create",
+        "document",
+        document_id,
+        actor=request.user,
+        new_state={
+            "token_id": share_token.id,
+            "rights": share_token.rights,
+            "expires_at": (
+                share_token.expires_at.isoformat()
+                if share_token.expires_at
+                else None
+            ),
+        },
+    )
     share_url = request.build_absolute_uri(f"/share/{share_token.token}/")
     response["token"] = str(share_token.token)
     response["share_url"] = share_url
@@ -1664,8 +1719,26 @@ def revoke_share_token(request):
     if token:
         token.is_active = False
         token.save()
+        log_security_event(
+            "share_token.revoke",
+            "document",
+            token.document_id,
+            actor=request.user,
+            new_state={
+                "token_id": token.id,
+                "rights": token.rights,
+            },
+        )
+        notify_access_change(token.document_id)
         response["success"] = True
     else:
+        log_security_event(
+            "share_token.revoke",
+            "share_token",
+            token_id,
+            actor=request.user,
+            outcome="denied",
+        )
         response["success"] = False
     return JsonResponse(response, status=200)
 

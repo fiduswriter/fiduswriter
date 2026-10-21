@@ -15,6 +15,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from user.models import User, UserEncryptionKey, UserInvite
 from user.views import is_email, invites_connect
+from base.models import AuditLog
 
 
 AJAX_HEADERS = {"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
@@ -598,3 +599,105 @@ class TwoFactorDisableStepUpTest(TestCase):
         self.assertTrue(
             Session.objects.filter(session_key=current_session_key).exists()
         )
+
+
+# ---------------------------------------------------------------------------
+# Structured audit trail for account-critical actions
+# ---------------------------------------------------------------------------
+
+
+class AuditTrailUserTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="audit_user", password="topsecret"
+        )
+        self.client.force_login(self.user)
+        TOTPDevice.objects.create(
+            user=self.user,
+            name="test",
+            confirmed=True,
+            step=30,
+            t0=0,
+            digits=6,
+        )
+
+    def test_two_factor_disable_denial_logged(self):
+        self.client.post(
+            "/api/user/two-factor/disable/",
+            json.dumps({"password": "wrong", "code": "123456"}),
+            content_type="application/json",
+            **AJAX_HEADERS,
+        )
+        self.assertTrue(
+            AuditLog.objects.filter(
+                action="two_factor.disable",
+                target_type="user",
+                target_id=str(self.user.pk),
+                outcome="denied",
+                new_state__reason="password",
+            ).exists()
+        )
+
+    def test_encryption_key_denials_logged(self):
+        UserEncryptionKey.objects.create(
+            user=self.user,
+            public_key="pubkey",
+            encrypted_private_key="encpriv",
+            encrypted_master_key="encmk",
+            user_salt=b"\x12" * 16,
+            user_iterations=600000,
+            encrypted_master_key_backup="backup",
+        )
+        json_post(
+            self.client,
+            "/api/user/encryption_key/save/",
+            {
+                "public_key": "evil",
+                "password": "nope",
+                "expected_version": 0,
+                "old_public_key": "pubkey",
+            },
+        )
+        self.assertTrue(
+            AuditLog.objects.filter(
+                action="encryption_key.replace",
+                outcome="denied",
+                new_state__reason="password",
+            ).exists()
+        )
+
+    def test_key_rotation_success_logged(self):
+        UserEncryptionKey.objects.create(
+            user=self.user,
+            public_key="pubkey",
+            encrypted_private_key="encpriv",
+            encrypted_master_key="encmk",
+            user_salt=b"\x12" * 16,
+            user_iterations=600000,
+            encrypted_master_key_backup="backup",
+        )
+        json_post(
+            self.client,
+            "/api/user/encryption_key/save/",
+            {
+                "public_key": "pubkey2",
+                "encrypted_private_key": "encpriv2",
+                "encrypted_master_key": "encmk2",
+                "user_salt": base64.b64encode(b"\x34" * 16).decode("ascii"),
+                "user_iterations": 600000,
+                "encrypted_master_key_backup": "backup2",
+                "password": "topsecret",
+                "expected_version": 0,
+                "old_public_key": "pubkey",
+            },
+        )
+        entry = AuditLog.objects.filter(
+            action="encryption_key.rotate",
+            target_type="user",
+        ).first()
+        self.assertIsNotNone(entry)
+        self.assertTrue(entry.new_state["public_key_changed"])
+        # key material itself must never be recorded
+        self.assertNotIn("encpriv2", json.dumps(entry.new_state))
+        self.assertNotIn("topsecret", json.dumps(entry.new_state))

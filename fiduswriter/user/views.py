@@ -27,6 +27,7 @@ from django_otp import user_has_device
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from base.decorators import ajax_required
+from base.helpers.audit import log_security_event
 from base.mixins import JsonFormMixin
 from base.views import apply_language_cookie
 from .forms import UserForm, FidusLoginForm
@@ -268,8 +269,23 @@ def delete_user(request):
     if not user.check_password(password):
         status = 401
     elif user.is_staff:
+        log_security_event(
+            "account.delete",
+            "user",
+            user.pk,
+            actor=user,
+            outcome="denied",
+            new_state={"reason": "staff"},
+        )
         status = 403
     else:
+        log_security_event(
+            "account.delete",
+            "user",
+            user.pk,
+            actor=user,
+            actor_label=user.username,
+        )
         logout(request)
         user.delete()
         status = 200
@@ -833,6 +849,7 @@ def two_factor_verify(request):
 def two_factor_disable(request):
     """
     Disable 2FA for the user by removing all TOTP devices.
+
     Requires step-up re-authentication: the account password plus a valid
     Token from a confirmed TOTP device. After disabling, all
     other sessions of the user are expired.
@@ -853,6 +870,14 @@ def two_factor_disable(request):
         )
 
     if not password or not request.user.check_password(password):
+        log_security_event(
+            "two_factor.disable",
+            "user",
+            request.user.pk,
+            actor=request.user,
+            outcome="denied",
+            new_state={"reason": "password"},
+        )
         return JsonResponse(
             {
                 "status": "error",
@@ -862,6 +887,14 @@ def two_factor_disable(request):
         )
 
     if not code or not device.verify_token(code):
+        log_security_event(
+            "two_factor.disable",
+            "user",
+            request.user.pk,
+            actor=request.user,
+            outcome="denied",
+            new_state={"reason": "totp"},
+        )
         return JsonResponse(
             {
                 "status": "error",
@@ -898,6 +931,13 @@ def two_factor_disable(request):
         ):
             Session.objects.filter(session_key=store.session_key).delete()
 
+    log_security_event(
+        "two_factor.disable",
+        "user",
+        request.user.pk,
+        actor=request.user,
+        old_state={"device_id": device.pk},
+    )
     return JsonResponse(
         {
             "status": "success",

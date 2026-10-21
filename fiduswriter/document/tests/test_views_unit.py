@@ -24,6 +24,7 @@ from document.models import (
     DocumentRevision,
 )
 from document.views import _handle_automatic_key_sharing
+from base.models import AuditLog
 
 _revision_migration = importlib.import_module(
     "document.migrations.0027_move_revisions_to_app_storage"
@@ -1365,4 +1366,104 @@ class RevisionFileDeletionTest(TestCase):
             revision.delete()
         self.assertFalse(
             DocumentRevision.objects.filter(pk=revision.pk).exists()
+        )
+
+
+# ---------------------------------------------------------------------------
+
+
+class AuditTrailDocumentTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.owner = User.objects.create_user(
+            username="audit_owner", password="pass"
+        )
+        self.template = DocumentTemplate.objects.create(
+            title="Audit Template", content={}
+        )
+        self.doc = Document.objects.create(
+            owner=self.owner, template=self.template
+        )
+        self.client.force_login(self.owner)
+
+    def test_share_token_create_and_revoke_logged(self):
+        response = json_post(
+            self.client,
+            "/api/document/share_token/create/",
+            {"document_id": self.doc.id, "rights": "read"},
+        )
+        self.assertEqual(response.status_code, 201)
+        token = ShareToken.objects.get(document=self.doc)
+        json_post(
+            self.client,
+            "/api/document/share_token/revoke/",
+            {"token_id": token.id},
+        )
+        create_entries = AuditLog.objects.filter(
+            action="share_token.create",
+            target_type="document",
+            target_id=str(self.doc.id),
+            outcome="success",
+        )
+        self.assertTrue(create_entries.exists())
+        # Token value must not appear anywhere in the entry
+        for entry in create_entries:
+            self.assertNotIn(str(token.token), json.dumps(entry.new_state))
+        self.assertTrue(
+            AuditLog.objects.filter(
+                action="share_token.revoke",
+                target_type="document",
+                new_state__token_id=token.id,
+            ).exists()
+        )
+
+    def test_access_rights_change_logged_with_state(self):
+        reader = User.objects.create_user(
+            username="audit_reader", password="pass"
+        )
+        json_post(
+            self.client,
+            "/api/document/save_access_rights/",
+            {
+                "document_ids": [self.doc.id],
+                "access_rights": [
+                    {
+                        "holder": {"type": "user", "id": reader.id},
+                        "rights": "read",
+                    }
+                ],
+            },
+        )
+        entry = AuditLog.objects.filter(
+            action="access_rights.change",
+            target_type="document",
+            target_id=str(self.doc.id),
+        ).first()
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry.old_state, [])
+        self.assertEqual(
+            entry.new_state,
+            [
+                {
+                    "holder_type": "user",
+                    "holder_id": reader.id,
+                    "rights": "read",
+                }
+            ],
+        )
+
+    def test_revision_delete_logged(self):
+        revision = DocumentRevision.objects.create(document=self.doc)
+        response = json_post(
+            self.client,
+            "/api/document/delete_revision/",
+            {"id": revision.id},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            AuditLog.objects.filter(
+                action="revision.delete",
+                target_type="document",
+                new_state__revision_id=revision.id,
+            ).exists()
         )

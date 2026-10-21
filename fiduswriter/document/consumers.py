@@ -729,7 +729,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         logger.debug(
             f"Action:Handling Diff. URL:{self.endpoint} User:{self.user.id} "
             f"ParticipantID:{self.id} Client version:{pv} "
-            f"Server version:{dv} Message:{message}"
+            f"Server version:{dv}"
         )
         # in "required" mode legacy (non-E2EE) documents are
         # read-only for every mutation path.

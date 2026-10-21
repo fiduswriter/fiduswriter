@@ -39,6 +39,7 @@ from document.helpers.e2ee_guards import (
     E2EE_MIN_ITERATIONS,
     validate_e2ee_params,
 )
+from document.helpers.comment_filter import sanitize_diff_message
 from user.helpers import Avatars
 
 # Rights that may only touch their own comments.
@@ -370,6 +371,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 for msg in messages:
                     new_message = msg.copy()
                     new_message["server_fix"] = True
+                    new_message = sanitize_diff_message(
+                        new_message,
+                        self.user_info.access_rights,
+                        self.user_info.user.id,
+                        self.session["doc"].comments,
+                    )
                     await self.send_message(new_message)
                 await self.send_message(
                     {
@@ -904,6 +911,12 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 for message in messages:
                     new_message = message.copy()
                     new_message["server_fix"] = True
+                    new_message = sanitize_diff_message(
+                        new_message,
+                        self.user_info.access_rights,
+                        self.user_info.user.id,
+                        self.session["doc"].comments,
+                    )
                     await self.send_message(new_message)
             else:
                 logger.debug(
@@ -1416,6 +1429,24 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 if need_copy:
                     msg_to_send = deepcopy(message)
                     msg_to_send["comments"] = []
+
+                # comment updates travel inside "cu" of diff
+                # messages; filter them per recipient rights.
+                if (
+                    not session["doc"].e2ee
+                    and message.get("type") == "diff"
+                    and "cu" in message
+                    and (
+                        access_rights == "read-without-comments"
+                        or access_rights in OWN_COMMENTS_ONLY_RIGHTS
+                    )
+                ):
+                    msg_to_send = sanitize_diff_message(
+                        msg_to_send,
+                        access_rights,
+                        waiter.user_info.user.id,
+                        session["doc"].comments,
+                    )
 
                 # Add the send task to our list
                 send_tasks.append(waiter.send_message(msg_to_send))

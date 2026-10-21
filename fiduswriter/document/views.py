@@ -56,6 +56,10 @@ from document.helpers.token_access import (
     get_token_access,
     guest_participant_id,
 )
+from document.helpers.comment_filter import (
+    filter_comments_dict,
+    sanitize_diff_message,
+)
 from document.helpers.e2ee_guards import (
     validate_e2ee_params,
     e2ee_write_guard,
@@ -117,11 +121,24 @@ def get_documentlist_extra(request):
             if "content" not in doc.content:
                 doc.content["content"] = [{"type": "title"}]
             doc.save()
+        if doc.owner_id == request.user.id:
+            holder_rights = "write"
+        else:
+            access_right = doc.accessright_set.filter(
+                user=request.user
+            ).first()
+            holder_rights = access_right.rights if access_right else None
         response["documents"].append(
             {
                 "images": images,
                 "content": doc.content,
-                "comments": doc.comments,
+                # Comments are visible per access right.
+                "comments": filter_comments_dict(
+                    doc.comments,
+                    holder_rights,
+                    request.user.id,
+                    e2ee=doc.e2ee,
+                ),
                 "bibliography": doc.bibliography,
                 "id": doc.id,
                 "e2ee": doc.e2ee,
@@ -1521,6 +1538,8 @@ def get_doc_data(request):
         doc_data["comments"] = filtered_comments
     else:
         doc_data["comments"] = doc.comments
+        # The retained diffs inside catch-up payloads carry comment
+    # updates in "cu" — filter them with the same rules as above.
 
     # The owner's contact list is private — share it only with
     # the owner (collaborators use the dedicated owner-only ACL endpoints).
@@ -1562,7 +1581,14 @@ def get_doc_data(request):
             if doc.version > client_version:
                 diffs_needed = doc.version - client_version
                 if client_version + len(doc.diffs) >= doc.version:
-                    response["m"] = doc.diffs[-diffs_needed:]
+                    # Retained diffs carry comment updates in
+                    # "cu"; filter them for restricted recipients.
+                    response["m"] = [
+                        sanitize_diff_message(
+                            dm, access_rights, user_id, doc.comments
+                        )
+                        for dm in doc.diffs[-diffs_needed:]
+                    ]
         except (ValueError, TypeError):
             pass
     return JsonResponse(response, status=200)

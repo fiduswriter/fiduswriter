@@ -679,15 +679,23 @@ export class ModCollabDoc {
             window.history.replaceState(null, "", newHash)
         }
 
-        // Decrypt image copyright metadata for E2EE documents.
-        // The server stores it as an opaque encrypted string; we decrypt
-        // it here so the image DB receives plaintext objects.
+        // Decrypt image title and copyright metadata for E2EE documents.
+        // The server stores them as opaque encrypted strings; we decrypt
+        // them here so the image DB receives plaintext objects.
         let decryptedImages = doc.images
         if (doc.images) {
             decryptedImages = {}
             const {E2EEEncryptor} = await import("../e2ee/encryptor")
             for (const [id, image] of Object.entries(doc.images)) {
                 decryptedImages[id] = image
+                if (typeof image.title === "string") {
+                    try {
+                        decryptedImages[id].title =
+                            await E2EEEncryptor.decryptObject(image.title, key)
+                    } catch (_e) {
+                        // If decryption fails, leave as-is (legacy plaintext)
+                    }
+                }
                 if (typeof image.copyright === "string") {
                     try {
                         decryptedImages[id].copyright =

@@ -168,6 +168,40 @@ Keys are stored in `sessionStorage` (cleared on browser close):
 |--------|----------|---------|
 | `GET/POST` | `/api/user/preferences/` | Get/update user preferences (e.g., `has_dismissed_passphrase_offer`) |
 
+## Plaintext Field Contract (E2EE documents)
+
+The following values are **encrypted with the document key** and are never
+stored or transported in plaintext by the server:
+
+* document `content`, `comments`, `bibliography` (snapshot handler; field
+  values become Base64 ciphertext strings)
+* image files (`EncryptedDocumentImage.image`)
+* image metadata `title` and `copyright`
+  (encrypted client-side via `E2EEEncryptor.encryptObject` before
+  `POST /api/document/e2ee_image/`, and stored/served as opaque ciphertext;
+  decrypt on load in `editor/collab/doc.js`)
+* chat messages in E2EE rooms
+* document passwords shared between users (DEK envelopes wrapped per
+  recipient, `DocumentEncryptionKey`)
+
+The following values intentionally **remain plaintext metadata**:
+
+* IDs, URLs/storage paths, `updated`/`created` timestamps, file type
+  markers (`file_type` is set to `application/octet-stream` for encrypted
+  images, `original_file_type` only indicates the MIME type for rendering)
+* `checksum` on `EncryptedDocumentImage` — an in-document counter used to
+  keep image references stable across FIDUS import; it is not a content
+  hash and is not used to deduplicate encrypted images. (Content-hash
+  deduplication only applies to the unencrypted `Image` model.)
+* document `path`/`title` for the unencrypted case only. Once an
+  `e2ee_snapshot` exists, the real title lives inside the ciphertext;
+  the overview column shows the cached decrypted title from
+  `sessionStorage` or a placeholder.
+
+Legacy documents/images uploaded before metadata encryption existed may
+contain plaintext `title`/`copyright`; clients detect this by failing to
+decrypt the string and fall back to the stored value.
+
 ## Working with E2EE Code
 
 ### Adding a New Feature That Touches Encrypted Content

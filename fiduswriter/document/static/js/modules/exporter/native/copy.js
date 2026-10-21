@@ -141,6 +141,20 @@ export class SaveCopy {
                             // If decryption fails, leave as-is
                         }
                     }
+                    if (
+                        typeof imageEntry.title === "string" &&
+                        imageEntry.title.length > 0
+                    ) {
+                        try {
+                            imageEntry.title =
+                                await E2EEEncryptor.decryptObject(
+                                    imageEntry.title,
+                                    key
+                                )
+                        } catch (_e) {
+                            // If decryption fails, leave as-is
+                        }
+                    }
                 })
             )
         }
@@ -181,12 +195,23 @@ export class SaveCopy {
                             // If encryption fails, keep original file
                         }
                     }
-                    // Encrypt copyright metadata
+                    // Encrypt copyright and title metadata
                     if (imageEntry.copyright) {
                         try {
                             imageEntry.copyright =
                                 await E2EEEncryptor.encryptObject(
                                     imageEntry.copyright,
+                                    key
+                                )
+                        } catch (_e) {
+                            // If encryption fails, keep original
+                        }
+                    }
+                    if (imageEntry.title) {
+                        try {
+                            imageEntry.title =
+                                await E2EEEncryptor.encryptObject(
+                                    imageEntry.title,
                                     key
                                 )
                         } catch (_e) {

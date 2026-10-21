@@ -44,18 +44,38 @@ export class ModImageDB {
 
     // Save an image directly for this document (E2EE only).
     // The image file is expected to be already encrypted client-side.
-    saveImage(imageData) {
+    async saveImage(imageData) {
         const isE2EE = this.mod.editor.e2ee?.encrypted === true
         if (!isE2EE) {
             // Non-E2EE documents must use the user's imageDB
             return this.mod.editor.app.imageDB.saveImage(imageData)
         }
 
-        // E2EE path: upload encrypted image directly to the document
+        // E2EE path: upload encrypted image directly to the document.
+        // Metadata (title, copyright) is encrypted with the document key
+        // so it is never stored or transported in plaintext.
+        const {E2EEEncryptor} = await import("../e2ee/encryptor")
+        const key = this.mod.editor.e2ee.key
+        let encryptedTitle = imageData.title
+        let encryptedCopyright = imageData.copyright
+        try {
+            encryptedTitle = await E2EEEncryptor.encryptObject(
+                imageData.title,
+                key
+            )
+            if (imageData.copyright) {
+                encryptedCopyright = await E2EEEncryptor.encryptObject(
+                    imageData.copyright,
+                    key
+                )
+            }
+        } catch (_err) {
+            throw new Error("Could not encrypt image metadata")
+        }
         const jsonData = {
             doc_id: this.mod.editor.docInfo.id,
-            title: imageData.title,
-            copyright: imageData.copyright,
+            title: encryptedTitle,
+            copyright: encryptedCopyright,
             checksum: imageData.checksum || 0
         }
         if (imageData.original_file_type) {

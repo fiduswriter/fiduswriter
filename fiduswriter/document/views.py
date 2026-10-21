@@ -753,6 +753,17 @@ def import_image(request):
         owner_id=request.user.pk, id=int(request.JSON["doc_id"])
     ).first()
     if document:
+        if document.e2ee:
+            # Plaintext images must never be attached to an encrypted
+            # document (use the encrypted image path).
+            response["error"] = (
+                "Use the encrypted image flow for E2EE documents"
+            )
+            return JsonResponse(response, status=403)
+        # Legacy documents are read-only in required mode.
+        if not e2ee_write_guard(document):
+            response["error"] = "Document is read-only on this server"
+            return JsonResponse(response, status=403)
         status = 201
     else:
         status = 401

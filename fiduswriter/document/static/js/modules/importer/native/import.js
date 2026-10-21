@@ -130,11 +130,30 @@ export class NativeImporter {
         const sendPromises = Object.values(images).map(imageEntry => {
             return this._maybeDecryptImage(imageEntry)
                 .then(() => this._maybeEncryptImage(imageEntry))
-                .then(encryptedFile => {
+                .then(async encryptedFile => {
+                    let title = imageEntry.title
+                    let copyright = imageEntry.copyright
+                    if (isE2EE && this.e2eeOptions.key) {
+                        // Image metadata is encrypted with the target
+                        // document key before upload.
+                        const {E2EEEncryptor} = await import(
+                            "../../editor/e2ee/encryptor"
+                        )
+                        title = await E2EEEncryptor.encryptObject(
+                            title,
+                            this.e2eeOptions.key
+                        )
+                        if (copyright) {
+                            copyright = await E2EEEncryptor.encryptObject(
+                                copyright,
+                                this.e2eeOptions.key
+                            )
+                        }
+                    }
                     const jsonData = {
                         doc_id: this.docId,
-                        title: imageEntry.title,
-                        copyright: imageEntry.copyright,
+                        title: title,
+                        copyright: copyright,
                         checksum: imageEntry.checksum
                     }
                     const files = {

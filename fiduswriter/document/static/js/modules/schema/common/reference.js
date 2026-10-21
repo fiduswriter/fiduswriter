@@ -1,3 +1,5 @@
+import {isSafeLinkHref} from "../../common"
+
 export const cross_reference = {
     inline: true,
     group: "inline",
@@ -45,8 +47,14 @@ export const link = {
         {
             tag: "a[href]",
             getAttrs(dom) {
+                const href = dom.getAttribute("href")
+                // Drop anchors with a disallowed scheme
+                // (e.g. javascript:) when parsing pasted HTML.
+                if (!isSafeLinkHref(href)) {
+                    return null
+                }
                 return {
-                    href: dom.getAttribute("href"),
+                    href,
                     title: dom.getAttribute("title")
                 }
             }

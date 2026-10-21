@@ -2,7 +2,7 @@ import {NodeSelection, Plugin, PluginKey} from "prosemirror-state"
 import {RemoveMarkStep} from "prosemirror-transform"
 import {Decoration, DecorationSet} from "prosemirror-view"
 
-import {addAlert, noSpaceTmp} from "../../common"
+import {addAlert, escapeText, noSpaceTmp} from "../../common"
 import {
     randomFigureId,
     randomHeadingId,
@@ -297,12 +297,12 @@ export const linksPlugin = options => {
                         ? `<div class="drop-up-head">
                         ${
                             linkMark.attrs.title
-                                ? `<div class="link-title">${gettext("Title")}:&nbsp;${linkMark.attrs.title}</div>`
+                                ? `<div class="link-title">${gettext("Title")}:&nbsp;${escapeText(linkMark.attrs.title)}</div>`
                                 : ""
                         }
                         <div class="link-href">
-                            <a class="href${linkType === "internal" ? " internal" : ""}" ${linkType === "external" ? 'target="_blank"' : ""} href="${linkHref}">
-            		            ${linkHref}
+                            <a class="href${linkType === "internal" ? " internal" : ""}" ${linkType === "external" ? 'target="_blank"' : ""} href="${escapeText(linkHref)}">
+            		            ${escapeText(linkHref)}
             		        </a>
                         </div>
                     </div>

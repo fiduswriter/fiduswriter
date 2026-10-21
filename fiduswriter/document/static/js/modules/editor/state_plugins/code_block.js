@@ -1,6 +1,6 @@
 import {DOMSerializer} from "prosemirror-model"
 import {NodeSelection, Plugin, PluginKey} from "prosemirror-state"
-import {ContentMenu} from "../../common"
+import {ContentMenu, escapeText} from "../../common"
 
 const key = new PluginKey("codeBlockMenu")
 
@@ -83,10 +83,10 @@ class CodeBlockView {
                 ? `${categoryLabel} ${number}: ${title}`
                 : `${categoryLabel} ${number}`
 
-            label.innerHTML = `<span class="label-text">${labelText}</span>`
+            label.innerHTML = `<span class="label-text">${escapeText(labelText)}</span>`
         } else if (title) {
             // Title without category
-            label.innerHTML = `<span class="label-text">${title}</span>`
+            label.innerHTML = `<span class="label-text">${escapeText(title)}</span>`
         }
 
         this.dom.appendChild(label)

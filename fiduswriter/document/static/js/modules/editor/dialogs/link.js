@@ -2,7 +2,7 @@ import {TextSelection} from "prosemirror-state"
 
 import {linkDialogTemplate} from "./templates"
 
-import {Dialog} from "../../common"
+import {Dialog, addAlert, isSafeLinkHref} from "../../common"
 import {getInternalTargets} from "../state_plugins"
 
 export class LinkDialog {
@@ -161,6 +161,17 @@ export class LinkDialog {
                             linkEl.value !== this.defaultLink
                         ) {
                             href = linkEl.value
+                        }
+                        if (href && !isSafeLinkHref(href)) {
+                            // Only http(s) links and internal
+                            // anchors may be stored.
+                            addAlert(
+                                "danger",
+                                gettext(
+                                    "Links may only start with http://, https:// or #. The link was not saved."
+                                )
+                            )
+                            return
                         }
                         title =
                             this.dialog.dialogEl.querySelector(

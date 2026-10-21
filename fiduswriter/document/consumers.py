@@ -28,10 +28,16 @@ from document.models import (
     CAN_UPDATE_DOCUMENT,
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
+    AccessRight,
 )
 from document.helpers.token_access import (
     get_token_access,
     guest_participant_id,
+)
+from document.helpers.e2ee_guards import (
+    ae2ee_write_guard,
+    E2EE_MIN_ITERATIONS,
+    validate_e2ee_params,
 )
 from user.helpers import Avatars
 
@@ -422,6 +428,8 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.handle_path_change(message)
         elif message["type"] == "e2ee_snapshot":
             await self.handle_e2ee_snapshot(message)
+        elif message["type"] == "e2ee_rekey":
+            await self.handle_e2ee_rekey(message)
 
     async def update_bibliography(self, bibliography_updates):
         for bu in bibliography_updates:
@@ -536,6 +544,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if (
             WebsocketConsumer.get_session(self.user_info.document_id)
             and self.user_info.path_object
+            and await ae2ee_write_guard(self.session["doc"])
         ):
             await document_store.save_path_object(
                 self.user_info.path_object, message["path"]
@@ -602,6 +611,15 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             f"ParticipantID:{self.id} Client version:{pv} "
             f"Server version:{dv} Message:{message}"
         )
+        # in "required" mode legacy (non-E2EE) documents are
+        # read-only for every mutation path.
+        if not await ae2ee_write_guard(self.session["doc"]):
+            logger.debug(
+                f"Action:Diff on legacy document in required mode rejected."
+                f" URL:{self.endpoint} User:{self.user.id}"
+                f" ParticipantID:{self.id}"
+            )
+            return
         if (
             self.user_info.access_rights in COMMENT_ONLY
             and not self.only_comments(message, bool(self.session["doc"].e2ee))
@@ -635,17 +653,27 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 # Instead, we relay the encrypted diff to other clients
                 # and store it for catch-up. The diff content is opaque
                 # to the server.
-                # Validate that the diff was encrypted with the current salt.
+                # the salt is mandatory on every E2EE diff
+                # and must match the current key epoch; the diff payload
+                # must be an encrypted envelope string.
                 msg_salt = message.get("e2ee_salt")
-                if msg_salt is not None:
-                    try:
-                        decoded_salt = base64.b64decode(msg_salt)
-                    except Exception:
-                        await self.reject_message(message)
-                        return
-                    if decoded_salt != self.session["doc"].e2ee_salt:
-                        await self.reject_message(message)
-                        return
+                if not isinstance(msg_salt, str):
+                    await self.reject_message(message)
+                    return
+                try:
+                    decoded_salt = base64.b64decode(msg_salt, validate=True)
+                except Exception:
+                    await self.reject_message(message)
+                    return
+                if (
+                    len(decoded_salt) != len(self.session["doc"].e2ee_salt)
+                    or decoded_salt != self.session["doc"].e2ee_salt
+                ):
+                    await self.reject_message(message)
+                    return
+                if not isinstance(message.get("ep"), str):
+                    await self.reject_message(message)
+                    return
                 self.session["doc"].diffs.append(message)
                 self.session["doc"].diffs = self.session["doc"].diffs[
                     -self.history_length :
@@ -668,9 +696,17 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             else:
                 # Original unencrypted diff handling
                 if "ds" in message:  # ds = document steps
-                    updated_node = prosemirror.apply(
-                        message["ds"], self.session["node"]
-                    )
+                    try:
+                        updated_node = prosemirror.apply(
+                            message["ds"], self.session["node"]
+                        )
+                    except Exception as exc:
+                        # A malformed step must not tear down the whole
+                        # session; treat it like an unapplyable diff.
+                        logger.warning(
+                            f"Action:Diff steps raised an error: {exc}"
+                        )
+                        updated_node = None
                     if updated_node:
                         self.session["node"] = updated_node
                         self.session["node_updates"] = True
@@ -761,26 +797,83 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         if self.user_info.access_rights not in ["write"]:
             return
 
-        # Validate salt for E2EE documents.
-        # All E2EE snapshots must include e2ee_salt so the server can
-        # verify they match the current key or detect a password change.
-        salt_changed = False
-        if doc.e2ee:
-            msg_salt = message.get("e2ee_salt")
-            if not msg_salt:
-                return
+        # Legacy documents are read-only when E2EE is required.
+        if not await ae2ee_write_guard(doc):
+            return
+
+        # never write snapshot data to a non-E2EE document and
+        # never accept the frame while E2EE is disabled.
+        if not doc.e2ee or (
+            getattr(settings, "E2EE_MODE", "disabled") == "disabled"
+        ):
+            logger.warning(
+                f"Action:e2ee_snapshot rejected for non-E2EE document or "
+                f"disabled mode. URL:{self.endpoint} User:{self.user.id}"
+                f" ParticipantID:{self.id}"
+            )
+            return
+
+        # the salt must be present, well formed and match
+        # the current epoch. Epoch (salt/iterations) changes only go
+        # through the owner-controlled "e2ee_rekey" message.
+        try:
+            salt, _iterations = validate_e2ee_params(
+                message.get("e2ee_salt"),
+                doc.e2ee_iterations or E2EE_MIN_ITERATIONS,
+            )
+        except ValueError:
+            await self.reject_message(message)
+            return
+        if len(salt) != len(doc.e2ee_salt) or salt != doc.e2ee_salt:
+            await self.reject_message(message)
+            return
+        if "e2ee_iterations" in message:
             try:
-                decoded_salt = base64.b64decode(msg_salt)
-            except Exception:
-                return
-            if decoded_salt != doc.e2ee_salt:
-                salt_changed = True
-                doc.e2ee_salt = decoded_salt
-            if "e2ee_iterations" in message:
                 new_iterations = int(message["e2ee_iterations"])
-                if new_iterations != doc.e2ee_iterations:
-                    salt_changed = True
-                doc.e2ee_iterations = new_iterations
+            except (TypeError, ValueError):
+                await self.reject_message(message)
+                return
+            if new_iterations != doc.e2ee_iterations:
+                # Changing the epoch here would invalidate every stored
+                # diff and key envelope.
+                await self.reject_message(message)
+                return
+
+        # the snapshot must cover exactly the current version.
+        snapshot_v = message.get("v")
+        if (
+            not isinstance(snapshot_v, int)
+            or isinstance(snapshot_v, bool)
+            or snapshot_v != doc.version
+        ):
+            await self.reject_message(message)
+            return
+
+        # after the document has been initialized, every state
+        # field must be a ciphertext string. Plain (template) values are
+        # accepted only for the one-time initialization of a brand new
+        # E2EE document.
+        initial = (
+            doc.version == 0
+            and doc.e2ee_snapshot_version is None
+            and isinstance(doc.content, dict)
+        )
+
+        def _field_ok(value):
+            if isinstance(value, str):
+                return True
+            return initial and isinstance(value, (dict, list))
+
+        if "content" not in message or not _field_ok(message["content"]):
+            await self.reject_message(message)
+            return
+        for opt_field in ("comments", "bibliography"):
+            if opt_field in message and not _field_ok(message[opt_field]):
+                await self.reject_message(message)
+                return
+        if "title" in message and not _field_ok(message["title"]):
+            await self.reject_message(message)
+            return
 
         # Store the encrypted snapshot
         doc.content = message["content"]  # Encrypted, opaque to server
@@ -794,13 +887,7 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             doc.title = message["title"]
 
         # Record the version this snapshot covers.
-        snapshot_v = message["v"]
         doc.e2ee_snapshot_version = snapshot_v
-
-        if salt_changed:
-            # Old diffs are encrypted with the old key and useless.
-            # The snapshot becomes the new baseline.
-            doc.diffs = []
 
         # Save to database. Force save because the encrypted content may
         # have changed even if the version number hasn't (e.g. initial
@@ -809,24 +896,154 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             self.user_info.document_id, force=True
         )
 
-        if salt_changed:
-            # Force other clients to refetch so they prompt for the new
-            # password. This prevents outdated clients from sending
-            # diffs encrypted with the old key.
-            for participant in self.session["participants"].values():
-                if participant.id != self.id:
-                    await participant.send_message({"type": "refetch_doc"})
-        else:
-            # Notify other clients of the new snapshot version
-            await WebsocketConsumer.send_updates(
-                {
-                    "type": "e2ee_snapshot_received",
-                    "v": snapshot_v,
-                },
-                self.user_info.document_id,
-                self.id,
-                self.user_info.user.id,
+        # Notify other clients of the new snapshot version
+        await WebsocketConsumer.send_updates(
+            {
+                "type": "e2ee_snapshot_received",
+                "v": snapshot_v,
+            },
+            self.user_info.document_id,
+            self.id,
+            self.user_info.user.id,
+        )
+
+    async def handle_e2ee_rekey(self, message):
+        """Owner-controlled re-key.
+
+        Changes the PBKDF2 epoch (salt/iterations) of an E2EE document
+        only together with a re-encrypted snapshot and fresh wrapped-DEK
+        envelopes for every current key holder.
+        """
+        doc = self.session["doc"]
+
+        if not doc.e2ee or (
+            getattr(settings, "E2EE_MODE", "disabled") == "disabled"
+        ):
+            return
+        if not await ae2ee_write_guard(doc):
+            return
+        if not getattr(self.user_info, "is_owner", False):
+            logger.warning(
+                f"Action:e2ee_rekey from non-owner rejected. "
+                f"URL:{self.endpoint} User:{self.user.id}"
+                f" ParticipantID:{self.id}"
             )
+            return
+
+        try:
+            salt, iterations = validate_e2ee_params(
+                message.get("e2ee_salt"), message.get("e2ee_iterations")
+            )
+        except ValueError:
+            await self.reject_message(message)
+            return
+
+        # every state field must be ciphertext.
+        for field in ("content", "comments", "bibliography"):
+            if not isinstance(message.get(field), str):
+                await self.reject_message(message)
+                return
+        if "title" in message and not isinstance(message["title"], str):
+            await self.reject_message(message)
+            return
+
+        snapshot_v = message.get("v")
+        if (
+            not isinstance(snapshot_v, int)
+            or isinstance(snapshot_v, bool)
+            or snapshot_v != doc.version
+        ):
+            await self.reject_message(message)
+            return
+
+        keys = message.get("keys")
+        if not isinstance(keys, list) or not keys:
+            await self.reject_message(message)
+            return
+        for entry in keys:
+            if (
+                not isinstance(entry, dict)
+                or not isinstance(entry.get("holder_id"), int)
+                or not isinstance(entry.get("encrypted_key"), str)
+                or not entry.get("encrypted_key")
+                or not isinstance(
+                    entry.get("encrypted_with_master_key", False), bool
+                )
+            ):
+                await self.reject_message(message)
+                return
+
+        def _apply_rekey():
+            from django.db import transaction
+
+            from document.models import DocumentEncryptionKey
+
+            existing_holder_ids = set(
+                DocumentEncryptionKey.objects.filter(
+                    document_id=doc.id
+                ).values_list("holder_id", flat=True)
+            )
+            new_holder_ids = {e["holder_id"] for e in keys}
+            # Every previous holder must receive a replacement envelope.
+            if not existing_holder_ids.issubset(new_holder_ids):
+                return "holders"
+            # Any additional holder must already have access to the doc.
+            allowed_ids = set(
+                AccessRight.objects.filter(document_id=doc.id).values_list(
+                    "holder_id", flat=True
+                )
+            ) | {doc.owner_id}
+            if not new_holder_ids.issubset(allowed_ids):
+                return "rights"
+            with transaction.atomic():
+                doc.e2ee_salt = salt
+                doc.e2ee_iterations = iterations
+                doc.content = message["content"]
+                doc.comments = message["comments"]
+                doc.bibliography = message["bibliography"]
+                if "title" in message:
+                    doc.title = message["title"]
+                # Old diffs and the old snapshot are encrypted with the
+                # previous epoch and become unusable.
+                doc.diffs = []
+                doc.e2ee_snapshot_version = snapshot_v
+                doc.save()
+                for entry in keys:
+                    DocumentEncryptionKey.objects.update_or_create(
+                        document_id=doc.id,
+                        holder_id=entry["holder_id"],
+                        defaults={
+                            "encrypted_key": entry["encrypted_key"],
+                            "encrypted_with_master_key": entry[
+                                "encrypted_with_master_key"
+                            ],
+                        },
+                    )
+            return "ok"
+
+        try:
+            result = await sync_to_async(_apply_rekey, thread_sensitive=True)()
+        except Exception:
+            logger.exception("Action:e2ee_rekey failed.")
+            await self.reject_message(message)
+            return
+        if result != "ok":
+            await self.reject_message(message)
+            return
+
+        # Force every other participant to refetch: they must re-derive
+        # the key with the new passphrase (via the new envelope).
+        for participant in self.session["participants"].values():
+            if participant.id != self.id:
+                await participant.send_message({"type": "refetch_doc"})
+        await self.send_message(
+            {
+                "type": "e2ee_rekey_done",
+                "v": snapshot_v,
+                "e2ee_salt": base64.b64encode(salt).decode("ascii"),
+                "e2ee_iterations": iterations,
+            }
+        )
 
     async def request_snapshot(self):
         """Request a snapshot from a write-capable client.

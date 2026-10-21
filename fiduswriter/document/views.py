@@ -10,7 +10,7 @@ from django.core import serializers
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.db import transaction
 from django.core.files import File
 from django.utils.translation import gettext as _
@@ -50,6 +50,10 @@ from user.helpers import Avatars
 from document.helpers.token_access import (
     get_token_access,
     guest_participant_id,
+)
+from document.helpers.e2ee_guards import (
+    validate_e2ee_params,
+    e2ee_write_guard,
 )
 
 
@@ -510,10 +514,14 @@ def create_doc(request):
     e2ee_salt = None
     e2ee_iterations = 600000
     if e2ee:
-        salt_b64 = request.JSON.get("e2ee_salt")
-        if salt_b64:
-            e2ee_salt = base64.b64decode(salt_b64)
-        e2ee_iterations = request.JSON.get("e2ee_iterations", 600000)
+        try:
+            e2ee_salt, e2ee_iterations = validate_e2ee_params(
+                request.JSON.get("e2ee_salt"),
+                request.JSON.get("e2ee_iterations", 600000),
+            )
+        except ValueError as error:
+            response["error"] = str(error)
+            return JsonResponse(response, status=400)
 
     document = Document.objects.create(
         owner_id=request.user.pk,
@@ -641,10 +649,14 @@ def import_create(request):
     e2ee_salt = None
     e2ee_iterations = 600000
     if e2ee:
-        salt_b64 = request.JSON.get("e2ee_salt")
-        if salt_b64:
-            e2ee_salt = base64.b64decode(salt_b64)
-        e2ee_iterations = int(request.JSON.get("e2ee_iterations", 600000))
+        try:
+            e2ee_salt, e2ee_iterations = validate_e2ee_params(
+                request.JSON.get("e2ee_salt"),
+                request.JSON.get("e2ee_iterations", 600000),
+            )
+        except ValueError as error:
+            response["error"] = str(error)
+            return JsonResponse(response, status=400)
 
     document = Document.objects.create(
         owner=request.user,
@@ -777,6 +789,10 @@ def import_doc(request):
         response["error"] = "No access to file"
         status = 403
         return JsonResponse(response, status=status)
+    # Legacy documents are read-only in required mode.
+    if not e2ee_write_guard(document):
+        response["error"] = "Document is read-only on this server"
+        return JsonResponse(response, status=403)
     document.title = request.JSON["title"]
     payload = {}
     for field in ("content", "comments", "bibliography"):
@@ -858,6 +874,13 @@ def save_document(request):
             status=409,
         )
 
+    # Legacy documents are read-only in required mode.
+    if not e2ee_write_guard(document):
+        return JsonResponse(
+            {"error": "Document is read-only on this server"},
+            status=403,
+        )
+
     if "content" in request.JSON:
         document.content = request.JSON["content"]
     if "comments" in request.JSON:
@@ -868,10 +891,26 @@ def save_document(request):
         document.title = request.JSON["title"]
 
     if document.e2ee:
+        if "e2ee_salt" in request.JSON or "e2ee_iterations" in request.JSON:
+            try:
+                _salt, _iterations = validate_e2ee_params(
+                    request.JSON.get(
+                        "e2ee_salt",
+                        base64.b64encode(document.e2ee_salt or b"").decode(
+                            "ascii"
+                        ),
+                    ),
+                    request.JSON.get(
+                        "e2ee_iterations", document.e2ee_iterations
+                    ),
+                )
+            except ValueError as error:
+                response["error"] = str(error)
+                return JsonResponse(response, status=400)
         if "e2ee_salt" in request.JSON:
             document.e2ee_salt = base64.b64decode(request.JSON["e2ee_salt"])
         if "e2ee_iterations" in request.JSON:
-            document.e2ee_iterations = request.JSON["e2ee_iterations"]
+            document.e2ee_iterations = int(request.JSON["e2ee_iterations"])
         if "e2ee_snapshot_version" in request.JSON:
             document.e2ee_snapshot_version = request.JSON[
                 "e2ee_snapshot_version"
@@ -1981,6 +2020,48 @@ def get_user_document_encryption_keys(request):
         )
 
     return JsonResponse(response, status=status)
+
+
+@login_required
+@ajax_required
+@require_GET
+def get_document_encryption_key_holders(request):
+    """List the current wrapped-DEK holders of a document so
+    the owner can supply replacement envelopes when re-keying."""
+    document_id = request.GET.get("document_id")
+    try:
+        document_id = int(document_id)
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Invalid document id"}, status=400)
+
+    document = Document.objects.filter(pk=document_id).first()
+    if not document:
+        return JsonResponse({"error": "Document not found"}, status=404)
+    if document.owner_id != request.user.id:
+        return JsonResponse({"error": "Not allowed"}, status=403)
+
+    from user.models import UserEncryptionKey
+
+    holder_ids = list(
+        DocumentEncryptionKey.objects.filter(document=document).values_list(
+            "holder_id", flat=True
+        )
+    )
+    with_key = set(
+        UserEncryptionKey.objects.filter(user_id__in=holder_ids).values_list(
+            "user_id", flat=True
+        )
+    )
+    response = {
+        "holders": [
+            {
+                "holder_id": holder_id,
+                "has_public_key": holder_id in with_key,
+            }
+            for holder_id in holder_ids
+        ]
+    }
+    return JsonResponse(response, status=200)
 
 
 @staff_member_required

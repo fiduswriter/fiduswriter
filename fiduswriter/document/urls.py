@@ -41,6 +41,11 @@ urlpatterns = [
         name="get_user_document_encryption_keys",
     ),
     re_path(
+        "^encryption_key/holders/$",
+        views.get_document_encryption_key_holders,
+        name="get_document_encryption_key_holders",
+    ),
+    re_path(
         "^delete_e2ee_image/$",
         views.delete_e2ee_image,
         name="delete_e2ee_image",

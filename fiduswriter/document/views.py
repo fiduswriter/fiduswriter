@@ -1413,21 +1413,22 @@ def get_doc_data(request):
     else:
         doc_data["comments"] = doc.comments
 
-    # Get owner contacts
-    for contact in doc_owner.contacts.all().only(
-        "id", "username", "first_name", "last_name"
-    ):
-        contact_object = {
-            "id": contact.id,
-            "name": contact.readable_name,
-            "username": contact.get_username(),
-            "avatar": avatars.get_url(contact),
-            "type": "user",
-        }
-        doc_info["owner"]["contacts"].append(contact_object)
-
-    # Get invites (only for owner)
+    # The owner's contact list is private — share it only with
+    # the owner (collaborators use the dedicated owner-only ACL endpoints).
     if is_owner:
+        for contact in doc_owner.contacts.all().only(
+            "id", "username", "first_name", "last_name"
+        ):
+            contact_object = {
+                "id": contact.id,
+                "name": contact.readable_name,
+                "username": contact.get_username(),
+                "avatar": avatars.get_url(contact),
+                "type": "user",
+            }
+            doc_info["owner"]["contacts"].append(contact_object)
+
+        # Get invites (only for owner)
         for invite in doc_owner.invites_by.all():
             contact_object = {
                 "id": invite.id,

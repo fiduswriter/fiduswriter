@@ -115,8 +115,18 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 # This determines whether there is a star labeled "Free" on the login page
 IS_FREE = True
 
-# Send emails to console.
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAILS: WARNING — the console backend below writes the full content
+# of every outgoing email (including unauthenticated feedback, which is
+# arbitrary user input) to the process' stdout and is for DEVELOPMENT
+# ONLY. In production always configure an SMTP backend (see below).
+# When DEBUG is off and no backend was configured by the instance, the
+# packaged fallback only logs the subject of outgoing messages to the
+# "fiduswriter.outgoing_email" logger instead of dumping
+# user content to stdout.
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = "base.mailback.LoggingEmailBackend"
 
 # Or send emails using an SMTP server
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

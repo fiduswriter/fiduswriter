@@ -29,7 +29,10 @@ from document.models import (
     CAN_COMMUNICATE,
     FW_DOCUMENT_VERSION,
 )
-from document.helpers.token_access import get_token_access
+from document.helpers.token_access import (
+    get_token_access,
+    guest_participant_id,
+)
 from user.helpers import Avatars
 
 logger = logging.getLogger(__name__)
@@ -188,8 +191,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
         """
         document, rights = await sync_to_async(get_token_access)(token_str)
         if document and document.id == self.document_id:
+            # The participant id must not be the secret token
+            # itself. Guests are identified by a non-secret derived id;
+            # the token is kept separately for authorization only.
             return GuestUser(
-                id=str(token_str), token=str(token_str), token_rights=rights
+                id=guest_participant_id(token_str, self.document_id),
+                token=str(token_str),
+                token_rights=rights,
             )
         return None
 
@@ -277,6 +285,11 @@ class WebsocketConsumer(BaseWebsocketConsumer):
                 "session_id": self.id,
                 "access_right": self.user_info.access_rights,
             }
+            if isinstance(self.user, GuestUser):
+                # Tell the guest its non-secret participant id
+                # so the client uses it for comments/chat instead of the
+                # secret share token.
+                session_info_msg["guest_id"] = self.user.id
             if doc_db.e2ee:
 
                 session_info_msg["e2ee"] = True
@@ -291,12 +304,13 @@ class WebsocketConsumer(BaseWebsocketConsumer):
             await self.check_version(client_version)
         else:
             # Reconnecting user — send access rights for comparison
-            await self.send_message(
-                {
-                    "type": "access_right",
-                    "access_right": self.user_info.access_rights,
-                }
-            )
+            reconnect_msg = {
+                "type": "access_right",
+                "access_right": self.user_info.access_rights,
+            }
+            if isinstance(self.user, GuestUser):
+                reconnect_msg["guest_id"] = self.user.id
+            await self.send_message(reconnect_msg)
         if await self.can_communicate():
             await self.handle_participant_update()
 

@@ -463,7 +463,10 @@ export class Editor {
                                     // Update guest user identity with session_id
                                     if (!this.user.is_authenticated) {
                                         this.user = {
-                                            id: this.docInfo.token,
+                                            // Non-secret participant id from
+                                            // the server. Never use the share
+                                            // token as an identity.
+                                            id: data.guest_id,
                                             username: `guest${data.session_id}`,
                                             name: `Guest ${data.session_id}`,
                                             is_authenticated: false

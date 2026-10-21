@@ -42,7 +42,10 @@ from base.helpers.ws import get_url_base
 from user.models import UserInvite
 from . import emails
 from user.helpers import Avatars
-from document.helpers.token_access import get_token_access
+from document.helpers.token_access import (
+    get_token_access,
+    guest_participant_id,
+)
 
 
 @login_required
@@ -1221,9 +1224,9 @@ def get_doc_data(request):
                 access_rights = rights
                 is_owner = False
                 path = ""
-                user_id = (
-                    token_str  # Guest users are identified by their token
-                )
+                # Guests are identified by a non-secret derived
+                # id, never by the secret share token itself.
+                user_id = guest_participant_id(token_str, doc.id)
 
     if not doc:
         return JsonResponse({}, status=401)

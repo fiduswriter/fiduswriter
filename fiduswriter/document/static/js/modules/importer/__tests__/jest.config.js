@@ -13,7 +13,12 @@ export default {
     ],
     moduleNameMapper: {
         "^jszip$": "<rootDir>/mocks/jszip.js",
-        "^mathml-to-latex$": "<rootDir>/mocks/mathml-to-latex.js"
+        "^mathml-to-latex$": "<rootDir>/mocks/mathml-to-latex.js",
+        // The shared helpers live in the base app and are merged into the
+        // same module tree when transpiling. The tests run against the
+        // sources, so they need a stand-in for that module.
+        "^\\.\\./\\.\\./common$":
+            "<rootDir>/../../exporter/__tests__/mocks/common.js"
     },
     testMatch: ["**/__tests__/**/*.test.js"],
     setupFiles: ["<rootDir>/jest.setup.js"],

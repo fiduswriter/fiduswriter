@@ -22,6 +22,7 @@ This section provides guides for configuring and customizing Fidus Writer for yo
 - [Load Balancer Setup](load-balancer.md) - Deploy with load balancing
 - [Performance Optimization](performance.md) - Tune for better performance
 - [Caching Configuration](caching.md) - Configure caching and sessions
+- [Rust Components and Install Profiles](rust-components.md) - The Rust parts of Fidus Writer and how to run without them
 
 ### Operations
 

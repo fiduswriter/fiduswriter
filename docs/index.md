@@ -30,6 +30,7 @@ Configure and customize your Fidus Writer installation:
 - Branding - Add your organization's logo and styling
 - Load Balancer - Set up load balancing for production
 - Advanced Configuration - Environment variables and Django settings
+- Rust Components - The Rust parts of Fidus Writer and how to run without them
 
 ### Development
 

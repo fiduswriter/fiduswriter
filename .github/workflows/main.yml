@@ -67,6 +67,9 @@ jobs:
                     - document.tests.test_export
                     - "document.tests.test_admin document.tests.test_external_save"
                     #- document.tests.test_message_exchange
+                    #  Disabled: the "doc_data" WebSocket message it inspects
+                    #  was replaced by the /api/document/get_doc_data/ REST
+                    #  endpoint, so the test no longer describes the protocol.
                     - document.tests.test_paste_template_filter
                     - document.tests.test_memory_leak
                     - document.tests.test_merge
@@ -122,7 +125,6 @@ jobs:
                   pip install requests[security]
                   pip install -r requirements.txt
                   pip install -r test-requirements.txt
-                  pip install orjson
                   pip install coverage
                   pip install coveralls
                   coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
@@ -193,6 +195,75 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 COVERALLS_PARALLEL: true
                 COVERALLS_FLAG_NAME: ${{ matrix.test }}
+    test-python-engine:
+        # The pure-Python ProseMirror engine is the fallback for
+        # installations without the prosemirror-rs extension (PyPy). Keep it
+        # covered by CI so that it cannot rot.
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                test:
+                    - "document.tests.test_collaboration"
+                    - "document.tests.test_consumers_unit document.tests.test_document_store document.tests.test_authorization_refresh"
+                    - document.tests.test_fuzz_steps
+        env:
+            PROSEMIRROR_BACKEND: python
+        steps:
+            - name: Install Chrome (Forgejo runners)
+              if: github.server_url != 'https://github.com'
+              run: |
+                  apt-get update
+                  apt-get install -y wget gnupg ca-certificates
+                  wget -q -O /tmp/google-chrome.gpg https://dl.google.com/linux/linux_signing_key.pub
+                  gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg /tmp/google-chrome.gpg
+                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+                  apt-get update
+                  apt-get install -y google-chrome-stable rsync
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              if: github.server_url == 'https://github.com'
+              with:
+                  python-version: "3.14"
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              if: github.server_url == 'https://github.com'
+              with:
+                  node-version: 26
+            - uses: actions/checkout@v7
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
+            - name: Install dependencies
+              run: |
+                  SUDO=""
+                  if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
+                  $SUDO apt-get update
+                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git build-essential
+                  cd ${{ env.BACKEND_REPO }}
+                  mv ci/configuration.py fiduswriter/configuration.py
+                  cd fiduswriter
+                  pip install requests[security]
+                  pip install -r requirements.txt
+                  pip install -r test-requirements.txt
+                  pip install coverage
+                  coverage run --concurrency=multiprocessing,thread manage.py setup --no-static
+            - name: Run test ${{ matrix.test }} with the python engine
+              uses: nick-fields/retry@v4
+              with:
+                timeout_minutes: 15
+                max_attempts: 3
+                retry_on: error
+                command: |
+                  cd ${{ env.BACKEND_REPO }}/fiduswriter
+                  coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
+            - name: Upload failed test screenshots
+              if: github.server_url == 'https://github.com' && failure()
+              uses: actions/upload-artifact@v4.3.4
+              with:
+                  name: failure-artifacts
+                  path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
     plugin-tests:
         runs-on: ubuntu-latest
         strategy:
@@ -304,7 +375,6 @@ jobs:
                   pip install requests[security]
                   pip install -r requirements.txt
                   pip install -r test-requirements.txt
-                  pip install orjson
                   pip install coverage
                   # Install optional Python requirements shipped with the
                   # plugins under test (e.g. pycryptodome for the payment plugin).

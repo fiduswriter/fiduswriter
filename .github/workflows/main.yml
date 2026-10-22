@@ -264,6 +264,102 @@ jobs:
               with:
                   name: failure-artifacts
                   path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
+    test-native-ws:
+        # The native Rust websockets route (fiduswriter-server-backend/native
+        # served by aethonan (the Fidus Writer fork of granian)). Covers the collaboration protocol
+        # end-to-end through the Rust path: the browser websockets of the
+        # live server hit the native route. The Python consumer stays
+        # covered by the regular matrix above. E2EE documents are refused by
+        # the native route, so the E2EE suite runs afterwards with stock
+        # aethonan restored.
+        runs-on: ubuntu-latest
+        steps:
+            - name: Install Chrome (Forgejo runners)
+              if: github.server_url != 'https://github.com'
+              run: |
+                  apt-get update
+                  apt-get install -y wget gnupg ca-certificates
+                  wget -q -O /tmp/google-chrome.gpg https://dl.google.com/linux/linux_signing_key.pub
+                  gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg /tmp/google-chrome.gpg
+                  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+                  apt-get update
+                  apt-get install -y google-chrome-stable rsync
+            - name: Set up Python
+              uses: actions/setup-python@v6
+              if: github.server_url == 'https://github.com'
+              with:
+                  python-version: "3.14"
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              if: github.server_url == 'https://github.com'
+              with:
+                  node-version: 26
+            - name: Set up Rust
+              run: |
+                  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile minimal
+                  echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+            - uses: actions/checkout@v7
+            - name: Check out backend repository
+              run: |
+                  git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
+                      || git clone --depth 1 "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}"
+            - name: Install dependencies
+              run: |
+                  SUDO=""
+                  if [ "$(id -u)" != "0" ]; then SUDO=sudo; fi
+                  $SUDO apt-get update
+                  $SUDO apt-get install -y libjpeg-dev python3-dev python3-pip gettext zlib1g-dev git build-essential
+                  cd ${{ env.BACKEND_REPO }}
+                  mv ci/configuration.py fiduswriter/configuration.py
+                  cd fiduswriter
+                  pip install requests[security]
+                  pip install -r requirements.txt
+                  pip install -r test-requirements.txt
+                  # aethonan from the fiduswriter fork (native routes), replacing
+                  # the git pin from requirements.txt
+                  pip install --no-deps --force-reinstall "aethonan[uvloop] @ git+https://github.com/fiduswriter/granian@aethonan"
+                  python manage.py setup --no-static
+            - name: Build and install the native websockets module
+              run: |
+                  cd ${{ env.BACKEND_REPO }}/native
+                  cargo build --release
+                  python install.py target/release/libfiduswriter_native.so
+                  python -c "from aethonan import _aethonan; assert hasattr(_aethonan, 'configure'), 'native module missing configure()'"
+                  test -f ../fiduswriter/static-libs/json/schema.json
+            - name: Run collaboration tests through the native route
+              uses: nick-fields/retry@v4
+              with:
+                timeout_minutes: 30
+                max_attempts: 2
+                retry_on: error
+                command: |
+                  cd ${{ env.BACKEND_REPO }}/fiduswriter
+                  export FIDUSWRITER_REQUIRE_NATIVE_WS=1
+                  python manage.py test \
+                      document.tests.test_collaboration \
+                      document.tests.test_offline \
+                      document.tests.test_share_link_access \
+                      document.tests.test_path \
+                      document.tests.test_consumers_unit \
+                      document.tests.test_authorization_refresh \
+                      document.tests.test_document_store \
+                      base.tests.test_views_unit -v 2
+            - name: Upload failed test screenshots
+              if: github.server_url == 'https://github.com' && failure()
+              uses: actions/upload-artifact@v4.3.4
+              with:
+                  name: failure-artifacts-native
+                  path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
+            - name: Restore stock aethonan and run the E2EE suite
+              uses: nick-fields/retry@v4
+              with:
+                timeout_minutes: 20
+                max_attempts: 2
+                retry_on: error
+                command: |
+                  cd ${{ env.BACKEND_REPO }}/fiduswriter
+                  pip install --no-deps --force-reinstall "aethonan[uvloop] @ git+https://github.com/fiduswriter/granian@aethonan"
+                  python manage.py test document.tests.test_e2ee -v 2
     plugin-tests:
         runs-on: ubuntu-latest
         strategy:

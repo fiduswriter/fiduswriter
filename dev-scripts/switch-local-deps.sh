@@ -24,10 +24,10 @@
 # `manage.py transpile` instead.)
 #
 # The script also switches the Rust native websockets crate
-# (fiduswriter-server-backend/native): its granian and prosemirror
-# dependencies flip between the committed git dependencies (the fiduswriter
-# forks on GitHub) and local sibling checkouts. Run `cargo build` in
-# native/ afterwards so Cargo.lock picks up the switch.
+# (fiduswriter-server-backend/native): its aethonan (the fiduswriter fork of
+# granian) and prosemirror dependencies flip between the committed git
+# dependencies (the fiduswriter forks on GitHub) and local sibling checkouts.
+# Run `cargo build` in native/ afterwards so Cargo.lock picks up the switch.
 #
 # Environment variables:
 #   FIDUSWRITER_SIBLINGS_DIR      Directory containing the sibling @fiduswriter
@@ -54,8 +54,8 @@
 #                                 vivliostyle-pdf).
 #                                 Default: <siblings-dir>/../pagination
 #
-#   FIDUSWRITER_GRANIAN_DIR       The granian fork checkout used for the Rust
-#                                 crate in local mode.
+#   FIDUSWRITER_GRANIAN_DIR       The granian fork checkout (aethonan branch)
+#                                 used for the Rust crate in local mode.
 #                                 Default: <siblings-dir>/../granian
 #
 #   FIDUSWRITER_PROSEMIRROR_RS_DIR The prosemirror-rs checkout used for the
@@ -72,7 +72,7 @@ BACKEND_DIR="${FIDUSWRITER_BACKEND_DIR:-$SIBLINGS_DIR/fiduswriter-server-backend
 INSTALL_DIR="${FIDUSWRITER_INSTALL_DIR:-$BACKEND_DIR/fiduswriter/.transpile}"
 PAGINATION_DIR="${FIDUSWRITER_PAGINATION_DIR:-$SIBLINGS_DIR/../pagination}"
 
-# The Rust native websockets crate in the backend repo. Its granian and
+# The Rust native websockets crate in the backend repo. Its aethonan and
 # prosemirror dependencies are git dependencies on the fiduswriter forks in
 # the committed state (npm mode) and path dependencies on the local
 # checkouts in local mode.
@@ -449,21 +449,25 @@ switch_pagination_deps() {
     done
 }
 
-# Switch the Rust crate's granian/prosemirror dependencies between the
+# Switch the Rust crate's aethonan/prosemirror dependencies between the
 # committed git dependencies and local path checkouts.
 switch_rust_deps() {
     if [[ ! -f "$RUST_CARGO_TOML" ]]; then
         return 0
     fi
-    local granian_dep prosemirror_dep
+    local aethonan_dep prosemirror_dep
     if [[ "$MODE" == "local" ]]; then
-        granian_dep="{ path = \"$GRANIAN_DIR\", package = \"granian\", default-features = false }"
+        # The sibling checkout dir is still named "granian" (it holds the
+        # aethonan branch of the fiduswriter granian fork). The package key
+        # pins the extern crate name to "aethonan" (the fork's lib target is
+        # named "_aethonan").
+        aethonan_dep="{ path = \"$GRANIAN_DIR\", package = \"aethonan\", default-features = false }"
         prosemirror_dep="{ path = \"$PROSEMIRROR_RS_DIR\" }"
     else
-        granian_dep="{ git = \"https://github.com/fiduswriter/granian\", branch = \"combined-patches\", package = \"granian\", default-features = false }"
+        aethonan_dep="{ git = \"https://github.com/fiduswriter/granian\", branch = \"aethonan\", package = \"aethonan\", default-features = false }"
         prosemirror_dep="{ git = \"https://github.com/fiduswriter/prosemirror-rs\", branch = \"main\" }"
     fi
-    GRANIAN_DEP="$granian_dep" PROSEMIRROR_DEP="$prosemirror_dep" python3 - "$RUST_CARGO_TOML" <<'RUST_DEPS_EOF'
+    GRANIAN_DEP="$aethonan_dep" PROSEMIRROR_DEP="$prosemirror_dep" python3 - "$RUST_CARGO_TOML" <<'RUST_DEPS_EOF'
 import os
 import re
 import sys
@@ -473,8 +477,8 @@ granian_dep = os.environ["GRANIAN_DEP"]
 prosemirror_dep = os.environ["PROSEMIRROR_DEP"]
 source = open(path).read()
 source = re.sub(
-    r'^granian = \{[^\n]*\}',
-    f"granian = {granian_dep}",
+    r'^aethonan = \{[^\n]*\}',
+    f"aethonan = {granian_dep}",
     source,
     count=1,
     flags=re.M,

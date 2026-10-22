@@ -23,6 +23,12 @@
 # apps' package.json5 files are merged and installed through
 # `manage.py transpile` instead.)
 #
+# The script also switches the Rust native websockets crate
+# (fiduswriter-server-backend/native): its granian and prosemirror
+# dependencies flip between the committed git dependencies (the fiduswriter
+# forks on GitHub) and local sibling checkouts. Run `cargo build` in
+# native/ afterwards so Cargo.lock picks up the switch.
+#
 # Environment variables:
 #   FIDUSWRITER_SIBLINGS_DIR      Directory containing the sibling @fiduswriter
 #                                 package repositories.
@@ -47,6 +53,14 @@
 #                                 checkouts (paginate-for-print, pages-to-pdf,
 #                                 vivliostyle-pdf).
 #                                 Default: <siblings-dir>/../pagination
+#
+#   FIDUSWRITER_GRANIAN_DIR       The granian fork checkout used for the Rust
+#                                 crate in local mode.
+#                                 Default: <siblings-dir>/../granian
+#
+#   FIDUSWRITER_PROSEMIRROR_RS_DIR The prosemirror-rs checkout used for the
+#                                 Rust crate in local mode.
+#                                 Default: <siblings-dir>/../prosemirror/prosemirror-rs
 
 set -euo pipefail
 
@@ -57,6 +71,14 @@ SIBLINGS_DIR="${FIDUSWRITER_SIBLINGS_DIR:-$REPO_ROOT/..}"
 BACKEND_DIR="${FIDUSWRITER_BACKEND_DIR:-$SIBLINGS_DIR/fiduswriter-server-backend}"
 INSTALL_DIR="${FIDUSWRITER_INSTALL_DIR:-$BACKEND_DIR/fiduswriter/.transpile}"
 PAGINATION_DIR="${FIDUSWRITER_PAGINATION_DIR:-$SIBLINGS_DIR/../pagination}"
+
+# The Rust native websockets crate in the backend repo. Its granian and
+# prosemirror dependencies are git dependencies on the fiduswriter forks in
+# the committed state (npm mode) and path dependencies on the local
+# checkouts in local mode.
+GRANIAN_DIR="${FIDUSWRITER_GRANIAN_DIR:-$SIBLINGS_DIR/../granian}"
+PROSEMIRROR_RS_DIR="${FIDUSWRITER_PROSEMIRROR_RS_DIR:-$SIBLINGS_DIR/../prosemirror/prosemirror-rs}"
+RUST_CARGO_TOML="$BACKEND_DIR/native/Cargo.toml"
 
 MODE="${1:-}"
 
@@ -427,7 +449,51 @@ switch_pagination_deps() {
     done
 }
 
+# Switch the Rust crate's granian/prosemirror dependencies between the
+# committed git dependencies and local path checkouts.
+switch_rust_deps() {
+    if [[ ! -f "$RUST_CARGO_TOML" ]]; then
+        return 0
+    fi
+    local granian_dep prosemirror_dep
+    if [[ "$MODE" == "local" ]]; then
+        granian_dep="{ path = \"$GRANIAN_DIR\", package = \"granian\", default-features = false }"
+        prosemirror_dep="{ path = \"$PROSEMIRROR_RS_DIR\" }"
+    else
+        granian_dep="{ git = \"https://github.com/fiduswriter/granian\", branch = \"combined-patches\", package = \"granian\", default-features = false }"
+        prosemirror_dep="{ git = \"https://github.com/fiduswriter/prosemirror-rs\", branch = \"main\" }"
+    fi
+    GRANIAN_DEP="$granian_dep" PROSEMIRROR_DEP="$prosemirror_dep" python3 - "$RUST_CARGO_TOML" <<'RUST_DEPS_EOF'
+import os
+import re
+import sys
+
+path = sys.argv[1]
+granian_dep = os.environ["GRANIAN_DEP"]
+prosemirror_dep = os.environ["PROSEMIRROR_DEP"]
+source = open(path).read()
+source = re.sub(
+    r'^granian = \{[^\n]*\}',
+    f"granian = {granian_dep}",
+    source,
+    count=1,
+    flags=re.M,
+)
+source = re.sub(
+    r'^prosemirror = \{[^\n]*\}',
+    f"prosemirror = {prosemirror_dep}",
+    source,
+    count=1,
+    flags=re.M,
+)
+open(path, "w").write(source)
+RUST_DEPS_EOF
+    echo "Switched Rust dependencies ($(basename "$(dirname "$RUST_CARGO_TOML")"))"
+}
+
 echo "Switching @fiduswriter dependencies to $MODE mode..."
+
+switch_rust_deps
 
 handle_bibliography_manager
 
@@ -518,12 +584,16 @@ Next steps:
   1. Rebuild any packages you modified (e.g. pnpm run build in
      fiduswriter-editor-ts).
   2. Run python fiduswriter/manage.py transpile --force
-  3. Hard-reload the browser (disable cache in dev tools).
+  3. cargo build --release in fiduswriter-server-backend/native
+     (syncs Cargo.lock with the local path dependencies).
+  4. Hard-reload the browser (disable cache in dev tools).
 EOF
 else
     cat <<EOF
 
 Next steps:
   1. Rebuild any packages you modified (pnpm run build).
+  2. cargo build --release in fiduswriter-server-backend/native
+     (syncs Cargo.lock with the git dependencies).
 EOF
 fi

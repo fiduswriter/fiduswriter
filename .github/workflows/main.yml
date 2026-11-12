@@ -167,7 +167,7 @@ jobs:
                   sleep 5  # Give ffmpeg time to finish writing
             - name: Upload video
               if: ${{ runner.debug == '1' && (failure() || success()) }}
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                 name: test-video
                 path: |
@@ -175,7 +175,7 @@ jobs:
                   video-browser2.mp4
             - name: Upload failed test screenshots
               if: ${{ github.server_url == 'https://github.com' && failure() }}
-              uses: actions/upload-artifact@v4.6.2
+              uses: actions/upload-artifact@v7.0.2
               with:
                 name: failure-artifacts
                 path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/
@@ -325,7 +325,7 @@ jobs:
                   coverage run --concurrency=multiprocessing,thread manage.py test ${{ matrix.test }} -v 2
             - name: Upload failed test screenshots
               if: ${{ github.server_url == 'https://github.com' && failure() }}
-              uses: actions/upload-artifact@v4.6.2
+              uses: actions/upload-artifact@v7.0.2
               with:
                 name: failure-artifacts
                 path: ${{ github.workspace }}/${{ env.BACKEND_REPO }}/fiduswriter/screenshots/

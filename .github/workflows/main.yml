@@ -221,7 +221,7 @@ jobs:
                   apt-get update
                   apt-get install -y google-chrome-stable rsync
             - name: Set up Python
-              uses: actions/setup-python@v6
+              uses: actions/setup-python@v7
               if: github.server_url == 'https://github.com'
               with:
                   python-version: "3.14"
@@ -285,7 +285,7 @@ jobs:
                   apt-get update
                   apt-get install -y google-chrome-stable rsync
             - name: Set up Python
-              uses: actions/setup-python@v6
+              uses: actions/setup-python@v7
               if: github.server_url == 'https://github.com'
               with:
                   python-version: "3.14"

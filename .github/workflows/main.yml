@@ -38,7 +38,7 @@ jobs:
         - uses: actions/setup-python@v7
           if: github.server_url == 'https://github.com'
           with:
-            python-version: "3.14"
+            python-version: "3.15"
         - name: Check out backend repository
           run: |
               git clone --depth 1 --branch "${{ github.ref_name }}" "https://github.com/fiduswriter/${BACKEND_REPO}.git" "${BACKEND_REPO}" 2>/dev/null \
@@ -98,7 +98,7 @@ jobs:
               uses: actions/setup-python@v7
               if: github.server_url == 'https://github.com'
               with:
-                  python-version: "3.14"
+                  python-version: "3.15"
             - name: Set up Node
               uses: actions/setup-node@v7
               # Only needed on GitHub. The Forgejo runner image
@@ -224,7 +224,7 @@ jobs:
               uses: actions/setup-python@v6
               if: github.server_url == 'https://github.com'
               with:
-                  python-version: "3.14"
+                  python-version: "3.15"
             - name: Set up Node
               uses: actions/setup-node@v6
               if: github.server_url == 'https://github.com'
@@ -288,7 +288,7 @@ jobs:
               uses: actions/setup-python@v6
               if: github.server_url == 'https://github.com'
               with:
-                  python-version: "3.14"
+                  python-version: "3.15"
             - name: Set up Node
               uses: actions/setup-node@v6
               if: github.server_url == 'https://github.com'
@@ -405,7 +405,7 @@ jobs:
               uses: actions/setup-python@v7
               if: github.server_url == 'https://github.com'
               with:
-                  python-version: "3.14"
+                  python-version: "3.15"
             - name: Set up Node
               uses: actions/setup-node@v7
               # Only needed on GitHub. The Forgejo runner image

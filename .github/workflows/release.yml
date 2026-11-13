@@ -151,7 +151,7 @@ jobs:
                   node-version: 26
 
             - name: Set up pnpm
-              uses: pnpm/action-setup@v4
+              uses: pnpm/action-setup@v6
               with:
                   package_json_file: fiduswriter-desktop/package.json
 
@@ -269,7 +269,7 @@ jobs:
                   node-version: 26
 
             - name: Set up pnpm
-              uses: pnpm/action-setup@v4
+              uses: pnpm/action-setup@v6
               with:
                   package_json_file: fiduswriter-desktop/package.json
 
@@ -406,7 +406,7 @@ jobs:
                   node-version: 26
 
             - name: Set up pnpm
-              uses: pnpm/action-setup@v4
+              uses: pnpm/action-setup@v6
               with:
                   package_json_file: fiduswriter-desktop/package.json
 

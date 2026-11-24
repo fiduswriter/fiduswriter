@@ -15,6 +15,11 @@ help: ## Show this help message
 build: ## Build the Docker image (version read from version.txt automatically)
 	docker compose build --build-arg FIDUSWRITER_VERSION=$(VERSION)
 
+build-multiarch: ## Build and push the image for x86_64 and ARM (requires buildx and registry login)
+	docker buildx build --platform linux/amd64,linux/arm64 \
+		--build-arg FIDUSWRITER_VERSION=$(VERSION) \
+		-t fiduswriter/fiduswriter:$(VERSION) -f Dockerfile .. --push
+
 up: ## Start the container in the background
 	mkdir -p volumes/data
 	chown -R 999:999 volumes

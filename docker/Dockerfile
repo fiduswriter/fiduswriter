@@ -53,18 +53,11 @@ RUN apt-get update \
         software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python 3.14.5 from deadsnakes PPA
-RUN add-apt-repository ppa:deadsnakes/ppa -y \
-    && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        python3.14 \
-        python3.14-venv \
-        python3.14-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set Python 3.14 as the default python3
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.14 1 \
-    && update-alternatives --set python3 /usr/bin/python3.14
+# Install Python 3.14 through uv. Unlike the deadsnakes PPA (x86_64 only),
+# uv's standalone Python builds are available for aarch64 as well, so the
+# image builds for both x86_64 and ARM NAS models.
+RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh \
+    && uv python install 3.14
 
 # Install Node.js 24.x
 RUN curl -sL https://deb.nodesource.com/setup_24.x | bash \
@@ -80,7 +73,7 @@ RUN chown -R ${EXECUTING_USER}:${EXECUTING_GROUP} /data
 RUN chmod -R 755 /data
 
 # Create virtual environment with the right permissions
-RUN python3 -m venv venv
+RUN uv venv --seed --python 3.14 venv
 RUN chown -R ${EXECUTING_USER}:${EXECUTING_GROUP} /fiduswriter
 
 # Copy source and install from local path

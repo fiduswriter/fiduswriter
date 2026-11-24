@@ -12,6 +12,7 @@ Fidus Writer uses [Django-allauth](https://django-allauth.readthedocs.io/) for s
 - Twitter/X
 - Microsoft
 - ORCID
+- Any OpenID Connect provider (including LDAP via a Dex/Keycloak/authentik bridge)
 - And many more providers
 
 ## General Setup Process
@@ -528,6 +529,47 @@ Configuration follows the same pattern for all providers.
 
 For enterprise single sign-on (SSO) with SAML or LDAP, additional configuration is required. These are typically used in institutional settings.
 
+### LDAP via an OpenID Connect bridge (recommended)
+
+Fidus Writer has no built-in LDAP client, and adding one is unnecessary: bridge your LDAP directory to OpenID Connect with an identity provider such as [Dex](https://dexidp.io/docs/connectors/ldap/) (which has a dedicated LDAP connector), [Keycloak](https://www.keycloak.org/) or [authentik](https://goauthentik.io/). Fidus Writer then talks to the bridge via allauth's generic `openid_connect` provider — no extra Python packages, no code changes.
+
+Add to your configuration file:
+
+```python
+INSTALLED_APPS += [
+    'allauth.socialaccount.providers.openid_connect',
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'openid_connect': {
+        'APPS': [
+            {
+                # Shown on the login button, used in the callback URL:
+                'provider_id': 'university-sso',
+                'name': 'University Login',
+                'server_url': 'https://sso.example.edu',
+                'client_id': 'fiduswriter',
+                'secret': 'your-client-secret',
+            },
+        ],
+    },
+}
+```
+
+In the bridge, register Fidus Writer as an OIDC client with the callback URL:
+
+```
+https://yourdomain.com/api/openid_connect/oidc/<provider_id>/login/callback/
+```
+
+For example with the configuration above:
+
+```
+https://yourdomain.com/api/openid_connect/oidc/university-sso/login/callback/
+```
+
+The login button ("Log in with University Login") then appears automatically on the login and signup pages. Multiple `APPS` entries can point at different identity providers.
+
 ### SAML Setup
 
 Requires additional packages:
@@ -537,9 +579,10 @@ pip install python3-saml
 
 This is an advanced topic. Consult your IT department and see Django SAML2 authentication documentation.
 
-### LDAP Setup
+### Direct LDAP Setup (not recommended)
 
-Requires additional packages:
+It is also possible to authenticate directly against LDAP with `django-auth-ldap`:
+
 ```bash
 pip install django-auth-ldap
 ```
@@ -559,7 +602,9 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
 )
 ```
 
-Contact your system administrator for LDAP connection details.
+Contact your system administrator for LDAP connection details. Note that this
+only covers authentication — it does not handle SSO, and profile information
+mapping is limited compared to the OIDC bridge approach above.
 
 ## Related Documentation
 
@@ -575,6 +620,6 @@ Contact your system administrator for LDAP connection details.
 
 ---
 
-**Last Updated:** December 8, 2025
+**Last Updated:** November 24, 2026
 
 **Questions?** Open an [issue](https://github.com/fiduswriter/fiduswriter/issues) or [discussion](https://github.com/fiduswriter/fiduswriter/discussions)!

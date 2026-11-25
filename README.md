@@ -60,3 +60,10 @@ All of Fidus Writer's original code is licensed under the GNU AFFERO GENERAL
 PUBLIC LICENSE, for details see LICENSE. Some third party libraries are
 licensed under other, compatible open source libraries. Licensing information
 is included in those files.
+
+## Trademark
+
+"Fidus Writer" is a registered EU trademark of Lund Info AB. This
+repository's license covers the code, not the name and logo — see
+[TRADEMARK.md](TRADEMARK.md) and the
+[Fidus Writer trademark policy](https://www.fiduswriter.org/trademark/).
